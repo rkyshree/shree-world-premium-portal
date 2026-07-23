@@ -121,6 +121,16 @@
     <!-- MAIN BANNER & HERO SECTION -->
     <section class="w-full pt-4 pb-6 px-4 text-center relative overflow-hidden hero-glow-bg border-b border-slate-200">
         <div class="max-w-4xl mx-auto relative z-10">
+            
+            <!-- NEW: STYLED TOP BANNER TEXT -->
+            <div class="mb-6 pt-2 select-none">
+                <h2 class="text-[28px] sm:text-[42px] leading-none font-black uppercase tracking-widest drop-shadow-md">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-600">SHREE WORLD</span><br class="sm:hidden"/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500 sm:ml-2">PREMIUM PORTAL</span>
+                </h2>
+                <div class="w-32 h-1.5 mx-auto bg-gradient-to-r from-blue-600 via-pink-500 to-amber-500 rounded-full mt-3 shadow-sm"></div>
+            </div>
+
             <!-- HEADING -->
             <h1 class="text-2xl sm:text-5xl font-black tracking-tight leading-tight mb-3 text-slate-900 cursor-pointer">
                 India's Trusted Digital<br>
@@ -145,9 +155,9 @@
                 </div>
             </div>
 
-            <!-- NEW TODAY DEALS BANNER -->
+            <!-- NEW TODAY DEALS BANNER WITH IFRAME TOGGLE -->
             <div class='w-full max-w-4xl mx-auto mt-1 no-url-preview' id='today-deals-section'>
-                <div onclick="goLink('https://www.rkyshree.in/today-deals')" class='cursor-pointer block w-full bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-2 border-amber-300 hover:border-amber-400 rounded-2xl p-4 sm:p-5 text-center shadow-lg transform active:scale-95 transition-all btn-glow relative overflow-hidden group'>
+                <div onclick="toggleTodayDeals()" class='cursor-pointer block w-full bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-2 border-amber-300 hover:border-amber-400 rounded-2xl p-4 sm:p-5 text-center shadow-lg transform active:scale-95 transition-all btn-glow relative overflow-hidden group'>
                     <div class='flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10'>
                         <div class='text-center sm:text-left w-full sm:w-auto'>
                             <div class='flex items-center justify-center sm:justify-start gap-2 mb-1'>
@@ -165,6 +175,17 @@
                             </span>
                         </div>
                     </div>
+                </div>
+                
+                <!-- IFRAME CONTAINER (Hidden by default) -->
+                <div id="today-deals-iframe-container" class="hidden mt-4 w-full bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-200 transition-all duration-500">
+                    <div class="bg-amber-100 px-4 py-3 flex justify-between items-center border-b border-amber-200">
+                        <span class="font-bold text-amber-800 text-sm flex items-center gap-2">
+                            <span class="animate-pulse">🔥</span> धमाकेदार लाइव ऑफर्स
+                        </span>
+                        <button onclick="toggleTodayDeals()" class="text-amber-800 hover:text-red-600 font-bold text-xl px-2 py-0.5 rounded hover:bg-amber-200 transition-colors">&times; बंद करें</button>
+                    </div>
+                    <iframe src='https://inrdeals.com/embed/deals?user=arm532515116' width='100%' height='1140' frameborder='0' allowTransparency='true'></iframe>
                 </div>
             </div>
 
@@ -736,7 +757,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-privacy'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50' id='acc-privacy'>
-                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
+                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं চুক্তे। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
                 </div>
             </div>
 
@@ -960,7 +981,7 @@
             { name: "आशीष अग्रवाल", loc: "राजकोट, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "काम में एकदम ट्रांसपेरेंसी है। जितना बोला उतना दिया।" },
             { name: "मुकेश अम्बष्ट", loc: "धनबाद, झारखंड", rating: "⭐⭐⭐⭐⭐", msg: "QR स्कैन करके स्क्रीनशॉट भेजा और काम तुरंत शुरू, नो झंझट!" },
             { name: "रविंदर", loc: "अमृतसर, पंजाब", rating: "⭐⭐⭐⭐⭐", msg: "10K फॉलोअर्स का महा ऑफर पैक एकदम पैसा वसूल है।" },
-            { name: "सुभान अली", loc: "हैदराबाद, तेलंगाना", rating: "⭐⭐⭐⭐", msg: "थोड़ा समय लगा लेकिन फॉलोअर्स की क्वालिटी बहुत ही शानदार है।" },
+            { name: "सुभान अली", loc: "है हैदराबाद, तेलंगाना", rating: "⭐⭐⭐⭐", msg: "थोड़ा समय लगा लेकिन फॉलोअर्स की क्वालिटी बहुत ही शानदार है।" },
             { name: "प्रदीप शर्मा", loc: "मथुरा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट टिकट बहुत जल्दी बुक हो गया। गुड सर्विस।" },
             { name: "लोकेश मीणा", loc: "कोटा, राजस्थान", rating: "⭐⭐⭐⭐⭐", msg: "मेरे फेसबुक ग्रुप में मेंबर बढ़ाने के लिए बेस्ट है ये।" },
             { name: "दिनेश कार्तिक", loc: "कोयंबटूर, तमिलनाडु", rating: "⭐⭐⭐⭐⭐", msg: "Website layout is very user friendly. Ordered 5k likes easily." },
@@ -1297,6 +1318,18 @@
             }
         }
 
+        function toggleTodayDeals() {
+            const container = document.getElementById('today-deals-iframe-container');
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                setTimeout(() => {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 150);
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
         window.onload = function() {
             selectPlatform('instagram'); 
             setPaymentPurpose('Instagram'); 
@@ -1309,3 +1342,4 @@
     </script>
 </body>
 </html>
+
