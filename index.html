@@ -1354,6 +1354,95 @@
             setInterval(rotateReviewsSystem, 10000);
         };
     </script>
+    <!-- Flipkart / Zomato Style PWA Install Popup Banner -->
+<div id="pwaInstallBanner" class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl hidden pwa-popup-slide max-w-lg mx-auto sm:rounded-t-3xl">
+    <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center shadow-md flex-shrink-0 text-white font-black text-xl">
+                श्री
+            </div>
+            <div>
+                <h4 class="font-black text-slate-900 text-sm sm:text-base">Shree World App इनस्टॉल करें</h4>
+                <p class="text-[11px] sm:text-xs text-slate-500 font-medium">बेहतर और तेज़ अनुभव के लिए होम स्क्रीन पर जोड़ें!</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 flex-shrink-0">
+            <button onclick="dismissPwaPopup()" class="text-xs font-bold text-slate-500 px-3 py-2 hover:bg-slate-100 rounded-xl transition-all">बाद में</button>
+            <button id="pwaInstallBtn" class="bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow-md hover:brightness-110 transition-all transform active:scale-95">Install Now</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Service Worker Register
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Registered'))
+                .catch(err => console.log('Service Worker Failed', err));
+        });
+    }
+
+    // PWA Install Prompt Logic
+    let deferredPrompt;
+    const pwaBanner = document.getElementById('pwaInstallBanner');
+    const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // अगर यूजर ने पहले 'बाद में' नहीं दबाया है, तो ही पॉपअप दिखाएं
+        if (!localStorage.getItem('pwaDismissed')) {
+            setTimeout(() => {
+                pwaBanner.classList.remove('hidden');
+            }, 2000); // वेबसाइट खुलने के 2 सेकंड बाद नीचे से आएगा
+        }
+    });
+
+    pwaInstallBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            }
+            deferredPrompt = null;
+            pwaBanner.classList.add('hidden');
+        } else {
+            // iPhone या ऐसे ब्राउज़र के लिए जहाँ डायरेक्ट प्रॉम्प्ट नहीं आता
+            alert('आईफोन (iOS) पर ऐप इंस्टॉल करने के लिए Safari ब्राउज़र के शेयर (Share) बटन पर क्लिक करें और "Add to Home Screen" चुनें।');
+        }
+    });
+
+    function dismissPwaPopup() {
+        pwaBanner.classList.add('hidden');
+        localStorage.setItem('pwaDismissed', 'true'); // दोबारा परेशान न करे
+    }
+
+    // ऐप इंस्टॉल होने के बाद ऑटो हाइड
+    window.addEventListener('appinstalled', () => {
+        pwaBanner.classList.add('hidden');
+        console.log('PWA was installed successfully');
+    });
+</script>
+
 </body>
 </html>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#b58900">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shree World">
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+
+<style>
+/* Flipkart/Zomato जैसा नीचे से आने वाला App Install Popup स्टाइल */
+@keyframes slideUpPopup {
+    0% { transform: translateY(100%); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+.pwa-popup-slide {
+    animation: slideUpPopup 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
