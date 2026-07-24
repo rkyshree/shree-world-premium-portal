@@ -115,8 +115,9 @@
                 ⚙️ Admin
             </button>
             
-            <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
-                <span id="authBtnIcon">👤</span> <span id="authBtnText">My Profile</span>
+            <!-- DYNAMIC HEADER BUTTON: Shows "Refer & Earn" before login, changes to "My Profile" after login -->
+            <button id="authBtn" onclick="handleAuthButtonClick()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
+                <span id="authBtnIcon">🎁</span> <span id="authBtnText">Refer & Earn</span>
             </button>
         </div>
     </header>
@@ -160,9 +161,9 @@
                     </div>
                 </div>
 
-                <!-- Modern Withdraw Section -->
+                <!-- Modern Withdraw Section (Minimum ₹500) -->
                 <div class="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm space-y-2.5">
-                    <h5 class="font-black text-xs text-slate-800 flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹100)</h5>
+                    <h5 class="font-black text-xs text-slate-800 flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹500)</h5>
                     <div class="space-y-2">
                         <input type="text" id="withdrawUpi" placeholder="अपना upi id या अपना Gpay/Phone pay/Paytm नम्बर दे" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
                         <div class="flex gap-2">
@@ -171,6 +172,16 @@
                                 Withdraw Now 🚀
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Refer & Earn Detailed Info inside Dashboard -->
+                <div class="bg-emerald-50/40 border border-emerald-200 p-3.5 rounded-2xl shadow-sm space-y-2">
+                    <h5 class="font-black text-xs text-emerald-900 flex items-center gap-1.5">
+                        <span>💡</span> Refer &amp; Earn (पैसे कमाएं) जानकारी
+                    </h5>
+                    <div class="text-[11px] text-slate-700 space-y-1.5 font-medium leading-relaxed">
+                        <p>दोस्तों को जोड़ें और हर सफल रेफरल पर <strong>₹200 कमाएं</strong>। जब आपके वॉलेट में ₹500 हो जाएं और सभी शर्तें पूरी हो जाएं, तब आप तुरंत व्हाट्सएप के जरिए विड्रॉल ले सकते हैं।</p>
                     </div>
                 </div>
 
@@ -927,6 +938,7 @@
             const adminBtn = document.getElementById('adminBtn');
 
             if (user) {
+                // Logged In: Change button to "My Profile"
                 btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
                 btnText.innerText = 'My Profile';
                 authBtn.onclick = window.openDashboard;
@@ -958,7 +970,7 @@
                         const querySnapshot = await getDocs(q);
                         querySnapshot.forEach(async (referrerDoc) => {
                             await updateDoc(doc(db, "users", referrerDoc.id), {
-                                wallet: increment(200), // Updated to ₹200 Refer Bonus
+                                wallet: increment(200), // Updated to ₹200 Referral Bonus
                                 referralCount: increment(1)
                             });
                         });
@@ -974,13 +986,25 @@
                 }
 
             } else {
-                btnIcon.innerHTML = `👤`;
-                btnText.innerText = 'My Profile';
-                authBtn.onclick = window.loginWithGoogle;
+                // Not Logged In: Button shows "Refer & Earn"
+                btnIcon.innerHTML = `🎁`;
+                btnText.innerText = 'Refer & Earn';
+                authBtn.onclick = window.handleAuthButtonClick;
                 adminBtn.classList.add('hidden');
                 currentUserData = null;
             }
         });
+
+        // HEADER BUTTON ACTION HANDLER
+        window.handleAuthButtonClick = () => {
+            if (currentUserData) {
+                window.openDashboard();
+            } else {
+                // If not logged in, clicking the button opens the Refer & Earn Popup info or triggers Google Login
+                // Let's open the Info modal first or Login. Since user wants "Refer & Earn" visible before login:
+                window.toggleReferEarnModal();
+            }
+        };
 
         // GLOBAL FUNCTIONS
         window.loginWithGoogle = () => {
@@ -1013,7 +1037,6 @@
 
         window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
 
-        // Toggle Refer & Earn Modal
         window.toggleReferEarnModal = () => {
             const modal = document.getElementById('referEarnModal');
             modal.classList.toggle('hidden');
@@ -1027,13 +1050,13 @@
             alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
         };
 
-        // 🟢 DIRECT WHATSAPP WITHDRAWAL REQUEST 
+        // 🟢 DIRECT WHATSAPP WITHDRAWAL REQUEST (Minimum ₹500)
         window.requestWithdraw = async () => {
             const upiId = document.getElementById('withdrawUpi').value.trim();
             const amount = parseInt(document.getElementById('withdrawAmount').value);
             
             if(!upiId || !amount) return alert("कृपया UPI ID या GPay/PhonePe/Paytm नंबर भरें!");
-            if(amount < 100) return alert("आप कम से कम ₹100 ही निकाल सकते हैं!");
+            if(amount < 500) return alert("न्यूनतम विड्रॉल राशि ₹500 है!");
             if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस नहीं है!");
 
             try {
@@ -1054,7 +1077,7 @@
                 alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा है...");
                 
                 const adminPhone = "919451239239";
-                const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *निकालने की रकम:* ₹${amount}\n🏦 *UPI/Number:* ${upiId}\n\nसर, मैंने T&C के अनुसार 3 सफल सर्विस सेल की शर्त पूरी कर ली है। कृपया मेरा विड्रोल अप्रूव करके पेमेंट भेज दें।`;
+                const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *निकालने की रकम:* ₹${amount}\n🏦 *UPI/Number:* ${upiId}\n\nसर, मैंने T&C के अनुसार 3 सफल सर्विस सेल और सभी शर्तें पूरी कर ली हैं। कृपया मेरा विड्रोल अप्रूव करके पेमेंट भेज दें।`;
                 const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(waMessage)}`;
                 
                 document.getElementById('withdrawUpi').value = "";
