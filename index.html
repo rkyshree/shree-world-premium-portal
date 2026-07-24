@@ -115,9 +115,9 @@
                 ⚙️ Admin
             </button>
             
-            <!-- DYNAMIC HEADER BUTTON -->
+            <!-- SMART DYNAMIC HEADER BUTTON (Shows Loading initially to prevent flash) -->
             <button id="authBtn" onclick="handleAuthButtonClick()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
-                <span id="authBtnIcon">🎁</span> <span id="authBtnText">Refer & Earn</span>
+                <span id="authBtnIcon" class="animate-spin text-lg">⏳</span> <span id="authBtnText">Loading...</span>
             </button>
         </div>
     </header>
@@ -165,11 +165,11 @@
                 <div class="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm space-y-2.5">
                     <h5 class="font-black text-xs text-slate-800 flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹500)</h5>
                     <div class="space-y-2">
-                        <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe नंबर दें" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
+                        <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe/Paytm नंबर दें" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
                         <div class="flex gap-2">
                             <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
                             <button onclick="requestWithdraw()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95">
-                                Withdraw Now 🚀
+                                Withdraw 🚀
                             </button>
                         </div>
                     </div>
@@ -767,7 +767,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-about-us'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50' id='acc-about-us'>
-                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और सोशल मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
+                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और সোশ্যাল मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
                 </div>
             </div>
             
@@ -904,7 +904,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -931,71 +931,76 @@
             sessionStorage.setItem('referredBy', referralId);
         }
 
-        onAuthStateChanged(auth, async (user) => {
-            const btnIcon = document.getElementById('authBtnIcon');
-            const btnText = document.getElementById('authBtnText');
-            const authBtn = document.getElementById('authBtn');
-            const adminBtn = document.getElementById('adminBtn');
+        // Set explicit persistence to prevent logout on refresh
+        setPersistence(auth, browserLocalPersistence).then(() => {
+            onAuthStateChanged(auth, async (user) => {
+                const btnIcon = document.getElementById('authBtnIcon');
+                const btnText = document.getElementById('authBtnText');
+                const authBtn = document.getElementById('authBtn');
+                const adminBtn = document.getElementById('adminBtn');
 
-            if (user) {
-                // Logged In: Change button to "My Profile"
-                btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
-                btnText.innerText = 'My Profile';
-                authBtn.onclick = window.openDashboard;
-                
-                if (user.email === ADMIN_EMAIL) {
-                    adminBtn.classList.remove('hidden');
-                }
-
-                const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-                
-                if (!userSnap.exists()) {
-                    let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
-
-                    await setDoc(userRef, {
-                        uid: user.uid,
-                        name: user.displayName,
-                        email: user.email,
-                        photo: user.photoURL,
-                        wallet: 0,
-                        referralCount: 0,
-                        refCode: emailPrefix, 
-                        createdAt: new Date()
-                    });
+                if (user) {
+                    // Logged In: Update UI to "My Profile"
+                    btnIcon.className = "text-lg"; 
+                    btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
+                    btnText.innerText = 'My Profile';
+                    authBtn.onclick = window.openDashboard;
                     
-                    const savedRef = sessionStorage.getItem('referredBy');
-                    if (savedRef && savedRef !== emailPrefix) {
-                        const q = query(collection(db, "users"), where("refCode", "==", savedRef));
-                        const querySnapshot = await getDocs(q);
-                        querySnapshot.forEach(async (referrerDoc) => {
-                            await updateDoc(doc(db, "users", referrerDoc.id), {
-                                wallet: increment(200), // Updated to ₹200 Referral Bonus
-                                referralCount: increment(1)
-                            });
-                        });
+                    if (user.email === ADMIN_EMAIL) {
+                        adminBtn.classList.remove('hidden');
                     }
-                }
 
-                const latestSnap = await getDoc(userRef);
-                currentUserData = latestSnap.data();
-                
-                if (!currentUserData.refCode) {
-                    currentUserData.refCode = currentUserData.email ? currentUserData.email.split('@')[0] : currentUserData.uid;
-                    await updateDoc(userRef, { refCode: currentUserData.refCode });
-                }
+                    const userRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userRef);
+                    
+                    if (!userSnap.exists()) {
+                        let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
 
-            } else {
-                // Not Logged In: Button shows "Refer & Earn" and triggers Google Login directly
-                btnIcon.innerHTML = `🎁`;
-                btnText.innerText = 'Refer & Earn';
-                authBtn.onclick = window.handleAuthButtonClick;
-                adminBtn.classList.add('hidden');
-                currentUserData = null;
-            }
+                        await setDoc(userRef, {
+                            uid: user.uid,
+                            name: user.displayName,
+                            email: user.email,
+                            photo: user.photoURL,
+                            wallet: 0,
+                            referralCount: 0,
+                            refCode: emailPrefix, 
+                            createdAt: new Date()
+                        });
+                        
+                        const savedRef = sessionStorage.getItem('referredBy');
+                        if (savedRef && savedRef !== emailPrefix) {
+                            const q = query(collection(db, "users"), where("refCode", "==", savedRef));
+                            const querySnapshot = await getDocs(q);
+                            querySnapshot.forEach(async (referrerDoc) => {
+                                await updateDoc(doc(db, "users", referrerDoc.id), {
+                                    wallet: increment(200), // Updated to ₹200 Referral Bonus
+                                    referralCount: increment(1)
+                                });
+                            });
+                        }
+                    }
+
+                    const latestSnap = await getDoc(userRef);
+                    currentUserData = latestSnap.data();
+                    
+                    if (!currentUserData.refCode) {
+                        currentUserData.refCode = currentUserData.email ? currentUserData.email.split('@')[0] : currentUserData.uid;
+                        await updateDoc(userRef, { refCode: currentUserData.refCode });
+                    }
+
+                } else {
+                    // Not Logged In: Set UI to "Refer & Earn"
+                    btnIcon.className = "text-lg"; 
+                    btnIcon.innerHTML = `🎁`;
+                    btnText.innerText = 'Refer & Earn';
+                    authBtn.onclick = window.handleAuthButtonClick;
+                    adminBtn.classList.add('hidden');
+                    currentUserData = null;
+                }
+            });
         });
 
-        // HEADER BUTTON ACTION HANDLER (Direct Google Login if not logged in)
+        // HEADER BUTTON ACTION HANDLER (Login if not logged in)
         window.handleAuthButtonClick = () => {
             if (currentUserData) {
                 window.openDashboard();
@@ -1024,7 +1029,7 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
-            // 2. Set basic cached data instantly so user sees it
+            // 2. Set basic cached data instantly so user sees it without waiting
             document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
             document.getElementById('dashEmail').innerText = currentUserData.email || '';
             if(currentUserData.photo) {
@@ -1295,7 +1300,7 @@
             {n: "मनीष तिवारी", c: "भोपाल", m: "हवाई जहाज की टिकट बहुत ही सस्ते में बुक हो गई और तुरंत कन्फर्मेशन रसीद मिल गई।"},
             {n: "स्नेहा जैन", c: "इंदौर", m: "वेबसाइट डेवलपमेंट सर्विस ली थी, काम बहुत शानदार और प्रोफेशनल किया इन्होने।"},
             {n: "विकास यादव", c: "कानपुर", m: "एकदम सेफ और फ़ास्ट सर्विस है। मैंने यहाँ से 3 बार आर्डर किया है और हर बार संतुष्ट रहा।"},
-            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू পুরোনো हो गया। ग्रेट सर्विस!"},
+            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू हो गया। ग्रेट सर्विस!"},
             {n: "दीपक सिंह", c: "पुणे", m: "फॉलोअर्स की क्वालिटी बहुत बढ़िया है। एक भी ड्रॉप नहीं हुआ!"},
             {n: "आराध्या यादव", c: "अहमदाबाद", m: "डिजिटल मार्केटिंग के लिए सबसे अच्छी और भरोसेमंद वेबसाइट है।"},
             {n: "नीलेश कुमार", c: "सूरत", m: "टिकट बुकिंग में मुझे 2% की एक्स्ट्रा छूट मिली, मज़ा आ गया!"},
