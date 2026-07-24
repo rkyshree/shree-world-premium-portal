@@ -120,11 +120,96 @@
             </div>
         </div>
 
-        <button onclick="toggleAiChat()" class="bg-slate-900 hover:bg-slate-800 text-white rounded-full flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 shadow-md border border-slate-700 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap">
-            <span class="text-xs sm:text-sm">🤖</span>
-            <span class="font-bold text-[10px] sm:text-xs tracking-wide">AI Help</span>
-        </button>
+        <div class="flex items-center gap-2">
+            <!-- ADMIN BUTTON (Hidden by default) -->
+            <button id="adminBtn" onclick="openAdminPanel()" class="hidden bg-red-600 hover:bg-red-700 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-md text-xs sm:text-sm font-bold transition-transform hover:scale-105">
+                ⚙️ Admin
+            </button>
+            
+            <!-- LOGIN / DASHBOARD BUTTON -->
+            <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-md text-xs sm:text-sm font-bold transition-transform hover:scale-105 flex items-center gap-1.5">
+                <span id="authBtnIcon">🔑</span> <span id="authBtnText">Login</span>
+            </button>
+            
+            <button onclick="toggleAiChat()" class="bg-slate-900 hover:bg-slate-800 text-white rounded-full flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 shadow-md border border-slate-700 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap">
+                <span class="text-xs sm:text-sm">🤖</span>
+                <span class="font-bold text-[10px] sm:text-xs tracking-wide">AI Help</span>
+            </button>
+        </div>
     </header>
+
+    <!-- ==================== USER DASHBOARD MODAL ==================== -->
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-5 flex justify-between items-center text-white">
+                <h3 class="font-black text-lg">👤 My Dashboard</h3>
+                <button onclick="closeDashboard()" class="text-white hover:text-red-200 text-3xl leading-none">&times;</button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Profile Info -->
+                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <img id="dashPhoto" src="" alt="Profile" class="w-16 h-16 rounded-full border-2 border-amber-500 shadow-md">
+                    <div>
+                        <h4 id="dashName" class="font-black text-slate-900 text-lg">Name</h4>
+                        <p id="dashEmail" class="text-xs font-bold text-slate-500">Email</p>
+                    </div>
+                </div>
+
+                <!-- Wallet & Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-center shadow-sm">
+                        <span class="block text-xs font-bold text-emerald-700 uppercase tracking-widest mb-1">Wallet Balance</span>
+                        <div class="text-3xl font-black text-emerald-600">₹<span id="dashWallet">0</span></div>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-center shadow-sm">
+                        <span class="block text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">Total Referrals</span>
+                        <div class="text-3xl font-black text-blue-600" id="dashRefs">0</div>
+                    </div>
+                </div>
+
+                <!-- Refer & Earn -->
+                <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl shadow-sm">
+                    <h5 class="font-black text-sm text-amber-800 mb-2">🎁 Refer & Earn (₹50 प्रति रेफरल)</h5>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="dashRefLink" readonly class="w-full bg-white border border-amber-300 rounded-xl py-2 px-3 text-xs text-slate-700 font-bold focus:outline-none">
+                        <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap">Copy</button>
+                    </div>
+                </div>
+
+                <!-- Withdraw Section -->
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm">
+                    <h5 class="font-black text-sm text-slate-800 mb-3">💸 Withdraw Money (न्यूनतम ₹100)</h5>
+                    <div class="space-y-3">
+                        <input type="text" id="withdrawUpi" placeholder="अपना UPI ID दर्ज करें..." class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
+                        <div class="flex gap-2">
+                            <input type="number" id="withdrawAmount" placeholder="₹ Amount" class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
+                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md whitespace-nowrap text-sm">Withdraw</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-bold py-3 rounded-xl transition-all">🚪 Logout (बाहर जाएँ)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PANEL MODAL ==================== -->
+    <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200">
+            <div class="bg-slate-900 p-5 flex justify-between items-center text-white border-b-4 border-red-500">
+                <h3 class="font-black text-lg flex items-center gap-2">⚙️ Admin Control Panel</h3>
+                <button onclick="closeAdminPanel()" class="text-white hover:text-red-400 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 h-[400px] overflow-y-auto bg-slate-50">
+                <h4 class="font-black text-slate-800 mb-4 text-sm uppercase tracking-wider">Pending Withdrawal Requests</h4>
+                <div id="adminRequestsList" class="space-y-3">
+                    <p class="text-slate-500 text-sm text-center py-10">Loading requests...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- ==================== LIVE TRACKER THIN FULL WIDTH BANNER ==================== -->
     <div class='w-full bg-amber-50 border-b border-amber-200 py-2.5 flex justify-center items-center shadow-sm relative z-[110]' id='live-tracker-section'>
@@ -797,7 +882,239 @@
         </div>
     </footer>
 
-    <!-- MAIN SCRIPT -->
+    <!-- ========================================== -->
+    <!-- 🔥 FIREBASE & JAVASCRIPT LOGIC BLOCK 🔥 -->
+    <!-- ========================================== -->
+    
+    <script type="module">
+        // 1. FIREBASE SDK IMPORTS
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // 2. YOUR FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+            authDomain: "rkyshree-2f74b.firebaseapp.com",
+            projectId: "rkyshree-2f74b",
+            storageBucket: "rkyshree-2f74b.firebasestorage.app",
+            messagingSenderId: "354823113610",
+            appId: "1:354823113610:web:d043805305c945339c9673",
+            measurementId: "G-WSXGTGFWYK"
+        };
+
+        // 3. INITIALIZE FIREBASE
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // 4. ADMIN SETTINGS
+        const ADMIN_EMAIL = "rkyshree.in@gmail.com"; 
+        let currentUserData = null;
+
+        // 5. REFERRAL TRACKING (URL से ID निकालकर Session में सेव करना)
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralId = urlParams.get('ref');
+        if(referralId) {
+            sessionStorage.setItem('referredBy', referralId);
+        }
+
+        // 6. AUTH STATE LISTENER (यूजर लॉगिन है या नहीं चेक करना)
+        onAuthStateChanged(auth, async (user) => {
+            const btnIcon = document.getElementById('authBtnIcon');
+            const btnText = document.getElementById('authBtnText');
+            const authBtn = document.getElementById('authBtn');
+            const adminBtn = document.getElementById('adminBtn');
+
+            if (user) {
+                // User is Logged In
+                btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
+                btnText.innerText = 'Dashboard';
+                authBtn.onclick = window.openDashboard;
+                
+                // Show Admin Panel Button if email matches
+                if (user.email === ADMIN_EMAIL) {
+                    adminBtn.classList.remove('hidden');
+                }
+
+                // Check/Create User Document in Firestore
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                
+                if (!userSnap.exists()) {
+                    // New User Registration
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        name: user.displayName,
+                        email: user.email,
+                        photo: user.photoURL,
+                        wallet: 0,
+                        referralCount: 0,
+                        createdAt: new Date()
+                    });
+                    
+                    // Reward the Referrer (if referred)
+                    const savedRef = sessionStorage.getItem('referredBy');
+                    if (savedRef && savedRef !== user.uid) {
+                        const refDoc = doc(db, "users", savedRef);
+                        const refSnap = await getDoc(refDoc);
+                        if (refSnap.exists()) {
+                            await updateDoc(refDoc, {
+                                wallet: increment(50), // ₹50 Refer Bonus
+                                referralCount: increment(1)
+                            });
+                        }
+                    }
+                }
+
+                // Fetch latest user data to display
+                const latestSnap = await getDoc(userRef);
+                currentUserData = latestSnap.data();
+
+            } else {
+                // User is Logged Out
+                btnIcon.innerHTML = `🔑`;
+                btnText.innerText = 'Login';
+                authBtn.onclick = window.loginWithGoogle;
+                adminBtn.classList.add('hidden');
+                currentUserData = null;
+            }
+        });
+
+        // ================= GLOBAL FUNCTIONS (Attached to window for HTML buttons) =================
+
+        // 🟢 Login Function
+        window.loginWithGoogle = () => {
+            signInWithPopup(auth, provider).catch(err => alert("Login Failed: " + err.message));
+        };
+
+        // 🔴 Logout Function
+        window.logoutUser = () => {
+            signOut(auth).then(() => {
+                window.closeDashboard();
+                alert("आप सफलतापूर्वक लॉग आउट हो गए हैं।");
+            });
+        };
+
+        // 🟡 Open Dashboard
+        window.openDashboard = async () => {
+            if(!currentUserData) return;
+            
+            // Refresh DB data instantly before opening
+            const snap = await getDoc(doc(db, "users", currentUserData.uid));
+            currentUserData = snap.data();
+
+            document.getElementById('dashName').innerText = currentUserData.name;
+            document.getElementById('dashEmail').innerText = currentUserData.email;
+            document.getElementById('dashPhoto').src = currentUserData.photo;
+            document.getElementById('dashWallet').innerText = currentUserData.wallet;
+            document.getElementById('dashRefs').innerText = currentUserData.referralCount;
+            
+            // Generate Referral Link
+            const link = window.location.origin + window.location.pathname + "?ref=" + currentUserData.uid;
+            document.getElementById('dashRefLink').value = link;
+            
+            document.getElementById('dashboardModal').classList.remove('hidden');
+        };
+
+        window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
+
+        // 🔵 Copy Link Function
+        window.copyRefLink = () => {
+            const linkField = document.getElementById('dashRefLink');
+            linkField.select();
+            document.execCommand("copy");
+            alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
+        };
+
+        // 🟠 Withdrawal Request Function
+        window.requestWithdraw = async () => {
+            const upiId = document.getElementById('withdrawUpi').value;
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            
+            if(!upiId || !amount) return alert("कृपया UPI ID और Amount दोनों भरें!");
+            if(amount < 100) return alert("आप कम से कम ₹100 ही निकाल सकते हैं!");
+            if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस नहीं है!");
+
+            try {
+                // Deduct Wallet Balance
+                await updateDoc(doc(db, "users", currentUserData.uid), {
+                    wallet: increment(-amount)
+                });
+                // Create Request in Admin Panel
+                await addDoc(collection(db, "withdraws"), {
+                    uid: currentUserData.uid,
+                    name: currentUserData.name,
+                    email: currentUserData.email,
+                    upi: upiId,
+                    amount: amount,
+                    status: 'Pending',
+                    timestamp: new Date()
+                });
+                
+                alert("✅ आपकी Withdrawal Request सफलतापूर्वक भेज दी गई है। एडमिन जल्द ही पेमेंट भेज देंगे!");
+                document.getElementById('withdrawUpi').value = "";
+                document.getElementById('withdrawAmount').value = "";
+                window.closeDashboard();
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        };
+
+        // ⚙️ Admin Panel Functions
+        window.openAdminPanel = async () => {
+            document.getElementById('adminModal').classList.remove('hidden');
+            const listDiv = document.getElementById('adminRequestsList');
+            listDiv.innerHTML = '<p class="text-slate-500 text-sm text-center py-10">Fetching pending requests...</p>';
+            
+            try {
+                // Fetch Pending Withdrawals
+                const q = query(collection(db, "withdraws"), where("status", "==", "Pending"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = '<p class="text-green-600 font-bold text-center py-10">No pending withdrawal requests. All clear! 🎉</p>';
+                    return;
+                }
+
+                listDiv.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const html = `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${data.name} <span class="text-slate-500 text-xs">(${data.email})</span></p>
+                            <p class="text-amber-600 font-black">UPI: ${data.upi}</p>
+                            <p class="text-xs text-slate-500">Amount: ₹<strong class="text-emerald-600 text-sm">${data.amount}</strong></p>
+                        </div>
+                        <button onclick="approveWithdrawal('${docSnap.id}', '${data.uid}')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-sm w-full sm:w-auto">Approve Paid</button>
+                    </div>`;
+                    listDiv.innerHTML += html;
+                });
+            } catch (e) {
+                listDiv.innerHTML = '<p class="text-red-500 text-center">Error fetching data</p>';
+            }
+        };
+
+        window.closeAdminPanel = () => document.getElementById('adminModal').classList.add('hidden');
+
+        // Approve Withdrawal (Admin Only)
+        window.approveWithdrawal = async (docId, userUid) => {
+            if(!confirm("Are you sure you have transferred the money to the user's UPI?")) return;
+            try {
+                await updateDoc(doc(db, "withdraws", docId), {
+                    status: 'Paid'
+                });
+                alert("Status Updated to Paid!");
+                window.openAdminPanel(); // Refresh list
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        };
+    </script>
+
+    <!-- MAIN SCRIPT (आपका पुराना सारा जावास्क्रिप्ट) -->
     <script type='text/javascript'>
         let activePlatform = 'instagram';
         let activeServiceLabel = 'Followers';
