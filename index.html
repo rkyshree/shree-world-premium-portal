@@ -3,15 +3,12 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
-    <title>श्री</title>
+    <title>SHREE WORLD PREMIUM PORTAL</title>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href='data:application/manifest+json,{"name":"Shree","short_name":"Shree","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#16a34a"}'>
 
     <script src='https://cdn.tailwindcss.com'></script>
-    <!-- html2canvas for downloading ID Card -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -96,9 +93,6 @@
 
     .tnc-scroll::-webkit-scrollbar { width: 4px; }
     .tnc-scroll::-webkit-scrollbar-thumb { background-color: #d4af37; border-radius: 10px; }
-    
-    /* ID Card Pattern */
-    .bg-pattern { background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px); background-size: 10px 10px; }
     </style>
 </head>
 <body class='text-slate-900 min-h-screen flex flex-col bg-white'>
@@ -122,112 +116,76 @@
             </button>
             
             <!-- DYNAMIC HEADER BUTTON -->
-            <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
+            <button id="authBtn" onclick="handleAuthButtonClick()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
                 <span id="authBtnIcon">🎁</span> <span id="authBtnText">Refer & Earn</span>
             </button>
         </div>
     </header>
 
     <!-- ==================== MY PROFILE DASHBOARD MODAL ==================== -->
-    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200 flex flex-col max-h-[95vh]">
-            <div class="bg-slate-900 p-4 flex justify-between items-center text-amber-400 shrink-0 border-b-2 border-amber-500">
-                <h3 class="font-black text-lg flex items-center gap-2">👑 My Profile</h3>
-                <button onclick="closeDashboard()" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200 flex flex-col max-h-[85vh]">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-3.5 flex justify-between items-center text-white shrink-0">
+                <h3 class="font-black text-base flex items-center gap-1.5">👑 My Profile</h3>
+                <button onclick="closeDashboard()" class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
             </div>
             
-            <div class="p-5 overflow-y-auto tnc-scroll flex-grow bg-slate-50 space-y-5">
-                
-                <!-- THE ID CARD ELEMENT TO BE DOWNLOADED -->
-                <div id="user-id-card" class="bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-amber-400 rounded-2xl p-5 text-white relative shadow-lg overflow-hidden bg-pattern">
-                    <div class="absolute -right-6 -top-10 text-9xl font-black text-amber-500 opacity-5 select-none pointer-events-none">श्री</div>
-                    
-                    <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4 relative z-10">
-                        <h3 class="text-amber-400 font-black tracking-widest text-[13px] sm:text-sm drop-shadow-md">SHREE WORLD PREMIUM</h3>
-                        <span class="bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 text-[10px] font-black px-2 py-1 rounded tracking-wider shadow-sm">VIP MEMBER</span>
-                    </div>
-                    
-                    <div class="flex gap-4 relative z-10 items-center">
-                        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('photoUpload').click()">
-                            <img id="cardPhoto" src="" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-amber-400 object-cover shadow-md bg-white">
-                            <div id="camera-icon-overlay" class="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span class="text-2xl">📷</span>
-                            </div>
-                        </div>
-                        <div class="flex-1 overflow-hidden">
-                            <h2 id="cardName" class="text-lg sm:text-xl font-black text-white leading-tight truncate drop-shadow-sm">Name</h2>
-                            <p id="cardEmail" class="text-[10px] sm:text-xs text-amber-200 mb-2 truncate">email@example.com</p>
-                            <div class="grid grid-cols-2 gap-2 text-[10px] sm:text-xs">
-                                <div class="bg-slate-800/80 p-1.5 rounded border border-slate-600 shadow-inner">
-                                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider">Earnings</span>
-                                    <span class="font-black text-emerald-400 text-sm">₹<span id="cardEarned">0</span></span>
-                                </div>
-                                <div class="bg-slate-800/80 p-1.5 rounded border border-slate-600 shadow-inner">
-                                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider">Referrals</span>
-                                    <span class="font-black text-blue-400 text-sm" id="cardShared">0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] sm:text-xs font-medium text-slate-200 relative z-10 bg-slate-800/50 p-3 rounded-xl border border-slate-700">
-                        <div class="flex items-center gap-1.5 truncate"><span class="text-green-400 text-sm">🟢</span> <span id="cardWp">WhatsApp No.</span></div>
-                        <div class="flex items-center gap-1.5 truncate"><span class="text-pink-400 text-sm">📸</span> <span id="cardInsta">Instagram ID</span></div>
-                        <div class="flex items-center gap-1.5 truncate"><span class="text-blue-400 text-sm">👥</span> <span id="cardFb">Facebook ID</span></div>
-                    </div>
-                    
-                    <div class="mt-4 pt-3 border-t border-slate-700 text-center relative z-10">
-                        <span class="text-[9px] text-slate-400 uppercase tracking-widest block mb-1">Your Referral Web Link</span>
-                        <p class="text-[11px] sm:text-xs text-amber-400 font-bold tracking-wider break-all bg-slate-950 p-2 rounded-lg border border-slate-800 inline-block shadow-inner" id="cardRefLinkDisplay">rkyshree.in/?ref=xyz</p>
+            <div class="p-4 space-y-4 overflow-y-auto tnc-scroll flex-grow bg-slate-50/50 text-xs">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                    <img id="dashPhoto" src="https://via.placeholder.com/150" alt="Profile" class="w-12 h-12 rounded-full border-2 border-amber-500 shadow-sm object-cover shrink-0">
+                    <div class="overflow-hidden">
+                        <h4 id="dashName" class="font-black text-slate-900 text-sm truncate">Loading...</h4>
+                        <p id="dashEmail" class="text-[10px] text-slate-500 truncate font-semibold">Loading...</p>
                     </div>
                 </div>
 
-                <!-- Profile Edit Fields -->
-                <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-                    <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-1"><span>✏️</span> Edit Profile Details</h4>
-                    <div class="grid grid-cols-1 gap-3 text-sm">
-                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
-                            <span class="px-3 text-green-500">🟢</span>
-                            <input type="text" id="editWp" placeholder="WhatsApp Number" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardWp').innerText = this.value || 'WhatsApp No.'">
-                        </div>
-                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
-                            <span class="px-3 text-pink-500">📸</span>
-                            <input type="text" id="editInsta" placeholder="Instagram Username" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardInsta').innerText = this.value || 'Instagram ID'">
-                        </div>
-                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
-                            <span class="px-3 text-blue-500">👥</span>
-                            <input type="text" id="editFb" placeholder="Facebook Profile Name" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardFb').innerText = this.value || 'Facebook ID'">
-                        </div>
+                <!-- Wallet & Stats Grid -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-center shadow-sm">
+                        <span class="block text-[10px] font-bold text-emerald-700 uppercase tracking-wider mb-0.5">Wallet Balance</span>
+                        <div class="text-2xl font-black text-emerald-600">₹<span id="dashWallet">0</span></div>
                     </div>
-                    <div class="flex gap-2 mt-4">
-                        <button onclick="saveProfile()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-black py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm">💾 Save Profile</button>
-                        <button onclick="downloadIdCard()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-amber-400 border border-amber-500 font-black py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm flex justify-center items-center gap-1">⬇️ Download ID</button>
+                    <div class="bg-blue-50 border border-blue-200 p-3 rounded-2xl text-center shadow-sm">
+                        <span class="block text-[10px] font-bold text-blue-700 uppercase tracking-wider mb-0.5">Total Referrals</span>
+                        <div class="text-2xl font-black text-blue-600" id="dashRefs">0</div>
                     </div>
-                    <!-- Hidden File Input -->
-                    <input type="file" id="photoUpload" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
                 </div>
 
-                <!-- Referral Link Quick Copy -->
-                <div class="flex items-center gap-2 bg-amber-50 p-2 rounded-xl border border-amber-200">
-                    <input type="text" id="dashRefLink" readonly class="w-full bg-transparent py-1.5 px-2 text-[11px] text-amber-800 font-bold focus:outline-none">
-                    <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-black shadow-sm whitespace-nowrap active:scale-95">Copy Link</button>
+                <!-- Refer & Earn Link Box -->
+                <div class="bg-amber-50/80 border border-amber-200 p-3 rounded-2xl shadow-sm space-y-1.5">
+                    <h5 class="font-black text-xs text-amber-900 flex items-center gap-1"><span>🎁</span> Refer & Earn (₹200 / Referral)</h5>
+                    <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-amber-200">
+                        <input type="text" id="dashRefLink" readonly class="w-full bg-transparent px-1 text-[10px] text-slate-700 font-bold focus:outline-none truncate">
+                        <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-sm shrink-0">Copy</button>
+                    </div>
                 </div>
 
-                <!-- Withdraw Section -->
-                <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
-                    <h5 class="font-black text-sm text-slate-800 mb-3 flex items-center gap-1">💸 Withdraw Earnings (न्यूनतम ₹500)</h5>
-                    <div class="space-y-3">
-                        <input type="text" id="withdrawUpi" placeholder="अपना UPI ID या GPay/PhonePe/Paytm नंबर दें" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none font-bold text-slate-800">
+                <!-- Modern Withdraw Section (Minimum ₹500) -->
+                <div class="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm space-y-2.5">
+                    <h5 class="font-black text-xs text-slate-800 flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹500)</h5>
+                    <div class="space-y-2">
+                        <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe नंबर दें" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
                         <div class="flex gap-2">
-                            <input type="number" id="withdrawAmount" placeholder="₹ Amount" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none font-bold text-slate-800">
-                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-black shadow-md whitespace-nowrap text-sm flex items-center gap-1 transition-transform active:scale-95">
-                                Withdraw
+                            <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-slate-800">
+                            <button onclick="requestWithdraw()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95">
+                                Withdraw Now 🚀
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-black py-3 rounded-xl transition-all shrink-0 text-sm">🚪 Logout (बाहर जाएँ)</button>
+                <!-- Refer & Earn Detailed Info inside Dashboard -->
+                <div class="bg-emerald-50/40 border border-emerald-200 p-3.5 rounded-2xl shadow-sm space-y-2">
+                    <h5 class="font-black text-xs text-emerald-900 flex items-center gap-1.5">
+                        <span>💡</span> Refer &amp; Earn (पैसे कमाएं) जानकारी
+                    </h5>
+                    <div class="text-[11px] text-slate-700 space-y-1.5 font-medium leading-relaxed">
+                        <p>दोस्तों को जोड़ें और हर सफल रेफरल पर <strong>₹200 कमाएं</strong>। जब आपके वॉलेट में ₹500 हो जाएं और सभी शर्तें पूरी हो जाएं, तब आप तुरंत व्हाट्सएप के जरिए विड्रॉल ले सकते हैं।</p>
+                    </div>
+                </div>
+
+                <button onclick="logoutUser()" class="w-full border border-red-400 text-red-600 hover:bg-red-50 font-bold py-2.5 rounded-xl transition-all shrink-0 text-xs">🚪 Logout (बाहर जाएँ)</button>
             </div>
         </div>
     </div>
@@ -249,7 +207,7 @@
     </div>
 
     <!-- ==================== REFER & EARN MODAL (POPUP INFO) ==================== -->
-    <div id="referEarnModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[160] hidden flex items-center justify-center p-4">
+    <div id="referEarnModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[160] hidden items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-amber-200 flex flex-col max-h-[90vh]">
             <div class="bg-gradient-to-r from-emerald-600 to-green-600 p-4 sm:p-5 flex justify-between items-center text-white shrink-0">
                 <h3 class="font-black text-base sm:text-lg flex items-center gap-2">🎁 Refer &amp; Earn Program</h3>
@@ -588,7 +546,7 @@
                                 <ul class='space-y-1.5 text-slate-300 list-disc list-inside font-medium'>
                                     <li>यह सेवा 3 मिलियन (30 लाख) तक के फॉलोअर्स वाले Instagram अकाउंट पर काम करती है।</li>
                                     <li>Lifetime Refill केवल 3 मिलियन फॉलोअर्स तक ही मान्य है।</li>
-                                    <li>यदि इस सेवा से दिए गए फॉलोअर्स कम जाएँ, तो Support Team से संपर्क करें। आपको मुफ्त Refill दिया जाएगा।</li>
+                                    <li>यदि इस सेवा से दिए गए फॉलोअर्स कम हो जाएँ, तो Support Team से संपर्क करें। आपको मुफ्त Refill दिया जाएगा।</li>
                                     <li>एक ही प्रोफ़ाइल पर एक समय में केवल एक ऑर्डर करें।</li>
                                     <li>Private Account या गलत लिंक पर ऑर्डर न करें।</li>
                                     <li>गलत लिंक या नियमों का पालन न करने Refund नहीं मिलेगा।</li>
@@ -1028,14 +986,23 @@
                 }
 
             } else {
-                // Not Logged In: Button shows "Refer & Earn" and triggers Google Login
+                // Not Logged In: Button shows "Refer & Earn" and triggers Google Login directly
                 btnIcon.innerHTML = `🎁`;
                 btnText.innerText = 'Refer & Earn';
-                authBtn.onclick = window.loginWithGoogle;
+                authBtn.onclick = window.handleAuthButtonClick;
                 adminBtn.classList.add('hidden');
                 currentUserData = null;
             }
         });
+
+        // HEADER BUTTON ACTION HANDLER (Direct Google Login if not logged in)
+        window.handleAuthButtonClick = () => {
+            if (currentUserData) {
+                window.openDashboard();
+            } else {
+                window.loginWithGoogle();
+            }
+        };
 
         // GLOBAL FUNCTIONS
         window.loginWithGoogle = () => {
@@ -1051,22 +1018,43 @@
 
         window.openDashboard = async () => {
             if(!currentUserData) return;
-            const snap = await getDoc(doc(db, "users", currentUserData.uid));
-            currentUserData = snap.data();
+            
+            // 1. Open Modal Immediately for Instant UI feedback
+            const modal = document.getElementById('dashboardModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
 
-            document.getElementById('dashName').innerText = currentUserData.name;
-            document.getElementById('dashEmail').innerText = currentUserData.email;
-            document.getElementById('dashPhoto').src = currentUserData.photo;
-            document.getElementById('dashWallet').innerText = currentUserData.wallet;
-            document.getElementById('dashRefs').innerText = currentUserData.referralCount;
+            // 2. Set basic cached data instantly so user sees it
+            document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
+            document.getElementById('dashEmail').innerText = currentUserData.email || '';
+            if(currentUserData.photo) {
+                document.getElementById('dashPhoto').src = currentUserData.photo;
+            }
+            document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
+            document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
             
-            const link = window.location.origin + window.location.pathname + "?ref=" + currentUserData.refCode;
+            // 3. Set Ref Link
+            const link = window.location.origin + window.location.pathname + "?ref=" + (currentUserData.refCode || currentUserData.uid);
             document.getElementById('dashRefLink').value = link;
-            
-            document.getElementById('dashboardModal').classList.remove('hidden');
+
+            // 4. Fetch latest from DB quietly to update live Wallet/Referral counts
+            try {
+                const snap = await getDoc(doc(db, "users", currentUserData.uid));
+                if(snap.exists()) {
+                    currentUserData = snap.data();
+                    document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
+                    document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
+                }
+            } catch(e) {
+                console.log("Silent DB update failed:", e);
+            }
         };
 
-        window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
+        window.closeDashboard = () => {
+            const modal = document.getElementById('dashboardModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
 
         window.toggleReferEarnModal = () => {
             const modal = document.getElementById('referEarnModal');
@@ -1307,7 +1295,7 @@
             {n: "मनीष तिवारी", c: "भोपाल", m: "हवाई जहाज की टिकट बहुत ही सस्ते में बुक हो गई और तुरंत कन्फर्मेशन रसीद मिल गई।"},
             {n: "स्नेहा जैन", c: "इंदौर", m: "वेबसाइट डेवलपमेंट सर्विस ली थी, काम बहुत शानदार और प्रोफेशनल किया इन्होने।"},
             {n: "विकास यादव", c: "कानपुर", m: "एकदम सेफ और फ़ास्ट सर्विस है। मैंने यहाँ से 3 बार आर्डर किया है और हर बार संतुष्ट रहा।"},
-            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू हो गया। ग्रेट सर्विस!"},
+            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू পুরোনো हो गया। ग्रेट सर्विस!"},
             {n: "दीपक सिंह", c: "पुणे", m: "फॉलोअर्स की क्वालिटी बहुत बढ़िया है। एक भी ड्रॉप नहीं हुआ!"},
             {n: "आराध्या यादव", c: "अहमदाबाद", m: "डिजिटल मार्केटिंग के लिए सबसे अच्छी और भरोसेमंद वेबसाइट है।"},
             {n: "नीलेश कुमार", c: "सूरत", m: "टिकट बुकिंग में मुझे 2% की एक्स्ट्रा छूट मिली, मज़ा आ गया!"},
