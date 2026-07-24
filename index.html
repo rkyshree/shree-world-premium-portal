@@ -9,6 +9,9 @@
     <link rel="manifest" href='data:application/manifest+json,{"name":"Shree","short_name":"Shree","start_url":".","display":"standalone","background_color":"#ffffff","theme_color":"#16a34a"}'>
 
     <script src='https://cdn.tailwindcss.com'></script>
+    <!-- html2canvas for downloading ID Card -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -97,9 +100,11 @@
     }
     .premium-ticker-update { animation: premiumFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
 
-    /* Custom T&C Scrollbar */
     .tnc-scroll::-webkit-scrollbar { width: 4px; }
     .tnc-scroll::-webkit-scrollbar-thumb { background-color: #d4af37; border-radius: 10px; }
+    
+    /* ID Card Pattern */
+    .bg-pattern { background-image: radial-gradient(rgba(212, 175, 55, 0.15) 1px, transparent 1px); background-size: 10px 10px; }
     </style>
 </head>
 <body class='text-slate-900 min-h-screen flex flex-col bg-white'>
@@ -107,7 +112,6 @@
     <!-- ==================== PROFESSIONAL STICKY HEADER ==================== -->
     <header class="fixed top-0 left-0 right-0 z-[120] bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200 h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all">
         <div class="flex items-center gap-2 sm:gap-4 cursor-pointer" onclick="window.scrollTo(0,0)">
-            <!-- Premium Text Logo -->
             <div class="flex flex-col justify-center">
                 <h1 class="text-xl sm:text-2xl font-black bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 bg-clip-text text-transparent uppercase tracking-wider leading-none mb-1 drop-shadow-sm">
                     SHREE WORLD
@@ -119,101 +123,116 @@
         </div>
 
         <div class="flex items-center gap-3">
-            <!-- ADMIN BUTTON (Hidden by default) -->
             <button id="adminBtn" onclick="openAdminPanel()" class="hidden bg-red-600 hover:bg-red-700 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-md text-xs sm:text-sm font-bold transition-transform hover:scale-105">
                 ⚙️ Admin
             </button>
             
-            <!-- REFER & EARN / DASHBOARD BUTTON (GREEN) -->
             <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
                 <span id="authBtnIcon">🎁</span> <span id="authBtnText">Refer & Earn</span>
             </button>
         </div>
     </header>
 
-    <!-- ==================== USER DASHBOARD MODAL ==================== -->
-    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200 flex flex-col max-h-[90vh]">
-            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-5 flex justify-between items-center text-white shrink-0">
-                <h3 class="font-black text-lg">👤 My Dashboard</h3>
-                <button onclick="closeDashboard()" class="text-white hover:text-red-200 text-3xl leading-none">&times;</button>
+    <!-- ==================== VIP DASHBOARD MODAL (ID CARD STYLE) ==================== -->
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[150] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200 flex flex-col max-h-[95vh]">
+            <div class="bg-slate-900 p-4 flex justify-between items-center text-amber-400 shrink-0 border-b-2 border-amber-500">
+                <h3 class="font-black text-lg flex items-center gap-2">👑 VIP Dashboard</h3>
+                <button onclick="closeDashboard()" class="text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
             
-            <div class="p-6 space-y-5 overflow-y-auto tnc-scroll flex-grow">
-                <!-- Profile Info -->
-                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                    <img id="dashPhoto" src="" alt="Profile" class="w-16 h-16 rounded-full border-2 border-amber-500 shadow-md">
-                    <div>
-                        <h4 id="dashName" class="font-black text-slate-900 text-lg">Name</h4>
-                        <p id="dashEmail" class="text-xs font-bold text-slate-500">Email</p>
+            <div class="p-5 overflow-y-auto tnc-scroll flex-grow bg-slate-50 space-y-5">
+                
+                <!-- THE ID CARD ELEMENT TO BE DOWNLOADED -->
+                <div id="user-id-card" class="bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-amber-400 rounded-2xl p-5 text-white relative shadow-lg overflow-hidden bg-pattern">
+                    <div class="absolute -right-6 -top-10 text-9xl font-black text-amber-500 opacity-5 select-none pointer-events-none">श्री</div>
+                    
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4 relative z-10">
+                        <h3 class="text-amber-400 font-black tracking-widest text-[13px] sm:text-sm drop-shadow-md">SHREE WORLD PREMIUM</h3>
+                        <span class="bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-900 text-[10px] font-black px-2 py-1 rounded tracking-wider shadow-sm">VIP MEMBER</span>
+                    </div>
+                    
+                    <div class="flex gap-4 relative z-10 items-center">
+                        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('photoUpload').click()">
+                            <img id="cardPhoto" src="" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-amber-400 object-cover shadow-md bg-white">
+                            <div id="camera-icon-overlay" class="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-2xl">📷</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h2 id="cardName" class="text-lg sm:text-xl font-black text-white leading-tight truncate drop-shadow-sm">Name</h2>
+                            <p id="cardEmail" class="text-[10px] sm:text-xs text-amber-200 mb-2 truncate">email@example.com</p>
+                            <div class="grid grid-cols-2 gap-2 text-[10px] sm:text-xs">
+                                <div class="bg-slate-800/80 p-1.5 rounded border border-slate-600 shadow-inner">
+                                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider">Earnings</span>
+                                    <span class="font-black text-emerald-400 text-sm">₹<span id="cardEarned">0</span></span>
+                                </div>
+                                <div class="bg-slate-800/80 p-1.5 rounded border border-slate-600 shadow-inner">
+                                    <span class="text-slate-400 block text-[9px] uppercase tracking-wider">Referrals</span>
+                                    <span class="font-black text-blue-400 text-sm" id="cardShared">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] sm:text-xs font-medium text-slate-200 relative z-10 bg-slate-800/50 p-3 rounded-xl border border-slate-700">
+                        <div class="flex items-center gap-1.5 truncate"><span class="text-green-400 text-sm">🟢</span> <span id="cardWp">WhatsApp No.</span></div>
+                        <div class="flex items-center gap-1.5 truncate"><span class="text-pink-400 text-sm">📸</span> <span id="cardInsta">Instagram ID</span></div>
+                        <div class="flex items-center gap-1.5 truncate"><span class="text-blue-400 text-sm">👥</span> <span id="cardFb">Facebook ID</span></div>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-t border-slate-700 text-center relative z-10">
+                        <span class="text-[9px] text-slate-400 uppercase tracking-widest block mb-1">Your Referral Web Link</span>
+                        <p class="text-[11px] sm:text-xs text-amber-400 font-bold tracking-wider break-all bg-slate-950 p-2 rounded-lg border border-slate-800 inline-block shadow-inner" id="cardRefLinkDisplay">rkyshree.in/?ref=xyz</p>
                     </div>
                 </div>
 
-                <!-- Wallet & Stats -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl text-center shadow-sm">
-                        <span class="block text-xs font-bold text-emerald-700 uppercase tracking-widest mb-1">Wallet Balance</span>
-                        <div class="text-3xl font-black text-emerald-600">₹<span id="dashWallet">0</span></div>
+                <!-- Profile Edit Fields -->
+                <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+                    <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-1"><span>✏️</span> Edit Profile Details</h4>
+                    <div class="grid grid-cols-1 gap-3 text-sm">
+                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
+                            <span class="px-3 text-green-500">🟢</span>
+                            <input type="text" id="editWp" placeholder="WhatsApp Number" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardWp').innerText = this.value || 'WhatsApp No.'">
+                        </div>
+                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
+                            <span class="px-3 text-pink-500">📸</span>
+                            <input type="text" id="editInsta" placeholder="Instagram Username" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardInsta').innerText = this.value || 'Instagram ID'">
+                        </div>
+                        <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors">
+                            <span class="px-3 text-blue-500">👥</span>
+                            <input type="text" id="editFb" placeholder="Facebook Profile Name" class="w-full bg-transparent py-2.5 outline-none font-bold text-slate-700" oninput="document.getElementById('cardFb').innerText = this.value || 'Facebook ID'">
+                        </div>
                     </div>
-                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl text-center shadow-sm">
-                        <span class="block text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">Total Referrals</span>
-                        <div class="text-3xl font-black text-blue-600" id="dashRefs">0</div>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="saveProfile()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-black py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm">💾 Save Profile</button>
+                        <button onclick="downloadIdCard()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-amber-400 border border-amber-500 font-black py-2.5 rounded-xl shadow-md transition-all active:scale-95 text-sm flex justify-center items-center gap-1">⬇️ Download ID</button>
                     </div>
+                    <!-- Hidden File Input -->
+                    <input type="file" id="photoUpload" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
                 </div>
 
-                <!-- Refer & Earn -->
-                <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl shadow-sm">
-                    <h5 class="font-black text-sm text-amber-800 mb-2">🎁 Refer & Earn (₹50 प्रति रेफरल)</h5>
-                    <div class="flex items-center gap-2">
-                        <input type="text" id="dashRefLink" readonly class="w-full bg-white border border-amber-300 rounded-xl py-2 px-3 text-xs text-slate-700 font-bold focus:outline-none">
-                        <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap">Copy</button>
-                    </div>
+                <!-- Referral Link Quick Copy -->
+                <div class="flex items-center gap-2 bg-amber-50 p-2 rounded-xl border border-amber-200">
+                    <input type="text" id="dashRefLink" readonly class="w-full bg-transparent py-1.5 px-2 text-[11px] text-amber-800 font-bold focus:outline-none">
+                    <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-black shadow-sm whitespace-nowrap active:scale-95">Copy Link</button>
                 </div>
 
                 <!-- Withdraw Section -->
-                <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm">
-                    <h5 class="font-black text-sm text-slate-800 mb-3">💸 Withdraw Money (न्यूनतम ₹100)</h5>
+                <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+                    <h5 class="font-black text-sm text-slate-800 mb-3 flex items-center gap-1">💸 Withdraw Earnings (न्यूनतम ₹100)</h5>
                     <div class="space-y-3">
-                        <input type="text" id="withdrawUpi" placeholder="अपना UPI ID दर्ज करें..." class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
+                        <input type="text" id="withdrawUpi" placeholder="अपना UPI ID दर्ज करें..." class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none font-bold">
                         <div class="flex gap-2">
-                            <input type="number" id="withdrawAmount" placeholder="₹ Amount" class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
-                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md whitespace-nowrap text-sm flex items-center gap-1">
-                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z"/></svg> Withdraw
+                            <input type="number" id="withdrawAmount" placeholder="₹ Amount" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none font-bold">
+                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-black shadow-md whitespace-nowrap text-sm flex items-center gap-1 transition-transform active:scale-95">
+                                Withdraw
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Refer & Earn Reward Policy & Terms & Conditions -->
-                <div class="bg-amber-50/50 border border-amber-200 p-4 rounded-2xl shadow-sm">
-                    <h5 class="font-black text-sm text-amber-800 mb-2 border-b border-amber-200 pb-2 flex items-center gap-1.5">
-                        <span>📜</span> Refer & Earn Policy / T&C
-                    </h5>
-                    <div class="h-32 overflow-y-auto tnc-scroll text-[11px] sm:text-xs text-slate-700 space-y-2 pr-2 font-medium">
-                        <p><strong>1. Referral Reward:</strong> प्रत्येक सफल एवं वैध रेफरल पर आपको ₹50 का रिवॉर्ड मिलेगा। रिवॉर्ड आपके Refer & Earn Wallet में जोड़ा जाएगा।</p>
-                        
-                        <p><strong>2. Minimum Withdrawal:</strong> जब आपके Wallet में ₹100 या उससे अधिक हो जाएंगे, तब आप Withdrawal Request कर सकते हैं।</p>
-                        
-                        <p class="text-red-700 bg-red-50 p-1.5 rounded border border-red-100"><strong>3. Service Eligibility (अनिवार्य शर्त):</strong> केवल ₹100 पूरे होना पर्याप्त नहीं है। Withdrawal के लिए आपको कम से कम 3 सफल सर्विस सेल (Successful Service Sales) करनी होंगी। इन 3 सेल में नीचे दी गई सेवाओं में से कोई भी 3 या एक ही सेवा की 3 सफल बिक्री मान्य होगी:</p>
-                        <ul class="list-disc pl-5 space-y-0.5 text-slate-800">
-                            <li>Instagram Premium Growth Package – ₹1,999/-</li>
-                            <li>Flight Ticket Booking</li>
-                            <li>Facebook Followers Service</li>
-                            <li>Finance Join Service</li>
-                        </ul>
-                        <p><em>नोट: प्रत्येक सर्विस की बिक्री सफल भुगतान और सत्यापन (Verification) के बाद ही मान्य होगी।</em></p>
-                        
-                        <p><strong>4. Fraud & Misuse:</strong> निम्न गतिविधियाँ पूरी तरह प्रतिबंधित हैं: Self Referral (खुद को Refer करना), Fake या Duplicate Account बनाना, गलत जानकारी देना, Bot/Script या Fraud Activity करना, फर्जी ऑर्डर दिखाना। ऐसी गतिविधि पाए जाने पर Reward रद्द, Wallet Balance जब्त और Account Suspend/Block किया जा सकता है।</p>
-                        
-                        <p><strong>5. Verification:</strong> सभी Referral, Service Sales और Withdrawal Request का सत्यापन किया जाएगा।</p>
-                        
-                        <p><strong>6. Withdrawal Processing:</strong> Approved Withdrawal सामान्यतः 1–7 कार्यदिवस में प्रोसेस किया जाएगा। गलत UPI ID या बैंक विवरण देने पर हुई देरी के लिए उपयोगकर्ता स्वयं जिम्मेदार होगा।</p>
-                        
-                        <p><strong>7. Company Rights & Final Decision:</strong> Shree World Premium Portal नियमों में बदलाव का अधिकार सुरक्षित रखता है एवं विवाद में कंपनी का निर्णय अंतिम होगा।</p>
-                    </div>
-                </div>
-
-                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-bold py-3 rounded-xl transition-all shrink-0">🚪 Logout (बाहर जाएँ)</button>
+                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-black py-3 rounded-xl transition-all shrink-0">🚪 Logout (बाहर जाएँ)</button>
             </div>
         </div>
     </div>
@@ -528,7 +547,6 @@
                 </div>
                 <div class='bg-white border border-cyan-200 rounded-3xl p-5 sm:p-8 relative overflow-hidden shadow-lg'>
                     
-                    <!-- NEW ROUNDED FACING BUTTONS -->
                     <div class='flex flex-row items-stretch justify-center gap-3 sm:gap-6 mb-6 border-b border-cyan-100 pb-6'>
                         <button id='flight-dom-btn' class='flex-1 flex flex-col items-center justify-center gap-1.5 py-4 px-2 rounded-[2rem] border-2 font-bold text-cyan-800 bg-white border-cyan-200 hover:border-amber-400 hover:bg-cyan-50 transition-all duration-300 shadow-sm relative overflow-hidden' onclick='toggleInteractiveFlight("domestic")'>
                             <span class='text-3xl sm:text-4xl'>🛫</span>
@@ -649,29 +667,6 @@
             </div>
         </section>
 
-        <!-- TODAY DEALS BANNER (Direct Tab Link, NO IFRAME ISSUES) -->
-        <div class='w-full max-w-4xl mx-auto mt-2 mb-10 px-4 no-url-preview' id='today-deals-section'>
-            <div onclick="window.open('https://inrdeals.com/embed/deals?user=arm532515116', '_blank')" class='cursor-pointer block w-full bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-2 border-amber-300 hover:border-amber-400 rounded-2xl p-4 sm:p-5 text-center shadow-lg transform active:scale-95 transition-all btn-glow relative overflow-hidden group'>
-                <div class='flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10'>
-                    <div class='text-center sm:text-left w-full sm:w-auto'>
-                        <div class='flex items-center justify-center sm:justify-start gap-2 mb-1'>
-                            <span class='bg-amber-500 text-slate-950 text-[10px] font-black uppercase px-2 py-0.5 rounded tracking-wider shadow-sm'>Amazon / Flipkart Best Offers</span>
-                            <span class='text-amber-600 text-xs font-bold animate-pulse'>🔥 Live Offers</span>
-                        </div>
-                        <h3 class='text-base sm:text-xl font-black text-slate-900 tracking-wide group-hover:text-amber-700 transition-colors'>
-                            🛒 TODAY DEALS - लूट सको तो लूट लो !
-                        </h3>
-                        <p class='text-xs text-slate-600 font-medium mt-0.5'>अमेजन और फ्लिपकार्ट के बेस्ट ऑफर्स और डिस्काउंट पाने के लिए यहाँ क्लिक करें</p>
-                    </div>
-                    <div class='flex-shrink-0 w-full sm:w-auto mt-2 sm:mt-0'>
-                        <span class='inline-flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black px-6 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition-all'>
-                            TODAY DEALS देखें 🚀
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- कस्टमाइज्ड नया एफएक्यू सेक्शन -->
         <section class='py-12 px-4 max-w-4xl mx-auto bg-white border-t border-slate-200' id='faq-hub'>
             <div class='text-center mb-8'>
@@ -754,7 +749,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-privacy'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50' id='acc-privacy'>
-                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं চুক্ত करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
+                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
                 </div>
             </div>
 
@@ -776,6 +771,41 @@
                 </button>
                 <div class='hidden p-5 border-t border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50' id='acc-refund'>
                     हमारी रिफंड नीति अत्यंत सरल और पारदर्शी है। यदि किसी तकनीकी खराबी के चलते हम आपका सोशल मीडिया बूस्ट आर्डर डिलीवर नहीं कर पाते हैं, तो हम 100% राशि वापसी (Full Refund) की गारंटी देते हैं। हवाई टिकट रद्दीकरण (Flight Cancellation) के मामले में, संबंधित एयरलाइन की कैंसिलेशन फीस और रिफंड नीति के अनुसार ही रिफंड राशि प्रोसेस की जाएगी और 24-48 घंटों के भीतर सीधे आपके मूल भुगतान खाते में भेज दी जाएगी।
+                </div>
+            </div>
+
+            <!-- 🎁 NEW REFER & EARN ACCORDION (Added below Refund Policy) -->
+            <div class='border border-emerald-400 rounded-2xl bg-emerald-50 shadow-md overflow-hidden animate-pulse-slow'>
+                <button class='w-full text-left p-5 font-black text-emerald-900 flex justify-between items-center hover:bg-emerald-100 transition-all' onclick='toggleAccordion("acc-refer-earn")'>
+                    <span class="flex items-center gap-2"><span class="text-xl">🎁</span> Refer &amp; Earn (पैसे कमाएं)</span>
+                    <span class='text-sm text-emerald-600' id='icon-acc-refer-earn'>▼</span>
+                </button>
+                <div class='hidden p-5 border-t border-emerald-200 text-xs sm:text-sm text-emerald-900 leading-relaxed bg-white' id='acc-refer-earn'>
+                    <p class="font-bold mb-3 text-base">अपने दोस्तों को Shree World Premium Portal से जोड़ें और हर सफल रेफरल पर <span class="bg-amber-200 text-amber-900 px-2 py-0.5 rounded">₹50 कमाएँ</span>।</p>
+                    
+                    <h5 class="font-black text-emerald-700 mt-4 mb-2 flex items-center gap-1"><span>🎯</span> कैसे कमाएँ?</h5>
+                    <ul class="list-disc pl-5 space-y-1 font-medium text-slate-700">
+                        <li>अपना Referral Link शेयर करें।</li>
+                        <li>आपका रेफर किया हुआ व्यक्ति नीचे दी गई किसी भी 1 Premium Service को खरीदे:
+                            <ul class="list-circle pl-5 mt-1 text-slate-600">
+                                <li>Instagram Growth (₹1,999)</li>
+                                <li>Flight Ticket</li>
+                                <li>Facebook Service</li>
+                                <li>Finance Service</li>
+                            </ul>
+                        </li>
+                        <li>सफल ऑर्डर के बाद आपके Wallet में <strong class="text-emerald-600">₹50</strong> जोड़ दिए जाएंगे।</li>
+                    </ul>
+
+                    <h5 class="font-black text-emerald-700 mt-4 mb-2 flex items-center gap-1"><span>💸</span> Withdrawal (पैसे कैसे निकालें):</h5>
+                    <ul class="list-disc pl-5 space-y-1 font-medium text-slate-700">
+                        <li>Wallet में ₹100 होने पर Withdrawal कर सकते हैं।</li>
+                        <li>Withdrawal के लिए आपके द्वारा कम से कम 3 Premium Services सफलतापूर्वक ग्राहकों को बेची गई होनी चाहिए।</li>
+                    </ul>
+
+                    <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 font-bold text-xs">
+                        <strong>नोट:</strong> Fake, Self Referral या Fraud ऑर्डर पर कोई Reward नहीं मिलेगा। कंपनी का निर्णय अंतिम होगा।
+                    </div>
                 </div>
             </div>
         </section>
@@ -870,7 +900,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
@@ -915,7 +945,6 @@
                 const userSnap = await getDoc(userRef);
                 
                 if (!userSnap.exists()) {
-                    // Create User Email Prefix for Refer Code
                     let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
 
                     await setDoc(userRef, {
@@ -925,7 +954,7 @@
                         photo: user.photoURL,
                         wallet: 0,
                         referralCount: 0,
-                        refCode: emailPrefix, // <-- Saved to Database
+                        refCode: emailPrefix, 
                         createdAt: new Date()
                     });
                     
@@ -935,7 +964,7 @@
                         const querySnapshot = await getDocs(q);
                         querySnapshot.forEach(async (referrerDoc) => {
                             await updateDoc(doc(db, "users", referrerDoc.id), {
-                                wallet: increment(50), // ₹50 Refer Bonus Set Here
+                                wallet: increment(50), 
                                 referralCount: increment(1)
                             });
                         });
@@ -945,7 +974,6 @@
                 const latestSnap = await getDoc(userRef);
                 currentUserData = latestSnap.data();
                 
-                // Old user backward compatibility for refCode
                 if (!currentUserData.refCode) {
                     currentUserData.refCode = currentUserData.email ? currentUserData.email.split('@')[0] : currentUserData.uid;
                     await updateDoc(userRef, { refCode: currentUserData.refCode });
@@ -977,14 +1005,25 @@
             const snap = await getDoc(doc(db, "users", currentUserData.uid));
             currentUserData = snap.data();
 
-            document.getElementById('dashName').innerText = currentUserData.name;
-            document.getElementById('dashEmail').innerText = currentUserData.email;
-            document.getElementById('dashPhoto').src = currentUserData.photo;
-            document.getElementById('dashWallet').innerText = currentUserData.wallet;
-            document.getElementById('dashRefs').innerText = currentUserData.referralCount;
+            // Set ID Card Values
+            document.getElementById('cardName').innerText = currentUserData.name;
+            document.getElementById('cardEmail').innerText = currentUserData.email;
+            document.getElementById('cardEarned').innerText = currentUserData.wallet;
+            document.getElementById('cardShared').innerText = currentUserData.referralCount;
+            document.getElementById('cardPhoto').src = currentUserData.customPhoto || currentUserData.photo;
             
-            // New Format Referral Link using Email ID prefix
+            // Set Socials on Card
+            document.getElementById('cardWp').innerText = currentUserData.wpNum || 'Update below';
+            document.getElementById('cardInsta').innerText = currentUserData.instaId || 'Update below';
+            document.getElementById('cardFb').innerText = currentUserData.fbId || 'Update below';
+            
+            // Set Inputs
+            document.getElementById('editWp').value = currentUserData.wpNum || '';
+            document.getElementById('editInsta').value = currentUserData.instaId || '';
+            document.getElementById('editFb').value = currentUserData.fbId || '';
+            
             const link = window.location.origin + window.location.pathname + "?ref=" + currentUserData.refCode;
+            document.getElementById('cardRefLinkDisplay').innerText = link;
             document.getElementById('dashRefLink').value = link;
             
             document.getElementById('dashboardModal').classList.remove('hidden');
@@ -997,6 +1036,26 @@
             linkField.select();
             document.execCommand("copy");
             alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
+        };
+
+        // 🟢 SAVE PROFILE BUTTON LOGIC
+        window.saveProfile = async () => {
+            const wp = document.getElementById('editWp').value.trim();
+            const insta = document.getElementById('editInsta').value.trim();
+            const fb = document.getElementById('editFb').value.trim();
+            const photoSrc = document.getElementById('cardPhoto').src;
+            
+            try {
+                await updateDoc(doc(db, "users", currentUserData.uid), {
+                    wpNum: wp,
+                    instaId: insta,
+                    fbId: fb,
+                    customPhoto: photoSrc
+                });
+                alert("Profile Saved Successfully! 🎉");
+            } catch(e) {
+                alert("Error saving profile: " + e.message);
+            }
         };
 
         // 🟢 DIRECT WHATSAPP WITHDRAWAL REQUEST 
@@ -1027,7 +1086,6 @@
                 
                 alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा है...");
                 
-                // 🔥 DIRECT REDIRECT TO WHATSAPP 🔥
                 const adminPhone = "919451239239";
                 const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *निकालने की रकम:* ₹${amount}\n🏦 *UPI ID:* ${upiId}\n\nसर, मैंने T&C के अनुसार 3 सफल सर्विस सेल की शर्त पूरी कर ली है। कृपया मेरा विड्रोल अप्रूव करके पेमेंट भेज दें।`;
                 const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(waMessage)}`;
@@ -1036,7 +1094,6 @@
                 document.getElementById('withdrawAmount').value = "";
                 window.closeDashboard();
 
-                // Open WhatsApp immediately
                 window.open(waUrl, '_blank', 'noopener,noreferrer');
 
             } catch (e) {
@@ -1514,6 +1571,35 @@
                 el.classList.add('hidden'); if(icon) icon.innerText = '▼';
             }
         }
+
+        // 🟢 PHOTO UPLOAD LOGIC
+        window.handlePhotoUpload = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('cardPhoto').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // 🟢 DOWNLOAD ID CARD AS IMAGE
+        window.downloadIdCard = () => {
+            const card = document.getElementById('user-id-card');
+            const camIcon = document.getElementById('camera-icon-overlay');
+            if(camIcon) camIcon.style.display = 'none'; // Hide camera icon before capturing
+            
+            html2canvas(card, { scale: 3, backgroundColor: null, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Shree_VIP_ID.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                if(camIcon) camIcon.style.display = 'flex'; // Restore camera icon
+            }).catch(err => {
+                alert("ID Card डाउनलोड करने में समस्या आ रही है। कृपया कुछ देर बाद प्रयास करें।");
+                if(camIcon) camIcon.style.display = 'flex';
+            });
+        };
 
         window.onload = function() {
             selectPlatform('instagram'); 
