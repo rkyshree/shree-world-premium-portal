@@ -31,7 +31,7 @@
         color: #0f172a;
         scroll-behavior: smooth;
         overflow-x: hidden;
-        padding-top: 70px; /* Space for fixed header updated */
+        padding-top: 70px; 
     }
     .gold-glow {
         box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
@@ -97,9 +97,9 @@
     }
     .premium-ticker-update { animation: premiumFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; display: inline-block; }
 
-    /* Custom Chat Scrollbar */
-    #chatMessages::-webkit-scrollbar { width: 4px; }
-    #chatMessages::-webkit-scrollbar-thumb { background-color: #16a34a; border-radius: 10px; }
+    /* Custom T&C Scrollbar */
+    .tnc-scroll::-webkit-scrollbar { width: 4px; }
+    .tnc-scroll::-webkit-scrollbar-thumb { background-color: #d4af37; border-radius: 10px; }
     </style>
 </head>
 <body class='text-slate-900 min-h-screen flex flex-col bg-white'>
@@ -120,33 +120,28 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
             <!-- ADMIN BUTTON (Hidden by default) -->
             <button id="adminBtn" onclick="openAdminPanel()" class="hidden bg-red-600 hover:bg-red-700 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-md text-xs sm:text-sm font-bold transition-transform hover:scale-105">
                 ⚙️ Admin
             </button>
             
-            <!-- LOGIN / DASHBOARD BUTTON -->
-            <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-md text-xs sm:text-sm font-bold transition-transform hover:scale-105 flex items-center gap-1.5">
-                <span id="authBtnIcon">🔑</span> <span id="authBtnText">Login</span>
-            </button>
-            
-            <button onclick="toggleAiChat()" class="bg-slate-900 hover:bg-slate-800 text-white rounded-full flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 shadow-md border border-slate-700 transition-transform hover:scale-105 active:scale-95 whitespace-nowrap">
-                <span class="text-xs sm:text-sm">🤖</span>
-                <span class="font-bold text-[10px] sm:text-xs tracking-wide">AI Help</span>
+            <!-- HIGH VISIBILITY LOGIN / DASHBOARD BUTTON -->
+            <button id="authBtn" onclick="loginWithGoogle()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(212,175,55,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-amber-300 animate-pulse-slow">
+                <span id="authBtnIcon">🔑</span> <span id="authBtnText">Secure Login</span>
             </button>
         </div>
     </header>
 
     <!-- ==================== USER DASHBOARD MODAL ==================== -->
     <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200">
-            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-5 flex justify-between items-center text-white">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-200 flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-5 flex justify-between items-center text-white shrink-0">
                 <h3 class="font-black text-lg">👤 My Dashboard</h3>
                 <button onclick="closeDashboard()" class="text-white hover:text-red-200 text-3xl leading-none">&times;</button>
             </div>
             
-            <div class="p-6 space-y-6">
+            <div class="p-6 space-y-5 overflow-y-auto tnc-scroll flex-grow">
                 <!-- Profile Info -->
                 <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                     <img id="dashPhoto" src="" alt="Profile" class="w-16 h-16 rounded-full border-2 border-amber-500 shadow-md">
@@ -170,7 +165,7 @@
 
                 <!-- Refer & Earn -->
                 <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl shadow-sm">
-                    <h5 class="font-black text-sm text-amber-800 mb-2">🎁 Refer & Earn (₹50 प्रति रेफरल)</h5>
+                    <h5 class="font-black text-sm text-amber-800 mb-2">🎁 Refer & Earn (₹10 प्रति रेफरल)</h5>
                     <div class="flex items-center gap-2">
                         <input type="text" id="dashRefLink" readonly class="w-full bg-white border border-amber-300 rounded-xl py-2 px-3 text-xs text-slate-700 font-bold focus:outline-none">
                         <button onclick="copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm whitespace-nowrap">Copy</button>
@@ -184,12 +179,43 @@
                         <input type="text" id="withdrawUpi" placeholder="अपना UPI ID दर्ज करें..." class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
                         <div class="flex gap-2">
                             <input type="number" id="withdrawAmount" placeholder="₹ Amount" class="w-full bg-white border border-slate-300 rounded-xl py-2.5 px-3 text-sm focus:border-amber-500 focus:outline-none">
-                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md whitespace-nowrap text-sm">Withdraw</button>
+                            <button onclick="requestWithdraw()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md whitespace-nowrap text-sm flex items-center gap-1">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z"/></svg> Withdraw
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-bold py-3 rounded-xl transition-all">🚪 Logout (बाहर जाएँ)</button>
+                <!-- NEW: Refer & Earn Reward Policy & Terms & Conditions -->
+                <div class="bg-amber-50/50 border border-amber-200 p-4 rounded-2xl shadow-sm">
+                    <h5 class="font-black text-sm text-amber-800 mb-2 border-b border-amber-200 pb-2 flex items-center gap-1.5">
+                        <span>📜</span> Refer & Earn Policy / T&C
+                    </h5>
+                    <div class="h-32 overflow-y-auto tnc-scroll text-[11px] sm:text-xs text-slate-700 space-y-2 pr-2 font-medium">
+                        <p><strong>1. Referral Reward:</strong> प्रत्येक सफल एवं वैध रेफरल पर आपको ₹10 का रिवॉर्ड मिलेगा। रिवॉर्ड आपके Refer & Earn Wallet में जोड़ा जाएगा।</p>
+                        
+                        <p><strong>2. Minimum Withdrawal:</strong> जब आपके Wallet में ₹100 या उससे अधिक हो जाएंगे, तब आप Withdrawal Request कर सकते हैं।</p>
+                        
+                        <p class="text-red-700 bg-red-50 p-1.5 rounded border border-red-100"><strong>3. Service Eligibility (अनिवार्य शर्त):</strong> केवल ₹100 पूरे होना पर्याप्त नहीं है। Withdrawal के लिए आपको कम से कम 3 सफल सर्विस सेल (Successful Service Sales) करनी होंगी। इन 3 सेल में नीचे दी गई सेवाओं में से कोई भी 3 या एक ही सेवा की 3 सफल बिक्री मान्य होगी:</p>
+                        <ul class="list-disc pl-5 space-y-0.5 text-slate-800">
+                            <li>Instagram Premium Growth Package – ₹1,999/-</li>
+                            <li>Flight Ticket Booking</li>
+                            <li>Facebook Followers Service</li>
+                            <li>Finance Join Service</li>
+                        </ul>
+                        <p><em>नोट: प्रत्येक सर्विस की बिक्री सफल भुगतान और सत्यापन (Verification) के बाद ही मान्य होगी।</em></p>
+                        
+                        <p><strong>4. Fraud & Misuse:</strong> निम्न गतिविधियाँ पूरी तरह प्रतिबंधित हैं: Self Referral (खुद को Refer करना), Fake या Duplicate Account बनाना, गलत जानकारी देना, Bot/Script या Fraud Activity करना, फर्जी ऑर्डर दिखाना। ऐसी गतिविधि पाए जाने पर Reward रद्द, Wallet Balance जब्त और Account Suspend/Block किया जा सकता है।</p>
+                        
+                        <p><strong>5. Verification:</strong> सभी Referral, Service Sales और Withdrawal Request का सत्यापन किया जाएगा।</p>
+                        
+                        <p><strong>6. Withdrawal Processing:</strong> Approved Withdrawal सामान्यतः 1–7 कार्यदिवस में प्रोसेस किया जाएगा। गलत UPI ID या बैंक विवरण देने पर हुई देरी के लिए उपयोगकर्ता स्वयं जिम्मेदार होगा।</p>
+                        
+                        <p><strong>7. Company Rights & Final Decision:</strong> Shree World Premium Portal नियमों में बदलाव का अधिकार सुरक्षित रखता है एवं विवाद में कंपनी का निर्णय अंतिम होगा।</p>
+                    </div>
+                </div>
+
+                <button onclick="logoutUser()" class="w-full border-2 border-red-500 text-red-600 hover:bg-red-50 font-bold py-3 rounded-xl transition-all shrink-0">🚪 Logout (बाहर जाएँ)</button>
             </div>
         </div>
     </div>
@@ -201,7 +227,7 @@
                 <h3 class="font-black text-lg flex items-center gap-2">⚙️ Admin Control Panel</h3>
                 <button onclick="closeAdminPanel()" class="text-white hover:text-red-400 text-3xl leading-none">&times;</button>
             </div>
-            <div class="p-6 h-[400px] overflow-y-auto bg-slate-50">
+            <div class="p-6 h-[400px] overflow-y-auto bg-slate-50 tnc-scroll">
                 <h4 class="font-black text-slate-800 mb-4 text-sm uppercase tracking-wider">Pending Withdrawal Requests</h4>
                 <div id="adminRequestsList" class="space-y-3">
                     <p class="text-slate-500 text-sm text-center py-10">Loading requests...</p>
@@ -220,28 +246,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ==================== AI ASSISTANT CHAT WINDOW ==================== -->
-    <div id="aiChatWindow" class="fixed top-[110px] right-4 sm:right-8 z-[130] hidden bg-white w-[300px] sm:w-[350px] rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex-col h-[480px] transform transition-all">
-        <div class="bg-slate-900 p-4 flex justify-between items-center text-white border-b-[3px] border-green-500">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 border border-white bg-green-600 text-white rounded flex items-center justify-center font-black text-sm shadow-sm">
-                    श्री
-                </div>
-                <div>
-                    <h4 class="font-black text-sm tracking-wide">श्री AI Assistant</h4>
-                    <p class="text-[10px] text-green-400 font-bold flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse"></span> Online 24/7</p>
-                </div>
-            </div>
-            <button onclick="toggleAiChat()" class="text-slate-400 hover:text-white text-2xl font-bold">&times;</button>
-        </div>
-        <div id="chatMessages" class="flex-1 p-3 overflow-y-auto bg-slate-50 text-[12px] sm:text-[13px] space-y-3 font-medium"></div>
-        <div class="p-2 bg-white border-t border-slate-200 flex gap-2">
-            <input type="text" id="aiInput" placeholder="अपना सवाल यहाँ लिखें..." class="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-green-500" onkeypress="handleAiKeyPress(event)">
-            <button onclick="sendAiMessage()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-bold">भेजें</button>
-        </div>
-    </div>
-
 
     <!-- MAIN HERO SECTION -->
     <section class="w-full pt-4 pb-6 px-4 text-center relative overflow-hidden hero-glow-bg border-b border-slate-200">
@@ -847,7 +851,7 @@
             </div>
         </section>
 
-        <!-- Trust Badges Panel (Moved to the bottom) -->
+        <!-- Trust Badges Panel -->
         <section class='py-6 px-4 max-w-4xl mx-auto'>
             <div class='grid grid-cols-2 sm:grid-cols-4 gap-4 text-center bg-slate-50 border border-slate-200 p-4 rounded-2xl shadow-sm'>
                 <div class='p-2 flex flex-col items-center justify-center border-r border-slate-200 last:border-0'>
@@ -887,12 +891,10 @@
     <!-- ========================================== -->
     
     <script type="module">
-        // 1. FIREBASE SDK IMPORTS
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 2. YOUR FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
             authDomain: "rkyshree-2f74b.firebaseapp.com",
@@ -903,24 +905,20 @@
             measurementId: "G-WSXGTGFWYK"
         };
 
-        // 3. INITIALIZE FIREBASE
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // 4. ADMIN SETTINGS
         const ADMIN_EMAIL = "rkyshree.in@gmail.com"; 
         let currentUserData = null;
 
-        // 5. REFERRAL TRACKING (URL से ID निकालकर Session में सेव करना)
         const urlParams = new URLSearchParams(window.location.search);
         const referralId = urlParams.get('ref');
         if(referralId) {
             sessionStorage.setItem('referredBy', referralId);
         }
 
-        // 6. AUTH STATE LISTENER (यूजर लॉगिन है या नहीं चेक करना)
         onAuthStateChanged(auth, async (user) => {
             const btnIcon = document.getElementById('authBtnIcon');
             const btnText = document.getElementById('authBtnText');
@@ -928,22 +926,18 @@
             const adminBtn = document.getElementById('adminBtn');
 
             if (user) {
-                // User is Logged In
                 btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
                 btnText.innerText = 'Dashboard';
                 authBtn.onclick = window.openDashboard;
                 
-                // Show Admin Panel Button if email matches
                 if (user.email === ADMIN_EMAIL) {
                     adminBtn.classList.remove('hidden');
                 }
 
-                // Check/Create User Document in Firestore
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
                 
                 if (!userSnap.exists()) {
-                    // New User Registration
                     await setDoc(userRef, {
                         uid: user.uid,
                         name: user.displayName,
@@ -954,42 +948,36 @@
                         createdAt: new Date()
                     });
                     
-                    // Reward the Referrer (if referred)
                     const savedRef = sessionStorage.getItem('referredBy');
                     if (savedRef && savedRef !== user.uid) {
                         const refDoc = doc(db, "users", savedRef);
                         const refSnap = await getDoc(refDoc);
                         if (refSnap.exists()) {
                             await updateDoc(refDoc, {
-                                wallet: increment(50), // ₹50 Refer Bonus
+                                wallet: increment(10), // ₹10 Refer Bonus Set Here
                                 referralCount: increment(1)
                             });
                         }
                     }
                 }
 
-                // Fetch latest user data to display
                 const latestSnap = await getDoc(userRef);
                 currentUserData = latestSnap.data();
 
             } else {
-                // User is Logged Out
                 btnIcon.innerHTML = `🔑`;
-                btnText.innerText = 'Login';
+                btnText.innerText = 'Secure Login';
                 authBtn.onclick = window.loginWithGoogle;
                 adminBtn.classList.add('hidden');
                 currentUserData = null;
             }
         });
 
-        // ================= GLOBAL FUNCTIONS (Attached to window for HTML buttons) =================
-
-        // 🟢 Login Function
+        // GLOBAL FUNCTIONS
         window.loginWithGoogle = () => {
             signInWithPopup(auth, provider).catch(err => alert("Login Failed: " + err.message));
         };
 
-        // 🔴 Logout Function
         window.logoutUser = () => {
             signOut(auth).then(() => {
                 window.closeDashboard();
@@ -997,11 +985,8 @@
             });
         };
 
-        // 🟡 Open Dashboard
         window.openDashboard = async () => {
             if(!currentUserData) return;
-            
-            // Refresh DB data instantly before opening
             const snap = await getDoc(doc(db, "users", currentUserData.uid));
             currentUserData = snap.data();
 
@@ -1011,7 +996,6 @@
             document.getElementById('dashWallet').innerText = currentUserData.wallet;
             document.getElementById('dashRefs').innerText = currentUserData.referralCount;
             
-            // Generate Referral Link
             const link = window.location.origin + window.location.pathname + "?ref=" + currentUserData.uid;
             document.getElementById('dashRefLink').value = link;
             
@@ -1020,7 +1004,6 @@
 
         window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
 
-        // 🔵 Copy Link Function
         window.copyRefLink = () => {
             const linkField = document.getElementById('dashRefLink');
             linkField.select();
@@ -1028,9 +1011,9 @@
             alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
         };
 
-        // 🟠 Withdrawal Request Function
+        // 🟢 DIRECT WHATSAPP WITHDRAWAL REQUEST 
         window.requestWithdraw = async () => {
-            const upiId = document.getElementById('withdrawUpi').value;
+            const upiId = document.getElementById('withdrawUpi').value.trim();
             const amount = parseInt(document.getElementById('withdrawAmount').value);
             
             if(!upiId || !amount) return alert("कृपया UPI ID और Amount दोनों भरें!");
@@ -1038,11 +1021,12 @@
             if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस नहीं है!");
 
             try {
-                // Deduct Wallet Balance
+                // Deduct Wallet Balance in Firebase
                 await updateDoc(doc(db, "users", currentUserData.uid), {
                     wallet: increment(-amount)
                 });
-                // Create Request in Admin Panel
+                
+                // Create Request in Admin Panel Database
                 await addDoc(collection(db, "withdraws"), {
                     uid: currentUserData.uid,
                     name: currentUserData.name,
@@ -1053,23 +1037,32 @@
                     timestamp: new Date()
                 });
                 
-                alert("✅ आपकी Withdrawal Request सफलतापूर्वक भेज दी गई है। एडमिन जल्द ही पेमेंट भेज देंगे!");
+                alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा है...");
+                
+                // 🔥 DIRECT REDIRECT TO WHATSAPP 🔥
+                const adminPhone = "919451239239";
+                const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *निकालने की रकम:* ₹${amount}\n🏦 *UPI ID:* ${upiId}\n\nसर, मैंने T&C के अनुसार 3 सफल सर्विस सेल की शर्त पूरी कर ली है। कृपया मेरा विड्रोल अप्रूव करके पेमेंट भेज दें।`;
+                const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(waMessage)}`;
+                
                 document.getElementById('withdrawUpi').value = "";
                 document.getElementById('withdrawAmount').value = "";
                 window.closeDashboard();
+
+                // Open WhatsApp immediately
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+
             } catch (e) {
                 alert("Error: " + e.message);
             }
         };
 
-        // ⚙️ Admin Panel Functions
+        // ADMIN FUNCTIONS
         window.openAdminPanel = async () => {
             document.getElementById('adminModal').classList.remove('hidden');
             const listDiv = document.getElementById('adminRequestsList');
             listDiv.innerHTML = '<p class="text-slate-500 text-sm text-center py-10">Fetching pending requests...</p>';
             
             try {
-                // Fetch Pending Withdrawals
                 const q = query(collection(db, "withdraws"), where("status", "==", "Pending"));
                 const querySnapshot = await getDocs(q);
                 
@@ -1099,7 +1092,6 @@
 
         window.closeAdminPanel = () => document.getElementById('adminModal').classList.add('hidden');
 
-        // Approve Withdrawal (Admin Only)
         window.approveWithdrawal = async (docId, userUid) => {
             if(!confirm("Are you sure you have transferred the money to the user's UPI?")) return;
             try {
@@ -1107,14 +1099,14 @@
                     status: 'Paid'
                 });
                 alert("Status Updated to Paid!");
-                window.openAdminPanel(); // Refresh list
+                window.openAdminPanel(); 
             } catch (e) {
                 alert("Error: " + e.message);
             }
         };
     </script>
 
-    <!-- MAIN SCRIPT (आपका पुराना सारा जावास्क्रिप्ट) -->
+    <!-- GENERAL LOGIC -->
     <script type='text/javascript'>
         let activePlatform = 'instagram';
         let activeServiceLabel = 'Followers';
@@ -1143,11 +1135,10 @@
             document.getElementById("secure-payment").scrollIntoView({ behavior: "smooth" });
         }
 
-        // Updated Stats Tracker
         let instaCount = 138111; 
         let fbCount = 85460;     
         let flightCount = 11760; 
-        let satCount = 99; // Percentage
+        let satCount = 99; 
 
         function initPremiumLiveCounters() {
             const elInsta = document.getElementById('count-insta');
@@ -1189,7 +1180,7 @@
 
             function updateLiveUsers() {
                 let currentActive = parseInt(elActive.innerText.replace(/,/g, '')) || Math.floor(Math.random() * 9950) + 50;
-                let change = Math.floor(Math.random() * 200) - 100; // Fluctuation margin
+                let change = Math.floor(Math.random() * 200) - 100; 
                 currentActive += change;
                 if(currentActive < 50) currentActive = 50;
                 if(currentActive > 10000) currentActive = 10000;
@@ -1239,7 +1230,6 @@
             "ordered Customized Comments 💬"
         ];
 
-        // Advanced 100+ Reviews Logic using Array generation
         const revNames = ["अमित सिंह", "राहुल शर्मा", "प्रिया पटेल", "सुमित गुप्ता", "नेहा वर्मा", "रोहित कुमार", "मनीष तिवारी", "स्नेहा जैन", "विकास यादव", "सोनिया मिश्रा", "दीपक सिंह", "आराध्या यादव", "नीलेश कुमार", "अंकित दुबे", "किरण शर्मा", "सौरभ पांडेय", "पूजा ठाकुर", "रविंद्र चौहान", "कविता सिंह", "गौरव राठौर", "रिया गुप्ता", "आदित्य वर्मा", "प्रतीक जैन", "आयुष सिंह"];
         const revCities = ["गोरखपुर", "दिल्ली", "पटना", "लखनऊ", "मुंबई", "जयपुर", "भोपाल", "इंदौर", "कानपुर", "वाराणसी", "पुणे", "अहमदाबाद", "सूरत", "नागपुर", "रांची", "चंडीगढ़", "लुधियाना", "आगरा", "मेरठ", "देहरादून"];
         const revTemplates = [
@@ -1308,7 +1298,6 @@
             document.getElementById('userRevMessage').value = '';
             
             renderReviewsCarousel();
-            // Scroll back to start
             document.getElementById('reviewsCarousel').scrollTo({ left: 0, behavior: 'smooth' });
         }
 
@@ -1508,134 +1497,6 @@
                 container.classList.remove('hidden');
                 setTimeout(() => { container.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
             } else { container.classList.add('hidden'); }
-        }
-
-        // AI ASSISTANT LOGIC
-        let chatInit = false;
-
-        function toggleAiChat() {
-            const chatWindow = document.getElementById('aiChatWindow');
-            if (chatWindow.classList.contains('hidden')) {
-                chatWindow.classList.remove('hidden');
-                chatWindow.classList.add('flex');
-                if(!chatInit) {
-                    addAiMessage("नमस्ते! मैं श्री AI Assistant हूँ। श्री वर्ल्ड प्रीमियम पोर्टल में आपका स्वागत है।<br><br><b>हमारी सेवाएँ:</b><br>• Instagram Growth<br>• Facebook Growth<br>• Flight Ticket Booking<br>• Website Development<br>• Digital Marketing<br>• Finance<br><br>कृपया बताएं मैं आपकी क्या सहायता कर सकता हूँ?", 'bot');
-                    chatInit = true;
-                }
-            } else {
-                chatWindow.classList.add('hidden');
-                chatWindow.classList.remove('flex');
-            }
-        }
-
-        function closeChatAndScroll(id) {
-            toggleAiChat();
-            setTimeout(() => {
-                const element = document.getElementById(id);
-                if(element) element.scrollIntoView({ behavior: 'smooth' });
-            }, 300);
-        }
-
-        function closeChatAndGoLink(url) {
-            toggleAiChat();
-            goLink(url);
-        }
-
-        function addAiMessage(text, sender) {
-            const container = document.getElementById('chatMessages');
-            const msgDiv = document.createElement('div');
-            if(sender === 'bot') {
-                msgDiv.className = "bg-white border border-green-200 text-slate-700 p-2.5 rounded-xl rounded-tr-xl rounded-tl-sm shadow-sm inline-block max-w-[90%] leading-relaxed";
-                msgDiv.innerHTML = text;
-            } else {
-                msgDiv.className = "bg-green-100 border border-green-200 text-green-900 p-2.5 rounded-xl rounded-tl-xl rounded-tr-sm shadow-sm inline-block max-w-[85%] self-end float-right ml-auto font-bold";
-                msgDiv.innerHTML = text;
-            }
-            const wrapper = document.createElement('div');
-            wrapper.className = sender === 'user' ? 'flex flex-col items-end' : 'flex flex-col items-start';
-            wrapper.appendChild(msgDiv);
-            container.appendChild(wrapper);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function handleAiKeyPress(e) {
-            if(e.key === 'Enter') sendAiMessage();
-        }
-
-        function sendAiMessage() {
-            const input = document.getElementById('aiInput');
-            const val = input.value.trim();
-            if(!val) return;
-            addAiMessage(val, 'user');
-            input.value = '';
-            setTimeout(() => { processAiLogic(val.toLowerCase()); }, 700);
-        }
-
-        function processAiLogic(query) {
-            let reply = "";
-            let q = query.toLowerCase();
-
-            if(q.includes("hi") || q.includes("hello") || q.includes("नमस्ते") || q.includes("हेलो") || q.includes("hey")) {
-                reply = "नमस्ते! मैं श्री AI Assistant हूँ।<br><br><b>हमारी सेवाएँ:</b><br>• Instagram Growth<br>• Facebook Growth<br>• Flight Ticket Booking<br>• Website Development<br>• Digital Marketing<br>• Finance<br><br>कृपया बताएं मैं आपकी क्या सहायता कर सकता हूँ?";
-            }
-            else if(q.includes("सस्ता") || q.includes("cheap") || q.includes("कम दाम")) {
-                reply = "Instagram Followers: 100 Followers - ₹19<br>Instagram Likes: 1000 Likes - ₹30<br>Instagram Views: 10000 Views - ₹29<br>Facebook Views: 5000 Views - ₹49<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें।";
-            }
-            else if(q.includes("समय") || q.includes("time") || q.includes("देर") || q.includes("कब तक")) {
-                reply = "Start Time:<br>0-20 मिनट";
-            }
-            else if(q.includes("refill") || q.includes("रिफिल") || q.includes("ड्रॉप") || q.includes("drop")) {
-                reply = "हाँ, जहाँ Lifetime Refill उपलब्ध है वहाँ Refill दिया जाएगा।";
-            }
-            else if(q.includes("private") || q.includes("प्राइवेट")) {
-                reply = "ऑर्डर करने से पहले अकाउंट Public करें।";
-            }
-            else if((q.includes("instagram") || q.includes("insta")) && (q.includes("follower") || q.includes("फॉलोवर"))) {
-                reply = `<b>Instagram Followers</b><br>100 Followers - ₹19<br>1000 Followers - ₹249<br>5000 Followers - ₹899<br>10000 Followers - ₹1599<br><br>Start Time: 0-20 मिनट<br>Quality: Good Quality<br>Lifetime Refill उपलब्ध<br>Drop Rate: 0-10%<br><br>ऑर्डर करने से पहले अकाउंट Public होना चाहिए।<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-pink-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("instagram") || q.includes("insta")) && (q.includes("like") || q.includes("लाइक"))) {
-                reply = `<b>Instagram Likes</b><br>1000 Likes - ₹30<br>2000 Likes - ₹99<br>5000 Likes - ₹199<br>10000 Likes - ₹299<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-pink-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("instagram") || q.includes("insta")) && (q.includes("comment") || q.includes("कमेंट"))) {
-                reply = `<b>Instagram Comments</b><br>1000 Comments - ₹99<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-pink-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("instagram") || q.includes("insta")) && (q.includes("view") || q.includes("व्यू"))) {
-                reply = `<b>Instagram Views</b><br>10000 Views - ₹29<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-pink-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("facebook") || q.includes("fb")) && (q.includes("follower") || q.includes("फॉलोवर"))) {
-                reply = `<b>Facebook Followers</b><br>1000 Followers - ₹99<br>5000 Followers - ₹499<br>10000 Followers - ₹799<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-blue-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("facebook") || q.includes("fb")) && (q.includes("like") || q.includes("लाइक"))) {
-                reply = `<b>Facebook Likes</b><br>1000 Likes - ₹269<br>5000 Likes - ₹1399<br>10000 Likes - ₹2199<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-blue-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("facebook") || q.includes("fb")) && (q.includes("comment") || q.includes("कमेंट"))) {
-                reply = `<b>Facebook Comments</b><br>1000 Comments - ₹99<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-blue-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if((q.includes("facebook") || q.includes("fb")) && (q.includes("view") || q.includes("व्यू"))) {
-                reply = `<b>Facebook Views</b><br>5000 Views - ₹49<br>10000 Views - ₹99<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('social-growth')" class="text-blue-600 font-bold underline">यहाँ से Order करें</button>`;
-            }
-            else if(q.includes("flight") || q.includes("हवाई") || q.includes("टिकट") || q.includes("जहाज")) {
-                reply = `<b>FLIGHT BOOKING</b><br>• Domestic Flight Booking<br>• International Flight Booking<br>• Best Fare Assistance<br>• Seat Selection<br>• Travel Support<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndScroll('flight-booking')" class="text-cyan-600 font-bold underline">यहाँ से फ्लाइट बुक करें</button>`;
-            }
-            else if(q.includes("web") || q.includes("वेब") || q.includes("website") || q.includes("वेबसाइट")) {
-                reply = `<b>WEBSITE DEVELOPMENT</b><br>• Responsive Website<br>• Mobile Friendly<br>• SEO Friendly<br>• Google Search Setup<br>• Domain Support<br>• Hosting Support<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndGoLink('web-development.html')" class="text-indigo-600 font-bold underline">वेब डेवलपमेंट सर्विस देखें</button>`;
-            }
-            else if(q.includes("digital") || q.includes("marketing") || q.includes("मार्केटिंग") || q.includes("seo") || q.includes("ads") || q.includes("ऐड")) {
-                reply = `<b>DIGITAL MARKETING</b><br>• Instagram Marketing<br>• Facebook Marketing<br>• Google Ads<br>• SEO<br>• Business Promotion<br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndGoLink('digital-marketing.html')" class="text-emerald-600 font-bold underline">डिजिटल मार्केटिंग सर्विस देखें</button>`;
-            }
-            else if(q.includes("finance") || q.includes("लोन") || q.includes("फाइनेंस")) {
-                reply = `<b>FINANCE</b><br><br>ऑर्डर करने के लिए वेबसाइट पर Order करें या WhatsApp पर संपर्क करें。<br><br>👉 <button onclick="closeChatAndGoLink('https://mysalesboard.in/?dist=DQnzkVsISihDgXv0wV5IVdZakwk1')" class="text-amber-600 font-bold underline">फाइनेंस सर्विस देखें</button>`;
-            }
-            else if(q.includes("instagram") || q.includes("insta")) {
-                reply = "Instagram में हमारे पास Followers, Likes, Comments और Views की सर्विस है। कृपया बताएं आपको क्या चाहिए?";
-            }
-            else if(q.includes("facebook") || q.includes("fb")) {
-                reply = "Facebook में हमारे पास Followers, Likes, Comments और Views की सर्विस है। कृपया बताएं आपको क्या चाहिए?";
-            }
-            else {
-                reply = "इस जानकारी के लिए कृपया हमारी टीम से WhatsApp पर संपर्क करें।<br><br>👉 <a href='https://wa.me/919451239239' target='_blank' class='text-emerald-600 font-bold underline'>WhatsApp (9451239239) पर मैसेज करें</a>";
-            }
-            addAiMessage(reply, 'bot');
         }
 
         window.onload = function() {
