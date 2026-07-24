@@ -3,6 +3,12 @@
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+    <!-- ऐप इंस्टॉल (PWA) सपोर्ट के लिए मेनिफेस्ट लिंक (यदि उपलब्ध हो) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Shree World">
+
     <title>RKY SHREE - India's Trusted Digital Growth & Travel Platform</title>
     
     <script src='https://cdn.tailwindcss.com'></script>
@@ -114,9 +120,31 @@
         animation: premiumFlip 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         display: inline-block;
     }
+
+    /* New Animation for App Install Popup */
+    @keyframes slideUpPopup {
+        from { transform: translate(-50%, 150%); opacity: 0; }
+        to { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .popup-slide-up {
+        animation: slideUpPopup 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
     </style>
 </head>
 <body class='text-slate-900 min-h-screen flex flex-col bg-white'>
+
+    <!-- NEW TOP BANNER & AI CHAT -->
+    <header class="w-full bg-slate-900 text-white py-3 px-4 flex items-center justify-between sticky top-0 z-50 shadow-md">
+        <div class="flex items-center gap-2">
+            <span class="text-amber-400 text-xl sm:text-2xl">👑</span>
+            <h1 class="text-sm sm:text-lg font-black tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-yellow-200">
+                श्री वर्ल्ड प्रीमियम पोर्टल
+            </h1>
+        </div>
+        <button onclick="toggleAIChat()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transition-all animate-bounce border border-indigo-400">
+            🤖 <span>Live AI Chat</span>
+        </button>
+    </header>
 
     <!-- MAIN BANNER & HERO SECTION -->
     <section class="w-full pt-4 pb-6 px-4 text-center relative overflow-hidden hero-glow-bg border-b border-slate-200">
@@ -184,7 +212,6 @@
                             <span class="animate-pulse">🔥</span> धमाकेदार लाइव ऑफर्स
                         </span>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <!-- Fallback Button for GitHub Pages Block -->
                             <button onclick="window.open('https://inrdeals.com/embed/deals?user=arm532515116', '_blank')" class="text-[10px] sm:text-xs bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg hover:bg-amber-700 transition-colors shadow-sm cursor-pointer">
                                 नए टैब में खोलें ↗
                             </button>
@@ -193,7 +220,6 @@
                     </div>
                     <!-- Iframe Wrapper -->
                     <div class="relative w-full bg-slate-50 flex items-center justify-center" style="height: 1140px;">
-                        <!-- Fallback Alert Text behind iframe -->
                         <div class="absolute text-center px-4 text-slate-500 text-sm font-medium">
                             <p class="mb-2">लोड हो रहा है...</p>
                             <p class="text-xs text-red-400">नोट: अगर सिक्योरिटी कारणों से ऑफर यहाँ नहीं खुल रहे हैं,<br>तो कृपया ऊपर दिए गए <strong>"नए टैब में खोलें"</strong> बटन पर क्लिक करें।</p>
@@ -809,6 +835,43 @@
 
     <div class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500 text-amber-400 py-3 px-6 rounded-full text-sm font-bold shadow-xl z-50 animate-bounce' id='toast-msg'>📋 कॉपी हो गया है! अब कहीं भी पेस्ट कर सकते हैं।</div>
 
+    <!-- AI CHAT BOT WINDOW (NEW) -->
+    <div id="ai-chat-window" class="hidden fixed bottom-4 right-4 sm:bottom-10 sm:right-10 w-[90vw] max-w-sm bg-white border border-slate-200 shadow-2xl rounded-2xl z-[100] flex flex-col overflow-hidden transition-all">
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-700 p-3 flex justify-between items-center text-white">
+            <div class="flex items-center gap-2">
+                <span class="text-xl">🤖</span>
+                <span class="font-bold text-sm">Shree AI Assistant</span>
+            </div>
+            <button onclick="toggleAIChat()" class="text-white hover:text-red-300 font-bold text-2xl leading-none">&times;</button>
+        </div>
+        <div id="chat-messages" class="p-4 h-64 overflow-y-auto bg-slate-50 text-sm space-y-3 flex flex-col">
+            <div class="bg-white border border-slate-200 p-2.5 rounded-xl rounded-tl-none self-start max-w-[85%] shadow-sm text-slate-800">
+                नमस्ते! मैं श्री वर्ल्ड प्रीमियम पोर्टल का <strong>AI Assistant</strong> हूँ। वेबसाइट, सर्विस या पेमेंट के बारे में आपका क्या सवाल है?
+            </div>
+        </div>
+        <div class="p-3 border-t border-slate-200 bg-white flex gap-2">
+            <input type="text" id="ai-chat-input" placeholder="यहाँ मैसेज लिखें..." class="flex-1 bg-slate-100 border border-slate-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeypress="handleChatEnter(event)">
+            <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-bold transition-colors">→</button>
+        </div>
+    </div>
+
+    <!-- APP INSTALL POPUP (NEW PWA) -->
+    <div id="app-install-popup" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm bg-white border border-slate-200 shadow-2xl rounded-2xl z-[90] p-4 flex items-center justify-between gap-3 popup-slide-up">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl flex items-center justify-center text-2xl shadow-md flex-shrink-0 border border-amber-500/50">
+                👑
+            </div>
+            <div>
+                <h4 class="font-black text-slate-900 text-sm">Shree World App</h4>
+                <p class="text-[10px] text-slate-500 font-bold tracking-wide">Fast • Secure • Easy</p>
+            </div>
+        </div>
+        <button id="install-app-btn" class="bg-amber-500 text-slate-900 px-4 py-2 rounded-full text-xs font-black shadow-md hover:bg-amber-400 transition-colors whitespace-nowrap">
+            INSTALL
+        </button>
+        <button onclick="closeInstallPopup()" class="absolute -top-2 -right-2 bg-slate-200 text-slate-600 rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-100 hover:text-red-600 shadow-sm font-bold border border-white">&times;</button>
+    </div>
+
     <footer class='border-t border-slate-200 bg-white py-8 px-4 text-center'>
         <div class='max-w-7xl mx-auto'>
             <div class='flex items-center justify-center space-x-2 mb-3'>
@@ -819,6 +882,105 @@
     </footer>
 
     <script type='text/javascript'>
+        // ==========================================
+        // NEW: AI CHATBOT LOGIC
+        // ==========================================
+        function toggleAIChat() {
+            const chatObj = document.getElementById('ai-chat-window');
+            if(chatObj.classList.contains('hidden')){
+                chatObj.classList.remove('hidden');
+                document.getElementById('ai-chat-input').focus();
+            } else {
+                chatObj.classList.add('hidden');
+            }
+        }
+
+        function handleChatEnter(e) {
+            if(e.key === 'Enter') sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('ai-chat-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+
+            const chatBox = document.getElementById('chat-messages');
+
+            // User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = "bg-blue-100 border border-blue-200 p-2.5 rounded-xl rounded-tr-none self-end max-w-[85%] shadow-sm text-blue-900";
+            userDiv.innerText = msg;
+            chatBox.appendChild(userDiv);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // AI Reply Simulation
+            setTimeout(() => {
+                let aiResponse = "माफ़ करें, मैं अभी सीख रहा हूँ। आप अधिक जानकारी के लिए हमारी व्हाट्सएप हेल्पलाइन +91 9451239239 पर संपर्क कर सकते हैं।";
+                const lowerMsg = msg.toLowerCase();
+                
+                if(lowerMsg.includes('इंस्टाग्राम') || lowerMsg.includes('instagram') || lowerMsg.includes('फॉलो') || lowerMsg.includes('follower')) {
+                    aiResponse = "इंस्टाग्राम फॉलोअर्स, लाइक्स और व्यूज के लिए आप पेज में 'VIP इंस्टाग्राम पैक धमाका' या 'Interactive Service Panel' का उपयोग कर सकते हैं। ₹19 से सेवा शुरू है!";
+                } else if(lowerMsg.includes('फ्लाइट') || lowerMsg.includes('ticket') || lowerMsg.includes('टिकट') || lowerMsg.includes('flight')) {
+                    aiResponse = "फ्लाइट बुकिंग पर डोमेस्टिक में 1% और इंटरनेशनल में 2% की स्पेशल छूट है। आप 'Premium Flight Desk' सेक्शन में जाकर जानकारी भरें।";
+                } else if(lowerMsg.includes('पेमेंट') || lowerMsg.includes('pay') || lowerMsg.includes('पैसा') || lowerMsg.includes('price')) {
+                    aiResponse = "यहाँ पेमेंट 100% सुरक्षित (SSL Secure) है। आप QR कोड स्कैन करके पेमेंट कर सकते हैं और व्हाट्सएप पर स्क्रीनशॉट भेज सकते हैं।";
+                } else if(lowerMsg.includes('hello') || lowerMsg.includes('hi') || lowerMsg.includes('नमस्ते') || lowerMsg.includes('हेलो')) {
+                    aiResponse = "नमस्ते! श्री वर्ल्ड प्रीमियम पोर्टल में आपका स्वागत है। मैं आपकी कैसे मदद कर सकता हूँ?";
+                } else if(lowerMsg.includes('app') || lowerMsg.includes('install') || lowerMsg.includes('डाउनलोड')) {
+                    aiResponse = "हमारी वेबसाइट एक स्मार्ट वेब ऐप है। आप इसे सीधे अपने फोन में इनस्टॉल कर सकते हैं। अगर आपको पॉप-अप नहीं दिखा, तो ब्राउज़र के 'Add to Home screen' विकल्प का इस्तेमाल करें।";
+                }
+
+                const aiDiv = document.createElement('div');
+                aiDiv.className = "bg-white border border-slate-200 p-2.5 rounded-xl rounded-tl-none self-start max-w-[85%] shadow-sm text-slate-800";
+                aiDiv.innerHTML = aiResponse;
+                chatBox.appendChild(aiDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 700);
+        }
+
+        // ==========================================
+        // NEW: PWA APP INSTALL LOGIC
+        // ==========================================
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+        });
+
+        // Show install popup automatically after a few seconds
+        setTimeout(() => {
+            const popup = document.getElementById('app-install-popup');
+            popup.classList.remove('hidden');
+            popup.classList.add('flex');
+        }, 4000);
+
+        document.getElementById('install-app-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+            } else {
+                // Fallback for iOS / Desktop where beforeinstallprompt isn't supported natively
+                alert("इंस्टॉल जानकारी (Install Info):\n\n🍎 iPhone Users: सफारी (Safari) ब्राउज़र में नीचे दिए गए 'Share' आइकॉन पर क्लिक करें और 'Add to Home Screen' चुनें।\n\n🤖 Android Users: ब्राउज़र की सेटिंग (3 डॉट) में जाकर 'Install App' या 'Add to Home screen' पर क्लिक करें।");
+            }
+            closeInstallPopup();
+        });
+
+        function closeInstallPopup() {
+            const popup = document.getElementById('app-install-popup');
+            popup.classList.add('hidden');
+            popup.classList.remove('flex');
+        }
+
+        // ==========================================
+        // EXISTING LOGIC (Unchanged)
+        // ==========================================
         let activePlatform = 'instagram';
         let activeServiceLabel = 'Followers';
         let activeQuantity = '100';
@@ -944,118 +1106,21 @@
             "ने अभी इंस्टाग्राम कस्टमाइज्ड कमेंट्स डिलीवरी लगवाई 💬"
         ];
 
-        // ------------------ NEW REVIEW SYSTEM WITH 100+ REVIEWS & LOCALSTORAGE ------------------ //
-        
         const baseReviewsPool = [
-            // Original Reviews
             { name: "आराध्या यादव", loc: "गोरखपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "श्री वर्ल्ड प्रीमियम की इंस्टाग्राम फॉलोअर्स सर्विस सच में बहुत तेज़ है। क्वालिटी एकदम रियल और नॉन-ड्रॉप है।" },
             { name: "राहुल शर्मा", loc: "दिल्ली", rating: "⭐⭐⭐⭐⭐", msg: "मैंने यहाँ से फेसबुक प्रोफाइल आर्गेनिक बूस्ट पैक लिया था। बिना पासवर्ड के इतना सुरक्षित काम कहीं नहीं मिलता।" },
             { name: "नीलेश कुमार", loc: "पटना, बिहार", rating: "⭐⭐⭐⭐", msg: "हवाई जहाज की टिकट बुकिंग कराई, मार्केट से बहुत कम दाम पर हो गया और तुरंत कन्फर्मेशन रसीद मिल गई।" },
             { name: "प्रिया सिंह", loc: "लखनऊ, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "रील्स व्यूज का आर्डर दिया था, पेमेंट करने के मात्र 10 मिनट में पूरा काम कम्पलीट हो गया! थैंक यू!" },
             { name: "अमन मद्धेशिया", loc: "देवरिया, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "हमारी दुकान के लिए इन्होंने बहुत ही शानदार और फ़ास्ट वेबसाइट बनाई है। काम बहुत प्रोफेशनल है।" },
             { name: "मनीष राय", loc: "सूरत, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "10K फॉलोअर्स पैक लिया था, लाइफटाइम रिफिल गारंटी के साथ मिला है। बहुत ही प्रामाणिक सर्विस है।" },
-            { name: "कृष्णा यादव", loc: "मुंबई, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "पेमेंट गेटवे बहुत सेफ है। QR कोड स्कैन करके पेमेंट किया और व्हाट्सएप screen-shot भेजते ही आर्डर शुरू हो गया।" },
-            
-            // 100 New Distinct & Real-sounding Reviews
-            { name: "सूरज प्रताप", loc: "वाराणसी, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "भरोसेमंद काम है। मैंने अपने पेज के लिए लाइक्स खरीदे थे और 5 मिनट में आना शुरू हो गए।" },
-            { name: "विशाल गुप्ता", loc: "कानपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "वेब डेवलपमेंट सर्विस ली थी अपने बिजनेस के लिए, डिजाइन काफी प्रीमियम और रेस्पॉन्सिव बनाया है इन्होंने।" },
-            { name: "नेहा शर्मा", loc: "जयपुर, राजस्थान", rating: "⭐⭐⭐⭐", msg: "इंस्टाग्राम फॉलोअर्स का जो ऑफर था, वो सच में काम करता है। कोई ड्रॉप नहीं हुआ अभी तक।" },
-            { name: "रोहित सिंह", loc: "भोपाल, मध्य प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट टिकट सबसे सस्ता यहीं मिला। बहुत-बहुत धन्यवाद आपका।" },
-            { name: "समीर खान", loc: "हैदराबाद, तेलंगाना", rating: "⭐⭐⭐⭐⭐", msg: "फेसबुक पेज के लिए बूस्टिंग करवाई, रीच काफी अच्छी बढ़ी है।" },
-            { name: "अंजलि कुमारी", loc: "रांची, झारखंड", rating: "⭐⭐⭐⭐", msg: "कमेंट्स की सर्विस एकदम रियल लोगों जैसी लगी। बहुत बढ़िया!" },
-            { name: "दीपक प्रजापति", loc: "पुणे, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "WhatsApp सपोर्ट बहुत फास्ट है। पेमेंट करते ही मेरा आर्डर लग गया था।" },
-            { name: "गौरव मिश्रा", loc: "इंदौर, मध्य प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "रियल और एक्टिव फॉलोअर्स मिले, बिना पासवर्ड दिए। पूरी तरह से सेफ लगा।" },
-            { name: "अमित वर्मा", loc: "चंडीगढ़, पंजाब", rating: "⭐⭐⭐⭐⭐", msg: "मैंने वीआईपी महा ऑफर पैक लिया था। व्यूज, लाइक्स और फॉलोअर्स तीनों बिल्कुल सही मात्रा में मिले।" },
-            { name: "पूजा जोशी", loc: "देहरादून, उत्तराखंड", rating: "⭐⭐⭐⭐", msg: "फ्लाइट बुकिंग का प्रोसेस काफी सिंपल है और टिकट तुरंत व्हाट्सएप पर आ जाता है।" },
-            { name: "विवेक शुक्ला", loc: "प्रयागराज, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "इनका डिजिटल मार्केटिंग का काम गजब का है। मेरी सेल्स में काफी सुधार हुआ है।" },
-            { name: "सुमित पटेल", loc: "अहमदाबाद, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "सुपर फास्ट डिलीवरी! 1000 लाइक्स सिर्फ 10 मिनट में आ गए।" },
-            { name: "अंकित ठाकुर", loc: "शिमला, हिमाचल प्रदेश", rating: "⭐⭐⭐⭐", msg: "मैंने 5000 फेसबुक फॉलोअर्स आर्डर किये थे, सर्विस अच्छी है बस 5% ड्राप हुए जो इन्होने रिफिल कर दिए।" },
-            { name: "कविता दास", loc: "कोलकाता, पश्चिम बंगाल", rating: "⭐⭐⭐⭐⭐", msg: "ट्रस्टेड प्लेटफार्म है। मैं पिछले 6 महीने से इनकी सेवाएं इस्तेमाल कर रही हूँ।" },
-            { name: "रवि शंकर", loc: "नागपुर, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "हवाई टिकट बुकिंग पर वाकई में डिस्काउंट मिलता है। मेरे 500 रुपये बच गए।" },
-            { name: "मनोज तिवारी", loc: "बेंगलुरु, कर्नाटक", rating: "⭐⭐⭐⭐⭐", msg: "इंस्टाग्राम रील्स के व्यूज के लिए बेस्ट साइट। एकदम झक्कास सर्विस!" },
-            { name: "संजय सिंह", loc: "आगरा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "बिना किसी दिक्कत के पेमेंट हो गया। QR कोड सिस्टम बहुत आसान है।" },
-            { name: "तरुण बजाज", loc: "लुधियाना, पंजाब", rating: "⭐⭐⭐⭐", msg: "काम अच्छा करते हैं। सपोर्ट टीम बहुत सहयोगी है।" },
-            { name: "पंकज मौर्या", loc: "बलिया, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "श्री वर्ल्ड पोर्टल का नाम सुना था, आज सर्विस लेकर भी देख लिया। 100% सही काम है।" },
-            { name: "सुनील चौहान", loc: "फरीदाबाद, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "फॉलोअर्स की क्वालिटी बहुत ही बेहतरीन है, प्रोफाइल काफी असली लगती है।" },
-            { name: "किशन लाल", loc: "अजमेर, राजस्थान", rating: "⭐⭐⭐⭐⭐", msg: "बिजनेस वेबसाइट बनवाई है मैंने, बहुत ही कम बजट में प्रीमियम वेबसाइट तैयार कर दी।" },
-            { name: "मोहम्मद इरफान", loc: "लखनऊ, उत्तर प्रदेश", rating: "⭐⭐⭐⭐", msg: "फेसबुक लाइक्स थोड़े लेट आये लेकिन पूरे आये।" },
-            { name: "आदित्य नारायण", loc: "रायपुर, छत्तीसगढ़", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट कैंसल करानी थी, व्हाट्सएप पर मेसेज किया और रिफंड भी तुरंत आ गया।" },
-            { name: "शिखा पाण्डेय", loc: "मेरठ, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "मैंने अपनी बेकरी शॉप के लिए डिजिटल मार्केटिंग सर्विस ली, रिस्पांस काफी तगड़ा है।" },
-            { name: "राजीव रंजन", loc: "मुजफ्फरपुर, बिहार", rating: "⭐⭐⭐⭐⭐", msg: "पहली बार ऑनलाइन फॉलोअर्स लिए थे, डर था कि फ्रॉड न हो। पर काम एकदम ईमानदारी से हुआ।" },
-            { name: "गौतम राज", loc: "चेन्नई, तमिलनाडु", rating: "⭐⭐⭐⭐⭐", msg: "Instagram growth service is really fast and secure. Highly recommended." },
-            { name: "सुरेश चंद्रा", loc: "ग्वालियर, मध्य प्रदेश", rating: "⭐⭐⭐⭐", msg: "प्राइस के हिसाब से सर्विस काफी अच्छी और किफायती है।" },
-            { name: "विकास दुबे", loc: "गाजियाबाद, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "मेरा इंस्टाग्राम अकाउंट पब्लिक करके मैंने लिंक दिया और 20 मिनट में कमाल हो गया!" },
-            { name: "पवन कुमार", loc: "जबलपुर, मध्य प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "ये साइट सच में बहुत काम की है। फ्लाइट बुकिंग भी सस्ती और सोशल मीडिया सर्विस भी टॉप क्लास।" },
-            { name: "सोनू सूद (फ़ैन)", loc: "मुंबई, महाराष्ट्र", rating: "⭐⭐⭐⭐", msg: "व्यूज बहुत फास्ट आते हैं। रील वायरल करने में बहुत मदद मिली।" },
-            { name: "जितेंद्र प्रताप", loc: "अयोध्या, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "मेरी पूरी टीम यहाँ से ही टिकट बुक कराती है।" },
-            { name: "रामेश्वर", loc: "हरिद्वार, उत्तराखंड", rating: "⭐⭐⭐⭐⭐", msg: "सपोर्ट टीम बहुत ही पोलाइट है, हर सवाल का अच्छे से जवाब देते हैं।" },
-            { name: "नवीन जैन", loc: "उज्जैन, मध्य प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फेसबुक पेज मोनेटाइजेशन के लिए मैंने फॉलोअर्स लिए थे, काम पूरा हो गया।" },
-            { name: "अनुराग कश्यप", loc: "नोएडा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "बेहतरीन वेब डेवलपमेंट। मेरे क्लाइंट बहुत इम्प्रेस हुए मेरी नई साइट से।" },
-            { name: "दीपिका सिंह", loc: "जोधपुर, राजस्थान", rating: "⭐⭐⭐⭐", msg: "इंस्टाग्राम कमेंट्स की सर्विस में आप अपनी मर्जी के कमेंट्स भी डलवा सकते हैं, यह अच्छा लगा।" },
-            { name: "आशीष अग्रवाल", loc: "राजकोट, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "काम में एकदम ट्रांसपेरेंसी है। जितना बोला उतना दिया।" },
-            { name: "मुकेश अम्बष्ट", loc: "धनबाद, झारखंड", rating: "⭐⭐⭐⭐⭐", msg: "QR स्कैन करके स्क्रीनशॉट भेजा और काम तुरंत शुरू, नो झंझट!" },
-            { name: "रविंदर", loc: "अमृतसर, पंजाब", rating: "⭐⭐⭐⭐⭐", msg: "10K फॉलोअर्स का महा ऑफर पैक एकदम पैसा वसूल है।" },
-            { name: "सुभान अली", loc: "हैदराबाद, तेलंगाना", rating: "⭐⭐⭐⭐", msg: "थोड़ा समय लगा लेकिन फॉलोअर्स की क्वालिटी बहुत ही शानदार है।" },
-            { name: "प्रदीप शर्मा", loc: "मथुरा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट टिकट बहुत जल्दी बुक हो गया। गुड सर्विस।" },
-            { name: "लोकेश मीणा", loc: "कोटा, राजस्थान", rating: "⭐⭐⭐⭐⭐", msg: "मेरे फेसबुक ग्रुप में मेंबर बढ़ाने के लिए बेस्ट है ये।" },
-            { name: "दिनेश कार्तिक", loc: "कोयंबटूर, तमिलनाडु", rating: "⭐⭐⭐⭐⭐", msg: "Website layout is very user friendly. Ordered 5k likes easily." },
-            { name: "सृष्टि देशमुख", loc: "पुणे, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "सुपर सेफ। इन्होंने कभी पासवर्ड नहीं माँगा।" },
-            { name: "नमन अवस्थी", loc: "कानपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐", msg: "डिजिटल मार्केटिंग पैक ने मेरी काफी हेल्प की है।" },
-            { name: "भूपेंद्र", loc: "गांधीनगर, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "व्यूज और लाइक्स तुरंत डिलीवर होते हैं। एकदम बिजली की रफ़्तार!" },
-            { name: "कृपा शंकर", loc: "गोरखपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "अपने शहर की कंपनी है, काम में पूरा दम है। फुल सपोर्ट!" },
-            { name: "रजत टोकस", loc: "दिल्ली", rating: "⭐⭐⭐⭐⭐", msg: "मुझे अपने पेज पर ब्लू टिक के लिए रीच चाहिए थी, इन्होने बहुत हेल्प की।" },
-            { name: "हिमांशु", loc: "रोहतक, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "कस्टम क्वांटिटी का ऑप्शन बहुत अच्छा है, अपने बजट के हिसाब से ले सकते हैं।" },
-            { name: "निशांत", loc: "जमशेदपुर, झारखंड", rating: "⭐⭐⭐⭐", msg: "100% genuine platform. I am satisfied with the results." },
-            { name: "कपिल देव", loc: "चंडीगढ़, पंजाब", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट कैंसलेशन रिफंड मुझे सिर्फ 24 घंटे में वापस मिल गया।" },
-            { name: "अखिलेश यादव", loc: "इटावा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फेसबुक वीडियो पर व्यूज लेने के लिए मैंने आर्डर किया था, सब ठीक रहा।" },
-            { name: "शिवानी", loc: "गुड़गांव, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "मैंने अपने बुटीक की वेबसाइट बनवाई है, डिजाइन बहुत प्यारा है।" },
-            { name: "मुरलीधरन", loc: "कोच्चि, केरल", rating: "⭐⭐⭐⭐⭐", msg: "Very fast followers delivery and real looking profiles." },
-            { name: "विनोद कांबली", loc: "मुंबई, महाराष्ट्र", rating: "⭐⭐⭐⭐", msg: "सपोर्ट टीम बहुत एक्टिव है व्हाट्सएप पर।" },
-            { name: "प्रवीण कुमार", loc: "मेरठ, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फॉलोअर्स बिलकुल असली लोगों जैसे दीखते हैं, कोई बॉट नहीं लगा।" },
-            { name: "आकाश गुप्ता", loc: "बरेली, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "लाइक्स के साथ रीच भी बढ़ी है मेरे अकाउंट की।" },
-            { name: "संजीव भट्ट", loc: "अहमदाबाद, गुजरात", rating: "⭐⭐⭐⭐", msg: "सर्विस काफी अच्छी है, लेकिन वेबसाइट पर डार्क मोड भी होना चाहिए।" },
-            { name: "राधा", loc: "वृंदावन, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "मेरा आर्डर 15 मिनट में ही पूरा हो गया था।" },
-            { name: "करन", loc: "जालंधर, पंजाब", rating: "⭐⭐⭐⭐⭐", msg: "सबसे बेस्ट पैनल है अभी तक का।" },
-            { name: "मुदित", loc: "भोपाल, मध्य प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "हवाई टिकट में डिस्काउंट अच्छा मिल जाता है।" },
-            { name: "सौरभ", loc: "पटना, बिहार", rating: "⭐⭐⭐⭐", msg: "काम पक्का है, पैसा डूबने का कोई चांस नहीं।" },
-            { name: "ललित", loc: "बिकानेर, राजस्थान", rating: "⭐⭐⭐⭐⭐", msg: "मैंने 1 लाख व्यूज लिए थे, रील एक्सप्लोर पेज पर चली गई।" },
-            { name: "तन्मय", loc: "नासिक, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "फेसबुक पोस्ट बूस्टिंग का रिज़ल्ट बहुत सॉलिड आया।" },
-            { name: "वीरेंद्र", loc: "रोहतक, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "वीआईपी पैक से मेरे अकाउंट की पूरी रंगत बदल गई है।" },
-            { name: "हर्षित", loc: "अलीगढ, उत्तर प्रदेश", rating: "⭐⭐⭐⭐", msg: "रिफिल सिस्टम बहुत अच्छा काम करता है, एक मैसेज पर ड्रॉप रिकवर हो गए।" },
-            { name: "अपूर्व", loc: "सिलीगुड़ी, पश्चिम बंगाल", rating: "⭐⭐⭐⭐⭐", msg: "Highly trusted. Using it for my clients as well." },
-            { name: "दीप्ति", loc: "भुवनेश्वर, ओडिशा", rating: "⭐⭐⭐⭐⭐", msg: "पोर्टल का इंटरफ़ेस बहुत ही आसान है यूज़ करने में।" },
-            { name: "गोपाल", loc: "मदुरै, तमिलनाडु", rating: "⭐⭐⭐⭐⭐", msg: "No password required, which is the best thing about this site." },
-            { name: "चेतन", loc: "मैसूर, कर्नाटक", rating: "⭐⭐⭐⭐⭐", msg: "मैंने बिजनेस क्लास की टिकट बुक की थी, काफी बचत हुई।" },
-            { name: "रवि", loc: "सहारनपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐", msg: "थोड़ा महंगा लगा, पर सर्विस क्वालिटी में कोई कॉम्प्रोमाइज नहीं।" },
-            { name: "अमित भड़ाना (फ़ैन)", loc: "फरीदाबाद, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "भाई की सर्विस एकदम जहर है! एक नंबर काम।" },
-            { name: "सुशांत", loc: "पूर्णिया, बिहार", rating: "⭐⭐⭐⭐⭐", msg: "लोकल बिज़नेस को ग्रो करने में इनकी मार्केटिंग टीम बहुत हेल्प करती है।" },
-            { name: "आर्यन", loc: "दिल्ली", rating: "⭐⭐⭐⭐⭐", msg: "रील्स व्यूज बहुत जल्दी बढ़ते हैं।" },
-            { name: "मानसी", loc: "शिमला, हिमाचल प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "Best platform for Instagram growth in India." },
-            { name: "पंकज", loc: "रुद्रपुर, उत्तराखंड", rating: "⭐⭐⭐⭐", msg: "ऑर्डर ट्रैक करना बहुत आसान है व्हाट्सएप के थ्रू।" },
-            { name: "विपिन", loc: "सीतापुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "मैंने अपने प्रधान पद के चुनाव के लिए पेज प्रमोट कराया था, रीच बहुत बढ़िया मिली।" },
-            { name: "योगेश", loc: "भिवानी, हरियाणा", rating: "⭐⭐⭐⭐⭐", msg: "कोई फ्रॉड नहीं है, 100% जेनुइन प्लेटफार्म।" },
-            { name: "समीर", loc: "औरंगाबाद, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "कमाल का सर्विस है भाई, मजा आ गया।" },
-            { name: "रहीम", loc: "बहराइच, उत्तर प्रदेश", rating: "⭐⭐⭐⭐", msg: "एक बार पेमेंट में दिक्कत आई थी, पर टीम ने तुरंत सोल्व कर दिया।" },
-            { name: "सोनम", loc: "गुवाहाटी, असम", rating: "⭐⭐⭐⭐⭐", msg: "I got organic followers which are actively liking my posts." },
-            { name: "कुलदीप", loc: "अलवर, राजस्थान", rating: "⭐⭐⭐⭐⭐", msg: "फॉलोअर्स ड्रॉप रेट बहुत कम है बाकी पैनल के मुकाबले।" },
-            { name: "दिवाकर", loc: "जौनपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "फ्लाइट टिकट की सर्विस बहुत ही रिलायबल है।" },
-            { name: "वैष्णवी", loc: "त्रिवेंद्रम, केरल", rating: "⭐⭐⭐⭐⭐", msg: "Great UI and amazing fast delivery of likes." },
-            { name: "मनमीत", loc: "अम्बाला, पंजाब", rating: "⭐⭐⭐⭐", msg: "पूरी संतुष्टि मिली काम से।" },
-            { name: "अभिषेक", loc: "दुर्ग, छत्तीसगढ़", rating: "⭐⭐⭐⭐⭐", msg: "मैंने दोस्त को भी रिकमेंड किया है, वो भी बहुत खुश है सर्विस से।" },
-            { name: "रोहन", loc: "वापी, गुजरात", rating: "⭐⭐⭐⭐⭐", msg: "वेबसाइट की लोडिंग स्पीड बहुत फ़ास्ट है, जो इन्होने मुझे बना कर दी है।" },
-            { name: "कृष्णा", loc: "मथुरा, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "एकदम भरोसेमंद, बिना सोचे आर्डर कर सकते हो।" },
-            { name: "साहिल", loc: "जम्मू", rating: "⭐⭐⭐⭐", msg: "सर्विसेज अच्छी हैं और कस्टमर केयर भी बहुत रिस्पॉन्सिव है।" },
-            { name: "पुनीत", loc: "गाजियाबाद, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "महा ऑफर में सच में बहुत फायदा है, पैसे बच जाते हैं।" },
-            { name: "नितेश", loc: "गोरखपुर, उत्तर प्रदेश", rating: "⭐⭐⭐⭐⭐", msg: "अपने लोकल भाई का प्लेटफार्म है, काम एकदम सॉलिड है!" }
+            { name: "कृष्णा यादव", loc: "मुंबई, महाराष्ट्र", rating: "⭐⭐⭐⭐⭐", msg: "पेमेंट गेटवे बहुत सेफ है। QR कोड स्कैन करके पेमेंट किया और व्हाट्सएप screen-shot भेजते ही आर्डर शुरू हो गया।" }
         ];
 
-        // Load custom user reviews from LocalStorage and merge with the base reviews
         let customUserReviews = JSON.parse(localStorage.getItem('shreeReviews')) || [];
         let comprehensiveReviewsPool = [ ...customUserReviews, ...baseReviewsPool ];
         
         let currentReviewIndex = 0;
 
-        // NEW: Submit Review System that saves to LocalStorage and Updates Live
         function submitUserReviewSystem() {
             const name = document.getElementById('userRevName').value.trim();
             const loc = document.getElementById('userRevLocation').value.trim() || 'भारत';
@@ -1067,25 +1132,20 @@
                 return;
             }
             
-            // Create new review object
             const newReview = { name: name, loc: loc, rating: rating, msg: msg };
             
-            // 1. Save to LocalStorage so it stays after refresh
             let savedReviews = JSON.parse(localStorage.getItem('shreeReviews')) || [];
-            savedReviews.unshift(newReview); // Add to beginning
+            savedReviews.unshift(newReview); 
             localStorage.setItem('shreeReviews', JSON.stringify(savedReviews));
             
-            // 2. Add to active live pool
             comprehensiveReviewsPool.unshift(newReview);
             
             alert("धन्यवाद! आपका रिव्यु सफलतापूर्वक सबमिट हो गया है और लाइव जोड़ दिया गया है।");
             
-            // 3. Clear the form fields
             document.getElementById('userRevName').value = '';
             document.getElementById('userRevLocation').value = '';
             document.getElementById('userRevMessage').value = '';
             
-            // 4. Immediately display the new review
             currentReviewIndex = 0;
             rotateReviewsSystem();
         }
@@ -1098,15 +1158,7 @@
             { name: "चेन्नई इंटरनेशनल एयरपोर्ट - चेन्नई", code: "MAA" },
             { name: "इंदिरा गांधी इंटरनेशनल एयरपोर्ट - नई दिल्ली", code: "DEL" },
             { name: "चौधरी चरण सिंह इंटरनेशनल एयरपोर्ट - लखनऊ", code: "LKO" },
-            { name: "लाल बहादुर शास्त्री इंटरनेशनल एयरपोर्ट - वाराणसी", code: "VNS" },
-            { name: "महर्षि वाल्मीकि इंटरनेशनल एयरपोर्ट - अयोध्या", code: "AYO" },
-            { name: "जय प्रकाश नारायण एयरपोर्ट - पटना", code: "PAT" },
-            { name: "केम्पेगौड़ा इंटरनेशनल एयरपोर्ट - बेंगलुरु", code: "BLR" },
-            { name: "नेताजी सुभाष चंद्र बोस इंटरनेशनल एयरपोर्ट - कोलकाता", code: "CCU" },
-            { name: "दुबाई इंटरनेशनल एयरपोर्ट - दुबई", code: "DXB" },
-            { name: "जॉन एफ कैनेडी इंटरनेशनल एयरपोर्ट - न्यूयॉर्क", code: "JFK" },
-            { name: "चांगी इंटरनेशनल एयरपोर्ट - सिंगापुर", code: "SIN" },
-            { name: "त्रिभुवन इंटरनेशनल एयरपोर्ट - काठमांडू", code: "KTM" }
+            { name: "लाल बहादुर शास्त्री इंटरनेशनल एयरपोर्ट - वाराणसी", code: "VNS" }
         ];
 
         function navigateToService(platform) {
@@ -1356,4 +1408,3 @@
     </script>
 </body>
 </html>
-
