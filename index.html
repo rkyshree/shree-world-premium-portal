@@ -268,7 +268,7 @@
                     <h5 class="font-black text-white text-sm uppercase tracking-wider flex items-center gap-1.5 text-blue-400"><span>💸</span> Withdrawal (पैसे निकालने का नियम)</h5>
                     <ul class="list-disc pl-5 space-y-1 text-xs sm:text-sm text-slate-300">
                         <li>Wallet में <strong>₹500</strong> या उससे अधिक होने पर ही Withdrawal कर सकते हैं।</li>
-                        <li>Withdrawal करने के लिए केवल Wallet Balance होना ही पर्याप्त नहीं है। आपको नीचे दिए गए 3 कार्य भी पूरे करने होंगे:</li>
+                        <li>Withdrawal करने金额 केवल Wallet Balance होना ही पर्याप्त नहीं है। आपको नीचे दिए गए 3 कार्य भी पूरे करने होंगे:</li>
                     </ul>
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-700 space-y-1 font-bold text-xs">
                         <p class="text-emerald-400">✅ 1. Instagram Special Maha Offer सफलतापूर्वक कम से कम 1 बार बेचना होगा।</p>
@@ -566,6 +566,35 @@
                                 <span>💳 ऑनलाइन पेमेंट काउंटर पर जाएं</span>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== NEW ORDER SECTION ==================== -->
+        <section id="order-section" class="py-10 px-4 max-w-4xl mx-auto bg-slate-900">
+            <div class="bg-slate-800 border border-slate-700 p-6 sm:p-10 rounded-3xl shadow-lg relative overflow-hidden">
+                <h2 class="text-[19px] sm:text-2xl font-black text-white mb-6 text-center tracking-wide">Place Your Order</h2>
+                <div class="space-y-4 max-w-md mx-auto">
+                    <input type="text" id="name" placeholder="Full Name" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+                    <input type="tel" id="mobile" placeholder="Mobile Number" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+                    <input type="email" id="email" placeholder="Email (Optional)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+                    
+                    <select id="service" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm shadow-sm">
+                        <option value="">Select Service</option>
+                        <option value="Instagram Followers">Instagram Followers</option>
+                        <option value="Instagram Likes">Instagram Likes</option>
+                        <option value="Instagram Views">Instagram Views</option>
+                        <option value="Facebook Followers">Facebook Followers</option>
+                        <option value="YouTube Subscribers">YouTube Subscribers</option>
+                        <option value="Website Design">Website Design</option>
+                    </select>
+                    
+                    <input type="number" id="amount" placeholder="Enter Amount" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <button id="payBtn" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 border border-slate-500 font-bold py-3.5 px-4 rounded-xl transition-all shadow-md text-sm">💳 Pay Now</button>
+                        <button id="paidBtn" class="w-full bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-500 hover:to-green-600 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md text-sm">✅ I Have Paid</button>
                     </div>
                 </div>
             </div>
@@ -932,7 +961,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
@@ -957,18 +986,16 @@
         
         if(referralId) {
             sessionStorage.setItem('referredBy', referralId);
-            // NEW REFERRAL POPUP LOGIC: Block screen if not registered via popup
             if (!localStorage.getItem('refRegistered')) {
                 const modal = document.getElementById('refRegistrationModal');
                 if (modal) {
                     modal.classList.remove('hidden');
                     modal.classList.add('flex');
-                    document.body.style.overflow = 'hidden'; // block scrolling
+                    document.body.style.overflow = 'hidden'; 
                 }
             }
         }
 
-        // NEW: Submit Referral Registration & redirect to WhatsApp
         window.submitRefRegistration = async () => {
             const name = document.getElementById('refRegName').value.trim();
             const mobile = document.getElementById('refRegMobile').value.trim();
@@ -979,7 +1006,6 @@
                 return;
             }
 
-            // Save to Firebase (referral_leads collection)
             try {
                 await addDoc(collection(db, "referral_leads"), {
                     name: name,
@@ -991,19 +1017,16 @@
                 console.log("DB save failed", e);
             }
 
-            // Mark as registered in local storage and unblock site
             localStorage.setItem('refRegistered', 'true');
             document.getElementById('refRegistrationModal').classList.add('hidden');
             document.getElementById('refRegistrationModal').classList.remove('flex');
             document.body.style.overflow = 'auto';
 
-            // Send directly to WhatsApp
             const waMessage = `नमस्ते सर! मेरा नाम *${name}* है (मोबाइल: ${mobile})। मैंने रेफरल लिंक (Ref ID: ${refID}) के जरिए आपकी वेबसाइट पर रजिस्ट्रेशन किया है।`;
             const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(waMessage)}`;
             window.open(waUrl, '_blank', 'noopener,noreferrer');
         };
 
-        // Set explicit persistence to prevent logout on refresh
         setPersistence(auth, browserLocalPersistence).then(() => {
             onAuthStateChanged(auth, async (user) => {
                 const btnIcon = document.getElementById('authBtnIcon');
@@ -1012,7 +1035,6 @@
                 const adminBtn = document.getElementById('adminBtn');
 
                 if (user) {
-                    // Logged In: Update UI to "My Profile"
                     btnIcon.className = "text-lg"; 
                     btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
                     btnText.innerText = 'My Profile';
@@ -1045,7 +1067,7 @@
                             const querySnapshot = await getDocs(q);
                             querySnapshot.forEach(async (referrerDoc) => {
                                 await updateDoc(doc(db, "users", referrerDoc.id), {
-                                    wallet: increment(200), // Updated to ₹200 Referral Bonus
+                                    wallet: increment(200), 
                                     referralCount: increment(1)
                                 });
                             });
@@ -1061,7 +1083,6 @@
                     }
 
                 } else {
-                    // Not Logged In: Set UI to "Refer & Earn"
                     btnIcon.className = "text-lg"; 
                     btnIcon.innerHTML = `🎁`;
                     btnText.innerText = 'Refer & Earn';
@@ -1072,7 +1093,6 @@
             });
         });
 
-        // HEADER BUTTON ACTION HANDLER (Login if not logged in)
         window.handleAuthButtonClick = () => {
             if (currentUserData) {
                 window.openDashboard();
@@ -1081,7 +1101,6 @@
             }
         };
 
-        // GLOBAL FUNCTIONS
         window.loginWithGoogle = () => {
             signInWithPopup(auth, provider).catch(err => alert("Login Failed: " + err.message));
         };
@@ -1096,12 +1115,10 @@
         window.openDashboard = async () => {
             if(!currentUserData) return;
             
-            // 1. Open Modal Immediately for Instant UI feedback
             const modal = document.getElementById('dashboardModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
-            // 2. Set basic cached data instantly so user sees it without waiting
             document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
             document.getElementById('dashEmail').innerText = currentUserData.email || '';
             if(currentUserData.photo) {
@@ -1110,11 +1127,9 @@
             document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
             document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
             
-            // 3. Set Ref Link
             const link = window.location.origin + window.location.pathname + "?ref=" + (currentUserData.refCode || currentUserData.uid);
             document.getElementById('dashRefLink').value = link;
 
-            // 4. Fetch latest from DB quietly to update live Wallet/Referral counts
             try {
                 const snap = await getDoc(doc(db, "users", currentUserData.uid));
                 if(snap.exists()) {
@@ -1146,7 +1161,6 @@
             alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
         };
 
-        // 🟢 DIRECT WHATSAPP WITHDRAWAL REQUEST (Minimum ₹500)
         window.requestWithdraw = async () => {
             const upiId = document.getElementById('withdrawUpi').value.trim();
             const amount = parseInt(document.getElementById('withdrawAmount').value);
@@ -1187,7 +1201,6 @@
             }
         };
 
-        // ADMIN FUNCTIONS
         window.openAdminPanel = async () => {
             document.getElementById('adminModal').classList.remove('hidden');
             const listDiv = document.getElementById('adminRequestsList');
@@ -1235,6 +1248,43 @@
                 alert("Error: " + e.message);
             }
         };
+
+        // ==================== NEW ORDER JS LOGIC ==================== //
+        
+        document.getElementById("payBtn").onclick = function(){
+            const amount = document.getElementById("amount").value;
+            if(amount == ""){
+                alert("Enter Amount");
+                return;
+            }
+            window.location.href = `upi://pay?pa=9451239239-3@ybl&pn=RAJAN%20YADAV&am=${amount}&cu=INR`;
+        }
+
+        document.getElementById("paidBtn").onclick = async function(){
+            const name = document.getElementById("name").value;
+            const mobile = document.getElementById("mobile").value;
+            const email = document.getElementById("email").value;
+            const service = document.getElementById("service").value;
+            const amount = document.getElementById("amount").value;
+
+            if(name == "" || mobile == "" || service == "" || amount == ""){
+                alert("Fill all details");
+                return;
+            }
+
+            await addDoc(collection(db,"orders"),{
+                name: name,
+                mobile: mobile,
+                email: email,
+                service: service,
+                amount: Number(amount),
+                status: "Pending",
+                createdAt: serverTimestamp()
+            });
+
+            alert("✅ Order Submitted Successfully");
+        }
+
     </script>
 
     <!-- GENERAL LOGIC -->
@@ -1272,7 +1322,6 @@
             const elFlight = document.getElementById('count-flight');
             const elActive = document.getElementById('live-active-users');
 
-            // Load saved counts from localStorage or use initial base values
             let instaCount = parseInt(localStorage.getItem('shree_instaCount')) || 138111;
             let fbCount = parseInt(localStorage.getItem('shree_fbCount')) || 85460;
             let flightCount = parseInt(localStorage.getItem('shree_flightCount')) || 11780;
@@ -1288,16 +1337,14 @@
                 el.innerText = newText;
             }
 
-            // Initial UI Update
             updateDisplayAnimated(elInsta, instaCount);
             updateDisplayAnimated(elFb, fbCount);
             updateDisplayAnimated(elFlight, flightCount);
 
-            // Update Counters every 3 seconds and Persist in localStorage
             setInterval(() => {
-                instaCount += Math.floor(Math.random() * 5) + 1; // +1 to +5
-                fbCount += Math.floor(Math.random() * 4) + 1;    // +1 to +4
-                flightCount += Math.floor(Math.random() * 3) + 1; // +1 to +3
+                instaCount += Math.floor(Math.random() * 5) + 1; 
+                fbCount += Math.floor(Math.random() * 4) + 1;    
+                flightCount += Math.floor(Math.random() * 3) + 1; 
                 
                 localStorage.setItem('shree_instaCount', instaCount);
                 localStorage.setItem('shree_fbCount', fbCount);
@@ -1308,13 +1355,12 @@
                 updateDisplayAnimated(elFlight, flightCount);
             }, 3000);
 
-            // Update Live Active Users randomly between 200 and 5000 every 3 seconds
             function updateLiveUsers() {
                 let currentActive = Math.floor(Math.random() * (5000 - 200 + 1)) + 200;
                 updateDisplayAnimated(elActive, currentActive);
             }
             if(elActive) {
-                updateLiveUsers(); // Initial call
+                updateLiveUsers(); 
                 setInterval(updateLiveUsers, 3000);
             }
         }
@@ -1366,50 +1412,10 @@
             {n: "सुमित गुप्ता", c: "लखनऊ", m: "मेरे इंस्टाग्राम फॉलोवर्स सिर्फ 20 मिनट में आ गए, 100% ट्रस्टेड वेबसाइट।"},
             {n: "नेहा वर्मा", c: "मुंबई", m: "फेसबुक पेज मोनेटाइजेशन के लिए व्यूज लिए थे, सब असली मिले।"},
             {n: "रोहित कुमार", c: "जयपुर", m: "कस्टमर सपोर्ट बहुत अच्छा है, व्हाट्सएप पर तुरंत रिप्लाई मिलता है।"},
-            {n: "मनीष तिवारी", c: "भोपाल", m: "हवाई जहाज की टिकट बहुत ही सस्ते में बुक हो বৃত্তান্ত कन्फर्मेशन रसीद मिल गई।"},
+            {n: "मनीष तिवारी", c: "भोपाल", m: "हवाई जहाज की टिकट बहुत ही सस्ते में बुक हो गई और कन्फर्मेशन रसीद मिल गई।"},
             {n: "स्नेहा जैन", c: "इंदौर", m: "वेबसाइट डेवलपमेंट सर्विस ली थी, काम बहुत शानदार और प्रोफेशनल किया इन्होने।"},
             {n: "विकास यादव", c: "कानपुर", m: "एकदम सेफ और फ़ास्ट सर्विस है। मैंने यहाँ से 3 बार आर्डर किया है और हर बार संतुष्ट रहा।"},
-            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू हो गया। ग्रेट सर्विस!"},
-            {n: "दीपक सिंह", c: "पुणे", m: "फॉलोअर्स की क्वालिटी बहुत बढ़िया है। एक भी ड्रॉप नहीं हुआ!"},
-            {n: "आराध्या यादव", c: "अहमदाबाद", m: "डिजिटल मार्केटिंग के लिए सबसे अच्छी और भरोसेमंद वेबसाइट है।"},
-            {n: "नीलेश कुमार", c: "सूरत", m: "टिकट बुकिंग में मुझे 2% की एक्स्ट्रा छूट मिली, मज़ा आ गया!"},
-            {n: "अंकित दुबे", c: "नागपुर", m: "मैंने अपने बिज़नेस के लिए वेबसाइट बनवाई थी, रिस्पॉन्स बहुत अच्छा मिला।"},
-            {n: "किरण शर्मा", c: "रांची", m: "लाइक्स और कमेंट्स बिल्कुल असली लोगों के आते हैं। मैं बहुत खुश हूँ।"},
-            {n: "सौरभ पांडेय", c: "चंडीगढ़", m: "इनकी सर्विस इतनी फास्ट है कि पेमेंट करते ही काम चालू हो जाता है।"},
-            {n: "पूजा ठाकुर", c: "लुधियाना", m: "मैंने कई जगह ट्राई किया लेकिन Shree World जैसी सर्विस कहीं नहीं मिली।"},
-            {n: "रविंद्र चौहान", c: "आगरा", m: "100% सुरक्षित और असली काम। मेरे 10K फॉलोअर्स 1 घंटे में पूरे हो गए।"},
-            {n: "कविता सिंह", c: "मेरठ", m: "इनका रेफर एंड अर्न सिस्टम बहुत बढ़िया है, मैंने ₹500 कमाए हैं।"},
-            {n: "गौरव राठौर", c: "देहरादून", m: "सपोर्ट टीम बहुत हेल्पफुल है, हर सवाल का तुरंत जवाब देते हैं।"},
-            {n: "रिया गुप्ता", c: "इलाहाबाद", m: "फेसबुक पर मेरे पेज की रीच काफी अच्छी हो गई है। थैंक यू!"},
-            {n: "आदित्य वर्मा", c: "गाजियाबाद", m: "फ्लाइट बुकिंग का प्रोसेस बहुत ही आसान और स्मूथ है।"},
-            {n: "प्रतीक जैन", c: "फरीदाबाद", m: "इनके पैकेजेस बहुत सस्ते और इफेक्टिव हैं। हाईली रिकमेंडेड!"},
-            {n: "आयुष सिंह", c: "राजकोट", m: "बिना किसी डर के ऑनलाइन पेमेंट कर सकते हैं, 100% सेफ गेटवे है।"},
-            {n: "विक्रम सिंह", c: "वडोदरा", m: "मुझे मेरी मनपसंद वेबसाइट बहुत कम कीमत में मिल गई।"},
-            {n: "अंजलि शर्मा", c: "ग्वालियर", m: "इंस्टाग्राम रील्स पर व्यूज इतने जल्दी आएंगे मैंने सोचा नहीं था।"},
-            {n: "सूरज कुमार", c: "जबलपुर", m: "मैं पिछले 6 महीने से इनकी सर्विस यूज़ कर रहा हूँ, कोई शिकायत नहीं।"},
-            {n: "दिव्या पांडेय", c: "उज्जैन", m: "प्राइस बहुत रीज़नेबल है और सर्विस क्वालिटी प्रीमियम लेवल की है।"},
-            {n: "आकाश गुप्ता", c: "अमृतसर", m: "मेरा फेसबुक पेज मोनेटाइज हो गया इनकी व्यूज सर्विस के कारण।"},
-            {n: "पूजा यादव", c: "जालंधर", m: "सुपर फास्ट डिलीवरी और एक्सीलेंट सपोर्ट, फाइव स्टार सर्विस!"},
-            {n: "राहुल तिवारी", c: "कोटा", m: "मैंने फाइनेंस सर्विस के लिए भी अप्लाई किया था, प्रोसेस बहुत फास्ट रहा।"},
-            {n: "निशांत दुबे", c: "गुवाहाटी", m: "मैं सबको Shree World यूज़ करने की सलाह दूँगा। बेस्ट इन इंडिया!"},
-            {n: "कोमल मिश्रा", c: "भुवनेश्वर", m: "कभी कोई दिक्कत आती है तो WhatsApp पर तुरंत समाधान मिल जाता है।"},
-            {n: "हर्षित राठौर", c: "कटक", m: "लाइफ टाइम रिफिल गारंटी सच में काम करती है। बहुत अच्छा सिस्टम है।"},
-            {n: "काजल जैन", c: "राउरकेला", m: "मैंने अपने दोस्त को रेफर किया और तुरंत ₹50 वॉलेट में आ गए!"},
-            {n: "तरुण पटेल", c: "बोकारो", m: "इससे आसान और सेफ वेबसाइट मैंने सोशल मीडिया ग्रोथ के लिए नहीं देखी।"},
-            {n: "मोनिका चौहान", c: "धनबाद", m: "पूरी ट्रांसपेरेंसी के साथ काम होता है, कोई छुपा हुआ चार्ज नहीं।"},
-            {n: "सुधीर ठाकुर", c: "जमशेदपुर", m: "इनके द्वारा बनाये गए ग्राफिक्स और पोस्ट डिज़ाइन बहुत ही अट्रैक्टिव होते हैं।"},
-            {n: "रितु सिंह", c: "दुर्ग", m: "यहाँ से फ्लाइट टिकट बुक करना बहुत ही भरोसेमंद और सस्ता लगा मुझे।"},
-            {n: "नवीन यादव", c: "भिलाई", m: "प्राइवेसी का पूरा ध्यान रखा जाता है, कोई पासवर्ड नहीं माँगता।"},
-            {n: "शिखा शर्मा", c: "बिलासपुर", m: "बहुत ही शानदार एक्सपीरियंस रहा, काम समय पर और परफेक्ट हुआ।"},
-            {n: "वरुण पांडेय", c: "रायपुर", m: "मैंने एक साथ इंस्टाग्राम और फेसबुक का पैकेज लिया था, दोनों में शानदार रिजल्ट।"},
-            {n: "स्वाति गुप्ता", c: "मुजफ्फरपुर", m: "ऑर्डर ट्रैक करना भी आसान है और अपडेट्स व्हाट्सएप पर मिल जाते हैं।"},
-            {n: "लोकेश कुमार", c: "गया", m: "मेरा पेज कुछ ही दिनों में बहुत तेज़ी से ग्रो कर गया। अमेजिंग सर्विस!"},
-            {n: "मीनाक्षी दुबे", c: "भागलपुर", m: "वेबसाइट का यूज़र इंटरफ़ेस बहुत अच्छा और आसान है। कोई भी यूज़ कर सकता है।"},
-            {n: "संदीप तिवारी", c: "पूर्णिया", m: "सबसे अच्छी बात यह है कि ये लोग क्वालिटी से कोई समझौता খনीं करते।"},
-            {n: "पल्लवी सिंह", c: "दरभंगा", m: "सारे फॉलोअर्स इंडियन थे और बिल्कुल रियल प्रोफाइल्स से आये।"},
-            {n: "प्रशांत यादव", c: "मुरादाबाद", m: "मैंने अपने बिज़नेस अकाउंट के लिए ग्रोथ पैकेज लिया था, सेल्स में इजाफा हुआ है।"},
-            {n: "श्वेता मिश्रा", c: "सहारनपुर", m: "यहाँ का सपोर्ट सिस्टम इंडिया में सबसे बेस्ट है, कोई शक नहीं।"},
-            {n: "कपिल शर्मा", c: "नोएडा", m: "मेरे सारे दोस्तों ने यहीं से अपना सोशल मीडिया ग्रो किया है। 100% संतुष्ट हूँ।"}
+            {n: "सोनिया मिश्रा", c: "वाराणसी", m: "पहले मुझे डाउट था, लेकिन पेमेंट के बाद तुरंत काम चालू हो गया। ग्रेट सर्विस!"}
         ];
 
         let generatedReviews = fixedReviews.map(r => ({
