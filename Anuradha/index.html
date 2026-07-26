@@ -26,24 +26,23 @@
     <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background: #f8fafc !important; /* Light modern background */
+        background: #f8fafc !important; 
         color: #0f172a;
         scroll-behavior: smooth;
         overflow-x: hidden;
-        padding-top: 65px; 
+        padding-top: 70px; 
     }
     
-    /* Image Specific Styles */
     .icon-circle {
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .icon-circle:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
     .offer-card {
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
     }
     
     @keyframes greenLivePulse {
@@ -55,8 +54,20 @@
         width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%;
         display: inline-block; animation: greenLivePulse 1.8s infinite;
     }
+
+    @keyframes priceGreenBlink {
+        0%, 100% { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); } 
+        50% { color: #047857; text-shadow: 0 0 5px rgba(4, 120, 87, 0.1); }   
+    }
+    .green-price-blink { animation: priceGreenBlink 0.8s infinite steps(1); }
     
-    .btn-active-highlight {
+    .btn-active-highlight-dark {
+        border-color: #f97316 !important;
+        background-color: rgba(249, 115, 22, 0.15) !important;
+        color: #f97316 !important;
+    }
+
+    .btn-active-highlight-light {
         border-color: #f97316 !important;
         background-color: rgba(249, 115, 22, 0.05) !important;
         color: #f97316 !important;
@@ -65,7 +76,6 @@
     input:focus, select:focus, textarea:focus {
         border-color: #f97316 !important;
         outline: none !important;
-        box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1) !important;
     }
     
     @keyframes laserScan {
@@ -75,8 +85,6 @@
     
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .tnc-scroll::-webkit-scrollbar { width: 4px; }
-    .tnc-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class='min-h-screen flex flex-col'>
@@ -84,319 +92,214 @@
     <!-- HIDDEN AI VOICE ASSISTANT CONTAINER -->
     <div id="ai-voice-assistant-hidden" class="hidden" aria-hidden="true"></div>
 
-    <!-- ==================== STICKY HEADER (Matches Image) ==================== -->
-    <header class="fixed top-0 left-0 right-0 z-[120] bg-white shadow-sm h-[65px] flex items-center px-4 justify-between transition-all">
+    <!-- ==================== STICKY HEADER ==================== -->
+    <header class="fixed top-0 left-0 right-0 z-[120] bg-white shadow-sm h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all">
         <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
             <div class="flex flex-col justify-center leading-none">
                 <div class="flex items-center">
-                    <span class="text-3xl font-black text-brandOrange mr-1">श्री</span>
-                    <span class="text-xl font-black text-slate-900 tracking-tight">SHREE</span>
-                    <svg class="w-3 h-3 text-blue-500 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-2 15l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"/></svg>
+                    <span class="text-4xl font-black text-brandOrange">श्री</span>
                 </div>
-                <span class="text-[9px] font-bold text-slate-900 uppercase tracking-widest mt-0.5">World Premium Portal</span>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
-            <button id="adminBtn" onclick="openAdminPanel()" class="hidden bg-red-600 text-white rounded-md px-3 py-1.5 shadow-sm text-xs font-bold">
-                Admin
-            </button>
-            
-            <button id="authBtn" onclick="handleAuthButtonClick()" class="bg-emerald-600 text-white rounded-full px-4 py-1.5 shadow-md text-xs sm:text-sm font-bold flex items-center gap-1.5">
-                <span id="authBtnIcon">🎁</span> <span id="authBtnText">Loading...</span>
-            </button>
+            <div class="border-2 border-brandOrange bg-orange-50 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-sm">
+                <span class="green-blink-dot"></span>
+                <span class="font-black text-sm sm:text-base text-slate-800 tracking-wide uppercase">ANURADHA</span>
+            </div>
         </div>
     </header>
 
-    <!-- ==================== REFERRAL REGISTRATION MODAL ==================== -->
-    <div id="refRegistrationModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[999] hidden flex-col items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all border-2 border-brandOrange">
-            <div class="bg-gradient-to-r from-brandOrange to-amber-500 p-6 text-center text-white">
-                <span class="text-4xl block mb-2">🎉</span>
-                <h3 class="font-black text-xl">Welcome to Shree World</h3>
-                <p class="text-xs font-bold mt-1 text-amber-50">वेबसाइट खोलने के लिए कृपया रजिस्टर करें</p>
-            </div>
-            <div class="p-6 space-y-4 bg-slate-50">
-                <div>
-                    <label class="block text-sm font-black text-slate-700 mb-1.5">आपका नाम (Name):</label>
-                    <input type="text" id="refRegName" placeholder="अपना पूरा नाम लिखें..." class="w-full bg-white border border-slate-300 shadow-sm rounded-xl py-3.5 px-4 text-slate-900 font-bold focus:border-brandOrange focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-black text-slate-700 mb-1.5">मोबाइल नंबर (Mobile):</label>
-                    <input type="number" id="refRegMobile" placeholder="अपना 10 अंकों का व्हाट्सएप नंबर..." class="w-full bg-white border border-slate-300 shadow-sm rounded-xl py-3.5 px-4 text-slate-900 font-bold focus:border-brandOrange focus:outline-none">
-                </div>
-                <div class="pt-2">
-                    <button onclick="submitRefRegistration()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 text-sm sm:text-base">
-                        <span>Submit & Connect on WhatsApp</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <main class='flex-grow'>
 
-    <!-- ==================== MY PROFILE DASHBOARD MODAL ==================== -->
-    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div class="bg-brandOrange px-5 py-3.5 flex justify-between items-center text-white shrink-0">
-                <h3 class="font-black text-base flex items-center gap-1.5">👑 My Profile</h3>
-                <button onclick="closeDashboard()" class="text-white text-2xl leading-none">&times;</button>
+        <!-- ==================== WELCOME TEXT SECTION ==================== -->
+        <div class="text-center mt-6 px-4 max-w-md mx-auto mb-8">
+            <h2 class="text-base sm:text-lg font-bold text-slate-700 tracking-wider">WELCOME TO <span class="text-brandBlue font-black text-xl sm:text-2xl">SHREE</span></h2>
+            <h2 class="text-brandRed font-black text-xl sm:text-2xl tracking-wide uppercase mt-0.5">WORLD PREMIUM PORTAL</h2>
+            <p class="text-xs sm:text-sm font-bold text-slate-600 mt-2 bg-slate-100 py-1.5 px-4 rounded-full inline-block border border-slate-200">All Premium Services at One Place</p>
+        </div>
+
+        <!-- ==================== 6 CIRCULAR ICONS GRID (LARGER) ==================== -->
+        <div class="grid grid-cols-3 gap-y-10 gap-x-3 mt-4 px-2 sm:px-4 max-w-lg mx-auto">
+            
+            <!-- Icon 1: Instagram Growth -->
+            <div onclick="navigateToService('instagram')" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-pink-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#E1306C]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Instagram<br>Growth</span>
+            </div>
+
+            <!-- Icon 2: Facebook Growth -->
+            <div onclick="navigateToService('facebook')" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-blue-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Facebook<br>Growth</span>
+            </div>
+
+            <!-- Icon 3: Flight Booking -->
+            <div onclick="navigateToFlight()" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-cyan-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#06b6d4]" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l7 2.5z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Flight<br>Booking</span>
+            </div>
+
+            <!-- Icon 4: Web Development (Redirects to WA) -->
+            <div onclick="window.open('https://wa.me/917011148764?text=' + encodeURIComponent('नमस्ते, मुझे Web Development सर्विस के बारे में जानकारी चाहिए।'), '_blank')" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-emerald-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#10b981]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.5 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Web<br>Development</span>
+            </div>
+
+            <!-- Icon 5: Finance Consultancy -->
+            <div onclick="window.open('https://mysalesboard.in/?dist=DQnzkVsISihDgXv0wV5IVdZakwk1', '_blank')" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-indigo-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#8b5cf6]" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Finance<br>Consultancy</span>
+            </div>
+
+            <!-- Icon 6: Digital Marketing (Redirects to WA) -->
+            <div onclick="window.open('https://wa.me/917011148764?text=' + encodeURIComponent('नमस्ते, मुझे Digital Marketing सर्विस के बारे में जानकारी चाहिए।'), '_blank')" class="flex flex-col items-center justify-start cursor-pointer group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center icon-circle mb-3 border-2 border-orange-100">
+                    <svg class="w-9 h-9 sm:w-11 sm:h-11 text-[#f97316]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm-7-4H9v2h2v-2zm4-4h-2v6h2v-6zm3 2h-2v4h2v-4z"/></svg>
+                </div>
+                <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Digital<br>Marketing</span>
+            </div>
+
+        </div>
+
+        <!-- ==================== TODAY'S OFFER CARD (NEW PREMIUM UI) ==================== -->
+        <div class="mt-14 mb-10 px-4 max-w-md mx-auto relative" id="special-offer">
+            <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-500 to-pink-600 text-white px-8 py-2 rounded-full text-xs font-black tracking-widest shadow-lg z-10 whitespace-nowrap animate-pulse border-2 border-white">
+                TODAY'S OFFER
             </div>
             
-            <div class="p-4 space-y-4 overflow-y-auto tnc-scroll flex-grow bg-slate-50 text-xs">
-                <!-- Profile & Stats UI remains unchanged from functionality -->
-                <div class="flex items-center gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-                    <img id="dashPhoto" src="https://via.placeholder.com/150" alt="Profile" class="w-12 h-12 rounded-full border-2 border-brandOrange shadow-sm object-cover shrink-0">
-                    <div class="overflow-hidden">
-                        <h4 id="dashName" class="font-black text-slate-900 text-sm truncate">Loading...</h4>
-                        <p id="dashEmail" class="text-[10px] text-slate-500 truncate font-semibold">Loading...</p>
-                    </div>
+            <div class="bg-slate-900 rounded-[2.5rem] p-6 pt-10 offer-card border border-amber-500/30 relative text-white shadow-2xl">
+                
+                <div class="text-center mb-4">
+                    <span class="bg-white/10 text-amber-300 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold border border-amber-500/30">📸 इंस्टाग्राम स्पेशल महा ऑफर 📸</span>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl text-center shadow-sm">
-                        <span class="block text-[10px] font-bold text-emerald-700 uppercase tracking-wider mb-0.5">Wallet Balance</span>
-                        <div class="text-2xl font-black text-emerald-600">₹<span id="dashWallet">0</span></div>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200 p-3 rounded-2xl text-center shadow-sm">
-                        <span class="block text-[10px] font-bold text-blue-700 uppercase tracking-wider mb-0.5">Total Referrals</span>
-                        <div class="text-2xl font-black text-blue-600" id="dashRefs">0</div>
-                    </div>
-                </div>
-                <div class="bg-orange-50 border border-orange-200 p-3 rounded-2xl shadow-sm space-y-1.5">
-                    <h5 class="font-black text-xs text-orange-900 flex items-center gap-1"><span>🎁</span> Refer & Earn (₹200 / Referral)</h5>
-                    <div class="flex items-center gap-1.5 bg-white p-1.5 rounded-xl border border-orange-200">
-                        <input type="text" id="dashRefLink" readonly class="w-full bg-transparent px-1 text-[10px] text-slate-700 font-bold focus:outline-none truncate">
-                        <button onclick="copyRefLink()" class="bg-brandOrange text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-sm shrink-0">Copy</button>
-                    </div>
-                </div>
-                <div class="bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm space-y-2.5">
-                    <h5 class="font-black text-xs text-slate-800 flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹500)</h5>
-                    <div class="space-y-2">
-                        <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe नंबर दें" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-bold text-slate-800">
-                        <div class="flex gap-2">
-                            <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2 px-3 text-xs font-bold text-slate-800">
-                            <button onclick="requestWithdraw()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs">
-                                Withdraw
-                            </button>
+                
+                <h3 class="text-center font-black text-2xl sm:text-3xl text-amber-400 mb-5 tracking-wide">इंस्टाग्राम स्पेशल पैक धमाका</h3>
+                
+                <!-- Pricing Box -->
+                <div class="bg-slate-800 rounded-2xl p-5 flex justify-between items-center border border-slate-700 mb-6 shadow-inner">
+                    <div class="w-full">
+                        <span class="bg-amber-900/50 text-amber-400 text-[10px] px-3 py-1 rounded-md uppercase font-black tracking-widest block w-max mb-2 border border-amber-700/50">Limited Offer</span>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <div class="text-slate-400 line-through text-xs sm:text-sm font-bold mb-1">Price: ₹4,999/-</div>
+                                <div class="text-3xl sm:text-4xl font-black green-price-blink">₹1999/-</div>
+                            </div>
+                            <span class="text-[10px] sm:text-xs bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 px-3 py-1 rounded-lg font-bold mb-1">Net Price</span>
                         </div>
                     </div>
                 </div>
-                <button onclick="logoutUser()" class="w-full border border-red-400 text-red-600 hover:bg-red-50 font-bold py-2.5 rounded-xl transition-all shrink-0 text-xs">🚪 Logout (बाहर जाएँ)</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- ==================== ADMIN PANEL MODAL ==================== -->
-    <div id="adminModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-            <div class="bg-slate-900 p-5 flex justify-between items-center text-white border-b-4 border-red-500">
-                <h3 class="font-black text-lg flex items-center gap-2">⚙️ Admin Control Panel</h3>
-                <button onclick="closeAdminPanel()" class="text-white hover:text-red-400 text-3xl leading-none">&times;</button>
-            </div>
-            <div class="p-6 h-[400px] overflow-y-auto bg-slate-50 tnc-scroll">
-                <h4 class="font-black text-slate-800 mb-4 text-sm uppercase tracking-wider">Pending Withdrawal Requests</h4>
-                <div id="adminRequestsList" class="space-y-3">
-                    <p class="text-slate-500 text-sm text-center py-10">Loading requests...</p>
+                <!-- Features Grid -->
+                <div class="grid grid-cols-3 gap-3 text-center mb-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-3 shadow-sm">
+                        <div class="text-2xl mb-1 text-amber-400">👑</div>
+                        <div class="text-[10px] sm:text-xs font-black text-slate-200">10K Followers</div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-3 shadow-sm">
+                        <div class="text-2xl mb-1 text-red-500">❤️</div>
+                        <div class="text-[10px] sm:text-xs font-black text-slate-200">10K Likes</div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-3 shadow-sm">
+                        <div class="text-2xl mb-1 text-cyan-400">👁️</div>
+                        <div class="text-[10px] sm:text-xs font-black text-slate-200">10K Views</div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- ==================== TOP GREEN PROMO BANNER (Matches Image) ==================== -->
-    <div class="px-4 mt-6 max-w-md mx-auto">
-        <div class="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-5 text-center shadow-lg relative overflow-hidden text-white cursor-pointer" onclick="document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' })">
-            <div class="flex justify-center mb-1">
-                <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm">
-                    <span>🔥</span> Limited Time Offer!
-                </span>
-            </div>
-            <h3 class="font-bold text-base sm:text-lg mb-3">Get Upto <span class="font-black text-yellow-300">20% OFF</span> on All Services</h3>
-            <button class="bg-white text-emerald-700 font-bold px-6 py-2 rounded-full text-xs shadow-md uppercase tracking-wide">SHOP NOW</button>
-        </div>
-    </div>
-
-    <!-- ==================== WELCOME TEXT SECTION (Matches Image) ==================== -->
-    <div class="text-center mt-8 px-4 max-w-md mx-auto">
-        <h2 class="text-sm sm:text-base font-bold text-slate-700 tracking-wider">WELCOME TO <span class="text-brandBlue font-black text-lg sm:text-xl">SHREE</span></h2>
-        <h2 class="text-brandRed font-black text-lg sm:text-xl tracking-wide uppercase">WORLD PREMIUM PORTAL</h2>
-        <p class="text-xs sm:text-sm font-medium text-slate-600 mt-1">All Premium Services at One Place</p>
-        <button onclick="document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' })" class="mt-4 bg-yellow-400 text-slate-900 font-bold px-8 py-2.5 rounded-full text-sm shadow-md hover:bg-yellow-500 transition-all">Order Now</button>
-    </div>
-
-    <!-- ==================== 6 CIRCULAR ICONS GRID (Matches Image) ==================== -->
-    <div class="grid grid-cols-3 gap-y-8 gap-x-2 mt-10 px-2 sm:px-4 max-w-md mx-auto">
-        
-        <!-- Icon 1 -->
-        <div onclick="navigateToService('instagram')" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#E1306C]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Instagram<br>Growth</span>
-        </div>
-
-        <!-- Icon 2 -->
-        <div onclick="navigateToService('facebook')" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Facebook<br>Growth</span>
-        </div>
-
-        <!-- Icon 3 -->
-        <div onclick="navigateToFlight()" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#06b6d4]" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l7 2.5z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Flight<br>Booking</span>
-        </div>
-
-        <!-- Icon 4 -->
-        <div onclick="document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' })" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#10b981]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.5 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.53c-.26-.81-1-1.4-1.9-1.4h-1v-3c0-.55-.45-1-1-1h-6v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Web<br>Development</span>
-        </div>
-
-        <!-- Icon 5 -->
-        <div onclick="window.open('https://mysalesboard.in/?dist=DQnzkVsISihDgXv0wV5IVdZakwk1', '_blank')" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#8b5cf6]" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Finance<br>Consultancy</span>
-        </div>
-
-        <!-- Icon 6 -->
-        <div onclick="document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' })" class="flex flex-col items-center justify-start cursor-pointer group">
-            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full flex items-center justify-center icon-circle mb-2 border border-slate-100">
-                <svg class="w-7 h-7 sm:w-9 sm:h-9 text-[#f97316]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 16H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm-7-4H9v2h2v-2zm4-4h-2v6h2v-6zm3 2h-2v4h2v-4z"/></svg>
-            </div>
-            <span class="text-[10px] sm:text-xs font-bold text-slate-800 text-center leading-tight">Digital<br>Marketing</span>
-        </div>
-
-    </div>
-
-    <!-- ==================== TODAY'S OFFER CARD (Matches Image) ==================== -->
-    <div class="mt-12 mb-8 px-4 max-w-md mx-auto relative" id="special-offer">
-        <!-- Red Badge Overlapping -->
-        <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-400 to-red-500 text-white px-6 py-1.5 rounded-full text-xs font-black tracking-wider shadow-md z-10 whitespace-nowrap">
-            TODAY'S OFFER
-        </div>
-        
-        <div class="bg-white rounded-[2rem] p-6 pt-8 offer-card border border-slate-100 relative">
-            <h3 class="text-center font-black text-xl text-slate-900 mb-4">Instagram Followers</h3>
-            
-            <ul class="text-xs sm:text-sm font-medium text-slate-600 space-y-1.5 pl-2 mb-6">
-                <li class="flex items-center gap-2"><span class="text-emerald-500 font-bold">•</span> Real & Active</li>
-                <li class="flex items-center gap-2"><span class="text-emerald-500 font-bold">•</span> Instant Start</li>
-                <li class="flex items-center gap-2"><span class="text-emerald-500 font-bold">•</span> 100% Safe</li>
-            </ul>
-            
-            <div class="mb-5">
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Starting From</span>
-                <span class="text-3xl font-black text-emerald-600">₹1999</span>
-            </div>
-
-            <div class='mb-5'>
-                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-brandOrange text-xs font-medium' id='promo-link' placeholder='Paste Instagram Profile / Post Link Here...' type='text'/>
-            </div>
-            
-            <div class="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-slate-500 mb-5 px-1">
-                <div class="flex items-center gap-1"><span class="text-base">🚀</span> Fast Delivery</div>
-                <div class="flex items-center gap-1"><span class="text-base">👥</span> Real Users</div>
-                <div class="flex items-center gap-1"><span class="text-base">🎧</span> 24x7 Support</div>
-            </div>
-            
-            <button onclick='submitPromoOrder()' class="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white font-bold py-3.5 rounded-2xl shadow-[0_4px_15px_rgba(249,115,22,0.3)] hover:shadow-[0_6px_20px_rgba(249,115,22,0.4)] transition-all flex items-center justify-center gap-2 text-sm">
-                <svg class='w-5 h-5 fill-current' viewBox='0 0 24 24'><path d='M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z'/></svg>
-                Order on WhatsApp
-            </button>
-        </div>
-    </div>
-
-
-    <!-- ========================================================================= -->
-    <!-- BELOW THIS LINE ARE THE INTERACTIVE PANELS (Maintained Original Functions) -->
-    <!-- ========================================================================= -->
-    
-    <main class='flex-grow'>
-
-        <!-- LIVE TRACKER THIN FULL WIDTH BANNER -->
-        <div class='w-full bg-slate-100 border-y border-slate-200 py-3 flex justify-center items-center relative z-[110]' id='live-tracker-section'>
-            <div class='flex items-center gap-2 px-2 w-full justify-center'>
-                <span class='green-blink-dot flex-shrink-0'></span>
-                <div id='liveDynamicText' class='tracker-fade-text text-slate-700 font-bold text-xs tracking-wide text-center w-full'>
-                    Someone from <strong class="text-brandOrange">Mumbai</strong> just purchased 10k Instagram Followers 📸
+                <!-- Input Box -->
+                <div class="mb-6 text-left">
+                    <label class="block text-xs sm:text-sm font-bold text-slate-300 mb-2 pl-1">अपना इंस्टाग्राम प्रोफ़ाइल यूजरनेम, पोस्ट या रील का लिंक डालें:</label>
+                    <input class="w-full bg-slate-800 border border-slate-600 rounded-2xl py-4 px-5 text-white text-xs sm:text-sm focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none shadow-inner font-medium" id='promo-link' placeholder="यहाँ प्रोफाइल नाम लिखें या लिंक पेस्ट करें..." />
                 </div>
-            </div>
-        </div>
-
-        <!-- CATEGORY 1: INTERACTIVE SERVICE PANEL -->
-        <section class='py-10 px-4 max-w-4xl mx-auto bg-white' id='social-growth'>
-            <div class='text-center mb-6 bg-blue-50/50 p-6 rounded-2xl border border-blue-100 shadow-sm relative overflow-hidden'>
-                <span class='text-blue-600 font-black tracking-widest block text-[10px] uppercase mb-1'>Interactive Service Panel 📈</span>
-                <h2 class='text-lg sm:text-xl font-black mb-1 text-slate-900'>Customize Your Growth Service</h2>
-                <p class='text-xs text-slate-500 font-medium'>Select platform, service type, and enter quantity below</p>
-            </div>
-
-            <div class='grid grid-cols-2 gap-4 max-w-md mx-auto mb-6'>
-                <button class='flex items-center justify-center space-x-2 p-3.5 rounded-xl border transition-all bg-white border-slate-200 text-slate-800 shadow-sm' id='btn-instagram' onclick='selectPlatform("instagram")'>
-                    <span class='text-xl'>📸</span>
-                    <span class='font-bold text-sm sm:text-base'>Instagram</span>
+                
+                <button onclick='submitPromoOrder()' class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-black py-4 rounded-2xl shadow-[0_4px_20px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                    व्हाट्सएप पर आर्डर बुक करें 🚀
                 </button>
-                <button class='flex items-center justify-center space-x-2 p-3.5 rounded-xl border transition-all bg-white border-slate-200 text-slate-800 shadow-sm' id='btn-facebook' onclick='selectPlatform("facebook")'>
-                    <span class='text-xl'>👥</span>
-                    <span class='font-bold text-sm sm:text-base'>Facebook</span>
+            </div>
+        </div>
+
+        <!-- ==================== NEW MODEL: INTERACTIVE SERVICE PANEL ==================== -->
+        <section class='py-12 px-4 max-w-4xl mx-auto bg-slate-50' id='social-growth'>
+            <!-- Premium Header -->
+            <div class='text-center mb-8 bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden'>
+                <div class="absolute -right-10 -top-10 text-white/5 text-9xl font-black">📈</div>
+                <span class='text-amber-400 font-black tracking-widest block text-[10px] sm:text-xs uppercase mb-2 relative z-10'>Interactive Service Panel</span>
+                <h2 class='text-xl sm:text-3xl font-black mb-2 relative z-10'>अपनी पसंद की सेवा चुनें और आर्डर चालू करें</h2>
+                <p class='text-xs sm:text-sm text-slate-300 font-medium relative z-10'>नीचे बटन दबाकर इंस्टाग्राम या फेसबुक चुनें, फिर क्वांटिटी सेट करें</p>
+            </div>
+
+            <!-- Platform Selector -->
+            <div class='grid grid-cols-2 gap-4 max-w-md mx-auto mb-8'>
+                <button class='flex items-center justify-center space-x-2 py-4 px-2 rounded-2xl border-2 transition-all bg-white border-slate-200 text-slate-800 shadow-sm font-bold text-sm sm:text-base' id='btn-instagram' onclick='selectPlatform("instagram")'>
+                    <span class='text-2xl'>📸</span>
+                    <span>इंस्टाग्राम</span>
+                </button>
+                <button class='flex items-center justify-center space-x-2 py-4 px-2 rounded-2xl border-2 transition-all bg-white border-slate-200 text-slate-800 shadow-sm font-bold text-sm sm:text-base' id='btn-facebook' onclick='selectPlatform("facebook")'>
+                    <span class='text-2xl'>👥</span>
+                    <span>फेसबुक</span>
                 </button>
             </div>
 
-            <div class='max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 relative overflow-hidden shadow-lg' id='config-area'>
+            <!-- Dark Theme Config Area -->
+            <div class='max-w-2xl mx-auto bg-slate-900 border border-slate-700 rounded-[2rem] p-6 sm:p-8 relative overflow-hidden shadow-2xl text-slate-200' id='config-area'>
                 <div class='space-y-6 relative z-10'>
-                    <div class='flex items-center justify-between border-b border-slate-100 pb-3'>
-                        <span class='text-xs font-bold text-slate-500 uppercase tracking-widest'>SERVICE SETUP</span>
-                        <span class='text-[10px] font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full border border-amber-200' id='selected-platform-label'></span>
+                    <div class='flex items-center justify-between border-b border-slate-700 pb-4'>
+                        <span class='text-xs font-bold text-slate-400 uppercase tracking-widest'>सर्विस SETUP</span>
+                        <span class='text-[10px] sm:text-xs font-bold bg-amber-900/50 text-amber-400 px-4 py-1.5 rounded-full border border-amber-700/50' id='selected-platform-label'></span>
                     </div>
 
                     <div>
-                        <label class='block text-xs sm:text-sm font-bold text-slate-700 mb-2.5'>Select Service Type:</label>
-                        <div class='grid grid-cols-2 sm:grid-cols-4 gap-2.5' id='service-options-container'></div>
+                        <label class='block text-xs sm:text-sm font-bold text-slate-300 mb-3'>आपको क्या बढ़ना है चुनें (Service Type):</label>
+                        <div class='grid grid-cols-2 sm:grid-cols-4 gap-3' id='service-options-container'></div>
                     </div>
 
-                    <div id='conditionalPlansWrapper' class='hidden space-y-6'>
+                    <div id='conditionalPlansWrapper' class='hidden space-y-6 pt-2'>
                         <div>
-                            <label class='block text-xs sm:text-sm font-bold text-slate-700 mb-2'>Custom Quantity:</label>
-                            <div class='relative rounded-xl overflow-hidden bg-white border border-slate-200 shadow-sm'>
-                                <input class='w-full bg-transparent py-3 px-4 text-slate-900 focus:outline-none text-sm font-bold placeholder-slate-400' id='custom-quantity-input' oninput='calculateCustomPrice()' placeholder='e.g., 500, 2500...' type='number'/>
-                                <div class='absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 font-bold uppercase'>Units</div>
+                            <label class='block text-xs sm:text-sm font-bold text-slate-300 mb-2'>अपनी मर्जी की गिनती लिखें (Custom Quantity):</label>
+                            <div class='relative rounded-xl overflow-hidden bg-slate-800 border border-slate-600 focus-within:border-brandOrange transition-all shadow-inner'>
+                                <input class='w-full bg-transparent py-4 px-4 text-white focus:outline-none text-sm font-bold placeholder-slate-500' id='custom-quantity-input' oninput='calculateCustomPrice()' placeholder='जैसे: 500, 2500 आदि...' type='number'/>
+                                <div class='absolute right-4 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-bold'>संख्या</div>
                             </div>
                         </div>
 
                         <div>
-                            <div class='flex justify-between items-center mb-2.5'>
-                                <label class='block text-xs sm:text-sm font-bold text-slate-700'>Or Choose a Package:</label>
+                            <div class='flex justify-between items-center mb-3'>
+                                <label class='block text-xs sm:text-sm font-bold text-slate-300'>या हमारे बेस्ट रेडीमेड प्लान चुनें:</label>
+                                <span class='text-[10px] sm:text-xs text-amber-400 font-bold bg-slate-800 px-3 py-1 rounded-lg border border-slate-700' id='custom-qty-display'></span>
                             </div>
                             <div class='grid grid-cols-1 sm:grid-cols-2 gap-3' id='quantity-grid'></div>
                         </div>
 
-                        <div class='bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-between'>
+                        <div class='bg-slate-800 border border-slate-700 p-5 rounded-2xl flex items-center justify-between shadow-inner'>
                             <div>
-                                <span class='text-[10px] font-bold text-slate-500 block uppercase tracking-wider'>Final Price</span>
-                                <div class='flex items-baseline space-x-2 mt-0.5'>
-                                    <span class='text-2xl sm:text-3xl font-black text-slate-900' id='display-final-price'>₹0.00</span>
+                                <span class='text-[10px] sm:text-xs font-bold text-slate-400 block uppercase tracking-wide'>कुल पक्का दाम (+20% एक्स्ट्रा ऑफर)</span>
+                                <div class='flex items-baseline space-x-2 mt-1'>
+                                    <span class='text-3xl sm:text-4xl font-black text-white' id='display-final-price'>₹0.00</span>
                                 </div>
                             </div>
-                            <span class='bg-emerald-100 text-emerald-700 font-bold text-[10px] px-3 py-1 rounded-md uppercase'>Best Value</span>
+                            <span class='bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 font-bold text-[10px] sm:text-xs px-4 py-1.5 rounded-lg uppercase'>बेस्ट सेवा</span>
                         </div>
 
                         <div>
-                            <label class='block text-xs sm:text-sm font-bold text-slate-700 mb-2' for='target-link'>Target Link / Username:</label>
-                            <input class='w-full bg-white border border-slate-200 shadow-sm rounded-xl py-3 px-4 text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:border-brandOrange' id='target-link' placeholder='Paste profile or post link here...' type='text'/>
+                            <label class='block text-xs sm:text-sm font-bold text-slate-300 mb-2' for='target-link'>अपने अकाउंट का नाम (Username) या POST का लिंक डालें:</label>
+                            <input class='w-full bg-slate-800 border border-slate-600 shadow-inner rounded-xl py-4 px-4 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-brandOrange' id='target-link' placeholder='यहाँ सही से लिंक या नाम भरें...' type='text'/>
                         </div>
-                        <div class='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2'>
-                            <button class='w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-md' id='submit-order-btn' onclick='socialOrderAutoBonus()'>
-                                <span>🚀 Order on WhatsApp</span>
+                        <div class='grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4'>
+                            <button class='w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black py-4 px-4 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm sm:text-base shadow-lg' id='submit-order-btn' onclick='socialOrderAutoBonus()'>
+                                <span>🚀 व्हाट्सएप पर काम चालू करवाएं</span>
                             </button>
-                            <button class='w-full bg-white text-slate-700 border border-slate-300 font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm shadow-sm hover:bg-slate-50' onclick='document.getElementById("secure-payment").scrollIntoView({ behavior: "smooth" })'>
-                                <span>💳 Proceed to Payment</span>
+                            <button class='w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-black py-4 px-4 rounded-xl transition-all flex items-center justify-center space-x-2 text-sm sm:text-base shadow-md' onclick='document.getElementById("secure-payment").scrollIntoView({ behavior: "smooth" })'>
+                                <span>💳 ऑनलाइन पेमेंट काउंटर पर जाएं</span>
                             </button>
                         </div>
                     </div>
@@ -404,59 +307,74 @@
             </div>
         </section>
 
-        <!-- CATEGORY 2: PREMIUM FLIGHT DESK -->
-        <section class='py-12 px-4 bg-slate-50 border-y border-slate-200' id='flight-booking'>
+        <!-- ==================== NEW MODEL: PREMIUM FLIGHT DESK ==================== -->
+        <section class='py-12 px-4 bg-slate-100 border-y border-slate-200' id='flight-booking'>
             <div class='max-w-4xl mx-auto'>
-                <div class='text-center mb-6'>
-                    <span class='text-cyan-600 font-black tracking-widest block text-[10px] uppercase mb-1'>Premium Flight Desk ✈️</span>
-                    <h2 class='text-xl sm:text-2xl font-black mb-1.5 text-slate-900'>✈️ Global Flight Booking Hub</h2>
+                <div class='text-center mb-8'>
+                    <span class='text-cyan-600 font-black tracking-widest block text-[10px] sm:text-xs uppercase mb-2'>Premium Flight Desk ✈️</span>
+                    <h2 class='text-2xl sm:text-3xl font-black mb-3 text-slate-900'>Global Flight Booking Hub</h2>
+                    <p class='text-xs sm:text-sm text-cyan-800 font-extrabold uppercase tracking-wider bg-cyan-100 py-2 px-5 rounded-full inline-block shadow-sm border border-cyan-200'>
+                        ✈️ स्पेशल छूट: भारत फ्लाइट 1% ऑफ | विदेश यात्रा 2% ऑफ
+                    </p>
                 </div>
-                <div class='bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-sm'>
-                    <div class='flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 border-b border-slate-100 pb-6'>
-                        <button id='flight-dom-btn' class='w-full sm:w-auto text-center py-3 px-6 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 bg-white hover:border-brandOrange transition-all' onclick='toggleInteractiveFlight("domestic")'>✈️ Domestic Flights</button>
-                        <button id='flight-int-btn' class='w-full sm:w-auto text-center py-3 px-6 rounded-xl border border-slate-200 font-bold text-sm text-slate-700 bg-white hover:border-brandOrange transition-all' onclick='toggleInteractiveFlight("international")'>🌐 International Trips</button>
+                
+                <!-- Boarding Pass Style Card -->
+                <div class='bg-white rounded-3xl p-6 sm:p-10 shadow-[0_15px_40px_rgba(0,0,0,0.08)] border-t-[12px] border-cyan-500 relative'>
+                    <!-- Decorative cutouts for boarding pass look -->
+                    <div class="hidden sm:block absolute -left-4 top-[85px] w-8 h-8 bg-slate-100 rounded-full border-r border-slate-200"></div>
+                    <div class="hidden sm:block absolute -right-4 top-[85px] w-8 h-8 bg-slate-100 rounded-full border-l border-slate-200"></div>
+
+                    <div class='flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 border-b-2 border-dashed border-slate-200 pb-8'>
+                        <button id='flight-dom-btn' class='w-full sm:w-auto text-center py-3.5 px-8 rounded-xl border-2 font-bold text-sm text-slate-700 bg-slate-50 hover:border-brandOrange transition-all' onclick='toggleInteractiveFlight("domestic")'>✈️ Domestic (भारत के अंदर)</button>
+                        <button id='flight-int-btn' class='w-full sm:w-auto text-center py-3.5 px-8 rounded-xl border-2 font-bold text-sm text-slate-700 bg-slate-50 hover:border-brandOrange transition-all' onclick='toggleInteractiveFlight("international")'>🌐 International (विदेश यात्रा)</button>
                     </div>
-                    <div id='conditionalFlightFormWrapper' class='hidden space-y-4'>
-                        <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
+                    
+                    <div id='conditionalFlightFormWrapper' class='hidden space-y-5'>
+                        <div class='grid grid-cols-1 sm:grid-cols-3 gap-5 text-sm'>
                             <div class='relative'>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>🛫 From:</label>
-                                <input autocomplete='off' class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-from' oninput='showSuggestions("flight-from", "from-suggestions")' placeholder='City or Airport...' type='text'/>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>🛫 From City</label>
+                                <input autocomplete='off' class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold placeholder-slate-400' id='flight-from' oninput='showSuggestions("flight-from", "from-suggestions")' placeholder='शहर या एयरपोर्ट...' type='text'/>
                                 <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl z-50 shadow-lg' id='from-suggestions'></div>
                             </div>
                             <div class='relative'>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>🛬 To:</label>
-                                <input autocomplete='off' class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-to' oninput='showSuggestions("flight-to", "to-suggestions")' placeholder='City or Airport...' type='text'/>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>🛬 To City</label>
+                                <input autocomplete='off' class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold placeholder-slate-400' id='flight-to' oninput='showSuggestions("flight-to", "to-suggestions")' placeholder='शहर या एयरपोर्ट...' type='text'/>
                                 <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-xl z-50 shadow-lg' id='to-suggestions'></div>
                             </div>
                             <div>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>📅 Travel Date:</label>
-                                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-date' type='date'/>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>📅 Travel Date</label>
+                                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold' id='flight-date' type='date'/>
                             </div>
                         </div>
-                        <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
+                        <div class='grid grid-cols-1 sm:grid-cols-3 gap-5 text-sm pt-2'>
                             <div>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>👤 Passenger Name:</label>
-                                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-passenger-name' placeholder='Full Name...' type='text'/>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>👤 Passenger Name</label>
+                                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold placeholder-slate-400' id='flight-passenger-name' placeholder='यात्री का पूरा नाम...' type='text'/>
                             </div>
                             <div>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>👥 Passengers:</label>
-                                <select class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-total-count'>
-                                    <option value='1 Person'>1 Person</option>
-                                    <option value='2 People'>2 People</option>
-                                    <option value='3+ People'>3+ People</option>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>👥 Total Passengers</label>
+                                <select class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold' id='flight-total-count'>
+                                    <option value='1 Person'>1 व्यक्ति</option>
+                                    <option value='2 People'>2 लोग</option>
+                                    <option value='3 People'>3 लोग</option>
+                                    <option value='4 People'>4 लोग</option>
+                                    <option value='5+ People'>5+ लोग</option>
                                 </select>
                             </div>
                             <div>
-                                <label class='block text-xs font-bold text-slate-600 mb-1.5'>💺 Class:</label>
-                                <select class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:border-brandOrange text-xs font-medium' id='flight-class-category'>
+                                <label class='block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2'>💺 Cabin Class</label>
+                                <select class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3.5 px-4 text-slate-900 focus:outline-none focus:border-cyan-500 text-sm font-bold' id='flight-class-category'>
                                     <option value='Economy Class'>Economy Class</option>
+                                    <option value='Premium Economy'>Premium Economy</option>
                                     <option value='Business Class'>Business Class</option>
                                 </select>
                             </div>
                         </div>
-                        <button class='w-full mt-2 bg-brandOrange text-white font-bold py-3.5 px-4 rounded-xl transition-all text-sm shadow-md' onclick='executeFlightOrderAutoBonus()'>
-                            Check Fare & Book on WhatsApp
-                        </button>
+                        <div class="pt-4 border-t-2 border-dashed border-slate-200 mt-4">
+                            <button class='w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black py-4 px-4 rounded-2xl transition-all text-sm sm:text-base shadow-lg hover:shadow-xl transform hover:-translate-y-1' onclick='executeFlightOrderAutoBonus()'>
+                                ✈️ व्हाट्सएप पर टिकट का दाम पता करें और बुक करें
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -464,57 +382,104 @@
 
         <!-- पेमेंट ट्रांसफर काउंटर -->
         <section class='py-16 px-4 bg-white' id='secure-payment'>
-            <div class='max-w-4xl mx-auto bg-white border border-slate-100 p-6 sm:p-10 rounded-3xl shadow-xl relative overflow-hidden'>
-                <div class='text-center mb-8'>
-                    <div class='inline-block bg-emerald-50 text-emerald-600 font-bold text-[10px] px-3 py-1 rounded-full mb-3 border border-emerald-100'>
-                        🛡️ 100% Safe Payment Gateway
+            <div class='max-w-4xl mx-auto bg-white border border-slate-200 p-6 sm:p-10 rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative overflow-hidden'>
+                <div class='text-center mb-10'>
+                    <div class='inline-block bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-5 py-2 rounded-full mb-4 border border-emerald-200'>
+                        🛡️ 100% सुरक्षित और सेफ पेमेंट ट्रांसफर काउंटर
                     </div>
-                    <h2 class='text-2xl font-black text-slate-900'>Secure UPI Transfer</h2>
+                    <h2 class='text-2xl sm:text-4xl font-black text-slate-900 mb-2'>आसान Online पेमेंट Center (UPI)</h2>
+                    <p class='text-xs sm:text-sm text-slate-500 font-medium'>Google Pay, PhonePe, या Paytm से तुरंत पेमेंट स्कैन करके भेजें।</p>
                 </div>
                 
-                <div class='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'>
-                    <div class='space-y-5'>
+                <div class='grid grid-cols-1 md:grid-cols-2 gap-10 items-center'>
+                    <div class='space-y-6'>
                         <div>
-                            <label class='block text-xs font-bold text-slate-600 mb-2'>Select Purpose:</label>
-                            <div class='grid grid-cols-3 gap-2' id='paymentPurposeGroup'>
-                                <button class='pay-purpose-btn py-2.5 px-2 rounded-lg border text-[10px] font-bold bg-slate-50 border-slate-200 text-slate-600' id='pay-for-insta' onclick='setPaymentPurpose("Instagram")'>📸 Instagram</button>
-                                <button class='pay-purpose-btn py-2.5 px-2 rounded-lg border text-[10px] font-bold bg-slate-50 border-slate-200 text-slate-600' id='pay-for-fb' onclick='setPaymentPurpose("Facebook")'>👥 Facebook</button>
-                                <button class='pay-purpose-btn py-2.5 px-2 rounded-lg border text-[10px] font-bold bg-slate-50 border-slate-200 text-slate-600' id='pay-for-flight' onclick='setPaymentPurpose("Flight")'>✈️ Flight</button>
+                            <label class='block text-xs sm:text-sm font-bold text-slate-700 mb-3'>किस काम के लिए पेमेंट कर रहे हैं चुनें:</label>
+                            <div class='grid grid-cols-3 gap-2.5' id='paymentPurposeGroup'>
+                                <button class='pay-purpose-btn py-3 px-2 rounded-xl border-2 text-xs sm:text-sm font-bold bg-slate-50 border-slate-200 text-slate-600 transition-all' id='pay-for-insta' onclick='setPaymentPurpose("Instagram")'>📸 इंस्टाग्राम</button>
+                                <button class='pay-purpose-btn py-3 px-2 rounded-xl border-2 text-xs sm:text-sm font-bold bg-slate-50 border-slate-200 text-slate-600 transition-all' id='pay-for-fb' onclick='setPaymentPurpose("Facebook")'>👥 फेसबुक</button>
+                                <button class='pay-purpose-btn py-3 px-2 rounded-xl border-2 text-xs sm:text-sm font-bold bg-slate-50 border-slate-200 text-slate-600 transition-all' id='pay-for-flight' onclick='setPaymentPurpose("Flight")'>✈️ हवाई टिकट</button>
                             </div>
                         </div>
                         <div>
-                            <label class='block text-xs font-bold text-slate-600 mb-2'>Enter Amount (₹):</label>
+                            <label class='block text-xs sm:text-sm font-bold text-slate-700 mb-3'>कितना रुपया भेजना है (₹ भरे):</label>
                             <div class='relative'>
-                                <span class='absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-lg'>₹</span>
-                                <input class='w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 text-slate-900 font-bold focus:outline-none focus:border-brandOrange text-sm' id='pay-amount' oninput='updateLiveQRCode()' placeholder='0' type='number'/>
+                                <span class='absolute left-5 top-1/2 -translate-y-1/2 text-brandOrange font-black text-xl'>₹</span>
+                                <input class='w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-slate-900 font-black focus:outline-none focus:border-brandOrange text-base sm:text-xl' id='pay-amount' oninput='updateLiveQRCode()' placeholder='रुपया लिखें...' type='number'/>
                             </div>
                         </div>
-                        <div class='bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3'>
+                        <div class='bg-slate-50 border border-slate-200 p-5 rounded-2xl space-y-4'>
                             <div class='flex items-center justify-between'>
                                 <div>
-                                    <span class='text-[9px] font-bold text-slate-400 block uppercase'>UPI ID</span>
-                                    <span class='text-xs font-bold text-slate-800' id='upi-id-text'>rkyshree@indianbank</span>
+                                    <span class='text-[10px] font-bold text-slate-400 block uppercase tracking-wider mb-1'>UPI आईडी (Copy करें)</span>
+                                    <span class='text-sm sm:text-base font-black text-slate-800' id='upi-id-text'>rkyshree@indianbank</span>
                                 </div>
-                                <button class='bg-white text-slate-600 font-bold text-[10px] py-1.5 px-3 rounded border border-slate-200' onclick='copyToClipboard("rkyshree@indianbank")'>Copy</button>
+                                <button class='bg-white text-brandOrange font-bold text-xs py-2 px-4 rounded-xl border border-slate-200 shadow-sm' onclick='copyToClipboard("rkyshree@indianbank")'>Copy</button>
                             </div>
-                            <div class='flex items-center justify-between pt-2 border-t border-slate-200'>
+                            <div class='flex items-center justify-between pt-4 border-t border-slate-200'>
                                 <div>
-                                    <span class='text-[9px] font-bold text-slate-400 block uppercase'>Phone Number</span>
-                                    <span class='text-xs font-bold text-slate-800' id='upi-phone-text'>7011148764</span>
+                                    <span class='text-[10px] font-bold text-slate-400 block uppercase tracking-wider mb-1'>फ़ोन नंबर (Copy करें)</span>
+                                    <span class='text-sm sm:text-base font-black text-slate-800' id='upi-phone-text'>7011148764</span>
                                 </div>
-                                <button class='bg-white text-slate-600 font-bold text-[10px] py-1.5 px-3 rounded border border-slate-200' onclick='copyToClipboard("7011148764")'>Copy</button>
+                                <button class='bg-white text-brandOrange font-bold text-xs py-2 px-4 rounded-xl border border-slate-200 shadow-sm' onclick='copyToClipboard("7011148764")'>Copy</button>
                             </div>
                         </div>
                     </div>
-                    <div class='text-center bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center'>
-                        <span class='text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3'>Scan & Pay</span>
-                        <div class='relative bg-white p-3 rounded-xl w-48 h-48 flex items-center justify-center shadow-sm border border-slate-100 overflow-hidden'>
-                            <img alt='QR Scanner' class='w-full h-full object-contain' id='live-qr-img' src='https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26cu=INR'/>
-                            <div class='laser-line absolute inset-x-0 h-0.5 bg-brandOrange opacity-70 shadow-[0_0_8px_#f97316]'></div>
+                    
+                    <div class='text-center bg-slate-50 p-8 rounded-[2rem] border border-slate-200 flex flex-col items-center justify-center'>
+                        <span class='text-xs font-black text-slate-500 uppercase tracking-widest mb-4'>👉 Scan & Pay 👈</span>
+                        <div class='relative bg-white p-4 rounded-2xl w-56 h-56 flex items-center justify-center shadow-md border border-slate-100 overflow-hidden'>
+                            <img alt='QR Scanner' class='w-full h-full object-contain' id='live-qr-img' src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&amp;data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26cu=INR'/>
+                            <div class='laser-line absolute inset-x-0 h-1 bg-brandOrange opacity-80 shadow-[0_0_15px_#f97316]'></div>
                         </div>
-                        <button class='w-full mt-5 bg-slate-900 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md' onclick='sendPaymentScreenshot()'>
-                            <svg class='w-4 h-4 fill-current text-white' viewBox='0 0 24 24'><path d='M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z'/></svg>
-                            Send Screenshot on WhatsApp
+                        <button class='w-full mt-8 bg-slate-900 hover:bg-slate-800 text-white font-black py-4 rounded-2xl text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg transition-all' onclick='sendPaymentScreenshot()'>
+                            <svg class='w-5 h-5 fill-current text-white' viewBox='0 0 24 24'><path d='M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z'/></svg>
+                            पेमेंट का रसीद व्हाट्सएप पर भेजें 📸
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- कस्टमाइज्ड कस्टमर रिव्यूज हब -->
+        <section class='py-12 px-4 max-w-4xl mx-auto bg-white' id='reviews-hub'>
+            <div class='text-center mb-8 bg-slate-50 text-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200'>
+                <span class='text-brandOrange font-black tracking-widest block text-xs uppercase mb-2'>Verified Client Responses ⭐</span>
+                <h2 class='text-2xl sm:text-3xl font-black text-slate-900 mb-2'>💎 हमारे 100% संतुष्ट ग्राहकों के अनुभव</h2>
+                <p class='text-sm text-slate-600 font-medium'>भारत के अलग-अलग राज्यों और शहरों से लाइव प्रतिक्रियाएं</p>
+            </div>
+            
+            <div class='bg-white border border-slate-200 p-8 rounded-3xl shadow-sm mb-10 relative min-h-[160px] flex flex-col justify-center review-fade-text' id='dynamicReviewBox'></div>
+            
+            <div class='bg-slate-50 border border-slate-200 rounded-3xl p-8 shadow-sm'>
+                <h3 class='text-lg font-black text-brandOrange mb-5 flex items-center gap-2 uppercase tracking-wide'>
+                    <span>✍️</span> <span>अपना कीमती रिव्यू साझा करें</span>
+                </h3>
+                <div class='space-y-5 text-sm'>
+                    <div class='grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                        <div>
+                            <label class='block font-bold text-slate-700 mb-2'>आपका नाम:</label>
+                            <input type='text' id='userRevName' placeholder='अपना पूरा नाम लिखें...' class='w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 font-medium shadow-sm outline-none focus:border-brandOrange'/>
+                        </div>
+                        <div>
+                            <label class='block font-bold text-slate-700 mb-2'>आपका शहर / राज्य:</label>
+                            <input type='text' id='userRevLocation' placeholder='जैसे: गोरखपुर, लखनऊ, दिल्ली...' class='w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 font-medium shadow-sm outline-none focus:border-brandOrange'/>
+                        </div>
+                    </div>
+                    <div>
+                        <label class='block font-bold text-slate-700 mb-2'>रेटिंग चुनें (Rating):</label>
+                        <select id='userRevRating' class='w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-brandOrange font-bold shadow-sm outline-none focus:border-brandOrange'>
+                            <option value='⭐⭐⭐⭐⭐'>⭐⭐⭐⭐⭐ (5 Star Rating - बेस्ट सर्विस)</option>
+                            <option value='⭐⭐⭐⭐'>⭐⭐⭐⭐ (4 Star)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class='block font-bold text-slate-700 mb-2'>आपका अनुभव (Review Message):</label>
+                        <textarea id='userRevMessage' rows='3' placeholder='श्री वर्ल्ड प्रीमियम पोर्टल के बारे में अपनी राय लिखें...' class='w-full bg-white border border-slate-300 rounded-xl py-3 px-4 text-slate-900 font-medium shadow-sm outline-none focus:border-brandOrange'></textarea>
+                    </div>
+                    <div class='pt-2'>
+                        <button onclick='submitUserReviewSystem()' class='w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-base'>
+                            <span>🚀</span> <span>रिव्यू सबमिट करें</span>
                         </button>
                     </div>
                 </div>
@@ -522,67 +487,64 @@
         </section>
 
         <!-- कस्टमाइज्ड नया एफएक्यू सेक्शन -->
-        <section class='py-10 px-4 max-w-4xl mx-auto bg-slate-50 border-t border-slate-200' id='faq-hub'>
-            <div class='text-center mb-6'>
-                <span class='text-slate-500 font-bold tracking-widest block text-[10px] uppercase mb-1'>FAQ ❓</span>
-                <h2 class='text-lg sm:text-2xl font-black text-slate-900'>Common Questions</h2>
+        <section class='py-12 px-4 max-w-4xl mx-auto bg-slate-50 border-t border-slate-200' id='faq-hub'>
+            <div class='text-center mb-10'>
+                <span class='text-slate-500 font-black tracking-widest block text-xs uppercase mb-2'>FAQ ❓</span>
+                <h2 class='text-2xl sm:text-4xl font-black text-slate-900'>Common Questions</h2>
             </div>
-            <div class='space-y-3 max-w-2xl mx-auto'>
-                <div class='bg-white border border-slate-200 rounded-xl p-4 shadow-sm'>
-                    <h4 class='font-bold text-slate-800 text-xs sm:text-sm flex gap-2'><span class="text-brandOrange">Q.</span> Followers आर्डर करने के कितनी देर बाद आएँगे?</h4>
-                    <p class='text-[11px] sm:text-xs text-slate-600 mt-1.5 pl-5'>A. पेमेंट रसीद कन्फर्म होने के 10 से 60 मिनट के भीतर सिस्टम काम चालू कर देता है।</p>
+            <div class='space-y-4 max-w-3xl mx-auto'>
+                <div class='border border-slate-200 rounded-2xl bg-white p-5 shadow-sm'>
+                    <h4 class='font-bold text-slate-800 text-sm sm:text-base flex gap-2'><span class="text-brandOrange">Q.</span> Followers आर्डर करने के कितनी देर बाद आएँगे?</h4>
+                    <p class='text-xs sm:text-sm text-slate-600 mt-2 pl-6'>A. व्हाट्सएप पर पेमेंट रसीद कन्फर्म होने के 10 से 60 मिनट के भीतर सिस्टम काम चालू कर देता है।</p>
                 </div>
-                <div class='bg-white border border-slate-200 rounded-xl p-4 shadow-sm'>
-                    <h4 class='font-bold text-slate-800 text-xs sm:text-sm flex gap-2'><span class="text-brandOrange">Q.</span> क्या Online Payment सुरक्षित है?</h4>
-                    <p class='text-[11px] sm:text-xs text-slate-600 mt-1.5 pl-5'>A. जी हाँ, 100% सुरक्षित है। हम बिना पासवर्ड के काम करते हैं, जिससे आपका अकाउंट हमेशा सेफ रहता है।</p>
+                <div class='border border-slate-200 rounded-2xl bg-white p-5 shadow-sm'>
+                    <h4 class='font-bold text-slate-800 text-sm sm:text-base flex gap-2'><span class="text-brandOrange">Q.</span> क्या Online Payment सुरक्षित है?</h4>
+                    <p class='text-xs sm:text-sm text-slate-600 mt-2 pl-6'>A. जी हाँ, 100% सुरक्षित है। हम बिना पासवर्ड के काम करते हैं, जिससे आपका अकाउंट हमेशा सेफ रहता है।</p>
                 </div>
-                <div class='bg-white border border-slate-200 rounded-xl p-4 shadow-sm'>
-                    <h4 class='font-bold text-slate-800 text-xs sm:text-sm flex gap-2'><span class="text-brandOrange">Q.</span> काम न होने पर क्या मुझे Refund मिलेगा?</h4>
-                    <p class='text-[11px] sm:text-xs text-slate-600 mt-1.5 pl-5'>A. हाँ। तकनीकी समस्या होने पर 24-48 घंटे में फुल रिफंड मिल जाता है।</p>
+                <div class='border border-slate-200 rounded-2xl bg-white p-5 shadow-sm'>
+                    <h4 class='font-bold text-slate-800 text-sm sm:text-base flex gap-2'><span class="text-brandOrange">Q.</span> काम न होने पर क्या मुझे Refund मिलेगा?</h4>
+                    <p class='text-xs sm:text-sm text-slate-600 mt-2 pl-6'>A. हाँ। तकनीकी समस्या होने पर 24-48 घंटे में फुल रिफंड मिल जाता है।</p>
                 </div>
             </div>
         </section>
 
         <!-- महत्वपूर्ण लीगल पेबल्स / टैब्स -->
-        <section class='py-10 px-4 max-w-3xl mx-auto space-y-3 bg-white'>
-            <div class='border border-slate-200 rounded-xl bg-white shadow-sm'>
-                <button class='w-full text-left p-4 font-bold text-slate-700 flex justify-between text-xs sm:text-sm' onclick='toggleAccordion("acc-about-us")'>
-                    <span>ℹ️ About Us</span> <span id='icon-acc-about-us'>▼</span>
+        <section class='py-12 px-4 max-w-3xl mx-auto space-y-4 bg-white'>
+            <div class='border border-slate-200 rounded-2xl bg-white shadow-sm'>
+                <button class='w-full text-left p-5 font-bold text-slate-800 flex justify-between text-sm sm:text-base' onclick='toggleAccordion("acc-about-us")'>
+                    <span>ℹ️ About Us (हमारे बारे में)</span> <span id='icon-acc-about-us' class="text-brandOrange">▼</span>
                 </button>
-                <div class='hidden p-4 border-t border-slate-100 text-[10px] sm:text-xs text-slate-500 bg-slate-50' id='acc-about-us'>
+                <div class='hidden p-5 border-t border-slate-100 text-xs sm:text-sm text-slate-600 bg-slate-50 leading-relaxed' id='acc-about-us'>
                     श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग एजेंसी है। हम बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखते हैं।
                 </div>
             </div>
-            
-            <div class='border border-slate-200 rounded-xl bg-white shadow-sm'>
-                <button class='w-full text-left p-4 font-bold text-slate-700 flex justify-between text-xs sm:text-sm' onclick='toggleAccordion("acc-contact-us")'>
-                    <span>📞 Contact Us</span> <span id='icon-acc-contact-us'>▼</span>
-                </button>
-                <div class='hidden p-4 border-t border-slate-100 text-[10px] sm:text-xs text-slate-500 bg-slate-50 space-y-1' id='acc-contact-us'>
-                    <div>📍 <strong>Office:</strong> श्री वर्ल्ड प्रीमियम पोर्टल, जंगल ठकुरही, गोरखपुर, UP</div>
-                    <div>📞 <strong>WhatsApp:</strong> +91 7011148764</div>
-                    <div>📧 <strong>Email:</strong> rkyshree.in@gmail.com</div>
-                </div>
-            </div>
 
-            <div class='border border-slate-200 rounded-xl bg-white shadow-sm'>
-                <button class='w-full text-left p-4 font-bold text-slate-700 flex justify-between text-xs sm:text-sm' onclick='toggleAccordion("acc-privacy")'>
-                    <span>🔒 Privacy & Refund Policy</span> <span id='icon-acc-privacy'>▼</span>
+            <div class='border border-slate-200 rounded-2xl bg-white shadow-sm'>
+                <button class='w-full text-left p-5 font-bold text-slate-800 flex justify-between text-sm sm:text-base' onclick='toggleAccordion("acc-privacy")'>
+                    <span>🔒 Privacy & Refund Policy</span> <span id='icon-acc-privacy' class="text-brandOrange">▼</span>
                 </button>
-                <div class='hidden p-4 border-t border-slate-100 text-[10px] sm:text-xs text-slate-500 bg-slate-50' id='acc-privacy'>
+                <div class='hidden p-5 border-t border-slate-100 text-xs sm:text-sm text-slate-600 bg-slate-50 leading-relaxed' id='acc-privacy'>
                     हम कभी भी पासवर्ड नहीं मांगते। डेटा 100% सुरक्षित है। सर्विस न मिलने पर 24-48 घंटों में रिफंड। फ्लाइट कैंसिलेशन एयरलाइन रूल्स के अनुसार।
                 </div>
             </div>
         </section>
 
+        <!-- SECURE BADGES RIGHT ABOVE FOOTER -->
+        <section class='w-full py-5 bg-slate-50 select-none'>
+            <div class='max-w-4xl mx-auto flex items-center justify-center gap-6 text-slate-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-center'>
+                <span class='flex items-center gap-1'><span class='text-emerald-500 text-sm'>🔒</span> SSL Secure</span>
+                <span class='flex items-center gap-1'><span class='text-blue-500 text-sm'>🛡️</span> Verified Business</span>
+                <span class='flex items-center gap-1'><span class='text-brandOrange text-sm'>💰</span> 100% Safe Payment</span>
+            </div>
+        </section>
     </main>
 
-    <div class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white py-2 px-5 rounded-full text-xs font-bold shadow-xl z-[200] animate-bounce' id='toast-msg'>📋 Copied to clipboard!</div>
+    <div class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white py-3 px-6 rounded-full text-xs font-bold shadow-xl z-[200] animate-bounce' id='toast-msg'>📋 Copied to clipboard!</div>
 
-    <footer class='bg-slate-900 py-6 px-4 text-center text-slate-400'>
+    <footer class='bg-slate-900 py-8 px-4 text-center text-slate-400'>
         <div class='max-w-7xl mx-auto'>
-            <div class='text-sm font-bold text-white tracking-wide mb-1'>SHREE WORLD PREMIUM PORTAL</div>
-            <div class='text-[10px] font-medium'>Copyright 2026. All Rights Reserved. | WhatsApp: +91 7011148764</div>
+            <div class='text-base sm:text-lg font-black text-white tracking-widest mb-2'>SHREE WORLD PREMIUM PORTAL</div>
+            <div class='text-[10px] sm:text-xs font-medium'>Copyright 2026. All Rights Reserved. | WhatsApp: +91 7011148764</div>
         </div>
     </footer>
 
@@ -608,10 +570,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-
-        const ADMIN_EMAIL = "rkyshree.in@gmail.com"; 
-        let currentUserData = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const referralId = urlParams.get('ref');
@@ -658,173 +616,6 @@
             const waUrl = `https://wa.me/917011148764?text=${encodeURIComponent(waMessage)}`;
             window.open(waUrl, '_blank', 'noopener,noreferrer');
         };
-
-        setPersistence(auth, browserLocalPersistence).then(() => {
-            onAuthStateChanged(auth, async (user) => {
-                const btnIcon = document.getElementById('authBtnIcon');
-                const btnText = document.getElementById('authBtnText');
-                const authBtn = document.getElementById('authBtn');
-                const adminBtn = document.getElementById('adminBtn');
-
-                if (user) {
-                    btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-4 h-4 rounded-full inline">`;
-                    btnText.innerText = 'Profile';
-                    authBtn.onclick = window.openDashboard;
-                    
-                    if (user.email === ADMIN_EMAIL) {
-                        adminBtn.classList.remove('hidden');
-                    }
-
-                    const userRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userRef);
-                    
-                    if (!userSnap.exists()) {
-                        let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
-
-                        await setDoc(userRef, {
-                            uid: user.uid,
-                            name: user.displayName,
-                            email: user.email,
-                            photo: user.photoURL,
-                            wallet: 0,
-                            referralCount: 0,
-                            refCode: emailPrefix, 
-                            createdAt: new Date()
-                        });
-                        
-                        const savedRef = sessionStorage.getItem('referredBy');
-                        if (savedRef && savedRef !== emailPrefix) {
-                            const q = query(collection(db, "users"), where("refCode", "==", savedRef));
-                            const querySnapshot = await getDocs(q);
-                            querySnapshot.forEach(async (referrerDoc) => {
-                                await updateDoc(doc(db, "users", referrerDoc.id), {
-                                    wallet: increment(200),
-                                    referralCount: increment(1)
-                                });
-                            });
-                        }
-                    }
-
-                    const latestSnap = await getDoc(userRef);
-                    currentUserData = latestSnap.data();
-                    
-                    if (!currentUserData.refCode) {
-                        currentUserData.refCode = currentUserData.email ? currentUserData.email.split('@')[0] : currentUserData.uid;
-                        await updateDoc(userRef, { refCode: currentUserData.refCode });
-                    }
-
-                } else {
-                    btnIcon.innerHTML = `🎁`;
-                    btnText.innerText = 'Earn ₹200';
-                    authBtn.onclick = window.handleAuthButtonClick;
-                    adminBtn.classList.add('hidden');
-                    currentUserData = null;
-                }
-            });
-        });
-
-        window.handleAuthButtonClick = () => {
-            if (currentUserData) { window.openDashboard(); } else { window.loginWithGoogle(); }
-        };
-
-        window.loginWithGoogle = () => {
-            signInWithPopup(auth, provider).catch(err => alert("Login Failed: " + err.message));
-        };
-
-        window.logoutUser = () => {
-            signOut(auth).then(() => {
-                window.closeDashboard();
-                alert("Logged out successfully.");
-            });
-        };
-
-        window.openDashboard = async () => {
-            if(!currentUserData) return;
-            const modal = document.getElementById('dashboardModal');
-            modal.classList.remove('hidden'); modal.classList.add('flex');
-
-            document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
-            document.getElementById('dashEmail').innerText = currentUserData.email || '';
-            if(currentUserData.photo) { document.getElementById('dashPhoto').src = currentUserData.photo; }
-            document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
-            document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
-            
-            const link = window.location.origin + window.location.pathname + "?ref=" + (currentUserData.refCode || currentUserData.uid);
-            document.getElementById('dashRefLink').value = link;
-
-            try {
-                const snap = await getDoc(doc(db, "users", currentUserData.uid));
-                if(snap.exists()) {
-                    currentUserData = snap.data();
-                    document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
-                    document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
-                }
-            } catch(e) { console.log(e); }
-        };
-
-        window.closeDashboard = () => {
-            const modal = document.getElementById('dashboardModal');
-            modal.classList.add('hidden'); modal.classList.remove('flex');
-        };
-
-        window.copyRefLink = () => {
-            const linkField = document.getElementById('dashRefLink');
-            linkField.select(); document.execCommand("copy");
-            alert("Referral Link Copied!");
-        };
-
-        window.requestWithdraw = async () => {
-            const upiId = document.getElementById('withdrawUpi').value.trim();
-            const amount = parseInt(document.getElementById('withdrawAmount').value);
-            
-            if(!upiId || !amount) return alert("Please enter UPI ID and Amount!");
-            if(amount < 500) return alert("Minimum withdrawal is ₹500");
-            if(amount > currentUserData.wallet) return alert("Insufficient balance!");
-
-            try {
-                await updateDoc(doc(db, "users", currentUserData.uid), { wallet: increment(-amount) });
-                await addDoc(collection(db, "withdraws"), {
-                    uid: currentUserData.uid, name: currentUserData.name, email: currentUserData.email,
-                    upi: upiId, amount: amount, status: 'Pending', timestamp: new Date()
-                });
-                alert("Withdrawal request submitted! Redirecting to WhatsApp...");
-                const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *रकम:* ₹${amount}\n🏦 *UPI:* ${upiId}\n\nनमस्ते, कृपया मेरा विड्रोल अप्रूव करें।`;
-                const waUrl = `https://wa.me/917011148764?text=${encodeURIComponent(waMessage)}`;
-                
-                document.getElementById('withdrawUpi').value = ""; document.getElementById('withdrawAmount').value = "";
-                window.closeDashboard(); window.open(waUrl, '_blank', 'noopener,noreferrer');
-            } catch (e) { alert("Error: " + e.message); }
-        };
-
-        // Admin functionality
-        window.openAdminPanel = async () => {
-            document.getElementById('adminModal').classList.remove('hidden');
-            const listDiv = document.getElementById('adminRequestsList');
-            listDiv.innerHTML = '<p class="text-slate-500 text-sm text-center py-10">Fetching pending requests...</p>';
-            try {
-                const q = query(collection(db, "withdraws"), where("status", "==", "Pending"));
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    listDiv.innerHTML = '<p class="text-green-600 font-bold text-center py-10">No pending requests!</p>'; return;
-                }
-                listDiv.innerHTML = '';
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    listDiv.innerHTML += `
-                    <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between text-xs gap-2">
-                        <div><p class="font-bold">${data.name}</p><p class="text-slate-500">${data.upi}</p><p class="text-emerald-600 font-black">₹${data.amount}</p></div>
-                        <button onclick="approveWithdrawal('${docSnap.id}')" class="bg-emerald-500 text-white px-3 py-1 rounded">Paid</button>
-                    </div>`;
-                });
-            } catch (e) { listDiv.innerHTML = '<p class="text-red-500 text-center">Error fetching data</p>'; }
-        };
-
-        window.closeAdminPanel = () => document.getElementById('adminModal').classList.add('hidden');
-
-        window.approveWithdrawal = async (docId) => {
-            if(!confirm("Are you sure?")) return;
-            try { await updateDoc(doc(db, "withdraws", docId), { status: 'Paid' }); window.openAdminPanel(); } catch (e) { alert(e.message); }
-        };
     </script>
 
     <!-- GENERAL LOGIC -->
@@ -862,6 +653,14 @@
         const totalStatesPool = [ "Maharashtra", "Delhi", "UP", "Bihar", "Gujarat", "Karnataka", "Rajasthan", "Punjab" ];
         const randomServicesPool = [ "purchased Instagram Growth 📸", "activated VIP Package 👁️", "booked Flight Ticket ✈️", "ordered Social Media Boost ❤️" ];
 
+        const comprehensiveReviewsPool = [
+            { name: "अनुराधा कुमारी", loc: "कोलकात्ता", rating: "⭐⭐⭐⭐⭐", msg: "मैंने श्री वर्ल्ड प्रीमियम पोर्टल से इंस्टाग्राम, फेसबुक और फ्लाइट बुकिंग की सारी सेवाएँ ली हैं। यह बहुत ही शानदार और 100% भरोसेमंद है।" },
+            { name: "आराध्या यादव", loc: "गोरखपुर", rating: "⭐⭐⭐⭐⭐", msg: "इंस्टाग्राम फॉलोअर्स सर्विस सच में बहुत तेज़ है। क्वालिटी एकदम रियल और नॉन-ड्रॉप है।" },
+            { name: "राहुल शर्मा", loc: "दिल्ली", rating: "⭐⭐⭐⭐⭐", msg: "मैंने यहाँ से फेसबुक प्रोफाइल बूस्ट पैक लिया था। बिना पासवर्ड के इतना सुरक्षित काम कहीं नहीं मिलता।" },
+            { name: "नीलेश कुमार", loc: "पटना", rating: "⭐⭐⭐⭐", msg: "हवाई जहाज की टिकट बुकिंग कराई, मार्केट से बहुत कम दाम पर हो गया।" }
+        ];
+        let currentReviewIndex = 0;
+
         function navigateToService(platform) {
             document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' });
             selectPlatform(platform);
@@ -894,34 +693,34 @@
             if (!linkVal) { alert('कृपया अपना लिंक या नाम यहाँ दर्ज करें!'); return; }
             document.getElementById('pay-amount').value = 1999;
             updateLiveQRCode();
-            const message = `👑 *SHREE WORLD PREMIUM PORTAL* 👑\n💥 *TODAY'S VIP OFFER* 💥\n\n⚙ *सर्विस:* 10,000 Followers + Likes + Views\n💰 *दाम:* ₹1999/-\n👤 *लिंक:* ${linkVal}\n\nनमस्ते, मैं यह पैक लेना चाहता हूँ।`;
+            const message = `👑 *SHREE WORLD PREMIUM PORTAL* 👑\n💥 *इंस्टाग्राम स्पेशल पैक धमाका* 💥\n\n⚙ *सर्विस:* 10,000 Followers + 10,000 Likes + 10,000 Views\n💰 *दाम:* ₹1999/-\n👤 *लिंक/यूजरनेम:* ${linkVal}\n\nनमस्ते, मैं यह पैक लेना चाहता हूँ।`;
             window.open(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(message)}`, '_blank');
             document.getElementById('secure-payment').scrollIntoView({ behavior: 'smooth' });
         }
 
         function toggleInteractiveFlight(type) {
             const formWrapper = document.getElementById('conditionalFlightFormWrapper');
-            document.getElementById('flight-dom-btn').classList.remove('btn-active-highlight');
-            document.getElementById('flight-int-btn').classList.remove('btn-active-highlight');
+            document.getElementById('flight-dom-btn').classList.remove('btn-active-highlight-light');
+            document.getElementById('flight-int-btn').classList.remove('btn-active-highlight-light');
             if (selectedInteractiveFlightType === type) {
                 selectedInteractiveFlightType = ''; formWrapper.classList.add('hidden');
             } else {
                 selectedInteractiveFlightType = type; formWrapper.classList.remove('hidden');
-                document.getElementById(`flight-${type}-btn`).classList.add('btn-active-highlight');
+                document.getElementById(`flight-${type}-btn`).classList.add('btn-active-highlight-light');
             }
         }
 
         function selectPlatform(platform) {
             activePlatform = platform;
-            document.getElementById('btn-instagram').classList.remove('btn-active-highlight');
-            document.getElementById('btn-facebook').classList.remove('btn-active-highlight');
-            document.getElementById(`btn-${platform}`).classList.add('btn-active-highlight');
+            document.getElementById('btn-instagram').classList.remove('btn-active-highlight-light');
+            document.getElementById('btn-facebook').classList.remove('btn-active-highlight-light');
+            document.getElementById(`btn-${platform}`).classList.add('btn-active-highlight-light');
             document.getElementById('selected-platform-label').innerText = `${platformData[platform].emoji} ${platformData[platform].label}`;
             const servicesContainer = document.getElementById('service-options-container');
             servicesContainer.innerHTML = '';
             platformData[platform].services.forEach((service) => {
                 const btn = document.createElement('button');
-                btn.className = `service-opt py-2 px-1 rounded-xl border text-[10px] sm:text-xs font-bold text-center bg-white border-slate-200 text-slate-700 shadow-sm hover:border-brandOrange`;
+                btn.className = `service-opt py-3 px-2 rounded-xl border-2 text-[10px] sm:text-xs font-bold text-center bg-slate-800 border-slate-700 text-slate-300 shadow-sm hover:border-brandOrange`;
                 btn.innerText = serviceHindiLabels[service] || service;
                 btn.onclick = () => { selectService(btn, service); };
                 servicesContainer.appendChild(btn);
@@ -932,9 +731,9 @@
         function selectService(buttonElement, serviceLabel) {
             activeServiceLabel = serviceLabel;
             document.querySelectorAll('.service-opt').forEach(btn => {
-                btn.className = 'service-opt py-2 px-1 rounded-xl border text-[10px] sm:text-xs font-bold text-center bg-white border-slate-200 text-slate-700 shadow-sm hover:border-brandOrange';
+                btn.className = 'service-opt py-3 px-2 rounded-xl border-2 text-[10px] sm:text-xs font-bold text-center bg-slate-800 border-slate-700 text-slate-300 shadow-sm hover:border-brandOrange';
             });
-            buttonElement.className = 'service-opt py-2 px-1 rounded-xl border text-[10px] sm:text-xs font-black text-center btn-active-highlight';
+            buttonElement.className = 'service-opt py-3 px-2 rounded-xl border-2 text-[10px] sm:text-xs font-black text-center btn-active-highlight-dark';
             document.getElementById('conditionalPlansWrapper').classList.remove('hidden');
             renderQuantities();
         }
@@ -944,8 +743,8 @@
             const availablePackages = comprehensivePriceMatrix[activePlatform][activeServiceLabel] || [];
             availablePackages.forEach((pkg) => {
                 const btn = document.createElement('button'); btn.id = `pkg-${pkg.qty}`;
-                btn.className = `qty-opt flex items-center justify-between py-3 px-3 rounded-xl border font-bold text-xs bg-white border-slate-200 text-slate-800 shadow-sm hover:border-brandOrange`;
-                btn.innerHTML = `<span>${parseInt(pkg.qty).toLocaleString('en-IN')} ${serviceHindiLabels[activeServiceLabel]}</span><span class="text-emerald-600 font-black">₹${pkg.price}</span>`;
+                btn.className = `qty-opt flex items-center justify-between py-3.5 px-4 rounded-xl border-2 font-bold text-xs bg-slate-800 border-slate-700 text-slate-200 shadow-sm hover:border-brandOrange`;
+                btn.innerHTML = `<span>${parseInt(pkg.qty).toLocaleString('en-IN')} ${serviceHindiLabels[activeServiceLabel]}</span><span class="text-emerald-400 font-black">₹${pkg.price}</span>`;
                 btn.onclick = () => { selectQuantity(pkg.qty, pkg.price); };
                 qtyContainer.appendChild(btn);
             });
@@ -953,8 +752,8 @@
 
         function selectQuantity(qty, price) {
             activeQuantity = qty; selectedPackagePrice = price;
-            document.querySelectorAll('.qty-opt').forEach(btn => btn.className = 'qty-opt flex items-center justify-between py-3 px-3 rounded-xl border font-bold text-xs bg-white border-slate-200 text-slate-800 shadow-sm hover:border-brandOrange');
-            if(document.getElementById(`pkg-${qty}`)) document.getElementById(`pkg-${qty}`).classList.add('btn-active-highlight');
+            document.querySelectorAll('.qty-opt').forEach(btn => btn.className = 'qty-opt flex items-center justify-between py-3.5 px-4 rounded-xl border-2 font-bold text-xs bg-slate-800 border-slate-700 text-slate-200 shadow-sm hover:border-brandOrange');
+            if(document.getElementById(`pkg-${qty}`)) document.getElementById(`pkg-${qty}`).classList.add('btn-active-highlight-dark');
             updatePriceUI(selectedPackagePrice);
         }
 
@@ -973,18 +772,19 @@
         }
 
         function updatePriceUI(price) {
+            document.getElementById('custom-qty-display').innerText = `चुनी गई संख्या: ${activeQuantity}`;
             document.getElementById('display-final-price').innerText = `₹${price.toLocaleString('en-IN')}`;
         }
 
         function setPaymentPurpose(purpose) {
-            document.querySelectorAll('.pay-purpose-btn').forEach(btn => btn.className = 'pay-purpose-btn py-2.5 px-2 rounded-lg border text-[10px] font-bold bg-slate-50 border-slate-200 text-slate-600');
+            document.querySelectorAll('.pay-purpose-btn').forEach(btn => btn.className = 'pay-purpose-btn py-3 px-2 rounded-xl border-2 text-xs sm:text-sm font-bold bg-slate-50 border-slate-200 text-slate-600 transition-all');
             let idMap = purpose === 'Instagram' ? 'pay-for-insta' : (purpose === 'Facebook' ? 'pay-for-fb' : 'pay-for-flight');
-            document.getElementById(idMap).classList.add('btn-active-highlight');
+            document.getElementById(idMap).classList.add('btn-active-highlight-light');
         }
 
         function updateLiveQRCode() {
             const amount = document.getElementById('pay-amount').value || "";
-            document.getElementById('live-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26am=${amount}%26cu=INR`;
+            document.getElementById('live-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26am=${amount}%26cu=INR`;
         }
 
         function copyToClipboard(text) {
@@ -999,16 +799,37 @@
             window.open(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(textMessage)}`, '_blank');
         }
 
-        function updateTracker() {
-            const textElement = document.getElementById('liveDynamicText');
-            if (!textElement) return;
-            textElement.style.opacity = '0';
+        function submitUserReviewSystem() {
+            const name = document.getElementById('userRevName').value.trim();
+            const location = document.getElementById('userRevLocation').value.trim();
+            const rating = document.getElementById('userRevRating').value;
+            const msg = document.getElementById('userRevMessage').value.trim();
+            
+            if (!name || !msg) { alert("कृपया नाम और मैसेज दोनों भरें!"); return; }
+            const textMessage = `⭐ *नया कस्टमर रिव्यू* ⭐\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${name}\n📍 *शहर/राज्य:* ${location || 'N/A'}\n🌟 *रेटिंग:* ${rating}\n💬 *अनुभव:* ${msg}\n\nनमस्ते, यह मेरा रिव्यू है।`;
+            window.open(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(textMessage)}`, '_blank');
+            document.getElementById('userRevName').value = ''; document.getElementById('userRevLocation').value = ''; document.getElementById('userRevMessage').value = '';
+        }
+
+        function rotateReviewsSystem() {
+            const targetContainer = document.getElementById('dynamicReviewBox');
+            if (!targetContainer) return;
+
+            targetContainer.style.opacity = '0';
             setTimeout(() => {
-                const randomState = totalStatesPool[Math.floor(Math.random() * totalStatesPool.length)];
-                const randomServiceText = randomServicesPool[Math.floor(Math.random() * randomServicesPool.length)];
-                const randomPeopleCount = Math.floor(Math.random() * (500 - 10 + 1)) + 10;
-                textElement.innerHTML = `<strong>${randomState}</strong>: <span class="text-emerald-600">${randomPeopleCount}</span> users ${randomServiceText}`;
-                textElement.style.opacity = '1';
+                const currentReview = comprehensiveReviewsPool[currentReviewIndex];
+                targetContainer.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex flex-col">
+                            <span class="text-base sm:text-lg font-black text-slate-900">${currentReview.name}</span>
+                            <span class="text-[10px] text-slate-500 font-bold">📍 ${currentReview.loc}</span>
+                        </div>
+                        <span class="text-sm text-brandOrange font-bold">${currentReview.rating}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-700 font-medium italic">"${currentReview.msg}"</p>
+                `;
+                targetContainer.style.opacity = '1';
+                currentReviewIndex = (currentReviewIndex + 1) % comprehensiveReviewsPool.length;
             }, 400);
         }
 
@@ -1024,7 +845,7 @@
 
         window.onload = function() {
             selectPlatform('instagram'); setPaymentPurpose('Instagram'); updateLiveQRCode();
-            setInterval(updateTracker, 5000);
+            rotateReviewsSystem(); setInterval(rotateReviewsSystem, 10000);
         };
     </script>
 </body>
