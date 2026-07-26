@@ -76,11 +76,14 @@ font-weight:bold;
 color:#0d6efd;
 }
 
-/* Select dropdown style (optional) */
+/* Select dropdown style */
 select {
-  padding: 5px;
+  padding: 6px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  outline: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -136,6 +139,7 @@ select {
       </tr>
     </thead>
     <tbody id="ordersBody">
+      <!-- Orders will be injected here -->
     </tbody>
   </table>
 
@@ -143,7 +147,8 @@ select {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+// updateDoc और doc को भी import किया गया है ताकि डेटाबेस अपडेट हो सके
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
@@ -170,14 +175,11 @@ async function loadDashboard() {
 
     // Total Revenue
     let revenue = 0;
-
-    orders.forEach((doc) => {
-      const data = doc.data();
+    orders.forEach((docSnap) => {
+      const data = docSnap.data();
       revenue += Number(data.amount || 0);
     });
-
-    document.getElementById("totalRevenue").innerText =
-      "₹" + revenue.toLocaleString("en-IN");
+    document.getElementById("totalRevenue").innerText = "₹" + revenue.toLocaleString("en-IN");
 
     // Total Reviews
     try {
@@ -186,7 +188,6 @@ async function loadDashboard() {
     } catch {
       document.getElementById("totalReviews").innerText = 0;
     }
-
   } catch (err) {
     console.error(err);
   }
@@ -197,18 +198,22 @@ async function loadRecentOrders() {
     const snapshot = await getDocs(collection(db, "orders"));
     let html = "";
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const id = docSnap.id; // Document ID निकाल रहे हैं
+      const currentStatus = data.status || "Pending";
+
       html += `
       <tr>
         <td style="padding:10px;border-bottom:1px solid #ddd;">${data.name || "-"}</td>
         <td style="padding:10px;border-bottom:1px solid #ddd;">${data.service || "-"}</td>
         <td style="padding:10px;border-bottom:1px solid #ddd;">₹${data.amount || 0}</td>
         <td style="padding:10px;border-bottom:1px solid #ddd;">
-          <select>
-            <option ${data.status=="Pending" ? "selected" : ""}>Pending</option>
-            <option ${data.status=="Processing" ? "selected" : ""}>Processing</option>
-            <option ${data.status=="Completed" ? "selected" : ""}>Completed</option>
+          <select onchange="updateStatus('${id}', this.value)" style="color: #0d6efd;">
+            <option value="Pending" ${currentStatus == "Pending" ? "selected" : ""}>Pending</option>
+            <option value="Processing" ${currentStatus == "Processing" ? "selected" : ""}>Processing</option>
+            <option value="Completed" ${currentStatus == "Completed" ? "selected" : ""}>Completed</option>
+            <option value="Cancelled" ${currentStatus == "Cancelled" ? "selected" : ""}>Cancelled</option>
           </select>
         </td>
       </tr>
@@ -219,6 +224,21 @@ async function loadRecentOrders() {
 
   } catch (e) {
     console.log(e);
+  }
+}
+
+// यह फंक्शन डेटाबेस में स्टेटस अपडेट करेगा
+window.updateStatus = async function(orderId, newStatus) {
+  try {
+    const orderRef = doc(db, "orders", orderId);
+    await updateDoc(orderRef, {
+      status: newStatus
+    });
+    console.log(`Order ${orderId} updated to ${newStatus}`);
+    // आप चाहें तो यहाँ alert("Status Updated Successfully!"); लगा सकते हैं।
+  } catch (error) {
+    console.error("Error updating status:", error);
+    alert("Error updating status. Check console.");
   }
 }
 
