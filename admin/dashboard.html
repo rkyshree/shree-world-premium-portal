@@ -110,19 +110,20 @@ th, td {
 </div>
 
 <div class="main">
+  
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <h1>Admin Dashboard</h1>
-    <div style="position:relative;font-size:28px;cursor:pointer;">
+    <div onclick="readNotifications()" style="position:relative;font-size:30px;cursor:pointer;">
       🔔
       <span id="notifyCount"
       style="
       position:absolute;
-      top:-10px;
-      right:-10px;
+      top:-8px;
+      right:-8px;
       background:red;
       color:white;
       border-radius:50%;
-      padding:3px 8px;
+      padding:3px 7px;
       font-size:12px;
       display:none;
       ">
@@ -130,6 +131,7 @@ th, td {
       </span>
     </div>
   </div>
+
   <p>Welcome Admin</p>
 
   <div class="cards">
@@ -198,15 +200,12 @@ const db = getFirestore(app);
 
 async function loadDashboard() {
   try {
-    // Total Users
     const users = await getDocs(collection(db, "users"));
     document.getElementById("totalUsers").innerText = users.size;
 
-    // Total Orders
     const orders = await getDocs(collection(db, "orders"));
     document.getElementById("totalOrders").innerText = orders.size;
 
-    // Total Revenue
     let revenue = 0;
     orders.forEach((docSnap) => {
       const data = docSnap.data();
@@ -214,7 +213,6 @@ async function loadDashboard() {
     });
     document.getElementById("totalRevenue").innerText = "₹" + revenue.toLocaleString("en-IN");
 
-    // Total Reviews
     try {
       const reviews = await getDocs(collection(db, "reviews"));
       document.getElementById("totalReviews").innerText = reviews.size;
@@ -230,13 +228,16 @@ function liveOrders(){
   const ordersRef = collection(db,"orders");
   
   onSnapshot(ordersRef,(snapshot)=>{
-    document.getElementById("notifyCount").style.display="block";
-    document.getElementById("notifyCount").innerText=snapshot.size;
-    
     let html="";
+    let newOrders = 0;
     
     snapshot.forEach((docSnap)=>{
       const data=docSnap.data();
+      
+      if(data.seen==false){
+        newOrders++;
+      }
+      
       html+=`
       <tr>
         <td>${data.name||""}</td>
@@ -254,6 +255,14 @@ function liveOrders(){
       `;
     });
     
+    document.getElementById("notifyCount").innerText = newOrders;
+
+    if(newOrders > 0){
+      document.getElementById("notifyCount").style.display = "block";
+    } else {
+      document.getElementById("notifyCount").style.display = "none";
+    }
+    
     document.getElementById("ordersBody").innerHTML=html;
   });
 }
@@ -266,6 +275,16 @@ window.updateStatus = async function(id,status){
     status:status
   });
   alert("Status Updated");
+}
+
+window.readNotifications = async function(){
+  const snapshot = await getDocs(collection(db,"orders"));
+  
+  snapshot.forEach(async(item)=>{
+    await updateDoc(doc(db,"orders",item.id),{
+      seen:true
+    });
+  });
 }
 </script>
 
