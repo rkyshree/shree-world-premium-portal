@@ -115,12 +115,39 @@
                 ⚙️ Admin
             </button>
             
-            <!-- SMART DYNAMIC HEADER BUTTON (Shows Loading initially to prevent flash) -->
             <button id="authBtn" onclick="handleAuthButtonClick()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
                 <span id="authBtnIcon" class="animate-spin text-lg">⏳</span> <span id="authBtnText">Loading...</span>
             </button>
         </div>
     </header>
+
+    <!-- ==================== REFERRAL REGISTRATION MODAL (NEW) ==================== -->
+    <div id="refRegistrationModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[999] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all border-2 border-amber-400">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-center text-white">
+                <span class="text-4xl block mb-2">🎉</span>
+                <h3 class="font-black text-xl">Welcome to Shree World</h3>
+                <p class="text-xs font-bold mt-1 text-amber-100">वेबसाइट खोलने के लिए कृपया रजिस्टर करें</p>
+            </div>
+            <div class="p-6 space-y-4 bg-slate-50">
+                <div>
+                    <label class="block text-sm font-black text-slate-700 mb-1.5">आपका नाम (Name):</label>
+                    <input type="text" id="refRegName" placeholder="अपना पूरा नाम लिखें..." class="w-full bg-white border border-slate-300 shadow-sm rounded-xl py-3.5 px-4 text-slate-900 font-bold focus:border-amber-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-black text-slate-700 mb-1.5">मोबाइल नंबर (Mobile):</label>
+                    <input type="number" id="refRegMobile" placeholder="अपना 10 अंकों का व्हाट्सएप नंबर..." class="w-full bg-white border border-slate-300 shadow-sm rounded-xl py-3.5 px-4 text-slate-900 font-bold focus:border-amber-500 focus:outline-none">
+                </div>
+                <div class="pt-2">
+                    <button onclick="submitRefRegistration()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-black py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm sm:text-base border border-emerald-400">
+                        <svg class='w-5 h-5 fill-current text-white' viewBox='0 0 24 24'><path d='M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.863-9.73.001-2.595-1.013-5.035-2.855-6.882-1.844-1.848-4.29-2.865-6.885-2.865-5.437 0-9.86 4.37-9.863 9.73-.001 1.759.485 3.475 1.407 4.991L1.982 20.53l4.665-1.376z'/></svg>
+                        <span>Submit & Connect on WhatsApp</span>
+                    </button>
+                    <p class="text-[10px] text-center text-slate-500 font-bold mt-3">सुरक्षित रजिस्ट्रेशन • 100% सेफ</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ==================== MY PROFILE DASHBOARD MODAL ==================== -->
     <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
@@ -927,9 +954,54 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const referralId = urlParams.get('ref');
+        
         if(referralId) {
             sessionStorage.setItem('referredBy', referralId);
+            // NEW REFERRAL POPUP LOGIC: Block screen if not registered via popup
+            if (!localStorage.getItem('refRegistered')) {
+                const modal = document.getElementById('refRegistrationModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    document.body.style.overflow = 'hidden'; // block scrolling
+                }
+            }
         }
+
+        // NEW: Submit Referral Registration & redirect to WhatsApp
+        window.submitRefRegistration = async () => {
+            const name = document.getElementById('refRegName').value.trim();
+            const mobile = document.getElementById('refRegMobile').value.trim();
+            const refID = sessionStorage.getItem('referredBy');
+
+            if (!name || mobile.length < 10) {
+                alert("कृपया अपना सही नाम और 10 अंकों का मोबाइल नंबर दर्ज करें!");
+                return;
+            }
+
+            // Save to Firebase (referral_leads collection)
+            try {
+                await addDoc(collection(db, "referral_leads"), {
+                    name: name,
+                    mobile: mobile,
+                    referredBy: refID,
+                    timestamp: new Date()
+                });
+            } catch(e) {
+                console.log("DB save failed", e);
+            }
+
+            // Mark as registered in local storage and unblock site
+            localStorage.setItem('refRegistered', 'true');
+            document.getElementById('refRegistrationModal').classList.add('hidden');
+            document.getElementById('refRegistrationModal').classList.remove('flex');
+            document.body.style.overflow = 'auto';
+
+            // Send directly to WhatsApp
+            const waMessage = `नमस्ते सर! मेरा नाम *${name}* है (मोबाइल: ${mobile})। मैंने रेफरल लिंक (Ref ID: ${refID}) के जरिए आपकी वेबसाइट पर रजिस्ट्रेशन किया है।`;
+            const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(waMessage)}`;
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
+        };
 
         // Set explicit persistence to prevent logout on refresh
         setPersistence(auth, browserLocalPersistence).then(() => {
@@ -1287,7 +1359,6 @@
             "ordered Customized Comments 💬"
         ];
 
-        // 50 UNIQUE REAL CLIENT REVIEWS
         const fixedReviews = [
             {n: "अमित सिंह", c: "गोरखपुर", m: "सर्विस सच में बहुत तेज़ है। क्वालिटी एकदम रियल और नॉन-ड्रॉप है।"},
             {n: "राहुल शर्मा", c: "दिल्ली", m: "बिना पासवर्ड के इतना सुरक्षित काम कहीं नहीं मिलता, बहुत बढ़िया।"},
