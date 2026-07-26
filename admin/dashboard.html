@@ -151,38 +151,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function loadDashboard() {
-  try {
+async function loadRevenue() {
+  const snapshot = await getDocs(collection(db, "orders"));
 
-    // Users
-    const users = await getDocs(collection(db, "users"));
-    document.getElementById("totalUsers").innerText = users.size;
+  let total = 0;
 
-    // Orders
-    const orders = await getDocs(collection(db, "orders"));
-    document.getElementById("totalOrders").innerText = orders.size;
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    total += Number(data.amount || 0);
+  });
 
-    // Reviews
-    const reviews = await getDocs(collection(db, "reviews"));
-    document.getElementById("totalReviews").innerText = reviews.size;
-
-    // Revenue
-    let revenue = 0;
-
-    orders.forEach((doc) => {
-      const data = doc.data();
-      revenue += Number(data.amount || 0);
-    });
-
-    document.getElementById("totalRevenue").innerText =
-      "₹" + revenue.toLocaleString("en-IN");
-
-  } catch (error) {
-    console.log(error);
-  }
+  document.getElementById("totalRevenue").innerText =
+    "₹" + total.toLocaleString("en-IN");
 }
 
-loadDashboard();
+loadRevenue();
 </script>
 </body>
 </html>
