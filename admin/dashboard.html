@@ -84,6 +84,7 @@ select {
   outline: none;
   cursor: pointer;
   font-weight: bold;
+  color: #0d6efd;
 }
 
 /* Table styling for better look */
@@ -177,7 +178,9 @@ import {
   getFirestore,
   collection,
   getDocs,
-  onSnapshot
+  onSnapshot,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -232,14 +235,21 @@ function liveOrders(){
     
     let html="";
     
-    snapshot.forEach((doc)=>{
-      const data=doc.data();
+    snapshot.forEach((docSnap)=>{
+      const data=docSnap.data();
       html+=`
       <tr>
         <td>${data.name||""}</td>
         <td>${data.service||""}</td>
         <td>₹${data.amount||0}</td>
-        <td>${data.status||"Pending"}</td>
+        <td>
+          <select onchange="updateStatus('${docSnap.id}',this.value)">
+            <option value="Pending" ${data.status=="Pending"?"selected":""}>Pending</option>
+            <option value="Processing" ${data.status=="Processing"?"selected":""}>Processing</option>
+            <option value="Completed" ${data.status=="Completed"?"selected":""}>Completed</option>
+            <option value="Cancelled" ${data.status=="Cancelled"?"selected":""}>Cancelled</option>
+          </select>
+        </td>
       </tr>
       `;
     });
@@ -250,6 +260,13 @@ function liveOrders(){
 
 loadDashboard();
 liveOrders();
+
+window.updateStatus = async function(id,status){
+  await updateDoc(doc(db,"orders",id),{
+    status:status
+  });
+  alert("Status Updated");
+}
 </script>
 
 </body>
