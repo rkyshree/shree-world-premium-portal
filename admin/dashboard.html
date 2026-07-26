@@ -85,6 +85,13 @@ select {
   cursor: pointer;
   font-weight: bold;
 }
+
+/* Table styling for better look */
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
 </style>
 </head>
 
@@ -102,7 +109,26 @@ select {
 </div>
 
 <div class="main">
-  <h1>Admin Dashboard</h1>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <h1>Admin Dashboard</h1>
+    <div style="position:relative;font-size:28px;cursor:pointer;">
+      🔔
+      <span id="notifyCount"
+      style="
+      position:absolute;
+      top:-10px;
+      right:-10px;
+      background:red;
+      color:white;
+      border-radius:50%;
+      padding:3px 8px;
+      font-size:12px;
+      display:none;
+      ">
+      0
+      </span>
+    </div>
+  </div>
   <p>Welcome Admin</p>
 
   <div class="cards">
@@ -129,17 +155,17 @@ select {
 
   <h2 style="margin-top:30px;">Recent Orders</h2>
 
-  <table style="width:100%;background:#fff;border-collapse:collapse;margin-top:15px;box-shadow:0 3px 10px rgba(0,0,0,.1);border-radius:10px;overflow:hidden;">
-    <thead style="background:#0d6efd;color:#fff;">
+  <table style="width:100%;margin-top:15px;background:#fff;border-collapse:collapse;box-shadow:0 3px 10px rgba(0,0,0,.1);border-radius:10px;overflow:hidden;">
+    <thead style="background:#0d6efd;color:white;">
       <tr>
-        <th style="padding:12px; text-align:left;">Customer</th>
-        <th style="padding:12px; text-align:left;">Service</th>
-        <th style="padding:12px; text-align:left;">Amount</th>
-        <th style="padding:12px; text-align:left;">Status</th>
+        <th>Name</th>
+        <th>Service</th>
+        <th>Amount</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody id="ordersBody">
-      <!-- Orders will be injected here -->
+      <!-- Live Orders will be injected here -->
     </tbody>
   </table>
 
@@ -147,8 +173,12 @@ select {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-// updateDoc और doc को भी import किया गया है ताकि डेटाबेस अपडेट हो सके
-import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
@@ -193,57 +223,33 @@ async function loadDashboard() {
   }
 }
 
-async function loadRecentOrders() {
-  try {
-    const snapshot = await getDocs(collection(db, "orders"));
-    let html = "";
-
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const id = docSnap.id; // Document ID निकाल रहे हैं
-      const currentStatus = data.status || "Pending";
-
-      html += `
+function liveOrders(){
+  const ordersRef = collection(db,"orders");
+  
+  onSnapshot(ordersRef,(snapshot)=>{
+    document.getElementById("notifyCount").style.display="block";
+    document.getElementById("notifyCount").innerText=snapshot.size;
+    
+    let html="";
+    
+    snapshot.forEach((doc)=>{
+      const data=doc.data();
+      html+=`
       <tr>
-        <td style="padding:10px;border-bottom:1px solid #ddd;">${data.name || "-"}</td>
-        <td style="padding:10px;border-bottom:1px solid #ddd;">${data.service || "-"}</td>
-        <td style="padding:10px;border-bottom:1px solid #ddd;">₹${data.amount || 0}</td>
-        <td style="padding:10px;border-bottom:1px solid #ddd;">
-          <select onchange="updateStatus('${id}', this.value)" style="color: #0d6efd;">
-            <option value="Pending" ${currentStatus == "Pending" ? "selected" : ""}>Pending</option>
-            <option value="Processing" ${currentStatus == "Processing" ? "selected" : ""}>Processing</option>
-            <option value="Completed" ${currentStatus == "Completed" ? "selected" : ""}>Completed</option>
-            <option value="Cancelled" ${currentStatus == "Cancelled" ? "selected" : ""}>Cancelled</option>
-          </select>
-        </td>
+        <td>${data.name||""}</td>
+        <td>${data.service||""}</td>
+        <td>₹${data.amount||0}</td>
+        <td>${data.status||"Pending"}</td>
       </tr>
       `;
     });
-
-    document.getElementById("ordersBody").innerHTML = html;
-
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-// यह फंक्शन डेटाबेस में स्टेटस अपडेट करेगा
-window.updateStatus = async function(orderId, newStatus) {
-  try {
-    const orderRef = doc(db, "orders", orderId);
-    await updateDoc(orderRef, {
-      status: newStatus
-    });
-    console.log(`Order ${orderId} updated to ${newStatus}`);
-    // आप चाहें तो यहाँ alert("Status Updated Successfully!"); लगा सकते हैं।
-  } catch (error) {
-    console.error("Error updating status:", error);
-    alert("Error updating status. Check console.");
-  }
+    
+    document.getElementById("ordersBody").innerHTML=html;
+  });
 }
 
 loadDashboard();
-loadRecentOrders();
+liveOrders();
 </script>
 
 </body>
