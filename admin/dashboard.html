@@ -75,6 +75,13 @@ font-size:28px;
 font-weight:bold;
 color:#0d6efd;
 }
+
+/* Select dropdown style (optional) */
+select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
 </style>
 </head>
 
@@ -122,10 +129,10 @@ color:#0d6efd;
   <table style="width:100%;background:#fff;border-collapse:collapse;margin-top:15px;box-shadow:0 3px 10px rgba(0,0,0,.1);border-radius:10px;overflow:hidden;">
     <thead style="background:#0d6efd;color:#fff;">
       <tr>
-        <th style="padding:12px;">Customer</th>
-        <th style="padding:12px;">Service</th>
-        <th style="padding:12px;">Amount</th>
-        <th style="padding:12px;">Status</th>
+        <th style="padding:12px; text-align:left;">Customer</th>
+        <th style="padding:12px; text-align:left;">Service</th>
+        <th style="padding:12px; text-align:left;">Amount</th>
+        <th style="padding:12px; text-align:left;">Status</th>
       </tr>
     </thead>
     <tbody id="ordersBody">
@@ -197,7 +204,13 @@ async function loadRecentOrders() {
         <td style="padding:10px;border-bottom:1px solid #ddd;">${data.name || "-"}</td>
         <td style="padding:10px;border-bottom:1px solid #ddd;">${data.service || "-"}</td>
         <td style="padding:10px;border-bottom:1px solid #ddd;">₹${data.amount || 0}</td>
-        <td style="padding:10px;border-bottom:1px solid #ddd;">${data.status || "-"}</td>
+        <td style="padding:10px;border-bottom:1px solid #ddd;">
+          <select>
+            <option ${data.status=="Pending" ? "selected" : ""}>Pending</option>
+            <option ${data.status=="Processing" ? "selected" : ""}>Processing</option>
+            <option ${data.status=="Completed" ? "selected" : ""}>Completed</option>
+          </select>
+        </td>
       </tr>
       `;
     });
