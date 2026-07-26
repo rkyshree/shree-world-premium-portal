@@ -30,7 +30,7 @@
         color: #0f172a;
         scroll-behavior: smooth;
         overflow-x: hidden;
-        padding-top: 70px; 
+        padding-top: 75px; 
     }
     
     .icon-circle {
@@ -61,19 +61,6 @@
     }
     .green-price-blink { animation: priceGreenBlink 0.8s infinite steps(1); }
     
-    /* NEW PREMIUM BLUE SHREE BLINK */
-    @keyframes blueSlightBlink {
-        0%, 100% { opacity: 1; text-shadow: 0 0 12px rgba(37, 99, 235, 0.4); }
-        50% { opacity: 0.85; text-shadow: 0 0 20px rgba(37, 99, 235, 0.8); }
-    }
-    .shree-blue-premium {
-        background: linear-gradient(to right, #1e3a8a, #3b82f6, #60a5fa);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: blueSlightBlink 2.5s infinite ease-in-out;
-        display: inline-block;
-    }
-    
     .btn-active-highlight-dark {
         border-color: #f97316 !important;
         background-color: rgba(249, 115, 22, 0.15) !important;
@@ -98,41 +85,43 @@
     
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Offer Button Pulse */
+    @keyframes offerPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(225,29,72,0.4); }
+        50% { transform: scale(1.02); box-shadow: 0 15px 40px rgba(225,29,72,0.6); }
+    }
+    .offer-pulse-btn {
+        animation: offerPulse 2s infinite ease-in-out;
+    }
     </style>
 </head>
 <body class='min-h-screen flex flex-col'>
 
-    <!-- ==================== STICKY HEADER ==================== -->
-    <header class="fixed top-0 left-0 right-0 z-[120] bg-white shadow-sm h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all">
+    <!-- HIDDEN AI VOICE ASSISTANT CONTAINER -->
+    <div id="ai-voice-assistant-hidden" class="hidden" aria-hidden="true"></div>
+
+    <!-- ==================== PREMIUM 2-COLOR COMPACT HEADER ==================== -->
+    <header class="fixed top-0 left-0 right-0 z-[120] bg-white/95 backdrop-blur-md shadow-sm h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all border-b border-slate-200">
         <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
-            <div class="flex items-center">
-                <span class="text-3xl sm:text-4xl font-black shree-blue-premium mr-1">श्री</span>
-                <span class="text-sm sm:text-xl font-black text-slate-900 ml-1 uppercase">World premium portal</span>
+            <div class="flex items-center bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+                <span class="text-2xl sm:text-3xl font-black text-brandOrange mr-1">श्री</span>
+                <span class="text-[10px] sm:text-xs font-black text-brandBlue uppercase tracking-widest">World Premium</span>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
             <div class="border-2 border-brandOrange bg-orange-50 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-sm">
                 <span class="green-blink-dot"></span>
-                <span class="font-black text-xs sm:text-sm text-slate-800 tracking-wide uppercase">ANURADHA</span>
+                <span class="font-black text-[10px] sm:text-sm text-slate-800 tracking-wide uppercase">ANURADHA</span>
             </div>
         </div>
     </header>
 
     <main class='flex-grow'>
 
-        <!-- ==================== WELCOME TEXT SECTION ==================== -->
-        <div class="text-center mt-8 px-4 max-w-md mx-auto mb-8">
-            <h2 class="text-base sm:text-lg font-bold text-slate-700 tracking-wider">WELCOME TO</h2>
-            <div class="flex items-center justify-center mt-1 mb-2">
-                <span class="text-4xl sm:text-5xl font-black shree-blue-premium mr-2">श्री</span>
-                <span class="text-xl font-black text-slate-900 uppercase">World premium portal</span>
-            </div>
-            <p class="text-xs sm:text-sm font-bold text-slate-600 mt-2 bg-slate-100 py-1.5 px-4 rounded-full inline-block border border-slate-200">All Premium Services at One Place</p>
-        </div>
-
-        <!-- ==================== 6 CIRCULAR ICONS GRID (LARGER) ==================== -->
-        <div class="grid grid-cols-3 gap-y-10 gap-x-3 mt-4 px-2 sm:px-4 max-w-lg mx-auto">
+        <!-- ==================== 6 CIRCULAR ICONS GRID ==================== -->
+        <div class="grid grid-cols-3 gap-y-10 gap-x-3 mt-10 px-2 sm:px-4 max-w-lg mx-auto">
             
             <!-- Icon 1: Instagram Growth -->
             <div onclick="navigateToService('instagram')" class="flex flex-col items-center justify-start cursor-pointer group">
@@ -181,16 +170,19 @@
                 </div>
                 <span class="text-xs sm:text-sm font-black text-slate-800 text-center leading-tight tracking-wide">Digital<br>Marketing</span>
             </div>
-
         </div>
 
-        <!-- ==================== TODAY'S OFFER CARD ==================== -->
+        <!-- ==================== TODAY'S OFFER CARD (INTERACTIVE BANNER) ==================== -->
         <div class="mt-14 mb-10 px-4 max-w-md mx-auto relative" id="special-offer">
-            <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-500 to-pink-600 text-white px-8 py-2 rounded-full text-xs font-black tracking-widest shadow-lg z-10 whitespace-nowrap animate-pulse border-2 border-white">
-                TODAY'S OFFER
-            </div>
             
-            <div class="bg-slate-900 rounded-[2.5rem] p-6 pt-10 offer-card border border-amber-500/30 relative text-white shadow-2xl">
+            <!-- BLINKING TRIGGER BUTTON -->
+            <button onclick="toggleOfferCard()" class="w-full bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-[2rem] p-5 offer-pulse-btn border-2 border-white relative overflow-hidden group">
+                <span class="block text-sm sm:text-base font-black tracking-widest uppercase mb-1">🔥 Today's Special Offer 🔥</span>
+                <span class="block text-[10px] sm:text-xs font-bold text-pink-100">Click Here To Reveal The Mega Pack</span>
+            </button>
+            
+            <!-- EXPANDABLE OFFER DETAILS -->
+            <div id="offer-details" class="hidden mt-5 bg-slate-900 rounded-[2.5rem] p-6 pt-8 border border-amber-500/30 text-white shadow-2xl transition-all duration-300">
                 
                 <div class="text-center mb-4">
                     <span class="bg-white/10 text-amber-300 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold border border-amber-500/30">📸 इंस्टाग्राम स्पेशल महा ऑफर 📸</span>
@@ -391,12 +383,8 @@
             <div class='max-w-4xl mx-auto bg-white border border-slate-200 p-6 sm:p-10 rounded-[2.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative overflow-hidden'>
                 
                 <div class='text-center mb-10'>
-                    <div class='inline-block bg-emerald-50 text-emerald-600 font-bold text-xs sm:text-sm px-5 py-2 rounded-full mb-4 border border-emerald-200'>
-                        🛡️ 100% सुरक्षित और सेफ पेमेंट ट्रांसफर
-                    </div>
-                    <h2 class='text-[15px] sm:text-2xl font-black text-slate-900 mb-2 whitespace-nowrap'>
-                        आसान Online पेमेंट Center (UPI) | <span class="text-slate-500 font-medium text-[11px] sm:text-base">Google Pay, PhonePe, या Paytm से स्कैन करें</span>
-                    </h2>
+                    <h2 class='text-[18px] sm:text-2xl font-black text-slate-900 mb-2'>आसान Online पेमेंट Center (UPI)</h2>
+                    <p class='text-[11px] sm:text-sm text-slate-500 font-bold'>Google Pay, PhonePe, या Paytm से तुरंत पेमेंट स्कैन करके भेजें।</p>
                 </div>
                 
                 <div class='grid grid-cols-1 md:grid-cols-2 gap-10 items-center'>
@@ -706,6 +694,16 @@
             document.getElementById('secure-payment').scrollIntoView({ behavior: 'smooth' });
         }
 
+        function toggleOfferCard() {
+            const el = document.getElementById('offer-details');
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
         function toggleInteractiveFlight(type) {
             const formWrapper = document.getElementById('conditionalFlightFormWrapper');
             document.getElementById('flight-dom-btn').classList.remove('btn-active-highlight-light');
@@ -726,8 +724,8 @@
             container.innerHTML = '';
             filtered.forEach(airport => {
                 const item = document.createElement('div');
-                item.className = "p-3 hover:bg-slate-700 cursor-pointer flex justify-between bg-slate-800 text-slate-200 text-xs border-b border-slate-700";
-                item.innerHTML = `<span>${airport.name}</span><span class="font-bold text-cyan-400">${airport.code}</span>`;
+                item.className = "p-3 hover:bg-slate-100 cursor-pointer flex justify-between bg-white text-slate-800 text-xs border-b border-cyan-100";
+                item.innerHTML = `<span>${airport.name}</span><span class="font-bold text-cyan-600">${airport.code}</span>`;
                 item.onclick = function() { 
                     document.getElementById(inputId).value = `${airport.name} (${airport.code})`; 
                     container.classList.add('hidden'); 
