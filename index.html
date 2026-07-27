@@ -291,7 +291,7 @@
         </div>
     </div>
 
-    <!-- ==================== REFER & EARN MODAL (POPUP INFO) ==================== -->
+    <!-- ==================== REFER & EARN MODAL ==================== -->
     <div id="referEarnModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[160] hidden items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-amber-600/50 flex flex-col max-h-[90vh]">
             <div class="bg-gradient-to-r from-emerald-600 to-green-600 p-4 sm:p-5 flex justify-between items-center text-white shrink-0">
@@ -537,18 +537,10 @@
                     </div>
 
                     <div id='conditionalPlansWrapper' class='hidden space-y-6'>
-                        <div>
-                            <label class='block text-xs sm:text-sm font-bold text-purple-200 mb-2 p-1 rounded'>अपनी मर्जी की गिनती लिखें (Custom Quantity):</label>
-                            <div class='relative rounded-xl overflow-hidden bg-slate-800 border border-purple-800/50 focus-within:border-amber-400 transition-all shadow-sm'>
-                                <input class='w-full bg-transparent py-3.5 px-4 text-white focus:outline-none text-sm sm:text-base font-bold placeholder-slate-500' id='custom-quantity-input' oninput='calculateCustomPrice()' placeholder='जैसे: 500, 2500 आदि...' type='number'/>
-                                <div class='absolute right-4 top-1/2 -translate-y-1/2 text-xs text-purple-400 font-bold'>संख्या (Units)</div>
-                            </div>
-                        </div>
-
+                        
                         <div>
                             <div class='flex justify-between items-center mb-2.5 p-1 rounded'>
-                                <label class='block text-xs sm:text-sm font-bold text-purple-200'>या हमारे बेस्ट रेडीमेड प्लान चुनें:</label>
-                                <span class='text-xs text-amber-300 font-bold bg-amber-900/30 px-2.5 py-0.5 rounded border border-amber-800' id='custom-qty-display'></span>
+                                <label class='block text-xs sm:text-sm font-bold text-purple-200'>हमारे बेस्ट रेडीमेड प्लान चुनें:</label>
                             </div>
                             <div class='grid grid-cols-1 sm:grid-cols-2 gap-3' id='quantity-grid'></div>
                         </div>
@@ -623,51 +615,102 @@
                     </button>
                 </div>
 
-                <div id='conditionalFlightFormWrapper' class='hidden space-y-4 animate-fadeIn bg-slate-900 p-5 rounded-3xl border border-slate-700/50 shadow-inner'>
+                <!-- Domestic Form -->
+                <div id='domesticFlightFormWrapper' class='hidden space-y-4 animate-fadeIn bg-slate-900 p-5 rounded-3xl border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]'>
                     <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
                         <div class='relative'>
-                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>🛫 कहां से बैठना है (From City):</label>
-                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-from' oninput='showSuggestions("flight-from", "from-suggestions")' placeholder='शहर या एयरपोर्ट...' type='text'/>
-                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-cyan-500 rounded-xl z-50 shadow-2xl' id='from-suggestions'></div>
+                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>🛫 कहां से बैठना है (From):</label>
+                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-from' oninput='showFlightSuggestions("dom-flight-from", "dom-from-suggestions", "domestic")' placeholder='शहर या एयरपोर्ट...' type='text'/>
+                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-cyan-500 rounded-xl z-50 shadow-2xl' id='dom-from-suggestions'></div>
                         </div>
                         <div class='relative'>
-                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>🛬 कहां तक जाना है (To City):</label>
-                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-to' oninput='showSuggestions("flight-to", "to-suggestions")' placeholder='जाने वाले शहर...' type='text'/>
-                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-cyan-500 rounded-xl z-50 shadow-2xl' id='to-suggestions'></div>
+                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>🛬 कहां तक जाना है (To):</label>
+                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-to' oninput='showFlightSuggestions("dom-flight-to", "dom-to-suggestions", "domestic")' placeholder='जाने वाले शहर...' type='text'/>
+                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-cyan-500 rounded-xl z-50 shadow-2xl' id='dom-to-suggestions'></div>
                         </div>
                         <div>
-                            <label class='block text-xs font-bold text-cyan-300 whitespace-nowrap mb-1.5'>📅 जाने की तारीख (Travel Date):</label>
-                            <input class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-date' type='date'/>
+                            <label class='block text-xs font-bold text-cyan-300 whitespace-nowrap mb-1.5'>📅 तारीख (Date):</label>
+                            <input class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-date' type='date'/>
                         </div>
                     </div>
                     <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
                         <div>
-                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>👤 यात्री का नाम (Passenger Name):</label>
-                            <input class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-passenger-name' placeholder='पूरा नाम...' type='text'/>
+                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>👤 यात्री का नाम (Name):</label>
+                            <input class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-passenger-name' placeholder='पूरा नाम...' type='text'/>
                         </div>
                         <div>
-                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>👥 कुल कितने लोग हैं (Passengers):</label>
-                            <select class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-total-count'>
+                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>👥 कुल कितने लोग हैं:</label>
+                            <select class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-total-count'>
                                 <option value='1 Person'>1 व्यक्ति</option>
                                 <option value='2 People'>2 लोग</option>
                                 <option value='3 People'>3 लोग</option>
                                 <option value='4 People'>4 लोग</option>
-                                <option value='5+ People'>5 से ज़्यादा लोग</option>
+                                <option value='5+ People'>5+ लोग</option>
                             </select>
                         </div>
                         <div>
-                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>💺 बैठने की क्लास (Cabin Class):</label>
-                            <select class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs sm:text-sm font-medium' id='flight-class-category'>
-                                <option value='Economy Class'>इकोनॉमी (नॉर्मल सीट)</option>
+                            <label class='block text-xs font-bold text-cyan-300 mb-1.5'>💺 क्लास (Class):</label>
+                            <select class='w-full bg-slate-800/80 border border-cyan-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='dom-flight-class-category'>
+                                <option value='Economy Class'>इकोनॉमी (नॉर्मल)</option>
                                 <option value='Premium Economy'>प्रीमियम इकोनॉमी</option>
-                                <option value='Business Class'>बिजनेस क्लास (प्रीमियम)</option>
+                                <option value='Business Class'>बिजनेस क्लास</option>
                                 <option value='First Class'>फर्स्ट क्लास</option>
                             </select>
                         </div>
                     </div>
                     <div class="pt-2">
-                        <button class='w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition-all text-sm flex items-center justify-center space-x-2 shadow-[0_0_15px_rgba(245,158,11,0.3)] transform active:scale-95 uppercase tracking-wide border border-amber-300' onclick='executeFlightOrderAutoBonus()'>
-                            <span>✈️ व्हाट्सएप पर टिकट का दाम पता करें और बुक करें</span>
+                        <button class='w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition-all text-sm flex items-center justify-center space-x-2 shadow-[0_0_15px_rgba(245,158,11,0.3)] transform active:scale-95 uppercase tracking-wide border border-amber-300' onclick='executeFlightOrderAutoBonus("domestic")'>
+                            <span>✈️ व्हाट्सएप पर टिकट बुक करें</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- International Form -->
+                <div id='internationalFlightFormWrapper' class='hidden space-y-4 animate-fadeIn bg-slate-900 p-5 rounded-3xl border border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.2)]'>
+                    <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
+                        <div class='relative'>
+                            <label class='block text-xs font-bold text-purple-300 mb-1.5'>🛫 कहां से बैठना है (From):</label>
+                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-from' oninput='showFlightSuggestions("int-flight-from", "int-from-suggestions", "international")' placeholder='शहर या एयरपोर्ट...' type='text'/>
+                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-purple-500 rounded-xl z-50 shadow-2xl' id='int-from-suggestions'></div>
+                        </div>
+                        <div class='relative'>
+                            <label class='block text-xs font-bold text-purple-300 mb-1.5'>🛬 कहां तक जाना है (To):</label>
+                            <input autocomplete='off' class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-to' oninput='showFlightSuggestions("int-flight-to", "int-to-suggestions", "international")' placeholder='जाने वाले शहर...' type='text'/>
+                            <div class='hidden absolute left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-slate-800 border border-purple-500 rounded-xl z-50 shadow-2xl' id='int-to-suggestions'></div>
+                        </div>
+                        <div>
+                            <label class='block text-xs font-bold text-purple-300 whitespace-nowrap mb-1.5'>📅 तारीख (Date):</label>
+                            <input class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-date' type='date'/>
+                        </div>
+                    </div>
+                    <div class='grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm'>
+                        <div>
+                            <label class='block text-xs font-bold text-purple-300 mb-1.5'>👤 यात्री का नाम (Name):</label>
+                            <input class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-passenger-name' placeholder='पूरा नाम...' type='text'/>
+                        </div>
+                        <div>
+                            <label class='block text-xs font-bold text-purple-300 mb-1.5'>👥 कुल कितने लोग हैं:</label>
+                            <select class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-total-count'>
+                                <option value='1 Person'>1 व्यक्ति</option>
+                                <option value='2 People'>2 लोग</option>
+                                <option value='3 People'>3 लोग</option>
+                                <option value='4 People'>4 लोग</option>
+                                <option value='5+ People'>5+ लोग</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class='block text-xs font-bold text-purple-300 mb-1.5'>💺 क्लास (Class):</label>
+                            <select class='w-full bg-slate-800/80 border border-purple-700/50 shadow-sm rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-xs font-medium' id='int-flight-class-category'>
+                                <option value='Economy Class'>इकोनॉमी (नॉर्मल)</option>
+                                <option value='Premium Economy'>प्रीमियम इकोनॉमी</option>
+                                <option value='Business Class'>बिजनेस क्लास</option>
+                                <option value='First Class'>फर्स्ट क्लास</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button class='w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition-all text-sm flex items-center justify-center space-x-2 shadow-[0_0_15px_rgba(245,158,11,0.3)] transform active:scale-95 uppercase tracking-wide border border-amber-300' onclick='executeFlightOrderAutoBonus("international")'>
+                            <span>✈️ व्हाट्सएप पर टिकट बुक करें</span>
                         </button>
                     </div>
                 </div>
@@ -930,53 +973,6 @@
             </div>
         </section>
 
-        <!-- REVIEWS SECTION -->
-        <section class='py-12 px-4 max-w-5xl mx-auto bg-slate-900 border-t border-slate-800' id='reviews-hub'>
-            <div class='text-center mb-6 cursor-pointer'>
-                <span class='text-amber-500 font-extrabold tracking-widest block text-xs uppercase mb-1'>Verified Client Responses ⭐</span>
-                <h2 class='text-[19px] sm:text-2xl font-black text-white mb-1.5'>💎 हमारे 100% संतुष्ट ग्राहकों के वास्तविक अनुभव</h2>
-                <p class='text-[11px] sm:text-xs text-blue-300 font-bold bg-blue-900/30 inline-block px-3 py-1 rounded-full border border-blue-800 mt-2'>भारत के अलग-अलग राज्यों और शहरों से लाइव प्रतिक्रियाएं</p>
-            </div>
-            
-            <div id="reviewsCarousel" class="flex overflow-x-auto gap-4 pb-6 snap-x snap-mandatory no-scrollbar mt-4 scroll-smooth">
-                <!-- Reviews injected via JS -->
-            </div>
-            
-            <div class='bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-sm mt-4 max-w-4xl mx-auto'>
-                <h3 class='text-base font-black text-amber-500 mb-3 flex items-center gap-1.5 uppercase tracking-wide'>
-                    <span>✍️</span> <span>अपना कीमती रिव्यू साझा करें</span>
-                </h3>
-                <div class='space-y-4 text-xs sm:text-sm'>
-                    <div class='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                        <div>
-                            <label class='block font-bold text-slate-300 mb-1'>आपका नाम:</label>
-                            <input type='text' id='userRevName' placeholder='अपना पूरा नाम लिखें...' class='w-full bg-slate-900 border border-slate-600 rounded-xl py-2.5 px-4 text-white font-medium shadow-sm'/>
-                        </div>
-                        <div>
-                            <label class='block font-bold text-slate-300 mb-1'>आपका शहर / राज्य:</label>
-                            <input type='text' id='userRevLocation' placeholder='जैसे: गोरखपुर, लखनऊ, दिल्ली...' class='w-full bg-slate-900 border border-slate-600 rounded-xl py-2.5 px-4 text-white font-medium shadow-sm'/>
-                        </div>
-                    </div>
-                    <div>
-                        <label class='block font-bold text-slate-300 mb-1'>रेटिंग चुनें (Rating):</label>
-                        <select id='userRevRating' class='w-full bg-slate-900 border border-slate-600 rounded-xl py-2.5 px-4 text-amber-500 font-bold shadow-sm'>
-                            <option value='⭐⭐⭐⭐⭐'>⭐⭐⭐⭐⭐ (5 Star Rating - बेस्ट सर्विस)</option>
-                            <option value='⭐⭐⭐⭐'>⭐⭐⭐⭐ (4 Star)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class='block font-bold text-slate-300 mb-1'>आपका अनुभव (Review Message):</label>
-                        <textarea id='userRevMessage' rows='2' placeholder='श्री वर्ल्ड प्रीमियम पोर्टल के बारे में अपनी राय लिखें...' class='w-full bg-slate-900 border border-slate-600 rounded-xl py-2.5 px-4 text-white font-medium shadow-sm'></textarea>
-                    </div>
-                    <div class='pt-2'>
-                        <button onclick='submitUserReviewSystem()' class='w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center space-x-1.5 text-sm'>
-                            <span>🚀</span> <span>रिव्यू सबमिट करें</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <div class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500 text-amber-400 py-3 px-6 rounded-full text-sm font-bold shadow-xl z-[200] animate-bounce' id='toast-msg'>📋 कॉपी हो गया है! अब कहीं भी पेस्ट कर सकते हैं।</div>
@@ -1221,7 +1217,7 @@
             
             if(!upiId || !amount) return alert("कृपया UPI ID या GPay/PhonePe/Paytm नंबर भरें!");
             if(amount < 500) return alert("न्यूनतम विड्रॉल राशि ₹500 है!");
-            if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस नहीं है!");
+            if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस float नहीं है!");
 
             try {
                 await updateDoc(doc(db, "users", currentUserData.uid), {
@@ -1549,393 +1545,6 @@
             }
         };
 
-    </script>
-
-    <!-- GENERAL LOGIC -->
-    <script type='text/javascript'>
-        let activePlatform = 'instagram';
-        let activeServiceLabel = 'Followers';
-        let activeQuantity = '100';
-        let selectedPackagePrice = 19;
-        
-        // ==================== NEW ORDER FORM LOGIC ==================== //
-        const orderDataMatrix = {
-            Instagram: [
-                { label: 'Followers - 100 (₹19)', price: 19 },
-                { label: 'Followers - 1000 (₹249)', price: 249 },
-                { label: 'Followers - 5000 (₹899)', price: 899 },
-                { label: 'Followers - 10000 (₹1599)', price: 1599 },
-                { label: 'Likes - 1000 (₹30)', price: 30 },
-                { label: 'Likes - 2000 (₹99)', price: 99 },
-                { label: 'Likes - 5000 (₹199)', price: 199 },
-                { label: 'Likes - 10000 (₹299)', price: 299 },
-                { label: 'Views - 10000 (₹29)', price: 29 },
-                { label: 'Comments - 1000 (₹99)', price: 99 }
-            ],
-            Facebook: [
-                { label: 'Followers - 1000 (₹99)', price: 99 },
-                { label: 'Followers - 5000 (₹499)', price: 499 },
-                { label: 'Followers - 10000 (₹799)', price: 799 },
-                { label: 'Likes - 1000 (₹269)', price: 269 },
-                { label: 'Likes - 5000 (₹1399)', price: 1399 },
-                { label: 'Likes - 10000 (₹2199)', price: 2199 },
-                { label: 'Views - 5000 (₹49)', price: 49 },
-                { label: 'Views - 10000 (₹99)', price: 99 },
-                { label: 'Comments - 1000 (₹99)', price: 99 }
-            ]
-        };
-
-        window.handleCategoryChange = function() {
-            const cat = document.getElementById('orderCategory').value;
-            const subContainer = document.getElementById('subServiceContainer');
-            const subSelect = document.getElementById('orderSubService');
-            const linkContainer = document.getElementById('profileLinkContainer');
-            const amountInput = document.getElementById('orderAmount');
-
-            subSelect.innerHTML = '<option value="">-- पैकेज चुनें --</option>';
-            amountInput.value = '';
-
-            if (cat === 'Instagram Special Pack') {
-                subContainer.classList.add('hidden');
-                linkContainer.classList.remove('hidden');
-                document.getElementById('profileLinkLabel').innerText = "अपने अकाउंट का नाम (Username) या POST का लिंक डालें:";
-                amountInput.value = '1999'; 
-            } else if (cat === 'Instagram' || cat === 'Facebook') {
-                subContainer.classList.remove('hidden');
-                linkContainer.classList.remove('hidden');
-                document.getElementById('profileLinkLabel').innerText = "अपने अकाउंट का नाम (Username) या POST का लिंक डालें:";
-                
-                orderDataMatrix[cat].forEach(item => {
-                    let opt = document.createElement('option');
-                    opt.value = item.price;
-                    opt.text = item.label;
-                    subSelect.appendChild(opt);
-                });
-            } else if (cat === 'Website') {
-                subContainer.classList.add('hidden');
-                linkContainer.classList.remove('hidden');
-                document.getElementById('profileLinkLabel').innerText = "वेबसाइट का नाम या बिज़नेस डिटेल्स:";
-                amountInput.value = '999'; // Landing Page Option
-            } else {
-                subContainer.classList.add('hidden');
-                linkContainer.classList.add('hidden');
-            }
-            updateLiveQRCode();
-        }
-
-        window.handleSubServiceChange = function() {
-            const val = document.getElementById('orderSubService').value;
-            if (val) {
-                document.getElementById('orderAmount').value = val;
-            } else {
-                document.getElementById('orderAmount').value = '';
-            }
-            updateLiveQRCode();
-        }
-
-        window.handlePanelOrder = function() {
-            document.getElementById('order-section').scrollIntoView({ behavior: 'smooth' });
-            
-            const categorySelect = document.getElementById('orderCategory');
-            categorySelect.value = (activePlatform === 'instagram') ? 'Instagram' : 'Facebook';
-            handleCategoryChange();
-            
-            const amountInput = document.getElementById('orderAmount');
-            amountInput.value = selectedPackagePrice;
-            
-            const subSelect = document.getElementById('orderSubService');
-            
-            let found = false;
-            for(let i=0; i<subSelect.options.length; i++) {
-                // simple match text logic
-                if(subSelect.options[i].text.includes(activeServiceLabel) && subSelect.options[i].text.includes(activeQuantity.toString())) {
-                    subSelect.selectedIndex = i;
-                    found = true;
-                    break;
-                }
-            }
-            if(!found) {
-                for(let i=0; i<subSelect.options.length; i++) {
-                    if(subSelect.options[i].value == selectedPackagePrice) {
-                        subSelect.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-            updateLiveQRCode();
-        }
-
-        window.payViaUPI = function(appCode) {
-            const amount = document.getElementById('orderAmount').value;
-            if (!amount) {
-                alert("कृपया पहले सर्विस चुनें ताकि अमाउंट तय हो सके!");
-                return;
-            }
-            // Universal UPI link allows any UPI app (PhonePe, GPay, Paytm) installed on phone to handle it.
-            window.location.href = `upi://pay?pa=9451239239-3@ybl&pn=RAJAN%20YADAV&am=${amount}&cu=INR`;
-        }
-        // ============================================================== //
-
-        function goLink(url) {
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = url;
-            document.body.appendChild(iframe);
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-                window.open(url, '_blank', 'noopener,noreferrer');
-            }, 100);
-        }
-
-        function initPremiumLiveCounters() {
-            const elInsta = document.getElementById('count-insta');
-            const elFb = document.getElementById('count-fb');
-            const elFlight = document.getElementById('count-flight');
-            const elActive = document.getElementById('live-active-users');
-
-            let instaCount = parseInt(localStorage.getItem('shree_instaCount')) || 138111;
-            let fbCount = parseInt(localStorage.getItem('shree_fbCount')) || 85460;
-            let flightCount = parseInt(localStorage.getItem('shree_flightCount')) || 11780;
-
-            function updateDisplayAnimated(el, count) {
-                if(!el) return;
-                const newText = count.toLocaleString('en-IN');
-                if(el.innerText !== newText && el.innerText !== "") {
-                    el.classList.remove('premium-ticker-update');
-                    void el.offsetWidth; 
-                    el.classList.add('premium-ticker-update');
-                }
-                el.innerText = newText;
-            }
-
-            updateDisplayAnimated(elInsta, instaCount);
-            updateDisplayAnimated(elFb, fbCount);
-            updateDisplayAnimated(elFlight, flightCount);
-
-            setInterval(() => {
-                instaCount += Math.floor(Math.random() * 5) + 1; 
-                fbCount += Math.floor(Math.random() * 4) + 1;    
-                flightCount += Math.floor(Math.random() * 3) + 1; 
-                
-                localStorage.setItem('shree_instaCount', instaCount);
-                localStorage.setItem('shree_fbCount', fbCount);
-                localStorage.setItem('shree_flightCount', flightCount);
-
-                updateDisplayAnimated(elInsta, instaCount);
-                updateDisplayAnimated(elFb, fbCount);
-                updateDisplayAnimated(elFlight, flightCount);
-            }, 3000);
-
-            function updateLiveUsers() {
-                let currentActive = Math.floor(Math.random() * (5000 - 200 + 1)) + 200;
-                updateDisplayAnimated(elActive, currentActive);
-            }
-            if(elActive) {
-                updateLiveUsers(); 
-                setInterval(updateLiveUsers, 3000);
-            }
-        }
-
-        const comprehensivePriceMatrix = {
-            instagram: {
-                'Followers': [{ qty: '100', price: 19 }, { qty: '1000', price: 249 }, { qty: '5000', price: 899 }, { qty: '10000', price: 1599 }],
-                'Likes': [{ qty: '1000', price: 30 }, { qty: '2000', price: 99 }, { qty: '5000', price: 199 }, { qty: '10000', price: 299 }],
-                'Views': [{ qty: '10000', price: 29 }],
-                'Comments': [{ qty: '1000', price: 99 }]
-            },
-            facebook: {
-                'Followers': [{ qty: '1000', price: 99 }, { qty: '5000', price: 499 }, { qty: '10000', price: 799 }],
-                'Likes': [{ qty: '1000', price: 269 }, { qty: '5000', price: 1399 }, { qty: '10000', price: 2199 }],
-                'Views': [{ qty: '5000', price: 49 }, { qty: '10000', price: 99 }],
-                'Comments': [{ qty: '1000', price: 99 }]
-            }
-        };
-
-        const platformData = {
-            instagram: { label: 'इंस्टाग्राम', emoji: '📸', services: ['Followers', 'Likes', 'Comments', 'Views'] },
-            facebook: { label: 'फेसबुक', emoji: '👥', services: ['Followers', 'Likes', 'Comments', 'Views'] }
-        };
-
-        const serviceHindiLabels = { 'Followers': 'फॉलोअर्स', 'Likes': 'लाइक्स', 'Comments': 'कमेंट्स', 'Views': 'व्यूज' };
-
-        const airports = [
-            { name: "गोरखपुर एयरपोर्ट - गोरखपुर", code: "GOP" },
-            { name: "छत्रपति शिवाजी महाराज इंटरनेशनल एयरपोर्ट - मुंबई", code: "BOM" },
-            { name: "इंदिरा गांधी इंटरनेशनल एयरपोर्ट - नई दिल्ली", code: "DEL" },
-            { name: "चौधरी चरण सिंह इंटरनेशनल एयरपोर्ट - लखनऊ", code: "LKO" }
-        ];
-
-        function navigateToService(platform) {
-            document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' });
-            selectPlatform(platform);
-        }
-
-        function navigateToFlight() {
-            document.getElementById('flight-booking').scrollIntoView({ behavior: 'smooth' });
-            if (selectedInteractiveFlightType === '') toggleInteractiveFlight('domestic'); 
-        }
-
-        function executeFlightOrderAutoBonus() {
-            const from = document.getElementById('flight-from').value.trim();
-            const toad = document.getElementById('flight-to').value.trim();
-            const date = document.getElementById('flight-date').value;
-            const pName = document.getElementById('flight-passenger-name').value.trim();
-            if(!from || !toad || !date || !pName) { alert('कृपया फॉर्म पूरा भरें!'); return; }
-            const textMessage = `✈️ *FLIGHT BOOKING* ✈️\n━━━━━━━━━━━━━━━━━━\n👤 *यात्री:* ${pName}\n🛫 *कहाँ से:* ${from}\n🛬 *कहाँ तक:* ${toad}\n📅 *तारीख:* ${date}`;
-            goLink(`https://wa.me/919451239239?text=${encodeURIComponent(textMessage)}`);
-        }
-
-        function toggleInteractiveFlight(type) {
-            const formWrapper = document.getElementById('conditionalFlightFormWrapper');
-            document.getElementById('flight-dom-btn').classList.remove('btn-active-highlight');
-            document.getElementById('flight-int-btn').classList.remove('btn-active-highlight');
-            if (selectedInteractiveFlightType === type) {
-                selectedInteractiveFlightType = ''; formWrapper.classList.add('hidden');
-            } else {
-                selectedInteractiveFlightType = type; formWrapper.classList.remove('hidden');
-                document.getElementById(`flight-${type}-btn`).classList.add('btn-active-highlight');
-            }
-        }
-
-        function showSuggestions(inputId, containerId) {
-            const inputVal = document.getElementById(inputId).value.toLowerCase().trim();
-            const container = document.getElementById(containerId);
-            if (inputVal.length < 1) { container.classList.add('hidden'); return; }
-            const filtered = airports.filter(a => a.name.toLowerCase().includes(inputVal) || a.code.toLowerCase().includes(inputVal));
-            container.innerHTML = '';
-            filtered.forEach(airport => {
-                const item = document.createElement('div');
-                item.className = "p-3 hover:bg-slate-700 cursor-pointer flex justify-between bg-slate-800 text-slate-200 text-xs border-b border-slate-700";
-                item.innerHTML = `<span>${airport.name}</span><span class="font-bold text-cyan-400">${airport.code}</span>`;
-                item.onclick = function() { 
-                    document.getElementById(inputId).value = `${airport.name} (${airport.code})`; 
-                    container.classList.add('hidden'); 
-                };
-                container.appendChild(item);
-            });
-            container.classList.remove('hidden');
-        }
-
-        function selectPlatform(platform) {
-            activePlatform = platform;
-            document.getElementById('btn-instagram').classList.remove('btn-active-highlight');
-            document.getElementById('btn-facebook').classList.remove('btn-active-highlight');
-            document.getElementById(`btn-${platform}`).classList.add('btn-active-highlight');
-            document.getElementById('selected-platform-label').innerText = `${platformData[platform].emoji} ${platformData[platform].label}`;
-            const servicesContainer = document.getElementById('service-options-container');
-            servicesContainer.innerHTML = '';
-            platformData[platform].services.forEach((service) => {
-                const btn = document.createElement('button');
-                btn.className = `service-opt p-3 rounded-xl border text-xs sm:text-sm font-semibold text-center bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700`;
-                btn.innerText = serviceHindiLabels[service] || service;
-                btn.onclick = () => { selectService(btn, service); };
-                servicesContainer.appendChild(btn);
-            });
-            document.getElementById('conditionalPlansWrapper').classList.add('hidden');
-        }
-
-        function selectService(buttonElement, serviceLabel) {
-            activeServiceLabel = serviceLabel;
-            document.querySelectorAll('.service-opt').forEach(btn => {
-                btn.className = 'service-opt p-3 rounded-xl border text-xs sm:text-sm font-semibold text-center bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700';
-            });
-            buttonElement.className = 'service-opt p-3 rounded-xl border text-xs sm:text-sm font-black text-center btn-active-highlight';
-            document.getElementById('conditionalPlansWrapper').classList.remove('hidden');
-            renderQuantities();
-        }
-
-        function renderQuantities() {
-            const qtyContainer = document.getElementById('quantity-grid'); qtyContainer.innerHTML = '';
-            const availablePackages = comprehensivePriceMatrix[activePlatform][activeServiceLabel] || [];
-            availablePackages.forEach((pkg) => {
-                const btn = document.createElement('button'); btn.id = `pkg-${pkg.qty}`;
-                btn.className = `qty-opt flex items-center justify-between p-3.5 rounded-xl border font-bold text-sm bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700`;
-                btn.innerHTML = `<span>${parseInt(pkg.qty).toLocaleString('en-IN')} ${serviceHindiLabels[activeServiceLabel]}</span><span class="text-amber-500 font-black">₹${pkg.price}</span>`;
-                btn.onclick = () => { selectQuantity(pkg.qty, pkg.price); };
-                qtyContainer.appendChild(btn);
-            });
-        }
-
-        function selectQuantity(qty, price) {
-            activeQuantity = qty; selectedPackagePrice = price;
-            document.querySelectorAll('.qty-opt').forEach(btn => btn.className = 'qty-opt flex items-center justify-between p-3.5 rounded-xl border font-bold text-sm bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700');
-            if(document.getElementById(`pkg-${qty}`)) document.getElementById(`pkg-${qty}`).classList.add('btn-active-highlight');
-            updatePriceUI(selectedPackagePrice);
-        }
-
-        function calculateCustomPrice() {
-            const customInput = document.getElementById('custom-quantity-input').value.trim();
-            if (customInput === "" || parseInt(customInput) <= 0) { renderQuantities(); return; }
-            const userQty = parseInt(customInput);
-            const availablePackages = comprehensivePriceMatrix[activePlatform][activeServiceLabel] || [];
-            if (availablePackages.length === 0) return;
-
-            let basePackage = availablePackages[0];
-            let calculatedCost = (userQty / parseInt(basePackage.qty)) * basePackage.price;
-            selectedPackagePrice = Math.round(calculatedCost * 1.20);
-            activeQuantity = userQty.toString();
-            updatePriceUI(selectedPackagePrice);
-        }
-
-        function updatePriceUI(price) {
-            document.getElementById('custom-qty-display').innerText = `चुनी गई संख्या: ${activeQuantity}`;
-            document.getElementById('display-final-price').innerText = `₹${price.toLocaleString('en-IN')}`;
-        }
-
-        window.updateLiveQRCode = function() {
-            const amount = document.getElementById('orderAmount') ? document.getElementById('orderAmount').value : "0";
-            const qrImg = document.getElementById('live-qr-img');
-            if(qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26am=${amount}%26cu=INR`;
-            
-            const displayAmt = document.getElementById('displayPayAmount');
-            if(displayAmt) displayAmt.innerText = amount || "0";
-        }
-
-        function copyToClipboard(text) {
-            const tempInput = document.createElement("input"); tempInput.value = text;
-            document.body.appendChild(tempInput); tempInput.select(); document.execCommand("copy"); document.body.removeChild(tempInput);
-            const toast = document.getElementById('toast-msg'); toast.classList.remove('hidden');
-            setTimeout(() => { toast.classList.add('hidden'); }, 2000);
-        }
-
-        function toggleAccordion(id) {
-            const el = document.getElementById(id);
-            const icon = document.getElementById(`icon-${id}`);
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden'); if(icon) icon.innerText = '▲';
-            } else {
-                el.classList.add('hidden'); if(icon) icon.innerText = '▼';
-            }
-        }
-
-        window.onload = function() {
-            selectPlatform('instagram'); 
-            updateLiveQRCode();
-            initPremiumLiveCounters(); 
-            // Reviews Data 
-            const fixedReviews = [
-                {n: "अमित सिंह", c: "गोरखपुर", r:"⭐⭐⭐⭐⭐", m: "सर्विस सच में बहुत तेज़ है। क्वालिटी एकदम रियल और नॉन-ड्रॉप है।"},
-                {n: "राहुल शर्मा", c: "दिल्ली", r:"⭐⭐⭐⭐", m: "बिना पासवर्ड के इतना सुरक्षित काम कहीं नहीं मिलता, बहुत बढ़िया।"},
-                {n: "प्रिया पटेल", c: "पटना", r:"⭐⭐⭐⭐⭐", m: "मार्केट से बहुत कम दाम पर मेरा काम हो गया, धन्यवाद श्री टीम!"},
-                {n: "सुमित गुप्ता", c: "लखनऊ", r:"⭐⭐⭐⭐⭐", m: "मेरे इंस्टाग्राम फॉलोवर्स सिर्फ 20 मिनट में आ गए, 100% ट्रस्टेड वेबसाइट।"}
-            ];
-            const container = document.getElementById('reviewsCarousel');
-            if(container) {
-                fixedReviews.forEach(rev => {
-                    container.innerHTML += `
-                    <div class="flex-none w-[260px] sm:w-[300px] bg-slate-800 border border-slate-700 p-5 rounded-3xl shadow-sm snap-center hover:shadow-md transition-all shrink-0">
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex flex-col items-start gap-1">
-                                <span class="text-sm sm:text-base font-black text-white">${rev.n}</span>
-                                <span class="text-[10px] text-slate-300 bg-slate-700 px-2 py-0.5 rounded-md border border-slate-600 flex items-center gap-1">📍 ${rev.c}</span>
-                            </div>
-                        </div>
-                        <div class="text-xs text-amber-500 font-bold mb-2">${rev.r}</div>
-                        <p class="text-[12px] sm:text-sm text-slate-300 font-medium leading-relaxed">"${rev.m}"</p>
-                    </div>`;
-                });
-            }
-        };
     </script>
 </body>
 </html>
