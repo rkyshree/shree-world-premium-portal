@@ -27,7 +27,7 @@
     <style>
     body {
         font-family: 'Hind', sans-serif;
-        background: #0f172a !important;
+        background: #0f172a !important; /* Premium Dark Navy */
         color: #f1f5f9;
         scroll-behavior: smooth;
         overflow-x: hidden;
@@ -205,16 +205,6 @@
                     </div>
                 </div>
 
-                <!-- Refer Detailed Info inside Dashboard -->
-                <div class="bg-emerald-900/30 border border-emerald-800 p-3.5 rounded-2xl shadow-sm space-y-2 mt-3">
-                    <h5 class="font-black text-xs text-emerald-400 flex items-center gap-1.5">
-                        <span>💡</span> Refer &amp; Earn जानकारी
-                    </h5>
-                    <div class="text-[11px] text-slate-300 space-y-1.5 font-medium leading-relaxed">
-                        <p>दोस्तों को जोड़ें और हर सफल रेफरल पर <strong>₹200 कमाएं</strong>। जब आपके वॉलेट में ₹500 हो जाएं और सभी शर्तें पूरी हो जाएं, तब आप तुरंत व्हाट्सएप के जरिए विड्रॉल ले सकते हैं।</p>
-                    </div>
-                </div>
-
                 <button onclick="logoutUser()" class="w-full border border-red-500/50 text-red-400 hover:bg-red-900/30 font-bold py-2.5 rounded-xl transition-all shrink-0 text-xs mt-3">🚪 Logout (बाहर जाएँ)</button>
             </div>
         </div>
@@ -262,14 +252,14 @@
                 <button onclick="closeTrackModal()" class="text-white hover:text-red-300 text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 bg-slate-900 space-y-4">
-                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर दर्ज करें:</p>
+                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर या मोबाइल नंबर दर्ज करें:</p>
                 
                 <div class="flex gap-2">
-                    <input type="text" id="trackMobileInput" placeholder="अपना आर्डर नंबर डालें (उदा: RAJAN9918164690)..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
+                    <input type="text" id="trackMobileInput" placeholder="उदा: Order-001RAJAN या मोबाइल नंबर..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
                     <button onclick="searchMyOrder()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-black shadow-md">Check</button>
                 </div>
 
-                <div id="trackResultArea" class="hidden pt-4 border-t border-slate-700 mt-4 space-y-4">
+                <div id="trackResultArea" class="hidden pt-4 border-t border-slate-700 mt-4 space-y-4 max-h-[50vh] overflow-y-auto tnc-scroll">
                     <!-- Results injected here -->
                 </div>
             </div>
@@ -448,6 +438,11 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-400 mb-1.5 ml-1 uppercase tracking-wider">Mobile Number</label>
                         <input type="number" id="newOrdMobile" placeholder="10 अंकों का मोबाइल नंबर..." class="w-full bg-slate-900/80 border border-slate-600 rounded-2xl py-3.5 px-5 text-white font-bold focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-inner">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1.5 ml-1 uppercase tracking-wider">Profile / Post Link</label>
+                        <input type="text" id="newOrdLink" placeholder="अपना इंस्टाग्राम/फेसबुक का लिंक पेस्ट करें..." class="w-full bg-slate-900/80 border border-slate-600 rounded-2xl py-3.5 px-5 text-white font-bold focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all shadow-inner">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1231,13 +1226,14 @@
         window.submitNewOrderSystem = async () => {
             const name = document.getElementById('newOrdName').value.trim();
             const mobile = document.getElementById('newOrdMobile').value.trim();
+            const link = document.getElementById('newOrdLink').value.trim();
             const platform = document.getElementById('newOrdPlatform').value;
             const service = document.getElementById('newOrdService').value;
             const qtyStr = document.getElementById('newOrdQty').value;
             const amount = document.getElementById('newOrdAmount').value;
 
-            if(!name || mobile.length < 10 || !platform || !service || !qtyStr || !amount) {
-                alert("कृपया आर्डर फॉर्म की सभी जानकारी सही से भरें!");
+            if(!name || mobile.length < 10 || !link || !platform || !service || !qtyStr || !amount) {
+                alert("कृपया आर्डर फॉर्म की सभी जानकारी (लिंक सहित) सही से भरें!");
                 return;
             }
 
@@ -1245,16 +1241,22 @@
             btn.disabled = true;
             btn.innerHTML = "⏳ Processing...";
 
-            // Order ID Generation: Name(FirstName) + Mobile
             const cleanName = name.split(' ')[0].toUpperCase();
-            const orderId = cleanName + mobile;
 
             try {
-                // SAVING IN "orders" COLLECTION EXACTLY AS REQUESTED
+                // Check previous orders count for sequential ID
+                const userOrdersQ = query(collection(db, "orders"), where("mobile", "==", mobile));
+                const userOrdersSnap = await getDocs(userOrdersQ);
+                const orderCount = userOrdersSnap.size + 1;
+                
+                const formattedCount = String(orderCount).padStart(3, '0');
+                const orderId = `Order-${formattedCount}${cleanName}`;
+
                 const docRef = await addDoc(collection(db, "orders"), {
                     name: name,
                     mobile: mobile,
-                    orderId: orderId, // Saved dynamically as Name + Mobile
+                    orderId: orderId,
+                    link: link,
                     platform: platform, 
                     service: service,
                     quantity: qtyStr, 
@@ -1264,7 +1266,6 @@
                     createdAt: serverTimestamp()
                 });
 
-                // Show Success UI
                 document.getElementById('orderFormContainer').classList.add('hidden');
                 document.getElementById('orderSuccessTrackerUI').classList.remove('hidden');
                 document.getElementById('successOrderIdDisplay').innerText = orderId;
@@ -1281,7 +1282,6 @@
         function startLiveTracking(docId) {
             if(currentOrderUnsubscribe) currentOrderUnsubscribe();
             
-            // Listening to "orders" collection
             currentOrderUnsubscribe = onSnapshot(doc(db, "orders", docId), (docSnap) => {
                 if(docSnap.exists()) {
                     const data = docSnap.data();
@@ -1318,28 +1318,53 @@
         // TRACK ORDER MODAL SEARCH
         window.searchMyOrder = async () => {
             const trackInput = document.getElementById('trackMobileInput').value.trim().toUpperCase();
-            if(trackInput.length < 5) return alert("कृपया सही आर्डर नंबर डालें!");
+            if(trackInput.length < 5) return alert("कृपया सही आर्डर नंबर या मोबाइल नंबर डालें!");
             
             const resultArea = document.getElementById('trackResultArea');
             resultArea.innerHTML = '<p class="text-center text-amber-500 font-bold">ढूंढा जा रहा है...</p>';
             resultArea.classList.remove('hidden');
 
             try {
-                // Tracking by generated orderId in "orders" collection
-                const q = query(collection(db, "orders"), where("orderId", "==", trackInput));
-                const snap = await getDocs(q);
+                // Find if the input is an Order ID to get the mobile number
+                let targetMobile = trackInput;
+                let idQuery = query(collection(db, "orders"), where("orderId", "==", trackInput));
+                let idSnap = await getDocs(idQuery);
                 
-                if(snap.empty) {
-                    resultArea.innerHTML = '<p class="text-center text-red-400 font-bold">इस नंबर से कोई आर्डर नहीं मिला!</p>';
-                    return;
+                if(!idSnap.empty) {
+                    targetMobile = idSnap.docs[0].data().mobile;
                 }
 
-                resultArea.innerHTML = '';
-                snap.forEach(docSnap => {
-                    const data = docSnap.data();
+                // Fetch all orders associated with this mobile number
+                const allQ = query(collection(db, "orders"), where("mobile", "==", targetMobile));
+                const allSnap = await getDocs(allQ);
+
+                if(allSnap.empty) {
+                    // One final check if trackInput itself was mobile
+                    const mobQ = query(collection(db, "orders"), where("mobile", "==", trackInput));
+                    const mobSnap = await getDocs(mobQ);
+                    if(mobSnap.empty){
+                         resultArea.innerHTML = '<p class="text-center text-red-400 font-bold">इस नंबर से कोई आर्डर नहीं मिला!</p>';
+                         return;
+                    }
+                }
+
+                const finalSnap = allSnap.empty ? await getDocs(query(collection(db, "orders"), where("mobile", "==", trackInput))) : allSnap;
+
+                resultArea.innerHTML = `
+                <div class="bg-blue-900/30 border border-blue-800 p-3 rounded-xl mb-4 text-center shadow-sm">
+                    <p class="text-blue-300 font-bold text-xs uppercase tracking-wider">Total Orders Placed</p>
+                    <p class="text-2xl font-black text-white">${finalSnap.size}</p>
+                </div>`;
+                
+                // Sort array by createdAt
+                let docsArr = [];
+                finalSnap.forEach(d => docsArr.push(d.data()));
+                docsArr.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                docsArr.forEach(data => {
                     let color = data.status === 'Completed' ? 'text-green-400' : (data.status === 'Processing' ? 'text-blue-400' : 'text-amber-400');
                     let html = `
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 shadow-sm">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 shadow-sm mb-3">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <p class="text-xs text-slate-400 uppercase font-bold">${data.platform || 'Service'} - ${data.service}</p>
@@ -1423,7 +1448,6 @@
             listDiv.innerHTML = '<p class="text-center text-amber-500">Loading orders...</p>';
             
             try {
-                // Query from "orders" collection
                 const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
                 
@@ -1436,12 +1460,14 @@
                 snap.forEach((docSnap) => {
                     const data = docSnap.data();
                     const displayId = data.orderId || data.mobile;
+                    const displayLink = data.link ? `<p class="text-[10px] text-blue-400 truncate max-w-[200px] mt-1"><a href="${data.link}" target="_blank">🔗 ${data.link}</a></p>` : '';
                     const html = `
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 shadow-sm flex flex-col sm:flex-row justify-between items-start gap-3">
                         <div>
                             <p class="font-bold text-white text-sm">${displayId} <span class="text-slate-400 text-xs">(${data.name})</span></p>
                             <p class="text-amber-400 font-bold text-xs uppercase">${data.platform || 'Web'} - ${data.service} (${data.quantity || 'N/A'})</p>
-                            <p class="text-[10px] text-slate-400 mt-1">₹${data.amount}</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">Mobile: ${data.mobile} | ₹${data.amount}</p>
+                            ${displayLink}
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
                             <select onchange="updateOrderStatusAdmin('${docSnap.id}', this.value)" class="bg-slate-900 border border-slate-600 text-white text-xs font-bold rounded-lg px-2 py-2">
@@ -1461,7 +1487,6 @@
 
         window.updateOrderStatusAdmin = async (docId, newStatus) => {
             try {
-                // Updating in "orders" collection
                 await updateDoc(doc(db, "orders", docId), { status: newStatus });
             } catch(e) { alert("Update failed"); }
         };
@@ -1497,7 +1522,7 @@
         };
 
         // NEW ORDER FORM LOGIC
-        function updateNewOrderServices() {
+        window.updateNewOrderServices = () => {
             const platform = document.getElementById("newOrdPlatform").value;
             const serviceSelect = document.getElementById("newOrdService");
             const qtySelect = document.getElementById("newOrdQty");
@@ -1520,9 +1545,9 @@
                     serviceSelect.appendChild(opt);
                 });
             }
-        }
+        };
 
-        function updateNewOrderQuantity() {
+        window.updateNewOrderQuantity = () => {
             const platform = document.getElementById("newOrdPlatform").value;
             const service = document.getElementById("newOrdService").value;
             const qtySelect = document.getElementById("newOrdQty");
@@ -1544,33 +1569,33 @@
                     qtySelect.appendChild(opt);
                 });
             }
-        }
+        };
 
-        function updateNewOrderAmount() {
+        window.updateNewOrderAmount = () => {
             const qtySelect = document.getElementById("newOrdQty");
             const amtInput = document.getElementById("newOrdAmount");
             if(qtySelect.selectedIndex > 0) {
                 const selectedOption = qtySelect.options[qtySelect.selectedIndex];
                 amtInput.value = selectedOption.getAttribute('data-price');
             }
-        }
+        };
 
         // UPI APPS MODAL LOGIC
-        function openUpiAppsModal() {
+        window.openUpiAppsModal = () => {
             const amount = document.getElementById('newOrdAmount').value;
             if(!amount) return alert("कृपया पहले सर्विस और क्वांटिटी चुनें!");
             
             document.getElementById('upiModalAmount').innerText = amount;
             document.getElementById('upiAppsModal').classList.remove('hidden');
             document.getElementById('upiAppsModal').classList.add('flex');
-        }
+        };
 
-        function closeUpiAppsModal() {
+        window.closeUpiAppsModal = () => {
             document.getElementById('upiAppsModal').classList.add('hidden');
             document.getElementById('upiAppsModal').classList.remove('flex');
-        }
+        };
 
-        function triggerPaymentApp(appCode) {
+        window.triggerPaymentApp = (appCode) => {
             const amount = document.getElementById('newOrdAmount').value;
             const upiId = "rkyshree@indianbank";
             const name = "Rajan Yadav";
@@ -1589,31 +1614,20 @@
                 closeUpiAppsModal();
                 document.getElementById('paidSubmitBtn').classList.add('animate-pulse');
             }, 1000);
-        }
+        };
 
-        function resetOrderForm() {
+        window.resetOrderForm = () => {
             document.getElementById('orderFormContainer').classList.remove('hidden');
             document.getElementById('orderSuccessTrackerUI').classList.add('hidden');
             document.getElementById('newOrdName').value = "";
             document.getElementById('newOrdMobile').value = "";
+            document.getElementById('newOrdLink').value = "";
             document.getElementById('newOrdPlatform').value = "";
             updateNewOrderServices();
             
             const btn = document.getElementById('paidSubmitBtn');
             btn.disabled = false;
             btn.innerHTML = `<span class="text-lg">✅</span> <span>मैंने पेमेंट कर दिया है</span>`;
-        }
-
-        // TRACK ORDER MODAL LOGIC
-        window.openTrackModal = () => {
-            document.getElementById('trackOrderModal').classList.remove('hidden');
-            document.getElementById('trackOrderModal').classList.add('flex');
-            document.getElementById('trackResultArea').classList.add('hidden');
-            document.getElementById('trackMobileInput').value = "";
-        };
-        window.closeTrackModal = () => {
-            document.getElementById('trackOrderModal').classList.add('hidden');
-            document.getElementById('trackOrderModal').classList.remove('flex');
         };
 
         // ----------------------------------------------------
