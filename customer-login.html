@@ -109,7 +109,13 @@ getFirestore,
 doc,
 getDoc,
 setDoc,
-serverTimestamp
+serverTimestamp,
+collection,
+query,
+where,
+getDocs,
+addDoc,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -249,3 +255,646 @@ photo:localStorage.getItem("customerPhoto")
 
 };
   
+// ================= LOGOUT =================
+
+window.customerLogout = async function(){
+
+try{
+
+await signOut(auth);
+
+localStorage.clear();
+
+alert("Logout Successful");
+
+window.location.href="customer-login.html";
+
+}catch(error){
+
+console.log(error);
+
+alert(error.message);
+
+}
+
+};
+
+// ================= LOGIN CHECK =================
+
+window.checkCustomerLogin = function(){
+
+const uid = localStorage.getItem("customerUID");
+
+if(!uid){
+
+window.location.href="customer-login.html";
+
+return false;
+
+}
+
+return true;
+
+};
+
+// ================= SHOW CUSTOMER NAME =================
+
+window.showCustomerName = function(id){
+
+const name = localStorage.getItem("customerName");
+
+if(document.getElementById(id)){
+
+document.getElementById(id).innerText = name || "Customer";
+
+}
+
+};
+
+// ================= SHOW CUSTOMER PHOTO =================
+
+window.showCustomerPhoto = function(id){
+
+const photo = localStorage.getItem("customerPhoto");
+
+if(document.getElementById(id) && photo){
+
+document.getElementById(id).src = photo;
+
+}
+
+};
+  // ================= LOAD CUSTOMER PROFILE =================
+
+window.loadCustomerProfile = async function(){
+
+const uid = localStorage.getItem("customerUID");
+
+if(!uid) return;
+
+try{
+
+const ref = doc(db,"users",uid);
+
+const snap = await getDoc(ref);
+
+if(snap.exists()){
+
+const data = snap.data();
+
+if(document.getElementById("customerName")){
+document.getElementById("customerName").innerText = data.name || "";
+}
+
+if(document.getElementById("customerEmail")){
+document.getElementById("customerEmail").innerText = data.email || "";
+}
+
+if(document.getElementById("customerWallet")){
+document.getElementById("customerWallet").innerText =
+"₹"+(data.wallet || 0);
+}
+
+if(document.getElementById("customerReferral")){
+document.getElementById("customerReferral").innerText =
+data.referralCode || "";
+}
+
+if(document.getElementById("customerPhoto")){
+document.getElementById("customerPhoto").src =
+data.photo || "icon-192.png";
+}
+
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+};
+
+// ================= COPY REFERRAL CODE =================
+
+window.copyReferral=function(){
+
+const code=document.getElementById("customerReferral").innerText;
+
+navigator.clipboard.writeText(code);
+
+alert("Referral Code Copied");
+
+};
+
+// ================= GO TO ORDER HISTORY =================
+
+window.openOrderHistory=function(){
+
+window.location.href="order-history.html";
+
+};
+
+// ================= GO TO TRACK ORDER =================
+
+window.openTrackOrder=function(){
+
+window.location.href="track-order.html";
+
+};
+// ================= PROFILE CARD =================
+
+window.createCustomerCard = function(){
+
+const name = localStorage.getItem("customerName") || "Customer";
+
+const photo = localStorage.getItem("customerPhoto") || "icon-192.png";
+
+const html = `
+
+<div style="
+background:#fff;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+margin:20px 0;
+text-align:center;
+">
+
+<img id="customerPhoto"
+
+src="${photo}"
+
+style="
+width:90px;
+height:90px;
+border-radius:50%;
+border:4px solid #0d6efd;
+object-fit:cover;
+">
+
+<h2 id="customerName"
+style="margin-top:10px;">
+${name}
+</h2>
+
+<p id="customerEmail"></p>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+margin-top:20px;
+">
+
+<div style="
+background:#f8f9fa;
+padding:15px;
+border-radius:10px;
+">
+
+<h4>Wallet</h4>
+
+<h2 id="customerWallet">
+₹0
+</h2>
+
+</div>
+
+<div style="
+background:#f8f9fa;
+padding:15px;
+border-radius:10px;
+">
+
+<h4>Referral</h4>
+
+<h3 id="customerReferral">
+Loading...
+</h3>
+
+</div>
+
+</div>
+
+<div style="margin-top:20px;">
+
+<button onclick="copyReferral()">
+
+Copy Referral
+
+</button>
+
+<button onclick="openOrderHistory()"
+style="margin-top:10px;">
+
+My Orders
+
+</button>
+
+<button onclick="openTrackOrder()"
+style="margin-top:10px;">
+
+Track Order
+
+</button>
+
+<button onclick="customerLogout()"
+style="
+margin-top:10px;
+background:red;
+">
+
+Logout
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+return html;
+
+};
+
+// ================= SHOW PROFILE =================
+
+window.showProfile=function(id){
+
+document.getElementById(id).innerHTML=createCustomerCard();
+
+loadCustomerProfile();
+
+};
+// ================= ORDER HISTORY =================
+
+import {
+collection,
+query,
+where,
+getDocs
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+window.loadMyOrders = async function(tableId){
+
+const uid = localStorage.getItem("customerUID");
+
+if(!uid) return;
+
+const tbody=document.getElementById(tableId);
+
+if(!tbody) return;
+
+tbody.innerHTML="<tr><td colspan='5'>Loading...</td></tr>";
+
+try{
+
+const q=query(
+
+collection(db,"orders"),
+
+where("uid","==",uid)
+
+);
+
+const snapshot=await getDocs(q);
+
+let html="";
+
+if(snapshot.empty){
+
+html="<tr><td colspan='5'>No Orders Found</td></tr>";
+
+}else{
+
+snapshot.forEach((doc)=>{
+
+const d=doc.data();
+
+html+=`
+
+<tr>
+
+<td>${d.orderId || "-"}</td>
+
+<td>${d.service || "-"}</td>
+
+<td>₹${d.amount || 0}</td>
+
+<td>${d.status || "Pending"}</td>
+
+<td>${d.date || "-"}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+tbody.innerHTML=html;
+
+}catch(e){
+
+console.log(e);
+
+tbody.innerHTML="<tr><td colspan='5'>Error Loading Orders</td></tr>";
+
+}
+
+};
+
+// ================= REFER LINK =================
+
+window.getReferralLink=function(){
+
+const code=document.getElementById("customerReferral").innerText;
+
+return "https://www.rkyshree.in/?ref="+code;
+
+};
+
+// ================= SHARE REFERRAL =================
+
+window.shareReferral=function(){
+
+const link=getReferralLink();
+
+navigator.clipboard.writeText(link);
+
+alert("Referral Link Copied");
+
+};
+
+// ================= SHOW LOGIN USER =================
+
+window.updateLoginButton=function(id){
+
+const btn=document.getElementById(id);
+
+if(!btn) return;
+
+const name=localStorage.getItem("customerName");
+
+const photo=localStorage.getItem("customerPhoto");
+
+if(name){
+
+btn.innerHTML=`
+<img src="${photo}"
+style="
+width:32px;
+height:32px;
+border-radius:50%;
+vertical-align:middle;
+margin-right:8px;
+">
+${name}
+`;
+
+btn.href="profile.html";
+
+}
+
+};
+  // ================= WALLET =================
+
+window.loadWallet = async function(){
+
+const uid = localStorage.getItem("customerUID");
+
+if(!uid) return;
+
+try{
+
+const ref = doc(db,"users",uid);
+
+const snap = await getDoc(ref);
+
+if(snap.exists()){
+
+const data = snap.data();
+
+if(document.getElementById("walletBalance")){
+
+document.getElementById("walletBalance").innerText =
+"₹" + (data.wallet || 0);
+
+}
+
+}
+
+}catch(err){
+
+console.log(err);
+
+}
+
+};
+
+// ================= WITHDRAW REQUEST =================
+
+window.sendWithdrawRequest = async function(){
+
+const uid = localStorage.getItem("customerUID");
+
+const amount = document.getElementById("withdrawAmount").value;
+
+const upi = document.getElementById("withdrawUpi").value;
+
+if(amount=="" || upi==""){
+
+alert("Please Fill All Details");
+
+return;
+
+}
+
+try{
+
+await addDoc(collection(db,"withdrawRequests"),{
+
+uid:uid,
+
+amount:Number(amount),
+
+upi:upi,
+
+status:"Pending",
+
+date:new Date().toLocaleString()
+
+});
+
+alert("Withdraw Request Submitted");
+
+}catch(err){
+
+alert(err.message);
+
+}
+
+};
+
+// ================= SHARE REFERRAL =================
+
+window.shareReferralLink=function(){
+
+const code=document.getElementById("customerReferral").innerText;
+
+const link="https://www.rkyshree.in/?ref="+code;
+
+navigator.clipboard.writeText(link);
+
+alert("Referral Link Copied");
+
+};
+
+// ================= PROFILE AUTO LOAD =================
+
+window.onload=function(){
+
+loadCustomerProfile();
+
+loadWallet();
+
+};
+  // ================= LIVE ORDER NOTIFICATION =================
+
+window.listenNewOrders = function(){
+
+const ordersRef = collection(db,"orders");
+
+onSnapshot(ordersRef,(snapshot)=>{
+
+const total = snapshot.size;
+
+const badge = document.getElementById("notificationCount");
+
+if(badge){
+
+badge.innerText = total;
+
+}
+
+snapshot.docChanges().forEach((change)=>{
+
+if(change.type==="added"){
+
+const data = change.doc.data();
+
+console.log("New Order :",data);
+
+// Browser Notification
+
+if("Notification" in window){
+
+Notification.requestPermission().then((permission)=>{
+
+if(permission==="granted"){
+
+new Notification("🛒 New Order Received",{
+
+body:
+(data.name || "Customer")+
+" ordered "+
+(data.service || "Service")
+
+});
+
+}
+
+});
+
+}
+
+}
+
+});
+
+});
+
+};
+
+// ================= AUTO START =================
+
+window.addEventListener("load",()=>{
+
+listenNewOrders();
+
+});
+  // ================= LIVE DASHBOARD =================
+
+window.loadDashboardLive = function(){
+
+// Live Users
+onSnapshot(collection(db,"users"),(snapshot)=>{
+
+const e=document.getElementById("totalUsers");
+
+if(e){
+e.innerText=snapshot.size;
+}
+
+});
+
+// Live Orders
+onSnapshot(collection(db,"orders"),(snapshot)=>{
+
+const e=document.getElementById("totalOrders");
+
+if(e){
+e.innerText=snapshot.size;
+}
+
+let revenue=0;
+
+snapshot.forEach((doc)=>{
+
+const d=doc.data();
+
+revenue+=Number(d.amount || 0);
+
+});
+
+const r=document.getElementById("totalRevenue");
+
+if(r){
+r.innerText="₹"+revenue.toLocaleString("en-IN");
+}
+
+});
+
+// Live Reviews
+onSnapshot(collection(db,"reviews"),(snapshot)=>{
+
+const e=document.getElementById("totalReviews");
+
+if(e){
+e.innerText=snapshot.size;
+}
+
+});
+
+};
+
+// ================= AUTO LOAD =================
+
+window.addEventListener("load",()=>{
+
+if(document.getElementById("totalUsers")){
+
+loadDashboardLive();
+
+}
+
+});
+
+// ================= FINISH =================
+</script>
+
+</body>
+</html>
