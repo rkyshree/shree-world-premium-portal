@@ -101,6 +101,24 @@
     .status-active ~ .timeline-line { background: #475569; }
     .status-completed .timeline-dot { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
     .status-completed + .timeline-line { background: #22c55e; }
+
+    /* New Customer Login Button Style */
+    .login-btn {
+        background: #0d6efd;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: transform 0.2s, background 0.2s;
+    }
+    .login-btn:hover {
+        background: #0b5ed7;
+        transform: scale(1.05);
+    }
     </style>
 </head>
 <body class='text-slate-200 min-h-screen flex flex-col bg-slate-900'>
@@ -118,9 +136,10 @@
                 ⚙️ Admin
             </button>
             
-            <button id="authBtn" onclick="window.handleAuthButtonClick()" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white rounded-full px-5 py-2 sm:px-6 sm:py-2.5 shadow-[0_0_15px_rgba(16,185,129,0.4)] text-sm sm:text-base font-black transition-transform hover:scale-105 flex items-center gap-2 border-2 border-green-400 animate-pulse-slow">
-                <span id="authBtnIcon" class="animate-spin text-lg">⏳</span> <span id="authBtnText">Loading...</span>
-            </button>
+            <!-- NEW CUSTOMER LOGIN BUTTON -->
+            <a href="customer-login.html" class="login-btn">
+                👤 Customer Login
+            </a>
         </div>
     </header>
 
@@ -922,7 +941,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-about-us'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900' id='acc-about-us'>
-                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और সোশ্যাল मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
+                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और सोशल मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
                 </div>
             </div>
             
@@ -945,7 +964,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-privacy'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900' id='acc-privacy'>
-                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग ত্রিশते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
+                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
                 </div>
             </div>
 
@@ -1124,12 +1143,14 @@
                 const adminBtn = document.getElementById('adminBtn');
 
                 if (user) {
-                    btnIcon.className = "text-lg"; 
-                    btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
-                    btnText.innerText = 'My Profile';
-                    authBtn.onclick = window.openDashboard;
+                    if (btnIcon) {
+                        btnIcon.className = "text-lg"; 
+                        btnIcon.innerHTML = `<img src="${user.photoURL}" class="w-5 h-5 rounded-full inline">`;
+                    }
+                    if (btnText) btnText.innerText = 'My Profile';
+                    if (authBtn) authBtn.onclick = window.openDashboard;
                     
-                    if (user.email === ADMIN_EMAIL) {
+                    if (user.email === ADMIN_EMAIL && adminBtn) {
                         adminBtn.classList.remove('hidden');
                     }
                     
@@ -1141,11 +1162,13 @@
                     const latestSnap = await getDoc(userRef);
                     currentUserData = latestSnap.data();
                 } else {
-                    btnIcon.className = "text-lg"; 
-                    btnIcon.innerHTML = `🎁`;
-                    btnText.innerText = 'Refer & Earn';
-                    authBtn.onclick = window.handleAuthButtonClick;
-                    adminBtn.classList.add('hidden');
+                    if (btnIcon) {
+                        btnIcon.className = "text-lg"; 
+                        btnIcon.innerHTML = `🎁`;
+                    }
+                    if (btnText) btnText.innerText = 'Refer & Earn';
+                    if (authBtn) authBtn.onclick = window.handleAuthButtonClick;
+                    if (adminBtn) adminBtn.classList.add('hidden');
                     currentUserData = null;
                 }
             });
