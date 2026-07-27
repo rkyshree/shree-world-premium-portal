@@ -1,3 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Login | SHREE WORLD</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.login-box{
+width:360px;
+background:#fff;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+text-align:center;
+}
+
+.login-box img{
+width:80px;
+margin-bottom:15px;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+p{
+color:#666;
+margin-bottom:20px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:#4285F4;
+color:#fff;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#3367D6;
+}
+
+.small{
+margin-top:20px;
+font-size:13px;
+color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+<img src="logo.png" alt="Logo">
+
+<h2>Customer Login</h2>
+
+<p>Continue with your Google Account</p>
+
+<button id="googleLogin">
+Continue with Google
+</button>
+
+<div class="small">
+SHREE WORLD PREMIUM PORTAL
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+
+import {
+getAuth,
+GoogleAuthProvider,
+signInWithPopup
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
   authDomain: "rkyshree-2f74b.firebaseapp.com",
@@ -7,3 +114,137 @@ const firebaseConfig = {
   appId: "1:354823113610:web:d043805305c945339c9673",
   measurementId: "G-WSXGTGFWYK"
 };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+  document.getElementById("googleLogin").onclick = async () => {
+
+try{
+
+const result = await signInWithPopup(auth, provider);
+
+const user = result.user;
+
+const userRef = doc(db,"users",user.uid);
+
+const userSnap = await getDoc(userRef);
+
+if(!userSnap.exists()){
+
+await setDoc(userRef,{
+
+uid:user.uid,
+
+name:user.displayName || "",
+
+email:user.email || "",
+
+photo:user.photoURL || "",
+
+mobile:"",
+
+wallet:0,
+
+totalReferral:0,
+
+referralCode:"SHREE"+user.uid.substring(0,6).toUpperCase(),
+
+joinedOn:serverTimestamp(),
+
+status:"Active"
+
+});
+
+}
+
+localStorage.setItem("customerUID",user.uid);
+
+localStorage.setItem("customerName",user.displayName || "");
+
+localStorage.setItem("customerEmail",user.email || "");
+
+localStorage.setItem("customerPhoto",user.photoURL || "");
+
+alert("Login Successful");
+
+window.location.href="index.html";
+
+}catch(error){
+
+alert(error.message);
+
+}
+
+};
+  // Auto Login Check
+
+import {
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+onAuthStateChanged(auth, async (user) => {
+
+if(user){
+
+localStorage.setItem("customerUID", user.uid);
+
+localStorage.setItem("customerName", user.displayName || "");
+
+localStorage.setItem("customerEmail", user.email || "");
+
+localStorage.setItem("customerPhoto", user.photoURL || "");
+
+console.log("Already Logged In");
+
+}
+
+});
+
+// Logout Function
+
+window.customerLogout = async function(){
+
+await signOut(auth);
+
+localStorage.clear();
+
+alert("Logout Successful");
+
+window.location.reload();
+
+};
+  // Ensure user document exists and update missing fields
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+
+    await setDoc(userRef, {
+      uid: user.uid,
+      name: user.displayName || "",
+      email: user.email || "",
+      photo: user.photoURL || "",
+      mobile: "",
+      wallet: 0,
+      totalReferral: 0,
+      referralCode: "SHREE" + user.uid.substring(0,6).toUpperCase(),
+      joinedOn: serverTimestamp(),
+      status: "Active"
+    });
+
+  }
+
+});
+
+// Close Script
+</script>
+
+</body>
+</html>
