@@ -124,11 +124,11 @@
 <body class='text-slate-200 min-h-screen flex flex-col bg-slate-900'>
 
     <!-- ==================== PROFESSIONAL STICKY HEADER ==================== -->
-    <header class="fixed top-0 left-0 right-0 z-[120] bg-slate-900/95 backdrop-blur-md shadow-sm border-b border-slate-800 h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all">
-        <div class="flex items-center gap-2 sm:gap-4 cursor-pointer">
-            <button onclick="window.openTrackModal()" style="background:#0d6efd;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:bold; cursor:pointer; border:none; outline:none; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                🔍 Track Order
-            </button>
+    <header class="fixed top-0 left-0 right-0 z-[120] bg-slate-900/95 backdrop-blur-md shadow-sm border-b border-amber-500/20 h-[70px] flex items-center px-4 sm:px-8 justify-between transition-all">
+        <!-- Professional Brand Logo (Replaced Track Order) -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+            <div class="w-10 h-10 bg-gradient-to-tr from-amber-500 to-amber-700 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg border border-amber-400">श्री</div>
+            <h1 class="text-xl font-black text-white tracking-wide hidden sm:block"><span class="text-amber-500">SHREE</span> WORLD</h1>
         </div>
 
         <div class="flex items-center gap-3">
@@ -137,8 +137,8 @@
             </button>
             
             <!-- NEW CUSTOMER LOGIN BUTTON -->
-            <a href="customer-login.html" id="customerBtn" class="login-btn">
-                👤 Customer Login
+            <a href="customer-login.html" id="customerBtn" class="login-btn shadow-md border border-blue-400/30">
+                👤 <span id="authBtnText">Customer Login</span>
             </a>
         </div>
     </header>
@@ -171,60 +171,92 @@
         </div>
     </div>
 
-    <!-- ==================== MY PROFILE DASHBOARD MODAL ==================== -->
-    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[150] hidden items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-700 flex flex-col max-h-[85vh]">
-            <div class="bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-3.5 flex justify-between items-center text-white shrink-0">
-                <h3 class="font-black text-base flex items-center gap-1.5">👑 My Profile</h3>
-                <button onclick="window.closeDashboard()" class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
+    <!-- ==================== PROFESSIONAL MY PROFILE DASHBOARD MODAL ==================== -->
+    <div id="dashboardModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-md z-[150] hidden items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-slate-600 flex flex-col max-h-[85vh]">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 px-5 py-4 flex justify-between items-center text-white shrink-0 border-b border-amber-500/30">
+                <h3 class="font-black text-lg flex items-center gap-2"><span class="text-amber-500">👑</span> My Dashboard</h3>
+                <button onclick="window.closeDashboard()" class="text-slate-400 hover:text-red-400 text-3xl leading-none">&times;</button>
             </div>
             
-            <div class="p-4 space-y-4 overflow-y-auto tnc-scroll flex-grow bg-slate-900 text-xs">
-                <!-- Profile Header -->
-                <div class="flex items-center gap-3 bg-slate-800 p-3.5 rounded-2xl border border-slate-700 shadow-sm">
-                    <img id="dashPhoto" src="https://via.placeholder.com/150" alt="Profile" class="w-12 h-12 rounded-full border-2 border-amber-500 shadow-sm object-cover shrink-0">
-                    <div class="overflow-hidden">
-                        <h4 id="dashName" class="font-black text-white text-sm truncate">Loading...</h4>
-                        <p id="dashEmail" class="text-[10px] text-slate-400 truncate font-semibold">Loading...</p>
-                    </div>
-                </div>
+            <!-- Dashboard Tabs -->
+            <div class="flex border-b border-slate-700 bg-slate-800 shrink-0">
+                <button onclick="window.switchDashTab('wallet')" id="tabDashWallet" class="flex-1 py-3 font-bold text-sm bg-slate-700 text-amber-400 border-b-2 border-amber-400 transition-all">💰 Wallet & Info</button>
+                <button onclick="window.switchDashTab('orders')" id="tabDashOrders" class="flex-1 py-3 font-bold text-sm text-slate-400 hover:text-white transition-all">📦 My Orders</button>
+            </div>
 
-                <!-- Wallet & Stats Grid -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-emerald-900/30 border border-emerald-800 p-3 rounded-2xl text-center shadow-sm">
-                        <span class="block text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-0.5">Wallet Balance</span>
-                        <div class="text-2xl font-black text-emerald-400">₹<span id="dashWallet">0</span></div>
-                    </div>
-                    <div class="bg-blue-900/30 border border-blue-800 p-3 rounded-2xl text-center shadow-sm">
-                        <span class="block text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-0.5">Total Referrals</span>
-                        <div class="text-2xl font-black text-blue-400" id="dashRefs">0</div>
-                    </div>
-                </div>
-
-                <!-- Refer & Earn Link Box -->
-                <div class="bg-amber-900/30 border border-amber-800 p-3 rounded-2xl shadow-sm space-y-1.5">
-                    <h5 class="font-black text-xs text-amber-300 flex items-center gap-1"><span>🎁</span> Refer & Earn (₹200 / Referral)</h5>
-                    <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-xl border border-amber-800/50">
-                        <input type="text" id="dashRefLink" readonly class="w-full bg-transparent px-1 text-[10px] text-slate-200 font-bold focus:outline-none truncate">
-                        <button onclick="window.copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded-lg text-[10px] font-black shadow-sm shrink-0">Copy</button>
-                    </div>
-                </div>
-
-                <!-- Modern Withdraw Section -->
-                <div class="bg-slate-800 border border-slate-700 p-3.5 rounded-2xl shadow-sm space-y-2.5">
-                    <h5 class="font-black text-xs text-white flex items-center gap-1"><span>💸</span> Withdraw Earnings (न्यूनतम ₹500)</h5>
-                    <div class="space-y-2">
-                        <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe/Paytm नंबर दें" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white">
-                        <div class="flex gap-2">
-                            <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white">
-                            <button onclick="window.requestWithdraw()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95">
-                                Withdraw 🚀
-                            </button>
+            <div class="p-4 overflow-y-auto tnc-scroll flex-grow bg-slate-900 text-xs relative">
+                
+                <!-- TAB 1: WALLET & INFO -->
+                <div id="dashWalletSection" class="space-y-4 block">
+                    <!-- Profile Header -->
+                    <div class="flex items-center gap-3 bg-gradient-to-r from-slate-800 to-slate-700 p-4 rounded-2xl border border-slate-600 shadow-md">
+                        <img id="dashPhoto" src="https://via.placeholder.com/150" alt="Profile" class="w-14 h-14 rounded-full border-2 border-amber-500 shadow-sm object-cover shrink-0">
+                        <div class="overflow-hidden">
+                            <h4 id="dashName" class="font-black text-white text-base truncate">Loading...</h4>
+                            <p id="dashEmail" class="text-xs text-amber-400 truncate font-semibold mt-0.5">Loading...</p>
                         </div>
                     </div>
+
+                    <!-- Wallet & Stats Grid -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-emerald-900/20 border border-emerald-500/30 p-4 rounded-2xl text-center shadow-sm">
+                            <span class="block text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1">Wallet Balance</span>
+                            <div class="text-2xl font-black text-white">₹<span id="dashWallet">0</span></div>
+                        </div>
+                        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-2xl text-center shadow-sm">
+                            <span class="block text-[10px] font-bold text-blue-400 uppercase tracking-wider mb-1">Total Referrals</span>
+                            <div class="text-2xl font-black text-white" id="dashRefs">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Refer & Earn Link Box -->
+                    <div class="bg-amber-900/20 border border-amber-500/30 p-4 rounded-2xl shadow-sm space-y-2">
+                        <h5 class="font-black text-xs text-amber-400 flex items-center gap-1.5"><span>🎁</span> Refer & Earn (₹200 / Referral)</h5>
+                        <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700">
+                            <input type="text" id="dashRefLink" readonly class="w-full bg-transparent px-2 text-xs text-slate-300 font-bold focus:outline-none truncate">
+                            <button onclick="window.copyRefLink()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-1.5 rounded-lg text-xs font-black shadow-sm shrink-0 transition-transform active:scale-95">Copy</button>
+                        </div>
+                    </div>
+
+                    <!-- Modern Withdraw Section -->
+                    <div class="bg-slate-800 border border-slate-600 p-4 rounded-2xl shadow-sm space-y-3">
+                        <h5 class="font-black text-xs text-white flex items-center gap-1.5"><span>💸</span> Withdraw Earnings (Min ₹500)</h5>
+                        <div class="space-y-2.5">
+                            <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe नंबर" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white shadow-inner">
+                            <div class="flex gap-2">
+                                <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2.5 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white shadow-inner">
+                                <button onclick="window.requestWithdraw()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-5 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95">
+                                    Withdraw 🚀
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="window.logoutUser()" class="w-full bg-red-900/20 border border-red-500/30 text-red-400 hover:bg-red-900/40 hover:text-red-300 font-bold py-3 rounded-xl transition-all shrink-0 text-sm mt-2 shadow-sm flex items-center justify-center gap-2">
+                        <span>🚪</span> Logout (बाहर जाएँ)
+                    </button>
                 </div>
 
-                <button onclick="window.logoutUser()" class="w-full border border-red-500/50 text-red-400 hover:bg-red-900/30 font-bold py-2.5 rounded-xl transition-all shrink-0 text-xs mt-3">🚪 Logout (बाहर जाएँ)</button>
+                <!-- TAB 2: MY ORDERS (TRACK ORDER) -->
+                <div id="dashOrdersSection" class="hidden space-y-4">
+                    <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-2xl shadow-sm text-center">
+                        <span class="text-3xl mb-2 block">🔍</span>
+                        <h4 class="font-black text-white text-sm mb-1">Track Your Orders</h4>
+                        <p class="text-[10px] text-blue-200 font-medium">अपने आर्डर का लाइव स्टेटस चेक करने के लिए रजिस्टर्ड <strong>मोबाइल नंबर</strong> या <strong>Order ID</strong> दर्ज करें</p>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <!-- Changed to type="text" to support "Order-XXX" search properly -->
+                        <input type="text" id="trackMobileInput" placeholder="मोबाइल नंबर या Order ID..." class="w-full bg-slate-800 border border-slate-600 shadow-inner rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none text-sm">
+                        <button onclick="window.searchMyOrder()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-black shadow-md transition-transform active:scale-95">Track</button>
+                    </div>
+
+                    <div id="trackResultArea" class="hidden pt-4 border-t border-slate-700 mt-4 space-y-4">
+                        <!-- Results injected here -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -262,29 +294,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ==================== TRACK ORDER MODAL ==================== -->
-    <div id="trackOrderModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[999] hidden flex-col items-center justify-center p-4">
-        <div class="bg-slate-800 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform transition-all border border-blue-500 flex flex-col max-h-[85vh]">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-5 flex justify-between items-center text-white shrink-0">
-                <h3 class="font-black text-lg flex items-center gap-2">🔍 Track Your Order</h3>
-                <button onclick="window.closeTrackModal()" class="text-white hover:text-red-300 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="p-6 bg-slate-900 space-y-4 overflow-y-auto tnc-scroll flex-grow">
-                <p class="text-sm text-slate-300 font-medium">अपना आर्डर ट्रैक करने के लिए अपना <strong>मोबाइल नंबर</strong> दर्ज करें:</p>
-                
-                <div class="flex gap-2">
-                    <input type="number" id="trackMobileInput" placeholder="अपना मोबाइल नंबर डालें और ट्रैक करें..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none">
-                    <button onclick="window.searchMyOrder()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-black shadow-md">Track</button>
-                </div>
-
-                <div id="trackResultArea" class="hidden pt-4 border-t border-slate-700 mt-4 space-y-4">
-                    <!-- Results injected here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- ==================== REFER & EARN MODAL (POPUP INFO) ==================== -->
     <div id="referEarnModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[160] hidden items-center justify-center p-4">
@@ -517,7 +526,7 @@
                     <div class="bg-slate-900 border border-slate-700 rounded-2xl p-4 mt-6 inline-block w-full max-w-sm">
                         <p class="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Your Order Number</p>
                         <p id="successOrderIdDisplay" class="text-2xl font-black text-amber-400 tracking-wider">Loading...</p>
-                        <p class="text-[10px] text-slate-500 mt-2 font-semibold">इसे सेव रखें, आप ऊपर 'Track Order' से अपना स्टेटस चेक कर सकते हैं।</p>
+                        <p class="text-[10px] text-slate-500 mt-2 font-semibold">इसे सेव रखें, आप अपने डैशबोर्ड (My Profile) से इसका स्टेटस ट्रैक कर सकते हैं।</p>
                     </div>
 
                     <div class="mt-8 pt-6 border-t border-slate-700 max-w-md mx-auto">
@@ -964,7 +973,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-privacy'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900' id='acc-privacy'>
-                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
+                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग content नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
                 </div>
             </div>
 
@@ -1166,7 +1175,7 @@
                         btnIcon.className = "text-lg"; 
                         btnIcon.innerHTML = `🎁`;
                     }
-                    if (btnText) btnText.innerText = 'Refer & Earn';
+                    if (btnText) btnText.innerText = 'Customer Login';
                     if (authBtn) authBtn.onclick = window.handleAuthButtonClick;
                     if (adminBtn) adminBtn.classList.add('hidden');
                     currentUserData = null;
@@ -1182,6 +1191,10 @@
             const modal = document.getElementById('dashboardModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            
+            // Default select wallet tab
+            window.switchDashTab('wallet');
+
             document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
             document.getElementById('dashEmail').innerText = currentUserData.email || '';
             if(currentUserData.photo) { document.getElementById('dashPhoto').src = currentUserData.photo; }
@@ -1326,7 +1339,7 @@
             }
         };
 
-        // TRACK ORDER MODAL SEARCH
+        // TRACK ORDER MODAL SEARCH (Now moved inside My Profile Dashboard)
         window.searchMyOrder = async () => {
             const rawInput = document.getElementById('trackMobileInput').value.trim();
             if(rawInput.length < 5) return alert("कृपया सही आर्डर नंबर या मोबाइल नंबर डालें!");
@@ -1525,22 +1538,20 @@
     <!-- GENERAL / STANDARD SCRIPT BLOCK -->
     <script type='text/javascript'>
         
-        // MODALS
-        window.openTrackModal = function() {
-            var modal = document.getElementById('trackOrderModal');
-            if(modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.getElementById('trackResultArea').classList.add('hidden');
-                document.getElementById('trackMobileInput').value = "";
-            }
-        };
-        
-        window.closeTrackModal = function() {
-            var modal = document.getElementById('trackOrderModal');
-            if(modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+        // MODALS DASHBOARD TABS 
+        window.switchDashTab = function(tabName) {
+            document.getElementById('tabDashWallet').className = "flex-1 py-3 font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition-all";
+            document.getElementById('tabDashOrders').className = "flex-1 py-3 font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition-all";
+            
+            document.getElementById('dashWalletSection').classList.add('hidden');
+            document.getElementById('dashOrdersSection').classList.add('hidden');
+
+            if(tabName === 'wallet') {
+                document.getElementById('tabDashWallet').className = "flex-1 py-3 font-bold text-sm bg-slate-700 text-amber-400 border-b-2 border-amber-400 transition-all";
+                document.getElementById('dashWalletSection').classList.remove('hidden');
+            } else {
+                document.getElementById('tabDashOrders').className = "flex-1 py-3 font-bold text-sm bg-slate-700 text-amber-400 border-b-2 border-amber-400 transition-all";
+                document.getElementById('dashOrdersSection').classList.remove('hidden');
             }
         };
 
