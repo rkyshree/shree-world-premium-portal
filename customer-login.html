@@ -3,109 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Login | SHREE WORLD</title>
+    <title>Premium Portal | SHREE WORLD</title>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
+        :root {
+            --primary: #4285F4;
+            --primary-hover: #3367D6;
+            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --text-dark: #333;
+            --text-light: #fff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            background: #f4f6f9;
+            background: var(--bg-gradient);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            color: var(--text-light);
+            padding: 20px;
         }
 
-        .login-box {
-            width: 360px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,.15);
+        /* Glassmorphism Card */
+        .portal-box {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             text-align: center;
+            overflow: hidden;
+            position: relative;
         }
 
         .logo {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: #fff;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 30px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(66, 133, 244, 0.4);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
+            font-size: 24px;
             margin-bottom: 10px;
-            color: #222;
+            font-weight: 600;
         }
 
-        p {
-            color: #666;
-            margin-bottom: 20px;
+        p.subtitle {
+            font-size: 14px;
+            color: #ddd;
+            margin-bottom: 30px;
         }
 
-        button {
+        /* Buttons & Inputs */
+        .google-btn {
             width: 100%;
             padding: 14px;
             border: none;
-            border-radius: 10px;
-            background: #4285F4;
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text-dark);
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .google-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+        }
+
+        .google-btn img {
+            width: 24px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px 15px 45px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-group input::placeholder {
+            color: #bbb;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bbb;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
             color: #fff;
             font-size: 16px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.4);
         }
 
-        button:hover {
-            background: #3367D6;
+        .action-btn:hover {
+            background: var(--primary-hover);
         }
 
-        .small {
+        /* Order Result Box */
+        #trackResult {
             margin-top: 20px;
-            font-size: 13px;
-            color: #777;
+            text-align: left;
+        }
+
+        .order-card {
+            background: rgba(255,255,255,0.9);
+            color: var(--text-dark);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .order-card p {
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .status-pending { background: #f39c12; }
+        .status-processing { background: #3498db; }
+        .status-completed { background: #2ecc71; }
+        .status-cancelled { background: #e74c3c; }
+
+        .footer-text {
+            margin-top: 30px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <div class="login-box">
-        <img src="icon-512.png" class="logo" alt="Logo">
-        <h2>Customer Login</h2>
-        <p>Continue with Google</p>
-        <button id="googleLogin">
-            Continue with Google
-        </button>
-        <div class="small">
-            SHREE WORLD PREMIUM PORTAL
+    <div class="portal-box">
+        <img src="icon-512.png" class="logo" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3063/3063822.png'">
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Customer Login</button>
+            <button class="tab-btn" onclick="switchTab('track')">Track Order</button>
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="section active">
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to access your premium dashboard</p>
+            
+            <button id="googleLogin" class="google-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G">
+                Continue with Google
+            </button>
+        </div>
+
+        <!-- Track Order Section -->
+        <div id="trackSection" class="section">
+            <h2>Track Your Order</h2>
+            <p class="subtitle">Enter Mobile No. or Order ID</p>
+
+            <div class="input-group">
+                <i class="fas fa-search"></i>
+                <input type="text" id="trackInput" placeholder="e.g. 9876543210 or ORD-123">
+            </div>
+            
+            <button id="trackBtn" class="action-btn">
+                <i class="fas fa-truck"></i> Track Now
+            </button>
+
+            <div id="trackResult"></div>
+        </div>
+
+        <div class="footer-text">
+            SHREE WORLD PREMIUM PORTAL &copy; 2026
         </div>
     </div>
 
     <script type="module">
         // ================= 1. FIREBASE IMPORTS =================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import {
-            getAuth,
-            GoogleAuthProvider,
-            signInWithPopup,
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-        import {
-            getFirestore,
-            doc,
-            getDoc,
-            setDoc,
-            serverTimestamp,
-            collection,
-            query,
-            where,
-            getDocs,
-            addDoc,
-            onSnapshot
-        } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
         // ================= 2. FIREBASE CONFIGURATION =================
         const firebaseConfig = {
@@ -123,17 +305,37 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // ================= 3. GOOGLE LOGIN =================
+        // ================= 3. TAB SWITCHING LOGIC =================
+        window.switchTab = function(tab) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const sections = document.querySelectorAll('.section');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
+
+            if(tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginSection').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('trackSection').classList.add('active');
+            }
+        };
+
+        // ================= 4. GOOGLE LOGIN =================
         const loginBtn = document.getElementById("googleLogin");
         if(loginBtn) {
             loginBtn.addEventListener("click", async () => {
                 try {
+                    // Changing text to show process
+                    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Please wait...';
+                    
                     const result = await signInWithPopup(auth, provider);
                     const user = result.user;
                     const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
 
-                    // पहली बार Login
+                    // First time login setup
                     if (!userSnap.exists()) {
                         await setDoc(userRef, {
                             uid: user.uid,
@@ -154,302 +356,72 @@
                     localStorage.setItem("customerEmail", user.email || "");
                     localStorage.setItem("customerPhoto", user.photoURL || "");
 
-                    alert("✅ Login Successful");
-                    window.location.replace("index.html");
+                    window.location.replace("index.html"); // Redirect after login
 
                 } catch (error) {
                     console.error(error);
-                    alert(error.message);
+                    alert("Login Failed: " + error.message);
+                    loginBtn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G"> Continue with Google';
                 }
             });
         }
 
-        // ================= 4. AUTO LOGIN / AUTH STATE =================
-        onAuthStateChanged(auth, (user) => {
-
-if(user){
-
-localStorage.setItem("customerUID", user.uid);
-localStorage.setItem("customerName", user.displayName || "");
-localStorage.setItem("customerEmail", user.email || "");
-localStorage.setItem("customerPhoto", user.photoURL || "");
-
-}
-
-});
-
-        // ================= 5. GLOBAL FUNCTIONS =================
-
-        window.getCustomer = function () {
-            return {
-                uid: localStorage.getItem("customerUID"),
-                name: localStorage.getItem("customerName"),
-                email: localStorage.getItem("customerEmail"),
-                photo: localStorage.getItem("customerPhoto")
-            };
-        };
-
-        window.customerLogout = async function () {
-            try {
-                await signOut(auth);
-                localStorage.clear();
-                alert("Logout Successful");
-                window.location.href = "customer-login.html";
-            } catch (error) {
-                console.log(error);
-                alert(error.message);
-            }
-        };
-
-        window.checkCustomerLogin = function () {
-            const uid = localStorage.getItem("customerUID");
-            if (!uid) {
-                window.location.href = "customer-login.html";
-                return false;
-            }
-            return true;
-        };
-
-        window.showCustomerName = function (id) {
-            const name = localStorage.getItem("customerName");
-            if (document.getElementById(id)) {
-                document.getElementById(id).innerText = name || "Customer";
-            }
-        };
-
-        window.showCustomerPhoto = function (id) {
-            const photo = localStorage.getItem("customerPhoto");
-            if (document.getElementById(id) && photo) {
-                document.getElementById(id).src = photo;
-            }
-        };
-
-        window.loadCustomerProfile = async function () {
-            const uid = localStorage.getItem("customerUID");
-            if (!uid) return;
-            try {
-                const ref = doc(db, "users", uid);
-                const snap = await getDoc(ref);
-                if (snap.exists()) {
-                    const data = snap.data();
-                    if (document.getElementById("customerName")) document.getElementById("customerName").innerText = data.name || "";
-                    if (document.getElementById("customerEmail")) document.getElementById("customerEmail").innerText = data.email || "";
-                    if (document.getElementById("customerWallet")) document.getElementById("customerWallet").innerText = "₹" + (data.wallet || 0);
-                    if (document.getElementById("customerReferral")) document.getElementById("customerReferral").innerText = data.referralCode || "";
-                    if (document.getElementById("customerPhoto")) document.getElementById("customerPhoto").src = data.photo || "icon-192.png";
+        // ================= 5. TRACK ORDER LOGIC =================
+        const trackBtn = document.getElementById("trackBtn");
+        if(trackBtn) {
+            trackBtn.addEventListener("click", async () => {
+                const inputVal = document.getElementById("trackInput").value.trim();
+                const resultDiv = document.getElementById("trackResult");
+                
+                if(!inputVal) {
+                    resultDiv.innerHTML = "<p style='color: #ff6b6b; font-size:14px;'><i class='fas fa-exclamation-circle'></i> Please enter Order ID or Mobile No.</p>";
+                    return;
                 }
-            } catch (err) {
-                console.log(err);
-            }
-        };
 
-        window.copyReferral = function () {
-            const el = document.getElementById("customerReferral");
-            if(el){
-                navigator.clipboard.writeText(el.innerText);
-                alert("Referral Code Copied");
-            }
-        };
+                resultDiv.innerHTML = "<p style='color: #4cd137; font-size:14px;'><i class='fas fa-spinner fa-spin'></i> Searching your order...</p>";
 
-        window.getReferralLink = function () {
-            const code = document.getElementById("customerReferral")?.innerText || "";
-            return "https://www.rkyshree.in/?ref=" + code;
-        };
+                try {
+                    // 1. Search by Order ID first
+                    let ordersRef = collection(db, "orders");
+                    let q = query(ordersRef, where("orderId", "==", inputVal));
+                    let querySnapshot = await getDocs(q);
 
-        window.shareReferralLink = function () {
-            const link = window.getReferralLink();
-            navigator.clipboard.writeText(link);
-            alert("Referral Link Copied");
-        };
+                    // 2. If not found, Search by Mobile Number
+                    if (querySnapshot.empty) {
+                        q = query(ordersRef, where("mobile", "==", inputVal));
+                        querySnapshot = await getDocs(q);
+                    }
 
-        window.openOrderHistory = function () {
-            window.location.href = "order-history.html";
-        };
+                    if (querySnapshot.empty) {
+                        resultDiv.innerHTML = "<p style='color: #ff6b6b; font-size:14px;'><i class='fas fa-times-circle'></i> No order found with this detail.</p>";
+                        return;
+                    }
 
-        window.openTrackOrder = function () {
-            window.location.href = "track-order.html";
-        };
-
-        window.createCustomerCard = function () {
-            const name = localStorage.getItem("customerName") || "Customer";
-            const photo = localStorage.getItem("customerPhoto") || "icon-192.png";
-            return `
-            <div style="background:#fff; padding:20px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,.1); margin:20px 0; text-align:center;">
-                <img id="customerPhoto" src="${photo}" style="width:90px; height:90px; border-radius:50%; border:4px solid #0d6efd; object-fit:cover;">
-                <h2 id="customerName" style="margin-top:10px;">${name}</h2>
-                <p id="customerEmail"></p>
-                <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-top:20px;">
-                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
-                        <h4>Wallet</h4>
-                        <h2 id="customerWallet">₹0</h2>
-                    </div>
-                    <div style="background:#f8f9fa; padding:15px; border-radius:10px;">
-                        <h4>Referral</h4>
-                        <h3 id="customerReferral">Loading...</h3>
-                    </div>
-                </div>
-                <div style="margin-top:20px;">
-                    <button onclick="copyReferral()">Copy Referral</button>
-                    <button onclick="openOrderHistory()" style="margin-top:10px;">My Orders</button>
-                    <button onclick="openTrackOrder()" style="margin-top:10px;">Track Order</button>
-                    <button onclick="customerLogout()" style="margin-top:10px; background:red;">Logout</button>
-                </div>
-            </div>`;
-        };
-
-        window.showProfile = function (id) {
-            const el = document.getElementById(id);
-            if(el) {
-                el.innerHTML = window.createCustomerCard();
-                window.loadCustomerProfile();
-            }
-        };
-
-        window.loadMyOrders = async function (tableId) {
-            const uid = localStorage.getItem("customerUID");
-            if (!uid) return;
-            const tbody = document.getElementById(tableId);
-            if (!tbody) return;
-
-            tbody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
-            try {
-                const q = query(collection(db, "orders"), where("uid", "==", uid));
-                const snapshot = await getDocs(q);
-                let html = "";
-                if (snapshot.empty) {
-                    html = "<tr><td colspan='5'>No Orders Found</td></tr>";
-                } else {
-                    snapshot.forEach((doc) => {
-                        const d = doc.data();
+                    let html = "";
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const statusClass = (data.status || 'pending').toLowerCase();
+                        
                         html += `
-                        <tr>
-                            <td>${d.orderId || "-"}</td>
-                            <td>${d.service || "-"}</td>
-                            <td>₹${d.amount || 0}</td>
-                            <td>${d.status || "Pending"}</td>
-                            <td>${d.date || "-"}</td>
-                        </tr>`;
+                        <div class="order-card">
+                            <p><strong><i class="fas fa-box"></i> Order ID:</strong> ${data.orderId || doc.id}</p>
+                            <p><strong><i class="fas fa-tools"></i> Service:</strong> ${data.service || "N/A"}</p>
+                            <p><strong><i class="fas fa-rupee-sign"></i> Amount:</strong> ₹${data.amount || 0}</p>
+                            <p style="margin-top: 10px;">
+                                <strong>Status:</strong> 
+                                <span class="status-badge status-${statusClass}">${data.status || "Pending"}</span>
+                            </p>
+                        </div>`;
                     });
+
+                    resultDiv.innerHTML = html;
+
+                } catch (error) {
+                    console.error(error);
+                    resultDiv.innerHTML = "<p style='color: #ff6b6b; font-size:14px;'><i class='fas fa-exclamation-triangle'></i> Error fetching order details.</p>";
                 }
-                tbody.innerHTML = html;
-            } catch (e) {
-                console.log(e);
-                tbody.innerHTML = "<tr><td colspan='5'>Error Loading Orders</td></tr>";
-            }
-        };
-
-        window.updateLoginButton = function (id) {
-            const btn = document.getElementById(id);
-            if (!btn) return;
-            const name = localStorage.getItem("customerName");
-            const photo = localStorage.getItem("customerPhoto");
-            if (name) {
-                btn.innerHTML = `<img src="${photo}" style="width:32px; height:32px; border-radius:50%; vertical-align:middle; margin-right:8px;"> ${name}`;
-                btn.href = "profile.html";
-            }
-        };
-
-        window.loadWallet = async function () {
-            const uid = localStorage.getItem("customerUID");
-            if (!uid) return;
-            try {
-                const ref = doc(db, "users", uid);
-                const snap = await getDoc(ref);
-                if (snap.exists()) {
-                    const data = snap.data();
-                    if (document.getElementById("walletBalance")) {
-                        document.getElementById("walletBalance").innerText = "₹" + (data.wallet || 0);
-                    }
-                }
-            } catch (err) {
-                console.log(err);
-            }
-        };
-
-        window.sendWithdrawRequest = async function () {
-            const uid = localStorage.getItem("customerUID");
-            const amount = document.getElementById("withdrawAmount")?.value;
-            const upi = document.getElementById("withdrawUpi")?.value;
-
-            if (!amount || !upi) {
-                alert("Please Fill All Details");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "withdrawRequests"), {
-                    uid: uid,
-                    amount: Number(amount),
-                    upi: upi,
-                    status: "Pending",
-                    date: new Date().toLocaleString()
-                });
-                alert("Withdraw Request Submitted");
-            } catch (err) {
-                alert(err.message);
-            }
-        };
-
-        window.listenNewOrders = function () {
-            const ordersRef = collection(db, "orders");
-            onSnapshot(ordersRef, (snapshot) => {
-                const total = snapshot.size;
-                const badge = document.getElementById("notificationCount");
-                if (badge) badge.innerText = total;
-
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        if ("Notification" in window) {
-                            Notification.requestPermission().then((permission) => {
-                                if (permission === "granted") {
-                                    new Notification("🛒 New Order Received", {
-                                        body: (data.name || "Customer") + " ordered " + (data.service || "Service")
-                                    });
-                                }
-                            });
-                        }
-                    }
-                });
             });
-        };
-
-        window.loadDashboardLive = function () {
-            onSnapshot(collection(db, "users"), (snapshot) => {
-                const e = document.getElementById("totalUsers");
-                if (e) e.innerText = snapshot.size;
-            });
-
-            onSnapshot(collection(db, "orders"), (snapshot) => {
-                const e = document.getElementById("totalOrders");
-                if (e) e.innerText = snapshot.size;
-                let revenue = 0;
-                snapshot.forEach((doc) => {
-                    const d = doc.data();
-                    revenue += Number(d.amount || 0);
-                });
-                const r = document.getElementById("totalRevenue");
-                if (r) r.innerText = "₹" + revenue.toLocaleString("en-IN");
-            });
-
-            onSnapshot(collection(db, "reviews"), (snapshot) => {
-                const e = document.getElementById("totalReviews");
-                if (e) e.innerText = snapshot.size;
-            });
-        };
-
-        // ================= 6. INITIALIZE ON LOAD =================
-        window.addEventListener("load", () => {
-            window.loadCustomerProfile();
-            window.loadWallet();
-            window.listenNewOrders();
-            
-            // Check if dashboard elements exist before running live dashboard script
-            if (document.getElementById("totalUsers")) {
-                window.loadDashboardLive();
-            }
-        });
-
+        }
     </script>
 </body>
 </html>
