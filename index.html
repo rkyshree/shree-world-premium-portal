@@ -252,11 +252,10 @@
                 <button onclick="closeTrackModal()" class="text-white hover:text-red-300 text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 bg-slate-900 space-y-4">
-                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर (Order ID) दर्ज करें:</p>
+                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर (Order ID या Mobile Number) दर्ज करें:</p>
                 
                 <div class="flex gap-2">
-                    <!-- Changed type to text to support ID like RAJAN9918164690 -->
-                    <input type="text" id="trackMobileInput" placeholder="अपना आर्डर नंबर डालें (उदा: RAJAN9918164690)..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
+                    <input type="text" id="trackMobileInput" placeholder="अपना मोबाइल नंबर डालें..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
                     <button onclick="searchMyOrder()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-black shadow-md">Check</button>
                 </div>
 
@@ -1156,11 +1155,11 @@
         window.handleAuthButtonClick = () => { if (currentUserData) window.openDashboard(); else signInWithPopup(auth, provider); };
         window.logoutUser = () => { signOut(auth).then(() => { window.closeDashboard(); alert("लॉग आउट सफल।"); }); };
         
-        window.openDashboard = async () => { /* Logic hidden to keep clean */ };
+        window.openDashboard = async () => { /* Hidden to keep clean */ };
         window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
 
         // ==========================================
-        // NEW ORDER LOGIC WITH FIREBASE (Order Number Gen)
+        // 🔥 NEW ORDER LOGIC WITH FIREBASE (orders collection + orderId) 🔥
         // ==========================================
         
         window.submitNewOrderSystem = async () => {
@@ -1180,21 +1179,23 @@
             btn.disabled = true;
             btn.innerHTML = "⏳ Processing...";
 
-            // Order ID Generation logic (Name + Mobile)
+            // Order ID Generation: Name(FirstName) + Mobile
             const cleanName = name.split(' ')[0].toUpperCase();
             const orderId = cleanName + mobile;
 
             try {
-                const docRef = await addDoc(collection(db, "social_orders"), {
-                    orderId: orderId,
+                // SAVING IN "orders" COLLECTION EXACTLY AS REQUESTED
+                const docRef = await addDoc(collection(db, "orders"), {
                     name: name,
-                    mobile: mobile, 
-                    platform: platform,
+                    mobile: mobile,
+                    orderId: orderId, // Saved dynamically as Name + Mobile
+                    platform: platform, 
                     service: service,
-                    quantity: qtyStr,
+                    quantity: qtyStr, 
                     amount: Number(amount),
                     status: "Pending",
-                    timestamp: serverTimestamp()
+                    seen: false,
+                    createdAt: serverTimestamp()
                 });
 
                 // Show Success UI
@@ -1214,7 +1215,8 @@
         function startLiveTracking(docId) {
             if(currentOrderUnsubscribe) currentOrderUnsubscribe();
             
-            currentOrderUnsubscribe = onSnapshot(doc(db, "social_orders", docId), (docSnap) => {
+            // Listening to "orders" collection
+            currentOrderUnsubscribe = onSnapshot(doc(db, "orders", docId), (docSnap) => {
                 if(docSnap.exists()) {
                     const data = docSnap.data();
                     updateTimelineUI(data.status);
@@ -1223,7 +1225,6 @@
         }
 
         window.updateTimelineUI = (status) => {
-            // Reset all
             document.getElementById('statusPending').className = "flex flex-col items-center z-10 w-1/3";
             document.getElementById('statusProcessing').className = "flex flex-col items-center z-10 w-1/3";
             document.getElementById('statusCompleted').className = "flex flex-col items-center z-10 w-1/3";
@@ -1258,8 +1259,8 @@
             resultArea.classList.remove('hidden');
 
             try {
-                // Tracking by generated orderId directly
-                const q = query(collection(db, "social_orders"), where("orderId", "==", trackInput));
+                // Tracking by generated orderId in "orders" collection
+                const q = query(collection(db, "orders"), where("orderId", "==", trackInput));
                 const snap = await getDocs(q);
                 
                 if(snap.empty) {
@@ -1275,8 +1276,8 @@
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 shadow-sm">
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <p class="text-xs text-slate-400 uppercase font-bold">${data.platform} - ${data.service}</p>
-                                <p class="text-white font-black text-sm">Qty: ${data.quantity}</p>
+                                <p class="text-xs text-slate-400 uppercase font-bold">${data.platform || 'Service'} - ${data.service}</p>
+                                <p class="text-white font-black text-sm">Qty: ${data.quantity || 'N/A'}</p>
                             </div>
                             <span class="font-black ${color} text-sm px-2 py-1 bg-slate-900 rounded-lg shadow-inner">${data.status}</span>
                         </div>
@@ -1319,7 +1320,8 @@
             listDiv.innerHTML = '<p class="text-center text-amber-500">Loading orders...</p>';
             
             try {
-                const q = query(collection(db, "social_orders"), orderBy("timestamp", "desc"));
+                // Query from "orders" collection
+                const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
                 
                 if (snap.empty) {
@@ -1330,12 +1332,12 @@
                 listDiv.innerHTML = '';
                 snap.forEach((docSnap) => {
                     const data = docSnap.data();
-                    const displayId = data.orderId || (data.name.split(' ')[0].toUpperCase() + data.mobile);
+                    const displayId = data.orderId || data.mobile;
                     const html = `
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-600 shadow-sm flex flex-col sm:flex-row justify-between items-start gap-3">
                         <div>
                             <p class="font-bold text-white text-sm">${displayId} <span class="text-slate-400 text-xs">(${data.name})</span></p>
-                            <p class="text-amber-400 font-bold text-xs uppercase">${data.platform} - ${data.service} (${data.quantity})</p>
+                            <p class="text-amber-400 font-bold text-xs uppercase">${data.platform || 'Web'} - ${data.service} (${data.quantity || 'N/A'})</p>
                             <p class="text-[10px] text-slate-400 mt-1">₹${data.amount}</p>
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
@@ -1356,8 +1358,8 @@
 
         window.updateOrderStatusAdmin = async (docId, newStatus) => {
             try {
-                await updateDoc(doc(db, "social_orders", docId), { status: newStatus });
-                // Automatically updates on live tracking for user without refresh
+                // Updating in "orders" collection
+                await updateDoc(doc(db, "orders", docId), { status: newStatus });
             } catch(e) { alert("Update failed"); }
         };
 
