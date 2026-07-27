@@ -121,7 +121,7 @@
         </div>
     </header>
 
-    <!-- ==================== REFERRAL REGISTRATION MODAL (NEW) ==================== -->
+    <!-- ==================== REFERRAL REGISTRATION MODAL ==================== -->
     <div id="refRegistrationModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[999] hidden flex-col items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden transform transition-all border-2 border-amber-400">
             <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-6 text-center text-white">
@@ -195,7 +195,7 @@
                         <input type="text" id="withdrawUpi" placeholder="UPI ID या GPay/PhonePe/Paytm नंबर दें" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white">
                         <div class="flex gap-2">
                             <input type="number" id="withdrawAmount" placeholder="रुपया (₹)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-2 px-3 text-xs focus:border-amber-500 focus:outline-none font-bold text-white">
-                            <button onclick="requestWithdraw()" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95">
+                            <button onclick="requestWithdraw()" id="withdrawBtn" class="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white px-4 py-2 rounded-xl font-black shadow-md whitespace-nowrap text-xs transition-transform active:scale-95 disabled:opacity-50">
                                 Withdraw 🚀
                             </button>
                         </div>
@@ -571,30 +571,69 @@
             </div>
         </section>
 
-        <!-- ==================== NEW ORDER SECTION ==================== -->
+        <!-- ==================== NEW ORDER SECTION (Redesigned) ==================== -->
         <section id="order-section" class="py-10 px-4 max-w-4xl mx-auto bg-slate-900">
-            <div class="bg-slate-800 border border-slate-700 p-6 sm:p-10 rounded-3xl shadow-lg relative overflow-hidden">
-                <h2 class="text-[19px] sm:text-2xl font-black text-white mb-6 text-center tracking-wide">Place Your Order</h2>
-                <div class="space-y-4 max-w-md mx-auto">
-                    <input type="text" id="name" placeholder="Full Name" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
-                    <input type="tel" id="mobile" placeholder="Mobile Number" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
-                    <input type="email" id="email" placeholder="Email (Optional)" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+            <!-- Banner / Trigger Button -->
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-3xl shadow-xl p-1 cursor-pointer hover:scale-[1.01] transition-transform" onclick="toggleOrderForm(true)" id="orderBanner">
+                <div class="bg-slate-900 rounded-[22px] p-6 text-center border border-amber-500/50">
+                    <span class="text-3xl mb-2 block">🚀</span>
+                    <h2 class="text-xl sm:text-2xl font-black text-amber-400 uppercase tracking-widest">Place Your Order</h2>
+                    <p class="text-slate-300 text-sm mt-1 font-bold">क्लिक करें और तुरंत अपना आर्डर बुक करें</p>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <div id="orderFormContainer" class="hidden bg-slate-800 border-2 border-amber-500/50 p-6 sm:p-10 rounded-3xl shadow-2xl relative overflow-hidden mt-6">
+                <button onclick="toggleOrderForm(false)" class="absolute top-4 right-5 text-slate-400 hover:text-red-400 text-3xl font-black">&times;</button>
+                <h2 class="text-[19px] sm:text-2xl font-black text-white mb-6 text-center tracking-wide border-b border-slate-700 pb-4">📝 Order Details</h2>
+                
+                <div class="space-y-5 max-w-md mx-auto">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">आपका नाम (Name):</label>
+                        <input type="text" id="orderName" placeholder="Full Name" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">मोबाइल नंबर (Mobile):</label>
+                        <input type="tel" id="orderMobile" placeholder="Mobile Number" required class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm shadow-sm">
+                    </div>
                     
-                    <select id="service" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm shadow-sm">
-                        <option value="">Select Service</option>
-                        <option value="Instagram Followers">Instagram Followers</option>
-                        <option value="Instagram Likes">Instagram Likes</option>
-                        <option value="Instagram Views">Instagram Views</option>
-                        <option value="Facebook Followers">Facebook Followers</option>
-                        <option value="YouTube Subscribers">YouTube Subscribers</option>
-                        <option value="Website Design">Website Design</option>
-                    </select>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">सर्विस चुनें (Select Service):</label>
+                        <select id="orderCategory" onchange="handleCategoryChange()" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm font-bold shadow-sm">
+                            <option value="">-- सर्विस चुनें --</option>
+                            <option value="Instagram">📸 Instagram (Follow, Like, Comment, View)</option>
+                            <option value="Facebook">👥 Facebook (Follow, Like, Comment, View)</option>
+                            <option value="Flight">✈️ Flight Ticket (Advance Booking)</option>
+                            <option value="Website">🌐 Website Design (Landing Page)</option>
+                        </select>
+                    </div>
+
+                    <div id="subServiceContainer" class="hidden">
+                        <label class="block text-xs font-bold text-slate-300 mb-1" id="subServiceLabel">पैकेज चुनें:</label>
+                        <select id="orderSubService" onchange="handleSubServiceChange()" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm font-bold shadow-sm">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+
+                    <div id="profileLinkContainer" class="hidden">
+                        <label class="block text-xs font-bold text-slate-300 mb-1" id="profileLinkLabel">प्रोफाइल/पोस्ट लिंक या डिटेल्स:</label>
+                        <input type="text" id="orderLink" placeholder="Paste link here..." class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm shadow-sm">
+                    </div>
                     
-                    <input type="number" id="amount" placeholder="Enter Amount" class="w-full bg-slate-900 border border-slate-600 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-amber-400 text-sm placeholder-slate-500 shadow-sm">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">भुगतान राशि (Amount):</label>
+                        <input type="number" id="orderAmount" readonly placeholder="₹0" class="w-full bg-slate-900/50 border border-slate-600 rounded-xl py-3 px-4 text-amber-400 font-black focus:outline-none text-lg">
+                    </div>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                        <button id="payBtn" class="w-full bg-slate-700 hover:bg-slate-600 text-amber-400 border border-slate-500 font-bold py-3.5 px-4 rounded-xl transition-all shadow-md text-sm">💳 Pay Now</button>
-                        <button id="paidBtn" class="w-full bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-500 hover:to-green-600 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md text-sm">✅ I Have Paid</button>
+                    <div class="pt-4 space-y-3">
+                        <p class="text-xs text-center text-slate-400 font-bold mb-2">किसी भी ऐप से सीधे पेमेंट करें:</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="payViaUPI('phonepe')" class="bg-[#5f259f] hover:bg-[#4a1c7c] text-white font-bold py-3 px-2 rounded-xl text-xs flex items-center justify-center gap-1"><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" class="h-4 bg-white p-0.5 rounded"> PhonePe</button>
+                            <button onclick="payViaUPI('gpay')" class="bg-white hover:bg-slate-200 text-slate-800 font-bold py-3 px-2 rounded-xl text-xs flex items-center justify-center gap-1"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" class="h-4"> GPay</button>
+                            <button onclick="payViaUPI('paytm')" class="bg-[#002970] hover:bg-[#001d52] text-white font-bold py-3 px-2 rounded-xl text-xs flex items-center justify-center gap-1">Paytm</button>
+                            <button onclick="payViaUPI('other')" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-2 rounded-xl text-xs flex items-center justify-center gap-1">UPI / Other</button>
+                        </div>
+                        <button id="newPaidBtn" class="w-full mt-3 bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-500 hover:to-green-600 text-white font-black py-4 px-4 rounded-xl transition-all shadow-lg text-sm border border-emerald-400 flex justify-center items-center gap-2">✅ I Have Paid (पेमेंट कर दिया है)</button>
                     </div>
                 </div>
             </div>
@@ -791,7 +830,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-about-us'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900' id='acc-about-us'>
-                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और সোশ্যাল मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
+                    श्री वर्ल्ड प्रीमियम पोर्टल भारत की अग्रणी डिजिटल ग्रोथ एवं एयर टिकटिंग agency है। हम बीते कई वर्षों से पूरे देश में व्यापारियों, प्रधानी चुनाव उम्मीदवारों और सोशल मीडिया क्रिएटर्स को उनके बिजनेस ब्रांडिंग, इंस्टाग्राम-फेसबुक ऑर्गेनिक बूस्टिंग और एडवांस्ड वेब डेवलपमेंट जैसी सेवाएँ पूरी प्रामाणिकता के साथ दे रहे हैं। हमारा उद्देश्य बिना पासवर्ड मांगे आपके सोशल प्रेजेंस को सेफ रखना है।
                 </div>
             </div>
             
@@ -814,7 +853,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-privacy'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900' id='acc-privacy'>
-                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग ত্রিশते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
+                    श्री वर्ल्ड प्रीमियम पर ग्राहकों की प्राइवेसी हमारे लिए सबसे सर्वोच्च प्राथमिकता है। हम कभी भी आपके सोशल मीडिया क्रेडेंशियल जैसे पासवर्ड, ओटीपी या लॉक कोड की मांग नहीं करते। हमारे पोर्टल पर आपके द्वारा साझा किया गया यूजरनेम, पोस्ट लिंक या यात्री विवरण पूरी तरह से सुरक्षित डेटाबेस में रखा जाता है और इसे किसी भी तीसरे पक्ष के साथ साझा नहीं किया जाता।
                 </div>
             </div>
 
@@ -1047,9 +1086,10 @@
                     const userRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userRef);
                     
-                    if (!userSnap.exists()) {
-                        let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
+                    // Profile/Email referral ID creation
+                    let emailPrefix = user.email ? user.email.split('@')[0] : user.uid.substring(0,8);
 
+                    if (!userSnap.exists()) {
                         await setDoc(userRef, {
                             uid: user.uid,
                             name: user.displayName,
@@ -1078,7 +1118,7 @@
                     currentUserData = latestSnap.data();
                     
                     if (!currentUserData.refCode) {
-                        currentUserData.refCode = currentUserData.email ? currentUserData.email.split('@')[0] : currentUserData.uid;
+                        currentUserData.refCode = emailPrefix;
                         await updateDoc(userRef, { refCode: currentUserData.refCode });
                     }
 
@@ -1130,12 +1170,29 @@
             const link = window.location.origin + window.location.pathname + "?ref=" + (currentUserData.refCode || currentUserData.uid);
             document.getElementById('dashRefLink').value = link;
 
+            // 500 Rule Check for Withdrawal Field
+            if((currentUserData.wallet || 0) < 500) {
+                document.getElementById('withdrawAmount').disabled = true;
+                document.getElementById('withdrawAmount').placeholder = "न्यूनतम ₹500 आवश्यक";
+            } else {
+                document.getElementById('withdrawAmount').disabled = false;
+                document.getElementById('withdrawAmount').placeholder = "रुपया (₹)";
+            }
+
             try {
                 const snap = await getDoc(doc(db, "users", currentUserData.uid));
                 if(snap.exists()) {
                     currentUserData = snap.data();
                     document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
                     document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
+                    
+                    if((currentUserData.wallet || 0) < 500) {
+                        document.getElementById('withdrawAmount').disabled = true;
+                        document.getElementById('withdrawAmount').placeholder = "न्यूनतम ₹500 आवश्यक";
+                    } else {
+                        document.getElementById('withdrawAmount').disabled = false;
+                        document.getElementById('withdrawAmount').placeholder = "रुपया (₹)";
+                    }
                 }
             } catch(e) {
                 console.log("Silent DB update failed:", e);
@@ -1162,6 +1219,11 @@
         };
 
         window.requestWithdraw = async () => {
+            if((currentUserData.wallet || 0) < 500) {
+                alert(`न्यूनतम विड्रॉल राशि ₹500 है! अभी आपके वॉलेट में मात्र ₹${currentUserData.wallet || 0} हैं।`);
+                return;
+            }
+
             const upiId = document.getElementById('withdrawUpi').value.trim();
             const amount = parseInt(document.getElementById('withdrawAmount').value);
             
@@ -1249,43 +1311,52 @@
             }
         };
 
-        // ==================== NEW ORDER JS LOGIC ==================== //
-        
-        document.getElementById("payBtn").onclick = function(){
-            const amount = document.getElementById("amount").value;
-            if(amount == ""){
-                alert("Enter Amount");
-                return;
+        // ==================== NEW ORDER JS LOGIC (Firebase Side) ==================== //
+        const newPaidBtn = document.getElementById("newPaidBtn");
+        if(newPaidBtn) {
+            newPaidBtn.onclick = async function(){
+                const name = document.getElementById("orderName").value;
+                const mobile = document.getElementById("orderMobile").value;
+                const cat = document.getElementById("orderCategory").value;
+                const subServiceSelect = document.getElementById("orderSubService");
+                const subService = subServiceSelect ? subServiceSelect.options[subServiceSelect.selectedIndex].text : "";
+                const link = document.getElementById("orderLink").value;
+                const amount = document.getElementById("orderAmount").value;
+
+                if(!name || !mobile || !cat || !amount || !link){
+                    alert("कृपया सभी जानकारी भरें (नाम, मोबाइल, सर्विस, लिंक)!");
+                    return;
+                }
+
+                let finalService = cat;
+                if(cat === "Instagram" || cat === "Facebook") finalService = `${cat} - ${subService}`;
+
+                try {
+                    await addDoc(collection(db,"orders"),{
+                        name: name,
+                        mobile: mobile,
+                        email: "", // Removed from UI as requested
+                        service: finalService,
+                        link: link,
+                        amount: Number(amount),
+                        status: "Pending",
+                        seen: false,
+                        createdAt: serverTimestamp()
+                    });
+                    alert("✅ आपका आर्डर सफलतापूर्वक दर्ज हो गया है! हम जल्द ही इसे प्रोसेस करेंगे।");
+                    
+                    // Reset
+                    document.getElementById("orderName").value = "";
+                    document.getElementById("orderMobile").value = "";
+                    document.getElementById("orderLink").value = "";
+                    document.getElementById("orderCategory").value = "";
+                    document.getElementById("orderAmount").value = "";
+                    window.toggleOrderForm(false);
+                } catch(e) {
+                    alert("Order booking failed: " + e.message);
+                }
             }
-            window.location.href = `upi://pay?pa=9451239239-3@ybl&pn=RAJAN%20YADAV&am=${amount}&cu=INR`;
         }
-
-        document.getElementById("paidBtn").onclick = async function(){
-            const name = document.getElementById("name").value;
-            const mobile = document.getElementById("mobile").value;
-            const email = document.getElementById("email").value;
-            const service = document.getElementById("service").value;
-            const amount = document.getElementById("amount").value;
-
-            if(name == "" || mobile == "" || service == "" || amount == ""){
-                alert("Fill all details");
-                return;
-            }
-
-            await addDoc(collection(db,"orders"),{
-                name: name,
-                mobile: mobile,
-                email: email,
-                service: service,
-                amount: Number(amount),
-                status: "Pending",
-                seen: false,
-                createdAt: serverTimestamp()
-            });
-
-            alert("✅ Order Submitted Successfully");
-        }
-
     </script>
 
     <!-- GENERAL LOGIC -->
@@ -1299,6 +1370,103 @@
         let activePaymentPurpose = 'Instagram';
         const ownerWpNumber = '919451239239'; 
         let selectedInteractiveFlightType = '';
+
+        // ==================== NEW ORDER FORM LOGIC ==================== //
+        const orderDataMatrix = {
+            Instagram: [
+                { label: 'Followers - 100 (₹19)', price: 19 },
+                { label: 'Followers - 1000 (₹249)', price: 249 },
+                { label: 'Followers - 5000 (₹899)', price: 899 },
+                { label: 'Followers - 10000 (₹1599)', price: 1599 },
+                { label: 'Likes - 1000 (₹30)', price: 30 },
+                { label: 'Likes - 2000 (₹99)', price: 99 },
+                { label: 'Likes - 5000 (₹199)', price: 199 },
+                { label: 'Likes - 10000 (₹299)', price: 299 },
+                { label: 'Views - 10000 (₹29)', price: 29 },
+                { label: 'Comments - 1000 (₹99)', price: 99 }
+            ],
+            Facebook: [
+                { label: 'Followers - 1000 (₹99)', price: 99 },
+                { label: 'Followers - 5000 (₹499)', price: 499 },
+                { label: 'Followers - 10000 (₹799)', price: 799 },
+                { label: 'Likes - 1000 (₹269)', price: 269 },
+                { label: 'Likes - 5000 (₹1399)', price: 1399 },
+                { label: 'Likes - 10000 (₹2199)', price: 2199 },
+                { label: 'Views - 5000 (₹49)', price: 49 },
+                { label: 'Views - 10000 (₹99)', price: 99 },
+                { label: 'Comments - 1000 (₹99)', price: 99 }
+            ]
+        };
+
+        window.toggleOrderForm = function(show) {
+            const form = document.getElementById('orderFormContainer');
+            const banner = document.getElementById('orderBanner');
+            if (show) {
+                form.classList.remove('hidden');
+                banner.classList.add('hidden');
+                form.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                form.classList.add('hidden');
+                banner.classList.remove('hidden');
+            }
+        }
+
+        window.handleCategoryChange = function() {
+            const cat = document.getElementById('orderCategory').value;
+            const subContainer = document.getElementById('subServiceContainer');
+            const subSelect = document.getElementById('orderSubService');
+            const linkContainer = document.getElementById('profileLinkContainer');
+            const amountInput = document.getElementById('orderAmount');
+
+            subSelect.innerHTML = '<option value="">-- पैकेज चुनें --</option>';
+            amountInput.value = '';
+
+            if (cat === 'Instagram' || cat === 'Facebook') {
+                subContainer.classList.remove('hidden');
+                linkContainer.classList.remove('hidden');
+                document.getElementById('profileLinkLabel').innerText = "प्रोफाइल या पोस्ट का लिंक:";
+                
+                orderDataMatrix[cat].forEach(item => {
+                    let opt = document.createElement('option');
+                    opt.value = item.price;
+                    opt.text = item.label;
+                    subSelect.appendChild(opt);
+                });
+            } else if (cat === 'Flight') {
+                subContainer.classList.add('hidden');
+                linkContainer.classList.remove('hidden');
+                document.getElementById('profileLinkLabel').innerText = "यात्रा का विवरण (कहाँ से कहाँ, तारीख):";
+                amountInput.value = '500'; // Advance Book
+            } else if (cat === 'Website') {
+                subContainer.classList.add('hidden');
+                linkContainer.classList.remove('hidden');
+                document.getElementById('profileLinkLabel').innerText = "वेबसाइट का नाम या बिज़नेस डिटेल्स:";
+                amountInput.value = '999'; // Landing Page Option
+            } else {
+                subContainer.classList.add('hidden');
+                linkContainer.classList.add('hidden');
+            }
+        }
+
+        window.handleSubServiceChange = function() {
+            const val = document.getElementById('orderSubService').value;
+            if (val) {
+                document.getElementById('orderAmount').value = val;
+            } else {
+                document.getElementById('orderAmount').value = '';
+            }
+        }
+
+        window.payViaUPI = function(appCode) {
+            const amount = document.getElementById('orderAmount').value;
+            if (!amount) {
+                alert("कृपया पहले सर्विस चुनें ताकि अमाउंट तय हो सके!");
+                return;
+            }
+            // Universal UPI link allows any UPI app (PhonePe, GPay, Paytm) installed on phone to handle it.
+            window.location.href = `upi://pay?pa=9451239239-3@ybl&pn=RAJAN%20YADAV&am=${amount}&cu=INR`;
+        }
+        // ============================================================== //
 
         function goLink(url) {
             const iframe = document.createElement('iframe');
