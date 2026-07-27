@@ -155,7 +155,7 @@
                     localStorage.setItem("customerPhoto", user.photoURL || "");
 
                     alert("✅ Login Successful");
-                    window.location.href = "index.html";
+                    window.location.replace("index.html");
 
                 } catch (error) {
                     console.error(error);
@@ -165,24 +165,18 @@
         }
 
         // ================= 4. AUTO LOGIN / AUTH STATE =================
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                localStorage.setItem("customerUID", user.uid);
-                localStorage.setItem("customerName", user.displayName || "");
-                localStorage.setItem("customerEmail", user.email || "");
-                localStorage.setItem("customerPhoto", user.photoURL || "");
+        onAuthStateChanged(auth, (user) => {
 
-                // अगर Login Page खुला है तो Home भेज दो
-                if (window.location.pathname.includes("customer-login.html")) {
-                    window.location.href = "index.html";
-                }
-            } else {
-                localStorage.removeItem("customerUID");
-                localStorage.removeItem("customerName");
-                localStorage.removeItem("customerEmail");
-                localStorage.removeItem("customerPhoto");
-            }
-        });
+if(user){
+
+localStorage.setItem("customerUID", user.uid);
+localStorage.setItem("customerName", user.displayName || "");
+localStorage.setItem("customerEmail", user.email || "");
+localStorage.setItem("customerPhoto", user.photoURL || "");
+
+}
+
+});
 
         // ================= 5. GLOBAL FUNCTIONS =================
 
