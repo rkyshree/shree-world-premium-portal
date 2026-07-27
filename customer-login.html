@@ -94,7 +94,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebas
 import {
 getAuth,
 GoogleAuthProvider,
-signInWithPopup
+signInWithPopup,
+onAuthStateChanged,
+signOut
 } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
 import {
@@ -119,131 +121,83 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-  document.getElementById("googleLogin").onclick = async () => {
 
-try{
+document.getElementById("googleLogin").onclick = async () => {
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
 
-const result = await signInWithPopup(auth, provider);
+        if(!userSnap.exists()){
+            await setDoc(userRef, {
+                uid: user.uid,
+                name: user.displayName || "",
+                email: user.email || "",
+                photo: user.photoURL || "",
+                mobile: "",
+                wallet: 0,
+                totalReferral: 0,
+                referralCode: "SHREE" + user.uid.substring(0,6).toUpperCase(),
+                joinedOn: serverTimestamp(),
+                status: "Active"
+            });
+        }
 
-const user = result.user;
+        localStorage.setItem("customerUID", user.uid);
+        localStorage.setItem("customerName", user.displayName || "");
+        localStorage.setItem("customerEmail", user.email || "");
+        localStorage.setItem("customerPhoto", user.photoURL || "");
 
-const userRef = doc(db,"users",user.uid);
-
-const userSnap = await getDoc(userRef);
-
-if(!userSnap.exists()){
-
-await setDoc(userRef,{
-
-uid:user.uid,
-
-name:user.displayName || "",
-
-email:user.email || "",
-
-photo:user.photoURL || "",
-
-mobile:"",
-
-wallet:0,
-
-totalReferral:0,
-
-referralCode:"SHREE"+user.uid.substring(0,6).toUpperCase(),
-
-joinedOn:serverTimestamp(),
-
-status:"Active"
-
-});
-
-}
-
-localStorage.setItem("customerUID",user.uid);
-
-localStorage.setItem("customerName",user.displayName || "");
-
-localStorage.setItem("customerEmail",user.email || "");
-
-localStorage.setItem("customerPhoto",user.photoURL || "");
-
-alert("Login Successful");
-
-window.location.href="index.html";
-
-}catch(error){
-
-alert(error.message);
-
-}
-
+        alert("Login Successful");
+        window.location.href = "https://www.rkyshree.in/";
+    } catch(error) {
+        alert(error.message);
+    }
 };
-  // Auto Login Check
 
-import {
-onAuthStateChanged,
-signOut
-} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-
+// Auto Login Check
 onAuthStateChanged(auth, async (user) => {
-
-if(user){
-
-localStorage.setItem("customerUID", user.uid);
-
-localStorage.setItem("customerName", user.displayName || "");
-
-localStorage.setItem("customerEmail", user.email || "");
-
-localStorage.setItem("customerPhoto", user.photoURL || "");
-
-console.log("Already Logged In");
-
-}
-
+    if(user){
+        localStorage.setItem("customerUID", user.uid);
+        localStorage.setItem("customerName", user.displayName || "");
+        localStorage.setItem("customerEmail", user.email || "");
+        localStorage.setItem("customerPhoto", user.photoURL || "");
+        console.log("Already Logged In");
+    }
 });
 
 // Logout Function
-
 window.customerLogout = async function(){
-
-await signOut(auth);
-
-localStorage.clear();
-
-alert("Logout Successful");
-
-window.location.reload();
-
+    await signOut(auth);
+    localStorage.clear();
+    alert("Logout Successful");
+    window.location.reload();
 };
-  // Ensure user document exists and update missing fields
+
+// Ensure user document exists and update missing fields
 onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
 
-  if (!user) return;
-
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-
-  if (!snap.exists()) {
-
-    await setDoc(userRef, {
-      uid: user.uid,
-      name: user.displayName || "",
-      email: user.email || "",
-      photo: user.photoURL || "",
-      mobile: "",
-      wallet: 0,
-      totalReferral: 0,
-      referralCode: "SHREE" + user.uid.substring(0,6).toUpperCase(),
-      joinedOn: serverTimestamp(),
-      status: "Active"
-    });
-
-  }
-
+    if (!snap.exists()) {
+        await setDoc(userRef, {
+            uid: user.uid,
+            name: user.displayName || "",
+            email: user.email || "",
+            photo: user.photoURL || "",
+            mobile: "",
+            wallet: 0,
+            totalReferral: 0,
+            referralCode: "SHREE" + user.uid.substring(0,6).toUpperCase(),
+            joinedOn: serverTimestamp(),
+            status: "Active"
+        });
+    }
 });
 
-// Close Script
 </script>
 
 </body>
