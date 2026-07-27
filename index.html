@@ -27,7 +27,7 @@
     <style>
     body {
         font-family: 'Hind', sans-serif;
-        background: #0f172a !important; /* Premium Dark Navy */
+        background: #0f172a !important;
         color: #f1f5f9;
         scroll-behavior: smooth;
         overflow-x: hidden;
@@ -205,6 +205,16 @@
                     </div>
                 </div>
 
+                <!-- Refer Detailed Info inside Dashboard -->
+                <div class="bg-emerald-900/30 border border-emerald-800 p-3.5 rounded-2xl shadow-sm space-y-2 mt-3">
+                    <h5 class="font-black text-xs text-emerald-400 flex items-center gap-1.5">
+                        <span>💡</span> Refer &amp; Earn जानकारी
+                    </h5>
+                    <div class="text-[11px] text-slate-300 space-y-1.5 font-medium leading-relaxed">
+                        <p>दोस्तों को जोड़ें और हर सफल रेफरल पर <strong>₹200 कमाएं</strong>। जब आपके वॉलेट में ₹500 हो जाएं और सभी शर्तें पूरी हो जाएं, तब आप तुरंत व्हाट्सएप के जरिए विड्रॉल ले सकते हैं।</p>
+                    </div>
+                </div>
+
                 <button onclick="logoutUser()" class="w-full border border-red-500/50 text-red-400 hover:bg-red-900/30 font-bold py-2.5 rounded-xl transition-all shrink-0 text-xs mt-3">🚪 Logout (बाहर जाएँ)</button>
             </div>
         </div>
@@ -252,10 +262,10 @@
                 <button onclick="closeTrackModal()" class="text-white hover:text-red-300 text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 bg-slate-900 space-y-4">
-                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर (Order ID या Mobile Number) दर्ज करें:</p>
+                <p class="text-sm text-slate-300 font-medium">अपना लाइव आर्डर स्टेटस चेक करने के लिए अपना आर्डर नंबर दर्ज करें:</p>
                 
                 <div class="flex gap-2">
-                    <input type="text" id="trackMobileInput" placeholder="अपना मोबाइल नंबर डालें..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
+                    <input type="text" id="trackMobileInput" placeholder="अपना आर्डर नंबर डालें (उदा: RAJAN9918164690)..." class="w-full bg-slate-800 border border-slate-600 shadow-sm rounded-xl py-3 px-4 text-white font-bold focus:border-blue-500 focus:outline-none uppercase">
                     <button onclick="searchMyOrder()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-xl font-black shadow-md">Check</button>
                 </div>
 
@@ -414,7 +424,7 @@
             </div>
         </section>
 
-        <!-- ==================== PREMIUM PLACE YOUR ORDER SECTION (UPDATED) ==================== -->
+        <!-- ==================== PREMIUM PLACE YOUR ORDER SECTION ==================== -->
         <section id="order-section" class="py-12 px-4 max-w-3xl mx-auto bg-slate-900 relative">
             <div class="absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent blur-3xl rounded-full"></div>
             
@@ -1155,11 +1165,67 @@
         window.handleAuthButtonClick = () => { if (currentUserData) window.openDashboard(); else signInWithPopup(auth, provider); };
         window.logoutUser = () => { signOut(auth).then(() => { window.closeDashboard(); alert("लॉग आउट सफल।"); }); };
         
-        window.openDashboard = async () => { /* Hidden to keep clean */ };
-        window.closeDashboard = () => document.getElementById('dashboardModal').classList.add('hidden');
+        // -------------------------
+        // FULL DASHBOARD LOGIC
+        // -------------------------
+        window.openDashboard = async () => {
+            if(!currentUserData) return;
+            const modal = document.getElementById('dashboardModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('dashName').innerText = currentUserData.name || 'User Name';
+            document.getElementById('dashEmail').innerText = currentUserData.email || '';
+            if(currentUserData.photo) { document.getElementById('dashPhoto').src = currentUserData.photo; }
+            document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
+            document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
+            const link = window.location.origin + window.location.pathname + "?ref=" + (currentUserData.refCode || currentUserData.uid);
+            document.getElementById('dashRefLink').value = link;
+            try {
+                const snap = await getDoc(doc(db, "users", currentUserData.uid));
+                if(snap.exists()) {
+                    currentUserData = snap.data();
+                    document.getElementById('dashWallet').innerText = currentUserData.wallet || '0';
+                    document.getElementById('dashRefs').innerText = currentUserData.referralCount || '0';
+                }
+            } catch(e) { console.log("Silent DB update failed:", e); }
+        };
+        
+        window.closeDashboard = () => {
+            const modal = document.getElementById('dashboardModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
+
+        window.copyRefLink = () => {
+            const linkField = document.getElementById('dashRefLink');
+            linkField.select();
+            document.execCommand("copy");
+            alert("आपका Referral Link Copy हो गया है! अब इसे दोस्तों को शेयर करें।");
+        };
+
+        window.requestWithdraw = async () => {
+            const upiId = document.getElementById('withdrawUpi').value.trim();
+            const amount = parseInt(document.getElementById('withdrawAmount').value);
+            if(!upiId || !amount) return alert("कृपया UPI ID या GPay/PhonePe/Paytm नंबर भरें!");
+            if(amount < 500) return alert("न्यूनतम विड्रॉल राशि ₹500 है!");
+            if(amount > currentUserData.wallet) return alert("आपके वॉलेट में पर्याप्त बैलेंस नहीं है!");
+            try {
+                await updateDoc(doc(db, "users", currentUserData.uid), { wallet: increment(-amount) });
+                await addDoc(collection(db, "withdraws"), {
+                    uid: currentUserData.uid, name: currentUserData.name, email: currentUserData.email, upi: upiId, amount: amount, status: 'Pending', timestamp: new Date()
+                });
+                alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा है...");
+                const adminPhone = "919451239239";
+                const waMessage = `💸 *NEW WITHDRAWAL REQUEST* 💸\n━━━━━━━━━━━━━━━━━━\n👤 *नाम:* ${currentUserData.name}\n📧 *ईमेल:* ${currentUserData.email}\n💰 *निकालने की रकम:* ₹${amount}\n🏦 *UPI/Number:* ${upiId}\n\nसर, मैंने T&C के अनुसार 3 सफल सर्विस सेल और सभी शर्तें पूरी कर ली हैं। कृपया मेरा विड्रोल अप्रूव करके पेमेंट भेज दें।`;
+                const waUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(waMessage)}`;
+                document.getElementById('withdrawUpi').value = ""; document.getElementById('withdrawAmount').value = "";
+                window.closeDashboard();
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+            } catch (e) { alert("Error: " + e.message); }
+        };
 
         // ==========================================
-        // 🔥 NEW ORDER LOGIC WITH FIREBASE (orders collection + orderId) 🔥
+        // 🔥 NEW ORDER LOGIC WITH FIREBASE (orders collection) 🔥
         // ==========================================
         
         window.submitNewOrderSystem = async () => {
@@ -1308,11 +1374,48 @@
             if(tabName === 'withdrawals') {
                 document.getElementById('tabWithdrawals').className = "flex-1 py-3 font-bold text-sm bg-slate-700 text-amber-400 border-b-2 border-amber-400";
                 document.getElementById('adminWithdrawalsSection').classList.remove('hidden');
+                fetchWithdrawalsAdmin();
             } else {
                 document.getElementById('tabOrders').className = "flex-1 py-3 font-bold text-sm bg-slate-700 text-amber-400 border-b-2 border-amber-400";
                 document.getElementById('adminOrdersSection').classList.remove('hidden');
                 fetchSocialOrdersAdmin();
             }
+        };
+
+        async function fetchWithdrawalsAdmin() {
+            const listDiv = document.getElementById('adminRequestsList');
+            listDiv.innerHTML = '<p class="text-slate-400 text-sm text-center py-10">Fetching pending requests...</p>';
+            try {
+                const q = query(collection(db, "withdraws"), where("status", "==", "Pending"));
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = '<p class="text-green-400 font-bold text-center py-10">No pending withdrawal requests. All clear! 🎉</p>';
+                    return;
+                }
+                listDiv.innerHTML = '';
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const html = `
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div>
+                            <p class="font-bold text-white text-sm">${data.name} <span class="text-slate-400 text-xs">(${data.email})</span></p>
+                            <p class="text-amber-500 font-black">UPI/Num: ${data.upi}</p>
+                            <p class="text-xs text-slate-400">Amount: ₹<strong class="text-emerald-400 text-sm">${data.amount}</strong></p>
+                        </div>
+                        <button onclick="approveWithdrawal('${docSnap.id}', '${data.uid}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold text-xs shadow-sm w-full sm:w-auto">Approve Paid</button>
+                    </div>`;
+                    listDiv.innerHTML += html;
+                });
+            } catch (e) { listDiv.innerHTML = '<p class="text-red-500 text-center">Error fetching data</p>'; }
+        }
+
+        window.approveWithdrawal = async (docId, userUid) => {
+            if(!confirm("Are you sure you have transferred the money to the user?")) return;
+            try {
+                await updateDoc(doc(db, "withdraws", docId), { status: 'Paid' });
+                alert("Status Updated to Paid!");
+                fetchWithdrawalsAdmin(); 
+            } catch (e) { alert("Error: " + e.message); }
         };
 
         async function fetchSocialOrdersAdmin() {
@@ -1369,6 +1472,14 @@
 
     <!-- GENERAL LOGIC -->
     <script type='text/javascript'>
+        
+        // Modal Refer & Earn UI Logic
+        window.toggleReferEarnModal = () => {
+            const modal = document.getElementById('referEarnModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        };
+
         // Price Matrix for New Order Form
         const comprehensivePriceMatrix = {
             instagram: {
@@ -1494,16 +1605,16 @@
         }
 
         // TRACK ORDER MODAL LOGIC
-        function openTrackModal() {
+        window.openTrackModal = () => {
             document.getElementById('trackOrderModal').classList.remove('hidden');
             document.getElementById('trackOrderModal').classList.add('flex');
             document.getElementById('trackResultArea').classList.add('hidden');
             document.getElementById('trackMobileInput').value = "";
-        }
-        function closeTrackModal() {
+        };
+        window.closeTrackModal = () => {
             document.getElementById('trackOrderModal').classList.add('hidden');
             document.getElementById('trackOrderModal').classList.remove('flex');
-        }
+        };
 
         // ----------------------------------------------------
         // EXISTING LOGIC (Counters, Trackers, Reviews, Accordion)
@@ -1608,7 +1719,31 @@
             });
         }
         
-        function toggleAccordion(id) {
+        window.submitUserReviewSystem = () => {
+            const name = document.getElementById('userRevName').value.trim();
+            const loc = document.getElementById('userRevLocation').value.trim() || 'भारत';
+            const rating = document.getElementById('userRevRating').value;
+            const msg = document.getElementById('userRevMessage').value.trim();
+            
+            if (!name || !msg) { alert("कृपया अपना नाम और अपना अनुभव (मैसेज) दोनों भरें!"); return; }
+            
+            const newReview = { name: name, loc: loc, rating: rating, msg: msg };
+            let savedReviews = JSON.parse(localStorage.getItem('shreeReviews')) || [];
+            savedReviews.unshift(newReview); 
+            localStorage.setItem('shreeReviews', JSON.stringify(savedReviews));
+            allReviews.unshift(newReview);
+            
+            alert("धन्यवाद! आपका रिव्यु सफलतापूर्वक सबमिट हो गया है और लाइव जोड़ दिया गया है।");
+            
+            document.getElementById('userRevName').value = '';
+            document.getElementById('userRevLocation').value = '';
+            document.getElementById('userRevMessage').value = '';
+            
+            renderReviewsCarousel();
+            document.getElementById('reviewsCarousel').scrollTo({ left: 0, behavior: 'smooth' });
+        };
+
+        window.toggleAccordion = (id) => {
             const el = document.getElementById(id);
             const icon = document.getElementById(`icon-${id}`);
             if (el.classList.contains('hidden')) {
@@ -1616,9 +1751,9 @@
             } else {
                 el.classList.add('hidden'); if(icon) icon.innerText = '▼';
             }
-        }
+        };
         
-        // INTERACTIVE SERVICE PANEL LOGIC (Older Component)
+        // INTERACTIVE SERVICE PANEL LOGIC (Older Component Restored fully)
         const platformData = {
             instagram: { label: 'इंस्टाग्राम', emoji: '📸', services: ['Followers', 'Likes', 'Comments', 'Views'] },
             facebook: { label: 'फेसबुक', emoji: '👥', services: ['Followers', 'Likes', 'Comments', 'Views'] }
@@ -1630,7 +1765,12 @@
         let activeQuantity = '100';
         let selectedPackagePrice = 19;
         
-        function selectPlatform(platform) {
+        window.navigateToService = (platform) => {
+            document.getElementById('social-growth').scrollIntoView({ behavior: 'smooth' });
+            selectPlatform(platform);
+        };
+
+        window.selectPlatform = (platform) => {
             activePlatform = platform;
             document.getElementById('btn-instagram').classList.remove('btn-active-highlight');
             document.getElementById('btn-facebook').classList.remove('btn-active-highlight');
@@ -1646,9 +1786,9 @@
                 servicesContainer.appendChild(btn);
             });
             document.getElementById('conditionalPlansWrapper').classList.add('hidden');
-        }
+        };
 
-        function selectService(buttonElement, serviceLabel) {
+        window.selectService = (buttonElement, serviceLabel) => {
             activeServiceLabel = serviceLabel;
             document.querySelectorAll('.service-opt').forEach(btn => {
                 btn.className = 'service-opt p-3 rounded-xl border text-xs sm:text-sm font-semibold text-center bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700';
@@ -1656,9 +1796,9 @@
             buttonElement.className = 'service-opt p-3 rounded-xl border text-xs sm:text-sm font-black text-center btn-active-highlight';
             document.getElementById('conditionalPlansWrapper').classList.remove('hidden');
             renderQuantities();
-        }
+        };
         
-        function renderQuantities() {
+        window.renderQuantities = () => {
             const qtyContainer = document.getElementById('quantity-grid'); qtyContainer.innerHTML = '';
             const availablePackages = comprehensivePriceMatrix[activePlatform][activeServiceLabel] || [];
             availablePackages.forEach((pkg) => {
@@ -1668,16 +1808,16 @@
                 btn.onclick = () => { selectQuantity(pkg.qty, pkg.price); };
                 qtyContainer.appendChild(btn);
             });
-        }
+        };
         
-        function selectQuantity(qty, price) {
+        window.selectQuantity = (qty, price) => {
             activeQuantity = qty; selectedPackagePrice = price;
             document.querySelectorAll('.qty-opt').forEach(btn => btn.className = 'qty-opt flex items-center justify-between p-3.5 rounded-xl border font-bold text-sm bg-slate-800 border-purple-800/50 text-slate-200 shadow-sm transition-all hover:border-purple-500 hover:bg-slate-700');
             if(document.getElementById(`pkg-${qty}`)) document.getElementById(`pkg-${qty}`).classList.add('btn-active-highlight');
             updatePriceUI(selectedPackagePrice);
-        }
+        };
 
-        function calculateCustomPrice() {
+        window.calculateCustomPrice = () => {
             const customInput = document.getElementById('custom-quantity-input').value.trim();
             if (customInput === "" || parseInt(customInput) <= 0) { renderQuantities(); return; }
             const userQty = parseInt(customInput);
@@ -1689,72 +1829,99 @@
             selectedPackagePrice = Math.round(calculatedCost * 1.20);
             activeQuantity = userQty.toString();
             updatePriceUI(selectedPackagePrice);
-        }
+        };
 
-        function updatePriceUI(price) {
+        window.updatePriceUI = (price) => {
             document.getElementById('custom-qty-display').innerText = `चुनी गई संख्या: ${activeQuantity}`;
             document.getElementById('display-final-price').innerText = `₹${price.toLocaleString('en-IN')}`;
             document.getElementById('pay-amount').value = price;
             updateLiveQRCode();
-        }
+        };
         
         // OTHER LOGIC (Payment QR, Links, Flight)
         const ownerWpNumber = '919451239239';
         
-        function goLink(url) {
+        window.goLink = (url) => {
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none'; iframe.src = url; document.body.appendChild(iframe);
             setTimeout(() => { document.body.removeChild(iframe); window.open(url, '_blank', 'noopener,noreferrer'); }, 100);
-        }
+        };
         
-        function setPaymentPurpose(purpose) {
+        window.setPaymentPurpose = (purpose) => {
             document.querySelectorAll('.pay-purpose-btn').forEach(btn => btn.className = 'pay-purpose-btn py-3 px-3 rounded-xl border text-xs font-bold bg-slate-800 border-slate-600 text-slate-200 shadow-sm transition-all hover:bg-slate-700');
             let idMap = purpose === 'Instagram' ? 'pay-for-insta' : (purpose === 'Facebook' ? 'pay-for-fb' : 'pay-for-flight');
             document.getElementById(idMap).classList.add('btn-active-highlight');
-        }
+        };
 
-        function updateLiveQRCode() {
+        window.updateLiveQRCode = () => {
             const amount = document.getElementById('pay-amount').value || "";
             document.getElementById('live-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=RajanKumarYadav%26am=${amount}%26cu=INR`;
-        }
+        };
 
-        function copyToClipboard(text) {
+        window.copyToClipboard = (text) => {
             const tempInput = document.createElement("input"); tempInput.value = text;
             document.body.appendChild(tempInput); tempInput.select(); document.execCommand("copy"); document.body.removeChild(tempInput);
             const toast = document.getElementById('toast-msg'); toast.classList.remove('hidden');
             setTimeout(() => { toast.classList.add('hidden'); }, 2000);
-        }
+        };
 
-        function sendPaymentScreenshot() {
+        window.sendPaymentScreenshot = () => {
             const amt = document.getElementById('pay-amount').value || "0";
             const textMsg = `नमस्ते सर, मैंने ₹${amt} का ऑनलाइन पेमेंट कर दिया है। यह मेरी पेमेंट की रसीद है, कृपया मेरा ऑर्डर शुरू करें।`;
             goLink(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(textMsg)}`);
-        }
+        };
         
-        function goToPaymentSection() {
+        window.goToPaymentSection = () => {
             document.getElementById('pay-amount').value = selectedPackagePrice;
             updateLiveQRCode();
             document.getElementById("secure-payment").scrollIntoView({ behavior: "smooth" });
-        }
+        };
         
-        function socialOrderAutoBonus() {
+        window.socialOrderAutoBonus = () => {
             const targetLink = document.getElementById('target-link').value.trim();
             if(!targetLink) { alert('कृपया प्रोफाइल लिंक भरें!'); return; }
             const textMessage = `👑 *SHREE WORLD PREMIUM PORTAL* 👑\n━━━━━━━━━━━━━━━━━━\n✨ *नया सोशल मीडिया ऑर्डर* ✨\n\n📈 *प्लेटफॉर्म:* ${activePlatform.toUpperCase()}\n⚙ *सर्विस:* ${activeServiceLabel}\n📊 *संख्या:* ${activeQuantity}\n💰 *दाम:* ₹${selectedPackagePrice}/-\n👤 *लिंक:* ${targetLink}`;
             goLink(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(textMessage)}`);
-        }
+        };
         
-        function submitPromoOrder() {
+        window.submitPromoOrder = () => {
             const linkVal = document.getElementById('promo-link').value.trim();
             if (!linkVal) { alert('कृपया अपना लिंक या नाम यहाँ दर्ज करें!'); return; }
             document.getElementById('pay-amount').value = 1999; updateLiveQRCode();
             const message = `👑 *SHREE WORLD PREMIUM PORTAL* 👑\n━━━━━━━━━━━━━━━━━━\n💥 *कॉम्पैक्ट इंस्टाग्राम ऑल-इन-वन स्पेशल धमाका ऑर्डर* 💥\n\n📈 *प्लेटफॉर्म:* Instagram\n⚙ *सर्विस:* 10,000 Followers + 10,000 Likes + 10,000 Views\n💰 *दाम:* ₹1999/-\n👤 *लिंक/यूजरनेम:* ${linkVal}`;
             goLink(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(message)}`);
             document.getElementById('secure-payment').scrollIntoView({ behavior: 'smooth' });
-        }
+        };
         
+        // FLIGHT BOOKING & AIRPORTS (RESTORED)
+        const airports = [
+            { name: "गोरखपुर एयरपोर्ट - गोरखपुर", code: "GOP" },
+            { name: "छत्रपति शिवाजी महाराज इंटरनेशनल एयरपोर्ट - मुंबई", code: "BOM" },
+            { name: "इंदिरा गांधी इंटरनेशनल एयरपोर्ट - नई दिल्ली", code: "DEL" },
+            { name: "चौधरी चरण सिंह इंटरनेशनल एयरपोर्ट - लखनऊ", code: "LKO" }
+        ];
+
+        window.showSuggestions = (inputId, containerId) => {
+            const inputVal = document.getElementById(inputId).value.toLowerCase().trim();
+            const container = document.getElementById(containerId);
+            if (inputVal.length < 1) { container.classList.add('hidden'); return; }
+            const filtered = airports.filter(a => a.name.toLowerCase().includes(inputVal) || a.code.toLowerCase().includes(inputVal));
+            container.innerHTML = '';
+            filtered.forEach(airport => {
+                const item = document.createElement('div');
+                item.className = "p-3 hover:bg-slate-700 cursor-pointer flex justify-between bg-slate-800 text-slate-200 text-xs border-b border-slate-700";
+                item.innerHTML = `<span>${airport.name}</span><span class="font-bold text-cyan-400">${airport.code}</span>`;
+                item.onclick = function() { 
+                    document.getElementById(inputId).value = `${airport.name} (${airport.code})`; 
+                    container.classList.add('hidden'); 
+                };
+                container.appendChild(item);
+            });
+            container.classList.remove('hidden');
+        };
+
         let selectedInteractiveFlightType = '';
-        function toggleInteractiveFlight(type) {
+        window.toggleInteractiveFlight = (type) => {
             const formWrapper = document.getElementById('conditionalFlightFormWrapper');
             document.getElementById('flight-dom-btn').classList.remove('btn-active-highlight');
             document.getElementById('flight-int-btn').classList.remove('btn-active-highlight');
@@ -1764,12 +1931,12 @@
                 selectedInteractiveFlightType = type; formWrapper.classList.remove('hidden');
                 document.getElementById(`flight-${type}-btn`).classList.add('btn-active-highlight');
             }
-        }
-        function navigateToFlight() {
+        };
+        window.navigateToFlight = () => {
             document.getElementById('flight-booking').scrollIntoView({ behavior: 'smooth' });
             if (selectedInteractiveFlightType === '') toggleInteractiveFlight('domestic'); 
-        }
-        function executeFlightOrderAutoBonus() {
+        };
+        window.executeFlightOrderAutoBonus = () => {
             const from = document.getElementById('flight-from').value.trim();
             const toad = document.getElementById('flight-to').value.trim();
             const date = document.getElementById('flight-date').value;
@@ -1777,7 +1944,7 @@
             if(!from || !toad || !date || !pName) { alert('कृपया फॉर्म पूरा भरें!'); return; }
             const textMessage = `✈️ *FLIGHT BOOKING* ✈️\n━━━━━━━━━━━━━━━━━━\n👤 *यात्री:* ${pName}\n🛫 *कहाँ से:* ${from}\n🛬 *कहाँ तक:* ${toad}\n📅 *तारीख:* ${date}`;
             goLink(`https://wa.me/${ownerWpNumber}?text=${encodeURIComponent(textMessage)}`);
-        }
+        };
 
         window.onload = function() {
             initPremiumLiveCounters(); 
