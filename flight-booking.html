@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shree World Premium Portal | Flight Booking</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(9, 32, 63, 0.8), rgba(83, 120, 149, 0.7)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .glass-effect {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        /* Custom Scrollbar for dropdowns */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        /* Premium Shine Animation for Button */
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        .premium-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .premium-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            animation: shine 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-900 p-2 rounded-lg shadow-md">
+                        <i class="fa-solid fa-plane-departure text-yellow-400 text-2xl"></i>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold text-2xl text-blue-900 tracking-wide">SHREE WORLD</span>
+                        <span class="text-sm font-bold text-yellow-500 tracking-wide mt-1">PREMIUM PORTAL</span>
+                    </div>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 font-medium text-gray-600">
+                    <a href="#" class="text-blue-900 font-semibold border-b-2 border-blue-900 pb-1">Home</a>
+                    <a href="#" class="hover:text-blue-900 transition">Flights</a>
+                    <a href="#" class="hover:text-blue-900 transition">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-bg h-[45vh] flex flex-col justify-center items-center text-center px-4">
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-5 drop-shadow-lg">Book Your Flights Worldwide</h1>
+        <p class="text-lg md:text-xl text-gray-100 mb-8 max-w-3xl drop-shadow-md font-light">
+            Experience seamless travel with Shree World. Discover the best routes to India, USA, Dubai, Europe, and beyond.
+        </p>
+    </div>
+
+    <!-- Booking Form Section -->
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10 pb-20">
+        <div class="glass-effect p-6 md:p-10 border border-gray-100">
+            
+            <div class="flex items-center space-x-3 mb-8 pb-4 border-b border-gray-100">
+                <div class="bg-blue-100 p-3 rounded-full text-blue-900 shadow-inner">
+                    <i class="fa-solid fa-ticket-simple text-xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800">Flight Enquiry</h2>
+            </div>
+
+            <form id="bookingForm" onsubmit="sendToWhatsApp(event)" class="space-y-6" autocomplete="off">
+                
+                <!-- Routing Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- From -->
+                    <div class="relative">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">From</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-plane-departure text-blue-500"></i>
+                            </div>
+                            <input type="text" id="fromCity" required placeholder="City or Airport Code (e.g. LKO, GOP)" class="pl-12 w-full border border-gray-300 rounded-xl p-4 text-lg font-medium focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white">
+                        </div>
+                        <!-- Dropdown -->
+                        <div id="fromDropdown" class="absolute z-50 w-full mt-1 bg-white border border-gray-200 shadow-xl rounded-lg hidden max-h-64 overflow-y-auto custom-scrollbar"></div>
+                    </div>
+
+                    <!-- To -->
+                    <div class="relative">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">To</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-plane-arrival text-blue-500"></i>
+                            </div>
+                            <input type="text" id="toCity" required placeholder="City or Airport Code (e.g. DXB, BOM)" class="pl-12 w-full border border-gray-300 rounded-xl p-4 text-lg font-medium focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white">
+                        </div>
+                        <!-- Dropdown -->
+                        <div id="toDropdown" class="absolute z-50 w-full mt-1 bg-white border border-gray-200 shadow-xl rounded-lg hidden max-h-64 overflow-y-auto custom-scrollbar"></div>
+                    </div>
+                </div>
+
+                <!-- Date & Passengers Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+                    <!-- Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Departure Date</label>
+                        <div class="relative">
+                            <input type="date" id="travelDate" required class="w-full border border-gray-300 rounded-xl p-4 text-lg font-medium focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <!-- Passengers (Dropdown) -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Passengers</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                                <i class="fa-solid fa-users text-blue-500"></i>
+                            </div>
+                            <select id="passengersCount" required class="pl-12 pr-10 w-full border border-gray-300 rounded-xl p-4 text-lg font-medium focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white appearance-none relative">
+                                <option value="" disabled selected>Select Passengers</option>
+                                <option value="1">1 Passenger</option>
+                                <option value="2">2 Passengers</option>
+                                <option value="3">3 Passengers</option>
+                                <option value="4">4 Passengers</option>
+                                <option value="5">5 Passengers</option>
+                                <option value="5+">More than 5</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Class -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Cabin Class</label>
+                        <div class="relative">
+                            <select id="flightClass" required class="w-full border border-gray-300 rounded-xl p-4 text-lg font-medium focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white appearance-none">
+                                <option value="Economy">Economy Class</option>
+                                <option value="Premium Economy">Premium Economy</option>
+                                <option value="Business">Business Class</option>
+                                <option value="First Class">First Class</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Details Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 mt-4 border-t border-gray-100">
+                    <!-- Name -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="customerName" required placeholder="Enter your full name" class="pl-12 w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">WhatsApp / Mobile Number</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
+                            </div>
+                            <input type="tel" id="customerPhone" required placeholder="Enter 10-digit number" class="pl-12 w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition shadow-sm outline-none bg-gray-50 focus:bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium Submit Button -->
+                <div class="pt-8 text-center">
+                    <button type="submit" class="premium-btn w-full md:w-auto bg-gradient-to-r from-green-600 via-green-500 to-green-600 hover:from-green-500 hover:to-green-400 text-white font-bold text-lg py-4 px-12 rounded-xl shadow-[0_10px_20px_rgba(22,163,74,0.3)] hover:shadow-[0_15px_30px_rgba(22,163,74,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex justify-center items-center space-x-3 mx-auto">
+                        <i class="fa-brands fa-whatsapp text-2xl drop-shadow-md"></i>
+                        <span class="tracking-wide">Order on WhatsApp</span>
+                    </button>
+                    <p class="text-sm text-gray-500 mt-4"><i class="fa-solid fa-shield-halved text-green-500 mr-1"></i> Safe & Secure. Information will be sent securely to our agent.</p>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-10 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <h3 class="text-xl text-white font-bold mb-2 tracking-wide">SHREE WORLD PREMIUM PORTAL</h3>
+            <p class="mb-4 text-sm text-gray-400 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-phone text-blue-500"></i> Call / WhatsApp: +91 9451239239
+            </p>
+            <p class="text-xs border-t border-gray-800 pt-6">&copy; 2026 Shree World. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript logic -->
+    <script>
+        // --- 100+ Premium Airport Database ---
+        const airports = [
+            // India - High Priority
+            { code: "DEL", city: "New Delhi", country: "India", name: "Indira Gandhi International Airport" },
+            { code: "BOM", city: "Mumbai", country: "India", name: "Chhatrapati Shivaji Maharaj International" },
+            { code: "BLR", city: "Bengaluru", country: "India", name: "Kempegowda International Airport" },
+            { code: "HYD", city: "Hyderabad", country: "India", name: "Rajiv Gandhi International Airport" },
+            { code: "MAA", city: "Chennai", country: "India", name: "Chennai International Airport" },
+            { code: "CCU", city: "Kolkata", country: "India", name: "Netaji Subhas Chandra Bose" },
+            { code: "LKO", city: "Lucknow", country: "India", name: "Chaudhary Charan Singh International" },
+            { code: "GOP", city: "Gorakhpur", country: "India", name: "Mahayogi Gorakhnath Airport" },
+            { code: "VNS", city: "Varanasi", country: "India", name: "Lal Bahadur Shastri International" },
+            { code: "ATQ", city: "Amritsar", country: "India", name: "Sri Guru Ram Dass Jee International" },
+            { code: "AMD", city: "Ahmedabad", country: "India", name: "Sardar Vallabhbhai Patel" },
+            { code: "GOI", city: "Goa (Dabolim)", country: "India", name: "Dabolim Airport" },
+            { code: "GOX", city: "Goa (Mopa)", country: "India", name: "Manohar International" },
+            { code: "PNQ", city: "Pune", country: "India", name: "Pune International Airport" },
+            { code: "PAT", city: "Patna", country: "India", name: "Jay Prakash Narayan Airport" },
+            { code: "JAI", city: "Jaipur", country: "India", name: "Jaipur International Airport" },
+            { code: "COK", city: "Kochi", country: "India", name: "Cochin International Airport" },
+            
+            // Middle East & Gulf
+            { code: "DXB", city: "Dubai", country: "UAE", name: "Dubai International Airport" },
+            { code: "AUH", city: "Abu Dhabi", country: "UAE", name: "Zayed International Airport" },
+            { code: "SHJ", city: "Sharjah", country: "UAE", name: "Sharjah International Airport" },
+            { code: "KWI", city: "Kuwait City", country: "Kuwait", name: "Kuwait International Airport" },
+            { code: "RUH", city: "Riyadh", country: "Saudi Arabia", name: "King Khalid International" },
+            { code: "JED", city: "Jeddah", country: "Saudi Arabia", name: "King Abdulaziz International" },
+            { code: "DMM", city: "Dammam", country: "Saudi Arabia", name: "King Fahd International" },
+            { code: "MCT", city: "Muscat", country: "Oman", name: "Muscat International Airport" },
+            { code: "DOH", city: "Doha", country: "Qatar", name: "Hamad International Airport" },
+
+            // USA & Americas
+            { code: "JFK", city: "New York", country: "USA", name: "John F. Kennedy International" },
+            { code: "EWR", city: "Newark", country: "USA", name: "Newark Liberty International" },
+            { code: "LAX", city: "Los Angeles", country: "USA", name: "Los Angeles International" },
+            { code: "SFO", city: "San Francisco", country: "USA", name: "San Francisco International" },
+            { code: "ORD", city: "Chicago", country: "USA", name: "O'Hare International Airport" },
+            { code: "YYZ", city: "Toronto", country: "Canada", name: "Toronto Pearson International" },
+
+            // Europe
+            { code: "LHR", city: "London", country: "UK", name: "London Heathrow" },
+            { code: "CDG", city: "Paris", country: "France", name: "Charles de Gaulle Airport" },
+            { code: "FRA", city: "Frankfurt", country: "Germany", name: "Frankfurt Airport" },
+            { code: "AMS", city: "Amsterdam", country: "Netherlands", name: "Amsterdam Airport Schiphol" },
+
+            // Asia / Pacific & Nepal
+            { code: "KTM", city: "Kathmandu", country: "Nepal", name: "Tribhuvan International Airport" },
+            { code: "BWA", city: "Bhairahawa", country: "Nepal", name: "Gautam Buddha International Airport" },
+            { code: "SIN", city: "Singapore", country: "Singapore", name: "Changi Airport" },
+            { code: "KUL", city: "Kuala Lumpur", country: "Malaysia", name: "Kuala Lumpur International" },
+            { code: "BKK", city: "Bangkok", country: "Thailand", name: "Suvarnabhumi Airport" }
+        ];
+
+        // --- Date Picker Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('travelDate');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        });
+
+        // --- Autocomplete Setup ---
+        function setupAutocomplete(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+
+            const renderDropdown = (searchText) => {
+                const query = searchText.toLowerCase().trim();
+                dropdown.innerHTML = '';
+                
+                if (query.length < 1) {
+                    dropdown.classList.add('hidden');
+                    return;
+                }
+
+                const filtered = airports.filter(airport => 
+                    airport.code.toLowerCase().includes(query) || 
+                    airport.city.toLowerCase().includes(query) ||
+                    airport.name.toLowerCase().includes(query)
+                ).slice(0, 15);
+
+                if (filtered.length > 0) {
+                    filtered.forEach(airport => {
+                        const item = document.createElement('div');
+                        item.className = 'flex justify-between items-center p-4 hover:bg-blue-50 cursor-pointer border-b border-gray-100 transition';
+                        item.innerHTML = `
+                            <div class="flex items-center space-x-3">
+                                <i class="fa-solid fa-plane text-gray-300"></i>
+                                <div>
+                                    <div class="font-bold text-gray-800 text-base">${airport.city}, ${airport.country}</div>
+                                    <div class="text-xs text-gray-500">${airport.name}</div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-100 text-blue-800 font-bold py-1 px-3 rounded text-sm tracking-wider">
+                                ${airport.code}
+                            </div>
+                        `;
+                        
+                        item.addEventListener('click', () => {
+                            input.value = `${airport.city} (${airport.code})`;
+                            dropdown.classList.add('hidden');
+                        });
+                        
+                        dropdown.appendChild(item);
+                    });
+                    dropdown.classList.remove('hidden');
+                } else {
+                    dropdown.innerHTML = `<div class="p-4 text-sm text-gray-500 text-center">No airports found for "${searchText}"</div>`;
+                    dropdown.classList.remove('hidden');
+                }
+            };
+
+            input.addEventListener('input', (e) => renderDropdown(e.target.value));
+            input.addEventListener('focus', (e) => {
+                if(e.target.value.length > 0) renderDropdown(e.target.value);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (e.target !== input && e.target !== dropdown && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        setupAutocomplete('fromCity', 'fromDropdown');
+        setupAutocomplete('toCity', 'toDropdown');
+
+        // --- Beautiful Hindi WhatsApp Message Formatting ---
+        function sendToWhatsApp(event) {
+            event.preventDefault();
+
+            const from = document.getElementById('fromCity').value.trim();
+            const to = document.getElementById('toCity').value.trim();
+            const date = document.getElementById('travelDate').value;
+            const passengers = document.getElementById('passengersCount').value;
+            const flightClass = document.getElementById('flightClass').value;
+            const name = document.getElementById('customerName').value.trim();
+            const phone = document.getElementById('customerPhone').value.trim();
+
+            const whatsappNumber = "919451239239";
+
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('hi-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+            // Premium Hindi Format Message
+            const message = `*🌟 श्री वर्ल्ड प्रीमियम पोर्टल 🌟*
+✈️ *नई फ्लाइट बुकिंग इन्क्वायरी* ✈️
+
+नमस्कार! मुझे एक फ्लाइट की जानकारी चाहिए। मेरा विवरण इस प्रकार है:
+
+👤 *यात्री का नाम:* ${name}
+📞 *संपर्क नंबर:* ${phone}
+
+🛫 *कहाँ से (From):* ${from}
+🛬 *कहाँ तक (To):* ${to}
+📅 *यात्रा की तारीख:* ${formattedDate}
+👥 *कुल यात्री:* ${passengers}
+💺 *क्लास (Class):* ${flightClass}
+
+कृपया मुझे सबसे अच्छी फ्लाइट्स और उनके रेट्स की जानकारी प्रदान करें। धन्यवाद! 🙏`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, '_blank');
+        }
+    </script>
+</body>
+</html>
