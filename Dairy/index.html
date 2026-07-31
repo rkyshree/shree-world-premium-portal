@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHREE DAIRY FARM | श्री डेयरी फार्म</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Mukta', sans-serif;
+            background-color: #f0fdf4; 
+        }
+        .smooth-transition {
+            transition: all 0.3s ease;
+        }
+        /* Modal animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-animate {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-gray-800 pb-32">
+
+    <!-- Header / Banner -->
+    <header class="bg-green-700 text-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-cow text-3xl"></i>
+                <div>
+                    <h1 class="text-2xl font-bold leading-tight">श्री डेयरी फार्म</h1>
+                    <p class="text-sm text-green-100 font-semibold tracking-wider">SHREE DAIRY FARM</p>
+                </div>
+            </div>
+            <button onclick="speakWelcome()" class="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-4 rounded-full shadow-md flex items-center gap-2 smooth-transition">
+                <i class="fa-solid fa-volume-high"></i> <span class="hidden sm:inline">बोल कर सुनें</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-white shadow-sm mb-8">
+        <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1200&auto=format&fit=crop&q=80" alt="Dairy Farm Banner" class="w-full h-48 md:h-64 object-cover" onerror="this.src='https://images.unsplash.com/photo-1596434452198-bc1cb90c8890?w=1200&auto=format&fit=crop&q=80'">
+        <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+            <div class="text-center text-white p-4">
+                <h2 class="text-3xl md:text-5xl font-bold mb-2 drop-shadow-lg">ताजा, शुद्ध और सेहतमंद</h2>
+                <p class="text-lg md:text-2xl font-semibold drop-shadow-md text-yellow-300">सीधा आपके घर तक होम डिलीवरी</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <main class="container mx-auto px-4">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-green-800 border-b-2 border-green-500 inline-block pb-1">हमारे शुद्ध उत्पाद</h2>
+            <p class="text-gray-600 mt-2">जितना चाहिए, उतना चुनें और घर बैठे मंगाएं</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="product-container">
+            <!-- Products will be generated here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Bottom Cart Bar (Sticky) -->
+    <div class="fixed bottom-0 left-0 w-full bg-white border-t-2 border-gray-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] p-4 z-40 transform translate-y-full transition-transform duration-300 ease-in-out" id="cart-bar">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+            <div class="mb-3 sm:mb-0 text-center sm:text-left">
+                <div class="text-sm text-gray-600 font-semibold">सामग्री: ₹<span id="sub-total">0</span> + डिलीवरी: ₹50</div>
+                <div class="text-xl font-bold">
+                    कुल राशि: <span class="text-green-700 text-2xl">₹<span id="final-total">0</span></span>
+                </div>
+            </div>
+            <button onclick="openCheckoutForm()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center justify-center gap-2 text-lg smooth-transition">
+                <i class="fa-solid fa-basket-shopping text-xl"></i>
+                ऑर्डर बुक करें
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Form Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden modal-animate">
+            <div class="bg-green-700 p-4 text-white flex justify-between items-center">
+                <h3 class="text-xl font-bold"><i class="fa-solid fa-map-location-dot mr-2"></i> डिलीवरी की जानकारी</h3>
+                <button onclick="closeCheckoutForm()" class="text-white hover:text-red-300 text-3xl leading-none font-bold">&times;</button>
+            </div>
+            <form id="order-form" onsubmit="processOrder(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">आपका नाम <span class="text-red-500">*</span></label>
+                    <input type="text" id="cust-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" placeholder="अपना पूरा नाम लिखें">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">मोबाइल नम्बर <span class="text-red-500">*</span></label>
+                    <input type="tel" id="cust-phone" required pattern="[0-9]{10}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" placeholder="10 अंकों का मोबाइल नम्बर">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">पूरा पता (Address) <span class="text-red-500">*</span></label>
+                    <textarea id="cust-address" required rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none" placeholder="घर का नंबर, गली, मोहल्ला, पिनकोड..."></textarea>
+                </div>
+                
+                <div class="bg-green-50 p-3 rounded-lg border border-green-200 mb-4">
+                    <p class="text-sm font-semibold text-green-800 text-center">कुल राशि (डिलीवरी चार्ज सहित): <span class="text-lg">₹<span id="modal-final-total">0</span></span></p>
+                </div>
+
+                <button type="submit" class="w-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-lg transition-colors">
+                    <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    WhatsApp पर ऑर्डर भेजें
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 py-6 mt-12 text-center">
+        <div class="container mx-auto px-4">
+            <h3 class="text-xl font-bold text-white mb-2">श्री डेयरी फार्म</h3>
+            <p class="mb-2"><i class="fa-solid fa-phone mr-2"></i> मोबाइल: 9451239239</p>
+            <p><i class="fa-solid fa-location-dot mr-2"></i> शुद्धता और स्वाद, सीधा आपके घर तक।</p>
+            <p class="text-sm mt-4 text-gray-500">© 2026 Shree Dairy Farm</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // WhatsApp Number configuration (No plus sign, just country code and number)
+        const WHATSAPP_NUMBER = "919451239239"; 
+        const DELIVERY_CHARGE = 50;
+
+        // Product Data with highly reliable HTTPS Image URLs suitable for GitHub Pages
+        const products = [
+            {
+                id: 'cow_milk',
+                name: 'गाय का शुद्ध दूध',
+                price: 70,
+                unit: 'लीटर',
+                image: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=600&auto=format&fit=crop&q=80',
+                step: 1
+            },
+            {
+                id: 'buffalo_milk',
+                name: 'भैंस का दूध',
+                price: 90,
+                unit: 'लीटर',
+                image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&auto=format&fit=crop&q=80',
+                step: 1
+            },
+            {
+                id: 'paneer',
+                name: 'मलाई पनीर',
+                price: 400,
+                unit: 'किलो',
+                image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc3?w=600&auto=format&fit=crop&q=80', // Beautiful Indian Paneer Image
+                step: 0.25 // allows 250g, 500g etc.
+            },
+            {
+                id: 'dahi',
+                name: 'ताज़ा दही',
+                price: 100,
+                unit: 'किलो',
+                image: 'https://images.unsplash.com/photo-1571212515416-f28a7e44bb83?w=600&auto=format&fit=crop&q=80', // Yogurt/Dahi Image
+                step: 0.25 
+            },
+            {
+                id: 'ghee',
+                name: 'शुद्ध देसी घी',
+                price: 900,
+                unit: 'किलो',
+                image: 'https://images.unsplash.com/photo-1651260655077-f273b067a900?w=600&auto=format&fit=crop&q=80', // Pure Desi Ghee Image
+                step: 0.25
+            }
+        ];
+
+        // Cart State
+        const cart = {};
+
+        // Render Products
+        function renderProducts() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                cart[product.id] = 0; // Initialize cart
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl smooth-transition border border-green-100 flex flex-col";
+                
+                card.innerHTML = `
+                    <div class="h-48 overflow-hidden relative bg-gray-100">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover" loading="lazy">
+                        <div class="absolute top-2 right-2 bg-green-600 text-white text-sm font-bold px-2 py-1 rounded shadow">
+                            ₹${product.price} / ${product.unit}
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-1">${product.name}</h3>
+                        </div>
+                        
+                        <div class="flex items-center justify-between mt-4 bg-green-50 p-2 rounded-lg border border-green-100">
+                            <span class="text-gray-700 font-semibold text-sm">मात्रा चुनें:</span>
+                            <div class="flex items-center space-x-3 bg-white border border-gray-200 rounded-full px-2 py-1 shadow-sm">
+                                <button onclick="updateCart('${product.id}', -${product.step})" class="text-red-500 hover:text-red-700 w-8 h-8 flex items-center justify-center font-bold text-xl rounded-full focus:outline-none bg-red-50">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <span id="qty-${product.id}" class="font-bold text-lg w-16 text-center text-gray-800">0</span>
+                                <button onclick="updateCart('${product.id}', ${product.step})" class="text-green-600 hover:text-green-800 w-8 h-8 flex items-center justify-center font-bold text-xl rounded-full focus:outline-none bg-green-50">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-right mt-2 text-sm font-bold text-green-700 hidden" id="item-total-container-${product.id}">
+                            इसकी कीमत: ₹<span id="item-total-${product.id}">0</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Convert decimal quantity to spoken Hindi word
+        function getHindiQuantityText(qty) {
+            if (qty === 0) return "शून्य";
+            if (qty === 0.25) return "पाव भर";
+            if (qty === 0.5) return "आधा";
+            if (qty === 0.75) return "पौना";
+            if (qty === 1) return "एक";
+            if (qty === 1.25) return "सवा";
+            if (qty === 1.5) return "डेढ़";
+            if (qty === 1.75) return "पौने दो";
+            if (qty === 2) return "दो";
+            if (qty === 2.25) return "सवा दो";
+            if (qty === 2.5) return "ढाई";
+            if (qty === 2.75) return "पौने तीन";
+            if (qty === 3) return "तीन";
+            return qty; // Default to number for higher values
+        }
+
+        // Voice Feedback for Item Selection
+        function speakItemAction(productName, qty, unit) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop any ongoing speech
+                
+                const hindiQty = getHindiQuantityText(qty);
+                let text = "";
+                
+                if (qty === 0) {
+                    text = `आपने ${productName} को हटा दिया है`;
+                } else {
+                    text = `${productName}, ${hindiQty} ${unit}`;
+                }
+
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'hi-IN';
+                msg.rate = 1.0; 
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        // Update Cart logic
+        function updateCart(productId, change) {
+            const product = products.find(p => p.id === productId);
+            
+            // Calculate new quantity handling decimal precision for JS
+            let newQty = parseFloat((cart[productId] + change).toFixed(2));
+            
+            if (newQty < 0) newQty = 0; // Prevent negative quantities
+            
+            cart[productId] = newQty;
+            
+            // Update UI for this product
+            const qtyDisplay = document.getElementById(`qty-${productId}`);
+            const itemTotalContainer = document.getElementById(`item-total-container-${productId}`);
+            const itemTotalDisplay = document.getElementById(`item-total-${productId}`);
+            
+            // Show fractions properly in UI (e.g. 0.5 kg)
+            qtyDisplay.innerText = newQty + (newQty > 0 ? ` ${product.unit}` : '');
+            
+            const itemTotal = newQty * product.price;
+            itemTotalDisplay.innerText = itemTotal;
+
+            if (newQty > 0) {
+                itemTotalContainer.classList.remove('hidden');
+            } else {
+                itemTotalContainer.classList.add('hidden');
+                qtyDisplay.innerText = '0';
+            }
+
+            // Trigger Voice Feedback
+            speakItemAction(product.name, newQty, product.unit);
+
+            updateTotalCart();
+        }
+
+        // Update Overall Total and show/hide bottom bar
+        function updateTotalCart() {
+            let subTotal = 0;
+            let hasItems = false;
+
+            products.forEach(product => {
+                const qty = cart[product.id];
+                if (qty > 0) {
+                    subTotal += qty * product.price;
+                    hasItems = true;
+                }
+            });
+
+            const finalTotal = hasItems ? (subTotal + DELIVERY_CHARGE) : 0;
+
+            document.getElementById('sub-total').innerText = subTotal;
+            document.getElementById('final-total').innerText = finalTotal;
+            document.getElementById('modal-final-total').innerText = finalTotal;
+
+            const cartBar = document.getElementById('cart-bar');
+            if (hasItems) {
+                cartBar.classList.remove('translate-y-full'); // Show
+            } else {
+                cartBar.classList.add('translate-y-full'); // Hide
+                closeCheckoutForm(); // Close modal if cart becomes empty
+            }
+        }
+
+        // Modal Controls
+        function openCheckoutForm() {
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            document.getElementById('checkout-modal').classList.add('flex');
+        }
+
+        function closeCheckoutForm() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('flex');
+        }
+
+        // Process Form and Send to WhatsApp
+        function processOrder(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+
+            let message = `नमस्ते श्री डेयरी फार्म, मैं *${name}*।\nमेरा नया ऑर्डर नीचे दिया गया है:\n\n`;
+            let subTotal = 0;
+
+            products.forEach(product => {
+                const qty = cart[product.id];
+                if (qty > 0) {
+                    const cost = qty * product.price;
+                    let qtyText = getHindiQuantityText(qty);
+                    message += `▪️ ${product.name}: ${qtyText} ${product.unit} (₹${cost})\n`;
+                    subTotal += cost;
+                }
+            });
+
+            const finalTotal = subTotal + DELIVERY_CHARGE;
+
+            message += `\n*सामग्री का मूल्य:* ₹${subTotal}`;
+            message += `\n*होम डिलीवरी चार्ज:* ₹${DELIVERY_CHARGE}`;
+            message += `\n*कुल राशि (Final Price):* ₹${finalTotal}\n\n`;
+            
+            message += `*डिलवरी का पता (Address):*\n${address}\n`;
+            message += `*मोबाइल नम्बर:* ${phone}\n\n`;
+            message += `कृपया मेरे इस ऑर्डर को पक्का करें और होम डिलीवरी करवाएं!`;
+
+            // Encode for URL
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+            
+            // Open WhatsApp in new tab
+            window.open(whatsappUrl, '_blank');
+            closeCheckoutForm();
+        }
+
+        // Main Voice Assistant (Welcome)
+        function speakWelcome() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = "नमस्ते, श्री डेयरी फार्म में आपका स्वागत है। आप यहाँ से गाय और भैंस का ताज़ा दूध, मलाई पनीर, दही और शुद्ध घी मंगा सकते हैं। सामग्री चुनने के लिए प्लस बटन दबाएं। हम बोलकर बतायेंगे कि आपने कितना पाव या किलो चुना है। चुनने के बाद, नीचे ऑर्डर बुक करें बटन दबाकर, अपना नाम पता भरें और व्हाट्सएप पर भेज दें। धन्यवाद।";
+                
+                msg.lang = 'hi-IN';
+                msg.rate = 0.9;
+                
+                window.speechSynthesis.speak(msg);
+                
+                const btn = document.querySelector('button[onclick="speakWelcome()"]');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-waveform"></i> <span class="hidden sm:inline">बोल रहा हूँ...</span>`;
+                btn.classList.add('animate-pulse');
+                
+                msg.onend = function() {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('animate-pulse');
+                };
+            } else {
+                alert("क्षमा करें, आपका फ़ोन आवाज़ वाले फीचर को सपोर्ट नहीं करता।");
+            }
+        }
+
+        // Initialize App
+        window.onload = renderProducts;
+
+    </script>
+</body>
+</html>
