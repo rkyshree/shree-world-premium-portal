@@ -1830,38 +1830,32 @@
             const name = "Rajan Kumar Yadav";
             const note = "Shree World Order";
             
+            // यूनीक Transaction ID (tr) जोड़ना बहुत ज़रूरी है, वर्ना PhonePe इसे गैलरी स्कैन मान लेता है
+            const trId = "TXN" + Date.now() + Math.floor(Math.random() * 1000);
+            
             // mc=0000 पूरी तरह से हटा दिया गया है
-            const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
+            const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&tr=${trId}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
             
             let finalUrl = "";
-            const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
 
-            // Android डिवाइस पर सुरक्षित Intent सिस्टम का प्रयोग
-            if (isAndroid) {
-                if (appCode === 'phonepe') {
-                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=com.phonepe.app;end`;
-                } else if (appCode === 'gpay') {
-                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
-                } else if (appCode === 'paytm') {
-                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=net.one97.paytm;end`;
-                } else {
-                    finalUrl = `upi://pay?${upiString}`;
-                }
+            // सीधे ऐप स्कीम्स का उपयोग (बिना जटिल इंटेंट के)
+            if (appCode === 'phonepe') {
+                finalUrl = `phonepe://pay?${upiString}`;
+            } else if (appCode === 'gpay') {
+                finalUrl = `tez://upi/pay?${upiString}`;
+            } else if (appCode === 'paytm') {
+                finalUrl = `paytmmp://pay?${upiString}`;
             } else {
-                // iOS या अन्य के लिए साधारण लिंक
-                if (appCode === 'phonepe') finalUrl = `phonepe://pay?${upiString}`;
-                else if (appCode === 'gpay') finalUrl = `gpay://upi/pay?${upiString}`;
-                else if (appCode === 'paytm') finalUrl = `paytmmp://pay?${upiString}`;
-                else finalUrl = `upi://pay?${upiString}`;
+                finalUrl = `upi://pay?${upiString}`;
             }
             
             window.location.href = finalUrl;
             
-            // अगर Intent फेल हो जाये, तो यूनिवर्सल UPI का Fallback (2 सेकंड बाद)
+            // अगर Intent फेल हो जाये, तो यूनिवर्सल UPI का Fallback (1.5 सेकंड बाद)
             if (appCode !== 'other') {
                 setTimeout(() => {
                     window.location.href = `upi://pay?${upiString}`;
-                }, 2000);
+                }, 1500);
             }
         }
 
