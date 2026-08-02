@@ -628,13 +628,7 @@
                     <!-- Right Column: Payment Center -->
                     <div class="bg-slate-800/50 p-6 sm:p-10 rounded-3xl border border-slate-700 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden">
                         
-                        <!-- QR Code -->
-                        <div class='relative z-10 bg-white p-3 rounded-3xl w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center shadow-xl border-4 border-amber-500 overflow-hidden mb-6 group cursor-pointer hover:scale-105 transition-transform'>
-                            <img alt='QR स्कैनर कोड' class='w-full h-full object-contain' id='live-qr-img' src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&amp;data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26cu=INR%26tn=Order_Payment'/>
-                            <div class='laser-line absolute inset-x-0 h-0.5 bg-amber-500 opacity-90 shadow-[0_0_12px_#b58900]'></div>
-                        </div>
-                        
-                        <p class="text-amber-400 font-black text-2xl mb-6 animate-pulse relative z-10 tracking-widest drop-shadow-md">₹<span id="displayPayAmount">0</span></p>
+                        <p class="text-amber-400 font-black text-4xl mb-6 animate-pulse relative z-10 tracking-widest drop-shadow-md">₹<span id="displayPayAmount">0</span></p>
 
                         <!-- UPI ID Details -->
                         <div class="w-full bg-slate-900 border border-slate-600 rounded-2xl p-5 mb-8 shadow-inner relative z-10">
@@ -1808,12 +1802,6 @@
 
         window.updateLiveQRCode = function() {
             const amount = document.getElementById('orderAmount') ? document.getElementById('orderAmount').value : "0";
-            const formattedAmount = amount > 0 ? Number(amount).toFixed(2) : "0.00";
-            
-            // क्यूआर कोड से mc हटा दिया गया है
-            const qrImg = document.getElementById('live-qr-img');
-            if(qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26am=${formattedAmount}%26cu=INR%26tn=Order_Payment`;
-            
             const displayAmt = document.getElementById('displayPayAmount');
             if(displayAmt) displayAmt.innerText = amount || "0";
         }
@@ -1826,19 +1814,20 @@
             }
 
             const formattedAmount = Number(amount).toFixed(2);
+            
+            // यहाँ आपके PhonePe द्वारा दिए गए ओरिजिनल एरर के अनुसार UPI ID है
             const upiId = "rkyshree@indianbank";
-            const name = "Rajan Kumar Yadav";
+            const name = "RAJAN YADAV";
             const note = "Shree World Order";
             
-            // यूनीक Transaction ID (tr) जोड़ना बहुत ज़रूरी है, वर्ना PhonePe इसे गैलरी स्कैन मान लेता है
+            // नया और यूनीक Transaction ID जनरेट करना (बहुत ज़रूरी)
             const trId = "TXN" + Date.now() + Math.floor(Math.random() * 1000);
             
-            // mc=0000 पूरी तरह से हटा दिया गया है
+            // mc=0000 हटा दिया गया है
             const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&tr=${trId}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
             
             let finalUrl = "";
 
-            // सीधे ऐप स्कीम्स का उपयोग (बिना जटिल इंटेंट के)
             if (appCode === 'phonepe') {
                 finalUrl = `phonepe://pay?${upiString}`;
             } else if (appCode === 'gpay') {
@@ -1851,7 +1840,6 @@
             
             window.location.href = finalUrl;
             
-            // अगर Intent फेल हो जाये, तो यूनिवर्सल UPI का Fallback (1.5 सेकंड बाद)
             if (appCode !== 'other') {
                 setTimeout(() => {
                     window.location.href = `upi://pay?${upiString}`;
