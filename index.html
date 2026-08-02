@@ -630,7 +630,7 @@
                         
                         <!-- QR Code -->
                         <div class='relative z-10 bg-white p-3 rounded-3xl w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center shadow-xl border-4 border-amber-500 overflow-hidden mb-6 group cursor-pointer hover:scale-105 transition-transform'>
-                            <img alt='QR स्कैनर कोड' class='w-full h-full object-contain' id='live-qr-img' src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&amp;data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26mc=0000%26cu=INR%26tn=Order_Payment'/>
+                            <img alt='QR स्कैनर कोड' class='w-full h-full object-contain' id='live-qr-img' src='https://api.qrserver.com/v1/create-qr-code/?size=250x250&amp;data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26cu=INR%26tn=Order_Payment'/>
                             <div class='laser-line absolute inset-x-0 h-0.5 bg-amber-500 opacity-90 shadow-[0_0_12px_#b58900]'></div>
                         </div>
                         
@@ -1810,8 +1810,9 @@
             const amount = document.getElementById('orderAmount') ? document.getElementById('orderAmount').value : "0";
             const formattedAmount = amount > 0 ? Number(amount).toFixed(2) : "0.00";
             
+            // क्यूआर कोड से mc हटा दिया गया है
             const qrImg = document.getElementById('live-qr-img');
-            if(qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26mc=0000%26am=${formattedAmount}%26cu=INR%26tn=Order_Payment`;
+            if(qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=rkyshree@indianbank%26pn=Rajan%20Kumar%20Yadav%26am=${formattedAmount}%26cu=INR%26tn=Order_Payment`;
             
             const displayAmt = document.getElementById('displayPayAmount');
             if(displayAmt) displayAmt.innerText = amount || "0";
@@ -1824,34 +1825,43 @@
                 return;
             }
 
-            // यूपीआई ऐप्स के लिए अमाउंट में दशमलव (.00) होना ज़रूरी होता है
             const formattedAmount = Number(amount).toFixed(2);
-
             const upiId = "rkyshree@indianbank";
             const name = "Rajan Kumar Yadav";
             const note = "Shree World Order";
-            const queryParams = `?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
             
-            let intentUrl = "";
-            if (appCode === 'phonepe') {
-                intentUrl = `phonepe://pay${queryParams}`;
-            } else if (appCode === 'gpay') {
-                intentUrl = `tez://upi/pay${queryParams}`;
-            } else if (appCode === 'paytm') {
-                intentUrl = `paytmmp://pay${queryParams}`;
+            // mc=0000 पूरी तरह से हटा दिया गया है
+            const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
+            
+            let finalUrl = "";
+            const isAndroid = /android/i.test(navigator.userAgent || navigator.vendor || window.opera);
+
+            // Android डिवाइस पर सुरक्षित Intent सिस्टम का प्रयोग
+            if (isAndroid) {
+                if (appCode === 'phonepe') {
+                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=com.phonepe.app;end`;
+                } else if (appCode === 'gpay') {
+                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+                } else if (appCode === 'paytm') {
+                    finalUrl = `intent://pay?${upiString}#Intent;scheme=upi;package=net.one97.paytm;end`;
+                } else {
+                    finalUrl = `upi://pay?${upiString}`;
+                }
             } else {
-                intentUrl = `upi://pay${queryParams}`;
+                // iOS या अन्य के लिए साधारण लिंक
+                if (appCode === 'phonepe') finalUrl = `phonepe://pay?${upiString}`;
+                else if (appCode === 'gpay') finalUrl = `gpay://upi/pay?${upiString}`;
+                else if (appCode === 'paytm') finalUrl = `paytmmp://pay?${upiString}`;
+                else finalUrl = `upi://pay?${upiString}`;
             }
             
-            // मोबाइल डिवाइस पर इंटेंट ट्रिगर करना
-            window.location.href = intentUrl;
+            window.location.href = finalUrl;
             
-            // यदि कोई ऐप (जैसे gpay) के लिए कस्टम स्कीम काम न करे, तो 1 सेकंड बाद यूनिवर्सल UPI लिंक खोलें (Fallback)
+            // अगर Intent फेल हो जाये, तो यूनिवर्सल UPI का Fallback (2 सेकंड बाद)
             if (appCode !== 'other') {
                 setTimeout(() => {
-                    // अगर ऊपर वाला काम नहीं किया तो यूनिवर्सल UPI लिंक ट्रिगर करेगा
-                    window.location.href = `upi://pay${queryParams}`;
-                }, 1500);
+                    window.location.href = `upi://pay?${upiString}`;
+                }, 2000);
             }
         }
 
