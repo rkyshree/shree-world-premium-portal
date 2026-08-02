@@ -628,24 +628,19 @@
                     <!-- Right Column: Payment Center -->
                     <div class="bg-slate-800/50 p-6 sm:p-10 rounded-3xl border border-slate-700 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden">
                         
-                        <p class="text-amber-400 font-black text-4xl mb-6 animate-pulse relative z-10 tracking-widest drop-shadow-md">₹<span id="displayPayAmount">0</span></p>
+                        <h3 class="text-white font-black text-xl mb-4 tracking-wide uppercase">Payment Center</h3>
+                        
+                        <!-- Live Amount Display -->
+                        <p class="text-amber-400 font-black text-4xl sm:text-5xl mb-6 animate-pulse relative z-10 tracking-widest drop-shadow-md">₹<span id="displayPayAmount">0</span></p>
 
-                        <!-- UPI ID Details -->
-                        <div class="w-full bg-slate-900 border border-slate-600 rounded-2xl p-5 mb-8 shadow-inner relative z-10">
-                            <div class='flex items-center justify-between mb-4'>
-                                <div>
-                                    <span class='text-[10px] font-bold text-slate-400 uppercase tracking-widest'>UPI ID</span>
-                                    <span class='text-sm sm:text-base font-black text-amber-500 block tracking-wide' id='upi-id-text'>rkyshree@indianbank</span>
-                                </div>
-                                <button class='bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold text-xs py-2 px-5 rounded-xl border border-slate-500 transition-all shadow-sm' onclick='copyToClipboard("rkyshree@indianbank")'>Copy</button>
+                        <!-- Direct Mobile Number Payment Box -->
+                        <div class="w-full bg-slate-900 border border-emerald-500/50 rounded-2xl p-6 mb-8 shadow-inner relative z-10 text-center">
+                            <span class='text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2'>Pay Directly to Mobile Number</span>
+                            <div class="flex items-center justify-center gap-3">
+                                <span class='text-3xl font-black text-emerald-400 tracking-wider'>9451239239</span>
+                                <button class='bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-bold text-xs py-2.5 px-5 rounded-xl shadow-md transition-all uppercase' onclick='copyToClipboard("9451239239")'>Copy</button>
                             </div>
-                            <div class='flex items-center justify-between border-t border-slate-700 pt-4'>
-                                <div>
-                                    <span class='text-[10px] font-bold text-slate-400 uppercase tracking-widest'>GPay / PhonePe</span>
-                                    <span class='text-sm sm:text-base font-black text-amber-500 block tracking-wide' id='upi-phone-text'>9451239239</span>
-                                </div>
-                                <button class='bg-slate-700 hover:bg-slate-600 text-amber-400 font-bold text-xs py-2 px-5 rounded-xl border border-slate-500 transition-all shadow-sm' onclick='copyToClipboard("9451239239")'>Copy</button>
-                            </div>
+                            <p class="text-[11px] text-slate-500 mt-4 font-semibold uppercase tracking-wider">Tap a button below to open your app</p>
                         </div>
 
                         <!-- Direct App Pay Buttons (2x2 Grid Premium Layout) -->
@@ -668,13 +663,13 @@
                             <!-- Other UPI -->
                             <button onclick="payViaUPI('other')" class="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white rounded-2xl shadow-[0_4px_15px_rgba(51,65,85,0.4)] border border-slate-500 transition-transform active:scale-95 group">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" class="h-7 sm:h-8 bg-white p-1 rounded mb-2 shadow-sm group-hover:scale-110 transition-transform duration-300"> 
-                                <span class="font-black text-xs sm:text-sm tracking-wide uppercase">Any UPI App</span>
+                                <span class="font-black text-xs sm:text-sm tracking-wide uppercase">Any App</span>
                             </button>
                         </div>
 
                         <!-- Ultimate Submit Order Button -->
                         <button id="newPaidBtn" class="btn-shine-effect w-full text-white font-black py-4 sm:py-5 rounded-full text-sm sm:text-base uppercase tracking-wider transform transition-all active:scale-95 flex items-center justify-center gap-2 border-2 border-emerald-300 relative z-10">
-                            <span class="text-xl">✅</span> Submit Order
+                            <span class="text-xl">✅</span> Submit Order (पेमेंट के बाद दबाएं)
                         </button>
                     </div>
                 </div>
@@ -1748,7 +1743,7 @@
                     }
                 }
             }
-            updateLiveQRCode();
+            // Removing updateLiveQRCode since we don't display a QR code anymore
         }
 
         // Place Order Desk Functions
@@ -1787,7 +1782,7 @@
                 subContainer.classList.add('hidden');
                 linkContainer.classList.add('hidden');
             }
-            updateLiveQRCode();
+            updatePayAmountDisplay();
         }
 
         function handleSubServiceChange() {
@@ -1797,10 +1792,10 @@
             } else {
                 document.getElementById('orderAmount').value = '';
             }
-            updateLiveQRCode();
+            updatePayAmountDisplay();
         }
 
-        window.updateLiveQRCode = function() {
+        function updatePayAmountDisplay() {
             const amount = document.getElementById('orderAmount') ? document.getElementById('orderAmount').value : "0";
             const displayAmt = document.getElementById('displayPayAmount');
             if(displayAmt) displayAmt.innerText = amount || "0";
@@ -1814,16 +1809,12 @@
             }
 
             const formattedAmount = Number(amount).toFixed(2);
-            
-            // यहाँ आपके PhonePe द्वारा दिए गए ओरिजिनल एरर के अनुसार UPI ID है
             const upiId = "rkyshree@indianbank";
-            const name = "RAJAN YADAV";
+            const name = "Rajan Kumar Yadav";
             const note = "Shree World Order";
             
-            // नया और यूनीक Transaction ID जनरेट करना (बहुत ज़रूरी)
             const trId = "TXN" + Date.now() + Math.floor(Math.random() * 1000);
             
-            // mc=0000 हटा दिया गया है
             const upiString = `pa=${upiId}&pn=${encodeURIComponent(name)}&tr=${trId}&am=${formattedAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
             
             let finalUrl = "";
@@ -1850,7 +1841,7 @@
         // Initialization
         window.onload = function() {
             selectPlatform('instagram');
-            updateLiveQRCode();
+            updatePayAmountDisplay();
             initPremiumLiveCounters();
         };
     </script>
