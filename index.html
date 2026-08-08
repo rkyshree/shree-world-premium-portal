@@ -800,38 +800,6 @@
             </div>
         </section>
 
-        <!-- Our Numbers Speak & Live Active Users -->
-        <section class='py-6 px-4 max-w-4xl mx-auto bg-slate-900' id="our-numbers-speak">
-            <div class='text-center mb-4'>
-                <span class="text-amber-500 text-[10px] tracking-widest font-black uppercase">Our Numbers Speak</span>
-                <div class="w-12 h-0.5 bg-amber-500 mx-auto mt-1"></div>
-            </div>
-            <div class='bg-slate-800 text-white rounded-2xl p-5 shadow-sm grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border border-slate-700'>
-                <div class='p-2 border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-insta">...</span>+</div>
-                    <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Instagram Orders</div>
-                </div>
-                <div class='p-2 sm:border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-fb">...</span>+</div>
-                    <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Facebook Orders</div>
-                </div>
-                <div class='p-2 border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-sky-400 tracking-tight'><span id="count-flight">...</span>+</div>
-                    <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Flight Booking</div>
-                </div>
-                <div class='p-2 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-emerald-400 tracking-tight'>99%</div>
-                    <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Satisfaction Rate</div>
-                </div>
-            </div>
-            
-            <div class="mt-5 flex justify-center">
-                <div class="bg-emerald-900/30 border border-emerald-800 px-5 py-2.5 rounded-full text-xs sm:text-sm font-black shadow-sm flex items-center gap-2">
-                    <span class="green-blink-dot"></span> Live Active Users on Website: <span id="live-active-users" class="text-emerald-400 text-sm sm:text-base">...</span>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <div class='hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500 text-amber-400 py-3 px-6 rounded-full text-sm font-bold shadow-xl z-[200] animate-bounce' id='toast-msg'>📋 कॉपी हो गया है! अब कहीं भी पेस्ट कर सकते हैं।</div>
@@ -1480,64 +1448,6 @@
         let activeQuantity = '100';
         let selectedPackagePrice = 19;
 
-        // =======================
-        // UPDATED: LIVE COUNTERS (Fast & Random)
-        // =======================
-        function initPremiumLiveCounters() {
-            const elInsta = document.getElementById('count-insta');
-            const elFb = document.getElementById('count-fb');
-            const elFlight = document.getElementById('count-flight');
-            const elActive = document.getElementById('live-active-users');
-
-            // हर रिफ्रेश पर एक बड़ा रैंडम नंबर जोड़ा जाएगा ताकि पेज रिफ्रेश होने पर नया नंबर दिखे
-            let refreshJump = Math.floor(Math.random() * 800) + 300;
-
-            let instaCount = (parseInt(localStorage.getItem('shree_instaCount')) || 138111) + refreshJump;
-            let fbCount = (parseInt(localStorage.getItem('shree_fbCount')) || 85460) + refreshJump;
-            let flightCount = (parseInt(localStorage.getItem('shree_flightCount')) || 11780) + Math.floor(refreshJump/3);
-
-            function updateDisplayAnimated(el, count) {
-                if(!el) return;
-                const newText = count.toLocaleString('en-IN');
-                if(el.innerText !== newText && el.innerText !== "") {
-                    el.classList.remove('premium-ticker-update');
-                    void el.offsetWidth; 
-                    el.classList.add('premium-ticker-update');
-                }
-                el.innerText = newText;
-            }
-
-            // तुरंत नंबर्स को बदल दें ताकि स्टार्टिंग वैल्यूज़ (138111 आदि) न दिखें
-            updateDisplayAnimated(elInsta, instaCount);
-            updateDisplayAnimated(elFb, fbCount);
-            updateDisplayAnimated(elFlight, flightCount);
-
-            // हर 3 सेकंड में तेज़ गति से नंबर बढ़ाएँ 
-            setInterval(() => {
-                instaCount += Math.floor(Math.random() * 8) + 2; 
-                fbCount += Math.floor(Math.random() * 6) + 2;    
-                flightCount += Math.floor(Math.random() * 3) + 1; 
-                
-                localStorage.setItem('shree_instaCount', instaCount);
-                localStorage.setItem('shree_fbCount', fbCount);
-                localStorage.setItem('shree_flightCount', flightCount);
-
-                updateDisplayAnimated(elInsta, instaCount);
-                updateDisplayAnimated(elFb, fbCount);
-                updateDisplayAnimated(elFlight, flightCount);
-            }, 3000); 
-
-            // लाइव एक्टिव यूजर - हर 2.5 सेकंड में तेज़ी से बदलेगा
-            function updateLiveUsers() {
-                let currentActive = Math.floor(Math.random() * (12000 - 3000 + 1)) + 3000;
-                updateDisplayAnimated(elActive, currentActive);
-            }
-            if(elActive) {
-                updateLiveUsers(); 
-                setInterval(updateLiveUsers, 2500);
-            }
-        }
-
         function copyToClipboard(text) {
             const tempInput = document.createElement("input"); tempInput.value = text;
             document.body.appendChild(tempInput); tempInput.select(); document.execCommand("copy"); document.body.removeChild(tempInput);
@@ -1764,7 +1674,6 @@
         window.onload = function() {
             selectPlatform('instagram');
             updatePayAmountDisplay();
-            initPremiumLiveCounters();
         };
     </script>
 </body>
