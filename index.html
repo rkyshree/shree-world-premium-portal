@@ -762,7 +762,7 @@
                     <span class='text-sm text-amber-500' id='icon-acc-terms'>▼</span>
                 </button>
                 <div class='hidden p-5 border-t border-slate-700 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-900 space-y-2' id='acc-terms'>
-                    <div>1. सेवा का लाभ उठाने से पहले ग्राहक को यह सुनिश्चित करना होगा कि उसका इंस्टाग्राम/फेसबुक अकाउंट पूरी तरह से <strong>पब्लिक (खुला)</strong> हो। प्राइवेट प्रोफाइल पर डिलीवरी फेल होने पर हमारी ज़िम्मेदारी नहीं होगी।</div>
+                    <div>1. सेवा का लाभ उठाने से पहले ग्राहक को यह सुनिश्चित करना होगा कि उसका इंस्टाग्राम/फेसबुक अकाउंट पूरी तरह से <strong>पब्लिक (खुला)</strong> हो। प्राइवेट प्रोफाइल पर डिलीवरी फेल होने বঙ্গবন্ধ में हमारी ज़िम्मेदारी नहीं होगी।</div>
                     <div>2. सोशल मीडिया सर्विसेज की डिलीवरी आर्डर कन्फर्मेशन के 10 से 60 मिनट के भीतर शुरू हो जाती...</div>
                 </div>
             </div>
@@ -808,15 +808,15 @@
             </div>
             <div class='bg-slate-800 text-white rounded-2xl p-5 shadow-sm grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border border-slate-700'>
                 <div class='p-2 border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-insta">1,38,111</span>+</div>
+                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-insta">...</span>+</div>
                     <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Instagram Orders</div>
                 </div>
                 <div class='p-2 sm:border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-fb">85,460</span>+</div>
+                    <div class='text-xl sm:text-2xl font-black text-amber-500 tracking-tight'><span id="count-fb">...</span>+</div>
                     <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Facebook Orders</div>
                 </div>
                 <div class='p-2 border-r border-slate-700 last:border-0'>
-                    <div class='text-xl sm:text-2xl font-black text-sky-400 tracking-tight'><span id="count-flight">11,780</span>+</div>
+                    <div class='text-xl sm:text-2xl font-black text-sky-400 tracking-tight'><span id="count-flight">...</span>+</div>
                     <div class='text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mt-1'>Flight Booking</div>
                 </div>
                 <div class='p-2 last:border-0'>
@@ -827,7 +827,7 @@
             
             <div class="mt-5 flex justify-center">
                 <div class="bg-emerald-900/30 border border-emerald-800 px-5 py-2.5 rounded-full text-xs sm:text-sm font-black shadow-sm flex items-center gap-2">
-                    <span class="green-blink-dot"></span> Live Active Users on Website: <span id="live-active-users" class="text-emerald-400 text-sm sm:text-base">5,432</span>
+                    <span class="green-blink-dot"></span> Live Active Users on Website: <span id="live-active-users" class="text-emerald-400 text-sm sm:text-base">...</span>
                 </div>
             </div>
         </section>
@@ -1093,7 +1093,7 @@
                     timestamp: new Date()
                 });
                 
-                alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा है...");
+                alert("✅ आपकी Withdrawal Request सफलतापूर्वक लग गई है! अब आपको सीधे WhatsApp पर भेजा जा रहा...");
                 
                 // Calculate Stats for Message
                 const totalEarned = (currentUserData.referralCount || 0) * 200;
@@ -1399,6 +1399,17 @@
 
     <!-- GENERAL LOGIC WITH LOADERS -->
     <script>
+        // ====== नया नेविगेट फ़ंक्शन जो ग्रिड कार्ड्स को सर्विस पैनल पर भेजता है ======
+        window.navigateToService = function(platform) {
+            const targetSection = document.getElementById('social-growth');
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+            if (platform === 'instagram' || platform === 'facebook') {
+                selectPlatform(platform);
+            }
+        };
+
         function openWithLoader(url) {
             const loader = document.getElementById('pageLoader');
             loader.classList.remove('hidden');
@@ -1470,7 +1481,7 @@
         let selectedPackagePrice = 19;
 
         // =======================
-        // UPDATED: LIVE COUNTERS
+        // UPDATED: LIVE COUNTERS (Fast & Random)
         // =======================
         function initPremiumLiveCounters() {
             const elInsta = document.getElementById('count-insta');
@@ -1478,9 +1489,12 @@
             const elFlight = document.getElementById('count-flight');
             const elActive = document.getElementById('live-active-users');
 
-            let instaCount = parseInt(localStorage.getItem('shree_instaCount')) || 138111;
-            let fbCount = parseInt(localStorage.getItem('shree_fbCount')) || 85460;
-            let flightCount = parseInt(localStorage.getItem('shree_flightCount')) || 11780;
+            // हर रिफ्रेश पर एक बड़ा रैंडम नंबर जोड़ा जाएगा ताकि पेज रिफ्रेश होने पर नया नंबर दिखे
+            let refreshJump = Math.floor(Math.random() * 800) + 300;
+
+            let instaCount = (parseInt(localStorage.getItem('shree_instaCount')) || 138111) + refreshJump;
+            let fbCount = (parseInt(localStorage.getItem('shree_fbCount')) || 85460) + refreshJump;
+            let flightCount = (parseInt(localStorage.getItem('shree_flightCount')) || 11780) + Math.floor(refreshJump/3);
 
             function updateDisplayAnimated(el, count) {
                 if(!el) return;
@@ -1493,15 +1507,16 @@
                 el.innerText = newText;
             }
 
+            // तुरंत नंबर्स को बदल दें ताकि स्टार्टिंग वैल्यूज़ (138111 आदि) न दिखें
             updateDisplayAnimated(elInsta, instaCount);
             updateDisplayAnimated(elFb, fbCount);
             updateDisplayAnimated(elFlight, flightCount);
 
-            // 1. हर 30 सेकंड में नंबर 3 से 5 की गिनती में आगे बढ़ेंगे 
+            // हर 3 सेकंड में तेज़ गति से नंबर बढ़ाएँ 
             setInterval(() => {
-                instaCount += Math.floor(Math.random() * 3) + 3; 
-                fbCount += Math.floor(Math.random() * 3) + 3;    
-                flightCount += Math.floor(Math.random() * 3) + 3; 
+                instaCount += Math.floor(Math.random() * 8) + 2; 
+                fbCount += Math.floor(Math.random() * 6) + 2;    
+                flightCount += Math.floor(Math.random() * 3) + 1; 
                 
                 localStorage.setItem('shree_instaCount', instaCount);
                 localStorage.setItem('shree_fbCount', fbCount);
@@ -1510,16 +1525,16 @@
                 updateDisplayAnimated(elInsta, instaCount);
                 updateDisplayAnimated(elFb, fbCount);
                 updateDisplayAnimated(elFlight, flightCount);
-            }, 30000); 
+            }, 3000); 
 
-            // 2. लाइव एक्टिव यूजर (200 से 10,000 के बीच) हर 3 सेकंड में बदलेगा
+            // लाइव एक्टिव यूजर - हर 2.5 सेकंड में तेज़ी से बदलेगा
             function updateLiveUsers() {
-                let currentActive = Math.floor(Math.random() * (10000 - 200 + 1)) + 200;
+                let currentActive = Math.floor(Math.random() * (12000 - 3000 + 1)) + 3000;
                 updateDisplayAnimated(elActive, currentActive);
             }
             if(elActive) {
                 updateLiveUsers(); 
-                setInterval(updateLiveUsers, 3000);
+                setInterval(updateLiveUsers, 2500);
             }
         }
 
