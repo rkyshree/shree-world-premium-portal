@@ -21,6 +21,9 @@ rel="stylesheet">
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<!-- QR Code Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
 
 tailwind.config = {
@@ -47,10 +50,6 @@ tailwind.config = {
 
 
 <style>
-
-/* ==============================
-   BASIC
-============================== */
 
 *{
     box-sizing:border-box;
@@ -84,11 +83,6 @@ body{
 
 }
 
-
-/* ==============================
-   SCROLLBAR
-============================== */
-
 .no-scrollbar::-webkit-scrollbar{
     display:none;
 }
@@ -97,11 +91,6 @@ body{
     scrollbar-width:none;
     -ms-overflow-style:none;
 }
-
-
-/* ==============================
-   HEADER
-============================== */
 
 .site-header{
 
@@ -113,49 +102,17 @@ body{
 
 }
 
-
-/* ==============================
-   HERO
-============================== */
-
-.hero-section{
-
-    background:transparent;
-
-}
-
-
-/* ==============================
-   HERO TITLE
-============================== */
-
 .hero-title{
-
     letter-spacing:-.5px;
-
 }
-
-
-/* ==============================
-   STAT BOX
-============================== */
 
 .stat-box{
-
     transition:.25s ease;
-
 }
 
 .stat-box:hover{
-
     transform:translateY(-2px);
-
 }
-
-
-/* ==============================
-   MAIN BUTTON
-============================== */
 
 .main-button{
 
@@ -175,11 +132,6 @@ body{
 
 }
 
-
-/* ==============================
-   COURSE CARD
-============================== */
-
 .course-card{
 
     transition:
@@ -198,27 +150,13 @@ body{
 
 }
 
-
-/* ==============================
-   COURSE BUTTON
-============================== */
-
 .course-button{
-
     transition:.2s ease;
-
 }
 
 .course-button:hover{
-
     transform:translateY(-1px);
-
 }
-
-
-/* ==============================
-   COMBO OFFER
-============================== */
 
 .offer-box{
 
@@ -245,11 +183,6 @@ body{
 
 }
 
-
-/* ==============================
-   PICSART BANNER
-============================== */
-
 .picsart-box{
 
     background:
@@ -275,80 +208,35 @@ body{
 
 }
 
+.modal-backdrop{
 
-/* ==============================
-   FAQ SECTION
-============================== */
+    background:
+    rgba(15,23,42,.78);
+
+    backdrop-filter:
+    blur(5px);
+
+}
 
 .faq-item{
-
-    transition:
-    box-shadow .25s ease,
-    border-color .25s ease;
-
+    transition:.2s ease;
 }
-
-.faq-item:hover{
-
-    box-shadow:
-    0 10px 25px
-    rgba(15,23,42,.07);
-
-}
-
-
-.faq-question{
-
-    cursor:pointer;
-
-    user-select:none;
-
-}
-
 
 .faq-answer{
-
-    max-height:0;
-
-    overflow:hidden;
-
-    opacity:0;
-
-    transition:
-    max-height .3s ease,
-    opacity .25s ease,
-    padding .3s ease;
-
+    display:none;
 }
-
 
 .faq-item.active .faq-answer{
-
-    max-height:300px;
-
-    opacity:1;
-
+    display:block;
 }
-
-
-.faq-icon{
-
-    transition:
-    transform .3s ease;
-
-}
-
 
 .faq-item.active .faq-icon{
-
     transform:rotate(180deg);
-
 }
 
-
-/* ==============================
-   MOBILE
-============================== */
+.faq-icon{
+    transition:.2s ease;
+}
 
 @media(max-width:640px){
 
@@ -378,9 +266,9 @@ body{
 <body class="font-hindi text-gray-800 antialiased">
 
 
-<!-- =========================================================
+<!-- =====================================================
      HEADER
-========================================================= -->
+===================================================== -->
 
 <header class="site-header sticky top-0 z-50">
 
@@ -400,8 +288,6 @@ justify-between
 ">
 
 
-<!-- BRAND -->
-
 <div class="min-w-0">
 
 <h1 class="
@@ -417,7 +303,6 @@ truncate
 श्री WORLD PREMIUM PORTAL
 
 </h1>
-
 
 <p class="
 text-[8px]
@@ -436,10 +321,9 @@ DIGITAL SKILLS & ONLINE TRAINING
 </div>
 
 
-<!-- WHATSAPP -->
-
 <button
-onclick="bookComboOffer()"
+type="button"
+onclick="openOrder('All 12 Professional Courses Combo',999)"
 class="
 shrink-0
 w-11
@@ -465,6 +349,7 @@ text-xl
 
 </button>
 
+
 </div>
 
 </div>
@@ -473,21 +358,14 @@ text-xl
 
 
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
+<!-- =====================================================
+     HERO
+===================================================== -->
 
 <main>
 
 
-<!-- =========================================================
-     HERO SECTION
-========================================================= -->
-
-<section class="
-hero-section
-w-full
-">
+<section class="hero-section w-full">
 
 <div class="
 max-w-6xl
@@ -504,8 +382,6 @@ pb-6
 sm:pb-8
 ">
 
-
-<!-- PRACTICAL -->
 
 <div class="
 inline-flex
@@ -537,8 +413,6 @@ bg-orange-500
 </div>
 
 
-<!-- TITLE -->
-
 <h2 class="
 hero-title
 font-black
@@ -554,19 +428,15 @@ mx-auto
 घर बैठे सीखें
 
 <span class="text-blue-600">
-
 Digital Skills
-
 </span>
 
-<br class="hidden sm:block">
+<br>
 
 और बढ़ें आगे!
 
 </h2>
 
-
-<!-- DESCRIPTION -->
 
 <p class="
 hero-description
@@ -582,12 +452,12 @@ mt-4
 mb-6
 ">
 
-AI, Digital Marketing, Designing, Freelancing और Online Business जैसी जरूरी Digital Skills आसान भाषा और Practical तरीके से सीखें।
+AI, Digital Marketing, Designing, Freelancing,
+Online Business और दूसरी जरूरी Digital Skills
+आसान भाषा और Practical तरीके से सीखें।
 
 </p>
 
-
-<!-- STATS -->
 
 <div class="
 grid
@@ -707,10 +577,9 @@ font-bold
 </div>
 
 
-<!-- COMBO BUTTON -->
-
 <button
-onclick="bookComboOffer()"
+type="button"
+onclick="openOrder('All 12 Professional Courses Combo',999)"
 class="
 main-button
 w-full
@@ -722,8 +591,6 @@ gap-2
 bg-gradient-to-r
 from-orange-500
 to-red-600
-hover:from-red-600
-hover:to-orange-500
 text-white
 px-7
 sm:px-9
@@ -735,11 +602,7 @@ sm:text-lg
 shadow-lg
 ">
 
-<i class="
-fas
-fa-gift
-text-lg
-"></i>
+<i class="fas fa-gift"></i>
 
 सभी 12 कोर्स — मात्र ₹999
 
@@ -754,7 +617,7 @@ font-bold
 mt-2
 ">
 
-सीमित समय का ऑफर • 15 अगस्त रात 12 बजे तक
+Limited Time Special Offer
 
 </p>
 
@@ -767,17 +630,15 @@ mt-2
 
 
 
-<!-- =========================================================
-     CLASS / TIMING
-========================================================= -->
+<!-- =====================================================
+     CLASS INFORMATION
+===================================================== -->
 
 <section class="
 max-w-6xl
 mx-auto
 px-3
 sm:px-5
-mt-1
-sm:mt-2
 ">
 
 <div class="
@@ -793,7 +654,7 @@ sm:py-5
 ">
 
 
-<div class="text-center mb-3">
+<div class="text-center mb-4">
 
 <h3 class="
 font-black
@@ -802,244 +663,119 @@ text-lg
 sm:text-xl
 ">
 
-क्लासेस कहाँ होंगी?
+क्लासेस कहाँ और कैसे होंगी?
 
 </h3>
 
-
 <p class="
-text-[9px]
-sm:text-[10px]
+text-[10px]
+sm:text-xs
 text-gray-500
-font-medium
 mt-1
-tracking-wide
 ">
 
-शनिवार & रविवार
-
-<span class="mx-1 text-gray-300">|</span>
-
-रात 8:00–11:00
-
-<span class="mx-1 text-gray-300">|</span>
-
-3 घंटे की क्लास
+Online Practical Training • शनिवार एवं रविवार • रात 8:00–11:00
 
 </p>
 
 </div>
 
 
-<!-- PLATFORMS -->
-
 <div class="
-flex
-flex-wrap
-justify-center
-items-start
-gap-4
-sm:gap-12
-pb-1
+grid
+grid-cols-3
+gap-3
+max-w-2xl
+mx-auto
 ">
 
 
-<!-- ZOOM -->
-
-<div class="
-flex
-flex-col
-items-center
-gap-1
-min-w-[75px]
-">
+<div class="text-center">
 
 <div class="
 w-11
 h-11
-sm:w-12
-sm:h-12
+mx-auto
 rounded-full
 bg-blue-50
-border
-border-blue-100
 flex
 items-center
 justify-center
 ">
 
-<i class="
-fas
-fa-video
-text-blue-500
-text-lg
-"></i>
+<i class="fas fa-video text-blue-600"></i>
 
 </div>
 
-<span class="
-text-[9px]
-sm:text-[10px]
+<p class="
+text-[10px]
 font-bold
-text-gray-600
-whitespace-nowrap
-">
-
-Zoom App
-
-</span>
-
-</div>
-
-
-<!-- GOOGLE MEET -->
-
-<div class="
-flex
-flex-col
-items-center
-gap-1
-min-w-[75px]
-">
-
-<div class="
-w-11
-h-11
-sm:w-12
-sm:h-12
-rounded-full
-bg-gray-50
-border
-border-gray-200
-flex
-items-center
-justify-center
-">
-
-<i class="
-fas
-fa-video
-text-blue-500
-text-lg
-"></i>
-
-</div>
-
-<span class="
-text-[9px]
-sm:text-[10px]
-font-bold
-text-gray-600
-whitespace-nowrap
+mt-1
 ">
 
 Google Meet
 
-</span>
+</p>
 
 </div>
 
 
-<!-- WHATSAPP -->
-
-<div class="
-flex
-flex-col
-items-center
-gap-1
-min-w-[75px]
-">
+<div class="text-center">
 
 <div class="
 w-11
 h-11
-sm:w-12
-sm:h-12
+mx-auto
 rounded-full
 bg-green-50
-border
-border-green-100
 flex
 items-center
 justify-center
 ">
 
-<i class="
-fab
-fa-whatsapp
-text-green-500
-text-xl
-"></i>
+<i class="fab fa-whatsapp text-green-600 text-xl"></i>
 
 </div>
 
-<span class="
-text-[9px]
-sm:text-[10px]
+<p class="
+text-[10px]
 font-bold
-text-gray-600
-whitespace-nowrap
+mt-1
 ">
 
-WhatsApp Call
+WhatsApp Support
 
-</span>
+</p>
 
 </div>
 
 
-<!-- AUDIO VIDEO -->
-
-<div class="
-flex
-flex-col
-items-center
-gap-1
-min-w-[75px]
-">
+<div class="text-center">
 
 <div class="
 w-11
 h-11
-sm:w-12
-sm:h-12
+mx-auto
 rounded-full
 bg-purple-50
-border
-border-purple-100
 flex
 items-center
 justify-center
-gap-0.5
 ">
 
-<i class="
-fas
-fa-phone
-text-purple-600
-text-xs
-"></i>
-
-<i class="
-fas
-fa-video
-text-purple-600
-text-xs
-"></i>
+<i class="fas fa-mobile-screen text-purple-600"></i>
 
 </div>
 
-<span class="
-text-[9px]
-sm:text-[10px]
+<p class="
+text-[10px]
 font-bold
-text-gray-600
-whitespace-nowrap
+mt-1
 ">
 
-Audio / Video
+Mobile Friendly
 
-</span>
+</p>
 
 </div>
 
@@ -1051,9 +787,9 @@ Audio / Video
 
 
 
-<!-- =========================================================
-     PICSART SPECIAL ₹199 BANNER
-========================================================= -->
+<!-- =====================================================
+     PICSART
+===================================================== -->
 
 <section class="
 max-w-6xl
@@ -1069,31 +805,7 @@ relative
 overflow-hidden
 rounded-3xl
 shadow-xl
-border
-border-purple-300/30
 ">
-
-
-<div class="
-absolute
--top-16
--right-16
-w-40
-h-40
-rounded-full
-bg-white/10
-"></div>
-
-
-<div class="
-absolute
--bottom-20
--left-16
-w-44
-h-44
-rounded-full
-bg-white/5
-"></div>
 
 
 <div class="
@@ -1116,106 +828,39 @@ px-3
 py-1
 rounded-full
 text-[9px]
-sm:text-[10px]
 font-bold
 mb-3
 ">
 
-<i class="
-fas
-fa-star
-text-yellow-300
-"></i>
+<i class="fas fa-star text-yellow-300"></i>
 
 SPECIAL PRACTICAL COURSE
 
 </div>
 
 
-
 <div class="
 flex
 flex-col
 md:flex-row
-md:items-center
-gap-5
-md:gap-8
+gap-6
+items-center
 ">
 
 
 <div class="flex-1">
 
 
-<div class="
-flex
-items-center
-gap-3
-mb-2
-">
-
-
-<div class="
-w-12
-h-12
-sm:w-14
-sm:h-14
-shrink-0
-rounded-2xl
-bg-white
-flex
-items-center
-justify-center
-shadow-lg
-">
-
-<span class="
-text-transparent
-bg-clip-text
-bg-gradient-to-br
-from-pink-500
-via-purple-500
-to-blue-500
-font-black
-text-2xl
-sm:text-3xl
-">
-
-P
-
-</span>
-
-</div>
-
-
-<div>
-
-<p class="
-text-white/70
-text-[9px]
-font-bold
-uppercase
-tracking-widest
-">
-
-Complete Editing Training
-
-</p>
-
 <h2 class="
 text-white
-text-xl
+text-2xl
 sm:text-3xl
 font-black
-leading-tight
 ">
 
 PicsArt Editing Course
 
 </h2>
-
-</div>
-
-</div>
 
 
 <p class="
@@ -1223,11 +868,11 @@ text-white/90
 text-xs
 sm:text-sm
 leading-relaxed
-mt-3
-max-w-2xl
+mt-2
 ">
 
-मोबाइल से Professional Photo Editing सीखें — बिल्कुल आसान भाषा में और Practical तरीके से।
+Mobile से Professional Photo Editing सीखें —
+बिल्कुल आसान भाषा और Practical तरीके से।
 
 </p>
 
@@ -1236,73 +881,46 @@ max-w-2xl
 grid
 grid-cols-2
 sm:grid-cols-3
-gap-x-3
-gap-y-2
+gap-2
 mt-4
 ">
 
 
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-Logo बनाना
-</span>
+<div class="text-white text-[10px]">
+✓ Logo बनाना
 </div>
 
-
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-Photo Cutting
-</span>
+<div class="text-white text-[10px]">
+✓ Photo Cutting
 </div>
 
-
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-Background Editing
-</span>
+<div class="text-white text-[10px]">
+✓ Background Editing
 </div>
 
-
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-Duplicate करना
-</span>
+<div class="text-white text-[10px]">
+✓ Duplicate करना
 </div>
 
-
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-Text Editing
-</span>
+<div class="text-white text-[10px]">
+✓ Text Editing
 </div>
 
-
-<div class="flex items-center gap-1.5">
-<i class="fas fa-check-circle text-green-300 text-xs"></i>
-<span class="text-white text-[10px] sm:text-xs font-medium">
-PNG / Poster
-</span>
-</div>
-
-
+<div class="text-white text-[10px]">
+✓ PNG / Poster
 </div>
 
 </div>
 
+</div>
 
 
 <div class="
-w-full
-md:w-[210px]
-shrink-0
 bg-white
 rounded-2xl
 p-4
+w-full
+md:w-[210px]
 text-center
 shadow-xl
 ">
@@ -1312,36 +930,15 @@ shadow-xl
 text-gray-400
 text-[9px]
 font-bold
-uppercase
-tracking-wider
 ">
 
-3 Hours Practical Training
+3 HOURS PRACTICAL TRAINING
 
 </p>
 
 
 <div class="
-flex
-items-center
-justify-center
-gap-2
 mt-1
-">
-
-
-<span class="
-text-gray-400
-text-sm
-line-through
-">
-
-₹499
-
-</span>
-
-
-<span class="
 text-purple-700
 text-4xl
 font-black
@@ -1349,67 +946,30 @@ font-black
 
 ₹199
 
-</span>
-
-
 </div>
 
 
-<p class="
-text-pink-600
-text-[9px]
-font-bold
-mt-1
-mb-3
-">
-
-Special Course Offer
-
-</p>
-
-
 <button
-onclick="bookPicsArtCourse()"
+type="button"
+onclick="openOrder('PicsArt Complete Editing Course',199)"
 class="
 w-full
+mt-3
 bg-gradient-to-r
 from-pink-500
-via-purple-600
-to-indigo-600
-hover:from-indigo-600
-hover:to-pink-500
+to-purple-600
 text-white
 py-2.5
 rounded-xl
 font-black
 text-sm
-shadow-md
-transition
-flex
-items-center
-justify-center
-gap-2
 ">
-
-<i class="fab fa-whatsapp"></i>
 
 Book Now ₹199
 
 </button>
 
-
-<p class="
-text-gray-400
-text-[8px]
-mt-2
-">
-
-Direct WhatsApp Booking
-
-</p>
-
 </div>
-
 
 </div>
 
@@ -1421,42 +981,32 @@ Direct WhatsApp Booking
 
 
 
-<!-- =========================================================
-     PROFESSIONAL COURSES HEADER
-========================================================= -->
+<!-- =====================================================
+     COURSES HEADER
+===================================================== -->
 
 <section class="
 max-w-6xl
 mx-auto
 px-3
 sm:px-5
-pt-7
-sm:pt-9
+pt-8
 ">
 
 <div class="text-center">
-
 
 <div class="
 inline-flex
 items-center
 gap-2
-bg-gradient-to-r
-from-gray-900
-to-gray-800
+bg-gray-900
 text-white
 px-5
-sm:px-7
 py-2.5
 rounded-full
-shadow-lg
 ">
 
-
-<span class="text-orange-400">
-✦
-</span>
-
+<span class="text-orange-400">✦</span>
 
 <h2 class="
 text-base
@@ -1468,10 +1018,7 @@ font-black
 
 </h2>
 
-
-<span class="text-orange-400">
-✦
-</span>
+<span class="text-orange-400">✦</span>
 
 </div>
 
@@ -1480,11 +1027,10 @@ font-black
 text-gray-500
 text-[10px]
 sm:text-sm
-font-medium
 mt-2
 ">
 
-अपनी पसंद का कोर्स चुनें और नई Digital Skill सीखें।
+अपनी पसंद का Course चुनें और नई Digital Skill सीखें।
 
 </p>
 
@@ -1494,9 +1040,9 @@ mt-2
 
 
 
-<!-- =========================================================
-     12 COURSES
-========================================================= -->
+<!-- =====================================================
+     COURSE GRID
+===================================================== -->
 
 <section
 id="courses"
@@ -1506,7 +1052,7 @@ mx-auto
 px-3
 sm:px-5
 pt-5
-pb-7
+pb-8
 ">
 
 <div
@@ -1524,13 +1070,11 @@ sm:gap-5
 
 
 
-<!-- =========================================================
-     FAQ SECTION
-========================================================= -->
+<!-- =====================================================
+     COMBO
+===================================================== -->
 
-<section
-id="faq"
-class="
+<section class="
 max-w-6xl
 mx-auto
 px-3
@@ -1538,39 +1082,165 @@ sm:px-5
 pb-8
 ">
 
-<div class="text-center mb-5">
+<div class="
+offer-box
+rounded-3xl
+border
+border-slate-700
+shadow-xl
+">
+
+<div class="
+px-5
+sm:px-8
+py-7
+text-center
+">
+
 
 <div class="
 inline-flex
 items-center
 gap-2
-bg-blue-50
+bg-orange-500/10
 border
-border-blue-100
-text-blue-700
-px-5
-py-2.5
+border-orange-400/20
+text-orange-300
+px-3
+py-1
 rounded-full
-font-black
-text-base
-sm:text-xl
+text-[9px]
+font-bold
+mb-2
 ">
 
-<i class="fas fa-circle-question"></i>
-
-अक्सर पूछे जाने वाले सवाल
+🔥 12 COURSES COMBO
 
 </div>
 
+
+<h2 class="
+text-white
+text-2xl
+sm:text-3xl
+font-black
+">
+
+सभी 12 Professional Courses
+
+</h2>
+
+
+<p class="
+text-gray-300
+text-xs
+sm:text-sm
+mt-1
+">
+
+एक ही Combo में पूरी Digital Skills Training
+
+</p>
+
+
+<div class="
+mt-4
+flex
+items-center
+justify-center
+gap-3
+">
+
+
+<span class="
+text-gray-400
+line-through
+text-sm
+">
+
+₹73,988
+
+</span>
+
+
+<span class="
+text-orange-400
+text-4xl
+font-black
+">
+
+₹999
+
+</span>
+
+</div>
+
+
+<button
+type="button"
+onclick="openOrder('All 12 Professional Courses Combo',999)"
+class="
+main-button
+mt-4
+bg-gradient-to-r
+from-orange-500
+to-red-600
+text-white
+px-7
+py-3
+rounded-xl
+font-black
+">
+
+<i class="fas fa-bolt mr-1"></i>
+
+₹999 में Combo बुक करें
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =====================================================
+     FAQ
+===================================================== -->
+
+<section
+id="faq"
+class="
+max-w-4xl
+mx-auto
+px-3
+sm:px-5
+pb-10
+">
+
+<div class="text-center mb-5">
+
+<h2 class="
+text-2xl
+sm:text-3xl
+font-black
+text-gray-900
+">
+
+अक्सर पूछे जाने वाले सवाल
+
+</h2>
+
 <p class="
 text-gray-500
-text-[10px]
+text-xs
 sm:text-sm
-font-medium
 mt-2
 ">
 
-Course, Training और Classes से जुड़े जरूरी सवालों के जवाब
+Course, Classes और Payment से जुड़े सामान्य सवालों के जवाब
 
 </p>
 
@@ -1592,79 +1262,48 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
-
-<div class="flex items-center gap-3">
-
-<div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-blue-50
-text-blue-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-book-open text-sm"></i>
-
-</div>
-
-<h3 class="
+text-left
+p-4
 font-bold
-text-gray-800
 text-sm
-sm:text-base
 ">
 
-आपके यहाँ क्या-क्या सिखाया जाता है?
-
-</h3>
-
-</div>
+<span>
+1. इन Courses में क्या सिखाया जाएगा?
+</span>
 
 <i class="
-faq-icon
 fas
 fa-chevron-down
+faq-icon
 text-gray-400
 text-xs
 "></i>
 
-</div>
+</button>
 
 
-<div class="faq-answer">
-
-<p class="
+<div class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-AI, Digital Marketing, Graphic Designing, Photo/Video Editing, Freelancing, Social Media और अन्य जरूरी Digital Skills Practical तरीके से सिखाई जाती हैं।
-
-</p>
+हर Course में उसके विषय से जुड़ी जरूरी जानकारी,
+Tools और Practical काम सिखाया जाएगा, ताकि विद्यार्थी
+सीखी हुई Skill को वास्तविक Projects में इस्तेमाल कर सकें।
 
 </div>
 
@@ -1684,79 +1323,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+2. क्या Training Beginner के लिए है?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-green-50
-text-green-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-user-graduate text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या Beginner भी सीख सकता है?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हाँ। Courses को Beginner को ध्यान में रखकर आसान भाषा में Basic से शुरू किया जाता है।
-
-</p>
+हाँ। Training को आसान भाषा में रखा गया है।
+Beginner से शुरुआत करके Step-by-Step Practical तरीके से
+समझाया जाता है।
 
 </div>
 
@@ -1776,79 +1378,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+3. Classes Online होंगी या Offline?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-orange-50
-text-orange-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-laptop-code text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या सिर्फ Theory पढ़ाई जाती है?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-नहीं। Theory के साथ Practical Demo, Practice और Course के अनुसार Real-World Projects पर काम करना सिखाया जाता है।
-
-</p>
+Classes Online होंगी। Google Meet के माध्यम से
+Training दी जाएगी और जरूरत पड़ने पर WhatsApp Support
+भी उपलब्ध रहेगा।
 
 </div>
 
@@ -1868,79 +1433,41 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+4. क्या Mobile से Course किया जा सकता है?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-purple-50
-text-purple-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-video text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-Classes कैसे होंगी?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-Classes Online होंगी। Training के लिए Google Meet, Zoom और जरूरत के अनुसार WhatsApp Call जैसे माध्यमों का उपयोग किया जा सकता है।
-
-</p>
+हाँ। कई Courses Mobile से आसानी से किए जा सकते हैं।
+कुछ Advanced कामों के लिए Laptop/Computer उपयोगी हो सकता है।
 
 </div>
 
@@ -1960,79 +1487,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+5. Course की फीस कैसे जमा करें?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-pink-50
-text-pink-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-mobile-screen-button text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या Mobile से सीख सकते हैं?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हाँ। जिन Courses में Mobile से काम करना संभव है, उन्हें Mobile पर भी आसानी से सीखा जा सकता है।
-
-</p>
+Order पर क्लिक करने के बाद आपका नाम और मोबाइल नंबर
+लिया जाएगा। इसके बाद Payment Page पर QR Code,
+UPI ID Copy और Direct UPI Payment का विकल्प मिलेगा।
 
 </div>
 
@@ -2052,79 +1542,41 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+6. QR Code में कितनी राशि दिखाई देगी?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-cyan-50
-text-cyan-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-hands-helping text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या Practical करके सिखाएंगे?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हाँ। जरूरी Skills को Step-by-Step करके दिखाया जाएगा और फिर Practice के माध्यम से समझाया जाएगा।
-
-</p>
+जिस Course को आपने चुना है, उसी की निर्धारित फीस
+QR Payment में automatically set की जाएगी।
 
 </div>
 
@@ -2144,79 +1596,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+7. Payment करने के बाद क्या करना होगा?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-yellow-50
-text-yellow-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-comments text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या Doubt पूछ सकते हैं?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हाँ। Training के दौरान आने वाले जरूरी Doubts और समझ से जुड़ी समस्याओं में सहायता दी जाएगी।
-
-</p>
+Payment पूरा करने के बाद Payment Screenshot
+WhatsApp पर भेज दें। इसके बाद आपको Class और
+Course से जुड़ी आगे की जानकारी दी जाएगी।
 
 </div>
 
@@ -2236,79 +1651,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+8. क्या अलग-अलग Course भी खरीदे जा सकते हैं?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-red-50
-text-red-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-diagram-project text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-क्या कोई Project भी बनवाया जाएगा?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हाँ। Course के अनुसार Practical Projects और Real-World Examples के माध्यम से काम करना सिखाया जाएगा।
-
-</p>
+हाँ। आप अपनी जरूरत के अनुसार कोई भी एक Course
+अलग से खरीद सकते हैं या ₹999 में 12 Courses का
+Combo चुन सकते हैं।
 
 </div>
 
@@ -2328,79 +1706,42 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+9. क्या Certificate मिलेगा?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-emerald-50
-text-emerald-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-indian-rupee-sign text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-Course की फीस कितनी है?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-हर Course की फीस अलग है। वेबसाइट पर प्रत्येक Course के सामने उसकी Current Fee दी गई है। समय-समय पर Special Offers भी उपलब्ध हो सकते हैं।
-
-</p>
+Certificate की उपलब्धता Course/Training के नियमों
+के अनुसार होगी। Enrollment के समय इसकी जानकारी
+प्रदान की जाएगी।
 
 </div>
 
@@ -2420,79 +1761,41 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+10. क्या Course पूरा करने के बाद Support मिलेगा?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-indigo-50
-text-indigo-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-clock text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-Course कितने समय का है?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-Course की Duration Course के अनुसार अलग-अलग है। संबंधित Course की Class Duration और Schedule की जानकारी पहले से दी जाएगी।
-
-</p>
+हाँ, Course से संबंधित सामान्य guidance और
+support WhatsApp के माध्यम से दिया जाएगा।
 
 </div>
 
@@ -2512,79 +1815,41 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
+text-left
+p-4
+font-bold
+text-sm
+">
 
-<div class="flex items-center gap-3">
+<span>
+11. क्या एक ही Payment में सभी 12 Courses मिलेंगे?
+</span>
+
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
+
+</button>
+
 
 <div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-violet-50
-text-violet-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-briefcase text-sm"></i>
-
-</div>
-
-<h3 class="
-font-bold
-text-gray-800
-text-sm
-sm:text-base
-">
-
-Course करने के बाद क्या कर पाएंगे?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
+faq-answer
 px-4
-sm:px-5
 pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
 text-xs
 sm:text-sm
+text-gray-600
 leading-relaxed
 ">
 
-सीखी हुई Digital Skills का उपयोग Personal Work, Freelancing, Business Promotion और Online Work में किया जा सकता है।
-
-</p>
+हाँ। ₹999 Combo चुनने पर सभी 12 Professional
+Courses के लिए एक ही Enrollment Process रहेगा।
 
 </div>
 
@@ -2604,399 +1869,73 @@ shadow-sm
 overflow-hidden
 ">
 
-<div
+<button
+type="button"
+onclick="toggleFAQ(this)"
 class="
-faq-question
+w-full
 flex
 items-center
 justify-between
-gap-4
-px-4
-sm:px-5
-py-4
-"
-onclick="toggleFAQ(this)"
->
-
-<div class="flex items-center gap-3">
-
-<div class="
-w-9
-h-9
-shrink-0
-rounded-xl
-bg-orange-50
-text-orange-600
-flex
-items-center
-justify-center
-">
-
-<i class="fas fa-cart-shopping text-sm"></i>
-
-</div>
-
-<h3 class="
+text-left
+p-4
 font-bold
-text-gray-800
 text-sm
-sm:text-base
 ">
 
-Course कैसे Join करें?
-
-</h3>
-
-</div>
-
-<i class="
-faq-icon
-fas
-fa-chevron-down
-text-gray-400
-text-xs
-"></i>
-
-</div>
-
-
-<div class="faq-answer">
-
-<p class="
-px-4
-sm:px-5
-pb-4
-pl-16
-sm:pl-[68px]
-text-gray-500
-text-xs
-sm:text-sm
-leading-relaxed
-">
-
-अपना पसंदीदा Course चुनें, “बुक करें” या “Buy Now” पर क्लिक करें और WhatsApp के माध्यम से Booking तथा Payment की जानकारी प्राप्त करें।
-
-</p>
-
-</div>
-
-</div>
-
-
-</div>
-
-</section>
-
-
-
-<!-- =========================================================
-     12 COURSES COMBO OFFER
-========================================================= -->
-
-<section class="
-max-w-6xl
-mx-auto
-px-3
-sm:px-5
-pb-8
-">
-
-
-<div class="
-offer-box
-relative
-overflow-hidden
-rounded-3xl
-border
-border-slate-700
-shadow-xl
-">
-
-
-<div class="
-relative
-z-10
-px-5
-sm:px-8
-py-6
-sm:py-8
-">
-
-
-<div class="
-flex
-flex-col
-md:flex-row
-items-center
-gap-5
-md:gap-8
-">
-
-
-<!-- 12 BADGE -->
-
-<div class="
-shrink-0
-w-28
-h-28
-sm:w-32
-sm:h-32
-rounded-full
-border-4
-border-white/10
-flex
-flex-col
-items-center
-justify-center
-text-center
-bg-white/5
-">
-
-
-<div class="
-text-orange-400
-text-[10px]
-font-bold
-tracking-widest
-">
-
-SPECIAL
-
-</div>
-
-
-<div class="
-text-white
-text-4xl
-sm:text-5xl
-font-black
-leading-none
-">
-
-12
-
-</div>
-
-
-<div class="
-text-white
-text-[10px]
-font-bold
-tracking-widest
-">
-
-COURSES
-
-</div>
-
-
-<div class="
-text-[8px]
-text-gray-400
-mt-1
-">
-
-PREMIUM COMBO
-
-</div>
-
-</div>
-
-
-
-<!-- OFFER -->
-
-<div class="
-flex-1
-text-center
-md:text-left
-">
-
-
-<div class="
-inline-flex
-items-center
-gap-1.5
-bg-orange-500/10
-border
-border-orange-400/20
-text-orange-300
-px-3
-py-1
-rounded-full
-text-[9px]
-font-bold
-mb-2
-">
-
-🔥 12 COURSES DHAMAKA
-
-</div>
-
-
-<h2 class="
-text-white
-text-2xl
-sm:text-3xl
-font-black
-leading-tight
-">
-
-सभी 12 Professional Courses
-
-</h2>
-
-
-<p class="
-text-gray-300
-text-xs
-sm:text-sm
-mt-1
-mb-4
-">
-
-एक ही Premium Combo में पूरी Digital Skills Training
-
-</p>
-
-
-<!-- PRICE -->
-
-<div class="
-flex
-items-center
-justify-center
-md:justify-start
-gap-3
-flex-wrap
-mb-2
-">
-
-
-<span class="
-text-gray-400
-text-sm
-line-through
-font-bold
-">
-
-₹73,988
-
+<span>
+12. Course Book करने के लिए क्या करना होगा?
 </span>
 
-
-<span class="
-text-orange-400
-text-4xl
-sm:text-5xl
-font-black
-">
-
-₹999
-
-</span>
-
-
-<span class="
-bg-green-500/10
-border
-border-green-400/20
-text-green-300
-px-2
-py-1
-rounded-md
-text-[9px]
-font-bold
-">
-
-98.6% तक बचत
-
-</span>
-
-</div>
-
-
-<p class="
-text-gray-400
-text-[9px]
-mb-4
-">
-
-बस
-
-<span class="text-orange-300 font-bold">
-
-15 अगस्त
-
-</span>
-
-तक Special Discount
-
-</p>
-
-
-<button
-onclick="bookComboOffer()"
-class="
-main-button
-w-full
-sm:w-auto
-bg-gradient-to-r
-from-orange-500
-to-red-600
-hover:from-red-600
-hover:to-orange-500
-text-white
-px-7
-py-3
-rounded-xl
-font-black
-text-sm
-sm:text-base
-shadow-lg
-inline-flex
-items-center
-justify-center
-gap-2
-">
-
-<i class="fas fa-bolt"></i>
-
-₹999 में Combo बुक करें
+<i class="fas fa-chevron-down faq-icon text-gray-400 text-xs"></i>
 
 </button>
 
-</div>
+
+<div class="
+faq-answer
+px-4
+pb-4
+text-xs
+sm:text-sm
+text-gray-600
+leading-relaxed
+">
+
+अपना पसंदीदा Course चुनें, “Order करें” पर क्लिक करें,
+नाम और मोबाइल नंबर भरें और Payment पूरा करें।
+इसके बाद WhatsApp पर Payment Screenshot भेज दें।
 
 </div>
 
 </div>
+
 
 </div>
 
 </section>
-
 
 
 </main>
 
 
 
-<!-- =========================================================
+<!-- =====================================================
      FOOTER
-========================================================= -->
+===================================================== -->
 
-<footer class="bg-gray-950 text-white">
-
+<footer class="
+bg-gray-950
+text-white
+">
 
 <div class="
 max-w-6xl
 mx-auto
 px-4
-py-4
+py-5
 text-center
 ">
-
 
 <div class="
 font-sans
@@ -3008,7 +1947,6 @@ font-bold
 
 </div>
 
-
 <p class="
 text-gray-500
 text-[9px]
@@ -3019,19 +1957,10 @@ Digital Skills • Online Training • Professional Courses
 
 </p>
 
-
-<div class="
-border-t
-border-gray-800
-mt-3
-pt-2
-">
-
-
 <p class="
-text-[8px]
 text-gray-600
-font-sans
+text-[8px]
+mt-2
 ">
 
 © 2020–2026 Shree World Premium Portal. All Rights Reserved.
@@ -3040,30 +1969,634 @@ font-sans
 
 </div>
 
-</div>
-
 </footer>
 
 
 
-<!-- =========================================================
+<!-- =====================================================
+     ORDER / PAYMENT MODAL
+===================================================== -->
+
+<div
+id="orderModal"
+class="
+hidden
+fixed
+inset-0
+z-[999]
+modal-backdrop
+items-center
+justify-center
+p-3
+">
+
+<div
+class="
+bg-white
+w-full
+max-w-md
+max-h-[95vh]
+overflow-y-auto
+rounded-3xl
+shadow-2xl
+relative
+">
+
+
+<!-- CLOSE -->
+
+<button
+type="button"
+onclick="closeOrder()"
+class="
+absolute
+right-3
+top-3
+w-9
+h-9
+rounded-full
+bg-gray-100
+hover:bg-gray-200
+text-gray-700
+flex
+items-center
+justify-center
+z-10
+">
+
+<i class="fas fa-times"></i>
+
+</button>
+
+
+
+<!-- ORDER FORM -->
+
+<div
+id="customerForm"
+class="p-5 sm:p-6"
+>
+
+
+<div class="text-center mb-5">
+
+<div class="
+w-14
+h-14
+mx-auto
+rounded-2xl
+bg-blue-50
+text-blue-600
+flex
+items-center
+justify-center
+">
+
+<i class="fas fa-shopping-cart text-xl"></i>
+
+</div>
+
+
+<h2 class="
+text-xl
+font-black
+text-gray-900
+mt-3
+">
+
+Course Order
+
+</h2>
+
+
+<p class="
+text-xs
+text-gray-500
+mt-1
+">
+
+अपनी जानकारी भरकर Payment के लिए आगे बढ़ें।
+
+</p>
+
+</div>
+
+
+
+<!-- SELECTED COURSE -->
+
+<div class="
+bg-gray-50
+border
+border-gray-100
+rounded-2xl
+p-4
+mb-4
+">
+
+<p class="
+text-[10px]
+text-gray-500
+font-bold
+">
+
+SELECTED COURSE
+
+</p>
+
+
+<p
+id="selectedCourse"
+class="
+font-black
+text-gray-900
+text-sm
+mt-1
+">
+
+Course
+
+</p>
+
+
+<p
+id="selectedPrice"
+class="
+text-blue-600
+font-black
+text-xl
+mt-1
+">
+
+₹0
+
+</p>
+
+</div>
+
+
+
+<!-- NAME -->
+
+<label class="
+block
+text-xs
+font-bold
+text-gray-700
+mb-1
+">
+
+आपका नाम
+
+</label>
+
+
+<input
+id="customerName"
+type="text"
+placeholder="अपना पूरा नाम लिखें"
+class="
+w-full
+border
+border-gray-200
+rounded-xl
+px-4
+py-3
+text-sm
+outline-none
+focus:border-blue-500
+focus:ring-2
+focus:ring-blue-100
+mb-4
+">
+
+
+
+<!-- MOBILE -->
+
+<label class="
+block
+text-xs
+font-bold
+text-gray-700
+mb-1
+">
+
+मोबाइल नंबर
+
+</label>
+
+
+<input
+id="customerMobile"
+type="tel"
+maxlength="10"
+inputmode="numeric"
+placeholder="10 अंकों का मोबाइल नंबर"
+class="
+w-full
+border
+border-gray-200
+rounded-xl
+px-4
+py-3
+text-sm
+outline-none
+focus:border-blue-500
+focus:ring-2
+focus:ring-blue-100
+mb-5
+">
+
+
+
+<button
+type="button"
+onclick="goToPayment()"
+class="
+w-full
+bg-gradient-to-r
+from-blue-600
+to-indigo-600
+hover:from-indigo-600
+hover:to-blue-600
+text-white
+py-3.5
+rounded-xl
+font-black
+shadow-lg
+">
+
+आगे बढ़ें
+
+<i class="fas fa-arrow-right ml-1"></i>
+
+</button>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     PAYMENT STEP
+===================================================== -->
+
+<div
+id="paymentStep"
+class="
+hidden
+p-5
+sm:p-6
+">
+
+
+<div class="text-center">
+
+<div class="
+w-14
+h-14
+mx-auto
+rounded-2xl
+bg-green-50
+text-green-600
+flex
+items-center
+justify-center
+">
+
+<i class="fas fa-shield-check text-xl"></i>
+
+</div>
+
+
+<h2 class="
+text-xl
+font-black
+text-gray-900
+mt-3
+">
+
+Payment करें
+
+</h2>
+
+
+<p
+id="paymentCourseName"
+class="
+text-xs
+text-gray-500
+mt-1
+">
+
+Course
+
+</p>
+
+
+<div
+id="paymentAmount"
+class="
+text-3xl
+font-black
+text-green-600
+mt-2
+">
+
+₹0
+
+</div>
+
+</div>
+
+
+
+<!-- QR -->
+
+<div class="
+mt-4
+bg-gray-50
+border
+border-gray-100
+rounded-2xl
+p-4
+text-center
+">
+
+
+<p class="
+text-xs
+font-bold
+text-gray-700
+mb-3
+">
+
+QR Code Scan करके Payment करें
+
+</p>
+
+
+<div
+id="qrcode"
+class="
+bg-white
+inline-flex
+p-3
+rounded-2xl
+border
+border-gray-200
+shadow-sm
+">
+
+</div>
+
+
+<button
+type="button"
+onclick="downloadQR()"
+class="
+mt-3
+w-full
+bg-gray-900
+hover:bg-gray-800
+text-white
+py-2.5
+rounded-xl
+font-bold
+text-xs
+">
+
+<i class="fas fa-download mr-1"></i>
+
+QR Code Download करें
+
+</button>
+
+</div>
+
+
+
+<!-- UPI -->
+
+<div class="
+mt-4
+border
+border-purple-100
+bg-purple-50
+rounded-2xl
+p-4
+">
+
+
+<p class="
+text-[10px]
+font-bold
+text-purple-700
+">
+
+UPI ID
+
+</p>
+
+
+<div class="
+flex
+items-center
+gap-2
+mt-2
+">
+
+
+<div
+id="upiText"
+class="
+flex-1
+bg-white
+border
+border-purple-100
+rounded-xl
+px-3
+py-2.5
+text-xs
+font-bold
+text-gray-800
+break-all
+">
+
+9451239239@axisbank
+
+</div>
+
+
+<button
+type="button"
+onclick="copyUPI()"
+class="
+shrink-0
+bg-purple-600
+hover:bg-purple-700
+text-white
+px-3
+py-2.5
+rounded-xl
+text-xs
+font-bold
+">
+
+Copy
+
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- DIRECT PAYMENT -->
+
+<a
+id="upiPayButton"
+href="#"
+class="
+mt-4
+w-full
+bg-green-600
+hover:bg-green-700
+text-white
+py-3
+rounded-xl
+font-black
+flex
+items-center
+justify-center
+gap-2
+">
+
+<i class="fas fa-mobile-screen-button"></i>
+
+Direct UPI Payment करें
+
+</a>
+
+
+
+<!-- PAYMENT NOTE -->
+
+<div class="
+mt-4
+bg-orange-50
+border
+border-orange-100
+rounded-2xl
+p-3
+text-center
+">
+
+<p class="
+text-[10px]
+text-orange-700
+font-bold
+leading-relaxed
+">
+
+Payment पूरा करने के बाद Payment Screenshot
+WhatsApp पर भेजें ताकि आपका Order Confirm किया जा सके।
+
+</p>
+
+</div>
+
+
+
+<!-- WHATSAPP -->
+
+<button
+type="button"
+onclick="sendWhatsAppConfirmation()"
+class="
+mt-3
+w-full
+bg-[#25D366]
+hover:bg-green-600
+text-white
+py-3
+rounded-xl
+font-black
+flex
+items-center
+justify-center
+gap-2
+">
+
+<i class="fab fa-whatsapp text-lg"></i>
+
+WhatsApp पर Order भेजें
+
+</button>
+
+
+
+<button
+type="button"
+onclick="backToForm()"
+class="
+w-full
+mt-3
+text-gray-500
+text-xs
+font-bold
+py-2
+">
+
+← जानकारी बदलें
+
+</button>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- =====================================================
      JAVASCRIPT
-========================================================= -->
+===================================================== -->
 
 <script>
 
 
-/* ==========================================
-   YOUR WHATSAPP NUMBER
-========================================== */
+/* =====================================================
+   PAYMENT SETTINGS
+===================================================== */
 
 const WHATSAPP_NUMBER = "919451239239";
 
+const UPI_ID = "9451239239@axisbank";
+
+const UPI_NAME = "RAJAN KUMAR YADAV";
 
 
-/* ==========================================
-   12 COURSES DATA
-========================================== */
+/* =====================================================
+   CURRENT ORDER DATA
+===================================================== */
+
+let selectedCourseName = "";
+
+let selectedCoursePrice = 0;
+
+let customerName = "";
+
+let customerMobile = "";
+
+
+/* =====================================================
+   12 COURSES
+===================================================== */
 
 const courses = [
 
@@ -3226,335 +2759,958 @@ desc:"Professional Profile, Content Strategy और Online Presence से अ�
 ];
 
 
-
-/* ==========================================
-   RENDER COURSES
-========================================== */
+/* =====================================================
+   RENDER ALL COURSES
+===================================================== */
 
 const grid =
 document.getElementById("courses-grid");
 
 
-courses.forEach(course => {
+courses.forEach(function(course){
+
+    const card =
+    document.createElement("div");
+
+    card.className = `
+        course-card
+        bg-white
+        rounded-2xl
+        border
+        ${course.border}
+        overflow-hidden
+        relative
+    `;
 
 
-const card =
-document.createElement("div");
+    card.innerHTML = `
+
+        <div class="
+        absolute
+        top-0
+        left-0
+        right-0
+        h-1
+        ${course.iconColor.replace("text-","bg-")}
+        ">
+        </div>
 
 
-card.className = `
+        <div class="p-4 sm:p-5">
 
-course-card
-bg-white
-rounded-2xl
-border
-${course.border}
-overflow-hidden
-relative
-
-`;
+            <div class="
+            flex
+            items-start
+            gap-3
+            ">
 
 
-card.innerHTML = `
+                <div class="
+                w-12
+                h-12
+                sm:w-14
+                sm:h-14
+                shrink-0
+                rounded-xl
+                ${course.iconBg}
+                ${course.iconColor}
+                border
+                ${course.border}
+                flex
+                items-center
+                justify-center
+                shadow-sm
+                ">
 
-<div class="
-absolute
-top-0
-left-0
-right-0
-h-1
-${course.iconColor.replace("text-","bg-")}
-">
-</div>
+                    <i class="
+                    fas
+                    ${course.icon}
+                    text-xl
+                    sm:text-2xl
+                    "></i>
 
-
-<div class="
-p-4
-sm:p-5
-">
-
-
-<div class="
-flex
-items-start
-gap-3
-">
-
-
-<div class="
-w-12
-h-12
-sm:w-14
-sm:h-14
-shrink-0
-rounded-xl
-${course.iconBg}
-${course.iconColor}
-border
-${course.border}
-flex
-items-center
-justify-center
-shadow-sm
-">
-
-<i class="
-fas
-${course.icon}
-text-xl
-sm:text-2xl
-">
-</i>
-
-</div>
+                </div>
 
 
-<div class="
-min-w-0
-flex-1
-">
+                <div class="min-w-0 flex-1">
+
+                    <h3 class="
+                    font-extrabold
+                    text-gray-900
+                    text-[15px]
+                    sm:text-lg
+                    leading-tight
+                    mb-1
+                    ">
+
+                        ${course.title}
+
+                    </h3>
 
 
-<h3 class="
-font-extrabold
-text-gray-900
-text-[15px]
-sm:text-lg
-leading-tight
-mb-1
-">
+                    <p class="
+                    text-gray-500
+                    text-[11px]
+                    sm:text-[13px]
+                    font-medium
+                    leading-relaxed
+                    ">
 
-${course.title}
+                        ${course.desc}
 
-</h3>
+                    </p>
 
+                </div>
 
-<p class="
-text-gray-500
-text-[11px]
-sm:text-[13px]
-font-medium
-leading-relaxed
-">
-
-${course.desc}
-
-</p>
+            </div>
 
 
-</div>
-
-</div>
-
-
-<div class="
-flex
-items-center
-justify-between
-gap-2
-mt-4
-pt-3
-border-t
-border-gray-100
-">
+            <div class="
+            flex
+            items-center
+            justify-between
+            gap-2
+            mt-4
+            pt-3
+            border-t
+            border-gray-100
+            ">
 
 
-<div class="
-flex
-items-baseline
-gap-1.5
-">
+                <div class="
+                flex
+                items-baseline
+                gap-1.5
+                ">
+
+                    <span class="
+                    text-[10px]
+                    sm:text-xs
+                    text-gray-400
+                    font-bold
+                    line-through
+                    ">
+
+                        ₹${course.oldPrice}
+
+                    </span>
 
 
-<span class="
-text-[10px]
-sm:text-xs
-text-gray-400
-font-bold
-line-through
-">
+                    <span class="
+                    text-lg
+                    sm:text-xl
+                    font-black
+                    ${course.priceColor}
+                    ">
 
-₹${course.oldPrice}
+                        ₹${course.newPrice}
 
-</span>
+                    </span>
 
-
-<span class="
-text-lg
-sm:text-xl
-font-black
-${course.priceColor}
-">
-
-₹${course.newPrice}
-
-</span>
-
-</div>
+                </div>
 
 
-<button
-onclick="bookSingleCourse('${course.title}',${course.newPrice})"
-class="
-course-button
-bg-gray-900
-${course.hover}
-text-white
-px-3.5
-sm:px-4
-py-2
-rounded-lg
-text-[10px]
-sm:text-xs
-font-bold
-flex
-items-center
-gap-1.5
-shadow-sm
-">
+                <button
+                type="button"
+                data-order-course="${course.title}"
+                data-order-price="${course.newPrice}"
+                class="
+                course-button
+                bg-gray-900
+                ${course.hover}
+                text-white
+                px-3.5
+                sm:px-4
+                py-2
+                rounded-lg
+                text-[10px]
+                sm:text-xs
+                font-bold
+                flex
+                items-center
+                gap-1.5
+                shadow-sm
+                cursor-pointer
+                ">
 
-बुक करें
+                    Order करें
 
-<i class="
-fas
-fa-arrow-right
-text-[9px]
-"></i>
+                    <i class="
+                    fas
+                    fa-arrow-right
+                    text-[9px]
+                    "></i>
 
-</button>
-
-
-</div>
-
-</div>
-
-`;
+                </button>
 
 
-grid.appendChild(card);
+            </div>
+
+        </div>
+    `;
+
+
+    grid.appendChild(card);
 
 });
 
 
 
-/* ==========================================
-   FAQ ACCORDION
-========================================== */
+/* =====================================================
+   UNIVERSAL ORDER BUTTON
+   यह सभी 12 Courses पर काम करेगा
+===================================================== */
 
-function toggleFAQ(question){
+document.addEventListener("click", function(event){
 
-    const currentItem =
-    question.parentElement;
+    const button =
+    event.target.closest(
+        "button[data-order-course]"
+    );
 
-    const allItems =
-    document.querySelectorAll(".faq-item");
+
+    if(!button){
+
+        return;
+
+    }
 
 
-    allItems.forEach(item => {
+    event.preventDefault();
 
-        if(item !== currentItem){
 
-            item.classList.remove("active");
+    const name =
+    button.getAttribute(
+        "data-order-course"
+    );
+
+
+    const price =
+    Number(
+        button.getAttribute(
+            "data-order-price"
+        )
+    );
+
+
+    if(
+        name &&
+        price > 0
+    ){
+
+        openOrder(
+            name,
+            price
+        );
+
+    }
+
+});
+
+
+
+/* =====================================================
+   OPEN ORDER
+===================================================== */
+
+function openOrder(
+    name,
+    price
+){
+
+    selectedCourseName =
+    String(
+        name ||
+        "Selected Course"
+    );
+
+
+    selectedCoursePrice =
+    Number(
+        price ||
+        0
+    );
+
+
+    if(
+        !selectedCoursePrice
+    ){
+
+        alert(
+            "Course की जानकारी उपलब्ध नहीं है।"
+        );
+
+        return;
+
+    }
+
+
+    const modal =
+    document.getElementById(
+        "orderModal"
+    );
+
+
+    const selectedCourse =
+    document.getElementById(
+        "selectedCourse"
+    );
+
+
+    const selectedPrice =
+    document.getElementById(
+        "selectedPrice"
+    );
+
+
+    const paymentAmount =
+    document.getElementById(
+        "paymentAmount"
+    );
+
+
+    const paymentCourseName =
+    document.getElementById(
+        "paymentCourseName"
+    );
+
+
+    const customerForm =
+    document.getElementById(
+        "customerForm"
+    );
+
+
+    const paymentStep =
+    document.getElementById(
+        "paymentStep"
+    );
+
+
+    if(selectedCourse){
+
+        selectedCourse.textContent =
+        selectedCourseName;
+
+    }
+
+
+    if(selectedPrice){
+
+        selectedPrice.textContent =
+        "₹" +
+        selectedCoursePrice;
+
+    }
+
+
+    if(paymentAmount){
+
+        paymentAmount.textContent =
+        "₹" +
+        selectedCoursePrice;
+
+    }
+
+
+    if(paymentCourseName){
+
+        paymentCourseName.textContent =
+        selectedCourseName;
+
+    }
+
+
+    if(paymentStep){
+
+        paymentStep.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    if(customerForm){
+
+        customerForm.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    modal.classList.add(
+        "flex"
+    );
+
+
+    document.body.style.overflow =
+    "hidden";
+
+
+    setTimeout(
+        function(){
+
+            const input =
+            document.getElementById(
+                "customerName"
+            );
+
+            if(input){
+
+                input.focus();
+
+            }
+
+        },
+        100
+    );
+
+}
+
+
+
+/* =====================================================
+   CLOSE ORDER
+===================================================== */
+
+function closeOrder(){
+
+    const modal =
+    document.getElementById(
+        "orderModal"
+    );
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    modal.classList.remove(
+        "flex"
+    );
+
+
+    document.body.style.overflow =
+    "";
+
+}
+
+
+
+/* =====================================================
+   GO TO PAYMENT
+===================================================== */
+
+function goToPayment(){
+
+    const nameInput =
+    document.getElementById(
+        "customerName"
+    );
+
+
+    const mobileInput =
+    document.getElementById(
+        "customerMobile"
+    );
+
+
+    customerName =
+    nameInput.value.trim();
+
+
+    customerMobile =
+    mobileInput.value.trim();
+
+
+    if(
+        customerName.length < 2
+    ){
+
+        alert(
+            "कृपया अपना नाम दर्ज करें।"
+        );
+
+        nameInput.focus();
+
+        return;
+
+    }
+
+
+    if(
+        !/^[0-9]{10}$/.test(
+            customerMobile
+        )
+    ){
+
+        alert(
+            "कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।"
+        );
+
+        mobileInput.focus();
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "customerForm"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "paymentStep"
+    ).classList.remove(
+        "hidden"
+    );
+
+
+    createPaymentQR();
+
+}
+
+
+
+/* =====================================================
+   CREATE UPI QR
+===================================================== */
+
+function createPaymentQR(){
+
+    const qrBox =
+    document.getElementById(
+        "qrcode"
+    );
+
+
+    qrBox.innerHTML = "";
+
+
+    const upiURL =
+    "upi://pay" +
+    "?pa=" +
+    encodeURIComponent(
+        UPI_ID
+    ) +
+    "&pn=" +
+    encodeURIComponent(
+        UPI_NAME
+    ) +
+    "&am=" +
+    encodeURIComponent(
+        selectedCoursePrice
+    ) +
+    "&cu=INR" +
+    "&tn=" +
+    encodeURIComponent(
+        selectedCourseName
+    );
+
+
+    if(
+        typeof QRCode !==
+        "undefined"
+    ){
+
+        new QRCode(
+            qrBox,
+            {
+                text:upiURL,
+                width:220,
+                height:220,
+                colorDark:"#111827",
+                colorLight:"#ffffff",
+                correctLevel:
+                QRCode.CorrectLevel.H
+            }
+        );
+
+    }
+    else{
+
+        qrBox.innerHTML = `
+
+        <div class="
+        w-[220px]
+        h-[220px]
+        flex
+        items-center
+        justify-center
+        text-center
+        text-xs
+        text-red-500
+        font-bold
+        ">
+
+        QR Code Load नहीं हुआ।
+        Internet चालू करके
+        दोबारा कोशिश करें।
+
+        </div>
+
+        `;
+
+    }
+
+
+    const paymentLink =
+    document.getElementById(
+        "upiPayButton"
+    );
+
+
+    paymentLink.href =
+    upiURL;
+
+}
+
+
+
+/* =====================================================
+   COPY UPI
+===================================================== */
+
+function copyUPI(){
+
+    if(
+        navigator.clipboard
+    ){
+
+        navigator.clipboard.writeText(
+            UPI_ID
+        )
+        .then(
+            function(){
+
+                alert(
+                    "UPI ID Copy हो गई: " +
+                    UPI_ID
+                );
+
+            }
+        )
+        .catch(
+            function(){
+
+                fallbackCopy();
+
+            }
+        );
+
+    }
+    else{
+
+        fallbackCopy();
+
+    }
+
+}
+
+
+function fallbackCopy(){
+
+    const temp =
+    document.createElement(
+        "textarea"
+    );
+
+
+    temp.value =
+    UPI_ID;
+
+
+    document.body.appendChild(
+        temp
+    );
+
+
+    temp.select();
+
+
+    document.execCommand(
+        "copy"
+    );
+
+
+    temp.remove();
+
+
+    alert(
+        "UPI ID Copy हो गई: " +
+        UPI_ID
+    );
+
+}
+
+
+
+/* =====================================================
+   DOWNLOAD QR
+===================================================== */
+
+function downloadQR(){
+
+    const qrBox =
+    document.getElementById(
+        "qrcode"
+    );
+
+
+    const canvas =
+    qrBox.querySelector(
+        "canvas"
+    );
+
+
+    const image =
+    qrBox.querySelector(
+        "img"
+    );
+
+
+    let url = "";
+
+
+    if(canvas){
+
+        url =
+        canvas.toDataURL(
+            "image/png"
+        );
+
+    }
+    else if(image){
+
+        url =
+        image.src;
+
+    }
+
+
+    if(!url){
+
+        alert(
+            "QR Code अभी तैयार नहीं है।"
+        );
+
+        return;
+
+    }
+
+
+    const link =
+    document.createElement(
+        "a"
+    );
+
+
+    link.href =
+    url;
+
+
+    link.download =
+    "Payment-QR-" +
+    selectedCoursePrice +
+    ".png";
+
+
+    document.body.appendChild(
+        link
+    );
+
+
+    link.click();
+
+
+    link.remove();
+
+}
+
+
+
+/* =====================================================
+   WHATSAPP ORDER CONFIRMATION
+===================================================== */
+
+function sendWhatsAppConfirmation(){
+
+    if(
+        !customerName ||
+        !customerMobile
+    ){
+
+        alert(
+            "पहले अपना नाम और मोबाइल नंबर भरें।"
+        );
+
+        return;
+
+    }
+
+
+    const message =
+
+`नमस्ते R.K YADAV सर 🙏
+
+मैंने आपकी वेबसाइट से Course Order किया है।
+
+📚 Course:
+${selectedCourseName}
+
+💰 Amount:
+₹${selectedCoursePrice}/-
+
+👤 Name:
+${customerName}
+
+📱 Mobile:
+${customerMobile}
+
+💳 Payment:
+मैंने UPI Payment कर दिया है।
+
+कृपया मेरा Order Confirm करके
+Class की जानकारी भेज दें।
+
+धन्यवाद।`;
+
+
+    const url =
+    "https://wa.me/" +
+    WHATSAPP_NUMBER +
+    "?text=" +
+    encodeURIComponent(
+        message
+    );
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+
+/* =====================================================
+   BACK TO FORM
+===================================================== */
+
+function backToForm(){
+
+    document.getElementById(
+        "paymentStep"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "customerForm"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =====================================================
+   FAQ
+===================================================== */
+
+function toggleFAQ(button){
+
+    const item =
+    button.closest(
+        ".faq-item"
+    );
+
+
+    document
+    .querySelectorAll(
+        ".faq-item"
+    )
+    .forEach(
+        function(other){
+
+            if(
+                other !== item
+            ){
+
+                other.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+    item.classList.toggle(
+        "active"
+    );
+
+}
+
+
+
+/* =====================================================
+   ESC KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key ===
+            "Escape"
+        ){
+
+            closeOrder();
 
         }
 
-    });
+    }
+);
 
 
-    currentItem.classList.toggle("active");
+/* =====================================================
+   CLICK OUTSIDE MODAL
+===================================================== */
 
-}
+document.getElementById(
+    "orderModal"
+).addEventListener(
+    "click",
+    function(event){
 
+        if(
+            event.target ===
+            this
+        ){
 
+            closeOrder();
 
-/* ==========================================
-   COMBO BOOKING
-========================================== */
+        }
 
-function bookComboOffer(){
+    }
+);
 
-const message =
-
-`नमस्ते R.K YADAV सर 🙏
-
-मैं "All 12 Courses Combo Offer" बुक करना चाहता/चाहती हूँ।
-
-📚 12 Professional Courses
-
-💰 Special Combo Price: ₹999/-
-
-🎁 Limited Time Special Discount
-
-कृपया मुझे Payment Details (QR/UPI) और Class की जानकारी बताएं।
-
-धन्यवाद।`;
-
-const url =
-`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-window.open(url,"_blank");
-
-}
-
-
-
-/* ==========================================
-   SINGLE COURSE BOOKING
-========================================== */
-
-function bookSingleCourse(courseName,price){
-
-const message =
-
-`नमस्ते R.K YADAV सर 🙏
-
-मैं आपका "${courseName}" कोर्स बुक करना चाहता/चाहती हूँ।
-
-💰 Course Price: ₹${price}/-
-
-कृपया मुझे Payment Details और Class की जानकारी बताएं।
-
-धन्यवाद।`;
-
-const url =
-`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-window.open(url,"_blank");
-
-}
-
-
-
-/* ==========================================
-   PICSART ₹199 BOOKING
-========================================== */
-
-function bookPicsArtCourse(){
-
-const message =
-
-`नमस्ते R.K YADAV सर 🙏
-
-मैं "PicsArt Complete Editing Course" बुक करना चाहता/चाहती हूँ।
-
-📚 Complete Practical Training
-
-⏱️ 3 घंटे की Training
-
-💰 Course Price: ₹199/-
-
-मैं PicsArt में Logo बनाना, Photo Cutting, Background Editing, Duplicate करना, Text Editing, PNG/Poster और Basic Photo Editing सीखना चाहता/चाहती हूँ।
-
-कृपया मुझे Payment Details (QR/UPI) और Class की जानकारी बताएं।
-
-धन्यवाद।`;
-
-const url =
-`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-window.open(url,"_blank");
-
-}
 
 </script>
 
