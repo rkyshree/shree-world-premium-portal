@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#0f172a">
 
 <title>EDVYNOX - Smart Shopping</title>
 
@@ -15,22 +15,30 @@
     padding:0;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
     font-family:
     Arial,
     Helvetica,
     sans-serif;
-    background:#f5f7fa;
+
+    background:#f4f7fb;
     color:#111827;
 }
+
 
 /* =====================================================
    HEADER
 ===================================================== */
 
 .header{
-    height:64px;
-    background:#ffffff;
+    height:66px;
+
+    background:rgba(255,255,255,.96);
+
     border-bottom:1px solid #e5e7eb;
 
     display:flex;
@@ -42,37 +50,51 @@ body{
     position:sticky;
     top:0;
     z-index:1000;
+
+    backdrop-filter:blur(12px);
 }
 
 .brand{
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:9px;
 }
 
 .logo{
     font-size:22px;
     font-weight:900;
-    letter-spacing:.7px;
+    letter-spacing:.8px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #111827,
+        #2563eb
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
 .aff-badge{
     background:#16a34a;
-    color:#ffffff;
+    color:#fff;
 
     padding:5px 9px;
 
-    border-radius:20px;
+    border-radius:30px;
 
-    font-size:9px;
-    font-weight:800;
+    font-size:8px;
+    font-weight:900;
+
+    letter-spacing:.5px;
 }
 
 .whatsapp{
     width:40px;
     height:40px;
 
-    background:#25D366;
+    background:#25d366;
     color:white;
 
     border-radius:50%;
@@ -84,57 +106,136 @@ body{
     text-decoration:none;
 
     font-size:19px;
+
+    box-shadow:
+    0 6px 18px rgba(37,211,102,.25);
 }
 
+
 /* =====================================================
-   BANNER
+   BANNER SLIDER
 ===================================================== */
 
-.banner{
-    width:calc(100% - 24px);
-    max-width:1200px;
+.banner-wrapper{
+    width:100%;
+
+    max-width:1250px;
+
+    margin:14px auto 0;
+
+    padding:0 12px;
+}
+
+.banner-slider{
+    position:relative;
+
+    width:100%;
+
+    overflow:hidden;
+
+    border-radius:22px;
+
+    box-shadow:
+    0 14px 35px rgba(15,23,42,.12);
+
+    background:#0f172a;
+
+    touch-action:pan-y;
+}
+
+.banner-track{
+    display:flex;
+
+    width:100%;
+
+    transition:
+    transform .45s
+    cubic-bezier(.4,0,.2,1);
+}
+
+.banner-slide{
+    min-width:100%;
+
+    position:relative;
+
+    overflow:hidden;
+
+    aspect-ratio:16/6;
+
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+    );
+}
+
+.banner-slide a{
+    display:block;
+
+    width:100%;
+    height:100%;
+}
+
+.banner-slide img{
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    display:block;
+}
+
+
+/* fallback banner */
+
+.banner-fallback{
+    width:100%;
+    height:100%;
 
     min-height:190px;
 
-    margin:14px auto;
-
-    border-radius:18px;
-
     display:flex;
+
     align-items:center;
     justify-content:center;
 
     text-align:center;
 
-    padding:28px 18px;
+    padding:25px;
 
     color:white;
 
     background:
+    radial-gradient(
+        circle at top right,
+        #2563eb,
+        transparent 38%
+    ),
     linear-gradient(
         135deg,
-        #111827,
-        #1f2937,
-        #065f46
+        #0f172a,
+        #064e3b
     );
-
-    box-shadow:
-    0 10px 30px rgba(0,0,0,.08);
 }
 
-.banner h1{
-    font-size:31px;
+.banner-fallback h1{
+    font-size:32px;
+
     line-height:1.3;
+
     margin-bottom:10px;
 }
 
-.banner p{
-    color:#d1fae5;
+.banner-fallback p{
+    color:#dbeafe;
+
     font-size:14px;
+
     line-height:1.6;
 }
 
-.banner-badge{
+.banner-fallback-badge{
     display:inline-block;
 
     margin-top:15px;
@@ -148,25 +249,159 @@ body{
     color:white;
 
     font-size:12px;
+
     font-weight:bold;
 }
 
+
+/* Banner overlay */
+
+.banner-overlay{
+    position:absolute;
+
+    inset:0;
+
+    pointer-events:none;
+
+    background:
+    linear-gradient(
+        to top,
+        rgba(0,0,0,.25),
+        transparent 45%
+    );
+}
+
+
+/* Arrow buttons */
+
+.banner-arrow{
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:42px;
+    height:42px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:
+    rgba(255,255,255,.92);
+
+    color:#111827;
+
+    font-size:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 5px 18px rgba(0,0,0,.18);
+
+    z-index:10;
+}
+
+.banner-arrow:hover{
+    background:#fff;
+
+    transform:
+    translateY(-50%)
+    scale(1.05);
+}
+
+.banner-prev{
+    left:13px;
+}
+
+.banner-next{
+    right:13px;
+}
+
+
+/* Dots */
+
+.banner-dots{
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:13px;
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:7px;
+
+    z-index:10;
+}
+
+.banner-dot{
+    width:8px;
+    height:8px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:
+    rgba(255,255,255,.55);
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.banner-dot.active{
+    width:24px;
+
+    border-radius:20px;
+
+    background:#fff;
+}
+
+
 /* =====================================================
-   CONTAINER
+   MAIN
 ===================================================== */
 
 .container{
     width:calc(100% - 24px);
-    max-width:1200px;
+
+    max-width:1250px;
+
     margin:auto;
 }
 
-.section-title{
-    margin:20px 0 14px;
+.section-head{
+    display:flex;
 
-    font-size:21px;
-    font-weight:800;
+    align-items:center;
+    justify-content:space-between;
+
+    margin:25px 0 15px;
 }
+
+.section-title{
+    font-size:21px;
+
+    font-weight:900;
+}
+
+.section-subtitle{
+    font-size:11px;
+
+    color:#6b7280;
+
+    margin-top:4px;
+}
+
 
 /* =====================================================
    PRODUCTS
@@ -180,33 +415,38 @@ body{
 
     gap:17px;
 
-    padding-bottom:35px;
+    padding-bottom:40px;
 }
 
 .product{
-    background:#ffffff;
+    background:#fff;
 
     border:1px solid #e5e7eb;
 
-    border-radius:15px;
+    border-radius:17px;
 
     overflow:hidden;
 
-    transition:.2s;
+    transition:
+    transform .2s,
+    box-shadow .2s;
+
+    box-shadow:
+    0 4px 16px rgba(15,23,42,.04);
 }
 
 .product:hover{
-    transform:translateY(-3px);
+    transform:translateY(-4px);
 
     box-shadow:
-    0 12px 30px rgba(0,0,0,.08);
+    0 15px 35px rgba(15,23,42,.10);
 }
 
 .product-image{
     width:100%;
     height:220px;
 
-    background:#f3f4f6;
+    background:#f8fafc;
 
     display:flex;
     align-items:center;
@@ -222,11 +462,19 @@ body{
     object-fit:contain;
 
     padding:10px;
+
+    transition:
+    transform .3s;
+}
+
+.product:hover .product-image img{
+    transform:scale(1.04);
 }
 
 .placeholder{
     font-size:45px;
-    color:#9ca3af;
+
+    color:#cbd5e1;
 }
 
 .product-info{
@@ -235,11 +483,14 @@ body{
 
 .product-title{
     font-size:14px;
-    font-weight:700;
+
+    font-weight:800;
 
     line-height:1.45;
 
     min-height:40px;
+
+    color:#111827;
 }
 
 .buy-button{
@@ -249,18 +500,30 @@ body{
 
     padding:11px;
 
-    background:#2874f0;
-    color:white;
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
 
-    border-radius:8px;
+    color:#fff;
+
+    border-radius:9px;
 
     text-align:center;
 
     font-size:13px;
-    font-weight:bold;
+
+    font-weight:800;
 
     text-decoration:none;
 }
+
+.buy-button:hover{
+    background:#1d4ed8;
+}
+
 
 /* =====================================================
    EMPTY
@@ -271,42 +534,47 @@ body{
 
     background:white;
 
-    border-radius:15px;
+    border-radius:17px;
 
-    padding:50px 20px;
+    padding:55px 20px;
 
     text-align:center;
 
     color:#9ca3af;
 }
+
 
 /* =====================================================
    FOOTER
 ===================================================== */
 
 .footer{
-    background:#111827;
+    background:#0f172a;
 
-    color:#9ca3af;
+    color:#94a3b8;
 
     text-align:center;
 
-    padding:28px 15px;
+    padding:30px 15px;
 
     font-size:13px;
 }
 
 .admin-trigger{
     cursor:pointer;
+
     user-select:none;
+
+    color:#cbd5e1;
 }
 
 .admin-trigger:hover{
     color:white;
 }
 
+
 /* =====================================================
-   MODAL
+   MODALS
 ===================================================== */
 
 .modal{
@@ -317,31 +585,40 @@ body{
     inset:0;
 
     background:
-    rgba(0,0,0,.68);
+    rgba(2,6,23,.72);
 
     z-index:5000;
 
-    padding:18px;
+    padding:15px;
 
     overflow-y:auto;
+
+    backdrop-filter:blur(5px);
 }
 
 .modal-box{
     width:100%;
-    max-width:560px;
+
+    max-width:620px;
 
     background:white;
 
-    margin:25px auto;
+    margin:20px auto;
 
-    border-radius:18px;
+    border-radius:20px;
 
     padding:20px;
+
+    box-shadow:
+    0 25px 70px rgba(0,0,0,.25);
 }
 
 .modal-title{
     font-size:20px;
-    font-weight:800;
+
+    font-weight:900;
+
+    color:#111827;
 }
 
 .modal-subtitle{
@@ -350,8 +627,66 @@ body{
     font-size:12px;
 
     margin-top:5px;
+
     margin-bottom:18px;
 }
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
+.admin-tabs{
+    display:flex;
+
+    gap:7px;
+
+    margin-bottom:18px;
+
+    background:#f1f5f9;
+
+    padding:5px;
+
+    border-radius:12px;
+}
+
+.admin-tab{
+    flex:1;
+
+    border:0;
+
+    padding:10px 8px;
+
+    border-radius:9px;
+
+    background:transparent;
+
+    color:#64748b;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+.admin-tab.active{
+    background:#fff;
+
+    color:#1d4ed8;
+
+    box-shadow:
+    0 2px 8px rgba(0,0,0,.08);
+}
+
+.admin-section{
+    display:none;
+}
+
+.admin-section.active{
+    display:block;
+}
+
 
 /* =====================================================
    INPUT
@@ -365,7 +700,7 @@ body{
     border:
     1px solid #d1d5db;
 
-    border-radius:9px;
+    border-radius:10px;
 
     padding:0 12px;
 
@@ -374,11 +709,17 @@ body{
     outline:none;
 
     margin-bottom:10px;
+
+    background:#fff;
 }
 
 .input:focus{
-    border-color:#16a34a;
+    border-color:#2563eb;
+
+    box-shadow:
+    0 0 0 3px rgba(37,99,235,.08);
 }
+
 
 /* =====================================================
    PHOTO UPLOAD
@@ -388,9 +729,9 @@ body{
     display:block;
 
     border:
-    2px dashed #d1d5db;
+    2px dashed #cbd5e1;
 
-    border-radius:12px;
+    border-radius:13px;
 
     padding:18px 10px;
 
@@ -398,15 +739,15 @@ body{
 
     cursor:pointer;
 
-    background:#fafafa;
+    background:#f8fafc;
 
     margin-bottom:10px;
 }
 
 .photo-label:hover{
-    border-color:#16a34a;
+    border-color:#2563eb;
 
-    background:#f0fdf4;
+    background:#eff6ff;
 }
 
 .photo-icon{
@@ -419,7 +760,8 @@ body{
 
 .photo-title{
     font-size:13px;
-    font-weight:bold;
+
+    font-weight:900;
 }
 
 .photo-help{
@@ -429,10 +771,10 @@ body{
 
     font-size:11px;
 
-    color:#9ca3af;
+    color:#94a3b8;
 }
 
-#photoInput{
+.file-input{
     display:none;
 }
 
@@ -443,14 +785,36 @@ body{
 
     height:190px;
 
-    object-fit:contain;
+    object-fit:cover;
 
-    background:#f3f4f6;
+    background:#f1f5f9;
 
-    border-radius:10px;
+    border-radius:12px;
 
     margin-bottom:10px;
 }
+
+
+/* =====================================================
+   BANNER PREVIEW
+===================================================== */
+
+.banner-preview{
+    width:100%;
+
+    height:170px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    background:#f1f5f9;
+
+    margin-bottom:10px;
+
+    display:none;
+}
+
 
 /* =====================================================
    BUTTONS
@@ -467,13 +831,13 @@ body{
 .btn{
     border:0;
 
-    border-radius:9px;
+    border-radius:10px;
 
     padding:11px 15px;
 
     font-size:13px;
 
-    font-weight:bold;
+    font-weight:800;
 
     cursor:pointer;
 }
@@ -484,7 +848,7 @@ body{
 }
 
 .btn-blue{
-    background:#2874f0;
+    background:#2563eb;
     color:white;
 }
 
@@ -494,9 +858,10 @@ body{
 }
 
 .btn-gray{
-    background:#e5e7eb;
+    background:#e2e8f0;
     color:#111827;
 }
+
 
 /* =====================================================
    MESSAGE
@@ -507,7 +872,7 @@ body{
 
     padding:10px;
 
-    border-radius:8px;
+    border-radius:9px;
 
     font-size:12px;
 
@@ -530,6 +895,7 @@ body{
     background:#fee2e2;
 }
 
+
 /* =====================================================
    EDIT MODE
 ===================================================== */
@@ -541,7 +907,7 @@ body{
 
     color:#1d4ed8;
 
-    border-radius:8px;
+    border-radius:9px;
 
     padding:10px;
 
@@ -549,26 +915,29 @@ body{
 
     font-size:12px;
 
-    font-weight:bold;
+    font-weight:800;
 }
 
+
 /* =====================================================
-   ADMIN PRODUCTS
+   ADMIN PRODUCTS/BANNERS
 ===================================================== */
 
 .admin-heading{
     margin-top:22px;
 
     font-size:16px;
-    font-weight:800;
+
+    font-weight:900;
 }
 
-.admin-product{
-    background:#f9fafb;
+.admin-product,
+.admin-banner{
+    background:#f8fafc;
 
     border:1px solid #e5e7eb;
 
-    border-radius:12px;
+    border-radius:13px;
 
     padding:11px;
 
@@ -584,27 +953,28 @@ body{
 }
 
 .admin-image{
-    width:58px;
-    height:58px;
+    width:62px;
+    height:62px;
 
-    border-radius:9px;
+    border-radius:10px;
 
     object-fit:cover;
 
-    background:#eee;
+    background:#e2e8f0;
 
     flex-shrink:0;
 }
 
 .admin-name{
     font-size:13px;
-    font-weight:bold;
+
+    font-weight:900;
 }
 
 .admin-link{
     font-size:11px;
 
-    color:#6b7280;
+    color:#64748b;
 
     word-break:break-all;
 
@@ -613,8 +983,49 @@ body{
 
 .admin-actions{
     display:flex;
+
     gap:7px;
+
+    flex-wrap:wrap;
 }
+
+.banner-admin-image{
+    width:100%;
+
+    height:125px;
+
+    object-fit:cover;
+
+    border-radius:10px;
+
+    background:#e2e8f0;
+
+    margin-bottom:9px;
+}
+
+
+/* =====================================================
+   INFO BOX
+===================================================== */
+
+.info-box{
+    background:#eff6ff;
+
+    border:1px solid #bfdbfe;
+
+    color:#1e40af;
+
+    padding:11px;
+
+    border-radius:10px;
+
+    font-size:11px;
+
+    line-height:1.6;
+
+    margin-bottom:12px;
+}
+
 
 /* =====================================================
    LOADING
@@ -623,10 +1034,11 @@ body{
 .loading{
     text-align:center;
 
-    color:#6b7280;
+    color:#64748b;
 
     padding:30px;
 }
+
 
 /* =====================================================
    MOBILE
@@ -643,24 +1055,61 @@ body{
 
 @media(max-width:650px){
 
+    .header{
+        height:62px;
+    }
+
     .logo{
-        font-size:20px;
+        font-size:19px;
     }
 
     .aff-badge{
-        font-size:8px;
+        font-size:7px;
     }
 
-    .banner{
-        min-height:165px;
+    .banner-wrapper{
+        padding:0 10px;
+
+        margin-top:10px;
     }
 
-    .banner h1{
-        font-size:25px;
+    .banner-slider{
+        border-radius:17px;
     }
 
-    .banner p{
-        font-size:13px;
+    .banner-slide{
+        aspect-ratio:16/8.5;
+    }
+
+    .banner-fallback{
+        min-height:180px;
+    }
+
+    .banner-fallback h1{
+        font-size:24px;
+    }
+
+    .banner-fallback p{
+        font-size:12px;
+    }
+
+    .banner-arrow{
+        width:34px;
+        height:34px;
+
+        font-size:18px;
+    }
+
+    .banner-prev{
+        left:8px;
+    }
+
+    .banner-next{
+        right:8px;
+    }
+
+    .section-head{
+        margin-top:20px;
     }
 
     .products{
@@ -671,7 +1120,7 @@ body{
     }
 
     .product-image{
-        height:170px;
+        height:165px;
     }
 
     .product-info{
@@ -680,6 +1129,24 @@ body{
 
     .product-title{
         font-size:13px;
+    }
+
+    .buy-button{
+        padding:10px;
+
+        font-size:12px;
+    }
+
+    .modal{
+        padding:8px;
+    }
+
+    .modal-box{
+        margin:8px auto;
+
+        padding:16px;
+
+        border-radius:17px;
     }
 
 }
@@ -715,6 +1182,7 @@ body{
         href="https://wa.me/919451239239"
         target="_blank"
         rel="noopener"
+        aria-label="WhatsApp"
     >
         ☎
     </a>
@@ -723,25 +1191,76 @@ body{
 
 
 <!-- =====================================================
-     BANNER
+     BANNER SLIDER
 ===================================================== -->
 
-<section class="banner">
+<section class="banner-wrapper">
 
-    <div>
+    <div
+        id="bannerSlider"
+        class="banner-slider"
+    >
 
-        <h1>
-            आपकी पसंद, हमारी खोज! 🛍️
-        </h1>
+        <div
+            id="bannerTrack"
+            class="banner-track"
+        >
 
-        <p>
-            पसंदीदा प्रोडक्ट खोजें, बेहतर विकल्प देखें
-            और अपनी खरीदारी आसानी से करें।
-        </p>
+            <!-- Default Banner -->
 
-        <span class="banner-badge">
-            ✨ स्मार्ट शॉपिंग • आसान खरीदारी
-        </span>
+            <div class="banner-slide">
+
+                <div class="banner-fallback">
+
+                    <div>
+
+                        <h1>
+                            आपकी पसंद, हमारी खोज! 🛍️
+                        </h1>
+
+                        <p>
+                            पसंदीदा प्रोडक्ट खोजें,
+                            बेहतर विकल्प देखें
+                            और अपनी खरीदारी आसानी से करें।
+                        </p>
+
+                        <span class="banner-fallback-badge">
+                            ✨ स्मार्ट शॉपिंग • आसान खरीदारी
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button
+            id="bannerPrev"
+            class="banner-arrow banner-prev"
+            onclick="previousBanner()"
+            aria-label="Previous Banner"
+        >
+            ‹
+        </button>
+
+
+        <button
+            id="bannerNext"
+            class="banner-arrow banner-next"
+            onclick="nextBanner()"
+            aria-label="Next Banner"
+        >
+            ›
+        </button>
+
+
+        <div
+            id="bannerDots"
+            class="banner-dots"
+        ></div>
 
     </div>
 
@@ -754,9 +1273,21 @@ body{
 
 <main class="container">
 
-    <h2 class="section-title">
-        🛍️ हमारे चुनिंदा प्रोडक्ट
-    </h2>
+    <div class="section-head">
+
+        <div>
+
+            <h2 class="section-title">
+                🛍️ हमारे चुनिंदा प्रोडक्ट
+            </h2>
+
+            <div class="section-subtitle">
+                आपके लिए चुने गए बेहतर Shopping Options
+            </div>
+
+        </div>
+
+    </div>
 
 
     <div
@@ -865,127 +1396,267 @@ body{
         </div>
 
         <div class="modal-subtitle">
-            Product जोड़ें, Edit करें या Delete करें
+            Banner और Products को Manage करें
         </div>
 
 
-        <!-- EDIT MODE -->
+        <!-- TABS -->
 
-        <div
-            id="editMode"
-            class="edit-mode"
-        >
-            ✏️ आप अभी Product Edit कर रहे हैं
+        <div class="admin-tabs">
+
+            <button
+                id="bannerTab"
+                class="admin-tab active"
+                onclick="showAdminSection('bannerSection',this)"
+            >
+                🖼️ Banners
+            </button>
+
+            <button
+                id="productTab"
+                class="admin-tab"
+                onclick="showAdminSection('productSection',this)"
+            >
+                📦 Products
+            </button>
+
         </div>
 
 
-        <!-- MESSAGE -->
+        <!-- =================================================
+             BANNER SECTION
+        ================================================= -->
+
+        <section
+            id="bannerSection"
+            class="admin-section active"
+        >
+
+            <div class="info-box">
+
+                🖼️ Gallery से Banner फोटो चुनें।
+                <br>
+                🔗 Link optional है — अगर Link डालेंगे तो
+                ग्राहक Banner पर क्लिक करके उस Link पर जाएगा।
+                <br>
+                📱 मोबाइल में Gallery/Screenshot से भी फोटो चुन सकते हैं।
+
+            </div>
+
+
+            <div
+                id="bannerEditMode"
+                class="edit-mode"
+            >
+                ✏️ आप अभी Banner Edit कर रहे हैं
+            </div>
+
+
+            <div
+                id="bannerMessage"
+                class="message"
+            ></div>
+
+
+            <input
+                id="bannerLink"
+                class="input"
+                type="url"
+                placeholder="Banner Link (Optional)"
+                autocomplete="off"
+            >
+
+
+            <label
+                class="photo-label"
+                for="bannerInput"
+            >
+
+                <span class="photo-icon">
+                    🖼️
+                </span>
+
+                <span class="photo-title">
+                    Banner की फोटो चुनें
+                </span>
+
+                <span class="photo-help">
+                    Gallery या Screenshot से Banner चुनें
+                </span>
+
+            </label>
+
+
+            <input
+                id="bannerInput"
+                class="file-input"
+                type="file"
+                accept="image/*"
+            >
+
+
+            <img
+                id="bannerPreview"
+                class="banner-preview"
+                alt="Banner Preview"
+            >
+
+
+            <div class="buttons">
+
+                <button
+                    id="bannerSaveButton"
+                    class="btn btn-green"
+                    onclick="saveBanner()"
+                >
+                    + Banner Add करें
+                </button>
+
+
+                <button
+                    id="bannerCancelButton"
+                    class="btn btn-gray"
+                    onclick="cancelBannerEdit()"
+                    style="display:none;"
+                >
+                    Edit Cancel
+                </button>
+
+            </div>
+
+
+            <div class="admin-heading">
+                🖼️ Saved Banners
+            </div>
+
+
+            <div id="adminBanners"></div>
+
+        </section>
+
+
+        <!-- =================================================
+             PRODUCT SECTION
+        ================================================= -->
+
+        <section
+            id="productSection"
+            class="admin-section"
+        >
+
+            <div
+                id="editMode"
+                class="edit-mode"
+            >
+                ✏️ आप अभी Product Edit कर रहे हैं
+            </div>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+            <input
+                id="productLink"
+                class="input"
+                type="url"
+                placeholder="Product Link डालें"
+                autocomplete="off"
+            >
+
+
+            <input
+                id="productName"
+                class="input"
+                type="text"
+                placeholder="Product का नाम लिखें"
+                autocomplete="off"
+            >
+
+
+            <label
+                class="photo-label"
+                for="photoInput"
+            >
+
+                <span class="photo-icon">
+                    📷
+                </span>
+
+                <span class="photo-title">
+                    Product की फोटो चुनें
+                </span>
+
+                <span class="photo-help">
+                    Screenshot या Gallery से फोटो चुन सकते हैं
+                </span>
+
+            </label>
+
+
+            <input
+                id="photoInput"
+                class="file-input"
+                type="file"
+                accept="image/*"
+            >
+
+
+            <img
+                id="preview"
+                class="preview"
+                alt="Product Preview"
+            >
+
+
+            <div class="buttons">
+
+                <button
+                    id="saveButton"
+                    class="btn btn-green"
+                    onclick="saveProduct()"
+                >
+                    + Product Add करें
+                </button>
+
+
+                <button
+                    id="cancelEdit"
+                    class="btn btn-gray"
+                    onclick="cancelEdit()"
+                    style="display:none;"
+                >
+                    Edit Cancel
+                </button>
+
+            </div>
+
+
+            <div class="admin-heading">
+                📦 Saved Products
+            </div>
+
+
+            <div id="adminProducts"></div>
+
+        </section>
+
 
         <div
-            id="message"
-            class="message"
-        ></div>
-
-
-        <!-- LINK -->
-
-        <input
-            id="productLink"
-            class="input"
-            type="url"
-            placeholder="अपना Product Link डालें"
-            autocomplete="off"
+            class="buttons"
+            style="margin-top:20px;"
         >
-
-
-        <!-- NAME -->
-
-        <input
-            id="productName"
-            class="input"
-            type="text"
-            placeholder="Product का नाम लिखें"
-            autocomplete="off"
-        >
-
-
-        <!-- PHOTO -->
-
-        <label
-            class="photo-label"
-            for="photoInput"
-        >
-
-            <span class="photo-icon">
-                📷
-            </span>
-
-            <span class="photo-title">
-                Product की फोटो चुनें
-            </span>
-
-            <span class="photo-help">
-                Screenshot या Gallery से फोटो चुन सकते हैं
-            </span>
-
-        </label>
-
-
-        <input
-            id="photoInput"
-            type="file"
-            accept="image/*"
-        >
-
-
-        <img
-            id="preview"
-            class="preview"
-            alt="Product Preview"
-        >
-
-
-        <!-- BUTTONS -->
-
-        <div class="buttons">
-
-            <button
-                id="saveButton"
-                class="btn btn-green"
-                onclick="saveProduct()"
-            >
-                + Product Add करें
-            </button>
-
-
-            <button
-                id="cancelEdit"
-                class="btn btn-gray"
-                onclick="cancelEdit()"
-                style="display:none;"
-            >
-                Edit Cancel
-            </button>
-
 
             <button
                 class="btn btn-gray"
                 onclick="closeAdmin()"
             >
-                Close
+                Close Admin Panel
             </button>
 
         </div>
-
-
-        <!-- ADMIN PRODUCT LIST -->
-
-        <div class="admin-heading">
-            📦 Saved Products
-        </div>
-
-
-        <div id="adminProducts"></div>
 
     </div>
 
@@ -994,28 +1665,65 @@ body{
 
 <script>
 
+
 /* =====================================================
    SETTINGS
 ===================================================== */
 
 const ADMIN_PASSWORD = "1215";
 
-const DB_NAME = "EDVYNOX_DATABASE";
 
-const DB_VERSION = 1;
+const DB_NAME =
+    "EDVYNOX_DATABASE";
 
-const STORE_NAME = "products";
+
+const DB_VERSION =
+    2;
+
+
+const PRODUCT_STORE =
+    "products";
+
+
+const BANNER_STORE =
+    "banners";
 
 
 let db = null;
 
-let editingId = null;
 
-let oldEditingImage = null;
+/* Product editing */
+
+let editingId =
+    null;
+
+
+/* Banner editing */
+
+let editingBannerId =
+    null;
+
+
+/* Slider */
+
+let currentBanner =
+    0;
+
+let bannerTimer =
+    null;
+
+let bannerData =
+    [];
+
+let touchStartX =
+    0;
+
+let touchEndX =
+    0;
 
 
 /* =====================================================
-   OPEN DATABASE
+   DATABASE
 ===================================================== */
 
 function openDatabase(){
@@ -1037,14 +1745,16 @@ function openDatabase(){
                         event.target.result;
 
 
+                    /* PRODUCTS */
+
                     if(
                         !database.objectStoreNames
-                        .contains(STORE_NAME)
+                        .contains(PRODUCT_STORE)
                     ){
 
                         const store =
                             database.createObjectStore(
-                                STORE_NAME,
+                                PRODUCT_STORE,
                                 {
                                     keyPath:"id",
                                     autoIncrement:true
@@ -1053,6 +1763,31 @@ function openDatabase(){
 
 
                         store.createIndex(
+                            "createdAt",
+                            "createdAt"
+                        );
+
+                    }
+
+
+                    /* BANNERS */
+
+                    if(
+                        !database.objectStoreNames
+                        .contains(BANNER_STORE)
+                    ){
+
+                        const bannerStore =
+                            database.createObjectStore(
+                                BANNER_STORE,
+                                {
+                                    keyPath:"id",
+                                    autoIncrement:true
+                                }
+                            );
+
+
+                        bannerStore.createIndex(
                             "createdAt",
                             "createdAt"
                         );
@@ -1089,24 +1824,26 @@ function openDatabase(){
 
 
 /* =====================================================
-   GET ALL PRODUCTS
+   GENERIC STORE GET ALL
 ===================================================== */
 
-function getAllProducts(){
+function getAllFromStore(
+    storeName
+){
 
     return new Promise(
         (resolve,reject)=>{
 
             const transaction =
                 db.transaction(
-                    STORE_NAME,
+                    storeName,
                     "readonly"
                 );
 
 
             const store =
                 transaction.objectStore(
-                    STORE_NAME
+                    storeName
                 );
 
 
@@ -1149,29 +1886,32 @@ function getAllProducts(){
 
 
 /* =====================================================
-   ADD PRODUCT
+   GENERIC ADD
 ===================================================== */
 
-function addProduct(product){
+function addToStore(
+    storeName,
+    data
+){
 
     return new Promise(
         (resolve,reject)=>{
 
             const transaction =
                 db.transaction(
-                    STORE_NAME,
+                    storeName,
                     "readwrite"
                 );
 
 
             const store =
                 transaction.objectStore(
-                    STORE_NAME
+                    storeName
                 );
 
 
             const request =
-                store.add(product);
+                store.add(data);
 
 
             request.onsuccess =
@@ -1200,29 +1940,32 @@ function addProduct(product){
 
 
 /* =====================================================
-   UPDATE PRODUCT
+   GENERIC UPDATE
 ===================================================== */
 
-function updateProduct(product){
+function updateInStore(
+    storeName,
+    data
+){
 
     return new Promise(
         (resolve,reject)=>{
 
             const transaction =
                 db.transaction(
-                    STORE_NAME,
+                    storeName,
                     "readwrite"
                 );
 
 
             const store =
                 transaction.objectStore(
-                    STORE_NAME
+                    storeName
                 );
 
 
             const request =
-                store.put(product);
+                store.put(data);
 
 
             request.onsuccess =
@@ -1249,24 +1992,27 @@ function updateProduct(product){
 
 
 /* =====================================================
-   DELETE PRODUCT
+   GENERIC DELETE
 ===================================================== */
 
-function removeProduct(id){
+function deleteFromStore(
+    storeName,
+    id
+){
 
     return new Promise(
         (resolve,reject)=>{
 
             const transaction =
                 db.transaction(
-                    STORE_NAME,
+                    storeName,
                     "readwrite"
                 );
 
 
             const store =
                 transaction.objectStore(
-                    STORE_NAME
+                    storeName
                 );
 
 
@@ -1298,7 +2044,7 @@ function removeProduct(id){
 
 
 /* =====================================================
-   IMAGE FILE TO BLOB
+   IMAGE
 ===================================================== */
 
 function fileToBlob(file){
@@ -1340,10 +2086,6 @@ function fileToBlob(file){
 }
 
 
-/* =====================================================
-   BLOB TO IMAGE URL
-===================================================== */
-
 function createImageURL(blob){
 
     if(!blob){
@@ -1361,7 +2103,66 @@ function createImageURL(blob){
 
 
 /* =====================================================
-   IMAGE PREVIEW
+   BANNER IMAGE PREVIEW
+===================================================== */
+
+document
+.getElementById("bannerInput")
+.addEventListener(
+    "change",
+    function(){
+
+        const file =
+            this.files[0];
+
+
+        if(!file){
+
+            return;
+
+        }
+
+
+        if(
+            !file.type.startsWith(
+                "image/"
+            )
+        ){
+
+            showBannerMessage(
+                "❌ कृपया केवल फोटो चुनें।",
+                true
+            );
+
+            this.value =
+                "";
+
+            return;
+
+        }
+
+
+        const preview =
+            document.getElementById(
+                "bannerPreview"
+            );
+
+
+        preview.src =
+            URL.createObjectURL(
+                file
+            );
+
+
+        preview.style.display =
+            "block";
+
+    }
+);
+
+
+/* =====================================================
+   PRODUCT IMAGE PREVIEW
 ===================================================== */
 
 document
@@ -1372,12 +2173,6 @@ document
 
         const file =
             this.files[0];
-
-
-        const preview =
-            document.getElementById(
-                "preview"
-            );
 
 
         if(!file){
@@ -1398,21 +2193,24 @@ document
                 true
             );
 
-            this.value = "";
+            this.value =
+                "";
 
             return;
 
         }
 
 
-        const url =
-            URL.createObjectURL(
-                file
+        const preview =
+            document.getElementById(
+                "preview"
             );
 
 
         preview.src =
-            url;
+            URL.createObjectURL(
+                file
+            );
 
 
         preview.style.display =
@@ -1423,8 +2221,1161 @@ document
 
 
 /* =====================================================
-   SAVE PRODUCT
+   SAVE BANNER
 ===================================================== */
+
+async function saveBanner(){
+
+    const link =
+        document
+        .getElementById(
+            "bannerLink"
+        )
+        .value
+        .trim();
+
+
+    const input =
+        document.getElementById(
+            "bannerInput"
+        );
+
+
+    const file =
+        input.files[0];
+
+
+    /* Link optional */
+
+    if(link && !isValidURL(link)){
+
+        showBannerMessage(
+            "❌ Banner Link सही नहीं है।",
+            true
+        );
+
+        return;
+
+    }
+
+
+    /* EDIT */
+
+    if(
+        editingBannerId !== null
+    ){
+
+        try{
+
+            const banners =
+                await getAllFromStore(
+                    BANNER_STORE
+                );
+
+
+            const banner =
+                banners.find(
+                    b =>
+                        b.id ===
+                        editingBannerId
+                );
+
+
+            if(!banner){
+
+                showBannerMessage(
+                    "❌ Banner नहीं मिला।",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            if(file){
+
+                banner.image =
+                    await fileToBlob(
+                        file
+                    );
+
+            }
+
+
+            if(!banner.image){
+
+                showBannerMessage(
+                    "❌ Banner की फोटो चुनें।",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            banner.link =
+                link;
+
+
+            banner.updatedAt =
+                Date.now();
+
+
+            await updateInStore(
+                BANNER_STORE,
+                banner
+            );
+
+
+            showBannerMessage(
+                "✅ Banner सफलतापूर्वक Update हो गया।",
+                false
+            );
+
+
+            resetBannerForm();
+
+
+            await renderBanners();
+
+
+        }catch(error){
+
+            console.error(error);
+
+            showBannerMessage(
+                "❌ Banner Update नहीं हो पाया।",
+                true
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    /* NEW BANNER */
+
+    if(!file){
+
+        showBannerMessage(
+            "❌ Banner की फोटो चुनें।",
+            true
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const image =
+            await fileToBlob(
+                file
+            );
+
+
+        const banner = {
+
+            image:image,
+
+            link:link,
+
+            createdAt:
+                Date.now(),
+
+            updatedAt:
+                Date.now()
+
+        };
+
+
+        await addToStore(
+            BANNER_STORE,
+            banner
+        );
+
+
+        showBannerMessage(
+            "✅ Banner सफलतापूर्वक Save हो गया।",
+            false
+        );
+
+
+        resetBannerForm();
+
+
+        await renderBanners();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showBannerMessage(
+            "❌ Banner Save नहीं हो पाया।",
+            true
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GET BANNERS
+===================================================== */
+
+async function getBanners(){
+
+    return await getAllFromStore(
+        BANNER_STORE
+    );
+
+}
+
+
+/* =====================================================
+   RENDER BANNERS
+===================================================== */
+
+async function renderBanners(){
+
+    try{
+
+        bannerData =
+            await getBanners();
+
+
+        renderMainBannerSlider();
+
+        renderAdminBanners();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   MAIN BANNER SLIDER
+===================================================== */
+
+function renderMainBannerSlider(){
+
+    const track =
+        document.getElementById(
+            "bannerTrack"
+        );
+
+
+    const dots =
+        document.getElementById(
+            "bannerDots"
+        );
+
+
+    track.innerHTML =
+        "";
+
+
+    dots.innerHTML =
+        "";
+
+
+    if(
+        bannerData.length === 0
+    ){
+
+        track.innerHTML = `
+
+            <div class="banner-slide">
+
+                <div class="banner-fallback">
+
+                    <div>
+
+                        <h1>
+                            आपकी पसंद, हमारी खोज! 🛍️
+                        </h1>
+
+                        <p>
+                            पसंदीदा प्रोडक्ट खोजें,
+                            बेहतर विकल्प देखें
+                            और अपनी खरीदारी आसानी से करें।
+                        </p>
+
+                        <span class="banner-fallback-badge">
+                            ✨ स्मार्ट शॉपिंग • आसान खरीदारी
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document
+        .getElementById(
+            "bannerPrev"
+        )
+        .style.display =
+            "none";
+
+
+        document
+        .getElementById(
+            "bannerNext"
+        )
+        .style.display =
+            "none";
+
+
+        return;
+
+    }
+
+
+    bannerData.forEach(
+        (banner,index)=>{
+
+            const slide =
+                document.createElement(
+                    "div"
+                );
+
+
+            slide.className =
+                "banner-slide";
+
+
+            const imageURL =
+                createImageURL(
+                    banner.image
+                );
+
+
+            if(banner.link){
+
+                slide.innerHTML = `
+
+                    <a
+                        href="${escapeAttribute(banner.link)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+
+                        <img
+                            src="${imageURL}"
+                            alt="EDVYNOX Banner"
+                        >
+
+                        <div class="banner-overlay"></div>
+
+                    </a>
+
+                `;
+
+            }else{
+
+                slide.innerHTML = `
+
+                    <img
+                        src="${imageURL}"
+                        alt="EDVYNOX Banner"
+                    >
+
+                    <div class="banner-overlay"></div>
+
+                `;
+
+            }
+
+
+            track.appendChild(
+                slide
+            );
+
+
+            const dot =
+                document.createElement(
+                    "button"
+                );
+
+
+            dot.className =
+                "banner-dot";
+
+
+            if(
+                index === 0
+            ){
+
+                dot.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            dot.onclick =
+                function(){
+
+                    goToBanner(index);
+
+                };
+
+
+            dots.appendChild(
+                dot
+            );
+
+        }
+    );
+
+
+    currentBanner =
+        0;
+
+
+    updateBannerPosition();
+
+
+    document
+    .getElementById(
+        "bannerPrev"
+    )
+    .style.display =
+        bannerData.length > 1
+        ? "flex"
+        : "none";
+
+
+    document
+    .getElementById(
+        "bannerNext"
+    )
+    .style.display =
+        bannerData.length > 1
+        ? "flex"
+        : "none";
+
+
+    startBannerAutoPlay();
+
+}
+
+
+/* =====================================================
+   SLIDER POSITION
+===================================================== */
+
+function updateBannerPosition(){
+
+    const track =
+        document.getElementById(
+            "bannerTrack"
+        );
+
+
+    track.style.transform =
+        "translateX(-" +
+        (
+            currentBanner * 100
+        ) +
+        "%)";
+
+
+    const dots =
+        document.querySelectorAll(
+            ".banner-dot"
+        );
+
+
+    dots.forEach(
+        (dot,index)=>{
+
+            dot.classList.toggle(
+                "active",
+                index === currentBanner
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NEXT
+===================================================== */
+
+function nextBanner(){
+
+    if(
+        bannerData.length <= 1
+    ){
+
+        return;
+
+    }
+
+
+    currentBanner =
+        (
+            currentBanner + 1
+        ) %
+        bannerData.length;
+
+
+    updateBannerPosition();
+
+}
+
+
+/* =====================================================
+   PREVIOUS
+===================================================== */
+
+function previousBanner(){
+
+    if(
+        bannerData.length <= 1
+    ){
+
+        return;
+
+    }
+
+
+    currentBanner =
+        (
+            currentBanner -
+            1 +
+            bannerData.length
+        ) %
+        bannerData.length;
+
+
+    updateBannerPosition();
+
+}
+
+
+/* =====================================================
+   GO TO
+===================================================== */
+
+function goToBanner(index){
+
+    if(
+        index < 0 ||
+        index >= bannerData.length
+    ){
+
+        return;
+
+    }
+
+
+    currentBanner =
+        index;
+
+
+    updateBannerPosition();
+
+}
+
+
+/* =====================================================
+   AUTOPLAY
+===================================================== */
+
+function startBannerAutoPlay(){
+
+    clearInterval(
+        bannerTimer
+    );
+
+
+    if(
+        bannerData.length <= 1
+    ){
+
+        return;
+
+    }
+
+
+    bannerTimer =
+        setInterval(
+            function(){
+
+                nextBanner();
+
+            },
+            4000
+        );
+
+}
+
+
+function stopBannerAutoPlay(){
+
+    clearInterval(
+        bannerTimer
+    );
+
+}
+
+
+/* =====================================================
+   TOUCH SWIPE
+===================================================== */
+
+const bannerSlider =
+    document.getElementById(
+        "bannerSlider"
+    );
+
+
+bannerSlider.addEventListener(
+    "touchstart",
+    function(event){
+
+        touchStartX =
+            event.changedTouches[0].screenX;
+
+        stopBannerAutoPlay();
+
+    },
+    {
+        passive:true
+    }
+);
+
+
+bannerSlider.addEventListener(
+    "touchend",
+    function(event){
+
+        touchEndX =
+            event.changedTouches[0].screenX;
+
+
+        const difference =
+            touchStartX -
+            touchEndX;
+
+
+        if(
+            Math.abs(difference) > 45
+        ){
+
+            if(difference > 0){
+
+                nextBanner();
+
+            }else{
+
+                previousBanner();
+
+            }
+
+        }
+
+
+        startBannerAutoPlay();
+
+    },
+    {
+        passive:true
+    }
+);
+
+
+/* =====================================================
+   MOUSE HOVER
+===================================================== */
+
+bannerSlider.addEventListener(
+    "mouseenter",
+    function(){
+
+        stopBannerAutoPlay();
+
+    }
+);
+
+
+bannerSlider.addEventListener(
+    "mouseleave",
+    function(){
+
+        startBannerAutoPlay();
+
+    }
+);
+
+
+/* =====================================================
+   ADMIN BANNERS
+===================================================== */
+
+async function renderAdminBanners(){
+
+    const box =
+        document.getElementById(
+            "adminBanners"
+        );
+
+
+    box.innerHTML = `
+
+        <div class="loading">
+            Banners लोड हो रहे हैं...
+        </div>
+
+    `;
+
+
+    try{
+
+        const banners =
+            await getBanners();
+
+
+        box.innerHTML =
+            "";
+
+
+        if(
+            banners.length === 0
+        ){
+
+            box.innerHTML = `
+
+                <div
+                    style="
+                        color:#94a3b8;
+                        font-size:13px;
+                        padding:15px 0;
+                    "
+                >
+                    अभी कोई Banner Save नहीं है।
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        banners.forEach(
+            (banner,index)=>{
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "admin-banner";
+
+
+                const imageURL =
+                    createImageURL(
+                        banner.image
+                    );
+
+
+                item.innerHTML = `
+
+                    <img
+                        class="banner-admin-image"
+                        src="${imageURL}"
+                        alt="Banner ${index+1}"
+                    >
+
+
+                    <div class="admin-name">
+
+                        Banner ${index+1}
+
+                    </div>
+
+
+                    <div class="admin-link">
+
+                        ${
+                            banner.link
+                            ? escapeHTML(banner.link)
+                            : "🔗 कोई Link नहीं लगाया गया"
+                        }
+
+                    </div>
+
+
+                    <div class="admin-actions">
+
+                        <button
+                            class="btn btn-blue"
+                            onclick="editBanner(${banner.id})"
+                        >
+                            ✏️ Edit
+                        </button>
+
+
+                        <button
+                            class="btn btn-red"
+                            onclick="deleteBanner(${banner.id})"
+                        >
+                            🗑️ Delete
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                box.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        box.innerHTML = `
+
+            <div
+                style="
+                    color:#dc2626;
+                    font-size:13px;
+                "
+            >
+                Banners लोड नहीं हो पाए।
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   EDIT BANNER
+===================================================== */
+
+async function editBanner(id){
+
+    try{
+
+        const banners =
+            await getBanners();
+
+
+        const banner =
+            banners.find(
+                b =>
+                    b.id === id
+            );
+
+
+        if(!banner){
+
+            showBannerMessage(
+                "❌ Banner नहीं मिला।",
+                true
+            );
+
+            return;
+
+        }
+
+
+        editingBannerId =
+            id;
+
+
+        document
+        .getElementById(
+            "bannerLink"
+        )
+        .value =
+            banner.link || "";
+
+
+        document
+        .getElementById(
+            "bannerInput"
+        )
+        .value =
+            "";
+
+
+        const preview =
+            document
+            .getElementById(
+                "bannerPreview"
+            );
+
+
+        preview.src =
+            createImageURL(
+                banner.image
+            );
+
+
+        preview.style.display =
+            "block";
+
+
+        document
+        .getElementById(
+            "bannerEditMode"
+        )
+        .style.display =
+            "block";
+
+
+        document
+        .getElementById(
+            "bannerSaveButton"
+        )
+        .innerHTML =
+            "💾 Banner Update करें";
+
+
+        document
+        .getElementById(
+            "bannerCancelButton"
+        )
+        .style.display =
+            "inline-block";
+
+
+        document
+        .getElementById(
+            "adminModal"
+        )
+        .scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showBannerMessage(
+            "❌ Banner Edit नहीं हो पाया।",
+            true
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE BANNER
+===================================================== */
+
+async function deleteBanner(id){
+
+    const confirmDelete =
+        confirm(
+            "क्या आप इस Banner को Delete करना चाहते हैं?"
+        );
+
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        await deleteFromStore(
+            BANNER_STORE,
+            id
+        );
+
+
+        if(
+            editingBannerId === id
+        ){
+
+            resetBannerForm();
+
+        }
+
+
+        await renderBanners();
+
+
+        showBannerMessage(
+            "✅ Banner Delete हो गया।",
+            false
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showBannerMessage(
+            "❌ Banner Delete नहीं हो पाया।",
+            true
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESET BANNER
+===================================================== */
+
+function resetBannerForm(){
+
+    editingBannerId =
+        null;
+
+
+    document
+    .getElementById(
+        "bannerLink"
+    )
+    .value =
+        "";
+
+
+    document
+    .getElementById(
+        "bannerInput"
+    )
+    .value =
+        "";
+
+
+    const preview =
+        document
+        .getElementById(
+            "bannerPreview"
+        );
+
+
+    preview.src =
+        "";
+
+
+    preview.style.display =
+        "none";
+
+
+    document
+    .getElementById(
+        "bannerEditMode"
+    )
+    .style.display =
+        "none";
+
+
+    document
+    .getElementById(
+        "bannerSaveButton"
+    )
+    .innerHTML =
+        "+ Banner Add करें";
+
+
+    document
+    .getElementById(
+        "bannerCancelButton"
+    )
+    .style.display =
+        "none";
+
+}
+
+
+function cancelBannerEdit(){
+
+    resetBannerForm();
+
+
+    showBannerMessage(
+        "Banner Edit Cancel कर दिया गया।",
+        false
+    );
+
+}
+
+
+/* =====================================================
+   BANNER MESSAGE
+===================================================== */
+
+function showBannerMessage(
+    text,
+    error
+){
+
+    const box =
+        document.getElementById(
+            "bannerMessage"
+        );
+
+
+    box.textContent =
+        text;
+
+
+    box.className =
+        "message " +
+        (
+            error
+            ? "error"
+            : "success"
+        );
+
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+async function getProducts(){
+
+    return await getAllFromStore(
+        PRODUCT_STORE
+    );
+
+}
+
 
 async function saveProduct(){
 
@@ -1455,8 +3406,6 @@ async function saveProduct(){
     const file =
         photoInput.files[0];
 
-
-    /* VALIDATION */
 
     if(!link){
 
@@ -1494,22 +3443,21 @@ async function saveProduct(){
     }
 
 
-    /* =================================================
-       EDIT
-    ================================================= */
+    /* EDIT */
 
     if(editingId !== null){
 
         try{
 
             const products =
-                await getAllProducts();
+                await getProducts();
 
 
             const product =
                 products.find(
                     p =>
-                        p.id === editingId
+                        p.id ===
+                        editingId
                 );
 
 
@@ -1525,18 +3473,9 @@ async function saveProduct(){
             }
 
 
-            /*
-               नई फोटो चुनी है तो नई फोटो,
-               वरना पुरानी फोटो।
-            */
-
-            let image =
-                product.image;
-
-
             if(file){
 
-                image =
+                product.image =
                     await fileToBlob(
                         file
                     );
@@ -1552,31 +3491,29 @@ async function saveProduct(){
                 link;
 
 
-            product.image =
-                image;
-
-
             product.updatedAt =
                 Date.now();
 
 
-            await updateProduct(
+            await updateInStore(
+                PRODUCT_STORE,
                 product
             );
 
 
             showMessage(
-                "✅ Product सफलतापूर्वक Update हो गया।",
+                "✅ Product Update हो गया।",
                 false
             );
 
 
-            resetForm();
+            resetProductForm();
 
 
-            await renderEverything();
+            await renderMainProducts();
 
-            return;
+            await renderAdminProducts();
+
 
         }catch(error){
 
@@ -1587,16 +3524,14 @@ async function saveProduct(){
                 true
             );
 
-            return;
-
         }
+
+        return;
 
     }
 
 
-    /* =================================================
-       NEW PRODUCT
-    ================================================= */
+    /* NEW PRODUCT */
 
     if(!file){
 
@@ -1613,12 +3548,8 @@ async function saveProduct(){
     try{
 
         const products =
-            await getAllProducts();
+            await getProducts();
 
-
-        /*
-          Same link check
-        */
 
         const alreadyExists =
             products.some(
@@ -1645,25 +3576,23 @@ async function saveProduct(){
             );
 
 
-        const product = {
+        await addToStore(
+            PRODUCT_STORE,
+            {
 
-            name:name,
+                name:name,
 
-            link:link,
+                link:link,
 
-            image:image,
+                image:image,
 
-            createdAt:
-                Date.now(),
+                createdAt:
+                    Date.now(),
 
-            updatedAt:
-                Date.now()
+                updatedAt:
+                    Date.now()
 
-        };
-
-
-        await addProduct(
-            product
+            }
         );
 
 
@@ -1673,10 +3602,13 @@ async function saveProduct(){
         );
 
 
-        resetForm();
+        resetProductForm();
 
 
-        await renderEverything();
+        await renderMainProducts();
+
+        await renderAdminProducts();
+
 
     }catch(error){
 
@@ -1701,7 +3633,7 @@ async function editProduct(id){
     try{
 
         const products =
-            await getAllProducts();
+            await getProducts();
 
 
         const product =
@@ -1725,10 +3657,6 @@ async function editProduct(id){
 
         editingId =
             id;
-
-
-        oldEditingImage =
-            product.image || null;
 
 
         document
@@ -1755,8 +3683,6 @@ async function editProduct(id){
             "";
 
 
-        /* OLD IMAGE */
-
         const preview =
             document
             .getElementById(
@@ -1765,11 +3691,6 @@ async function editProduct(id){
 
 
         if(product.image){
-
-            /*
-              Existing Blob का
-              temporary URL बनाएं।
-            */
 
             preview.src =
                 createImageURL(
@@ -1781,8 +3702,6 @@ async function editProduct(id){
 
         }
 
-
-        /* EDIT UI */
 
         document
         .getElementById(
@@ -1808,15 +3727,13 @@ async function editProduct(id){
             "inline-block";
 
 
-        showMessage(
-            "✏️ Product Edit Mode में है।",
-            false
+        showAdminSection(
+            "productSection",
+            document.getElementById(
+                "productTab"
+            )
         );
 
-
-        /*
-          Admin Panel को ऊपर scroll
-        */
 
         document
         .getElementById(
@@ -1826,6 +3743,7 @@ async function editProduct(id){
             top:0,
             behavior:"smooth"
         });
+
 
     }catch(error){
 
@@ -1842,32 +3760,73 @@ async function editProduct(id){
 
 
 /* =====================================================
-   CANCEL EDIT
+   DELETE PRODUCT
 ===================================================== */
 
-function cancelEdit(){
+async function deleteProduct(id){
 
-    resetForm();
+    const confirmDelete =
+        confirm(
+            "क्या आप इस Product को Delete करना चाहते हैं?"
+        );
 
-    showMessage(
-        "Edit Cancel कर दिया गया।",
-        false
-    );
+
+    if(!confirmDelete){
+
+        return;
+
+    }
+
+
+    try{
+
+        await deleteFromStore(
+            PRODUCT_STORE,
+            id
+        );
+
+
+        if(
+            editingId === id
+        ){
+
+            resetProductForm();
+
+        }
+
+
+        await renderMainProducts();
+
+        await renderAdminProducts();
+
+
+        showMessage(
+            "✅ Product Delete हो गया।",
+            false
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "❌ Product Delete नहीं हो पाया।",
+            true
+        );
+
+    }
 
 }
 
 
 /* =====================================================
-   RESET FORM
+   RESET PRODUCT
 ===================================================== */
 
-function resetForm(){
+function resetProductForm(){
 
     editingId =
-        null;
-
-
-    oldEditingImage =
         null;
 
 
@@ -1936,15 +3895,15 @@ function resetForm(){
 }
 
 
-/* =====================================================
-   RENDER EVERYTHING
-===================================================== */
+function cancelEdit(){
 
-async function renderEverything(){
+    resetProductForm();
 
-    await renderMainProducts();
 
-    await renderAdminProducts();
+    showMessage(
+        "Edit Cancel कर दिया गया।",
+        false
+    );
 
 }
 
@@ -1973,10 +3932,11 @@ async function renderMainProducts(){
     try{
 
         const products =
-            await getAllProducts();
+            await getProducts();
 
 
-        box.innerHTML = "";
+        box.innerHTML =
+            "";
 
 
         if(
@@ -2003,7 +3963,7 @@ async function renderMainProducts(){
 
 
         products.forEach(
-            product => {
+            product=>{
 
                 const card =
                     document.createElement(
@@ -2014,8 +3974,6 @@ async function renderMainProducts(){
                 card.className =
                     "product";
 
-
-                /* IMAGE */
 
                 let imageHTML = `
 
@@ -2045,10 +4003,6 @@ async function renderMainProducts(){
 
                 }
 
-
-                /*
-                  पूरा Image clickable
-                */
 
                 card.innerHTML = `
 
@@ -2087,7 +4041,7 @@ async function renderMainProducts(){
                             rel="noopener noreferrer"
                         >
 
-                            🛒 Buy Now 
+                            🛒 Buy Now
 
                         </a>
 
@@ -2127,7 +4081,7 @@ async function renderMainProducts(){
 
 
 /* =====================================================
-   ADMIN PRODUCT LIST
+   ADMIN PRODUCTS
 ===================================================== */
 
 async function renderAdminProducts(){
@@ -2150,10 +4104,11 @@ async function renderAdminProducts(){
     try{
 
         const products =
-            await getAllProducts();
+            await getProducts();
 
 
-        box.innerHTML = "";
+        box.innerHTML =
+            "";
 
 
         if(
@@ -2164,7 +4119,7 @@ async function renderAdminProducts(){
 
                 <div
                     style="
-                        color:#9ca3af;
+                        color:#94a3b8;
                         font-size:13px;
                         padding:15px 0;
                     "
@@ -2263,9 +4218,7 @@ async function renderAdminProducts(){
                             class="btn btn-blue"
                             onclick="editProduct(${product.id})"
                         >
-
                             ✏️ Edit
-
                         </button>
 
 
@@ -2273,9 +4226,7 @@ async function renderAdminProducts(){
                             class="btn btn-red"
                             onclick="deleteProduct(${product.id})"
                         >
-
                             🗑️ Delete
-
                         </button>
 
                     </div>
@@ -2313,55 +4264,57 @@ async function renderAdminProducts(){
 
 
 /* =====================================================
-   DELETE
+   ADMIN TABS
 ===================================================== */
 
-async function deleteProduct(id){
+function showAdminSection(
+    sectionId,
+    button
+){
 
-    const confirmDelete =
-        confirm(
-            "क्या आप इस Product को Delete करना चाहते हैं?"
-        );
+    document
+    .querySelectorAll(
+        ".admin-section"
+    )
+    .forEach(
+        section=>{
 
-
-    if(!confirmDelete){
-
-        return;
-
-    }
-
-
-    try{
-
-        await removeProduct(
-            id
-        );
-
-
-        if(
-            editingId === id
-        ){
-
-            resetForm();
+            section.classList.remove(
+                "active"
+            );
 
         }
+    );
 
 
-        await renderEverything();
+    document
+    .querySelectorAll(
+        ".admin-tab"
+    )
+    .forEach(
+        tab=>{
+
+            tab.classList.remove(
+                "active"
+            );
+
+        }
+    );
 
 
-        showMessage(
-            "✅ Product Delete हो गया।",
-            false
-        );
+    document
+    .getElementById(
+        sectionId
+    )
+    .classList.add(
+        "active"
+    );
 
-    }catch(error){
 
-        console.error(error);
+    if(button){
 
-        showMessage(
-            "❌ Product Delete नहीं हो पाया।",
-            true
+        button.classList.add(
+            "active"
         );
 
     }
@@ -2370,7 +4323,7 @@ async function deleteProduct(id){
 
 
 /* =====================================================
-   URL VALIDATION
+   URL
 ===================================================== */
 
 function isValidURL(value){
@@ -2396,7 +4349,7 @@ function isValidURL(value){
 
 
 /* =====================================================
-   HTML ESCAPE
+   ESCAPE
 ===================================================== */
 
 function escapeHTML(value){
@@ -2419,7 +4372,7 @@ function escapeAttribute(value){
 
 
 /* =====================================================
-   MESSAGE
+   PRODUCT MESSAGE
 ===================================================== */
 
 function showMessage(
@@ -2470,19 +4423,17 @@ function openLogin(){
         "";
 
 
-    document
-    .getElementById(
-        "loginError"
-    )
-    .className =
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
+
+
+    errorBox.className =
         "message";
 
 
-    document
-    .getElementById(
-        "loginError"
-    )
-    .textContent =
+    errorBox.textContent =
         "";
 
 }
@@ -2545,7 +4496,7 @@ function login(){
 
 
 /* =====================================================
-   ADMIN OPEN
+   OPEN ADMIN
 ===================================================== */
 
 async function openAdmin(){
@@ -2558,13 +4509,23 @@ async function openAdmin(){
         "block";
 
 
+    showAdminSection(
+        "bannerSection",
+        document.getElementById(
+            "bannerTab"
+        )
+    );
+
+
+    await renderBanners();
+
     await renderAdminProducts();
 
 }
 
 
 /* =====================================================
-   ADMIN CLOSE
+   CLOSE ADMIN
 ===================================================== */
 
 function closeAdmin(){
@@ -2577,7 +4538,9 @@ function closeAdmin(){
         "none";
 
 
-    resetForm();
+    resetBannerForm();
+
+    resetProductForm();
 
 }
 
@@ -2608,7 +4571,7 @@ document
 
 
 /* =====================================================
-   CLICK OUTSIDE MODAL
+   CLICK OUTSIDE
 ===================================================== */
 
 window.addEventListener(
@@ -2651,7 +4614,7 @@ window.addEventListener(
 
 
 /* =====================================================
-   START DATABASE
+   START
 ===================================================== */
 
 (async function(){
@@ -2660,11 +4623,17 @@ window.addEventListener(
 
         await openDatabase();
 
+
+        await renderBanners();
+
+
         await renderMainProducts();
+
 
     }catch(error){
 
         console.error(error);
+
 
         document
         .getElementById(
@@ -2674,8 +4643,7 @@ window.addEventListener(
 
             <div class="empty">
 
-                ❌ Browser में Database
-                शुरू नहीं हो पाया।
+                ❌ Browser Database शुरू नहीं हो पाया।
 
                 <br><br>
 
