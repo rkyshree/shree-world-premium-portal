@@ -750,6 +750,97 @@ section{
 
 
 /* =========================================================
+   VIDEO
+========================================================= */
+
+.video-section{
+    background:#fff;
+}
+
+.video-box{
+    max-width:1000px;
+
+    margin:auto;
+
+    background:#f4f9f6;
+
+    border:
+    1px solid #dfeae4;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    box-shadow:
+    0 15px 40px
+    rgba(15,50,33,.06);
+}
+
+.video-player{
+    width:100%;
+
+    aspect-ratio:16 / 9;
+
+    border:0;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    background:#071d14;
+
+    display:block;
+}
+
+.video-player iframe,
+.video-player video{
+    width:100%;
+    height:100%;
+
+    border:0;
+
+    display:block;
+}
+
+.video-placeholder{
+    min-height:350px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-direction:column;
+
+    text-align:center;
+
+    color:#60746a;
+
+    background:
+    linear-gradient(
+        135deg,
+        #edf7f1,
+        #e0eee6
+    );
+
+    border-radius:18px;
+}
+
+.video-placeholder .video-icon{
+    font-size:55px;
+
+    margin-bottom:10px;
+}
+
+.video-placeholder strong{
+    color:#244b39;
+
+    font-size:18px;
+}
+
+
+/* =========================================================
    INFO
 ========================================================= */
 
@@ -1189,6 +1280,14 @@ footer p{
         font-size:23px;
     }
 
+    .video-box{
+        padding:10px;
+    }
+
+    .video-player{
+        border-radius:12px;
+    }
+
 }
 
 </style>
@@ -1252,6 +1351,10 @@ onclick="toggleMenu()">
 
 <a href="#gallery">
 फोटो
+</a>
+
+<a href="#video">
+वीडियो
 </a>
 
 <a href="#sampark">
@@ -1848,6 +1951,59 @@ id="galleryGrid">
 
 
 <!-- ======================================================
+     VIDEO
+====================================================== -->
+
+<section
+class="video-section"
+id="video">
+
+<div class="container">
+
+
+<div class="section-title">
+
+<div class="section-tag">
+वीडियो
+</div>
+
+<h2>
+पंकज कुमार यादव का वीडियो
+</h2>
+
+<p>
+नीचे वीडियो देखकर गाँव और क्षेत्र से जुड़ी जानकारी प्राप्त करें।
+</p>
+
+</div>
+
+
+<div
+class="video-box"
+id="videoBox">
+
+<div class="video-placeholder">
+
+<div class="video-icon">
+▶️
+</div>
+
+<strong>
+वीडियो जल्द उपलब्ध होगा
+</strong>
+
+</div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+<!-- ======================================================
      PERSONAL INFORMATION
 ====================================================== -->
 
@@ -2121,20 +2277,8 @@ alt="बड़ी फोटो">
 
 /* =========================================================
    =========================================================
-   IMAGE SETTINGS
-   =========================================================
-
-   ⭐⭐⭐ सभी फोटो के LINK केवल इसी जगह बदलें ⭐⭐⭐
-
-   आगे किसी भी फोटो को बदलना हो तो सिर्फ:
-   "पुराना लिंक"
-   हटाकर
-   "नया DIRECT IMAGE LINK"
-   डालें।
-
-   बाकी HTML / CSS / JavaScript को छूने की जरूरत नहीं है।
-
-   ========================================================= */
+   IMAGE + VIDEO SETTINGS
+========================================================= */
 
 
 /* =========================================================
@@ -2166,7 +2310,7 @@ const PROFILE_IMAGE_URL =
 ========================================================= */
 
 const VILLAGE_IMAGE_URL =
-"https://i.ibb.co/TxNbhfQq/Picsart-26-08-16-13-29-50-308.jpg";
+"https://i.ibb.co/gZ0SWFbs/file-0000000028308208b014e07afdfc168e.png";
 
 
 /* =========================================================
@@ -2246,6 +2390,30 @@ const GALLERY_IMAGE_9 =
 ========================================================= */
 
 const GALLERY_IMAGE_10 =
+"";
+
+
+/* =========================================================
+   ⭐ 15. VIDEO URL
+=========================================================
+
+   यहीं अपना VIDEO LINK डालें।
+
+   Direct MP4 example:
+
+   const VIDEO_URL =
+   "https://example.com/video.mp4";
+
+   YouTube example:
+
+   const VIDEO_URL =
+   "https://www.youtube.com/watch?v=XXXXXXXXXXX";
+
+   बस नीचे इस एक जगह पर LINK बदलना है।
+
+========================================================= */
+
+const VIDEO_URL =
 "";
 
 
@@ -2538,6 +2706,275 @@ function loadGallery(){
 
 
 /* =========================================================
+   VIDEO URL CHECK
+========================================================= */
+
+function isValidVideoURL(url){
+
+    return (
+        typeof url === "string" &&
+        url.trim() !== "" &&
+        /^https?:\/\//i.test(url.trim())
+    );
+
+}
+
+
+/* =========================================================
+   YOUTUBE ID
+========================================================= */
+
+function getYouTubeEmbedURL(url){
+
+    try{
+
+        const parsedURL =
+            new URL(url);
+
+        let videoID = "";
+
+
+        if(
+            parsedURL.hostname.includes(
+                "youtube.com"
+            )
+        ){
+
+            videoID =
+                parsedURL.searchParams.get(
+                    "v"
+                ) || "";
+
+
+            if(
+                parsedURL.pathname.startsWith(
+                    "/shorts/"
+                )
+            ){
+
+                videoID =
+                    parsedURL.pathname
+                    .split("/shorts/")[1]
+                    .split("/")[0];
+
+            }
+
+
+            if(
+                parsedURL.pathname.startsWith(
+                    "/embed/"
+                )
+            ){
+
+                videoID =
+                    parsedURL.pathname
+                    .split("/embed/")[1]
+                    .split("/")[0];
+
+            }
+
+        }
+
+
+        if(
+            parsedURL.hostname ===
+            "youtu.be"
+        ){
+
+            videoID =
+                parsedURL.pathname
+                .replace(
+                    "/",
+                    ""
+                );
+
+        }
+
+
+        if(videoID){
+
+            return (
+                "https://www.youtube.com/embed/" +
+                videoID
+            );
+
+        }
+
+    }
+
+    catch(error){
+
+        console.log(
+            "YouTube URL error:",
+            error
+        );
+
+    }
+
+    return null;
+
+}
+
+
+/* =========================================================
+   LOAD VIDEO
+========================================================= */
+
+function loadVideo(){
+
+    const videoBox =
+        document.getElementById(
+            "videoBox"
+        );
+
+    if(!videoBox){
+        return;
+    }
+
+
+    if(
+        !isValidVideoURL(
+            VIDEO_URL
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const cleanURL =
+        VIDEO_URL.trim();
+
+
+    /*
+       पहले YouTube URL check करें
+    */
+
+    const youtubeURL =
+        getYouTubeEmbedURL(
+            cleanURL
+        );
+
+
+    if(youtubeURL){
+
+        videoBox.innerHTML = "";
+
+
+        const iframe =
+            document.createElement(
+                "iframe"
+            );
+
+
+        iframe.className =
+            "video-player";
+
+
+        iframe.src =
+            youtubeURL;
+
+
+        iframe.title =
+            "पंकज कुमार यादव वीडियो";
+
+
+        iframe.allow =
+            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+
+        iframe.allowFullscreen =
+            true;
+
+
+        iframe.loading =
+            "lazy";
+
+
+        videoBox.appendChild(
+            iframe
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+       अगर YouTube नहीं है,
+       तो Direct Video मानकर चलेंगे।
+    */
+
+
+    videoBox.innerHTML = "";
+
+
+    const video =
+        document.createElement(
+            "video"
+        );
+
+
+    video.className =
+        "video-player";
+
+
+    video.src =
+        cleanURL;
+
+
+    video.controls =
+        true;
+
+
+    video.playsInline =
+        true;
+
+
+    video.preload =
+        "metadata";
+
+
+    video.setAttribute(
+        "controlsList",
+        "nodownload"
+    );
+
+
+    video.addEventListener(
+        "error",
+        function(){
+
+            videoBox.innerHTML = `
+
+                <div class="video-placeholder">
+
+                    <div class="video-icon">
+                    ⚠️
+                    </div>
+
+                    <strong>
+                    वीडियो लोड नहीं हो पाया
+                    </strong>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    videoBox.appendChild(
+        video
+    );
+
+}
+
+
+/* =========================================================
    MOBILE MENU
 ========================================================= */
 
@@ -2778,6 +3215,8 @@ document.addEventListener(
         loadVillage();
 
         loadGallery();
+
+        loadVideo();
 
     }
 );
