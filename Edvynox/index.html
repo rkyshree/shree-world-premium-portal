@@ -1,4843 +1,923 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>EDVYNOX — Free Digital Tools</title>
-
-<meta name="description"
-content="EDVYNOX — Free PDF, Image, Design, Social Media, Student and Utility tools for everyone.">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
-rel="stylesheet">
-
-<!-- PDF.JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-<script>
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-</script>
-
-<!-- JSPDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- QR -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<!-- OCR -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-<style>
-
-/* =====================================================
-   RESET
-===================================================== */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:"Manrope",sans-serif;
-    background:#f6faf8;
-    color:#10201d;
-    overflow-x:hidden;
-}
-
-button,
-input,
-textarea,
-select{
-    font-family:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-a{
-    text-decoration:none;
-    color:inherit;
-}
-
-:root{
-    --green:#087c65;
-    --green-dark:#075447;
-    --green-light:#0cae8b;
-    --yellow:#f4c536;
-    --black:#0c1917;
-    --gray:#66736f;
-    --light:#f1f8f5;
-    --white:#ffffff;
-    --border:#dfeae5;
-    --shadow:0 15px 45px rgba(0,0,0,.07);
-}
-
-.container{
-    width:min(92%,1380px);
-    margin:auto;
-}
-
-
-/* =====================================================
-   HEADER
-===================================================== */
-
-.header-wrap{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    background:rgba(246,250,248,.94);
-    backdrop-filter:blur(15px);
-    border-bottom:1px solid var(--border);
-}
-
-header{
-    height:78px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.logo{
-    font-family:"Plus Jakarta Sans";
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:-1.5px;
-}
-
-.logo span{
-    color:var(--green);
-}
-
-.logo small{
-    display:block;
-    font-size:7px;
-    letter-spacing:2.5px;
-    color:#75817e;
-    margin-top:4px;
-}
-
-.nav{
-    display:flex;
-    align-items:center;
-    gap:24px;
-}
-
-.nav a{
-    font-size:12px;
-    font-weight:800;
-    color:#46534f;
-}
-
-.nav a:hover{
-    color:var(--green);
-}
-
-.header-btn{
-    background:var(--green-dark);
-    color:#fff!important;
-    padding:11px 16px;
-    border-radius:8px;
-}
-
-.menu-btn{
-    display:none;
-    border:0;
-    background:transparent;
-    font-size:25px;
-}
-
-
-/* =====================================================
-   HERO
-===================================================== */
-
-.hero{
-    position:relative;
-    overflow:hidden;
-    padding:90px 0 80px;
-    background:
-        radial-gradient(circle at 90% 15%,rgba(12,174,139,.14),transparent 28%),
-        radial-gradient(circle at 10% 80%,rgba(244,197,54,.12),transparent 25%),
-        linear-gradient(135deg,#fff,#f1faf6);
-}
-
-.hero-grid{
-    display:grid;
-    grid-template-columns:1.05fr .95fr;
-    align-items:center;
-    gap:50px;
-}
-
-.eyebrow{
-    display:inline-flex;
-    align-items:center;
-    gap:9px;
-    padding:8px 13px;
-    background:#e9f7f2;
-    border:1px solid #cce8df;
-    border-radius:30px;
-    color:var(--green-dark);
-    font-size:11px;
-    font-weight:800;
-    margin-bottom:22px;
-}
-
-.eyebrow i{
-    width:7px;
-    height:7px;
-    background:var(--green);
-    border-radius:50%;
-}
-
-.hero h1{
-    font-family:"Plus Jakarta Sans";
-    font-size:clamp(42px,5vw,72px);
-    line-height:1;
-    letter-spacing:-4px;
-    margin-bottom:22px;
-}
-
-.hero h1 span{
-    color:var(--green);
-}
-
-.hero-description{
-    max-width:650px;
-    color:#64716d;
-    font-size:15px;
-    line-height:1.9;
-}
-
-.hero-description b{
-    color:var(--green-dark);
-}
-
-.hero-buttons{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-top:28px;
-}
-
-.primary-btn{
-    border:0;
-    background:var(--green-dark);
-    color:#fff;
-    padding:14px 20px;
-    border-radius:9px;
-    font-size:13px;
-    font-weight:800;
-    box-shadow:0 8px 20px rgba(7,84,71,.2);
-}
-
-.primary-btn:hover{
-    transform:translateY(-2px);
-    background:var(--green);
-}
-
-.secondary-btn{
-    border:1px solid var(--border);
-    background:#fff;
-    color:var(--green-dark);
-    padding:14px 20px;
-    border-radius:9px;
-    font-size:13px;
-    font-weight:800;
-}
-
-.secondary-btn:hover{
-    border-color:var(--green);
-}
-
-.hero-visual{
-    min-height:420px;
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.hero-circle{
-    width:260px;
-    height:260px;
-    border-radius:50%;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    background:radial-gradient(circle at 30% 25%,#fff,#e3f7f1 60%,#c5eee3);
-    border:8px solid #fff;
-    box-shadow:0 25px 70px rgba(8,124,101,.17);
-}
-
-.hero-circle strong{
-    font-family:"Plus Jakarta Sans";
-    font-size:31px;
-}
-
-.hero-circle strong span{
-    color:var(--green);
-}
-
-.hero-circle small{
-    margin-top:8px;
-    color:#6a7773;
-    font-size:8px;
-    font-weight:800;
-    letter-spacing:2px;
-}
-
-.float-card{
-    position:absolute;
-    padding:13px 16px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:12px;
-    box-shadow:var(--shadow);
-}
-
-.float-card strong{
-    display:block;
-    font-size:12px;
-}
-
-.float-card small{
-    color:#7b8783;
-    font-size:9px;
-}
-
-.fc1{top:25px;left:5%;}
-.fc2{top:100px;right:0;}
-.fc3{bottom:65px;left:0;}
-.fc4{bottom:15px;right:8%;}
-
-
-/* =====================================================
-   CATEGORY SECTION
-===================================================== */
-
-.tools-section{
-    padding:85px 0;
-    background:#fff;
-}
-
-.section-heading{
-    text-align:center;
-    max-width:720px;
-    margin:0 auto 38px;
-}
-
-.section-heading small{
-    color:var(--green);
-    font-size:10px;
-    font-weight:900;
-    letter-spacing:2px;
-}
-
-.section-heading h2{
-    font-family:"Plus Jakarta Sans";
-    font-size:clamp(30px,4vw,46px);
-    letter-spacing:-2px;
-    margin:10px 0 13px;
-}
-
-.section-heading p{
-    color:#697672;
-    font-size:13px;
-    line-height:1.8;
-}
-
-
-/* =====================================================
-   ROUND CATEGORY BUTTONS
-===================================================== */
-
-.category-area{
-    max-width:760px;
-    margin:0 auto 45px;
-}
-
-.category-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:22px;
-}
-
-.category{
-    border:1px solid var(--border);
-    background:#fff;
-    border-radius:20px;
-    min-height:130px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    transition:.3s;
-    box-shadow:0 5px 20px rgba(0,0,0,.03);
-}
-
-.category:hover{
-    transform:translateY(-4px);
-    border-color:var(--green-light);
-    box-shadow:var(--shadow);
-}
-
-.category.active{
-    background:var(--green-dark);
-    border-color:var(--green-dark);
-    color:#fff;
-    transform:translateY(-3px);
-    box-shadow:0 12px 30px rgba(7,84,71,.2);
-}
-
-.category-icon{
-    width:50px;
-    height:50px;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eaf7f3;
-    font-size:22px;
-}
-
-.category.active .category-icon{
-    background:rgba(255,255,255,.15);
-}
-
-.category strong{
-    font-family:"Plus Jakarta Sans";
-    font-size:12px;
-}
-
-.category span{
-    font-size:9px;
-    color:#7a8581;
-}
-
-.category.active span{
-    color:#cde6df;
-}
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-.search-box{
-    max-width:650px;
-    margin:0 auto 35px;
-    position:relative;
-}
-
-.search-box input{
-    width:100%;
-    padding:16px 20px 16px 48px;
-    border:1px solid var(--border);
-    border-radius:12px;
-    background:#f9fcfb;
-    font-size:13px;
-}
-
-.search-box input:focus{
-    border-color:var(--green);
-    box-shadow:0 0 0 4px rgba(8,124,101,.08);
-}
-
-.search-icon{
-    position:absolute;
-    left:18px;
-    top:50%;
-    transform:translateY(-50%);
-    font-size:18px;
-}
-
-
-/* =====================================================
-   CATEGORY TITLE
-===================================================== */
-
-.selected-category{
-    text-align:center;
-    margin-bottom:25px;
-}
-
-.selected-category h3{
-    font-family:"Plus Jakarta Sans";
-    font-size:24px;
-}
-
-.selected-category p{
-    margin-top:5px;
-    color:#78837f;
-    font-size:12px;
-}
-
-
-/* =====================================================
-   TOOL GRID
-===================================================== */
-
-.tool-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-.tool-card{
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:22px;
-    background:#fff;
-    transition:.3s;
-    display:flex;
-    flex-direction:column;
-}
-
-.tool-card:hover{
-    transform:translateY(-4px);
-    box-shadow:var(--shadow);
-    border-color:#a9d9cd;
-}
-
-.tool-icon{
-    width:48px;
-    height:48px;
-    border-radius:12px;
-    background:#eaf7f3;
-    color:var(--green);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    font-weight:900;
-    margin-bottom:15px;
-}
-
-.tool-card h3{
-    font-family:"Plus Jakarta Sans";
-    font-size:16px;
-    margin-bottom:7px;
-}
-
-.tool-card p{
-    color:#697672;
-    font-size:11px;
-    line-height:1.7;
-    flex:1;
-    margin-bottom:17px;
-}
-
-.tool-open{
-    width:100%;
-    border:0;
-    padding:11px 15px;
-    background:var(--green-dark);
-    color:#fff;
-    border-radius:8px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.tool-open:hover{
-    background:var(--green);
-}
-
-
-/* =====================================================
-   TOOL WORKSPACE
-===================================================== */
-
-.workspace{
-    display:none;
-    margin-top:18px;
-    padding:18px;
-    background:#f6faf8;
-    border:1px solid var(--border);
-    border-radius:12px;
-}
-
-.workspace.active{
-    display:block;
-    animation:showWorkspace .3s ease;
-}
-
-@keyframes showWorkspace{
-    from{
-        opacity:0;
-        transform:translateY(-8px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-.workspace input,
-.workspace textarea,
-.workspace select{
-    width:100%;
-    padding:11px 12px;
-    border:1px solid #d6e3de;
-    border-radius:8px;
-    background:#fff;
-    margin-bottom:10px;
-    font-size:12px;
-}
-
-.workspace textarea{
-    min-height:120px;
-    resize:vertical;
-}
-
-.workspace input:focus,
-.workspace textarea:focus,
-.workspace select:focus{
-    border-color:var(--green);
-}
-
-.file-input{
-    padding:12px!important;
-    border:2px dashed #bfd2cb!important;
-}
-
-.workspace-btn{
-    width:100%;
-    border:0;
-    padding:11px;
-    background:var(--green);
-    color:#fff;
-    border-radius:8px;
-    font-size:11px;
-    font-weight:800;
-    margin-top:4px;
-}
-
-.workspace-btn:hover{
-    background:var(--green-dark);
-}
-
-.download-btn{
-    background:#0ca987;
-}
-
-.preview-img{
-    max-width:100%;
-    max-height:300px;
-    display:block;
-    margin:15px auto;
-    border-radius:8px;
-}
-
-.status{
-    text-align:center;
-    margin-top:10px;
-    color:var(--green-dark);
-    font-size:11px;
-    font-weight:700;
-    line-height:1.6;
-}
-
-
-/* =====================================================
-   CANVAS DESIGN
-===================================================== */
-
-.design-canvas{
-    width:100%;
-    aspect-ratio:16/9;
-    background:#087c65;
-    border-radius:8px;
-    overflow:hidden;
-    position:relative;
-    margin-bottom:12px;
-}
-
-.design-canvas img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    position:absolute;
-    inset:0;
-}
-
-.design-overlay{
-    position:absolute;
-    inset:0;
-    background:linear-gradient(transparent,rgba(0,0,0,.7));
-}
-
-.design-title{
-    position:absolute;
-    bottom:15%;
-    left:6%;
-    right:6%;
-    color:#fff;
-    font-family:"Plus Jakarta Sans";
-    font-size:clamp(18px,4vw,34px);
-    font-weight:800;
-    line-height:1.05;
-}
-
-.design-subtitle{
-    position:absolute;
-    bottom:7%;
-    left:6%;
-    color:#fff;
-    font-size:9px;
-}
-
-
-/* =====================================================
-   INFO
-===================================================== */
-
-.info-section{
-    padding:75px 0;
-    background:#f5faf8;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-}
-
-.info-card{
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:15px;
-    padding:23px;
-}
-
-.info-card span{
-    font-size:25px;
-}
-
-.info-card h3{
-    margin:12px 0 6px;
-    font-family:"Plus Jakarta Sans";
-    font-size:16px;
-}
-
-.info-card p{
-    color:#6e7976;
-    font-size:11px;
-    line-height:1.7;
-}
-
-
-/* =====================================================
-   CONTACT
-===================================================== */
-
-.contact{
-    padding:75px 0;
-    text-align:center;
-    background:linear-gradient(135deg,#075b4c,#043d33);
-    color:#fff;
-}
-
-.contact h2{
-    font-family:"Plus Jakarta Sans";
-    font-size:clamp(30px,4vw,45px);
-}
-
-.contact p{
-    max-width:650px;
-    margin:12px auto 22px;
-    color:#d6e8e3;
-    font-size:13px;
-    line-height:1.8;
-}
-
-.contact a{
-    display:inline-block;
-    padding:13px 20px;
-    background:var(--yellow);
-    color:#17352f;
-    border-radius:8px;
-    font-weight:900;
-    font-size:12px;
-}
-
-
-/* =====================================================
-   FOOTER
-===================================================== */
-
-footer{
-    background:#041a16;
-    color:#8ea39e;
-    text-align:center;
-    padding:20px;
-    font-size:10px;
-}
-
-
-/* =====================================================
-   LOADER
-===================================================== */
-
-.loader{
-    position:fixed;
-    inset:0;
-    background:rgba(255,255,255,.93);
-    backdrop-filter:blur(5px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:5000;
-}
-
-.loader.active{
-    display:flex;
-}
-
-.loader-box{
-    background:#fff;
-    border-radius:16px;
-    padding:30px;
-    text-align:center;
-    box-shadow:0 15px 50px rgba(0,0,0,.12);
-}
-
-.loader-ring{
-    width:55px;
-    height:55px;
-    border:5px solid #e2efeb;
-    border-top-color:var(--green);
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    margin:auto;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-.loader-text{
-    margin-top:15px;
-    color:var(--green-dark);
-    font-size:12px;
-    font-weight:800;
-}
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:1000px){
-
-    .hero-grid{
-        grid-template-columns:1fr;
-        text-align:center;
-    }
-
-    .hero-description{
-        margin:auto;
-    }
-
-    .hero-buttons{
-        justify-content:center;
-    }
-
-    .hero-visual{
-        min-height:360px;
-    }
-
-    .tool-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-}
-
-@media(max-width:680px){
-
-    header{
-        height:68px;
-    }
-
-    .logo{
-        font-size:22px;
-    }
-
-    .logo small{
-        font-size:5px;
-    }
-
-    .nav{
-        display:none;
-    }
-
-    .menu-btn{
-        display:block;
-    }
-
-    .hero{
-        padding:60px 0 50px;
-    }
-
-    .hero h1{
-        font-size:43px;
-        letter-spacing:-2.5px;
-    }
-
-    .hero-description{
-        font-size:13px;
-    }
-
-    .hero-visual{
-        min-height:360px;
-        transform:scale(.82);
-    }
-
-    .category-grid{
-        grid-template-columns:repeat(3,1fr);
-        gap:10px;
-    }
-
-    .category{
-        min-height:105px;
-        border-radius:18px;
-    }
-
-    .category-icon{
-        width:42px;
-        height:42px;
-        font-size:18px;
-    }
-
-    .category strong{
-        font-size:9px;
-    }
-
-    .category span{
-        font-size:7px;
-    }
-
-    .tool-grid{
-        grid-template-columns:1fr;
-    }
-
-    .info-grid{
-        grid-template-columns:1fr;
-    }
-
-    .tools-section{
-        padding:60px 0;
-    }
-}
-
-@media(max-width:390px){
-
-    .category-grid{
-        gap:7px;
-    }
-
-    .category{
-        min-height:95px;
-    }
-
-    .category strong{
-        font-size:8px;
-    }
-
-    .hero h1{
-        font-size:38px;
-    }
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDVYNOX - Digital Courses & Free Tools</title>
+    <meta name="description" content="EDVYNOX — Learn Digital Skills & Use Free PDF, Image, Design, Social Media tools.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        hindi: ['Hind', 'sans-serif'],
+                        sans: ['Poppins', 'sans-serif'],
+                        jakarta: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- External Libraries for Tools -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; overflow-x: hidden; background-color: #f8fafc; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+
+        /* Custom Styles & Overlays */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .hero-bg {
+            background: radial-gradient(circle at 10% 0%, rgba(37, 99, 235, 0.06), transparent 30%),
+                        radial-gradient(circle at 90% 15%, rgba(13, 148, 136, 0.08), transparent 28%),
+                        linear-gradient(135deg, #ffffff, #f1faf6);
+        }
+
+        .picsart-box {
+            background: radial-gradient(circle at 10% 20%, rgba(255,255,255,.12), transparent 25%),
+                        radial-gradient(circle at 90% 80%, rgba(236,72,153,.16), transparent 30%),
+                        linear-gradient(135deg, #db2777, #7c3aed, #3730a3);
+        }
+
+        .modal-backdrop, .loader-backdrop {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(5px);
+        }
+
+        /* FAQ Toggle */
+        .faq-answer { display: none; }
+        .faq-item.active .faq-answer { display: block; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+
+        /* Tools Workspace */
+        .workspace {
+            display: none;
+            animation: showWorkspace 0.3s ease;
+        }
+        .workspace.active { display: block; }
+        @keyframes showWorkspace {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tool Category Active State */
+        .tool-cat-btn { transition: all 0.3s; }
+        .tool-cat-btn.active {
+            background-color: #0f766e; /* brand-700 */
+            color: white;
+            border-color: #0f766e;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.3);
+        }
+        .tool-cat-btn.active .icon-box { background: rgba(255,255,255,0.2); }
+        .tool-cat-btn.active span { color: #ccfbf1; }
+
+        /* Loader Animation */
+        .loader-ring {
+            width: 55px; height: 55px;
+            border: 5px solid #e2efeb;
+            border-top-color: #0d9488;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
+<body class="font-hindi text-gray-800 antialiased">
 
-<body>
+    <!-- =====================================================
+         HEADER
+    ===================================================== -->
+    <header class="glass-header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="h-16 sm:h-20 flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="min-w-0 flex flex-col">
+                    <h1 class="font-jakarta font-extrabold text-xl sm:text-2xl tracking-tight text-gray-900">
+                        EDVYNO<span class="text-brand-600">X</span>
+                    </h1>
+                    <p class="text-[8px] sm:text-[9px] text-gray-500 font-bold tracking-[2px] uppercase mt-0.5">
+                        Digital Skills & Tools
+                    </p>
+                </a>
 
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-8 font-jakarta text-sm font-bold text-gray-600">
+                    <a href="#home" class="hover:text-brand-600 transition">Home</a>
+                    <a href="#courses" class="hover:text-blue-600 transition">Courses</a>
+                    <a href="#tools" class="hover:text-brand-600 transition">Free Tools</a>
+                    <a href="#faq" class="hover:text-gray-900 transition">FAQ</a>
+                </nav>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
-<div class="header-wrap">
-
-<header class="container">
-
-    <div class="logo">
-        EDVYNO<span>X</span>
-        <small>ADVANCE VISION & SUCCESS</small>
-    </div>
-
-    <nav class="nav">
-
-        <a href="#home">Home</a>
-
-        <a href="#tools">Tools</a>
-
-        <a href="#about">About</a>
-
-        <a href="#contact">Contact</a>
-
-        <a class="header-btn" href="#tools">
-            Explore Tools
-        </a>
-
-    </nav>
-
-    <button class="menu-btn"
-    onclick="scrollToTools()">
-        ☰
-    </button>
-
-</header>
-
-</div>
-
-
-<!-- =====================================================
-     HERO
-===================================================== -->
-
-<section class="hero" id="home">
-
-<div class="container hero-grid">
-
-<div>
-
-    <div class="eyebrow">
-        <i></i>
-        Smart Digital Tools — Simple & Free
-    </div>
-
-    <h1>
-        Aapke Digital Kaam Ka
-        <span>Easy Solution.</span>
-    </h1>
-
-    <p class="hero-description">
-
-        <b>EDVYNOX</b> ek simple aur useful
-        digital tools platform hai jahan aap
-        PDF, Photo, Document, Poster, Social Media
-        aur daily digital work ke important tools
-        ek hi jagah use kar sakte hain.
-
-        <br><br>
-
-        Koi complicated software nahi.
-        Bas tool select karein, apni file ya information
-        add karein aur result download karein.
-
-    </p>
-
-    <div class="hero-buttons">
-
-        <button class="primary-btn"
-        onclick="scrollToTools()">
-            Explore Free Tools →
-        </button>
-
-        <button class="secondary-btn"
-        onclick="showAllTools()">
-            View All Tools
-        </button>
-
-    </div>
-
-</div>
-
-
-<div class="hero-visual">
-
-    <div class="hero-circle">
-
-        <strong>
-            EDVYNO<span>X</span>
-        </strong>
-
-        <small>
-            DIGITAL TOOLS HUB
-        </small>
-
-    </div>
-
-    <div class="float-card fc1">
-        <strong>📄 PDF Tools</strong>
-        <small>Convert • Merge • Split</small>
-    </div>
-
-    <div class="float-card fc2">
-        <strong>🖼️ Image Tools</strong>
-        <small>Resize • Compress • Convert</small>
-    </div>
-
-    <div class="float-card fc3">
-        <strong>🎨 Design Tools</strong>
-        <small>Poster • Thumbnail • Card</small>
-    </div>
-
-    <div class="float-card fc4">
-        <strong>⚡ Daily Utilities</strong>
-        <small>QR • Text • File Tools</small>
-    </div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =====================================================
-     TOOLS
-===================================================== -->
-
-<section class="tools-section" id="tools">
-
-<div class="container">
-
-<div class="section-heading">
-
-    <small>EDVYNOX DIGITAL TOOLS</small>
-
-    <h2>
-        Jo Digital Kaam Hai,
-        Uska Tool Yahin Hai.
-    </h2>
-
-    <p>
-        Category select karein aur apne kaam ka tool
-        choose karein. File upload karein ya text enter karein,
-        phir result easily download karein.
-    </p>
-
-</div>
-
-
-<!-- CATEGORY -->
-
-<div class="category-area">
-
-<div class="category-grid">
-
-    <button class="category active"
-    data-category="pdf"
-    onclick="selectCategory('pdf',this)">
-
-        <div class="category-icon">
-            📄
+                <!-- Actions -->
+                <div class="flex items-center gap-3">
+                    <a href="#tools" class="hidden sm:inline-flex bg-brand-700 hover:bg-brand-600 text-white px-5 py-2 rounded-lg text-sm font-bold shadow-md transition">
+                        Explore Tools
+                    </a>
+                    <a href="https://wa.me/919451239239" target="_blank" rel="noopener noreferrer" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-green-600 hover:bg-green-700 text-white flex items-center justify-center shadow-md transition">
+                        <i class="fab fa-whatsapp text-xl"></i>
+                    </a>
+                </div>
+            </div>
         </div>
+    </header>
 
-        <strong>PDF</strong>
+    <!-- =====================================================
+         HERO SECTION
+    ===================================================== -->
+    <section id="home" class="hero-bg w-full pt-10 pb-16 sm:pt-16 sm:pb-20 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 bg-brand-50 border border-brand-100 text-brand-700 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold mb-6">
+                    <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                    Your Ultimate Digital Hub
+                </div>
+                
+                <h2 class="font-jakarta font-black text-gray-900 text-3xl sm:text-5xl md:text-6xl leading-tight tracking-tight mb-6">
+                    Learn <span class="text-blue-600">Digital Skills</span> & <br> Use <span class="text-brand-600">Free Smart Tools</span>
+                </h2>
+                
+                <p class="text-gray-600 font-medium text-sm sm:text-base md:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                    EDVYNOX एक ऐसा प्लेटफॉर्म है जहाँ आप 100% Practical Digital Skills सीख सकते हैं और रोज़मर्रा के कामों के लिए Free PDF, Image, और Design Tools का उपयोग कर सकते हैं।
+                </p>
 
-        <span>Documents</span>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 font-sans">
+                    <a href="#courses" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-3.5 rounded-xl text-sm font-bold shadow-[0_8px_20px_rgba(37,99,235,0.25)] transition hover:-translate-y-1">
+                        <i class="fas fa-graduation-cap mr-2"></i> Explore Courses
+                    </a>
+                    <a href="#tools" class="w-full sm:w-auto bg-white border-2 border-gray-200 hover:border-brand-500 text-brand-700 px-8 py-3.5 rounded-xl text-sm font-bold shadow-sm transition hover:-translate-y-1">
+                        <i class="fas fa-tools mr-2"></i> Use Free Tools
+                    </a>
+                </div>
 
-    </button>
-
-
-    <button class="category"
-    data-category="image"
-    onclick="selectCategory('image',this)">
-
-        <div class="category-icon">
-            🖼️
+                <!-- Stats -->
+                <div class="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+                    <div class="bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-blue-600 text-2xl font-black">10+</div>
+                        <div class="text-[10px] text-gray-600 font-bold uppercase mt-1">Years Experience</div>
+                    </div>
+                    <div class="bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-green-600 text-2xl font-black">300+</div>
+                        <div class="text-[10px] text-gray-600 font-bold uppercase mt-1">Live Students</div>
+                    </div>
+                    <div class="bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-orange-600 text-2xl font-black">5000+</div>
+                        <div class="text-[10px] text-gray-600 font-bold uppercase mt-1">Registrations</div>
+                    </div>
+                    <div class="bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl p-4 shadow-sm">
+                        <div class="text-brand-600 text-2xl font-black">20+</div>
+                        <div class="text-[10px] text-gray-600 font-bold uppercase mt-1">Free Tools</div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <strong>IMAGE</strong>
-
-        <span>Photo Tools</span>
-
-    </button>
-
-
-    <button class="category"
-    data-category="design"
-    onclick="selectCategory('design',this)">
-
-        <div class="category-icon">
-            🎨
+    <!-- =====================================================
+         PICSART SPECIAL COURSE
+    ===================================================== -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+        <div class="picsart-box relative overflow-hidden rounded-3xl shadow-xl">
+            <div class="relative z-10 p-6 sm:p-10 flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white px-3 py-1 rounded-full text-[10px] font-bold mb-4">
+                        <i class="fas fa-star text-yellow-300"></i> SPECIAL PHOTO EDITING COURSE
+                    </div>
+                    <h2 class="text-white text-3xl sm:text-4xl font-black font-jakarta mb-3">PicsArt Photo Editing Course</h2>
+                    <p class="text-white/90 text-sm sm:text-base leading-relaxed mb-6">
+                        Mobile से Professional Photo Editing सीखें। Beginner से शुरुआत करके Photo Cutting, Background, Text, Logo, Poster और Social Media Design तक Step-by-Step Practical Training।
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-white text-xs font-medium">
+                        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-yellow-300"></i> Photo Cutting & Background</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-yellow-300"></i> Logo, PNG & Text Design</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-yellow-300"></i> Color & Light Correction</div>
+                        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-yellow-300"></i> Social Media Posters</div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 w-full md:w-80 shadow-2xl text-center shrink-0">
+                    <div class="flex items-center justify-center gap-2 mb-1">
+                        <span class="text-gray-400 text-sm font-bold line-through">₹999</span>
+                        <span class="bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full text-[10px] font-black">80% OFF</span>
+                    </div>
+                    <div class="text-purple-700 text-5xl font-black mb-1">₹199</div>
+                    <p class="text-[10px] text-gray-500 font-bold mb-4">ONE-TIME COURSE FEE</p>
+                    <button type="button" onclick="openOrder('PicsArt Photo Editing Course', 199)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-purple-600 hover:to-pink-500 text-white py-3.5 rounded-xl font-black text-sm shadow-md transition hover:-translate-y-1">
+                        Book Now ₹199 <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <strong>DESIGN</strong>
-
-        <span>Create Designs</span>
-
-    </button>
-
-
-    <button class="category"
-    data-category="social"
-    onclick="selectCategory('social',this)">
-
-        <div class="category-icon">
-            📱
+    <!-- =====================================================
+         COURSES GRID
+    ===================================================== -->
+    <section id="courses" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-10">
+            <h2 class="font-jakarta text-2xl sm:text-3xl font-black text-gray-900">Professional Digital Courses</h2>
+            <p class="text-gray-500 text-sm mt-2">Practical Skills सीखें • अपना काम आसान बनाएं • अपने Career को बेहतर बनाएं</p>
         </div>
-
-        <strong>SOCIAL</strong>
-
-        <span>Social Media</span>
-
-    </button>
-
-
-    <button class="category"
-    data-category="student"
-    onclick="selectCategory('student',this)">
-
-        <div class="category-icon">
-            🎓
+        
+        <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Courses injected via JS -->
         </div>
+    </section>
 
-        <strong>STUDENT</strong>
+    <!-- =====================================================
+         FREE DIGITAL TOOLS SECTION
+    ===================================================== -->
+    <section id="tools" class="bg-white py-16 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <small class="text-brand-600 text-[10px] font-black tracking-widest uppercase">EDVYNOX Free Tools</small>
+                <h2 class="font-jakarta text-2xl sm:text-3xl font-black text-gray-900 mt-2 mb-3">जो डिजिटल काम है, उसका टूल यहीं है।</h2>
+                <p class="text-gray-500 text-sm leading-relaxed">बिना किसी जटिल सॉफ्टवेयर के अपनी फाइल अपलोड करें, प्रोसेस करें और तुरंत डाउनलोड करें। 100% Free.</p>
+            </div>
 
-        <span>Study & Office</span>
+            <!-- Tool Categories -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 sm:gap-4 max-w-4xl mx-auto mb-10">
+                <button class="tool-cat-btn active bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="pdf" onclick="selectToolCategory('pdf', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">📄</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">PDF</strong>
+                </button>
+                <button class="tool-cat-btn bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="image" onclick="selectToolCategory('image', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">🖼️</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">IMAGE</strong>
+                </button>
+                <button class="tool-cat-btn bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="design" onclick="selectToolCategory('design', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">🎨</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">DESIGN</strong>
+                </button>
+                <button class="tool-cat-btn bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="social" onclick="selectToolCategory('social', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">📱</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">SOCIAL</strong>
+                </button>
+                <button class="tool-cat-btn bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="student" onclick="selectToolCategory('student', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">🎓</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">STUDENT</strong>
+                </button>
+                <button class="tool-cat-btn bg-white border border-gray-200 rounded-2xl p-3 flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm" data-category="utility" onclick="selectToolCategory('utility', this)">
+                    <div class="icon-box w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-xl transition-colors">⚡</div>
+                    <strong class="font-jakarta text-[10px] sm:text-xs text-gray-800">UTILITY</strong>
+                </button>
+            </div>
 
-    </button>
+            <!-- Search Tools -->
+            <div class="max-w-2xl mx-auto mb-10 relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="toolSearch" placeholder="Tool search करें... e.g. PDF, Resize, Resume" oninput="searchTools()" class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition">
+            </div>
 
+            <div class="text-center mb-8">
+                <h3 id="categoryTitle" class="font-jakarta text-xl font-bold text-gray-900">📄 PDF Tools</h3>
+                <p id="categoryDescription" class="text-xs text-gray-500 mt-1">PDF के दैनिक उपयोग के लिए टूल्स।</p>
+            </div>
 
-    <button class="category"
-    data-category="utility"
-    onclick="selectCategory('utility',this)">
+            <!-- Tools Grid Container -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tools-grid">
+                
+                <!-- PDF TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="pdf">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">PDF</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Image to PDF</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">JPG, PNG या WEBP images को एक single PDF file में convert करें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('imageToPdf')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="imageToPdf">
+                        <input type="file" id="imagePdfInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100" accept="image/*" multiple>
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="imagesToPDF()">Convert & Download</button>
+                        <div class="text-center text-[10px] font-bold text-brand-700 mt-2" id="imagePdfStatus"></div>
+                    </div>
+                </div>
 
-        <div class="category-icon">
-            ⚡
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="pdf">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">IMG</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">PDF to Image</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">PDF के pages को high-quality PNG images में convert करें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('pdfToImage')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="pdfToImage">
+                        <input type="file" id="pdfInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700" accept="application/pdf">
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="pdfToImages()">Extract Images</button>
+                        <div id="pdfPreview" class="mt-3 flex flex-col gap-2"></div>
+                    </div>
+                </div>
+
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="pdf">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">MERGE</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Merge PDF</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Multiple PDF files को एक single PDF में combine करें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('mergePdf')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="mergePdf">
+                        <input type="file" id="mergeInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700" accept="application/pdf" multiple>
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="mergePDF()">Merge & Download</button>
+                        <div class="text-center text-[10px] font-bold text-brand-700 mt-2" id="mergeStatus"></div>
+                    </div>
+                </div>
+
+                <!-- IMAGE TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="image">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">KB</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Image Compressor</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Photo का file size कम करें (Target KB के अनुसार)।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('imageCompress')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="imageCompress">
+                        <input type="file" id="compressImageInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700" accept="image/*">
+                        <input type="number" id="targetKB" placeholder="Target KB e.g. 100" class="w-full mb-3 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="compressImage()">Compress Image</button>
+                        <div class="text-center text-[10px] font-bold text-brand-700 mt-2" id="compressStatus"></div>
+                    </div>
+                </div>
+
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="image">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">SIZE</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Image Resize</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Photo की Width और Height पिक्सल में बदलें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('resizeImage')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="resizeImage">
+                        <input type="file" id="resizeInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700" accept="image/*">
+                        <div class="flex gap-2 mb-3">
+                            <input type="number" id="resizeWidth" placeholder="Width (px)" class="w-1/2 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                            <input type="number" id="resizeHeight" placeholder="Height (px)" class="w-1/2 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                        </div>
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="resizeImage()">Resize & Download</button>
+                    </div>
+                </div>
+
+                <!-- DESIGN TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="design">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">POSTER</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Poster Maker</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">सिंपल प्रोफेशनल पोस्टर बनाएं और डाउनलोड करें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('posterMaker')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="posterMaker">
+                        <input id="posterTitle" placeholder="Poster Title" value="YOUR BUSINESS" class="w-full mb-3 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                        <input id="posterSubtitle" placeholder="Subtitle" value="Grow Your Digital Presence" class="w-full mb-3 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                        <div class="flex items-center gap-2 mb-3 text-xs text-gray-600">
+                            Color: <input type="color" id="posterColor" value="#0d9488" class="h-8 w-12 cursor-pointer border-0 rounded">
+                        </div>
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold mb-3" onclick="createPoster()">Generate Preview</button>
+                        <canvas id="posterCanvas" class="w-full rounded-md border border-gray-200 bg-white"></canvas>
+                        <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-md text-xs font-bold mt-3" onclick="downloadCanvas('posterCanvas','EDVYNOX-Poster.png')">Download Poster</button>
+                    </div>
+                </div>
+
+                <!-- SOCIAL TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="social">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">QR</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">QR Code Generator</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">किसी भी Link, UPI, या Text का QR Code बनाएं।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('socialQR')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="socialQR">
+                        <input id="qrText" placeholder="Enter URL or Text" class="w-full mb-3 px-3 py-2 border border-gray-200 rounded-md text-xs focus:outline-none focus:border-brand-500">
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="generateToolQR()">Generate QR</button>
+                        <div id="tool-qrcode" class="flex justify-center mt-4 bg-white p-3 rounded-lg border border-gray-200 shadow-sm mx-auto w-fit"></div>
+                    </div>
+                </div>
+
+                <!-- STUDENT TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="student">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">OCR</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Image to Text (OCR)</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Photo या Scanned Image से Text निकालें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('ocrTool')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="ocrTool">
+                        <input type="file" id="ocrInput" class="w-full text-xs mb-3 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700" accept="image/*">
+                        <button class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold mb-3" onclick="runOCR()">Extract Text</button>
+                        <textarea id="ocrOutput" placeholder="Extracted text will appear here..." class="w-full h-24 p-2 text-xs border border-gray-200 rounded-md mb-2 focus:outline-none focus:border-brand-500"></textarea>
+                        <button class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-md text-xs font-bold" onclick="copyText('ocrOutput')">Copy Text</button>
+                        <div class="text-center text-[10px] font-bold text-brand-700 mt-2" id="ocrStatus"></div>
+                    </div>
+                </div>
+
+                <!-- UTILITY TOOLS -->
+                <div class="tool-card bg-white border border-gray-200 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-lg transition flex flex-col" data-category="utility">
+                    <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold text-sm mb-4">TXT</div>
+                    <h3 class="font-jakarta text-lg font-bold text-gray-900 mb-2">Text Cleaner</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed flex-1 mb-4">Extra spaces और blank lines को एक क्लिक में clean करें।</p>
+                    <button class="w-full bg-brand-700 hover:bg-brand-600 text-white py-2.5 rounded-lg text-xs font-bold transition" onclick="openWorkspace('textCleaner')">Open Tool &rarr;</button>
+                    
+                    <div class="workspace mt-4 bg-gray-50 p-4 rounded-xl border border-gray-100" id="textCleaner">
+                        <textarea id="cleanText" placeholder="Paste your messy text here..." class="w-full h-24 p-2 text-xs border border-gray-200 rounded-md mb-3 focus:outline-none focus:border-brand-500"></textarea>
+                        <div class="flex gap-2">
+                            <button class="w-1/2 bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-md text-xs font-bold" onclick="cleanTextNow()">Clean Text</button>
+                            <button class="w-1/2 bg-gray-800 hover:bg-gray-900 text-white py-2.5 rounded-md text-xs font-bold" onclick="copyText('cleanText')">Copy Result</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-
-        <strong>UTILITY</strong>
-
-        <span>Daily Tools</span>
-
-    </button>
-
-</div>
-
-</div>
-
-
-<!-- SEARCH -->
-
-<div class="search-box">
-
-    <span class="search-icon">
-        🔎
-    </span>
-
-    <input
-        type="text"
-        id="toolSearch"
-        placeholder="Tool search karein... e.g. PDF, photo, QR, resume"
-        oninput="searchTools()"
-    >
-
-</div>
-
-
-<div class="selected-category">
-
-    <h3 id="categoryTitle">
-        📄 PDF Tools
-    </h3>
-
-    <p id="categoryDescription">
-        PDF ke daily kaam ke liye useful tools.
-    </p>
-
-</div>
-
-
-<!-- TOOL GRID -->
-
-<div class="tool-grid" id="toolGrid">
-
-
-<!-- =====================================================
-     PDF TOOLS
-===================================================== -->
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">PDF</div>
-
-<h3>Image to PDF</h3>
-
-<p>
-JPG, PNG ya WEBP images ko ek single PDF file mein convert karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('imageToPdf')">
-Open Tool →
-</button>
-
-<div class="workspace" id="imageToPdf">
-
-<input
-type="file"
-id="imagePdfInput"
-class="file-input"
-accept="image/*"
-multiple
->
-
-<button class="workspace-btn"
-onclick="imagesToPDF()">
-Convert & Download PDF
-</button>
-
-<div class="status"
-id="imagePdfStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">IMG</div>
-
-<h3>PDF to Image</h3>
-
-<p>
-PDF ke pages ko PNG images mein convert karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('pdfToImage')">
-Open Tool →
-</button>
-
-<div class="workspace" id="pdfToImage">
-
-<input
-type="file"
-id="pdfInput"
-class="file-input"
-accept="application/pdf"
->
-
-<button class="workspace-btn"
-onclick="pdfToImages()">
-Convert PDF
-</button>
-
-<div id="pdfPreview"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">MERGE</div>
-
-<h3>Merge PDF</h3>
-
-<p>
-Multiple PDF files ko ek single PDF mein combine karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('mergePdf')">
-Open Tool →
-</button>
-
-<div class="workspace" id="mergePdf">
-
-<input
-type="file"
-id="mergeInput"
-class="file-input"
-accept="application/pdf"
-multiple
->
-
-<button class="workspace-btn"
-onclick="mergePDF()">
-Merge & Download
-</button>
-
-<div class="status" id="mergeStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">SPLIT</div>
-
-<h3>Split PDF</h3>
-
-<p>
-PDF se selected pages ko alag PDF file mein nikalein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('splitPdf')">
-Open Tool →
-</button>
-
-<div class="workspace" id="splitPdf">
-
-<input
-type="file"
-id="splitInput"
-class="file-input"
-accept="application/pdf"
->
-
-<input
-type="text"
-id="splitPages"
-placeholder="Pages: 1,3,5"
->
-
-<button class="workspace-btn"
-onclick="splitPDF()">
-Extract Pages
-</button>
-
-<div class="status" id="splitStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">ROTATE</div>
-
-<h3>Rotate PDF</h3>
-
-<p>
-PDF pages ko 90°, 180° ya 270° rotate karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('rotatePdf')">
-Open Tool →
-</button>
-
-<div class="workspace" id="rotatePdf">
-
-<input
-type="file"
-id="rotateInput"
-class="file-input"
-accept="application/pdf"
->
-
-<select id="rotateAngle">
-<option value="90">90°</option>
-<option value="180">180°</option>
-<option value="270">270°</option>
-</select>
-
-<button class="workspace-btn"
-onclick="rotatePDF()">
-Rotate & Download
-</button>
-
-<div class="status" id="rotateStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="pdf">
-
-<div class="tool-icon">KB</div>
-
-<h3>PDF Page Compressor</h3>
-
-<p>
-PDF pages ko smaller image quality ke saath compact PDF mein banayein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('compressPdf')">
-Open Tool →
-</button>
-
-<div class="workspace" id="compressPdf">
-
-<input
-type="file"
-id="compressPdfInput"
-class="file-input"
-accept="application/pdf"
->
-
-<select id="compressQuality">
-<option value="1">Normal Quality</option>
-<option value="0.75">Medium Compression</option>
-<option value="0.55">High Compression</option>
-</select>
-
-<button class="workspace-btn"
-onclick="compressPDF()">
-Compress PDF
-</button>
-
-<div class="status" id="compressPdfStatus"></div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     IMAGE TOOLS
-===================================================== -->
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">KB</div>
-
-<h3>Image Compressor</h3>
-
-<p>
-Photo ka file size reduce karein aur practical KB size mein download karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('imageCompress')">
-Open Tool →
-</button>
-
-<div class="workspace" id="imageCompress">
-
-<input
-type="file"
-id="compressImageInput"
-class="file-input"
-accept="image/*"
->
-
-<input
-type="number"
-id="targetKB"
-placeholder="Target KB e.g. 100"
->
-
-<button class="workspace-btn"
-onclick="compressImage()">
-Compress Image
-</button>
-
-<div class="status" id="compressStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">SIZE</div>
-
-<h3>Image Resize</h3>
-
-<p>
-Photo ka width aur height change karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('resizeImage')">
-Open Tool →
-</button>
-
-<div class="workspace" id="resizeImage">
-
-<input
-type="file"
-id="resizeInput"
-class="file-input"
-accept="image/*"
->
-
-<input
-type="number"
-id="resizeWidth"
-placeholder="Width in pixels"
->
-
-<input
-type="number"
-id="resizeHeight"
-placeholder="Height in pixels"
->
-
-<button class="workspace-btn"
-onclick="resizeImage()">
-Resize & Download
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">CROP</div>
-
-<h3>Image Crop</h3>
-
-<p>
-Image ko square, portrait ya landscape ratio mein crop karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('cropImage')">
-Open Tool →
-</button>
-
-<div class="workspace" id="cropImage">
-
-<input
-type="file"
-id="cropInput"
-class="file-input"
-accept="image/*"
->
-
-<select id="cropRatio">
-<option value="1">1 : 1 Square</option>
-<option value="1.777">16 : 9</option>
-<option value=".8">4 : 5</option>
-<option value=".667">2 : 3</option>
-</select>
-
-<button class="workspace-btn"
-onclick="cropImage()">
-Crop & Download
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">JPG</div>
-
-<h3>Image Format Converter</h3>
-
-<p>
-Image ko JPG, PNG ya WEBP format mein convert karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('imageConvert')">
-Open Tool →
-</button>
-
-<div class="workspace" id="imageConvert">
-
-<input
-type="file"
-id="convertInput"
-class="file-input"
-accept="image/*"
->
-
-<select id="convertFormat">
-<option value="image/jpeg">JPG</option>
-<option value="image/png">PNG</option>
-<option value="image/webp">WEBP</option>
-</select>
-
-<button class="workspace-btn"
-onclick="convertImage()">
-Convert & Download
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">ID</div>
-
-<h3>Passport Photo Maker</h3>
-
-<p>
-Ek photo se passport-size photo sheet create karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('passportPhoto')">
-Open Tool →
-</button>
-
-<div class="workspace" id="passportPhoto">
-
-<input
-type="file"
-id="passportInput"
-class="file-input"
-accept="image/*"
->
-
-<button class="workspace-btn"
-onclick="makePassportPhoto()">
-Create Photo Sheet
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="image">
-
-<div class="tool-icon">SIGN</div>
-
-<h3>Signature Compressor</h3>
-
-<p>
-Online forms ke liye signature ko resize aur compress karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('signature')">
-Open Tool →
-</button>
-
-<div class="workspace" id="signature">
-
-<input
-type="file"
-id="signatureInput"
-class="file-input"
-accept="image/*"
->
-
-<input
-type="number"
-id="signatureWidth"
-placeholder="Width e.g. 300"
-value="300"
->
-
-<button class="workspace-btn"
-onclick="resizeSignature()">
-Resize & Download
-</button>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     DESIGN
-===================================================== -->
-
-<div class="tool-card" data-category="design">
-
-<div class="tool-icon">POSTER</div>
-
-<h3>Poster Maker</h3>
-
-<p>
-Simple professional poster banayein aur PNG mein download karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('posterMaker')">
-Open Tool →
-</button>
-
-<div class="workspace" id="posterMaker">
-
-<input
-id="posterTitle"
-placeholder="Poster Title"
-value="YOUR BUSINESS">
-
-<input
-id="posterSubtitle"
-placeholder="Subtitle"
-value="Grow Your Digital Presence">
-
-<input
-type="color"
-id="posterColor"
-value="#087c65"
->
-
-<button class="workspace-btn"
-onclick="createPoster()">
-Create Poster
-</button>
-
-<canvas id="posterCanvas"
-style="width:100%;margin-top:12px;border-radius:8px;"></canvas>
-
-<button class="workspace-btn download-btn"
-onclick="downloadCanvas('posterCanvas','EDVYNOX-Poster.png')">
-Download Poster
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="design">
-
-<div class="tool-icon">YT</div>
-
-<h3>YouTube Thumbnail Maker</h3>
-
-<p>
-16:9 YouTube thumbnail ke liye title aur subtitle add karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('thumbnailMaker')">
-Open Tool →
-</button>
-
-<div class="workspace" id="thumbnailMaker">
-
-<input
-type="file"
-id="thumbnailImage"
-class="file-input"
-accept="image/*"
->
-
-<input
-id="thumbnailTitle"
-placeholder="Thumbnail Title"
-value="LEARN DIGITAL SKILLS">
-
-<input
-id="thumbnailSubtitle"
-placeholder="Subtitle"
-value="Easy Step-by-Step Guide">
-
-<button class="workspace-btn"
-onclick="createThumbnail()">
-Create Thumbnail
-</button>
-
-<canvas id="thumbnailCanvas"
-style="width:100%;margin-top:12px;border-radius:8px;"></canvas>
-
-<button class="workspace-btn download-btn"
-onclick="downloadCanvas('thumbnailCanvas','EDVYNOX-Thumbnail.png')">
-Download Thumbnail
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="design">
-
-<div class="tool-icon">CARD</div>
-
-<h3>Business Card Maker</h3>
-
-<p>
-Name, business aur contact details ke saath digital card banayein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('businessCard')">
-Open Tool →
-</button>
-
-<div class="workspace" id="businessCard">
-
-<input id="cardName"
-placeholder="Your Name">
-
-<input id="cardBusiness"
-placeholder="Business Name">
-
-<input id="cardPhone"
-placeholder="Mobile Number">
-
-<input id="cardEmail"
-placeholder="Email">
-
-<button class="workspace-btn"
-onclick="createBusinessCard()">
-Create Business Card
-</button>
-
-<canvas id="cardCanvas"
-style="width:100%;margin-top:12px;border-radius:8px;"></canvas>
-
-<button class="workspace-btn download-btn"
-onclick="downloadCanvas('cardCanvas','EDVYNOX-Business-Card.png')">
-Download Card
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="design">
-
-<div class="tool-icon">CERT</div>
-
-<h3>Certificate Maker</h3>
-
-<p>
-Basic certificate create karein aur PNG/PDF download karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('certificate')">
-Open Tool →
-</button>
-
-<div class="workspace" id="certificate">
-
-<input id="certName"
-placeholder="Student Name">
-
-<input id="certCourse"
-placeholder="Course Name">
-
-<input id="certDate"
-type="date">
-
-<button class="workspace-btn"
-onclick="createCertificate()">
-Create Certificate
-</button>
-
-<canvas id="certCanvas"
-style="width:100%;margin-top:12px;border-radius:8px;"></canvas>
-
-<button class="workspace-btn download-btn"
-onclick="downloadCanvas('certCanvas','EDVYNOX-Certificate.png')">
-Download Certificate
-</button>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     SOCIAL
-===================================================== -->
-
-<div class="tool-card" data-category="social">
-
-<div class="tool-icon">SOC</div>
-
-<h3>Social Caption Generator</h3>
-
-<p>
-Topic enter karein aur ready-to-edit social caption idea paayein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('captionTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="captionTool">
-
-<input
-id="captionTopic"
-placeholder="Topic e.g. Digital Marketing">
-
-<select id="captionStyle">
-
-<option value="professional">
-Professional
-</option>
-
-<option value="friendly">
-Friendly
-</option>
-
-<option value="short">
-Short & Catchy
-</option>
-
-<option value="sales">
-Promotional
-</option>
-
-</select>
-
-<button class="workspace-btn"
-onclick="generateCaption()">
-Generate Caption
-</button>
-
-<textarea id="captionOutput"
-placeholder="Caption yahan appear hoga...">
-</textarea>
-
-<button class="workspace-btn"
-onclick="copyText('captionOutput')">
-Copy Caption
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="social">
-
-<div class="tool-icon">#</div>
-
-<h3>Hashtag Generator</h3>
-
-<p>
-Topic ke basis par useful hashtag ideas generate karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('hashtagTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="hashtagTool">
-
-<input
-id="hashtagTopic"
-placeholder="Topic e.g. Photography">
-
-<button class="workspace-btn"
-onclick="generateHashtags()">
-Generate Hashtags
-</button>
-
-<textarea id="hashtagOutput"></textarea>
-
-<button class="workspace-btn"
-onclick="copyText('hashtagOutput')">
-Copy Hashtags
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="social">
-
-<div class="tool-icon">QR</div>
-
-<h3>Social QR Code</h3>
-
-<p>
-Instagram, YouTube, website ya kisi bhi link ka QR code banayein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('socialQR')">
-Open Tool →
-</button>
-
-<div class="workspace" id="socialQR">
-
-<input
-id="qrText"
-placeholder="Website / Instagram / YouTube URL">
-
-<button class="workspace-btn"
-onclick="generateQR()">
-Generate QR
-</button>
-
-<div id="qrBox"
-style="display:flex;justify-content:center;margin-top:15px;">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     STUDENT
-===================================================== -->
-
-<div class="tool-card" data-category="student">
-
-<div class="tool-icon">CV</div>
-
-<h3>Resume Maker</h3>
-
-<p>
-Basic professional resume details fill karke PDF banayein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('resumeMaker')">
-Open Tool →
-</button>
-
-<div class="workspace" id="resumeMaker">
-
-<input id="resumeName"
-placeholder="Full Name">
-
-<input id="resumePhone"
-placeholder="Mobile">
-
-<input id="resumeEmail"
-placeholder="Email">
-
-<input id="resumeEducation"
-placeholder="Education">
-
-<input id="resumeSkills"
-placeholder="Skills">
-
-<textarea
-id="resumeAbout"
-placeholder="About Me">
-</textarea>
-
-<button class="workspace-btn"
-onclick="createResume()">
-Create Resume PDF
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="student">
-
-<div class="tool-icon">OCR</div>
-
-<h3>Image to Text</h3>
-
-<p>
-Photo ya scanned image se text extract karne ki koshish karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('ocrTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="ocrTool">
-
-<input
-type="file"
-id="ocrInput"
-class="file-input"
-accept="image/*"
->
-
-<button class="workspace-btn"
-onclick="runOCR()">
-Extract Text
-</button>
-
-<textarea
-id="ocrOutput"
-placeholder="Extracted text...">
-</textarea>
-
-<button class="workspace-btn"
-onclick="copyText('ocrOutput')">
-Copy Text
-</button>
-
-<div class="status" id="ocrStatus"></div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="student">
-
-<div class="tool-icon">ABC</div>
-
-<h3>Word & Character Counter</h3>
-
-<p>
-Words, characters, sentences aur lines count karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('counterTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="counterTool">
-
-<textarea
-id="counterText"
-placeholder="Type or paste your text..."
-oninput="countText()">
-</textarea>
-
-<div class="status" id="counterOutput">
-Words: 0 | Characters: 0 | Sentences: 0 | Lines: 0
-</div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="student">
-
-<div class="tool-icon">Aa</div>
-
-<h3>Text Case Converter</h3>
-
-<p>
-Text ko UPPERCASE, lowercase ya Title Case mein convert karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('caseTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="caseTool">
-
-<textarea
-id="caseText"
-placeholder="Enter your text">
-</textarea>
-
-<button class="workspace-btn"
-onclick="caseUpper()">
-UPPERCASE
-</button>
-
-<button class="workspace-btn"
-onclick="caseLower()">
-lowercase
-</button>
-
-<button class="workspace-btn"
-onclick="caseTitle()">
-Title Case
-</button>
-
-</div>
-
-</div>
-
-
-<!-- =====================================================
-     UTILITY
-===================================================== -->
-
-<div class="tool-card" data-category="utility">
-
-<div class="tool-icon">INFO</div>
-
-<h3>File Information</h3>
-
-<p>
-File ka name, type, size aur modification information dekhein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('fileInfo')">
-Open Tool →
-</button>
-
-<div class="workspace" id="fileInfo">
-
-<input
-type="file"
-id="fileInfoInput"
-class="file-input"
-onchange="showFileInfo(this)"
->
-
-<div class="status"
-id="fileInfoOutput"
-style="text-align:left;">
-</div>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="utility">
-
-<div class="tool-icon">TXT</div>
-
-<h3>Text Cleaner</h3>
-
-<p>
-Extra spaces aur unwanted blank lines ko clean karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('textCleaner')">
-Open Tool →
-</button>
-
-<div class="workspace" id="textCleaner">
-
-<textarea
-id="cleanText"
-placeholder="Paste your text here...">
-</textarea>
-
-<button class="workspace-btn"
-onclick="cleanTextNow()">
-Clean Text
-</button>
-
-<button class="workspace-btn"
-onclick="copyText('cleanText')">
-Copy Result
-</button>
-
-</div>
-
-</div>
-
-
-<div class="tool-card" data-category="utility">
-
-<div class="tool-icon">🔢</div>
-
-<h3>Number Formatter</h3>
-
-<p>
-Large numbers ko Indian comma format mein convert karein.
-</p>
-
-<button class="tool-open"
-onclick="openWorkspace('numberTool')">
-Open Tool →
-</button>
-
-<div class="workspace" id="numberTool">
-
-<input
-type="number"
-id="numberInput"
-placeholder="Enter number">
-
-<button class="workspace-btn"
-onclick="formatNumber()">
-Format Number
-</button>
-
-<div
-class="status"
-id="numberOutput">
-</div>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =====================================================
-     ABOUT
-===================================================== -->
-
-<section class="info-section" id="about">
-
-<div class="container">
-
-<div class="section-heading">
-
-    <small>WHY EDVYNOX</small>
-
-    <h2>
-        Digital Kaam Ab Simple Hai.
-    </h2>
-
-    <p>
-        EDVYNOX ko everyday users, students, creators,
-        small businesses aur professionals ko dhyan mein
-        rakhkar design kiya gaya hai.
-    </p>
-
-</div>
-
-
-<div class="info-grid">
-
-<div class="info-card">
-
-<span>⚡</span>
-
-<h3>
-Fast & Simple
-</h3>
-
-<p>
-Tool select karein, file upload karein aur
-simple steps follow karke result paayein.
-</p>
-
-</div>
-
-
-<div class="info-card">
-
-<span>📱</span>
-
-<h3>
-Mobile Friendly
-</h3>
-
-<p>
-Website phone, tablet aur computer par
-easy-to-use interface ke saath kaam karti hai.
-</p>
-
-</div>
-
-
-<div class="info-card">
-
-<span>🛠️</span>
-
-<h3>
-Useful Tools
-</h3>
-
-<p>
-PDF, image, design, social media, study aur
-daily digital work ke practical tools ek jagah.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =====================================================
-     CONTACT
-===================================================== -->
-
-<section class="contact" id="contact">
-
-<div class="container">
-
-<h2>
-Digital Kaam Karein. Smartly.
-</h2>
-
-<p>
-EDVYNOX ka goal simple hai — useful digital tools ko
-easy interface ke saath ek jagah available karna.
-</p>
-
-<a href="mailto:edvynox@gmail.com">
-edvynox@gmail.com
-</a>
-
-</div>
-
-</section>
-
-
-<footer>
-
-© 2026 EDVYNOX — Advance Vision & Success.
-All Rights Reserved.
-
-</footer>
-
-
-<!-- LOADER -->
-
-<div class="loader" id="loader">
-
-<div class="loader-box">
-
-<div class="loader-ring"></div>
-
-<div class="loader-text"
-id="loaderText">
-Processing...
-</div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =====================================================
-   GLOBAL
-===================================================== */
-
-const categoryInfo = {
-
-pdf:{
-title:"📄 PDF Tools",
-description:"PDF ke daily kaam ke liye useful tools."
-},
-
-image:{
-title:"🖼️ Image Tools",
-description:"Photo resize, compress, crop aur convert karein."
-},
-
-design:{
-title:"🎨 Design Tools",
-description:"Poster, thumbnail, business card aur certificate banayein."
-},
-
-social:{
-title:"📱 Social Media Tools",
-description:"Social media content aur QR related tools."
-},
-
-student:{
-title:"🎓 Student & Office",
-description:"Resume, OCR, text aur study related tools."
-},
-
-utility:{
-title:"⚡ Utility Tools",
-description:"Daily digital work ke simple utility tools."
-}
-
-};
-
-
-/* =====================================================
-   SELECT CATEGORY
-===================================================== */
-
-function selectCategory(category,button){
-
-    document
-    .querySelectorAll(".category")
-    .forEach(function(btn){
-
-        btn.classList.remove("active");
-
-    });
-
-    button.classList.add("active");
-
-    document.getElementById("categoryTitle")
-    .textContent =
-    categoryInfo[category].title;
-
-    document.getElementById("categoryDescription")
-    .textContent =
-    categoryInfo[category].description;
-
-    document
-    .querySelectorAll(".tool-card")
-    .forEach(function(card){
-
-        card.style.display =
-        card.dataset.category === category
-        ? "flex"
-        : "none";
-
-    });
-
-    document.getElementById("toolSearch").value="";
-
-    setTimeout(function(){
-
-        document
-        .getElementById("tools")
-        .scrollIntoView({
-            behavior:"smooth",
-            block:"start"
+    </section>
+
+    <!-- =====================================================
+         FAQ SECTION
+    ===================================================== -->
+    <section id="faq" class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-blue-700 px-4 py-2 rounded-full text-xs font-black">
+                <i class="fas fa-circle-question"></i> Course & Platform Help
+            </div>
+            <h2 class="font-jakarta text-2xl sm:text-3xl font-black text-gray-900 mt-4">अक्सर पूछे जाने वाले सवाल</h2>
+        </div>
+        
+        <div class="space-y-3 font-sans">
+            <div class="faq-item bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-left p-4 font-bold text-sm text-gray-800 hover:bg-gray-50 transition">
+                    <span>1. इन Courses में वास्तव में क्या सिखाया जाएगा?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 transition-transform"></i>
+                </button>
+                <div class="faq-answer px-4 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                    हर Course को Practical Learning के हिसाब से तैयार किया गया है। Basic Level से शुरुआत करके Real-Life उपयोग समझाया जाएगा।
+                </div>
+            </div>
+            <div class="faq-item bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-left p-4 font-bold text-sm text-gray-800 hover:bg-gray-50 transition">
+                    <span>2. Classes कहाँ और किस माध्यम से होंगी?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 transition-transform"></i>
+                </button>
+                <div class="faq-answer px-4 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                    Training Online होगी। Live Class के लिए Google Meet का उपयोग किया जाएगा। WhatsApp Support उपलब्ध रहेगा।
+                </div>
+            </div>
+            <div class="faq-item bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-left p-4 font-bold text-sm text-gray-800 hover:bg-gray-50 transition">
+                    <span>3. Course की फीस कैसे जमा करनी होगी?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 transition-transform"></i>
+                </button>
+                <div class="faq-answer px-4 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                    Course के "Order करें" बटन पर क्लिक करें। Payment Page पर QR Code या UPI से फीस जमा करके Screenshot WhatsApp पर भेजें।
+                </div>
+            </div>
+            <div class="faq-item bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <button type="button" onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-left p-4 font-bold text-sm text-gray-800 hover:bg-gray-50 transition">
+                    <span>4. Free Tools का उपयोग कैसे करें?</span>
+                    <i class="fas fa-chevron-down faq-icon text-gray-400 transition-transform"></i>
+                </button>
+                <div class="faq-answer px-4 pb-4 text-xs sm:text-sm text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+                    'Free Tools' सेक्शन में जाएं, अपना टूल चुनें, फाइल/टेक्स्ट डालें और 'Convert/Download' पर क्लिक करें। यह पूरी तरह से मुफ्त है।
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================
+         FOOTER
+    ===================================================== -->
+    <footer class="bg-gray-950 text-white">
+        <div class="max-w-7xl mx-auto px-4 py-8 text-center">
+            <div class="font-jakarta text-lg font-bold">🚀EDVYNOX — एडवाइनॉक्स 🌍</div>
+            <p class="text-gray-400 text-xs mt-2">Digital Skills • Online Training • Free Smart Tools</p>
+            <p class="text-gray-600 text-[10px] mt-4">&copy; 2026 Shree World Premium Portal. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- =====================================================
+         MODALS & OVERLAYS
+    ===================================================== -->
+    
+    <!-- Loader -->
+    <div id="loader" class="hidden fixed inset-0 z-[9999] loader-backdrop flex items-center justify-center p-3">
+        <div class="bg-white rounded-2xl p-8 text-center shadow-2xl">
+            <div class="loader-ring"></div>
+            <div id="loaderText" class="mt-4 text-brand-700 text-sm font-bold">Processing...</div>
+        </div>
+    </div>
+
+    <!-- Course Order Modal -->
+    <div id="orderModal" class="hidden fixed inset-0 z-[999] modal-backdrop flex items-center justify-center p-3 font-sans">
+        <div class="bg-white w-full max-w-md max-h-[95vh] overflow-y-auto rounded-3xl shadow-2xl relative">
+            <button type="button" onclick="closeOrder()" class="absolute right-3 top-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center z-10 transition">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Customer Form -->
+            <div id="customerForm" class="p-6">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3"><i class="fas fa-shopping-cart text-lg"></i></div>
+                    <h2 class="text-xl font-black text-gray-900">Course Order</h2>
+                </div>
+                
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-5 text-center">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Selected Course</p>
+                    <p id="selectedCourse" class="font-black text-gray-900 text-sm mt-1">Course Name</p>
+                    <p id="selectedPrice" class="text-blue-600 font-black text-2xl mt-1">₹0</p>
+                </div>
+                
+                <label class="block text-xs font-bold text-gray-700 mb-1">आपका नाम</label>
+                <input id="customerName" type="text" placeholder="पूरा नाम लिखें" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 mb-4">
+                
+                <label class="block text-xs font-bold text-gray-700 mb-1">मोबाइल नंबर</label>
+                <input id="customerMobile" type="tel" maxlength="10" placeholder="10 अंकों का नंबर" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm outline-none focus:border-blue-500 mb-6">
+                
+                <button type="button" onclick="goToPayment()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3.5 rounded-xl font-black shadow-md transition">आगे बढ़ें <i class="fas fa-arrow-right ml-1"></i></button>
+            </div>
+            
+            <!-- Payment Step -->
+            <div id="paymentStep" class="hidden p-6">
+                <div class="text-center mb-4">
+                    <h2 class="text-xl font-black text-gray-900">Payment करें</h2>
+                    <p id="paymentCourseName" class="text-xs text-gray-500 mt-1">Course Name</p>
+                    <div id="paymentAmount" class="text-3xl font-black text-green-600 mt-2">₹0</div>
+                </div>
+                
+                <div class="bg-gray-50 border border-gray-100 rounded-2xl p-4 text-center mb-4">
+                    <p class="text-xs font-bold text-gray-700 mb-3">QR Code Scan करके Payment करें</p>
+                    <div id="payment-qrcode" class="bg-white inline-block p-2 rounded-xl border border-gray-200 shadow-sm mx-auto"></div>
+                </div>
+                
+                <div class="border border-purple-100 bg-purple-50 rounded-xl p-3 mb-4 flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-purple-700">UPI ID</p>
+                        <p class="text-xs font-bold text-gray-800">9451239239@axisbank</p>
+                    </div>
+                    <button onclick="copyUPI()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">Copy</button>
+                </div>
+                
+                <div class="bg-orange-50 border border-orange-100 rounded-xl p-3 text-center mb-4">
+                    <p class="text-[10px] text-orange-700 font-bold">Payment पूरा करने के बाद Screenshot WhatsApp पर भेजें।</p>
+                </div>
+                
+                <button type="button" onclick="sendWhatsAppConfirmation()" class="w-full bg-[#25D366] hover:bg-green-600 text-white py-3 rounded-xl font-black flex items-center justify-center gap-2 shadow-md transition mb-3">
+                    <i class="fab fa-whatsapp text-lg"></i> WhatsApp पर Order भेजें
+                </button>
+                <button type="button" onclick="backToForm()" class="w-full text-gray-500 text-xs font-bold py-2 hover:text-gray-700">← जानकारी बदलें</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT LOGIC
+    ===================================================== -->
+    <script>
+        /* ================= COURSES DATA & RENDER ================= */
+        const courses = [
+            { title:"आर्टिफिशियल इंटेलिजेंस (AI)", icon:"fa-robot", bg:"bg-blue-50", color:"text-blue-600", border:"border-blue-100", oldPrice:8000, newPrice:2400, desc:"AI और आधुनिक AI Tools का Practical उपयोग सीखें।" },
+            { title:"डिजिटल मार्केटिंग", icon:"fa-bullhorn", bg:"bg-orange-50", color:"text-orange-600", border:"border-orange-100", oldPrice:7000, newPrice:2100, desc:"Online Marketing और Customer तक पहुंचने की Skills सीखें।" },
+            { title:"इंस्टा और फेसबुक ग्रोथ", icon:"fa-instagram", bg:"bg-pink-50", color:"text-pink-600", border:"border-pink-100", oldPrice:5000, newPrice:1500, desc:"Instagram और Facebook पर बेहतर Content और Growth सीखें।" },
+            { title:"वेबसाइट डेवलपमेंट", icon:"fa-globe", bg:"bg-cyan-50", color:"text-cyan-600", border:"border-cyan-100", oldPrice:9000, newPrice:2700, desc:"Modern Website बनाने की Basic से Practical जानकारी सीखें।" },
+            { title:"फोटो और ग्राफिक डिजाइन", icon:"fa-pen-nib", bg:"bg-purple-50", color:"text-purple-600", border:"border-purple-100", oldPrice:6000, newPrice:1800, desc:"Canva से Professional Creative Design बनाना सीखें।" },
+            { title:"वीडियो एडिटिंग", icon:"fa-video", bg:"bg-red-50", color:"text-red-600", border:"border-red-100", oldPrice:7500, newPrice:2250, desc:"Mobile से Social Media Video Editing सीखें।" }
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const grid = document.getElementById("courses-grid");
+            courses.forEach(course => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl border ${course.border} overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 relative font-sans flex flex-col">
+                        <div class="absolute top-0 left-0 right-0 h-1 ${course.bg.replace('bg-','bg-')} ${course.color.replace('text-','bg-')}"></div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div class="flex items-start gap-4 mb-3">
+                                <div class="w-14 h-14 shrink-0 rounded-xl ${course.bg} ${course.color} border ${course.border} flex items-center justify-center"><i class="fas ${course.icon} text-2xl"></i></div>
+                                <div>
+                                    <h3 class="font-extrabold text-gray-900 text-lg leading-tight mb-1">${course.title}</h3>
+                                    <span class="bg-red-50 text-red-600 border border-red-100 rounded-full px-2 py-0.5 text-[9px] font-black">70% OFF</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-500 text-xs font-medium leading-relaxed mb-4 flex-1">${course.desc}</p>
+                            <div class="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
+                                <div>
+                                    <span class="text-xs text-gray-400 font-bold line-through">₹${course.oldPrice}</span>
+                                    <div class="text-xl font-black ${course.color}">₹${course.newPrice}</div>
+                                </div>
+                                <button onclick="openOrder('${course.title}', ${course.newPrice})" class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm">Order करें <i class="fas fa-arrow-right ml-1 text-[10px]"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         });
 
-    },100);
-}
-
-
-/* =====================================================
-   SHOW ALL
-===================================================== */
-
-function showAllTools(){
-
-    document
-    .querySelectorAll(".category")
-    .forEach(function(btn){
-
-        btn.classList.remove("active");
-
-    });
-
-    document.getElementById("categoryTitle")
-    .textContent =
-    "🛠️ All Digital Tools";
-
-    document.getElementById("categoryDescription")
-    .textContent =
-    "EDVYNOX ke saare available tools ek jagah.";
-
-    document
-    .querySelectorAll(".tool-card")
-    .forEach(function(card){
-
-        card.style.display="flex";
-
-    });
-
-    document.getElementById("toolSearch").value="";
-
-    scrollToTools();
-}
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-function searchTools(){
-
-    const query =
-    document
-    .getElementById("toolSearch")
-    .value
-    .toLowerCase()
-    .trim();
-
-    document
-    .querySelectorAll(".tool-card")
-    .forEach(function(card){
-
-        const text =
-        card.innerText.toLowerCase();
-
-        card.style.display =
-        text.includes(query)
-        ? "flex"
-        : "none";
-
-    });
-
-}
-
-
-/* =====================================================
-   SCROLL
-===================================================== */
-
-function scrollToTools(){
-
-    document
-    .getElementById("tools")
-    .scrollIntoView({
-        behavior:"smooth"
-    });
-
-}
-
-
-/* =====================================================
-   WORKSPACE
-===================================================== */
-
-function openWorkspace(id){
-
-    const workspace =
-    document.getElementById(id);
-
-    if(!workspace){
-        return;
-    }
-
-    const isActive =
-    workspace.classList.contains("active");
-
-    document
-    .querySelectorAll(".workspace")
-    .forEach(function(w){
-
-        w.classList.remove("active");
-
-    });
-
-    if(!isActive){
-
-        workspace.classList.add("active");
-
-        setTimeout(function(){
-
-            workspace.scrollIntoView({
-                behavior:"smooth",
-                block:"center"
-            });
-
-        },100);
-
-    }
-
-}
-
-
-/* =====================================================
-   LOADER
-===================================================== */
-
-function loader(text){
-
-    document
-    .getElementById("loaderText")
-    .textContent=text;
-
-    document
-    .getElementById("loader")
-    .classList.add("active");
-
-}
-
-function hideLoader(){
-
-    document
-    .getElementById("loader")
-    .classList.remove("active");
-
-}
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function readDataURL(file){
-
-    return new Promise(function(resolve,reject){
-
-        const reader =
-        new FileReader();
-
-        reader.onload=function(e){
-
-            resolve(e.target.result);
-
-        };
-
-        reader.onerror=reject;
-
-        reader.readAsDataURL(file);
-
-    });
-
-}
-
-
-function loadImage(src){
-
-    return new Promise(function(resolve,reject){
-
-        const img =
-        new Image();
-
-        img.onload=function(){
-            resolve(img);
-        };
-
-        img.onerror=reject;
-
-        img.src=src;
-
-    });
-
-}
-
-
-function downloadDataURL(dataURL,name){
-
-    const a =
-    document.createElement("a");
-
-    a.href=dataURL;
-    a.download=name;
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-}
-
-
-/* =====================================================
-   IMAGE TO PDF
-===================================================== */
-
-async function imagesToPDF(){
-
-    const input =
-    document.getElementById("imagePdfInput");
-
-    if(!input.files.length){
-
-        alert("Please images select karein.");
-
-        return;
-
-    }
-
-    loader("PDF create ho raha hai...");
-
-    try{
-
-        const {jsPDF} =
-        window.jspdf;
-
-        const pdf =
-        new jsPDF();
-
-        for(let i=0;i<input.files.length;i++){
-
-            const data =
-            await readDataURL(input.files[i]);
-
-            const img =
-            await loadImage(data);
-
-            if(i>0){
-                pdf.addPage();
-            }
-
-            const pageW =
-            pdf.internal.pageSize.getWidth();
-
-            const pageH =
-            pdf.internal.pageSize.getHeight();
-
-            const ratio =
-            Math.min(
-                (pageW-20)/img.width,
-                (pageH-20)/img.height
-            );
-
-            const w =
-            img.width*ratio;
-
-            const h =
-            img.height*ratio;
-
-            pdf.addImage(
-                img,
-                "JPEG",
-                (pageW-w)/2,
-                (pageH-h)/2,
-                w,
-                h
-            );
-
+        /* ================= COURSE PAYMENT LOGIC ================= */
+        const WHATSAPP_NUMBER = "919451239239";
+        const UPI_ID = "9451239239@axisbank";
+        const UPI_NAME = "RAJAN KUMAR YADAV";
+        let selectedCourseName = "", selectedCoursePrice = 0, customerName = "", customerMobile = "";
+
+        function openOrder(name, price) {
+            selectedCourseName = name; selectedCoursePrice = price;
+            document.getElementById('selectedCourse').textContent = name;
+            document.getElementById('selectedPrice').textContent = "₹" + price;
+            document.getElementById('paymentCourseName').textContent = name;
+            document.getElementById('paymentAmount').textContent = "₹" + price;
+            document.getElementById('customerForm').classList.remove('hidden');
+            document.getElementById('paymentStep').classList.add('hidden');
+            document.getElementById('orderModal').classList.remove('hidden');
+            document.getElementById('orderModal').classList.add('flex');
+            document.body.style.overflow = "hidden";
         }
 
-        pdf.save("EDVYNOX-Images.pdf");
-
-        document.getElementById(
-            "imagePdfStatus"
-        ).textContent =
-        "PDF successfully download ho gaya.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("PDF create nahi ho saka.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   PDF TO IMAGE
-===================================================== */
-
-async function pdfToImages(){
-
-    const input =
-    document.getElementById("pdfInput");
-
-    const preview =
-    document.getElementById("pdfPreview");
-
-    if(!input.files.length){
-
-        alert("PDF select karein.");
-
-        return;
-
-    }
-
-    loader("PDF pages convert ho rahe hain...");
-
-    try{
-
-        const buffer =
-        await input.files[0].arrayBuffer();
-
-        const pdf =
-        await pdfjsLib.getDocument({
-            data:buffer
-        }).promise;
-
-        preview.innerHTML="";
-
-        for(
-            let i=1;
-            i<=pdf.numPages;
-            i++
-        ){
-
-            const page =
-            await pdf.getPage(i);
-
-            const viewport =
-            page.getViewport({
-                scale:1.7
-            });
-
-            const canvas =
-            document.createElement("canvas");
-
-            const ctx =
-            canvas.getContext("2d");
-
-            canvas.width =
-            viewport.width;
-
-            canvas.height =
-            viewport.height;
-
-            await page.render({
-                canvasContext:ctx,
-                viewport:viewport
-            }).promise;
-
-            canvas.style.width="100%";
-            canvas.style.borderRadius="8px";
-            canvas.style.marginTop="12px";
-
-            preview.appendChild(canvas);
-
-            const button =
-            document.createElement("button");
-
-            button.className="workspace-btn";
-
-            button.textContent=
-            "Download Page "+i;
-
-            button.onclick=function(){
-
-                downloadDataURL(
-                    canvas.toDataURL("image/png"),
-                    "EDVYNOX-Page-"+i+".png"
-                );
-
-            };
-
-            preview.appendChild(button);
-
+        function closeOrder() {
+            document.getElementById('orderModal').classList.add('hidden');
+            document.getElementById('orderModal').classList.remove('flex');
+            document.body.style.overflow = "";
         }
 
-    }catch(error){
+        function goToPayment() {
+            customerName = document.getElementById('customerName').value.trim();
+            customerMobile = document.getElementById('customerMobile').value.trim();
+            if (customerName.length < 2) return alert("कृपया अपना नाम दर्ज करें।");
+            if (!/^[0-9]{10}$/.test(customerMobile)) return alert("कृपया सही 10 अंकों का मोबाइल नंबर दर्ज करें।");
+            
+            document.getElementById('customerForm').classList.add('hidden');
+            document.getElementById('paymentStep').classList.remove('hidden');
+            
+            // Generate Payment QR
+            const qrBox = document.getElementById('payment-qrcode');
+            qrBox.innerHTML = "";
+            const upiURL = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_NAME)}&am=${encodeURIComponent(selectedCoursePrice)}&cu=INR&tn=${encodeURIComponent(selectedCourseName)}`;
+            new QRCode(qrBox, { text: upiURL, width: 160, height: 160, colorDark: "#111827", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+        }
 
-        console.error(error);
+        function backToForm() {
+            document.getElementById('paymentStep').classList.add('hidden');
+            document.getElementById('customerForm').classList.remove('hidden');
+        }
 
-        alert("PDF read nahi ho saka.");
+        function copyUPI() {
+            navigator.clipboard.writeText(UPI_ID).then(() => alert("UPI ID Copy हो गई: " + UPI_ID));
+        }
 
-    }
+        function sendWhatsAppConfirmation() {
+            const msg = `नमस्ते R.K YADAV सर 🙏\n\nमैंने Course Order किया है।\n📚 Course: ${selectedCourseName}\n💰 Amount: ₹${selectedCoursePrice}/-\n👤 Name: ${customerName}\n📱 Mobile: ${customerMobile}\n\nमैंने Payment कर दिया है, कृपया Confirm करें।`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+        }
 
-    hideLoader();
+        function toggleFAQ(btn) {
+            const item = btn.closest('.faq-item');
+            document.querySelectorAll('.faq-item').forEach(other => { if (other !== item) other.classList.remove('active'); });
+            item.classList.toggle('active');
+        }
 
-}
+        /* ================= TOOLS LOGIC ================= */
+        const toolCategories = {
+            pdf: { title: "📄 PDF Tools", desc: "PDF के दैनिक उपयोग के लिए टूल्स।" },
+            image: { title: "🖼️ Image Tools", desc: "Photo resize, compress और convert करें।" },
+            design: { title: "🎨 Design Tools", desc: "Poster, thumbnail आदि बनाएं।" },
+            social: { title: "📱 Social Media", desc: "QR और Social media टूल्स।" },
+            student: { title: "🎓 Student & Office", desc: "OCR और text related टूल्स।" },
+            utility: { title: "⚡ Utility Tools", desc: "दैनिक डिजिटल उपयोग के टूल्स।" }
+        };
 
+        function selectToolCategory(category, btn) {
+            document.querySelectorAll('.tool-cat-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            
+            document.getElementById('categoryTitle').textContent = toolCategories[category].title;
+            document.getElementById('categoryDescription').textContent = toolCategories[category].desc;
+            
+            document.querySelectorAll('.tool-card').forEach(card => {
+                card.style.display = card.dataset.category === category ? 'flex' : 'none';
+            });
+            document.getElementById('toolSearch').value = '';
+        }
 
-/* =====================================================
-   MERGE PDF
-===================================================== */
+        function searchTools() {
+            const query = document.getElementById('toolSearch').value.toLowerCase().trim();
+            document.querySelectorAll('.tool-cat-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('categoryTitle').textContent = "🔎 Search Results";
+            document.getElementById('categoryDescription').textContent = "आपकी खोज के अनुसार परिणाम";
+            
+            document.querySelectorAll('.tool-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
 
-async function mergePDF(){
+        function openWorkspace(id) {
+            const ws = document.getElementById(id);
+            if (!ws) return;
+            document.querySelectorAll('.workspace').forEach(w => w.classList.remove('active'));
+            ws.classList.add('active');
+        }
 
-    const input =
-    document.getElementById("mergeInput");
+        function showLoader(text) {
+            document.getElementById('loaderText').textContent = text;
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('loader').classList.add('flex');
+        }
+        function hideLoader() {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('loader').classList.remove('flex');
+        }
 
-    if(input.files.length<2){
+        /* Helper Functions for Tools */
+        const readDataURL = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+        const loadImage = src => new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+        const downloadDataURL = (dataURL, name) => {
+            const a = document.createElement("a");
+            a.href = dataURL; a.download = name;
+            document.body.appendChild(a); a.click(); a.remove();
+        };
 
-        alert("Kam se kam 2 PDF select karein.");
-
-        return;
-
-    }
-
-    loader("PDF merge ho rahe hain...");
-
-    try{
-
-        const {jsPDF} =
-        window.jspdf;
-
-        const output =
-        new jsPDF();
-
-        let first=true;
-
-        for(const file of input.files){
-
-            const buffer =
-            await file.arrayBuffer();
-
-            const pdf =
-            await pdfjsLib.getDocument({
-                data:buffer
-            }).promise;
-
-            for(
-                let i=1;
-                i<=pdf.numPages;
-                i++
-            ){
-
-                const page =
-                await pdf.getPage(i);
-
-                const viewport =
-                page.getViewport({
-                    scale:1.4
-                });
-
-                const canvas =
-                document.createElement("canvas");
-
-                canvas.width =
-                viewport.width;
-
-                canvas.height =
-                viewport.height;
-
-                await page.render({
-                    canvasContext:
-                    canvas.getContext("2d"),
-                    viewport
-                }).promise;
-
-                const img =
-                canvas.toDataURL("image/jpeg",.82);
-
-                if(!first){
-                    output.addPage();
+        /* Tool Functions */
+        async function imagesToPDF() {
+            const input = document.getElementById("imagePdfInput");
+            if (!input.files.length) return alert("Please select images.");
+            showLoader("PDF बन रहा है...");
+            try {
+                const { jsPDF } = window.jspdf; const pdf = new jsPDF();
+                for (let i = 0; i < input.files.length; i++) {
+                    const img = await loadImage(await readDataURL(input.files[i]));
+                    if (i > 0) pdf.addPage();
+                    const pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
+                    const ratio = Math.min((pw - 20) / img.width, (ph - 20) / img.height);
+                    pdf.addImage(img, "JPEG", (pw - img.width * ratio) / 2, (ph - img.height * ratio) / 2, img.width * ratio, img.height * ratio);
                 }
-
-                first=false;
-
-                const w =
-                output.internal.pageSize.getWidth();
-
-                const h =
-                output.internal.pageSize.getHeight();
-
-                const ratio =
-                Math.min(
-                    (w-10)/canvas.width,
-                    (h-10)/canvas.height
-                );
-
-                output.addImage(
-                    img,
-                    "JPEG",
-                    (w-canvas.width*ratio)/2,
-                    (h-canvas.height*ratio)/2,
-                    canvas.width*ratio,
-                    canvas.height*ratio
-                );
-
-            }
-
+                pdf.save("EDVYNOX-Images.pdf");
+                document.getElementById("imagePdfStatus").textContent = "Success!";
+            } catch (e) { alert("Error"); }
+            hideLoader();
         }
 
-        output.save("EDVYNOX-Merged.pdf");
-
-        document.getElementById(
-            "mergeStatus"
-        ).textContent=
-        "PDF successfully merge ho gaya.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("PDF merge nahi ho saka.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   SPLIT PDF
-===================================================== */
-
-async function splitPDF(){
-
-    const input =
-    document.getElementById("splitInput");
-
-    const pagesText =
-    document.getElementById("splitPages").value;
-
-    if(!input.files.length){
-
-        alert("PDF select karein.");
-
-        return;
-
-    }
-
-    if(!pagesText){
-
-        alert("Pages enter karein. Example: 1,3,5");
-
-        return;
-
-    }
-
-    loader("Selected pages create ho rahe hain...");
-
-    try{
-
-        const buffer =
-        await input.files[0].arrayBuffer();
-
-        const pdf =
-        await pdfjsLib.getDocument({
-            data:buffer
-        }).promise;
-
-        const pages =
-        pagesText
-        .split(",")
-        .map(x=>parseInt(x.trim()))
-        .filter(x=>x>=1 && x<=pdf.numPages);
-
-        const {jsPDF} =
-        window.jspdf;
-
-        const output =
-        new jsPDF();
-
-        for(let n=0;n<pages.length;n++){
-
-            const page =
-            await pdf.getPage(pages[n]);
-
-            const viewport =
-            page.getViewport({
-                scale:1.5
-            });
-
-            const canvas =
-            document.createElement("canvas");
-
-            canvas.width =
-            viewport.width;
-
-            canvas.height =
-            viewport.height;
-
-            await page.render({
-                canvasContext:
-                canvas.getContext("2d"),
-                viewport
-            }).promise;
-
-            if(n>0){
-                output.addPage();
-            }
-
-            const img =
-            canvas.toDataURL("image/jpeg",.9);
-
-            const w =
-            output.internal.pageSize.getWidth();
-
-            const h =
-            output.internal.pageSize.getHeight();
-
-            const ratio =
-            Math.min(
-                (w-10)/canvas.width,
-                (h-10)/canvas.height
-            );
-
-            output.addImage(
-                img,
-                "JPEG",
-                (w-canvas.width*ratio)/2,
-                (h-canvas.height*ratio)/2,
-                canvas.width*ratio,
-                canvas.height*ratio
-            );
-
+        async function pdfToImages() {
+            const input = document.getElementById("pdfInput"), preview = document.getElementById("pdfPreview");
+            if (!input.files.length) return alert("PDF select करें।");
+            showLoader("Images Extract हो रही हैं...");
+            try {
+                const buffer = await input.files[0].arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                preview.innerHTML = "";
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement("canvas");
+                    canvas.width = viewport.width; canvas.height = viewport.height;
+                    await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+                    canvas.className = "w-full rounded-md border border-gray-200 mb-2";
+                    preview.appendChild(canvas);
+                    const btn = document.createElement("button");
+                    btn.className = "w-full bg-brand-100 text-brand-700 py-1.5 rounded-md text-[10px] font-bold mb-4";
+                    btn.textContent = "Download Page " + i;
+                    btn.onclick = () => downloadDataURL(canvas.toDataURL("image/png"), "Page-" + i + ".png");
+                    preview.appendChild(btn);
+                }
+            } catch (e) { alert("Error reading PDF."); }
+            hideLoader();
         }
 
-        output.save("EDVYNOX-Split.pdf");
-
-        document.getElementById(
-            "splitStatus"
-        ).textContent=
-        "Selected pages download ho gaye.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Split operation failed.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   ROTATE PDF
-===================================================== */
-
-async function rotatePDF(){
-
-    const input =
-    document.getElementById("rotateInput");
-
-    if(!input.files.length){
-
-        alert("PDF select karein.");
-
-        return;
-
-    }
-
-    loader("PDF rotate ho raha hai...");
-
-    try{
-
-        const buffer =
-        await input.files[0].arrayBuffer();
-
-        const pdf =
-        await pdfjsLib.getDocument({
-            data:buffer
-        }).promise;
-
-        const angle =
-        Number(
-            document.getElementById("rotateAngle").value
-        );
-
-        const {jsPDF} =
-        window.jspdf;
-
-        const output =
-        new jsPDF();
-
-        for(let i=1;i<=pdf.numPages;i++){
-
-            const page =
-            await pdf.getPage(i);
-
-            const viewport =
-            page.getViewport({
-                scale:1.4,
-                rotation:angle
-            });
-
-            const canvas =
-            document.createElement("canvas");
-
-            canvas.width =
-            viewport.width;
-
-            canvas.height =
-            viewport.height;
-
-            await page.render({
-                canvasContext:
-                canvas.getContext("2d"),
-                viewport
-            }).promise;
-
-            if(i>1){
-                output.addPage();
-            }
-
-            const img =
-            canvas.toDataURL("image/jpeg",.85);
-
-            const w =
-            output.internal.pageSize.getWidth();
-
-            const h =
-            output.internal.pageSize.getHeight();
-
-            const ratio =
-            Math.min(
-                (w-10)/canvas.width,
-                (h-10)/canvas.height
-            );
-
-            output.addImage(
-                img,
-                "JPEG",
-                (w-canvas.width*ratio)/2,
-                (h-canvas.height*ratio)/2,
-                canvas.width*ratio,
-                canvas.height*ratio
-            );
-
+        async function mergePDF() {
+            const input = document.getElementById("mergeInput");
+            if (input.files.length < 2) return alert("Select at least 2 PDFs.");
+            showLoader("PDF Merge हो रहे हैं...");
+            try {
+                const { jsPDF } = window.jspdf; const output = new jsPDF(); let first = true;
+                for (const file of input.files) {
+                    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const viewport = page.getViewport({ scale: 1.2 });
+                        const canvas = document.createElement("canvas");
+                        canvas.width = viewport.width; canvas.height = viewport.height;
+                        await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+                        if (!first) output.addPage();
+                        first = false;
+                        const pw = output.internal.pageSize.getWidth(), ph = output.internal.pageSize.getHeight();
+                        const ratio = Math.min(pw / canvas.width, ph / canvas.height);
+                        output.addImage(canvas.toDataURL("image/jpeg", 0.8), "JPEG", (pw - canvas.width * ratio) / 2, (ph - canvas.height * ratio) / 2, canvas.width * ratio, canvas.height * ratio);
+                    }
+                }
+                output.save("EDVYNOX-Merged.pdf");
+                document.getElementById("mergeStatus").textContent = "Merged Successfully!";
+            } catch (e) { alert("Merge failed."); }
+            hideLoader();
         }
 
-        output.save("EDVYNOX-Rotated.pdf");
-
-        document.getElementById(
-            "rotateStatus"
-        ).textContent=
-        "PDF rotated successfully.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Rotate failed.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   PDF COMPRESS
-===================================================== */
-
-async function compressPDF(){
-
-    const input =
-    document.getElementById("compressPdfInput");
-
-    if(!input.files.length){
-
-        alert("PDF select karein.");
-
-        return;
-
-    }
-
-    loader("PDF compress ho raha hai...");
-
-    try{
-
-        const buffer =
-        await input.files[0].arrayBuffer();
-
-        const pdf =
-        await pdfjsLib.getDocument({
-            data:buffer
-        }).promise;
-
-        const quality =
-        Number(
-            document.getElementById(
-                "compressQuality"
-            ).value
-        );
-
-        const {jsPDF} =
-        window.jspdf;
-
-        const output =
-        new jsPDF();
-
-        for(let i=1;i<=pdf.numPages;i++){
-
-            const page =
-            await pdf.getPage(i);
-
-            const viewport =
-            page.getViewport({
-                scale:quality
-            });
-
-            const canvas =
-            document.createElement("canvas");
-
-            canvas.width =
-            viewport.width;
-
-            canvas.height =
-            viewport.height;
-
-            await page.render({
-                canvasContext:
-                canvas.getContext("2d"),
-                viewport
-            }).promise;
-
-            if(i>1){
-                output.addPage();
-            }
-
-            const img =
-            canvas.toDataURL(
-                "image/jpeg",
-                quality
-            );
-
-            const w =
-            output.internal.pageSize.getWidth();
-
-            const h =
-            output.internal.pageSize.getHeight();
-
-            const ratio =
-            Math.min(
-                (w-10)/canvas.width,
-                (h-10)/canvas.height
-            );
-
-            output.addImage(
-                img,
-                "JPEG",
-                (w-canvas.width*ratio)/2,
-                (h-canvas.height*ratio)/2,
-                canvas.width*ratio,
-                canvas.height*ratio
-            );
-
+        async function compressImage() {
+            const input = document.getElementById("compressImageInput"), target = Number(document.getElementById("targetKB").value);
+            if (!input.files.length || !target) return alert("Select Image and enter KB.");
+            showLoader("Compressing...");
+            try {
+                const img = await loadImage(await readDataURL(input.files[0]));
+                const canvas = document.createElement("canvas");
+                const scale = Math.min(1, 1500 / img.width, 1500 / img.height);
+                canvas.width = img.width * scale; canvas.height = img.height * scale;
+                canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                let quality = 0.9, dataURL;
+                do {
+                    dataURL = canvas.toDataURL("image/jpeg", quality);
+                    quality -= 0.05;
+                } while (dataURL.length * 0.75 / 1024 > target && quality > 0.1);
+                downloadDataURL(dataURL, "Compressed.jpg");
+                document.getElementById("compressStatus").textContent = "Done!";
+            } catch (e) { alert("Error."); }
+            hideLoader();
         }
 
-        output.save("EDVYNOX-Compressed.pdf");
-
-        document.getElementById(
-            "compressPdfStatus"
-        ).textContent=
-        "Compressed PDF downloaded.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Compression failed.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   IMAGE COMPRESS
-===================================================== */
-
-async function compressImage(){
-
-    const input =
-    document.getElementById("compressImageInput");
-
-    const target =
-    Number(
-        document.getElementById("targetKB").value
-    );
-
-    if(!input.files.length){
-
-        alert("Image select karein.");
-
-        return;
-
-    }
-
-    if(!target || target<10){
-
-        alert("Target KB 10 se zyada rakhein.");
-
-        return;
-
-    }
-
-    loader("Image compress ho rahi hai...");
-
-    try{
-
-        const data =
-        await readDataURL(input.files[0]);
-
-        const img =
-        await loadImage(data);
-
-        const canvas =
-        document.createElement("canvas");
-
-        const max=2000;
-
-        const scale =
-        Math.min(
-            1,
-            max/img.width,
-            max/img.height
-        );
-
-        canvas.width =
-        img.width*scale;
-
-        canvas.height =
-        img.height*scale;
-
-        canvas
-        .getContext("2d")
-        .drawImage(
-            img,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        let quality=.9;
-
-        let dataURL;
-
-        do{
-
-            dataURL =
-            canvas.toDataURL(
-                "image/jpeg",
-                quality
-            );
-
-            quality-=.05;
-
-        }while(
-            dataURL.length*0.75/1024>target &&
-            quality>.1
-        );
-
-        downloadDataURL(
-            dataURL,
-            "EDVYNOX-Compressed.jpg"
-        );
-
-        document.getElementById(
-            "compressStatus"
-        ).textContent=
-        "Compressed image downloaded.";
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Compression failed.");
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   IMAGE RESIZE
-===================================================== */
-
-async function resizeImage(){
-
-    const input =
-    document.getElementById("resizeInput");
-
-    const width =
-    Number(
-        document.getElementById("resizeWidth").value
-    );
-
-    const height =
-    Number(
-        document.getElementById("resizeHeight").value
-    );
-
-    if(!input.files.length){
-
-        alert("Image select karein.");
-
-        return;
-
-    }
-
-    if(!width || !height){
-
-        alert("Width aur height enter karein.");
-
-        return;
-
-    }
-
-    const img =
-    await loadImage(
-        await readDataURL(input.files[0])
-    );
-
-    const canvas =
-    document.createElement("canvas");
-
-    canvas.width=width;
-    canvas.height=height;
-
-    canvas
-    .getContext("2d")
-    .drawImage(
-        img,
-        0,
-        0,
-        width,
-        height
-    );
-
-    downloadDataURL(
-        canvas.toDataURL("image/png"),
-        "EDVYNOX-Resized.png"
-    );
-
-}
-
-
-/* =====================================================
-   IMAGE CROP
-===================================================== */
-
-async function cropImage(){
-
-    const input =
-    document.getElementById("cropInput");
-
-    if(!input.files.length){
-
-        alert("Image select karein.");
-
-        return;
-
-    }
-
-    const ratio =
-    Number(
-        document.getElementById("cropRatio").value
-    );
-
-    const img =
-    await loadImage(
-        await readDataURL(input.files[0])
-    );
-
-    let w=img.width;
-    let h=w/ratio;
-
-    if(h>img.height){
-
-        h=img.height;
-        w=h*ratio;
-
-    }
-
-    const sx=(img.width-w)/2;
-    const sy=(img.height-h)/2;
-
-    const canvas =
-    document.createElement("canvas");
-
-    canvas.width=w;
-    canvas.height=h;
-
-    canvas
-    .getContext("2d")
-    .drawImage(
-        img,
-        sx,
-        sy,
-        w,
-        h,
-        0,
-        0,
-        w,
-        h
-    );
-
-    downloadDataURL(
-        canvas.toDataURL("image/jpeg",.92),
-        "EDVYNOX-Cropped.jpg"
-    );
-
-}
-
-
-/* =====================================================
-   IMAGE FORMAT
-===================================================== */
-
-async function convertImage(){
-
-    const input =
-    document.getElementById("convertInput");
-
-    if(!input.files.length){
-
-        alert("Image select karein.");
-
-        return;
-
-    }
-
-    const format =
-    document.getElementById(
-        "convertFormat"
-    ).value;
-
-    const img =
-    await loadImage(
-        await readDataURL(input.files[0])
-    );
-
-    const canvas =
-    document.createElement("canvas");
-
-    canvas.width=img.width;
-    canvas.height=img.height;
-
-    canvas
-    .getContext("2d")
-    .drawImage(img,0,0);
-
-    let extension="png";
-
-    if(format==="image/jpeg")
-        extension="jpg";
-
-    if(format==="image/webp")
-        extension="webp";
-
-    downloadDataURL(
-        canvas.toDataURL(format,.92),
-        "EDVYNOX-Converted."+extension
-    );
-
-}
-
-
-/* =====================================================
-   PASSPORT PHOTO
-===================================================== */
-
-async function makePassportPhoto(){
-
-    const input =
-    document.getElementById("passportInput");
-
-    if(!input.files.length){
-
-        alert("Photo select karein.");
-
-        return;
-
-    }
-
-    const img =
-    await loadImage(
-        await readDataURL(input.files[0])
-    );
-
-    const canvas =
-    document.createElement("canvas");
-
-    canvas.width=1200;
-    canvas.height=1800;
-
-    const ctx =
-    canvas.getContext("2d");
-
-    ctx.fillStyle="#fff";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    const pw=240;
-    const ph=300;
-
-    for(let y=40;y<1750;y+=ph+40){
-
-        for(let x=40;x<1150;x+=pw+40){
-
-            const ratio =
-            Math.min(
-                pw/img.width,
-                ph/img.height
-            );
-
-            const w=img.width*ratio;
-            const h=img.height*ratio;
-
-            ctx.drawImage(
-                img,
-                x+(pw-w)/2,
-                y+(ph-h)/2,
-                w,
-                h
-            );
-
+        async function resizeImage() {
+            const input = document.getElementById("resizeInput"), w = Number(document.getElementById("resizeWidth").value), h = Number(document.getElementById("resizeHeight").value);
+            if (!input.files.length || !w || !h) return alert("Select Image & provide dimensions.");
+            const img = await loadImage(await readDataURL(input.files[0]));
+            const canvas = document.createElement("canvas");
+            canvas.width = w; canvas.height = h;
+            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+            downloadDataURL(canvas.toDataURL("image/png"), "Resized.png");
         }
 
-    }
-
-    downloadDataURL(
-        canvas.toDataURL("image/jpeg",.92),
-        "EDVYNOX-Passport-Sheet.jpg"
-    );
-
-}
-
-
-/* =====================================================
-   SIGNATURE
-===================================================== */
-
-async function resizeSignature(){
-
-    const input =
-    document.getElementById("signatureInput");
-
-    const width =
-    Number(
-        document.getElementById("signatureWidth").value
-    );
-
-    if(!input.files.length){
-
-        alert("Signature select karein.");
-
-        return;
-
-    }
-
-    const img =
-    await loadImage(
-        await readDataURL(input.files[0])
-    );
-
-    const ratio =
-    width/img.width;
-
-    const canvas =
-    document.createElement("canvas");
-
-    canvas.width=width;
-
-    canvas.height=
-    img.height*ratio;
-
-    canvas
-    .getContext("2d")
-    .drawImage(
-        img,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    downloadDataURL(
-        canvas.toDataURL("image/png"),
-        "EDVYNOX-Signature.png"
-    );
-
-}
-
-
-/* =====================================================
-   POSTER
-===================================================== */
-
-function createPoster(){
-
-    const canvas =
-    document.getElementById("posterCanvas");
-
-    canvas.width=1200;
-    canvas.height=1500;
-
-    const ctx =
-    canvas.getContext("2d");
-
-    const color =
-    document.getElementById("posterColor").value;
-
-    ctx.fillStyle=color;
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    ctx.fillStyle="#ffffff";
-
-    ctx.font="bold 75px Arial";
-
-    ctx.textAlign="center";
-
-    ctx.fillText(
-        "EDVYNOX",
-        600,
-        250
-    );
-
-    ctx.font="bold 100px Arial";
-
-    ctx.fillText(
-        document.getElementById("posterTitle").value,
-        600,
-        650
-    );
-
-    ctx.font="38px Arial";
-
-    ctx.fillText(
-        document.getElementById("posterSubtitle").value,
-        600,
-        750
-    );
-
-    ctx.font="bold 28px Arial";
-
-    ctx.fillText(
-        "DIGITAL • CREATIVE • GROWTH",
-        600,
-        1370
-    );
-
-}
-
-
-/* =====================================================
-   THUMBNAIL
-===================================================== */
-
-async function createThumbnail(){
-
-    const canvas =
-    document.getElementById("thumbnailCanvas");
-
-    canvas.width=1280;
-    canvas.height=720;
-
-    const ctx =
-    canvas.getContext("2d");
-
-    ctx.fillStyle="#087c65";
-
-    ctx.fillRect(
-        0,
-        0,
-        1280,
-        720
-    );
-
-    const input =
-    document.getElementById("thumbnailImage");
-
-    if(input.files.length){
-
-        const img =
-        await loadImage(
-            await readDataURL(input.files[0])
-        );
-
-        ctx.globalAlpha=.55;
-
-        ctx.drawImage(
-            img,
-            0,
-            0,
-            1280,
-            720
-        );
-
-        ctx.globalAlpha=1;
-
-    }
-
-    ctx.fillStyle="rgba(0,0,0,.55)";
-
-    ctx.fillRect(
-        0,
-        0,
-        1280,
-        720
-    );
-
-    ctx.fillStyle="#fff";
-
-    ctx.textAlign="center";
-
-    ctx.font="bold 70px Arial";
-
-    ctx.fillText(
-        document.getElementById("thumbnailTitle").value,
-        640,
-        340
-    );
-
-    ctx.font="32px Arial";
-
-    ctx.fillText(
-        document.getElementById("thumbnailSubtitle").value,
-        640,
-        410
-    );
-
-}
-
-
-/* =====================================================
-   BUSINESS CARD
-===================================================== */
-
-function createBusinessCard(){
-
-    const canvas =
-    document.getElementById("cardCanvas");
-
-    canvas.width=1200;
-    canvas.height=675;
-
-    const ctx =
-    canvas.getContext("2d");
-
-    ctx.fillStyle="#075447";
-
-    ctx.fillRect(
-        0,
-        0,
-        1200,
-        675
-    );
-
-    ctx.fillStyle="#f4c536";
-
-    ctx.fillRect(
-        0,
-        0,
-        25,
-        675
-    );
-
-    ctx.fillStyle="#fff";
-
-    ctx.textAlign="left";
-
-    ctx.font="bold 70px Arial";
-
-    ctx.fillText(
-        document.getElementById("cardName").value || "Your Name",
-        100,
-        240
-    );
-
-    ctx.font="bold 35px Arial";
-
-    ctx.fillText(
-        document.getElementById("cardBusiness").value || "Business Name",
-        100,
-        310
-    );
-
-    ctx.font="28px Arial";
-
-    ctx.fillText(
-        "☎ "+(
-            document.getElementById("cardPhone").value || "Mobile"
-        ),
-        100,
-        420
-    );
-
-    ctx.fillText(
-        "✉ "+(
-            document.getElementById("cardEmail").value || "Email"
-        ),
-        100,
-        475
-    );
-
-    ctx.font="bold 30px Arial";
-
-    ctx.fillText(
-        "EDVYNOX",
-        100,
-        590
-    );
-
-}
-
-
-/* =====================================================
-   CERTIFICATE
-===================================================== */
-
-function createCertificate(){
-
-    const canvas =
-    document.getElementById("certCanvas");
-
-    canvas.width=1600;
-    canvas.height=1100;
-
-    const ctx =
-    canvas.getContext("2d");
-
-    ctx.fillStyle="#fff";
-
-    ctx.fillRect(
-        0,
-        0,
-        1600,
-        1100
-    );
-
-    ctx.strokeStyle="#087c65";
-
-    ctx.lineWidth=25;
-
-    ctx.strokeRect(
-        35,
-        35,
-        1530,
-        1030
-    );
-
-    ctx.textAlign="center";
-
-    ctx.fillStyle="#075447";
-
-    ctx.font="bold 90px Georgia";
-
-    ctx.fillText(
-        "CERTIFICATE",
-        800,
-        230
-    );
-
-    ctx.font="32px Arial";
-
-    ctx.fillText(
-        "This certificate is proudly presented to",
-        800,
-        350
-    );
-
-    ctx.font="bold 70px Georgia";
-
-    ctx.fillText(
-        document.getElementById("certName").value ||
-        "Student Name",
-        800,
-        470
-    );
-
-    ctx.font="30px Arial";
-
-    ctx.fillText(
-        "for successfully completing",
-        800,
-        550
-    );
-
-    ctx.font="bold 45px Arial";
-
-    ctx.fillText(
-        document.getElementById("certCourse").value ||
-        "Course Name",
-        800,
-        630
-    );
-
-    ctx.font="25px Arial";
-
-    ctx.fillText(
-        document.getElementById("certDate").value ||
-        new Date().toLocaleDateString(),
-        800,
-        760
-    );
-
-    ctx.font="bold 32px Arial";
-
-    ctx.fillText(
-        "EDVYNOX",
-        800,
-        900
-    );
-
-}
-
-
-/* =====================================================
-   DOWNLOAD CANVAS
-===================================================== */
-
-function downloadCanvas(id,name){
-
-    const canvas =
-    document.getElementById(id);
-
-    downloadDataURL(
-        canvas.toDataURL("image/png"),
-        name
-    );
-
-}
-
-
-/* =====================================================
-   QR
-===================================================== */
-
-function generateQR(){
-
-    const text =
-    document
-    .getElementById("qrText")
-    .value
-    .trim();
-
-    if(!text){
-
-        alert("URL ya text enter karein.");
-
-        return;
-
-    }
-
-    const box =
-    document.getElementById("qrBox");
-
-    box.innerHTML="";
-
-    new QRCode(
-        box,
-        {
-            text:text,
-            width:200,
-            height:200,
-            correctLevel:QRCode.CorrectLevel.H
+        function createPoster() {
+            const canvas = document.getElementById("posterCanvas"), ctx = canvas.getContext("2d");
+            canvas.width = 1200; canvas.height = 1200;
+            ctx.fillStyle = document.getElementById("posterColor").value || "#0d9488";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ffffff"; ctx.textAlign = "center";
+            ctx.font = "bold 80px Arial"; ctx.fillText("EDVYNOX", 600, 250);
+            ctx.font = "bold 110px Arial"; ctx.fillText(document.getElementById("posterTitle").value, 600, 600);
+            ctx.font = "40px Arial"; ctx.fillText(document.getElementById("posterSubtitle").value, 600, 720);
         }
-    );
 
-}
-
-
-/* =====================================================
-   CAPTION
-===================================================== */
-
-function generateCaption(){
-
-    const topic =
-    document
-    .getElementById("captionTopic")
-    .value
-    .trim();
-
-    const style =
-    document
-    .getElementById("captionStyle")
-    .value;
-
-    if(!topic){
-
-        alert("Topic enter karein.");
-
-        return;
-
-    }
-
-    let result="";
-
-    if(style==="professional"){
-
-        result=
-        "🚀 "+topic+
-        "\n\nAaj ke digital world mein "+
-        topic+
-        " ko samajhna aur sahi tarike se use karna bahut important hai.\n\n"+
-        "Learn • Create • Grow\n\n"+
-        "#DigitalGrowth #Learning #EDVYNOX";
-
-    }
-
-    else if(style==="friendly"){
-
-        result=
-        "✨ Chaliye aaj baat karte hain "+
-        topic+
-        " ke baare mein!\n\n"+
-        "Agar aap bhi apni digital journey ko better banana chahte hain, "+
-        "toh learning start kijiye. 💡\n\n"+
-        "#LearnWithUs #DigitalSkills";
-
-    }
-
-    else if(style==="short"){
-
-        result=
-        "🔥 "+topic+
-        " — Learn it. Use it. Grow with it.\n\n"+
-        "#DigitalSkills #Growth";
-
-    }
-
-    else{
-
-        result=
-        "🚀 "+topic+
-        " ke saath apni digital journey ko next level par le jaiye!\n\n"+
-        "Aaj hi start karein.\n\n"+
-        "#DigitalMarketing #OnlineGrowth #EDVYNOX";
-
-    }
-
-    document.getElementById(
-        "captionOutput"
-    ).value=result;
-
-}
-
-
-/* =====================================================
-   HASHTAGS
-===================================================== */
-
-function generateHashtags(){
-
-    const topic =
-    document
-    .getElementById("hashtagTopic")
-    .value
-    .trim();
-
-    if(!topic){
-
-        alert("Topic enter karein.");
-
-        return;
-
-    }
-
-    const clean =
-    topic
-    .replace(/[^a-zA-Z0-9 ]/g,"")
-    .trim()
-    .replace(/\s+/g,"");
-
-    const tags=[
-        "#"+clean,
-        "#"+clean+"Tips",
-        "#"+clean+"Guide",
-        "#Learn"+clean,
-        "#"+clean+"India",
-        "#DigitalSkills",
-        "#OnlineLearning",
-        "#Growth",
-        "#Creator",
-        "#EDVYNOX"
-    ];
-
-    document.getElementById(
-        "hashtagOutput"
-    ).value=
-    tags.join(" ");
-
-}
-
-
-/* =====================================================
-   COPY
-===================================================== */
-
-function copyText(id){
-
-    const element =
-    document.getElementById(id);
-
-    navigator.clipboard
-    .writeText(element.value)
-    .then(function(){
-
-        alert("Copied!");
-
-    })
-    .catch(function(){
-
-        element.select();
-
-        document.execCommand("copy");
-
-        alert("Copied!");
-
-    });
-
-}
-
-
-/* =====================================================
-   RESUME
-===================================================== */
-
-function createResume(){
-
-    const {jsPDF} =
-    window.jspdf;
-
-    const pdf =
-    new jsPDF();
-
-    const name =
-    document.getElementById("resumeName").value ||
-    "Your Name";
-
-    const phone =
-    document.getElementById("resumePhone").value;
-
-    const email =
-    document.getElementById("resumeEmail").value;
-
-    const education =
-    document.getElementById("resumeEducation").value;
-
-    const skills =
-    document.getElementById("resumeSkills").value;
-
-    const about =
-    document.getElementById("resumeAbout").value;
-
-    pdf.setTextColor(7,84,71);
-
-    pdf.setFontSize(26);
-
-    pdf.text(
-        name,
-        20,
-        30
-    );
-
-    pdf.setTextColor(60,70,67);
-
-    pdf.setFontSize(11);
-
-    pdf.text(
-        phone+" | "+email,
-        20,
-        40
-    );
-
-    pdf.setDrawColor(8,124,101);
-
-    pdf.line(
-        20,
-        48,
-        190,
-        48
-    );
-
-    pdf.setFontSize(15);
-
-    pdf.setTextColor(7,84,71);
-
-    pdf.text(
-        "ABOUT ME",
-        20,
-        65
-    );
-
-    pdf.setFontSize(11);
-
-    pdf.setTextColor(50,60,57);
-
-    pdf.text(
-        pdf.splitTextToSize(
-            about || "About me",
-            170
-        ),
-        20,
-        75
-    );
-
-    pdf.setFontSize(15);
-
-    pdf.setTextColor(7,84,71);
-
-    pdf.text(
-        "EDUCATION",
-        20,
-        115
-    );
-
-    pdf.setFontSize(11);
-
-    pdf.setTextColor(50,60,57);
-
-    pdf.text(
-        education || "Education",
-        20,
-        125
-    );
-
-    pdf.setFontSize(15);
-
-    pdf.setTextColor(7,84,71);
-
-    pdf.text(
-        "SKILLS",
-        20,
-        150
-    );
-
-    pdf.setFontSize(11);
-
-    pdf.setTextColor(50,60,57);
-
-    pdf.text(
-        skills || "Skills",
-        20,
-        160
-    );
-
-    pdf.setFontSize(9);
-
-    pdf.setTextColor(120,130,125);
-
-    pdf.text(
-        "Created with EDVYNOX Free Digital Tools",
-        20,
-        285
-    );
-
-    pdf.save(
-        "EDVYNOX-Resume.pdf"
-    );
-
-}
-
-
-/* =====================================================
-   OCR
-===================================================== */
-
-async function runOCR(){
-
-    const input =
-    document.getElementById("ocrInput");
-
-    if(!input.files.length){
-
-        alert("Image select karein.");
-
-        return;
-
-    }
-
-    const status =
-    document.getElementById("ocrStatus");
-
-    const output =
-    document.getElementById("ocrOutput");
-
-    loader("Image se text read ho raha hai...");
-
-    try{
-
-        const result =
-        await Tesseract.recognize(
-            input.files[0],
-            "eng"
-        );
-
-        output.value =
-        result.data.text;
-
-        status.textContent=
-        "Text extraction complete.";
-
-    }catch(error){
-
-        console.error(error);
-
-        status.textContent=
-        "OCR failed. Clear image try karein.";
-
-    }
-
-    hideLoader();
-
-}
-
-
-/* =====================================================
-   COUNTER
-===================================================== */
-
-function countText(){
-
-    const text =
-    document
-    .getElementById("counterText")
-    .value;
-
-    const words =
-    text.trim()
-    ? text.trim().split(/\s+/).length
-    : 0;
-
-    const characters =
-    text.length;
-
-    const sentences =
-    text
-    .split(/[.!?]+/)
-    .filter(x=>x.trim()).length;
-
-    const lines =
-    text
-    ? text.split("\n").length
-    : 0;
-
-    document.getElementById(
-        "counterOutput"
-    ).textContent=
-    "Words: "+words+
-    " | Characters: "+characters+
-    " | Sentences: "+sentences+
-    " | Lines: "+lines;
-
-}
-
-
-/* =====================================================
-   CASE
-===================================================== */
-
-function caseUpper(){
-
-    const el =
-    document.getElementById("caseText");
-
-    el.value =
-    el.value.toUpperCase();
-
-}
-
-function caseLower(){
-
-    const el =
-    document.getElementById("caseText");
-
-    el.value =
-    el.value.toLowerCase();
-
-}
-
-function caseTitle(){
-
-    const el =
-    document.getElementById("caseText");
-
-    el.value =
-    el.value.toLowerCase()
-    .replace(
-        /\b\w/g,
-        function(c){
-            return c.toUpperCase();
+        function generateToolQR() {
+            const text = document.getElementById("qrText").value.trim();
+            if (!text) return alert("Enter URL/Text.");
+            const box = document.getElementById("tool-qrcode"); box.innerHTML = "";
+            new QRCode(box, { text: text, width: 180, height: 180, colorDark: "#0f766e", correctLevel: QRCode.CorrectLevel.H });
         }
-    );
 
-}
+        async function runOCR() {
+            const input = document.getElementById("ocrInput");
+            if (!input.files.length) return alert("Select Image.");
+            showLoader("Extracting Text...");
+            try {
+                const result = await Tesseract.recognize(input.files[0], 'eng');
+                document.getElementById("ocrOutput").value = result.data.text;
+                document.getElementById("ocrStatus").textContent = "Done!";
+            } catch (e) { alert("OCR Failed."); }
+            hideLoader();
+        }
 
+        function cleanTextNow() {
+            const el = document.getElementById("cleanText");
+            el.value = el.value.replace(/[ \t]+/g, " ").replace(/\n\s*\n\s*\n/g, "\n\n").trim();
+        }
 
-/* =====================================================
-   FILE INFO
-===================================================== */
+        function copyText(id) {
+            const el = document.getElementById(id);
+            navigator.clipboard.writeText(el.value).then(() => alert("Copied!")).catch(() => { el.select(); document.execCommand("copy"); });
+        }
 
-function showFileInfo(input){
+        function downloadCanvas(id, name) { downloadDataURL(document.getElementById(id).toDataURL("image/png"), name); }
 
-    const file =
-    input.files[0];
-
-    if(!file){
-        return;
-    }
-
-    const output =
-    document.getElementById(
-        "fileInfoOutput"
-    );
-
-    output.innerHTML=
-    "<b>File Name:</b> "+
-    file.name+
-    "<br><br>"+
-    "<b>File Type:</b> "+
-    (file.type || "Unknown")+
-    "<br><br>"+
-    "<b>File Size:</b> "+
-    (file.size/1024).toFixed(2)+
-    " KB"+
-    "<br><br>"+
-    "<b>Last Modified:</b> "+
-    new Date(
-        file.lastModified
-    ).toLocaleString();
-
-}
-
-
-/* =====================================================
-   TEXT CLEANER
-===================================================== */
-
-function cleanTextNow(){
-
-    const el =
-    document.getElementById("cleanText");
-
-    el.value =
-    el.value
-    .replace(/[ \t]+/g," ")
-    .replace(/\n\s*\n\s*\n/g,"\n\n")
-    .trim();
-
-}
-
-
-/* =====================================================
-   NUMBER FORMAT
-===================================================== */
-
-function formatNumber(){
-
-    const number =
-    document.getElementById(
-        "numberInput"
-    ).value;
-
-    if(number===""){
-
-        alert("Number enter karein.");
-
-        return;
-
-    }
-
-    const formatted =
-    Number(number)
-    .toLocaleString(
-        "en-IN"
-    );
-
-    document.getElementById(
-        "numberOutput"
-    ).textContent=
-    "Formatted Number: "+
-    formatted;
-
-}
-
-
-/* =====================================================
-   INITIAL STATE
-===================================================== */
-
-document.addEventListener(
-"DOMContentLoaded",
-function(){
-
-    selectCategory(
-        "pdf",
-        document.querySelector(
-            '.category[data-category="pdf"]'
-        )
-    );
-
-});
-
-</script>
-
+        // Initial setup for tools section
+        document.addEventListener("DOMContentLoaded", () => {
+            selectToolCategory('pdf', document.querySelector('.tool-cat-btn[data-category="pdf"]'));
+        });
+    </script>
 </body>
 </html>
