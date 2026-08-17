@@ -53,33 +53,56 @@ body {
 }
 
 /* =========================
-   TIRANGA GLOW EFFECT (INDIAN FLAG)
+   FLOATING AI & SOCIAL ICONS (PROFILE BACKGROUND)
 ========================= */
-.tiranga-glow {
+.pulse-bg {
+    background: radial-gradient(circle, rgba(59,130,246,.15) 0%, rgba(168,85,247,.1) 45%, transparent 70%);
+    animation: pulse-glow 3s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0% { transform: scale(1); opacity: .6; filter: blur(30px); }
+    100% { transform: scale(1.15); opacity: .9; filter: blur(45px); }
+}
+
+.social-ai-icons {
     position: absolute;
-    inset: -22px;
-    border-radius: 50%;
-    /* Saffron, White, Green Gradient */
-    background: linear-gradient(180deg, rgba(255, 153, 51, 0.85) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(19, 136, 8, 0.85) 100%);
-    filter: blur(25px);
-    animation: pulse-tiranga 3.5s infinite alternate ease-in-out;
+    inset: -30px;
     z-index: 0;
+    pointer-events: none;
 }
 
-@keyframes pulse-tiranga {
-    0% { transform: scale(1); opacity: 0.7; filter: blur(20px); }
-    100% { transform: scale(1.15); opacity: 1; filter: blur(35px); }
+.social-ai-icons i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 24px;
+    opacity: 0;
+    animation: floatOut 4s infinite ease-out;
+    text-shadow: 0 0 10px currentColor;
 }
 
-.floating-badge {
-    animation: float-anim 4s ease-in-out infinite;
+/* Icons Animation Directions & Delays */
+.icon-1 { color: #ec4899; animation-delay: 0.0s; --tx: -90px; --ty: -100px; } /* Heart */
+.icon-2 { color: #3b82f6; animation-delay: 0.6s; --tx: 100px; --ty: -60px; }  /* Comment */
+.icon-3 { color: #10b981; animation-delay: 1.2s; --tx: -110px; --ty: 40px; }  /* Eye */
+.icon-4 { color: #a855f7; animation-delay: 1.8s; --tx: 80px; --ty: 90px; }    /* Robot / AI */
+.icon-5 { color: #eab308; animation-delay: 2.4s; --tx: 0px; --ty: -120px; }   /* Thumbs up */
+.icon-6 { color: #0ea5e9; animation-delay: 3.0s; --tx: -50px; --ty: 110px; }  /* Share */
+.icon-7 { color: #f43f5e; animation-delay: 3.6s; --tx: 110px; --ty: 10px; }   /* Flame/Like */
+
+@keyframes floatOut {
+    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+    20% { opacity: 1; transform: translate(calc(-50% + var(--tx)*0.3), calc(-50% + var(--ty)*0.3)) scale(1); }
+    80% { opacity: 0.8; transform: translate(calc(-50% + var(--tx)*0.8), calc(-50% + var(--ty)*0.8)) scale(1.1); }
+    100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0.7); opacity: 0; }
 }
 
+.floating-badge { animation: float-anim 4s ease-in-out infinite; }
 @keyframes float-anim {
     0%, 100% { transform: translateY(0) }
     50% { transform: translateY(-15px) }
 }
-
 .delay-1 { animation-delay: .5s }
 .delay-2 { animation-delay: 1.5s }
 .delay-3 { animation-delay: 2.5s }
@@ -95,75 +118,33 @@ body {
 /* =========================
    EBOOK STORE
 ========================= */
-.ebook-section {
-    position: relative;
-    overflow: hidden;
-}
-
+.ebook-section { position: relative; overflow: hidden; }
 .ebook-section::before {
-    content: "";
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    background: rgba(16, 185, 129, .07);
-    border-radius: 50%;
-    filter: blur(100px);
-    top: -150px;
-    left: -150px;
-    pointer-events: none;
+    content: ""; position: absolute; width: 400px; height: 400px;
+    background: rgba(16, 185, 129, .07); border-radius: 50%;
+    filter: blur(100px); top: -150px; left: -150px; pointer-events: none;
 }
-
-.ebook-section::after {
-    content: "";
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    background: rgba(234, 179, 8, .05);
-    border-radius: 50%;
-    filter: blur(100px);
-    bottom: -150px;
-    right: -150px;
-    pointer-events: none;
-}
-
 .ebook-card {
     background: linear-gradient(145deg, rgba(22, 30, 49, .98), rgba(15, 21, 35, .98));
     border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 22px;
+    border-radius: 16px;
     overflow: hidden;
     transition: all .35s ease;
 }
-
 .ebook-card:hover {
-    transform: translateY(-7px);
-    border-color: rgba(16, 185, 129, .5);
-    box-shadow: 0 20px 45px rgba(0, 0, 0, .35);
+    transform: translateY(-5px);
+    border-color: rgba(16, 185, 129, .4);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, .4);
 }
 
-.ebook-cover {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    display: block;
-    background: #0b101b;
-}
-
-.ebook-title { font-family: 'Outfit', sans-serif; }
+/* Line Clamp for titles and descriptions so layout doesn't break on mobile */
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* =========================
    YOUTUBE
 ========================= */
 .youtube-video-section { position: relative; overflow: hidden; }
-.youtube-video-section::before {
-    content: ""; position: absolute; width: 350px; height: 350px;
-    background: rgba(234, 179, 8, .08); border-radius: 50%;
-    filter: blur(100px); top: 10%; left: -150px; pointer-events: none;
-}
-.youtube-video-section::after {
-    content: ""; position: absolute; width: 350px; height: 350px;
-    background: rgba(59, 130, 246, .08); border-radius: 50%;
-    filter: blur(100px); bottom: 0; right: -150px; pointer-events: none;
-}
 .youtube-thumbnail-wrapper {
     position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden;
     border-radius: 24px; background: #080b12; border: 1px solid rgba(255, 255, 255, .08);
@@ -176,7 +157,7 @@ body {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 82px; height: 58px; border-radius: 18px; background: #f00;
     display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, .45); transition: all .3s ease;
+    transition: all .3s ease;
 }
 .youtube-play-button i { color: white; font-size: 30px; margin-left: 4px; }
 .youtube-thumbnail-wrapper:hover .youtube-play-button { transform: translate(-50%, -50%) scale(1.12); }
@@ -184,12 +165,10 @@ body {
     position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: rgba(0, 0, 0, .72); color: white; padding: 8px 16px;
     border-radius: 999px; font-size: 13px; font-weight: 700;
-    backdrop-filter: blur(8px); white-space: nowrap;
 }
 .youtube-video-wrapper {
     position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden;
     border-radius: 24px; background: #080b12; border: 1px solid rgba(255, 255, 255, .08);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
 }
 .youtube-video-wrapper iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
@@ -198,7 +177,6 @@ body {
     .youtube-play-button { width: 66px; height: 48px; border-radius: 14px; }
     .youtube-play-button i { font-size: 24px; }
     .youtube-watch-text { bottom: 12px; font-size: 10px; padding: 6px 11px; }
-    .ebook-cover { height: 240px; }
 }
 </style>
 
@@ -212,68 +190,72 @@ const WEBSITE_SETTINGS = {
 };
 
 /* =====================================================
-   EBOOK SETTINGS - ALL SET TO UPCOMING
+   SMART EBOOK STORE SYSTEM
+   कैसे काम करता है?
+   1. अगर 'pdf' में "#" लिखा है -> तो यह "UPCOMING" दिखाएगा और बटन बंद रहेगा।
+   2. अगर 'pdf' में "https://..." असली लिंक डाल दिया -> तो कवर फोटो साफ दिखेगी और Download बटन चालू हो जाएगा।
+   3. 'cover' में सिर्फ फोटो (JPG/PNG) का लिंक डालें। PDF का लिंक 'pdf' में डालें।
 ===================================================== */
 const EBOOKS = [
     {
-        title:"Book 01 — AI से पैसे कमाना",
-        cover:"https://drive.google.com/file/d/1WSCeqJUd10CZYqUER0nNLZ6jhR3yV2T-/view?usp=drivesdk",
-        description:"AI का इस्तेमाल करके online income शुरू करने की practical जानकारी। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 01 — AI से पैसे कमाना",
+        cover: "https://placehold.co/600x800/161e31/eab308?text=BOOK+01", // यहाँ सिर्फ बुक की फोटो (jpg/png) का लिंक डालें
+        description: "AI का इस्तेमाल करके online income शुरू करने की practical जानकारी।",
+        pdf: "#" // <--- यहाँ अपने PDF का लिंक डालें (लिंक डालते ही UPCOMING हट जाएगा)
     },
     {
-        title:"Book 02 — Digital Marketing",
-        cover:"https://placehold.co/600x800/161e31/10b981?text=UPCOMING+SOON",
-        description:"Digital Marketing को आसान भाषा में समझने वाली उपयोगी e-book। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 02 — Digital Marketing",
+        cover: "https://placehold.co/600x800/161e31/10b981?text=BOOK+02",
+        description: "Digital Marketing को आसान भाषा में समझने वाली उपयोगी e-book।",
+        pdf: "#" 
     },
     {
-        title:"Book 03 — Freelancing Guide",
-        cover:"https://placehold.co/600x800/161e31/3b82f6?text=UPCOMING+SOON",
-        description:"Freelancing शुरू करने और पहला client पाने की practical guide। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 03 — Freelancing Guide",
+        cover: "https://placehold.co/600x800/161e31/3b82f6?text=BOOK+03",
+        description: "Freelancing शुरू करने और पहला client पाने की practical guide।",
+        pdf: "#"
     },
     {
-        title:"Book 04 — Website Development",
-        cover:"https://placehold.co/600x800/161e31/a855f7?text=UPCOMING+SOON",
-        description:"Website बनाने और online presence तैयार करने की basic जानकारी। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 04 — Website Development",
+        cover: "https://placehold.co/600x800/161e31/a855f7?text=BOOK+04",
+        description: "Website बनाने और online presence तैयार करने की basic जानकारी।",
+        pdf: "#"
     },
     {
-        title:"Book 05 — Social Media Growth",
-        cover:"https://placehold.co/600x800/161e31/ec4899?text=UPCOMING+SOON",
-        description:"Social media पर audience और online presence बढ़ाने के तरीके। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 05 — Social Media Growth",
+        cover: "https://placehold.co/600x800/161e31/ec4899?text=BOOK+05",
+        description: "Social media पर audience और online presence बढ़ाने के तरीके।",
+        pdf: "#"
     },
     {
-        title:"Book 06 — SEO Guide",
-        cover:"https://placehold.co/600x800/161e31/10b981?text=UPCOMING+SOON",
-        description:"Search Engine Optimization की आसान और practical guide। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 06 — SEO Guide",
+        cover: "https://placehold.co/600x800/161e31/10b981?text=BOOK+06",
+        description: "Search Engine Optimization की आसान और practical guide।",
+        pdf: "#"
     },
     {
-        title:"Book 07 — Graphic Design",
-        cover:"https://placehold.co/600x800/161e31/eab308?text=UPCOMING+SOON",
-        description:"Professional graphic design सीखने के लिए useful e-book। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 07 — Graphic Design",
+        cover: "https://placehold.co/600x800/161e31/eab308?text=BOOK+07",
+        description: "Professional graphic design सीखने के लिए useful e-book।",
+        pdf: "#"
     },
     {
-        title:"Book 08 — Online Business",
-        cover:"https://placehold.co/600x800/161e31/3b82f6?text=UPCOMING+SOON",
-        description:"Online business शुरू करने और grow करने की practical जानकारी। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 08 — Online Business",
+        cover: "https://placehold.co/600x800/161e31/3b82f6?text=BOOK+08",
+        description: "Online business शुरू करने और grow करने की practical जानकारी।",
+        pdf: "#"
     },
     {
-        title:"Book 09 — Content Creation",
-        cover:"https://placehold.co/600x800/161e31/ec4899?text=UPCOMING+SOON",
-        description:"Content creation को professional तरीके से शुरू करने की guide। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 09 — Content Creation",
+        cover: "https://placehold.co/600x800/161e31/ec4899?text=BOOK+09",
+        description: "Content creation को professional तरीके से शुरू करने की guide।",
+        pdf: "#"
     },
     {
-        title:"Book 10 — AI Tools Guide",
-        cover:"https://placehold.co/600x800/161e31/a855f7?text=UPCOMING+SOON",
-        description:"काम को आसान और तेज बनाने वाले useful AI tools की जानकारी। (जल्द आ रही है)",
-        pdf:"#"
+        title: "Book 10 — AI Tools Guide",
+        cover: "https://placehold.co/600x800/161e31/a855f7?text=BOOK+10",
+        description: "काम को आसान और तेज बनाने वाले useful AI tools की जानकारी।",
+        pdf: "#"
     }
 ];
 </script>
@@ -290,7 +272,6 @@ const EBOOKS = [
 
         <!-- RIGHT SIDE MENU ITEMS -->
         <div class="flex items-center gap-3 sm:gap-5 ml-auto">
-            <!-- FREE E-BOOK STORE LINK (Smooth scrolls to E-book section) -->
             <a href="#ebooks" class="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-extrabold uppercase tracking-wide whitespace-nowrap hover:scale-105 transition bg-gray-800/50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-gray-700">
                 <span class="text-brandGold">FREE</span>
                 <span class="text-brandGreen">E-BOOK</span>
@@ -302,12 +283,11 @@ const EBOOKS = [
                 Message
             </a>
         </div>
-
     </div>
 </nav>
 
 <!-- =====================================================
- HERO
+ HERO (Updated Profile Background)
 ===================================================== -->
 <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden" id="home">
     <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-16">
@@ -338,8 +318,17 @@ const EBOOKS = [
         <div class="w-full lg:w-2/5 flex justify-center items-center py-10 z-10 relative">
             <div class="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 mt-6 md:mt-0">
                 
-                <!-- TIRANGA BLUR EFFECT BACKGROUND -->
-                <div class="tiranga-glow"></div>
+                <!-- NEW FLOATING ICONS & GLOW EFFECT -->
+                <div class="absolute inset-0 pulse-bg rounded-full z-0"></div>
+                <div class="social-ai-icons">
+                    <i class="fas fa-heart icon-1"></i>
+                    <i class="fas fa-comment-dots icon-2"></i>
+                    <i class="fas fa-eye icon-3"></i>
+                    <i class="fas fa-robot icon-4"></i>
+                    <i class="fas fa-thumbs-up icon-5"></i>
+                    <i class="fas fa-share-nodes icon-6"></i>
+                    <i class="fas fa-fire icon-7"></i>
+                </div>
 
                 <img id="profileImage" src="" alt="R.K. YADAV Profile" class="relative z-10 w-full h-full object-cover rounded-full border-4 border-gray-900 shadow-2xl">
 
@@ -359,34 +348,6 @@ const EBOOKS = [
                     <i class="fas fa-bullhorn"></i> Marketing
                 </div>
             </div>
-        </div>
-
-    </div>
-</section>
-
-<!-- =====================================================
- FREE EBOOK STORE (5 Left / 5 Right layout natively using Grid)
-===================================================== -->
-<section id="ebooks" class="ebook-section py-24 bg-sectionBg">
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        
-        <div class="text-center mb-14">
-            <p class="text-brandGreen font-bold tracking-widest uppercase mb-3">
-                FREE E-BOOKS
-            </p>
-            <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white">
-                <span class="text-brandGold">FREE</span>
-                <span class="text-brandGreen"> E-BOOK </span>
-                <span class="text-brandGold">STORE</span>
-            </h2>
-            <p class="text-gray-400 max-w-2xl mx-auto mt-5">
-                Here you will find our upcoming free e-books to help you grow digitally. Stay tuned!
-            </p>
-        </div>
-
-        <!-- BOOKS: DESKTOP 2 COLUMNS (5 Left / 5 Right) -->
-        <div id="ebookGrid" class="grid grid-cols-1 md:grid-cols-2 gap-7 lg:gap-10">
-            <!-- Books will be injected here via JavaScript -->
         </div>
 
     </div>
@@ -458,11 +419,6 @@ const EBOOKS = [
                 </div>
                 <h3 class="text-2xl font-heading font-bold text-white mb-4">Digital Marketing</h3>
                 <p class="text-gray-400 mb-6 text-base leading-relaxed">I create effective digital marketing strategies designed to increase your online reach, attract the right audience, generate leads, and grow your business.</p>
-                <div class="flex flex-wrap gap-2 text-xs font-bold text-brandBlue">
-                    <span class="bg-brandBlue/10 px-3 py-1.5 rounded-md">Traffic</span>
-                    <span class="bg-brandBlue/10 px-3 py-1.5 rounded-md">Leads</span>
-                    <span class="bg-brandBlue/10 px-3 py-1.5 rounded-md">Sales</span>
-                </div>
             </div>
 
             <div class="bg-sectionBg border border-gray-800 p-8 rounded-3xl card-hover">
@@ -471,11 +427,6 @@ const EBOOKS = [
                 </div>
                 <h3 class="text-2xl font-heading font-bold text-white mb-4">Web Development</h3>
                 <p class="text-gray-400 mb-6 text-base leading-relaxed">I build fast, responsive, modern, and user-friendly websites that represent your brand professionally and help convert visitors into customers.</p>
-                <div class="flex flex-wrap gap-2 text-xs font-bold text-brandPurple">
-                    <span class="bg-brandPurple/10 px-3 py-1.5 rounded-md">Responsive</span>
-                    <span class="bg-brandPurple/10 px-3 py-1.5 rounded-md">Fast</span>
-                    <span class="bg-brandPurple/10 px-3 py-1.5 rounded-md">Custom</span>
-                </div>
             </div>
 
             <div class="bg-sectionBg border border-gray-800 p-8 rounded-3xl card-hover">
@@ -484,11 +435,6 @@ const EBOOKS = [
                 </div>
                 <h3 class="text-2xl font-heading font-bold text-white mb-4">Graphic Design</h3>
                 <p class="text-gray-400 mb-6 text-base leading-relaxed">I create clean, creative, and professional visual designs that help businesses build a memorable and consistent brand identity.</p>
-                <div class="flex flex-wrap gap-2 text-xs font-bold text-brandPink">
-                    <span class="bg-brandPink/10 px-3 py-1.5 rounded-md">Social Media</span>
-                    <span class="bg-brandPink/10 px-3 py-1.5 rounded-md">Branding</span>
-                    <span class="bg-brandPink/10 px-3 py-1.5 rounded-md">Posters</span>
-                </div>
             </div>
 
             <div class="bg-sectionBg border border-gray-800 p-8 rounded-3xl card-hover">
@@ -497,11 +443,6 @@ const EBOOKS = [
                 </div>
                 <h3 class="text-2xl font-heading font-bold text-white mb-4">SEO</h3>
                 <p class="text-gray-400 mb-6 text-base leading-relaxed">I use smart SEO strategies to improve your website’s visibility, help you reach the right audience, and grow your organic traffic.</p>
-                <div class="flex flex-wrap gap-2 text-xs font-bold text-brandGreen">
-                    <span class="bg-brandGreen/10 px-3 py-1.5 rounded-md">Visibility</span>
-                    <span class="bg-brandGreen/10 px-3 py-1.5 rounded-md">Rankings</span>
-                    <span class="bg-brandGreen/10 px-3 py-1.5 rounded-md">Growth</span>
-                </div>
             </div>
         </div>
     </div>
@@ -526,14 +467,6 @@ const EBOOKS = [
             <div class="bg-darkBg border-t-4 border-brandPink p-6 rounded-xl w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)] text-left shadow-lg">
                 <h4 class="text-xl font-bold text-white mb-2">Graphic Design</h4>
                 <p class="text-gray-400 text-sm">Creative visuals, branding and promotional designs.</p>
-            </div>
-            <div class="bg-darkBg border-t-4 border-brandGreen p-6 rounded-xl w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)] text-left shadow-lg">
-                <h4 class="text-xl font-bold text-white mb-2">SEO</h4>
-                <p class="text-gray-400 text-sm">Website optimization, search visibility and organic growth.</p>
-            </div>
-            <div class="bg-darkBg border-t-4 border-brandGold p-6 rounded-xl w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1rem)] text-left shadow-lg">
-                <h4 class="text-xl font-bold text-white mb-2">Branding</h4>
-                <p class="text-gray-400 text-sm">Building a professional and consistent digital identity.</p>
             </div>
         </div>
     </div>
@@ -579,14 +512,41 @@ const EBOOKS = [
     <div class="max-w-7xl mx-auto px-6 text-center">
         <p class="text-brandGold font-bold tracking-widest uppercase mb-3">Portfolio</p>
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white mb-6">My Recent Work</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto text-base mb-12">Explore some of my selected digital projects and creative work that helped businesses achieve their goals.</p>
-        <div class="bg-gradient-to-r from-cardBg to-sectionBg border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl">
+        <div class="bg-gradient-to-r from-cardBg to-sectionBg border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl mt-10">
             <h3 class="text-3xl font-heading font-bold text-white mb-4">Ready to see my work?</h3>
             <p class="text-gray-300 mb-8 max-w-xl mx-auto">Click below to view my complete portfolio and the projects I have successfully delivered to my clients.</p>
             <a href="https://www.rkyshree.in/Edvynox" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-white text-black hover:bg-gray-200 px-10 py-4 rounded-full font-extrabold text-lg transition-all">
                 <i class="fas fa-external-link-alt"></i> View My Projects
             </a>
         </div>
+    </div>
+</section>
+
+<!-- =====================================================
+ FREE EBOOK STORE (Moved to Bottom, Responsive Desktop-like Mobile layout)
+===================================================== -->
+<section id="ebooks" class="ebook-section py-24 bg-sectionBg border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        
+        <div class="text-center mb-14">
+            <p class="text-brandGreen font-bold tracking-widest uppercase mb-3">
+                FREE E-BOOKS
+            </p>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white">
+                <span class="text-brandGold">FREE</span>
+                <span class="text-brandGreen"> E-BOOK </span>
+                <span class="text-brandGold">STORE</span>
+            </h2>
+            <p class="text-gray-400 max-w-2xl mx-auto mt-5 text-sm sm:text-base">
+                Read and download useful PDF books completely free to boost your digital journey.
+            </p>
+        </div>
+
+        <!-- BOOKS: grid-cols-2 on mobile forces 2 books side-by-side like desktop -->
+        <div id="ebookGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6">
+            <!-- Books will be injected here via JavaScript -->
+        </div>
+
     </div>
 </section>
 
@@ -617,54 +577,71 @@ const EBOOKS = [
 document.getElementById("profileImage").src = WEBSITE_SETTINGS.profileImage;
 
 /* =====================================================
- EBOOK STORE SYSTEM (Generates 10 books in Upcoming State)
+ DYNAMIC EBOOK STORE SYSTEM (Upcoming vs Active Logic)
 ===================================================== */
 const ebookGrid = document.getElementById("ebookGrid");
 
 EBOOKS.forEach((book) => {
     const card = document.createElement("article");
-    card.className = "ebook-card";
+    card.className = "ebook-card flex flex-col h-full"; // h-full ensures boxes are equal height
 
-    // Adding "Coming Soon" styling and disabled button
-    card.innerHTML = `
-        <div class="relative">
-            <img src="${book.cover}" alt="${book.title}" class="ebook-cover opacity-75" loading="lazy">
-            <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <span class="bg-brandGold text-black font-black px-6 py-2 rounded-lg transform -rotate-12 text-2xl tracking-widest shadow-2xl border-4 border-black">UPCOMING</span>
+    // Check if the user has provided a real PDF link (not just empty or "#")
+    const isUpcoming = !book.pdf || book.pdf.trim() === "" || book.pdf === "#";
+    
+    // Check if user provided a cover image, otherwise use placeholder
+    const coverImg = book.cover && book.cover.trim() !== "" ? book.cover : "https://placehold.co/600x800/161e31/eab308?text=BOOK";
+
+    if (isUpcoming) {
+        // --- UPCOMING BOOK HTML ---
+        card.innerHTML = `
+            <div class="relative w-full aspect-[3/4] bg-gray-900">
+                <img src="${coverImg}" alt="${book.title}" class="w-full h-full object-cover opacity-50 grayscale" loading="lazy">
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span class="bg-brandGold text-black font-black px-3 py-1 sm:px-4 sm:py-1.5 rounded transform -rotate-12 text-[10px] sm:text-sm tracking-widest shadow-xl border-2 border-black">UPCOMING</span>
+                </div>
             </div>
-        </div>
-
-        <div class="p-6">
-            <div class="flex items-start justify-between gap-3 mb-3">
-                <h3 class="ebook-title text-xl font-bold text-white">${book.title}</h3>
-                <span class="shrink-0 text-[10px] font-extrabold uppercase bg-gray-600/30 text-gray-400 border border-gray-600/50 px-2 py-1 rounded-full">
-                    SOON
-                </span>
+            <div class="p-3 sm:p-5 flex-grow flex flex-col">
+                <h3 class="ebook-title text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2 line-clamp-2">${book.title}</h3>
+                <p class="text-gray-400 text-[9px] sm:text-xs leading-relaxed mb-3 sm:mb-4 flex-grow line-clamp-3">
+                    ${book.description}
+                </p>
+                <button disabled class="w-full inline-flex items-center justify-center gap-1.5 bg-gray-800 text-gray-500 px-2 py-1.5 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-bold cursor-not-allowed">
+                    <i class="fas fa-clock"></i> Soon
+                </button>
             </div>
-            
-            <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                ${book.description}
-            </p>
-
-            <button disabled class="w-full inline-flex items-center justify-center gap-2 bg-gray-700 text-gray-400 px-5 py-3 rounded-xl font-bold cursor-not-allowed">
-                <i class="fas fa-clock"></i>
-                Coming Soon
-            </button>
-        </div>
-    `;
+        `;
+    } else {
+        // --- ACTIVE DOWNLOADABLE BOOK HTML ---
+        card.innerHTML = `
+            <div class="relative w-full aspect-[3/4] bg-gray-900">
+                <img src="${coverImg}" alt="${book.title}" class="w-full h-full object-cover" loading="lazy">
+                <div class="absolute top-2 right-2">
+                    <span class="text-[8px] sm:text-[10px] font-extrabold uppercase bg-brandGreen text-white px-2 py-1 rounded shadow-lg">FREE</span>
+                </div>
+            </div>
+            <div class="p-3 sm:p-5 flex-grow flex flex-col">
+                <h3 class="ebook-title text-xs sm:text-base font-bold text-white mb-1.5 sm:mb-2 line-clamp-2">${book.title}</h3>
+                <p class="text-gray-400 text-[9px] sm:text-xs leading-relaxed mb-3 sm:mb-4 flex-grow line-clamp-3">
+                    ${book.description}
+                </p>
+                <a href="${book.pdf}" target="_blank" rel="noopener noreferrer" class="w-full inline-flex items-center justify-center gap-1.5 bg-brandGreen hover:bg-emerald-600 text-white px-2 py-1.5 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-bold transition-all hover:scale-105">
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
+        `;
+    }
+    
     ebookGrid.appendChild(card);
 });
 
-
 /* =====================================================
- YOUTUBE
+ YOUTUBE LOGIC
 ===================================================== */
 function getYouTubeVideoId(url){
     if(!url) return null;
     try{
         const parsedUrl = new URL(url);
         const hostname = parsedUrl.hostname.toLowerCase();
-        
         if(hostname==="youtube.com" || hostname==="www.youtube.com" || hostname.endsWith(".youtube.com")){
             const videoId = parsedUrl.searchParams.get("v");
             if(videoId) return videoId;
@@ -678,9 +655,7 @@ function getYouTubeVideoId(url){
         if(hostname==="youtu.be" || hostname==="www.youtu.be"){
             return parsedUrl.pathname.replace("/","").split("/")[0];
         }
-    }catch(error){
-        console.error(error);
-    }
+    }catch(error){ console.error(error); }
     return null;
 }
 
@@ -719,15 +694,11 @@ if(youtubeVideoId){
         thumbnailContainer.classList.add("hidden");
         youtubeActions.classList.add("hidden");
         youtubePlayerContainer.classList.remove("hidden");
-        
-        setTimeout(() => {
-            youtubePlayerContainer.scrollIntoView({ behavior:"smooth", block:"center" });
-        }, 100);
+        setTimeout(() => { youtubePlayerContainer.scrollIntoView({ behavior:"smooth", block:"center" }); }, 100);
     }
 
     youtubeThumbnail.addEventListener("click", playYouTubeVideo);
     playVideoButton.addEventListener("click", playYouTubeVideo);
-
 } else {
     thumbnailContainer.innerHTML = `
         <div class="youtube-video-wrapper flex items-center justify-center">
