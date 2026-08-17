@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- PWA / INSTALL APP -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#080b12">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="R.K. YADAV">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
 <title>R.K. YADAV — Premium Digital Portfolio</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -663,10 +672,49 @@ body{
         padding-bottom:12px
     }
 }
+
+/* =====================================================
+   PWA INSTALL APP
+===================================================== */
+#pwaInstallButton{
+ position:fixed; right:16px; bottom:18px; z-index:90;
+ display:none; align-items:center; gap:9px;
+ background:linear-gradient(135deg,#eab308,#f59e0b); color:#080b12;
+ padding:12px 18px; border-radius:999px; font-weight:900;
+ box-shadow:0 8px 30px rgba(234,179,8,.35);
+ border:1px solid rgba(255,255,255,.18); cursor:pointer;
+}
+#pwaInstallButton.show{display:flex}
+#pwaInstallButton:hover{transform:translateY(-2px)}
+#pwaInstallHelp{
+ position:fixed; inset:0; z-index:120; display:none;
+ align-items:flex-end; justify-content:center; padding:16px;
+ background:rgba(0,0,0,.72); backdrop-filter:blur(8px);
+}
+#pwaInstallHelp.show{display:flex}
+.pwa-help-card{max-width:420px;width:100%;background:#161e31;border:1px solid rgba(234,179,8,.35);border-radius:22px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+
 </style>
 </head>
 
 <body class="antialiased font-sans selection:bg-brandGold selection:text-black">
+<!-- PWA INSTALL UI -->
+<button id="pwaInstallButton" type="button" aria-label="Install R.K. YADAV App">
+  <i class="fas fa-download"></i><span>Install App</span>
+</button>
+<div id="pwaInstallHelp" role="dialog" aria-modal="true" aria-labelledby="pwaHelpTitle">
+  <div class="pwa-help-card">
+    <div class="flex items-center justify-between mb-4">
+      <h3 id="pwaHelpTitle" class="text-xl font-black text-white">Install R.K. YADAV App</h3>
+      <button id="pwaHelpClose" class="w-9 h-9 rounded-full bg-white/10 text-white" type="button"><i class="fas fa-times"></i></button>
+    </div>
+    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+      Android/Chrome में <b>Install App</b> दबाएँ। iPhone में Safari के <b>Share</b> बटन पर जाएँ और <b>Add to Home Screen</b> चुनें।
+    </p>
+    <button id="pwaHelpOk" type="button" class="w-full bg-brandGold text-black font-black py-3 rounded-xl">Got it</button>
+  </div>
+</div>
+
 
 <script>
 
@@ -3429,6 +3477,54 @@ document
     );
 
 });
+
+
+/* =====================================================
+   PWA / INSTALL APP
+===================================================== */
+(function(){
+  const installBtn=document.getElementById('pwaInstallButton');
+  const help=document.getElementById('pwaInstallHelp');
+  const closeHelp=()=>help.classList.remove('show');
+  document.getElementById('pwaHelpClose').addEventListener('click',closeHelp);
+  document.getElementById('pwaHelpOk').addEventListener('click',closeHelp);
+  help.addEventListener('click',e=>{if(e.target===help)closeHelp();});
+
+  let deferredPrompt=null;
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); deferredPrompt=e; installBtn.classList.add('show');
+  });
+
+  installBtn.addEventListener('click',async()=>{
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt=null; installBtn.classList.remove('show');
+    }else{
+      help.classList.add('show');
+    }
+  });
+
+  window.addEventListener('appinstalled',()=>{
+    installBtn.classList.remove('show');
+    deferredPrompt=null;
+  });
+
+  if(isIOS && !isStandalone){
+    setTimeout(()=>installBtn.classList.add('show'),1800);
+  }
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('./service-worker.js',{scope:'./'})
+        .then(reg=>console.log('PWA Service Worker registered:',reg.scope))
+        .catch(err=>console.error('PWA Service Worker registration failed:',err));
+    });
+  }
+})();
 
 </script>
 
