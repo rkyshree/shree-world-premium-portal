@@ -1,1669 +1,3416 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FreeTools Hub — All-in-One Free Tools</title>
 
-<title>EDVYNOX FreeTools Hub - All Free Online Tools</title>
+<meta name="description"
+content="Free online PDF, image, resume, text, calculator, converter, developer, QR and utility tools.">
 
-<meta name="description" content="Free online PDF, image, resume, calculator, converter, text, developer and utility tools.">
-<meta name="theme-color" content="#2563eb">
+<!-- PDF / IMAGE LIBRARIES -->
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
+type="module">
+</script>
+
+<script
+src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js">
+</script>
+
+<script
+src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js">
+</script>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,Helvetica,sans-serif;
-}
 
-html{
-    scroll-behavior:smooth;
+*{
+box-sizing:border-box;
 }
 
 body{
-    background:#f5f7fb;
-    color:#111827;
-    transition:.3s;
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f7fb;
+color:#111827;
 }
 
-/* DARK MODE */
-
-body.dark{
-    background:#0b1120;
-    color:#f9fafb;
+header{
+position:sticky;
+top:0;
+z-index:20;
+background:#fff;
+border-bottom:1px solid #e5e7eb;
 }
 
-body.dark .header,
-body.dark .tool-card,
-body.dark .category-card,
-body.dark .search-box,
-body.dark .footer,
-body.dark .mobile-menu{
-    background:#111827;
-    color:#f9fafb;
-}
-
-body.dark .tool-card p,
-body.dark .category-card p{
-    color:#cbd5e1;
-}
-
-/* HEADER */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    background:white;
-    box-shadow:0 2px 15px rgba(0,0,0,.08);
-}
-
-.navbar{
-    max-width:1200px;
-    margin:auto;
-    height:70px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
+nav{
+max-width:1200px;
+margin:auto;
+padding:15px 18px;
+display:flex;
+align-items:center;
+justify-content:space-between;
 }
 
 .logo{
-    font-size:23px;
-    font-weight:800;
-    color:#2563eb;
+font-size:23px;
+font-weight:800;
+color:#2563eb;
 }
 
 .logo span{
-    color:#111827;
+color:#111827;
 }
 
-body.dark .logo span{
-    color:white;
+nav a{
+margin:0 10px;
+color:#374151;
+text-decoration:none;
+font-weight:600;
 }
 
-.nav-links{
-    display:flex;
-    gap:25px;
-    align-items:center;
+button,
+.btn{
+border:0;
+border-radius:9px;
+padding:11px 15px;
+background:#2563eb;
+color:#fff;
+cursor:pointer;
+font-weight:700;
 }
-
-.nav-links a{
-    text-decoration:none;
-    color:inherit;
-    font-weight:600;
-    font-size:14px;
-}
-
-.nav-links a:hover{
-    color:#2563eb;
-}
-
-.menu-btn{
-    display:none;
-    font-size:27px;
-    cursor:pointer;
-}
-
-.theme-btn{
-    border:0;
-    background:#eef2ff;
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    cursor:pointer;
-    font-size:18px;
-}
-
-/* MOBILE MENU */
-
-.mobile-menu{
-    display:none;
-    padding:15px 20px;
-    background:white;
-    border-top:1px solid #eee;
-}
-
-.mobile-menu a{
-    display:block;
-    padding:12px 0;
-    text-decoration:none;
-    color:inherit;
-}
-
-/* HERO */
 
 .hero{
-    background:linear-gradient(135deg,#2563eb,#7c3aed);
-    color:white;
-    text-align:center;
-    padding:80px 20px 90px;
+background:linear-gradient(
+135deg,
+#2563eb,
+#7c3aed
+);
+color:#fff;
+text-align:center;
+padding:70px 18px;
 }
 
 .hero h1{
-    font-size:48px;
-    max-width:850px;
-    margin:auto;
-    line-height:1.15;
-}
-
-.hero h1 span{
-    color:#facc15;
+font-size:44px;
+margin:0 auto 15px;
+max-width:850px;
 }
 
 .hero p{
-    max-width:700px;
-    margin:20px auto 30px;
-    font-size:18px;
-    line-height:1.6;
-    color:#e0e7ff;
+font-size:17px;
+max-width:720px;
+margin:0 auto 25px;
+line-height:1.6;
 }
 
-.hero-buttons{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    flex-wrap:wrap;
+.search{
+max-width:850px;
+margin:-30px auto 35px;
+padding:0 18px;
 }
 
-.hero-btn{
-    padding:14px 25px;
-    border-radius:10px;
-    text-decoration:none;
-    font-weight:bold;
+.search input{
+width:100%;
+padding:17px;
+border:0;
+border-radius:14px;
+box-shadow:0 8px 30px #0002;
+font-size:16px;
 }
 
-.primary-btn{
-    background:white;
-    color:#2563eb;
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:0 18px 70px;
 }
 
-.secondary-btn{
-    border:1px solid rgba(255,255,255,.5);
-    color:white;
+.filters{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+justify-content:center;
+margin:20px 0 35px;
 }
 
-/* SEARCH */
-
-.search-section{
-    max-width:900px;
-    margin:-35px auto 50px;
-    position:relative;
-    padding:0 20px;
+.filters button{
+background:#fff;
+color:#374151;
+border:1px solid #dbe2ea;
 }
 
-.search-box{
-    background:white;
-    padding:8px;
-    border-radius:15px;
-    box-shadow:0 10px 35px rgba(0,0,0,.12);
-    display:flex;
+.filters button.active{
+background:#2563eb;
+color:#fff;
 }
 
-.search-box input{
-    width:100%;
-    border:0;
-    outline:0;
-    padding:17px;
-    font-size:16px;
-    background:transparent;
-    color:inherit;
+.grid{
+display:grid;
+grid-template-columns:
+repeat(4,1fr);
+gap:17px;
 }
 
-.search-icon{
-    padding:15px;
-    font-size:20px;
+.card{
+background:#fff;
+border-radius:16px;
+padding:20px;
+box-shadow:
+0 4px 20px #0f172a0d;
+min-height:190px;
 }
 
-/* MAIN */
-
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:0 20px 70px;
+.icon{
+font-size:30px;
+margin-bottom:10px;
 }
 
-.section-title{
-    text-align:center;
-    margin-bottom:35px;
+.card h3{
+margin:6px 0;
 }
 
-.section-title h2{
-    font-size:32px;
-    margin-bottom:8px;
+.card p{
+font-size:13px;
+color:#64748b;
+line-height:1.45;
 }
 
-.section-title p{
-    color:#64748b;
+.card .btn{
+display:block;
+text-align:center;
+margin-top:15px;
+text-decoration:none;
 }
 
-/* CATEGORY FILTER */
-
-.category-filter{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:45px;
+footer{
+background:#111827;
+color:#cbd5e1;
+text-align:center;
+padding:35px 18px;
 }
 
-.filter-btn{
-    border:1px solid #dbe3ef;
-    background:white;
-    padding:10px 17px;
-    border-radius:30px;
-    cursor:pointer;
-    font-weight:600;
-    color:#334155;
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:#0009;
+z-index:100;
+padding:15px;
+overflow:auto;
 }
 
-.filter-btn:hover,
-.filter-btn.active{
-    background:#2563eb;
-    color:white;
-    border-color:#2563eb;
+.box{
+background:#fff;
+max-width:900px;
+margin:30px auto;
+border-radius:18px;
+padding:22px;
+position:relative;
 }
 
-/* CATEGORY CARDS */
-
-.category-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
-    margin-bottom:65px;
+.close{
+position:absolute;
+right:15px;
+top:12px;
+background:#ef4444;
+border-radius:50%;
+width:38px;
+height:38px;
+padding:0;
 }
 
-.category-card{
-    background:white;
-    border-radius:16px;
-    padding:25px 20px;
-    text-align:center;
-    box-shadow:0 4px 20px rgba(15,23,42,.06);
-    cursor:pointer;
-    transition:.25s;
+.field{
+margin:10px 0;
 }
 
-.category-card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 12px 30px rgba(37,99,235,.15);
+.field label{
+display:block;
+font-weight:700;
+margin-bottom:5px;
 }
 
-.category-icon{
-    font-size:38px;
-    margin-bottom:12px;
+.field input,
+.field textarea,
+.field select{
+width:100%;
+padding:11px;
+border:1px solid #d1d5db;
+border-radius:8px;
+font-size:15px;
 }
 
-.category-card h3{
-    font-size:17px;
-    margin-bottom:7px;
+.field textarea{
+min-height:130px;
+resize:vertical;
 }
 
-.category-card p{
-    color:#64748b;
-    font-size:13px;
+.row{
+display:grid;
+grid-template-columns:
+1fr 1fr;
+gap:12px;
 }
 
-/* TOOLS */
-
-.tools-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:15px;
 }
 
-.tool-card{
-    background:white;
-    border-radius:17px;
-    padding:23px;
-    box-shadow:0 4px 20px rgba(15,23,42,.06);
-    transition:.25s;
-    position:relative;
+.preview{
+background:#f8fafc;
+border:1px dashed #cbd5e1;
+border-radius:10px;
+padding:15px;
+margin-top:15px;
+min-height:50px;
 }
 
-.tool-card:hover{
-    transform:translateY(-5px);
-    box-shadow:0 15px 30px rgba(37,99,235,.12);
+.resume{
+background:#fff;
+color:#111;
+padding:28px;
+max-width:780px;
+margin:auto;
+box-shadow:0 2px 12px #0001;
 }
 
-.tool-icon{
-    width:55px;
-    height:55px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#eff6ff;
-    border-radius:13px;
-    font-size:28px;
-    margin-bottom:17px;
+.resume h1{
+margin:0;
 }
 
-.tool-card h3{
-    font-size:17px;
-    margin-bottom:8px;
+.resume h2{
+border-bottom:1px solid #111;
+padding-bottom:4px;
+font-size:17px;
 }
 
-.tool-card p{
-    color:#64748b;
-    font-size:13px;
-    line-height:1.5;
-    min-height:40px;
+.resume p{
+white-space:pre-wrap;
 }
 
-.tool-btn{
-    display:block;
-    text-align:center;
-    margin-top:18px;
-    background:#2563eb;
-    color:white;
-    padding:11px;
-    border-radius:9px;
-    text-decoration:none;
-    font-weight:bold;
-    font-size:14px;
+@media(max-width:950px){
+
+.grid{
+grid-template-columns:
+repeat(3,1fr);
 }
 
-.tool-btn:hover{
-    background:#1d4ed8;
-}
-
-/* BADGE */
-
-.badge{
-    position:absolute;
-    right:15px;
-    top:15px;
-    background:#dcfce7;
-    color:#15803d;
-    padding:4px 8px;
-    font-size:10px;
-    border-radius:20px;
-    font-weight:bold;
-}
-
-/* NO RESULT */
-
-.no-result{
-    text-align:center;
-    display:none;
-    padding:50px;
-    color:#64748b;
-}
-
-/* CTA */
-
-.cta{
-    background:linear-gradient(135deg,#111827,#1e3a8a);
-    color:white;
-    border-radius:25px;
-    padding:55px 25px;
-    text-align:center;
-    margin-top:70px;
-}
-
-.cta h2{
-    font-size:32px;
-    margin-bottom:12px;
-}
-
-.cta p{
-    color:#cbd5e1;
-    margin-bottom:25px;
-}
-
-.cta a{
-    display:inline-block;
-    background:white;
-    color:#1d4ed8;
-    padding:13px 25px;
-    border-radius:10px;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-/* FOOTER */
-
-.footer{
-    background:#111827;
-    color:white;
-    padding:50px 20px 20px;
-}
-
-.footer-grid{
-    max-width:1200px;
-    margin:auto;
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr 1fr;
-    gap:40px;
-}
-
-.footer h3{
-    margin-bottom:15px;
-}
-
-.footer p{
-    color:#9ca3af;
-    line-height:1.6;
-    font-size:14px;
-}
-
-.footer a{
-    display:block;
-    text-decoration:none;
-    color:#cbd5e1;
-    margin:10px 0;
-    font-size:14px;
-}
-
-.footer a:hover{
-    color:white;
-}
-
-.copyright{
-    max-width:1200px;
-    margin:40px auto 0;
-    border-top:1px solid #374151;
-    padding-top:20px;
-    text-align:center;
-    color:#9ca3af;
-    font-size:13px;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:1000px){
-
-    .tools-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .category-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .footer-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
 }
 
 @media(max-width:700px){
 
-    .nav-links{
-        display:none;
-    }
-
-    .menu-btn{
-        display:block;
-    }
-
-    .hero{
-        padding:60px 18px 75px;
-    }
-
-    .hero h1{
-        font-size:34px;
-    }
-
-    .hero p{
-        font-size:15px;
-    }
-
-    .tools-grid{
-        grid-template-columns:repeat(2,1fr);
-        gap:13px;
-    }
-
-    .category-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .tool-card{
-        padding:17px;
-    }
-
-    .tool-card h3{
-        font-size:15px;
-    }
-
-    .tool-card p{
-        font-size:12px;
-    }
-
-    .footer-grid{
-        grid-template-columns:1fr;
-    }
+nav a{
+display:none;
 }
 
-@media(max-width:430px){
-
-    .tools-grid{
-        grid-template-columns:1fr;
-    }
-
-    .category-grid{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .hero h1{
-        font-size:30px;
-    }
-
-    .section-title h2{
-        font-size:27px;
-    }
+.grid{
+grid-template-columns:
+repeat(2,1fr);
 }
+
+.hero h1{
+font-size:33px;
+}
+
+.row{
+grid-template-columns:1fr;
+}
+
+}
+
+@media(max-width:450px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
+<header>
 
-<header class="header">
-
-<div class="navbar">
+<nav>
 
 <div class="logo">
 Free<span>Tools Hub</span>
 </div>
 
-<nav class="nav-links">
-<a href="#home">Home</a>
-<a href="#categories">Categories</a>
-<a href="#tools">All Tools</a>
+<div>
+
+<a href="#tools">Tools</a>
+
 <a href="#about">About</a>
-</nav>
 
-<div style="display:flex;align-items:center;gap:10px;">
-
-<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+<button onclick="toggleDark()">
 🌙
 </button>
 
-<div class="menu-btn" onclick="toggleMenu()">
-☰
 </div>
 
-</div>
-
-</div>
-
-<div class="mobile-menu" id="mobileMenu">
-<a href="#home">Home</a>
-<a href="#categories">Categories</a>
-<a href="#tools">All Tools</a>
-<a href="#about">About</a>
-</div>
+</nav>
 
 </header>
 
 
-<!-- HERO -->
-
-<section class="hero" id="home">
+<section class="hero">
 
 <h1>
-100+ <span>Free Online Tools</span>
-for Everyone
+100+ Free Online Tools
 </h1>
 
 <p>
-PDF, Image, Resume, Calculator, Converter, Text, Developer,
-Design और Daily Utility Tools — एक ही जगह।
+PDF, Photo, Resume, Calculator,
+Converter, Text, Developer,
+QR और रोज़मर्रा के उपयोग के Tools
 </p>
-
-<div class="hero-buttons">
-
-<a href="#tools" class="hero-btn primary-btn">
-Explore All Tools
-</a>
-
-<a href="#categories" class="hero-btn secondary-btn">
-Browse Categories
-</a>
-
-</div>
 
 </section>
 
 
-<!-- SEARCH -->
-
-<div class="search-section">
-
-<div class="search-box">
-
-<span class="search-icon">🔍</span>
+<div class="search">
 
 <input
-type="text"
-id="searchInput"
-placeholder="Search tools... जैसे PDF, Resume, Image, Calculator"
-onkeyup="searchTools()"
->
+id="search"
+placeholder="Tool search करें..."
+oninput="searchTools()">
 
 </div>
 
-</div>
-
-
-<main class="container">
-
-
-<!-- CATEGORIES -->
-
-<section id="categories">
-
-<div class="section-title">
-
-<h2>Explore Categories</h2>
-
-<p>
-अपने जरूरत के अनुसार कोई भी category चुनें
-</p>
-
-</div>
-
-
-<div class="category-filter">
-
-<button class="filter-btn active" onclick="filterTools('all',this)">
-All
-</button>
-
-<button class="filter-btn" onclick="filterTools('pdf',this)">
-📄 PDF
-</button>
-
-<button class="filter-btn" onclick="filterTools('image',this)">
-🖼️ Image
-</button>
-
-<button class="filter-btn" onclick="filterTools('resume',this)">
-📋 Resume
-</button>
-
-<button class="filter-btn" onclick="filterTools('text',this)">
-📝 Text
-</button>
-
-<button class="filter-btn" onclick="filterTools('developer',this)">
-💻 Developer
-</button>
-
-<button class="filter-btn" onclick="filterTools('calculator',this)">
-🧮 Calculator
-</button>
-
-<button class="filter-btn" onclick="filterTools('converter',this)">
-🔄 Converter
-</button>
-
-<button class="filter-btn" onclick="filterTools('design',this)">
-🎨 Design
-</button>
-
-<button class="filter-btn" onclick="filterTools('social',this)">
-📱 Social
-</button>
-
-<button class="filter-btn" onclick="filterTools('ai',this)">
-🤖 AI
-</button>
-
-<button class="filter-btn" onclick="filterTools('security',this)">
-🔐 Security
-</button>
-
-<button class="filter-btn" onclick="filterTools('utility',this)">
-🛠️ Utility
-</button>
-
-</div>
-
-
-<div class="category-grid">
-
-<div class="category-card" onclick="filterTools('pdf')">
-<div class="category-icon">📄</div>
-<h3>PDF Tools</h3>
-<p>PDF को Edit और Convert करें</p>
-</div>
-
-<div class="category-card" onclick="filterTools('image')">
-<div class="category-icon">🖼️</div>
-<h3>Image Tools</h3>
-<p>Photo Edit और Convert करें</p>
-</div>
-
-<div class="category-card" onclick="filterTools('resume')">
-<div class="category-icon">📋</div>
-<h3>Resume & Documents</h3>
-<p>Resume और Documents बनाएं</p>
-</div>
-
-<div class="category-card" onclick="filterTools('text')">
-<div class="category-icon">📝</div>
-<h3>Text Tools</h3>
-<p>Text से जुड़े सभी Tools</p>
-</div>
-
-<div class="category-card" onclick="filterTools('developer')">
-<div class="category-icon">💻</div>
-<h3>Developer Tools</h3>
-<p>Developers के लिए Tools</p>
-</div>
-
-<div class="category-card" onclick="filterTools('calculator')">
-<div class="category-icon">🧮</div>
-<h3>Calculator Tools</h3>
-<p>हर तरह की Calculation</p>
-</div>
-
-<div class="category-card" onclick="filterTools('converter')">
-<div class="category-icon">🔄</div>
-<h3>Converter Tools</h3>
-<p>एक Format को दूसरे में बदलें</p>
-</div>
-
-<div class="category-card" onclick="filterTools('design')">
-<div class="category-icon">🎨</div>
-<h3>Design Tools</h3>
-<p>QR, Barcode और Design</p>
-</div>
-
-<div class="category-card" onclick="filterTools('social')">
-<div class="category-icon">📱</div>
-<h3>Social Media Tools</h3>
-<p>Social Media के लिए Tools</p>
-</div>
-
-<div class="category-card" onclick="filterTools('ai')">
-<div class="category-icon">🤖</div>
-<h3>AI Tools</h3>
-<p>Smart AI Based Tools</p>
-</div>
-
-<div class="category-card" onclick="filterTools('security')">
-<div class="category-icon">🔐</div>
-<h3>Security Tools</h3>
-<p>Password और Security Tools</p>
-</div>
-
-<div class="category-card" onclick="filterTools('utility')">
-<div class="category-icon">🛠️</div>
-<h3>Daily Utility</h3>
-<p>रोजमर्रा के काम के Tools</p>
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ALL TOOLS -->
-
-<section id="tools">
-
-<div class="section-title">
-
-<h2>All Free Tools</h2>
-
-<p>
-सभी Online Tools एक जगह
-</p>
-
-</div>
-
-
-<div class="tools-grid" id="toolsGrid">
-
-
-<!-- PDF -->
-
-<div class="tool-card" data-category="pdf" data-name="PDF Merge">
-<div class="tool-icon">📑</div>
-<span class="badge">FREE</span>
-<h3>PDF Merge</h3>
-<p>कई PDF files को एक PDF में जोड़ें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="PDF Split">
-<div class="tool-icon">✂️</div>
-<span class="badge">FREE</span>
-<h3>PDF Split</h3>
-<p>एक PDF को अलग-अलग pages में बांटें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="PDF Compress">
-<div class="tool-icon">📉</div>
-<span class="badge">FREE</span>
-<h3>PDF Compress</h3>
-<p>PDF का file size कम करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="PDF to JPG">
-<div class="tool-icon">🖼️</div>
-<span class="badge">FREE</span>
-<h3>PDF to JPG</h3>
-<p>PDF pages को images में बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="JPG to PDF">
-<div class="tool-icon">📄</div>
-<span class="badge">FREE</span>
-<h3>JPG to PDF</h3>
-<p>Photos को एक PDF file में बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="PDF Watermark">
-<div class="tool-icon">💧</div>
-<span class="badge">FREE</span>
-<h3>PDF Watermark</h3>
-<p>PDF में अपना watermark जोड़ें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="pdf" data-name="PDF Page Number">
-<div class="tool-icon">🔢</div>
-<span class="badge">FREE</span>
-<h3>PDF Page Number</h3>
-<p>PDF में page numbers लगाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- IMAGE -->
-
-<div class="tool-card" data-category="image" data-name="Image Compressor">
-<div class="tool-icon">🗜️</div>
-<span class="badge">FREE</span>
-<h3>Image Compressor</h3>
-<p>Photo की size कम करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image Resizer">
-<div class="tool-icon">📐</div>
-<span class="badge">FREE</span>
-<h3>Image Resizer</h3>
-<p>Photo का size और dimensions बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image Crop">
-<div class="tool-icon">✂️</div>
-<span class="badge">FREE</span>
-<h3>Image Crop</h3>
-<p>Photo को आसानी से crop करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image Rotate">
-<div class="tool-icon">🔄</div>
-<span class="badge">FREE</span>
-<h3>Image Rotate</h3>
-<p>Photo को rotate या flip करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image to PNG">
-<div class="tool-icon">🖼️</div>
-<span class="badge">FREE</span>
-<h3>Image to PNG</h3>
-<p>Images को PNG format में बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image to JPG">
-<div class="tool-icon">📸</div>
-<span class="badge">FREE</span>
-<h3>Image to JPG</h3>
-<p>Images को JPG format में बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image to WebP">
-<div class="tool-icon">🌐</div>
-<span class="badge">FREE</span>
-<h3>Image to WebP</h3>
-<p>Photo को WebP में convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="image" data-name="Image Watermark">
-<div class="tool-icon">💧</div>
-<span class="badge">FREE</span>
-<h3>Image Watermark</h3>
-<p>Photo पर text या logo लगाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- RESUME -->
-
-<div class="tool-card" data-category="resume" data-name="Resume Builder">
-<div class="tool-icon">📋</div>
-<span class="badge">FREE</span>
-<h3>Resume Builder</h3>
-<p>Professional resume बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="resume" data-name="CV Maker">
-<div class="tool-icon">📄</div>
-<span class="badge">FREE</span>
-<h3>CV Maker</h3>
-<p>Modern CV तैयार करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="resume" data-name="Cover Letter">
-<div class="tool-icon">✉️</div>
-<span class="badge">FREE</span>
-<h3>Cover Letter</h3>
-<p>Professional cover letter बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="resume" data-name="Invoice Generator">
-<div class="tool-icon">🧾</div>
-<span class="badge">FREE</span>
-<h3>Invoice Generator</h3>
-<p>Professional invoice बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="resume" data-name="Certificate Maker">
-<div class="tool-icon">🏆</div>
-<span class="badge">FREE</span>
-<h3>Certificate Maker</h3>
-<p>Certificates बनाएं और download करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="resume" data-name="ID Card Maker">
-<div class="tool-icon">🪪</div>
-<span class="badge">FREE</span>
-<h3>ID Card Maker</h3>
-<p>Simple ID cards बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- TEXT -->
-
-<div class="tool-card" data-category="text" data-name="Word Counter">
-<div class="tool-icon">🔢</div>
-<span class="badge">FREE</span>
-<h3>Word Counter</h3>
-<p>Words और characters count करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="text" data-name="Character Counter">
-<div class="tool-icon">🔤</div>
-<span class="badge">FREE</span>
-<h3>Character Counter</h3>
-<p>Characters की संख्या पता करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
 
+<main
+class="wrap"
+id="tools">
 
-<div class="tool-card" data-category="text" data-name="Case Converter">
-<div class="tool-icon">Aa</div>
-<span class="badge">FREE</span>
-<h3>Case Converter</h3>
-<p>UPPERCASE और lowercase बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
+<div
+class="filters"
+id="filters">
 </div>
 
-
-<div class="tool-card" data-category="text" data-name="Duplicate Remover">
-<div class="tool-icon">🧹</div>
-<span class="badge">FREE</span>
-<h3>Duplicate Line Remover</h3>
-<p>Duplicate lines को remove करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="text" data-name="Text Sorter">
-<div class="tool-icon">↕️</div>
-<span class="badge">FREE</span>
-<h3>Text Sorter</h3>
-<p>Text को A-Z या Z-A में sort करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- DEVELOPER -->
-
-<div class="tool-card" data-category="developer" data-name="JSON Formatter">
-<div class="tool-icon">{ }</div>
-<span class="badge">FREE</span>
-<h3>JSON Formatter</h3>
-<p>JSON को format और beautify करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="developer" data-name="HTML Formatter">
-<div class="tool-icon">🌐</div>
-<span class="badge">FREE</span>
-<h3>HTML Formatter</h3>
-<p>HTML code को clean और format करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="developer" data-name="Base64 Encoder">
-<div class="tool-icon">🔐</div>
-<span class="badge">FREE</span>
-<h3>Base64 Encoder</h3>
-<p>Text को Base64 में encode करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="developer" data-name="Base64 Decoder">
-<div class="tool-icon">🔓</div>
-<span class="badge">FREE</span>
-<h3>Base64 Decoder</h3>
-<p>Base64 को वापस text में बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="developer" data-name="HEX RGB">
-<div class="tool-icon">🎨</div>
-<span class="badge">FREE</span>
-<h3>HEX to RGB</h3>
-<p>HEX color को RGB में convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="developer" data-name="CSS Gradient">
-<div class="tool-icon">🌈</div>
-<span class="badge">FREE</span>
-<h3>CSS Gradient Generator</h3>
-<p>CSS gradients आसानी से बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- CALCULATOR -->
-
-<div class="tool-card" data-category="calculator" data-name="Age Calculator">
-<div class="tool-icon">🎂</div>
-<span class="badge">FREE</span>
-<h3>Age Calculator</h3>
-<p>अपनी exact age calculate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="EMI Calculator">
-<div class="tool-icon">💰</div>
-<span class="badge">FREE</span>
-<h3>EMI Calculator</h3>
-<p>Loan की EMI calculate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="GST Calculator">
-<div class="tool-icon">🧾</div>
-<span class="badge">FREE</span>
-<h3>GST Calculator</h3>
-<p>GST amount calculate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="BMI Calculator">
-<div class="tool-icon">⚖️</div>
-<span class="badge">FREE</span>
-<h3>BMI Calculator</h3>
-<p>BMI calculate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="Percentage Calculator">
-<div class="tool-icon">%</div>
-<span class="badge">FREE</span>
-<h3>Percentage Calculator</h3>
-<p>Percentage calculation करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="Loan Calculator">
-<div class="tool-icon">🏦</div>
-<span class="badge">FREE</span>
-<h3>Loan Calculator</h3>
-<p>Loan payment calculate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="calculator" data-name="SIP Calculator">
-<div class="tool-icon">📈</div>
-<span class="badge">FREE</span>
-<h3>SIP Calculator</h3>
-<p>SIP investment का अनुमान लगाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- CONVERTER -->
-
-<div class="tool-card" data-category="converter" data-name="Unit Converter">
-<div class="tool-icon">📏</div>
-<span class="badge">FREE</span>
-<h3>Unit Converter</h3>
-<p>Units को आसानी से convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="converter" data-name="Currency Converter">
-<div class="tool-icon">💱</div>
-<span class="badge">FREE</span>
-<h3>Currency Converter</h3>
-<p>Currency conversion करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="converter" data-name="Temperature Converter">
-<div class="tool-icon">🌡️</div>
-<span class="badge">FREE</span>
-<h3>Temperature Converter</h3>
-<p>Celsius, Fahrenheit आदि बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="converter" data-name="Length Converter">
-<div class="tool-icon">📐</div>
-<span class="badge">FREE</span>
-<h3>Length Converter</h3>
-<p>Meter, Feet, Inch आदि convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="converter" data-name="Weight Converter">
-<div class="tool-icon">⚖️</div>
-<span class="badge">FREE</span>
-<h3>Weight Converter</h3>
-<p>Kg, Gram, Pound आदि convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="converter" data-name="Storage Converter">
-<div class="tool-icon">💾</div>
-<span class="badge">FREE</span>
-<h3>Storage Converter</h3>
-<p>KB, MB, GB और TB convert करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- DESIGN -->
-
-<div class="tool-card" data-category="design" data-name="QR Code Generator">
-<div class="tool-icon">▦</div>
-<span class="badge">FREE</span>
-<h3>QR Code Generator</h3>
-<p>Text या URL का QR Code बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="design" data-name="Barcode Generator">
-<div class="tool-icon">▥</div>
-<span class="badge">FREE</span>
-<h3>Barcode Generator</h3>
-<p>Barcode generate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="design" data-name="Color Picker">
-<div class="tool-icon">🎨</div>
-<span class="badge">FREE</span>
-<h3>Color Picker</h3>
-<p>अपने design के लिए color चुनें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- SOCIAL -->
-
-<div class="tool-card" data-category="social" data-name="YouTube Thumbnail">
-<div class="tool-icon">▶️</div>
-<span class="badge">FREE</span>
-<h3>YouTube Thumbnail Tool</h3>
-<p>YouTube thumbnail बनाने में मदद करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="social" data-name="Social Media Caption">
-<div class="tool-icon">📱</div>
-<span class="badge">FREE</span>
-<h3>Caption Generator</h3>
-<p>Social media captions बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="social" data-name="Hashtag Generator">
-<div class="tool-icon">#️⃣</div>
-<span class="badge">FREE</span>
-<h3>Hashtag Generator</h3>
-<p>Social media hashtags बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- AI -->
-
-<div class="tool-card" data-category="ai" data-name="AI Resume">
-<div class="tool-icon">🤖</div>
-<span class="badge">AI</span>
-<h3>AI Resume Assistant</h3>
-<p>Resume content improve करने में मदद करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="ai" data-name="AI Cover Letter">
-<div class="tool-icon">✍️</div>
-<span class="badge">AI</span>
-<h3>AI Cover Letter</h3>
-<p>Professional cover letter तैयार करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="ai" data-name="AI Summarizer">
-<div class="tool-icon">🧠</div>
-<span class="badge">AI</span>
-<h3>AI Text Summarizer</h3>
-<p>Long text को short summary में बदलें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="ai" data-name="Grammar Checker">
-<div class="tool-icon">✓</div>
-<span class="badge">AI</span>
-<h3>Grammar Checker</h3>
-<p>Text की grammar check करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- SECURITY -->
-
-<div class="tool-card" data-category="security" data-name="Password Generator">
-<div class="tool-icon">🔑</div>
-<span class="badge">FREE</span>
-<h3>Password Generator</h3>
-<p>Strong random passwords बनाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="security" data-name="Password Strength">
-<div class="tool-icon">🛡️</div>
-<span class="badge">FREE</span>
-<h3>Password Strength Checker</h3>
-<p>Password की strength check करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="security" data-name="MD5 Hash">
-<div class="tool-icon">🔐</div>
-<span class="badge">FREE</span>
-<h3>MD5 Hash Generator</h3>
-<p>Text का MD5 hash generate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="security" data-name="SHA Hash">
-<div class="tool-icon">🔒</div>
-<span class="badge">FREE</span>
-<h3>SHA Hash Generator</h3>
-<p>SHA hash generate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<!-- UTILITY -->
-
-<div class="tool-card" data-category="utility" data-name="Date Difference">
-<div class="tool-icon">📅</div>
-<span class="badge">FREE</span>
-<h3>Date Difference</h3>
-<p>दो dates के बीच difference निकालें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="utility" data-name="Random Number">
-<div class="tool-icon">🎲</div>
-<span class="badge">FREE</span>
-<h3>Random Number Generator</h3>
-<p>Random numbers generate करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="utility" data-name="Stopwatch">
-<div class="tool-icon">⏱️</div>
-<span class="badge">FREE</span>
-<h3>Online Stopwatch</h3>
-<p>Simple online stopwatch इस्तेमाल करें।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-<div class="tool-card" data-category="utility" data-name="Timer">
-<div class="tool-icon">⏲️</div>
-<span class="badge">FREE</span>
-<h3>Online Timer</h3>
-<p>Countdown timer चलाएं।</p>
-<a href="#" class="tool-btn">Open Tool</a>
-</div>
-
-
-</div>
-
-
-<div class="no-result" id="noResult">
-
-<h3>😕 Tool नहीं मिला</h3>
-
-<p>दूसरा keyword search करके देखें।</p>
-
+<div
+class="grid"
+id="grid">
 </div>
-
-</section>
-
-
-<!-- CTA -->
-
-<section class="cta">
-
-<h2>सभी Tools एक ही जगह</h2>
-
-<p>
-Fast, Simple और User Friendly Online Tools
-</p>
-
-<a href="#tools">
-Start Using Free Tools
-</a>
-
-</section>
 
 </main>
 
 
-<!-- FOOTER -->
+<footer id="about">
 
-<footer class="footer" id="about">
-
-<div class="footer-grid">
-
-<div>
-
-<h3>FreeTools Hub</h3>
-
-<p>
-FreeTools Hub एक All-in-One Online Tools platform है,
-जहाँ users PDF, Image, Resume, Calculator, Converter,
-Text और कई दूसरे useful tools इस्तेमाल कर सकते हैं।
-</p>
-
-</div>
-
-
-<div>
-
-<h3>PDF Tools</h3>
-
-<a href="#tools">PDF Merge</a>
-<a href="#tools">PDF Split</a>
-<a href="#tools">PDF Compress</a>
-<a href="#tools">PDF to JPG</a>
-
-</div>
-
-
-<div>
-
-<h3>Image Tools</h3>
-
-<a href="#tools">Image Compressor</a>
-<a href="#tools">Image Resizer</a>
-<a href="#tools">Image Crop</a>
-<a href="#tools">Image Converter</a>
-
-</div>
-
-
-<div>
-
-<h3>Useful</h3>
-
-<a href="#home">Home</a>
-<a href="#categories">Categories</a>
-<a href="#tools">All Tools</a>
-<a href="#about">About</a>
-
-</div>
-
-</div>
-
-
-<div class="copyright">
-
-© <span id="year"></span> FreeTools Hub. All Rights Reserved.
-
-</div>
+© <span id="year"></span>
+FreeTools Hub
 
 </footer>
 
 
+<!-- TOOL MODAL -->
+
+<div
+class="modal"
+id="modal">
+
+<div class="box">
+
+<button
+class="close"
+onclick="closeModal()">
+×
+</button>
+
+<div id="toolUI">
+</div>
+
+</div>
+
+</div>
+
+
 <script>
 
-/* YEAR */
+/* =====================================
+TOOLS DATABASE
+===================================== */
 
-document.getElementById("year").textContent =
-new Date().getFullYear();
+const tools=[
+
+["pdf","📑","PDF Merge",
+"कई PDF को एक PDF में जोड़ें"],
+
+["pdf","✂️","PDF Split",
+"PDF से चुने हुए pages निकालें"],
+
+["pdf","📉","PDF Compress",
+"PDF को optimize करें"],
+
+["pdf","🖼️","PDF to JPG",
+"PDF pages को JPG images बनाएं"],
+
+["pdf","📄","JPG to PDF",
+"Photos को PDF बनाएं"],
+
+["pdf","💧","PDF Watermark",
+"PDF पर watermark लगाएं"],
+
+["pdf","🔢","PDF Page Number",
+"PDF में page numbers लगाएं"],
 
 
-/* MOBILE MENU */
+["image","🗜️","Image Compressor",
+"Photo की size कम करें"],
 
-function toggleMenu(){
+["image","📐","Image Resizer",
+"Photo का width/height बदलें"],
 
-const menu =
-document.getElementById("mobileMenu");
+["image","✂️","Image Crop",
+"Photo crop करें"],
 
-if(menu.style.display === "block"){
-    menu.style.display = "none";
-}else{
-    menu.style.display = "block";
+["image","🔄","Image Rotate",
+"Photo rotate करें"],
+
+["image","🖼️","Image to PNG",
+"Photo को PNG में बदलें"],
+
+["image","📸","Image to JPG",
+"Photo को JPG में बदलें"],
+
+["image","🌐","Image to WebP",
+"Photo को WebP में बदलें"],
+
+["image","💧","Image Watermark",
+"Photo पर watermark लगाएं"],
+
+
+["resume","📋","Resume Builder",
+"Professional Resume बनाएं"],
+
+["resume","📄","CV Maker",
+"Modern CV बनाएं"],
+
+["resume","✉️","Cover Letter",
+"Cover Letter बनाएं"],
+
+["resume","🧾","Invoice Generator",
+"Invoice बनाएं"],
+
+["resume","🏆","Certificate Maker",
+"Certificate बनाएं"],
+
+["resume","🪪","ID Card Maker",
+"ID Card बनाएं"],
+
+
+["text","🔢","Word Counter",
+"Words और characters count करें"],
+
+["text","🔤","Character Counter",
+"Characters count करें"],
+
+["text","Aa","Case Converter",
+"UPPER/lower/Title case बदलें"],
+
+["text","🧹","Duplicate Line Remover",
+"Duplicate lines हटाएं"],
+
+["text","↕️","Text Sorter",
+"Text lines sort करें"],
+
+
+["developer","{ }","JSON Formatter",
+"JSON format और validate करें"],
+
+["developer","🌐","HTML Formatter",
+"HTML को format करें"],
+
+["developer","🔐","Base64 Encoder",
+"Text को Base64 में encode करें"],
+
+["developer","🔓","Base64 Decoder",
+"Base64 decode करें"],
+
+["developer","🎨","HEX to RGB",
+"HEX color को RGB में बदलें"],
+
+["developer","🌈","CSS Gradient",
+"CSS gradient code बनाएं"],
+
+
+["calculator","🎂","Age Calculator",
+"Age calculate करें"],
+
+["calculator","💰","EMI Calculator",
+"Loan EMI calculate करें"],
+
+["calculator","🧾","GST Calculator",
+"GST calculate करें"],
+
+["calculator","⚖️","BMI Calculator",
+"BMI calculate करें"],
+
+["calculator","%","Percentage Calculator",
+"Percentage calculate करें"],
+
+["calculator","🏦","Loan Calculator",
+"Loan repayment calculate करें"],
+
+["calculator","📈","SIP Calculator",
+"SIP estimate करें"],
+
+
+["converter","📏","Unit Converter",
+"Units convert करें"],
+
+["converter","💱","Currency Converter",
+"Currency convert करें"],
+
+["converter","🌡️","Temperature Converter",
+"Temperature convert करें"],
+
+["converter","📐","Length Converter",
+"Length convert करें"],
+
+["converter","⚖️","Weight Converter",
+"Weight convert करें"],
+
+["converter","💾","Storage Converter",
+"Storage units convert करें"],
+
+
+["design","▦","QR Code Generator",
+"QR Code बनाएं"],
+
+["design","▥","Barcode Generator",
+"Barcode बनाएं"],
+
+["design","🎨","Color Picker",
+"Color और HEX देखें"],
+
+
+["social","📱","Caption Generator",
+"Social media captions बनाएं"],
+
+["social","#️⃣","Hashtag Generator",
+"Hashtags बनाएं"],
+
+
+["ai","🤖","AI Resume Assistant",
+"Resume content improve करें"],
+
+["ai","🧠","Text Summarizer",
+"Text की summary बनाएं"],
+
+["ai","✓","Grammar Helper",
+"Basic writing check करें"],
+
+
+["security","🔑","Password Generator",
+"Strong password बनाएं"],
+
+["security","🛡️","Password Strength",
+"Password strength देखें"],
+
+["security","🔐","SHA Hash Generator",
+"SHA-256 hash बनाएं"],
+
+
+["utility","📅","Date Difference",
+"दो dates का difference"],
+
+["utility","🎲","Random Number",
+"Random number बनाएं"],
+
+["utility","⏱️","Stopwatch",
+"Online stopwatch"],
+
+["utility","⏲️","Timer",
+"Countdown timer"]
+
+];
+
+
+/* =====================================
+CATEGORIES
+===================================== */
+
+const categories=[
+
+["all","All"],
+["pdf","📄 PDF"],
+["image","🖼️ Image"],
+["resume","📋 Resume"],
+["text","📝 Text"],
+["developer","💻 Developer"],
+["calculator","🧮 Calculator"],
+["converter","🔄 Converter"],
+["design","🎨 Design"],
+["social","📱 Social"],
+["ai","🤖 AI"],
+["security","🔐 Security"],
+["utility","🛠️ Utility"]
+
+];
+
+
+let activeCategory="all";
+
+
+/* =====================================
+RENDER
+===================================== */
+
+function renderFilters(){
+
+document.getElementById(
+"filters"
+).innerHTML=
+
+categories.map(c=>`
+
+<button
+class="${activeCategory===c[0]?'active':''}"
+onclick="setCategory('${c[0]}')">
+
+${c[1]}
+
+</button>
+
+`).join("");
+
 }
 
-}
 
+function renderTools(){
 
-/* DARK MODE */
+let search=
+document.getElementById(
+"search"
+).value
+.toLowerCase();
 
-function toggleTheme(){
+document.getElementById(
+"grid"
+).innerHTML=
 
-document.body.classList.toggle("dark");
+tools
+.map((tool,index)=>({tool,index}))
+.filter(x=>
 
-const btn =
-document.getElementById("themeBtn");
+(activeCategory==="all" ||
+x.tool[0]===activeCategory)
 
-if(document.body.classList.contains("dark")){
+&&
 
-btn.textContent="☀️";
+(
+!search ||
+x.tool[2]
+.toLowerCase()
+.includes(search)
 
-localStorage.setItem("theme","dark");
+||
 
-}else{
+x.tool[3]
+.toLowerCase()
+.includes(search)
+)
 
-btn.textContent="🌙";
+)
+.map(x=>`
 
-localStorage.setItem("theme","light");
+<div class="card">
 
-}
+<div class="icon">
+${x.tool[1]}
+</div>
 
-}
+<h3>
+${x.tool[2]}
+</h3>
 
+<p>
+${x.tool[3]}
+</p>
 
-/* LOAD THEME */
+<button
+class="btn"
+onclick="openTool(${x.index})">
 
-if(localStorage.getItem("theme")==="dark"){
+Open Tool
 
-document.body.classList.add("dark");
+</button>
 
-document.getElementById("themeBtn").textContent="☀️";
+</div>
 
-}
-
-
-/* FILTER */
-
-function filterTools(category,button){
-
-const cards =
-document.querySelectorAll(".tool-card");
-
-cards.forEach(card=>{
-
-if(category==="all" ||
-card.dataset.category===category){
-
-card.style.display="block";
-
-}else{
-
-card.style.display="none";
-
-}
-
-});
-
-
-/* BUTTON ACTIVE */
-
-document.querySelectorAll(".filter-btn")
-.forEach(btn=>{
-
-btn.classList.remove("active");
-
-});
-
-
-if(button){
-
-button.classList.add("active");
-
-}
-
-document.getElementById("noResult").style.display="none";
+`)
+.join("");
 
 }
 
 
-/* SEARCH */
+function setCategory(category){
+
+activeCategory=category;
+
+renderFilters();
+
+renderTools();
+
+}
+
 
 function searchTools(){
 
-const search =
-document.getElementById("searchInput")
-.value
-.toLowerCase()
-.trim();
+renderTools();
 
-const cards =
-document.querySelectorAll(".tool-card");
+}
 
-let found=0;
 
-cards.forEach(card=>{
+renderFilters();
 
-const name =
-card.dataset.name.toLowerCase();
+renderTools();
 
-const text =
-card.innerText.toLowerCase();
+document.getElementById(
+"year"
+).textContent=
+new Date().getFullYear();
 
-if(name.includes(search) ||
-text.includes(search)){
 
-card.style.display="block";
+/* =====================================
+MODAL
+===================================== */
 
-found++;
+function openTool(index){
 
-}else{
+let tool=tools[index];
 
-card.style.display="none";
+document.getElementById(
+"modal"
+).style.display="block";
+
+document.getElementById(
+"toolUI"
+).innerHTML=
+
+`
+
+<h2>
+${tool[1]} ${tool[2]}
+</h2>
+
+<p>
+${tool[3]}
+</p>
+
+${createToolUI(tool[2])}
+
+`;
+
+}
+
+
+function closeModal(){
+
+document.getElementById(
+"modal"
+).style.display="none";
+
+}
+
+
+/* =====================================
+FILE INPUT
+===================================== */
+
+function fileInput(
+id,
+multiple=false,
+accept="*/*"
+){
+
+return `
+
+<div class="field">
+
+<label>
+File चुनें
+</label>
+
+<input
+id="${id}"
+type="file"
+${multiple?"multiple":""}
+accept="${accept}">
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================
+DOWNLOAD
+===================================== */
+
+function downloadBlob(
+blob,
+filename
+){
+
+const url=
+URL.createObjectURL(blob);
+
+const a=
+document.createElement("a");
+
+a.href=url;
+
+a.download=filename;
+
+a.click();
+
+setTimeout(
+()=>URL.revokeObjectURL(url),
+1000
+);
+
+}
+
+
+/* =====================================
+TOOL UI
+===================================== */
+
+function createToolUI(name){
+
+/* PDF */
+
+if(name==="PDF Merge")
+
+return fileInput(
+"files",
+true,
+"application/pdf"
+)+`
+
+<button onclick="mergePDF()">
+Merge PDF
+</button>
+
+`;
+
+
+
+if(name==="PDF Split")
+
+return fileInput(
+"files",
+false,
+"application/pdf"
+)+`
+
+<div class="field">
+
+<label>
+Pages
+</label>
+
+<input
+id="pages"
+placeholder="1,3-5">
+
+</div>
+
+<button onclick="splitPDF()">
+Split PDF
+</button>
+
+`;
+
+
+
+if(name==="PDF Compress")
+
+return fileInput(
+"files",
+false,
+"application/pdf"
+)+`
+
+<button onclick="compressPDF()">
+Compress PDF
+</button>
+
+`;
+
+
+
+if(name==="PDF to JPG")
+
+return fileInput(
+"files",
+false,
+"application/pdf"
+)+`
+
+<button onclick="pdfToJPG()">
+Convert
+</button>
+
+`;
+
+
+
+if(name==="JPG to PDF")
+
+return fileInput(
+"files",
+true,
+"image/*"
+)+`
+
+<button onclick="jpgToPDF()">
+Create PDF
+</button>
+
+`;
+
+
+
+if(name==="PDF Watermark")
+
+return fileInput(
+"files",
+false,
+"application/pdf"
+)+`
+
+<div class="field">
+
+<input
+id="watermark"
+value="FreeTools Hub">
+
+</div>
+
+<button onclick="watermarkPDF()">
+Add Watermark
+</button>
+
+`;
+
+
+
+if(name==="PDF Page Number")
+
+return fileInput(
+"files",
+false,
+"application/pdf"
+)+`
+
+<button onclick="numberPDF()">
+Add Page Numbers
+</button>
+
+`;
+
+
+
+/* IMAGE */
+
+if(
+name==="Image Compressor" ||
+name==="Image Resizer" ||
+name==="Image Crop" ||
+name==="Image Rotate" ||
+name==="Image to PNG" ||
+name==="Image to JPG" ||
+name==="Image to WebP" ||
+name==="Image Watermark"
+){
+
+return imageToolUI(name);
+
+}
+
+
+/* RESUME */
+
+if(
+name==="Resume Builder" ||
+name==="CV Maker"
+){
+
+return resumeUI();
+
+}
+
+
+/* COVER LETTER */
+
+if(name==="Cover Letter")
+
+return `
+
+<div class="field">
+<input id="clname"
+placeholder="Your Name">
+</div>
+
+<div class="field">
+<input id="cljob"
+placeholder="Job Position">
+</div>
+
+<div class="field">
+<textarea
+id="cltext"
+placeholder="Your experience and skills">
+</textarea>
+</div>
+
+<button onclick="makeCoverLetter()">
+Create Cover Letter
+</button>
+
+<div
+id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+/* TEXT */
+
+if(
+name==="Word Counter" ||
+name==="Character Counter" ||
+name==="Case Converter" ||
+name==="Duplicate Line Remover" ||
+name==="Text Sorter"
+)
+
+return `
+
+<div class="field">
+
+<textarea
+id="textInput"
+placeholder="अपना text यहाँ लिखें">
+</textarea>
+
+</div>
+
+<button
+onclick="processText('${name}')">
+
+Process
+
+</button>
+
+<pre
+id="output"
+class="preview">
+</pre>
+
+`;
+
+
+
+/* JSON */
+
+if(name==="JSON Formatter")
+
+return `
+
+<div class="field">
+
+<textarea
+id="jsonInput"
+placeholder='{"name":"Rajan"}'>
+</textarea>
+
+</div>
+
+<button onclick="formatJSON()">
+Format JSON
+</button>
+
+<pre id="output"
+class="preview">
+</pre>
+
+`;
+
+
+
+/* BASE64 */
+
+if(
+name==="Base64 Encoder" ||
+name==="Base64 Decoder"
+)
+
+return `
+
+<div class="field">
+
+<textarea id="baseInput">
+</textarea>
+
+</div>
+
+<button
+onclick="base64Tool('${name}')">
+
+Convert
+
+</button>
+
+<pre
+id="output"
+class="preview">
+</pre>
+
+`;
+
+
+
+/* CALCULATORS */
+
+if(name==="Age Calculator")
+
+return `
+
+<div class="field">
+
+<label>Date of Birth</label>
+
+<input
+id="dob"
+type="date">
+
+</div>
+
+<button onclick="calculateAge()">
+Calculate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+if(
+name==="EMI Calculator" ||
+name==="Loan Calculator"
+)
+
+return `
+
+<div class="row">
+
+<input
+id="loan"
+type="number"
+placeholder="Loan Amount">
+
+<input
+id="interest"
+type="number"
+placeholder="Interest %">
+
+</div>
+
+<div class="field">
+
+<input
+id="months"
+type="number"
+placeholder="Months">
+
+</div>
+
+<button onclick="calculateEMI()">
+Calculate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+if(name==="GST Calculator")
+
+return `
+
+<div class="row">
+
+<input
+id="amount"
+type="number"
+placeholder="Amount">
+
+<input
+id="gstRate"
+type="number"
+value="18"
+placeholder="GST %">
+
+</div>
+
+<button onclick="calculateGST()">
+Calculate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+if(name==="BMI Calculator")
+
+return `
+
+<div class="row">
+
+<input
+id="weight"
+type="number"
+placeholder="Weight KG">
+
+<input
+id="height"
+type="number"
+placeholder="Height CM">
+
+</div>
+
+<button onclick="calculateBMI()">
+Calculate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+if(name==="Percentage Calculator")
+
+return `
+
+<div class="row">
+
+<input
+id="obtained"
+type="number"
+placeholder="Obtained">
+
+<input
+id="total"
+type="number"
+placeholder="Total">
+
+</div>
+
+<button onclick="calculatePercentage()">
+Calculate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+/* QR */
+
+if(name==="QR Code Generator")
+
+return `
+
+<div class="field">
+
+<input
+id="qrText"
+placeholder="Text या URL">
+
+</div>
+
+<button onclick="generateQR()">
+Generate QR
+</button>
+
+<div id="qrcode"
+class="preview">
+</div>
+
+`;
+
+
+
+/* PASSWORD */
+
+if(name==="Password Generator")
+
+return `
+
+<div class="field">
+
+<input
+id="passwordLength"
+type="number"
+value="16">
+
+</div>
+
+<button onclick="generatePassword()">
+Generate Password
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+if(name==="Password Strength")
+
+return `
+
+<div class="field">
+
+<input
+id="passwordCheck"
+type="password"
+placeholder="Password">
+
+</div>
+
+<button onclick="checkPassword()">
+Check Strength
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+/* SHA */
+
+if(name==="SHA Hash Generator")
+
+return `
+
+<div class="field">
+
+<textarea
+id="hashInput">
+</textarea>
+
+</div>
+
+<button onclick="makeSHA()">
+SHA-256
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+/* RANDOM */
+
+if(name==="Random Number")
+
+return `
+
+<div class="row">
+
+<input
+id="min"
+type="number"
+value="1">
+
+<input
+id="max"
+type="number"
+value="100">
+
+</div>
+
+<button onclick="randomNumber()">
+Generate
+</button>
+
+<div id="output"
+class="preview">
+</div>
+
+`;
+
+
+
+/* STOPWATCH */
+
+if(name==="Stopwatch")
+
+return `
+
+<h1 id="stopwatch">
+00:00:00
+</h1>
+
+<button onclick="startStopwatch()">
+Start
+</button>
+
+<button onclick="stopStopwatch()">
+Stop
+</button>
+
+<button onclick="resetStopwatch()">
+Reset
+</button>
+
+`;
+
+
+
+/* TIMER */
+
+if(name==="Timer")
+
+return `
+
+<div class="field">
+
+<input
+id="timerSeconds"
+type="number"
+value="60">
+
+</div>
+
+<button onclick="startTimer()">
+Start Timer
+</button>
+
+<h1 id="timerDisplay">
+60
+</h1>
+
+`;
+
+
+
+/* DEFAULT */
+
+return `
+
+<p>
+यह tool आगे advanced version में
+API या server functionality के साथ जोड़ा जा सकता है।
+</p>
+
+`;
+
+}
+
+
+/* =====================================
+IMAGE UI
+===================================== */
+
+function imageToolUI(name){
+
+let extra="";
+
+if(name==="Image Compressor")
+
+extra=`
+
+<div class="field">
+
+<label>Quality</label>
+
+<input
+id="quality"
+type="range"
+min="0.1"
+max="1"
+step="0.1"
+value="0.7">
+
+</div>
+
+`;
+
+if(name==="Image Resizer")
+
+extra=`
+
+<div class="row">
+
+<input
+id="newWidth"
+type="number"
+placeholder="Width">
+
+<input
+id="newHeight"
+type="number"
+placeholder="Height">
+
+</div>
+
+`;
+
+if(name==="Image Rotate")
+
+extra=`
+
+<div class="field">
+
+<select id="rotate">
+
+<option value="90">
+90°
+</option>
+
+<option value="180">
+180°
+</option>
+
+<option value="270">
+270°
+</option>
+
+</select>
+
+</div>
+
+`;
+
+if(name==="Image Watermark")
+
+extra=`
+
+<div class="field">
+
+<input
+id="imageWatermark"
+value="FreeTools Hub">
+
+</div>
+
+`;
+
+return fileInput(
+"imageFile",
+false,
+"image/*"
+)+
+
+extra+
+
+`
+
+<button
+onclick="processImage('${name}')">
+
+Process & Download
+
+</button>
+
+`;
+
+}
+
+
+/* =====================================
+IMAGE PROCESS
+===================================== */
+
+async function processImage(name){
+
+const file=
+document.getElementById(
+"imageFile"
+).files[0];
+
+if(!file){
+
+alert("पहले image चुनें");
+
+return;
+
+}
+
+const reader=
+new FileReader();
+
+reader.onload=function(){
+
+const image=
+new Image();
+
+image.onload=function(){
+
+let canvas=
+document.createElement("canvas");
+
+let ctx=
+canvas.getContext("2d");
+
+let width=image.width;
+
+let height=image.height;
+
+
+if(name==="Image Resizer"){
+
+width=
+Number(
+document.getElementById(
+"newWidth"
+).value
+)||width;
+
+height=
+Number(
+document.getElementById(
+"newHeight"
+).value
+)||height;
+
+}
+
+
+if(
+name==="Image Rotate" &&
+(
+document.getElementById(
+"rotate"
+).value==="90" ||
+document.getElementById(
+"rotate"
+).value==="270"
+)
+){
+
+canvas.width=height;
+
+canvas.height=width;
+
+ctx.translate(
+canvas.width/2,
+canvas.height/2
+);
+
+ctx.rotate(
+Number(
+document.getElementById(
+"rotate"
+).value
+)
+*Math.PI/180
+);
+
+ctx.drawImage(
+image,
+-width/2,
+-height/2,
+width,
+height
+);
+
+}
+
+else{
+
+canvas.width=width;
+
+canvas.height=height;
+
+ctx.drawImage(
+image,
+0,
+0,
+width,
+height
+);
+
+}
+
+
+/* WATERMARK */
+
+if(name==="Image Watermark"){
+
+ctx.font=
+"bold 32px Arial";
+
+ctx.fillStyle=
+"rgba(255,0,0,.55)";
+
+ctx.fillText(
+document.getElementById(
+"imageWatermark"
+).value,
+20,
+height-30
+);
+
+}
+
+
+let quality=
+name==="Image Compressor"
+?
+Number(
+document.getElementById(
+"quality"
+).value
+)
+:
+.92;
+
+
+let type="image/jpeg";
+
+let extension="jpg";
+
+
+if(name==="Image to PNG"){
+
+type="image/png";
+
+extension="png";
+
+}
+
+if(name==="Image to WebP"){
+
+type="image/webp";
+
+extension="webp";
+
+}
+
+
+canvas.toBlob(
+
+blob=>{
+
+downloadBlob(
+blob,
+`image.${extension}`
+);
+
+},
+
+type,
+quality
+
+);
+
+};
+
+image.src=
+reader.result;
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+
+/* =====================================
+PDF MERGE
+===================================== */
+
+async function mergePDF(){
+
+const files=
+document.getElementById(
+"files"
+).files;
+
+if(!files.length){
+
+alert("PDF files चुनें");
+
+return;
+
+}
+
+const output=
+await PDFLib.PDFDocument.create();
+
+for(
+const file of files
+){
+
+const pdf=
+await PDFLib.PDFDocument.load(
+await file.arrayBuffer()
+);
+
+const pages=
+await output.copyPages(
+pdf,
+pdf.getPageIndices()
+);
+
+pages.forEach(
+page=>output.addPage(page)
+);
+
+}
+
+const bytes=
+await output.save();
+
+downloadBlob(
+new Blob(
+[bytes],
+{type:"application/pdf"}
+),
+"merged.pdf"
+);
+
+}
+
+
+/* =====================================
+PDF SPLIT
+===================================== */
+
+async function splitPDF(){
+
+const file=
+document.getElementById(
+"files"
+).files[0];
+
+if(!file)return;
+
+const pdf=
+await PDFLib.PDFDocument.load(
+await file.arrayBuffer()
+);
+
+const input=
+document.getElementById(
+"pages"
+).value;
+
+const indexes=[];
+
+input.split(",")
+.forEach(part=>{
+
+if(part.includes("-")){
+
+let [
+start,
+end
+]=part.split("-")
+.map(Number);
+
+for(
+let i=start;
+i<=end;
+i++
+){
+
+indexes.push(i-1);
+
+}
+
+}
+
+else{
+
+indexes.push(
+Number(part)-1
+);
 
 }
 
 });
 
 
-if(found===0 && search!==""){
+const output=
+await PDFLib.PDFDocument.create();
 
-document.getElementById("noResult")
-.style.display="block";
+const pages=
+await output.copyPages(
+pdf,
+indexes.filter(
+i=>i>=0 &&
+i<pdf.getPageCount()
+)
+);
 
-}else{
+pages.forEach(
+p=>output.addPage(p)
+);
 
-document.getElementById("noResult")
-.style.display="none";
+downloadBlob(
+
+new Blob(
+[
+await output.save()
+],
+{
+type:"application/pdf"
+}
+),
+
+"split.pdf"
+
+);
 
 }
+
+
+/* =====================================
+PDF COMPRESS
+===================================== */
+
+async function compressPDF(){
+
+const file=
+document.getElementById(
+"files"
+).files[0];
+
+if(!file)return;
+
+const pdf=
+await PDFLib.PDFDocument.load(
+await file.arrayBuffer()
+);
+
+const bytes=
+await pdf.save({
+useObjectStreams:true
+});
+
+downloadBlob(
+
+new Blob(
+[bytes],
+{
+type:"application/pdf"
+}
+),
+
+"compressed.pdf"
+
+);
+
+}
+
+
+/* =====================================
+JPG TO PDF
+===================================== */
+
+async function jpgToPDF(){
+
+const files=
+[
+...document.getElementById(
+"files"
+).files
+];
+
+if(!files.length)return;
+
+const {
+jsPDF
+}=window.jspdf;
+
+const pdf=
+new jsPDF();
+
+for(
+let i=0;
+i<files.length;
+i++
+){
+
+const data=
+await readFile(
+files[i]
+);
+
+const img=
+await loadImage(
+data
+);
+
+let width=180;
+
+let height=
+width*
+img.height/
+img.width;
+
+if(i>0)
+pdf.addPage();
+
+pdf.addImage(
+data,
+"JPEG",
+15,
+15,
+width,
+height
+);
+
+}
+
+pdf.save(
+"images.pdf"
+);
+
+}
+
+
+/* =====================================
+PDF WATERMARK
+===================================== */
+
+async function watermarkPDF(){
+
+const file=
+document.getElementById(
+"files"
+).files[0];
+
+if(!file)return;
+
+const pdf=
+await PDFLib.PDFDocument.load(
+await file.arrayBuffer()
+);
+
+const text=
+document.getElementById(
+"watermark"
+).value;
+
+pdf.getPages()
+.forEach(page=>{
+
+const {
+width,
+height
+}=page.getSize();
+
+page.drawText(
+text,
+{
+x:width/2-50,
+y:height/2,
+size:25,
+opacity:.25,
+rotate:
+PDFLib.degrees(35)
+}
+);
+
+});
+
+downloadBlob(
+
+new Blob(
+[
+await pdf.save()
+],
+{
+type:"application/pdf"
+}
+),
+
+"watermarked.pdf"
+
+);
+
+}
+
+
+/* =====================================
+PDF PAGE NUMBER
+===================================== */
+
+async function numberPDF(){
+
+const file=
+document.getElementById(
+"files"
+).files[0];
+
+if(!file)return;
+
+const pdf=
+await PDFLib.PDFDocument.load(
+await file.arrayBuffer()
+);
+
+pdf.getPages()
+.forEach(
+(page,index)=>{
+
+const {
+width
+}=page.getSize();
+
+page.drawText(
+String(index+1),
+{
+x:width/2,
+y:20,
+size:11
+}
+);
+
+});
+
+downloadBlob(
+
+new Blob(
+[
+await pdf.save()
+],
+{
+type:"application/pdf"
+}
+),
+
+"numbered.pdf"
+
+);
+
+}
+
+
+/* =====================================
+PDF TO JPG
+===================================== */
+
+async function pdfToJPG(){
+
+alert(
+"PDF-to-JPG के लिए PDF.js library load होने के बाद browser में rendering होगी।"
+);
+
+}
+
+
+/* =====================================
+RESUME BUILDER
+===================================== */
+
+function resumeUI(){
+
+return `
+
+<div class="row">
+
+<div class="field">
+
+<input
+id="rName"
+placeholder="Full Name">
+
+</div>
+
+<div class="field">
+
+<input
+id="rContact"
+placeholder="Phone / Email">
+
+</div>
+
+</div>
+
+
+<div class="field">
+
+<input
+id="rTitle"
+placeholder="Professional Title">
+
+</div>
+
+
+<div class="field">
+
+<textarea
+id="rSummary"
+placeholder="Profile Summary">
+</textarea>
+
+</div>
+
+
+<div class="field">
+
+<textarea
+id="rExperience"
+placeholder="Work Experience">
+</textarea>
+
+</div>
+
+
+<div class="field">
+
+<textarea
+id="rEducation"
+placeholder="Education">
+</textarea>
+
+</div>
+
+
+<div class="field">
+
+<textarea
+id="rSkills"
+placeholder="Skills">
+</textarea>
+
+</div>
+
+
+<button
+onclick="createResume()">
+
+Create Resume
+
+</button>
+
+
+<button
+onclick="printResume()">
+
+Print / Save PDF
+
+</button>
+
+
+<div
+id="resumePreview"
+class="preview">
+
+</div>
+
+`;
+
+}
+
+
+function createResume(){
+
+const name=
+document.getElementById(
+"rName"
+).value;
+
+const contact=
+document.getElementById(
+"rContact"
+).value;
+
+const title=
+document.getElementById(
+"rTitle"
+).value;
+
+const summary=
+document.getElementById(
+"rSummary"
+).value;
+
+const experience=
+document.getElementById(
+"rExperience"
+).value;
+
+const education=
+document.getElementById(
+"rEducation"
+).value;
+
+const skills=
+document.getElementById(
+"rSkills"
+).value;
+
+
+document.getElementById(
+"resumePreview"
+).innerHTML=
+
+`
+
+<div
+class="resume"
+id="resume">
+
+<h1>
+${escapeHTML(name)}
+</h1>
+
+<p>
+${escapeHTML(contact)}
+</p>
+
+<h2>
+${escapeHTML(title)}
+</h2>
+
+<h2>
+PROFILE
+</h2>
+
+<p>
+${escapeHTML(summary)}
+</p>
+
+<h2>
+EXPERIENCE
+</h2>
+
+<p>
+${escapeHTML(experience)}
+</p>
+
+<h2>
+EDUCATION
+</h2>
+
+<p>
+${escapeHTML(education)}
+</p>
+
+<h2>
+SKILLS
+</h2>
+
+<p>
+${escapeHTML(skills)}
+</p>
+
+</div>
+
+`;
+
+}
+
+
+function printResume(){
+
+const resume=
+document.getElementById(
+"resume"
+);
+
+if(!resume){
+
+alert(
+"पहले Resume बनाएं"
+);
+
+return;
+
+}
+
+const win=
+window.open(
+"",
+"_blank"
+);
+
+win.document.write(`
+
+<html>
+
+<head>
+
+<title>
+Resume
+</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:30px;
+}
+
+.resume{
+max-width:760px;
+margin:auto;
+}
+
+.resume h2{
+border-bottom:
+1px solid #111;
+}
+
+</style>
+
+</head>
+
+<body>
+
+${resume.outerHTML}
+
+</body>
+
+</html>
+
+`);
+
+win.document.close();
+
+win.print();
+
+}
+
+
+/* =====================================
+COVER LETTER
+===================================== */
+
+function makeCoverLetter(){
+
+const name=
+document.getElementById(
+"clname"
+).value;
+
+const job=
+document.getElementById(
+"cljob"
+).value;
+
+const text=
+document.getElementById(
+"cltext"
+).value;
+
+document.getElementById(
+"output"
+).innerHTML=
+
+`
+
+<div class="resume">
+
+<h1>
+Cover Letter
+</h1>
+
+<p>
+Dear Hiring Manager,
+</p>
+
+<p>
+My name is
+<b>${escapeHTML(name)}</b>.
+I am applying for the position of
+<b>${escapeHTML(job)}</b>.
+</p>
+
+<p>
+${escapeHTML(text)}
+</p>
+
+<p>
+Thank you for considering my application.
+</p>
+
+<p>
+Sincerely,<br>
+${escapeHTML(name)}
+</p>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================
+TEXT TOOLS
+===================================== */
+
+function processText(name){
+
+const text=
+document.getElementById(
+"textInput"
+).value;
+
+let result="";
+
+
+if(name==="Word Counter"){
+
+const words=
+text.trim()
+?
+text.trim()
+.split(/\s+/)
+.length
+:
+0;
+
+result=
+"Words: "+
+words+
+"\nCharacters: "+
+text.length;
+
+}
+
+
+if(name==="Character Counter"){
+
+result=
+"Characters: "+
+text.length;
+
+}
+
+
+if(name==="Case Converter"){
+
+result=
+
+"UPPERCASE:\n"+
+text.toUpperCase()+
+
+"\n\nlowercase:\n"+
+text.toLowerCase()+
+
+"\n\nTitle Case:\n"+
+text
+.toLowerCase()
+.replace(
+/\b\w/g,
+c=>c.toUpperCase()
+);
+
+}
+
+
+if(name==="Duplicate Line Remover"){
+
+result=
+[
+...new Set(
+text.split(/\r?\n/)
+)
+]
+.join("\n");
+
+}
+
+
+if(name==="Text Sorter"){
+
+result=
+text
+.split(/\r?\n/)
+.filter(Boolean)
+.sort()
+.join("\n");
+
+}
+
+
+document.getElementById(
+"output"
+).textContent=
+result;
+
+}
+
+
+/* =====================================
+JSON
+===================================== */
+
+function formatJSON(){
+
+try{
+
+const value=
+JSON.parse(
+document.getElementById(
+"jsonInput"
+).value
+);
+
+document.getElementById(
+"output"
+).textContent=
+JSON.stringify(
+value,
+null,
+2
+);
+
+}
+
+catch(error){
+
+document.getElementById(
+"output"
+).textContent=
+"Invalid JSON";
+
+}
+
+}
+
+
+/* =====================================
+BASE64
+===================================== */
+
+function base64Tool(name){
+
+const input=
+document.getElementById(
+"baseInput"
+).value;
+
+try{
+
+if(
+name==="Base64 Encoder"
+){
+
+document.getElementById(
+"output"
+).textContent=
+btoa(
+unescape(
+encodeURIComponent(input)
+)
+);
+
+}
+
+else{
+
+document.getElementById(
+"output"
+).textContent=
+decodeURIComponent(
+escape(
+atob(input)
+)
+);
+
+}
+
+}
+
+catch(e){
+
+document.getElementById(
+"output"
+).textContent=
+"Invalid Base64";
+
+}
+
+}
+
+
+/* =====================================
+AGE
+===================================== */
+
+function calculateAge(){
+
+const dob=
+new Date(
+document.getElementById(
+"dob"
+).value
+);
+
+const today=
+new Date();
+
+let age=
+today.getFullYear()-
+dob.getFullYear();
+
+const month=
+today.getMonth()-
+dob.getMonth();
+
+if(
+month<0 ||
+(
+month===0 &&
+today.getDate()<dob.getDate()
+)
+){
+
+age--;
+
+}
+
+document.getElementById(
+"output"
+).textContent=
+"आपकी उम्र: "+
+age+
+" वर्ष";
+
+}
+
+
+/* =====================================
+EMI
+===================================== */
+
+function calculateEMI(){
+
+const P=
+Number(
+document.getElementById(
+"loan"
+).value
+);
+
+const annual=
+Number(
+document.getElementById(
+"interest"
+).value
+);
+
+const n=
+Number(
+document.getElementById(
+"months"
+).value
+);
+
+const r=
+annual/12/100;
+
+const emi=
+r===0
+?
+P/n
+:
+P*r*Math.pow(
+1+r,
+n
+)/
+(
+Math.pow(
+1+r,
+n
+)-1
+);
+
+document.getElementById(
+"output"
+).innerHTML=
+
+`
+
+Monthly EMI:
+<b>
+₹${emi.toFixed(2)}
+</b>
+
+<br><br>
+
+Total Payment:
+₹${(emi*n).toFixed(2)}
+
+`;
+
+}
+
+
+/* =====================================
+GST
+===================================== */
+
+function calculateGST(){
+
+const amount=
+Number(
+document.getElementById(
+"amount"
+).value
+);
+
+const rate=
+Number(
+document.getElementById(
+"gstRate"
+).value
+);
+
+const gst=
+amount*rate/100;
+
+document.getElementById(
+"output"
+).innerHTML=
+
+`
+
+GST:
+₹${gst.toFixed(2)}
+
+<br>
+
+Total:
+₹${(amount+gst).toFixed(2)}
+
+`;
+
+}
+
+
+/* =====================================
+BMI
+===================================== */
+
+function calculateBMI(){
+
+const weight=
+Number(
+document.getElementById(
+"weight"
+).value
+);
+
+const height=
+Number(
+document.getElementById(
+"height"
+).value
+)/100;
+
+const bmi=
+weight/(height*height);
+
+document.getElementById(
+"output"
+).innerHTML=
+
+`BMI:
+<b>${bmi.toFixed(2)}</b>`;
+
+}
+
+
+/* =====================================
+PERCENTAGE
+===================================== */
+
+function calculatePercentage(){
+
+const obtained=
+Number(
+document.getElementById(
+"obtained"
+).value
+);
+
+const total=
+Number(
+document.getElementById(
+"total"
+).value
+);
+
+document.getElementById(
+"output"
+).textContent=
+
+(
+obtained/
+total*
+100
+).toFixed(2)
++
+"%";
+
+}
+
+
+/* =====================================
+QR
+===================================== */
+
+function generateQR(){
+
+const text=
+document.getElementById(
+"qrText"
+).value;
+
+document.getElementById(
+"qrcode"
+).innerHTML="";
+
+new QRCode(
+
+document.getElementById(
+"qrcode"
+),
+
+{
+
+text:text,
+
+width:220,
+
+height:220
+
+}
+
+);
+
+}
+
+
+/* =====================================
+PASSWORD
+===================================== */
+
+function generatePassword(){
+
+const length=
+Number(
+document.getElementById(
+"passwordLength"
+).value
+);
+
+const chars=
+"ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
+
+const array=
+new Uint32Array(length);
+
+crypto
+.getRandomValues(array);
+
+let password="";
+
+for(
+let i=0;
+i<length;
+i++
+){
+
+password+=
+chars[
+array[i]%
+chars.length
+];
+
+}
+
+document.getElementById(
+"output"
+).textContent=
+password;
+
+}
+
+
+/* =====================================
+PASSWORD STRENGTH
+===================================== */
+
+function checkPassword(){
+
+const password=
+document.getElementById(
+"passwordCheck"
+).value;
+
+let score=0;
+
+if(password.length>=8)
+score++;
+
+if(/[A-Z]/.test(password))
+score++;
+
+if(/[a-z]/.test(password))
+score++;
+
+if(/[0-9]/.test(password))
+score++;
+
+if(/[^A-Za-z0-9]/.test(password))
+score++;
+
+const result=[
+"Very Weak",
+"Weak",
+"Fair",
+"Good",
+"Strong",
+"Very Strong"
+][score];
+
+document.getElementById(
+"output"
+).textContent=
+result;
+
+}
+
+
+/* =====================================
+SHA
+===================================== */
+
+async function makeSHA(){
+
+const text=
+document.getElementById(
+"hashInput"
+).value;
+
+const buffer=
+await crypto.subtle.digest(
+"SHA-256",
+new TextEncoder().encode(text)
+);
+
+const hash=
+[
+...new Uint8Array(buffer)
+]
+.map(
+b=>b.toString(16)
+.padStart(2,"0")
+)
+.join("");
+
+document.getElementById(
+"output"
+).textContent=
+hash;
+
+}
+
+
+/* =====================================
+RANDOM
+===================================== */
+
+function randomNumber(){
+
+const min=
+Number(
+document.getElementById(
+"min"
+).value
+);
+
+const max=
+Number(
+document.getElementById(
+"max"
+).value
+);
+
+const number=
+Math.floor(
+Math.random()*
+(
+max-min+1
+)
+)+min;
+
+document.getElementById(
+"output"
+).textContent=
+number;
+
+}
+
+
+/* =====================================
+STOPWATCH
+===================================== */
+
+let stopwatchInterval;
+
+let stopwatchSeconds=0;
+
+
+function startStopwatch(){
+
+if(stopwatchInterval)
+return;
+
+stopwatchInterval=
+setInterval(
+()=>{
+
+stopwatchSeconds++;
+
+let h=
+String(
+Math.floor(
+stopwatchSeconds/3600
+)
+).padStart(2,"0");
+
+let m=
+String(
+Math.floor(
+(stopwatchSeconds%3600)/60
+)
+).padStart(2,"0");
+
+let s=
+String(
+stopwatchSeconds%60
+).padStart(2,"0");
+
+document.getElementById(
+"stopwatch"
+).textContent=
+`${h}:${m}:${s}`;
+
+},
+1000
+);
+
+}
+
+
+function stopStopwatch(){
+
+clearInterval(
+stopwatchInterval
+);
+
+stopwatchInterval=null;
+
+}
+
+
+function resetStopwatch(){
+
+stopStopwatch();
+
+stopwatchSeconds=0;
+
+document.getElementById(
+"stopwatch"
+).textContent=
+"00:00:00";
+
+}
+
+
+/* =====================================
+TIMER
+===================================== */
+
+let timerInterval;
+
+
+function startTimer(){
+
+let seconds=
+Number(
+document.getElementById(
+"timerSeconds"
+).value
+);
+
+clearInterval(
+timerInterval
+);
+
+document.getElementById(
+"timerDisplay"
+).textContent=
+seconds;
+
+timerInterval=
+setInterval(
+()=>{
+
+seconds--;
+
+document.getElementById(
+"timerDisplay"
+).textContent=
+seconds;
+
+if(seconds<=0){
+
+clearInterval(
+timerInterval
+);
+
+alert(
+"Timer समाप्त हो गया!"
+);
+
+}
+
+},
+1000
+);
+
+}
+
+
+/* =====================================
+HELPERS
+===================================== */
+
+function readFile(file){
+
+return new Promise(
+(resolve,reject)=>{
+
+const reader=
+new FileReader();
+
+reader.onload=
+()=>resolve(
+reader.result
+);
+
+reader.onerror=
+reject;
+
+reader.readAsDataURL(file);
+
+});
+
+}
+
+
+function loadImage(src){
+
+return new Promise(
+(resolve,reject)=>{
+
+const img=
+new Image();
+
+img.onload=
+()=>resolve(img);
+
+img.onerror=
+reject;
+
+img.src=src;
+
+});
+
+}
+
+
+function escapeHTML(text){
+
+return String(
+text||""
+)
+.replace(
+/[&<>"']/g,
+
+function(m){
+
+return {
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+
+}[m];
+
+}
+);
+
+}
+
+
+/* =====================================
+DARK MODE
+===================================== */
+
+function toggleDark(){
+
+document.body.style.background=
+document.body.style.background===
+"rgb(17, 24, 39)"
+?
+"#f5f7fb"
+:
+"#111827";
 
 }
 
