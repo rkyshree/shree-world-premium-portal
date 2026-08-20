@@ -332,7 +332,7 @@ img{
 
 
 /* =====================================================
-   HERO CUSTOM LOGOS
+   HERO CLEAN PNG LOGOS (Updated: No Glass Box, Clean Look)
 ===================================================== */
 
 .hero-link-logos{
@@ -343,11 +343,11 @@ img{
 
     justify-content:center;
 
-    gap:18px;
+    gap:24px;
 
-    margin-top:27px;
+    margin-top:28px;
 
-    margin-bottom:10px;
+    margin-bottom:12px;
 
     flex-wrap:wrap;
 
@@ -359,85 +359,58 @@ img{
 
     position:relative;
 
-    width:74px;
-    height:74px;
-
-    border-radius:50%;
-
     display:flex;
 
+    flex-direction:column;
+
     align-items:center;
+
     justify-content:center;
 
     text-decoration:none;
 
-    background:
-    linear-gradient(
-        145deg,
-        rgba(255,255,255,.13),
-        rgba(255,255,255,.035)
-    );
+    background:transparent;
 
-    border:2px solid
-    rgba(255,255,255,.12);
+    border:none;
 
-    box-shadow:
-    0 10px 30px rgba(0,0,0,.40),
-    inset 0 0 20px rgba(255,255,255,.04);
+    box-shadow:none;
 
-    backdrop-filter:blur(12px);
+    padding:8px;
 
     transition:
-    transform .35s ease,
-    box-shadow .35s ease,
-    border-color .35s ease;
+    transform .35s ease;
 
 }
 
+/* Soft ambient glow behind the clean PNG logo */
 .hero-link-logo::before{
 
     content:"";
 
     position:absolute;
 
-    inset:-5px;
+    width:70px;
+
+    height:70px;
 
     border-radius:50%;
 
     background:
-    linear-gradient(
-        135deg,
-        var(--logo-color),
-        transparent 45%,
-        var(--logo-color)
+    radial-gradient(
+        circle,
+        var(--logo-color) 0%,
+        transparent 70%
     );
 
-    opacity:.85;
+    opacity:.18;
 
-    z-index:-1;
+    z-index:0;
 
-}
+    transition:
+    opacity .35s ease,
+    transform .35s ease;
 
-.hero-link-logo::after{
-
-    content:"";
-
-    position:absolute;
-
-    top:7px;
-    left:12px;
-
-    width:35px;
-    height:15px;
-
-    border-radius:50%;
-
-    background:
-    rgba(255,255,255,.12);
-
-    filter:blur(5px);
-
-    transform:rotate(-25deg);
+    filter:blur(14px);
 
 }
 
@@ -447,19 +420,20 @@ img{
 
     z-index:5;
 
-    width:42px;
-    height:42px;
+    width:64px;
+
+    height:64px;
 
     object-fit:contain;
 
-    border-radius:50%;
-
-    transition:.35s;
+    transition:
+    transform .35s ease,
+    filter .35s ease;
 
     filter:
     drop-shadow(
-        0 0 8px
-        var(--logo-color)
+        0 4px 10px
+        rgba(0,0,0,.5)
     );
 
 }
@@ -467,44 +441,49 @@ img{
 .hero-link-logo:hover{
 
     transform:
-    translateY(-8px)
-    scale(1.08);
+    translateY(-6px);
 
-    border-color:
-    var(--logo-color);
+}
 
-    box-shadow:
-    0 15px 35px rgba(0,0,0,.45),
-    0 0 20px var(--logo-color);
+.hero-link-logo:hover::before{
+
+    opacity:.45;
+
+    transform:scale(1.25);
 
 }
 
 .hero-link-logo:hover img{
 
-    transform:scale(1.15);
+    transform:scale(1.12);
+
+    filter:
+    drop-shadow(
+        0 0 14px
+        var(--logo-color)
+    );
 
 }
 
 .hero-link-logo .logo-label{
 
-    position:absolute;
+    position:relative;
 
-    left:50%;
+    z-index:5;
 
-    bottom:-27px;
-
-    transform:
-    translateX(-50%);
+    margin-top:6px;
 
     white-space:nowrap;
 
-    font-size:9px;
+    font-size:11px;
 
     font-weight:800;
 
+    letter-spacing:0.04em;
+
     color:#9ca3af;
 
-    opacity:0;
+    opacity:.85;
 
     transition:.3s;
 
@@ -515,6 +494,8 @@ img{
     opacity:1;
 
     color:var(--logo-color);
+
+    transform:translateY(1px);
 
 }
 
@@ -1649,38 +1630,48 @@ img{
 
 
 /* =====================================================
-   MOBILE
+   MOBILE OPTIMIZATIONS
 ===================================================== */
 
 @media(max-width:640px){
 
     .hero-link-logos{
 
-        gap:14px;
+        gap:16px;
 
-        margin-top:24px;
+        margin-top:20px;
 
     }
 
     .hero-link-logo{
 
-        width:62px;
-        height:62px;
+        padding:4px;
+
+    }
+
+    .hero-link-logo::before{
+
+        width:55px;
+
+        height:55px;
+
+        filter:blur(10px);
 
     }
 
     .hero-link-logo img{
 
-        width:34px;
-        height:34px;
+        width:52px;
+
+        height:52px;
 
     }
 
     .hero-link-logo .logo-label{
 
-        font-size:8px;
+        font-size:10px;
 
-        bottom:-22px;
+        margin-top:4px;
 
     }
 
@@ -1990,15 +1981,8 @@ const WEBSITE_SETTINGS = {
 /* =====================================================
    ⭐ HERO LOGO + LINK SETTINGS ⭐
    
-   सिर्फ इसी जगह से अपने 4 लोगो बदलें।
-
-   logo  = आपके लोगो की image URL
-   link  = जिस page/website पर जाना है
-   label = लोगो का नाम
-   color = लोगो का glow/border color
-
-   आप PNG / JPG / WEBP किसी भी image का URL
-   इस्तेमाल कर सकते हैं।
+   यहाँ अपने चारों लोगो सेट करें।
+   अब यह बिना बैकग्राउंड बॉक्स के साफ़ और बड़े दिखेंगे।
 ===================================================== */
 
 const HERO_LINKS = [
@@ -2446,8 +2430,7 @@ Businesses Grow.
 
 
 <!-- =================================================
-     ⭐ CUSTOM HERO LOGOS
-     JavaScript से automatically बनेंगे
+     ⭐ CLEAN PNG HERO LOGOS
 ================================================== -->
 
 <div
@@ -3620,7 +3603,7 @@ WEBSITE_SETTINGS.profileImage;
 
 
 /* =====================================================
-   ⭐ CREATE HERO LOGOS AUTOMATICALLY
+   ⭐ CREATE CLEAN PNG LOGOS
 ===================================================== */
 
 const heroLogoContainer =
