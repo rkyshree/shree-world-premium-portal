@@ -1,463 +1,246 @@
 ```html
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" class="h-full w-full overflow-hidden">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>एक्सक्लूसिव स्टोर - स्पेशल ऑफर्स</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom Styles -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .btn-glow {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
-        }
-        .btn-glow:hover {
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.7);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deals & Offers Portal - Official Partners</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* Fullscreen reset aur smooth scrolling config */
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #0f172a;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    /* Custom Scrollbar Agar zarurat pade */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+
+    /* Partner Badge Hover Effect */
+    .partner-card {
+      transition: all 0.25s ease-in-out;
+    }
+    .partner-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white pb-8">
+<body class="flex flex-col h-screen w-screen text-slate-100 select-none">
 
-    <!-- टॉप नेविगेशन Bar -->
-    <header class="w-full max-w-xl mx-auto px-4 pt-4 pb-2 flex justify-between items-center relative z-10">
-        <div class="flex items-center space-x-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-            <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">लाइव डील्स</span>
-        </div>
-
-        <!-- ट्रिगर बटन (केवल 3 बार क्लिक करने पर ही एडमिन खुलेगा) -->
-        <button id="admin-trigger-btn" onclick="handleAdminTrigger()" class="text-[11px] font-medium text-slate-400 hover:text-slate-200 opacity-40 hover:opacity-100 transition-all cursor-pointer px-2 py-1 rounded bg-slate-800/50 border border-slate-700/50">
-            <i class="fa-solid fa-lock text-[10px] mr-1"></i>Admin
-        </button>
-    </header>
-
-    <!-- हीरो बैनर -->
-    <div class="w-full max-w-xl mx-auto px-4 my-2 text-center">
-        <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-pink-300">
-            बेस्ट ऑफर्स और प्रोडक्ट्स
+  <!-- ========================================== -->
+  <!-- 1. Top Navigation Bar (Header Section)     -->
+  <!-- ========================================== -->
+  <header class="bg-slate-900 border-b border-slate-800 px-4 py-2.5 flex items-center justify-between shrink-0 z-20 shadow-md">
+    <!-- Brand Logo / Name -->
+    <div class="flex items-center space-x-3">
+      <div class="bg-gradient-to-tr from-blue-600 to-indigo-500 p-2 rounded-lg shadow-lg">
+        <i class="fa-solid fa-tags text-white text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-base md:text-lg font-bold tracking-wide text-white leading-tight">
+          TOP DEALS & OFFERS
         </h1>
-        <p class="text-xs text-slate-400 mt-1">अपनी पसंद का प्रोडक्ट चुनें और 'Click Here' पर क्लिक करें</p>
+        <p class="text-[11px] text-slate-400 font-medium hidden sm:block">
+          Humare Trusted Partners Ke Best Discounts Ek Hi Jagah
+        </p>
+      </div>
     </div>
 
-    <!-- मुख्य प्रोडक्ट ग्रिड (2 Left, 2 Right Layout) -->
-    <main class="w-full max-w-xl mx-auto px-3 my-4">
+    <!-- Quick Action Controls -->
+    <div class="flex items-center space-x-2">
+      <!-- Frame Refresh Button -->
+      <button onclick="refreshDeals()" title="Deals Refresh Karo" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-200 flex items-center gap-1.5 transition">
+        <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+        <span class="hidden md:inline">Refresh</span>
+      </button>
+
+      <!-- Full Screen Toggle Button -->
+      <button onclick="toggleFullScreen()" title="Full Screen View" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white flex items-center gap-1.5 transition shadow-sm">
+        <i id="fullscreen-icon" class="fa-solid fa-expand"></i>
+        <span class="hidden sm:inline">Full Screen</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 2. Compact Partners Showcase (1-2 Lines)  -->
+  <!-- ========================================== -->
+  <section class="bg-slate-950/90 border-b border-slate-800 px-3 py-2 shrink-0 z-10 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-2 md:gap-4">
+      
+      <!-- Label -->
+      <div class="flex items-center space-x-1.5 text-xs font-bold text-sky-400 uppercase tracking-wider shrink-0">
+        <i class="fa-solid fa-handshake text-indigo-400"></i>
+        <span>OUR PARTNERS:</span>
+      </div>
+
+      <!-- Compact Logos Container (1 line desktop, 2 lines mobile) -->
+      <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-8 gap-1.5 sm:gap-2 w-full">
         
-        <!-- लोडिंग स्टेट (डेटा लोड होने तक) -->
-        <div id="loading-skeleton" class="grid grid-cols-2 gap-3">
-            <div class="glass-card rounded-2xl p-3 animate-pulse h-64 flex flex-col justify-between">
-                <div class="bg-slate-700/50 rounded-xl h-32 w-full"></div>
-                <div class="h-4 bg-slate-700/50 rounded w-3/4 my-2"></div>
-                <div class="h-8 bg-slate-700/50 rounded-xl w-full"></div>
-            </div>
-            <div class="glass-card rounded-2xl p-3 animate-pulse h-64 flex flex-col justify-between">
-                <div class="bg-slate-700/50 rounded-xl h-32 w-full"></div>
-                <div class="h-4 bg-slate-700/50 rounded w-3/4 my-2"></div>
-                <div class="h-8 bg-slate-700/50 rounded-xl w-full"></div>
-            </div>
+        <!-- Partner 1: Amazon -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-amber-500/50">
+          <span class="font-extrabold text-xs sm:text-sm text-slate-100 tracking-tight flex items-center gap-0.5">
+            amazon<span class="text-amber-500 text-[10px]">✔</span>
+          </span>
         </div>
 
-        <!-- डेटा से आने वाले प्रोडक्ट्स (2 Columns Grid) -->
-        <div id="products-grid" class="grid grid-cols-2 gap-3 sm:gap-4 hidden">
-            <!-- प्रोडक्ट्स यहाँ जावास्क्रिप्ट द्वारा डायनामिकली दिखेंगे -->
+        <!-- Partner 2: Adidas -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-slate-400">
+          <div class="flex items-center gap-1">
+            <svg class="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
+              <path d="M24 18.5L16.2 6.5H11.5L19.3 18.5H24ZM15.5 18.5L10.3 10.4H5.6L10.8 18.5H15.5ZM7 18.5L4.4 14.5H0L2.6 18.5H7Z"/>
+            </svg>
+            <span class="font-bold text-[11px] uppercase tracking-wider text-white">adidas</span>
+          </div>
         </div>
 
-        <!-- अगर कोई प्रोडक्ट न हो -->
-        <div id="no-products" class="hidden text-center py-12 glass-card rounded-2xl px-4">
-            <i class="fa-solid fa-box-open text-4xl text-slate-600 mb-2"></i>
-            <p class="text-sm text-slate-400">अभी कोई प्रोडक्ट उपलब्ध नहीं है।</p>
-            <p class="text-xs text-slate-500 mt-1">एडमिन पैनल से नए प्रोडक्ट्स जोड़ें।</p>
+        <!-- Partner 3: AJIO -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-teal-400/50">
+          <span class="font-black text-xs sm:text-sm text-teal-300 tracking-widest uppercase">
+            AJIO
+          </span>
         </div>
-    </main>
 
-    <!-- फुटर -->
-    <footer class="text-center text-[11px] text-slate-500 mt-auto py-4">
-        &copy; 2026 एक्सक्लूसिव डील स्टोर. सर्वाधिकार सुरक्षित।
-    </footer>
-
-    <!-- ==================== लोडिंग / रीडायरेक्ट ओवरले ==================== -->
-    <div id="redirect-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden flex-col items-center justify-center z-50 p-4">
-        <div class="glass-card p-6 sm:p-8 rounded-3xl text-center max-w-xs w-full border border-indigo-500/20 shadow-2xl relative overflow-hidden">
-            <div class="absolute -top-10 -left-10 w-28 h-28 bg-indigo-500/20 rounded-full blur-2xl"></div>
-            
-            <!-- एनीमेटेड आइकॉन -->
-            <div class="relative w-20 h-20 mx-auto mb-5 flex items-center justify-center">
-                <div class="absolute inset-0 border-4 border-indigo-500/20 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                <i class="fa-solid fa-arrow-up-right-from-square text-xl text-indigo-400"></i>
-            </div>
-
-            <h3 class="text-lg font-bold text-white mb-1">कृप्या थोड़ा इंतजार करें...</h3>
-            <p class="text-xs text-slate-400 mb-5">आपको असली प्रोडक्ट वेबसाइट पर ले जाया जा रहा है।</p>
-
-            <div class="bg-indigo-950/60 border border-indigo-500/30 rounded-xl py-2 px-4 inline-flex items-center space-x-2 text-xs font-semibold text-indigo-300 mb-3">
-                <span>रीडायरेक्ट में:</span>
-                <span id="countdown-text" class="text-white font-bold text-sm bg-indigo-600 px-2 py-0.5 rounded">3s</span>
-            </div>
-
-            <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                <div id="redirect-progress" class="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-0 transition-all duration-1000 linear"></div>
-            </div>
+        <!-- Partner 4: Flipkart -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-yellow-400/50">
+          <div class="flex items-center gap-1">
+            <span class="font-bold text-xs sm:text-sm text-blue-400 italic">Flipkart</span>
+            <span class="bg-yellow-400 text-slate-900 text-[9px] font-black px-1 rounded-xs">f</span>
+          </div>
         </div>
+
+        <!-- Partner 5: Myntra -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-pink-500/50">
+          <span class="font-extrabold text-xs sm:text-sm bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+            Myntra
+          </span>
+        </div>
+
+        <!-- Partner 6: BigRock -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-orange-500/50">
+          <div class="flex items-center gap-1">
+            <i class="fa-solid fa-cube text-orange-500 text-[10px]"></i>
+            <span class="font-extrabold text-[11px] text-slate-200 uppercase tracking-tight">BIGROCK</span>
+          </div>
+        </div>
+
+        <!-- Partner 7: Jockey -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-slate-300">
+          <span class="font-bold text-[11px] sm:text-xs text-slate-200 uppercase tracking-widest font-mono">
+            JOCKEY
+          </span>
+        </div>
+
+        <!-- Partner 8: Udemy -->
+        <div class="partner-card bg-slate-900 border border-slate-800 rounded-md py-1 px-2 flex items-center justify-center hover:border-purple-500/50">
+          <div class="flex items-center gap-1">
+            <span class="font-black text-xs sm:text-sm text-purple-400">ûdemy</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 3. Full Screen Deals Frame Container      -->
+  <!-- ========================================== -->
+  <main class="flex-1 relative w-full h-full bg-white overflow-hidden">
+    
+    <!-- Loading Spinner Overlay -->
+    <div id="loading-spinner" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center z-0 transition-opacity duration-300">
+      <div class="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+      <p class="text-xs text-slate-400 font-medium">Deals Load Ho Rahi Hain...</p>
     </div>
 
-    <!-- ==================== एडमिन पैनल मोडाल (Secret Admin Modal) ==================== -->
-    <div id="admin-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="glass-card w-full max-w-md rounded-2xl border border-indigo-500/30 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <!-- एडमिन हेडर -->
-            <div class="bg-slate-900/90 p-4 border-b border-slate-800 flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <span class="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg text-xs">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </span>
-                    <h2 class="font-bold text-sm text-white">एडमिन कंट्रोल पैनल</h2>
-                </div>
-                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white p-1">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
+    <!-- User ka Provided Iframe -->
+    <iframe 
+      id="deals-frame" 
+      src="https://inrdeals.com/embed/deals?user=arm532515116" 
+      class="w-full h-full border-0 relative z-10" 
+      allowTransparency="true"
+      onload="hideSpinner()">
+    </iframe>
+  </main>
 
-            <!-- एडमिन बॉडी -->
-            <div class="p-4 overflow-y-auto space-y-5 text-xs text-slate-300">
-                
-                <!-- नया प्रोडक्ट जोड़ने का फॉर्म -->
-                <form id="add-product-form" onsubmit="handleAddProduct(event)" class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 class="font-bold text-indigo-400 text-xs flex items-center justify-between">
-                        <span><i class="fa-solid fa-plus-circle mr-1"></i> नया प्रोडक्ट जोड़ें</span>
-                        <span class="text-[10px] text-emerald-400 font-normal">● ऑल डिवाइसेज सिंक</span>
-                    </h3>
+  <!-- ========================================== -->
+  <!-- 4. Interactive JavaScript Controls         -->
+  <!-- ========================================== -->
+  <script>
+    // Loading indicator ko hide karne ka function
+    function hideSpinner() {
+      const spinner = document.getElementById('loading-spinner');
+      if (spinner) {
+        spinner.style.opacity = '0';
+        setTimeout(() => {
+          spinner.style.display = 'none';
+        }, 300);
+      }
+    }
 
-                    <div>
-                        <label class="block text-slate-400 mb-1 font-medium">1. प्रोडक्ट का नाम (Title):</label>
-                        <input type="text" id="input-title" required placeholder="जैसे: वायरलेस इयरबड्स" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500">
-                    </div>
+    // Deals Frame Refresh karne ka function
+    function refreshDeals() {
+      const iframe = document.getElementById('deals-frame');
+      const icon = document.getElementById('refresh-icon');
+      const spinner = document.getElementById('loading-spinner');
 
-                    <div>
-                        <label class="block text-slate-400 mb-1 font-medium">2. फोटो का लिंक (Image URL):</label>
-                        <input type="url" id="input-img" required placeholder="https://example.com/photo.jpg" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500">
-                    </div>
+      if (spinner) {
+        spinner.style.display = 'flex';
+        spinner.style.opacity = '1';
+      }
 
-                    <div>
-                        <label class="block text-slate-400 mb-1 font-medium">3. ओरिजिनल वेबसाइट/प्रोडक्ट लिंक (Target Link):</label>
-                        <input type="url" id="input-link" required placeholder="https://amazon.in/dp/example" 
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-indigo-500">
-                    </div>
+      icon.classList.add('fa-spin');
+      iframe.src = iframe.src;
 
-                    <button type="submit" id="save-btn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-lg shadow-lg transition active:scale-98 flex items-center justify-center space-x-1">
-                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i>
-                        <span>सेव करें और लाइव करें</span>
-                    </button>
-                </form>
+      setTimeout(() => {
+        icon.classList.remove('fa-spin');
+      }, 1000);
+    }
 
-                <!-- मौजूदा प्रोडक्ट्स की सूची -->
-                <div>
-                    <h3 class="font-bold text-slate-300 text-xs mb-2">मौजूदा प्रोडक्ट्स (<span id="product-count">0</span>):</h3>
-                    <div id="admin-product-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                        <!-- लिस्ट जावास्क्रिप्ट से भरेगी -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- नोटिफिकेशन टोस्ट -->
-    <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs px-4 py-2.5 rounded-full shadow-2xl hidden z-50 items-center space-x-2 border border-indigo-400">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toast-message">संदेश...</span>
-    </div>
-
-    <!-- Firebase SDK Modules -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase कॉन्फ़िगरेशन
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-product-store';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "",
-            authDomain: "demo.firebaseapp.com",
-            projectId: "demo-project",
-            storageBucket: "demo.appspot.com"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let productsCollectionRef = null;
-        let currentProducts = [];
-
-        // 1. ऑथेंटिकेशन और फ़ायरस्टोर सेट-अप
-        async function initApp() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.error("Auth Error:", err);
-            }
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (!user) return;
-            currentUser = user;
-
-            // Strict Collection Path: artifacts/{appId}/public/data/products
-            productsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'products');
-
-            // रियल-टाइम लिस्टनर (जब भी कोई अपडेट करेगा, सभी यूज़र्स के पास तुरंत दिखेगा)
-            onSnapshot(productsCollectionRef, (snapshot) => {
-                currentProducts = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-
-                renderProducts(currentProducts);
-                renderAdminList(currentProducts);
-            }, (error) => {
-                console.error("Firestore Listen Error:", error);
-            });
+    // Fullscreen Toggle function
+    function toggleFullScreen() {
+      const icon = document.getElementById('fullscreen-icon');
+      
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+          icon.classList.remove('fa-expand');
+          icon.classList.add('fa-compress');
+        }).catch(err => {
+          console.error("Full screen mode open nahi ho saka: ", err);
         });
-
-        initApp();
-
-        // 2. मेन वेबसाइट पर 2x2 लेआउट में प्रोडक्ट्स दिखाना
-        function renderProducts(products) {
-            const grid = document.getElementById('products-grid');
-            const skeleton = document.getElementById('loading-skeleton');
-            const noProducts = document.getElementById('no-products');
-
-            skeleton.classList.add('hidden');
-
-            if (!products || products.length === 0) {
-                grid.classList.add('hidden');
-                noProducts.classList.remove('hidden');
-                return;
-            }
-
-            noProducts.classList.add('hidden');
-            grid.classList.remove('hidden');
-
-            grid.innerHTML = products.map(prod => `
-                <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between p-2.5 transition-all duration-300 hover:border-indigo-500/50 hover:scale-[1.02] shadow-lg">
-                    <div>
-                        <div class="relative w-full aspect-square bg-slate-800 rounded-xl overflow-hidden mb-2">
-                            <img src="${escapeHtml(prod.imageUrl)}" 
-                                 alt="${escapeHtml(prod.title)}" 
-                                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                                 onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80'">
-                            <span class="absolute top-1.5 left-1.5 bg-indigo-600/90 backdrop-blur-md text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider">
-                                HOT DEAL
-                            </span>
-                        </div>
-                        <h3 class="text-xs font-bold text-white line-clamp-2 px-1 mb-2 leading-snug">
-                            ${escapeHtml(prod.title)}
-                        </h3>
-                    </div>
-
-                    <button onclick="triggerRedirect('${escapeJsString(prod.targetUrl)}')" 
-                            class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs font-bold py-2 px-3 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center space-x-1 btn-glow mt-1">
-                        <span>Click Here</span>
-                        <i class="fa-solid fa-bolt text-[10px] ml-0.5 text-yellow-300"></i>
-                    </button>
-                </div>
-            `).join('');
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().then(() => {
+            icon.classList.remove('fa-compress');
+            icon.classList.add('fa-expand');
+          });
         }
+      }
+    }
 
-        // 3. नया प्रोडक्ट डेटाबेस में जोड़ना
-        window.handleAddProduct = async function(event) {
-            event.preventDefault();
-            if (!currentUser || !productsCollectionRef) {
-                showToast("कनेक्शन स्थापित हो रहा है, कृपया प्रतीक्षा करें...");
-                return;
-            }
+    // Window Resize handlers for clean iframe adjustment
+    window.addEventListener('resize', () => {
+      // Auto adjust height context
+    });
+  </script>
 
-            const saveBtn = document.getElementById('save-btn');
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>सेव हो रहा है...</span>`;
-
-            const title = document.getElementById('input-title').value.trim();
-            const imageUrl = document.getElementById('input-img').value.trim();
-            const targetUrl = document.getElementById('input-link').value.trim();
-
-            try {
-                await addDoc(productsCollectionRef, {
-                    title: title,
-                    imageUrl: imageUrl,
-                    targetUrl: targetUrl,
-                    createdAt: new Date().toISOString()
-                });
-
-                document.getElementById('add-product-form').reset();
-                showToast("उत्पाद सफलतापूर्वक जोड़ा गया!");
-            } catch (err) {
-                console.error("Error adding product:", err);
-                showToast("सेव करने में त्रुटि हुई!");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1"></i><span>सेव करें और लाइव करें</span>`;
-            }
-        };
-
-        // 4. एडमिन लिस्ट में प्रोडक्ट्स दिखाना और डिलीट का विकल्प
-        function renderAdminList(products) {
-            const listEl = document.getElementById('admin-product-list');
-            const countEl = document.getElementById('product-count');
-            countEl.innerText = products.length;
-
-            if (products.length === 0) {
-                listEl.innerHTML = `<p class="text-slate-500 text-[11px] text-center py-2">कोई प्रोडक्ट मौजूद नहीं है।</p>`;
-                return;
-            }
-
-            listEl.innerHTML = products.map(prod => `
-                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800 flex items-center justify-between space-x-2">
-                    <img src="${escapeHtml(prod.imageUrl)}" class="w-8 h-8 rounded object-cover bg-slate-800 flex-shrink-0" onerror="this.src='https://via.placeholder.com/50'">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-white text-[11px] font-semibold truncate">${escapeHtml(prod.title)}</p>
-                        <p class="text-slate-500 text-[9px] truncate">${escapeHtml(prod.targetUrl)}</p>
-                    </div>
-                    <button onclick="deleteProductItem('${prod.id}')" class="text-red-400 hover:text-red-300 p-1.5 hover:bg-red-950/40 rounded transition">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // 5. प्रोडक्ट डिलीट करना
-        window.deleteProductItem = async function(docId) {
-            if (!confirm("क्या आप इस प्रोडक्ट को हटाना चाहते हैं?")) return;
-            try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'products', docId);
-                await deleteDoc(docRef);
-                showToast("उत्पाद हटा दिया गया है!");
-            } catch (err) {
-                console.error("Delete Error:", err);
-                showToast("हटाने में समस्या आई!");
-            }
-        };
-
-        // हेल्पर्स
-        function escapeHtml(str) {
-            return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-        function escapeJsString(str) {
-            return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        }
-    </script>
-
-    <!-- UI ट्रिगर और इंटरैक्शन जावास्क्रिप्ट -->
-    <script>
-        // ====================================================
-        //  ट्रिपल क्लिक (3 Click) एडमिन लॉजिक
-        // ====================================================
-        let clickCounter = 0;
-        let clickTimer = null;
-
-        function handleAdminTrigger() {
-            clickCounter++;
-            clearTimeout(clickTimer);
-
-            if (clickCounter === 1) {
-                // पहले क्लिक पर छोटा सा संकेत (हिंट)
-                console.log("1 Click");
-            } else if (clickCounter === 3) {
-                // ३ बार क्लिक होने पर एडमिन पैनल खोलें
-                clickCounter = 0;
-                openAdminModal();
-                showToast("एडमिन पैनल अनलॉक हो गया!");
-                return;
-            }
-
-            // 800ms के अंदर 3 क्लिक पूरे नहीं होने पर रीसेट कर दें
-            clickTimer = setTimeout(() => {
-                clickCounter = 0;
-            }, 800);
-        }
-
-        function openAdminModal() {
-            const modal = document.getElementById('admin-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeAdminModal() {
-            const modal = document.getElementById('admin-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        // ====================================================
-        //  "Click Here" रीडायरेक्ट लॉजिक (वेटिंग स्क्रीन)
-        // ====================================================
-        function triggerRedirect(targetUrl) {
-            if (!targetUrl) return;
-
-            const modal = document.getElementById('redirect-modal');
-            const countdownEl = document.getElementById('countdown-text');
-            const progressEl = document.getElementById('redirect-progress');
-
-            let secondsLeft = 3; // 3 सेकंड का टाइमर
-            countdownEl.innerText = `${secondsLeft}s`;
-            progressEl.style.width = '0%';
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-
-            setTimeout(() => {
-                progressEl.style.width = '100%';
-                progressEl.style.transitionDuration = '3s';
-            }, 50);
-
-            const timerInterval = setInterval(() => {
-                secondsLeft--;
-                if (secondsLeft >= 0) {
-                    countdownEl.innerText = `${secondsLeft}s`;
-                }
-
-                if (secondsLeft <= 0) {
-                    clearInterval(timerInterval);
-                    // असली प्रोडक्ट लिंक पर भेजें
-                    window.location.href = targetUrl;
-                }
-            }, 1000);
-        }
-
-        // टोस्ट मैसेज फंक्शन
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-message');
-            toastMsg.innerText = msg;
-
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('flex');
-            }, 3000);
-        }
-    </script>
 </body>
 </html>
 ```
