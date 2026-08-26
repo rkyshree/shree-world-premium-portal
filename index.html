@@ -269,7 +269,7 @@ img{
 .delay-3{ animation-delay:2.5s; }  
 
 /* =====================================================  
-   CARDS & PORTAL HUB  
+   CARDS & PORTAL HUB (2 LEFT / 2 RIGHT)  
 ===================================================== */  
 .card-hover{  
     transition: transform .4s ease, box-shadow .4s ease;  
@@ -282,14 +282,14 @@ img{
     position:relative;  
     background: linear-gradient(145deg, rgba(22, 30, 49, 0.95), rgba(15, 21, 35, 0.95));  
     border: 1px solid rgba(255, 255, 255, 0.08);  
-    border-radius: 20px;  
-    padding: 18px 20px;  
+    border-radius: 22px;  
+    padding: 24px;  
     display: flex;  
     align-items: center;  
-    gap: 16px;  
+    gap: 20px;  
     overflow: hidden;  
     transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);  
-    text-decoration: none;  
+    cursor: pointer;  
 }  
 .portal-premium-card::before{  
     content:'';  
@@ -298,7 +298,7 @@ img{
     left:-100%;  
     width:100%;  
     height:100%;  
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);  
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);  
     transition: left .6s ease;  
 }  
 .portal-premium-card:hover::before{  
@@ -307,77 +307,95 @@ img{
 .portal-premium-card:hover{  
     transform: translateY(-6px) scale(1.02);  
     border-color: var(--accent-color, #eab308);  
-    box-shadow: 0 14px 35px rgba(0,0,0,0.5), 0 0 25px var(--glow-color, rgba(234,179,8,0.25));  
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 30px var(--glow-color, rgba(234,179,8,0.3));  
 }  
 .portal-icon-box{  
-    width: 54px;  
-    height: 54px;  
-    border-radius: 16px;  
+    width: 64px;  
+    height: 64px;  
+    border-radius: 18px;  
     display: flex;  
     align-items: center;  
     justify-content: center;  
     background: rgba(255, 255, 255, 0.04);  
-    border: 1px solid rgba(255, 255, 255, 0.1);  
-    font-size: 26px;  
+    border: 1px solid rgba(255, 255, 255, 0.12);  
+    font-size: 32px;  
     flex-shrink: 0;  
     transition: transform .35s ease, background .35s ease;  
 }  
 .portal-premium-card:hover .portal-icon-box{  
-    transform: scale(1.1) rotate(5deg);  
-    background: var(--bg-hover, rgba(234,179,8,0.15));  
+    transform: scale(1.15) rotate(6deg);  
+    background: var(--bg-hover, rgba(234,179,8,0.18));  
 }  
 
 /* =====================================================  
-   GROWTH BANNER  
+   PREMIUM PORTAL MODAL (WITH BACK BUTTON)  
 ===================================================== */  
-.growth-banner{  
+#portalViewerModal{  
+    display: none;  
+    position: fixed;  
+    inset: 0;  
+    z-index: 9999;  
+    background: #080b12;  
+    flex-direction: column;  
+}  
+#portalViewerModal.active{  
+    display: flex;  
+}  
+
+/* =====================================================  
+   ⭐ PREMIUM LARGE GROWTH BANNER (BELOW EBOOKS)  
+===================================================== */  
+.growth-banner-large{  
     position:relative;  
     overflow:hidden;  
-    border-top: 1px solid rgba(234,179,8,.28);  
-    border-bottom: 1px solid rgba(234,179,8,.28);  
-    background: linear-gradient(110deg, #0b0f18, #17140b 48%, #0b0f18);  
+    border-top: 2px solid rgba(234,179,8,.4);  
+    border-bottom: 2px solid rgba(234,179,8,.4);  
+    background: radial-gradient(circle at 50% 50%, #1a1e2e 0%, #0c101d 50%, #080b12 100%);  
+    box-shadow: 0 0 50px rgba(234,179,8,0.15) inset;  
 }  
-.growth-banner:before{  
+.growth-banner-large::before{  
     content:"";  
     position:absolute;  
     inset:0;  
-    background: linear-gradient(90deg, transparent, rgba(234,179,8,.08), transparent);  
-    animation: goldSweep 4s linear infinite;  
+    background: linear-gradient(90deg, transparent, rgba(234,179,8,.15), transparent);  
+    animation: goldSweep 4.5s linear infinite;  
 }  
-@keyframes goldSweep{  
-    0%{ transform:translateX(-100%); }  
-    100%{ transform:translateX(100%); }  
-}  
-.growth-icons{  
+.growth-icons-large{  
     position:absolute;  
     inset:0;  
     pointer-events:none;  
     overflow:hidden;  
 }  
-.growth-icons i{  
+.growth-icons-large i{  
     position:absolute;  
-    font-size:42px;  
-    opacity:.045;  
-    filter:blur(1.5px);  
-    animation: iconDrift 8s ease-in-out infinite;  
+    font-size:52px;  
+    opacity:.07;  
+    filter:blur(1px);  
+    animation: iconDriftLarge 7s ease-in-out infinite alternate;  
 }  
-.growth-icons .g1{ left:8%; top:20%; color:#ec4899; }  
-.growth-icons .g2{ left:25%; top:55%; color:#3b82f6; }  
-.growth-icons .g3{ left:47%; top:18%; color:#10b981; }  
-.growth-icons .g4{ left:68%; top:58%; color:#a855f7; }  
-.growth-icons .g5{ left:86%; top:22%; color:#eab308; }  
-.growth-icons .g6{ left:57%; top:70%; color:#ef4444; }  
+.growth-icons-large .gl1{ left:6%; top:25%; color:#ec4899; animation-delay:0s; }  
+.growth-icons-large .gl2{ left:22%; top:60%; color:#3b82f6; animation-delay:1s; }  
+.growth-icons-large .gl3{ left:48%; top:15%; color:#10b981; animation-delay:2s; }  
+.growth-icons-large .gl4{ left:70%; top:65%; color:#a855f7; animation-delay:1.5s; }  
+.growth-icons-large .gl5{ left:88%; top:25%; color:#eab308; animation-delay:0.5s; }  
 
-@keyframes iconDrift{  
-    0%,100%{ transform: translateY(0) rotate(-5deg) scale(1); }  
-    50%{ transform: translateY(-13px) rotate(5deg) scale(1.12); }  
+@keyframes iconDriftLarge{  
+    0%{ transform: translateY(0) rotate(-6deg) scale(1); }  
+    100%{ transform: translateY(-20px) rotate(8deg) scale(1.2); }  
 }  
-.growth-click{  
-    animation: blinkGold 1.15s ease-in-out infinite;  
+@keyframes goldSweep{  
+    0%{ transform:translateX(-100%); }  
+    100%{ transform:translateX(100%); }  
 }  
-@keyframes blinkGold{  
-    0%,100%{ opacity:1; transform:scale(1); }  
-    50%{ opacity:.45; transform:scale(1.04); }  
+
+.growth-cta-btn{  
+    background: linear-gradient(135deg, #facc15 0%, #eab308 50%, #ca8a04 100%);  
+    box-shadow: 0 10px 35px rgba(234,179,8,0.45);  
+    animation: pulseCta 2s infinite ease-in-out;  
+}  
+@keyframes pulseCta{  
+    0%, 100%{ transform: scale(1); box-shadow: 0 10px 35px rgba(234,179,8,0.45); }  
+    50%{ transform: scale(1.05); box-shadow: 0 15px 50px rgba(234,179,8,0.7); }  
 }  
 
 /* =====================================================  
@@ -801,7 +819,6 @@ img{
     .youtube-play-button{ width:66px; height:48px; border-radius:14px; }  
     .youtube-play-button i{ font-size:24px; }  
     .youtube-watch-text{ bottom:12px; font-size:10px; padding:6px 11px; }  
-    .growth-icons i{ font-size:28px; }  
     .loader-photo-wrap{ width:140px; height:140px; }  
     .loader-photo{ width:100px; height:100px; }  
     .ring-1{ width:112px; height:112px; }  
@@ -844,7 +861,7 @@ img{
 </div>  
 
 <!-- =====================================================  
-     BACK BUTTON  
+     BACK BUTTON (GLOBAL)  
 ===================================================== -->  
 <button id="appBackButton" type="button" aria-label="Go Back">  
     <i class="fas fa-arrow-left"></i>  
@@ -880,6 +897,24 @@ img{
         <button id="pwaHelpOk" type="button" class="w-full bg-brandGold text-black font-black py-3 rounded-xl">  
             Got it  
         </button>  
+    </div>  
+</div>  
+
+<!-- =====================================================  
+     PORTAL IN-APP VIEWER MODAL (WITH BACK 🔙 BUTTON)  
+===================================================== -->  
+<div id="portalViewerModal">  
+    <div class="w-full bg-darkBg border-b border-gray-800 px-4 py-3 flex items-center justify-between z-50">  
+        <button id="closePortalViewer" type="button" class="inline-flex items-center gap-2 bg-brandGold text-black font-black px-4 py-2 rounded-xl text-sm shadow-md hover:brightness-110 active:scale-95 transition">  
+            <i class="fas fa-arrow-left"></i> 🔙 Back to Home  
+        </button>  
+        <h4 id="portalViewerTitle" class="text-white font-bold text-sm truncate max-w-[180px] sm:max-w-md">Digital Hub</h4>  
+        <a id="portalViewerDirectBtn" href="#" target="_blank" rel="noopener noreferrer" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-2 rounded-xl text-xs font-bold border border-gray-700 flex items-center gap-1.5">  
+            <i class="fas fa-external-link-alt"></i> <span class="hidden sm:inline">Open New Tab</span>  
+        </a>  
+    </div>  
+    <div class="flex-grow w-full h-full relative bg-[#0f1523]">  
+        <iframe id="portalIframe" src="" class="w-full h-full border-0" allow="fullscreen; geolocation; microphone; camera; midi"></iframe>  
     </div>  
 </div>  
 
@@ -1006,94 +1041,90 @@ const CERTIFICATES = [
     </section>  
 
     <!-- =====================================================  
-         GROWTH BANNER  
+         ⭐ FEATURED DIGITAL HUBS (2 LEFT - 2 RIGHT GRID)  
     ===================================================== -->  
-    <section class="growth-banner">  
-        <div class="growth-icons">  
-            <i class="fas fa-heart g1"></i>  
-            <i class="fas fa-comment-dots g2"></i>  
-            <i class="fas fa-eye g3"></i>  
-            <i class="fas fa-thumbs-up g4"></i>  
-            <i class="fas fa-share-nodes g5"></i>  
-            <i class="fas fa-fire g6"></i>  
-        </div>  
-        <div class="relative z-10 max-w-7xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-center gap-3 sm:gap-5">  
-            <span class="text-brandGold text-sm sm:text-base md:text-lg font-black tracking-wide">Growth Your Social Media</span>  
-            <a href="https://www.rkyshree.in/growth" class="growth-click inline-flex items-center gap-1.5 text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest text-black bg-brandGold px-3 sm:px-5 py-1.5 sm:py-2 rounded-full">  
-                Click Here <i class="fas fa-arrow-right text-[9px]"></i>  
-            </a>  
-        </div>  
-    </section>  
-
-    <!-- =====================================================  
-         ⭐ 4 FEATURED PORTALS / SERVICES HUB (MAIN SCREEN)  
-    ===================================================== -->  
-    <section class="py-16 bg-darkBg border-b border-gray-800/60">  
+    <section class="py-20 bg-darkBg border-t border-b border-gray-800/80">  
         <div class="max-w-7xl mx-auto px-6">  
-            <div class="text-center mb-10">  
-                <p class="text-brandGold font-bold tracking-widest uppercase text-xs sm:text-sm mb-2">Exclusive Portals & Tools</p>  
-                <h2 class="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-white">  
+            <div class="text-center mb-14">  
+                <p class="text-brandGold font-bold tracking-widest uppercase text-xs sm:text-sm mb-2">Direct Service Portals</p>  
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white">  
                     Featured <span class="text-brandGold">Digital Hubs</span>  
                 </h2>  
+                <p class="text-gray-400 max-w-xl mx-auto mt-3 text-sm sm:text-base">  
+                    Click any portal below to launch inside the app with instant back navigation.  
+                </p>  
             </div>  
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">  
+            <!-- 2 Left - 2 Right Layout -->  
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">  
                 
-                <!-- 1. Flight Portal -->  
-                <a href="https://www.rkyshree.in/Flight/" target="_blank" rel="noopener noreferrer" class="portal-premium-card group" style="--accent-color:#3b82f6; --glow-color:rgba(59,130,246,0.3); --bg-hover:rgba(59,130,246,0.15);">  
+                <!-- 1. Flight Portal (Left 1) -->  
+                <div onclick="openPortalViewer('Flight Booking Portal', 'https://www.rkyshree.in/Flight/')" class="portal-premium-card group" style="--accent-color:#3b82f6; --glow-color:rgba(59,130,246,0.35); --bg-hover:rgba(59,130,246,0.18);">  
                     <div class="portal-icon-box border-blue-500/30 text-blue-400">  
                         <span>✈️</span>  
                     </div>  
-                    <div class="overflow-hidden">  
-                        <h3 class="text-white font-black text-base group-hover:text-blue-400 transition-colors">Flight Portal</h3>  
-                        <p class="text-gray-400 text-xs truncate mt-0.5">Book & track flight tickets</p>  
-                        <span class="inline-flex items-center gap-1.5 text-[11px] text-blue-400 font-extrabold mt-2 uppercase tracking-wide">  
-                            Visit Portal <i class="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>  
+                    <div class="overflow-hidden flex-grow">  
+                        <div class="flex items-center justify-between">  
+                            <h3 class="text-white font-black text-lg sm:text-xl group-hover:text-blue-400 transition-colors">Flight Portal</h3>  
+                            <span class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full font-bold">Fast View</span>  
+                        </div>  
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">Book, search & track flight tickets instantly</p>  
+                        <span class="inline-flex items-center gap-1.5 text-xs text-blue-400 font-extrabold mt-3 uppercase tracking-wide">  
+                            Open Portal <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1.5 transition-transform"></i>  
                         </span>  
                     </div>  
-                </a>  
+                </div>  
 
-                <!-- 2. Digital Services -->  
-                <a href="https://www.rkyshree.in/Digital/" target="_blank" rel="noopener noreferrer" class="portal-premium-card group" style="--accent-color:#a855f7; --glow-color:rgba(168,85,247,0.3); --bg-hover:rgba(168,85,247,0.15);">  
+                <!-- 2. Digital Services (Right 1) -->  
+                <div onclick="openPortalViewer('Digital Services Hub', 'https://www.rkyshree.in/Digital/')" class="portal-premium-card group" style="--accent-color:#a855f7; --glow-color:rgba(168,85,247,0.35); --bg-hover:rgba(168,85,247,0.18);">  
                     <div class="portal-icon-box border-purple-500/30 text-purple-400">  
                         <span>🌐</span>  
                     </div>  
-                    <div class="overflow-hidden">  
-                        <h3 class="text-white font-black text-base group-hover:text-purple-400 transition-colors">Digital Services</h3>  
-                        <p class="text-gray-400 text-xs truncate mt-0.5">Online marketing & growth</p>  
-                        <span class="inline-flex items-center gap-1.5 text-[11px] text-purple-400 font-extrabold mt-2 uppercase tracking-wide">  
-                            Visit Portal <i class="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>  
+                    <div class="overflow-hidden flex-grow">  
+                        <div class="flex items-center justify-between">  
+                            <h3 class="text-white font-black text-lg sm:text-xl group-hover:text-purple-400 transition-colors">Digital Services</h3>  
+                            <span class="text-[10px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">Marketing</span>  
+                        </div>  
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">Online promotions, social tools & growth setup</p>  
+                        <span class="inline-flex items-center gap-1.5 text-xs text-purple-400 font-extrabold mt-3 uppercase tracking-wide">  
+                            Open Portal <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1.5 transition-transform"></i>  
                         </span>  
                     </div>  
-                </a>  
+                </div>  
 
-                <!-- 3. Website Services -->  
-                <a href="https://www.rkyshree.in/Website/" target="_blank" rel="noopener noreferrer" class="portal-premium-card group" style="--accent-color:#10b981; --glow-color:rgba(168,85,247,0.3); --bg-hover:rgba(16,185,129,0.15);">  
+                <!-- 3. Website Services (Left 2) -->  
+                <div onclick="openPortalViewer('Website Development Hub', 'https://www.rkyshree.in/Website/')" class="portal-premium-card group" style="--accent-color:#10b981; --glow-color:rgba(16,185,129,0.35); --bg-hover:rgba(16,185,129,0.18);">  
                     <div class="portal-icon-box border-green-500/30 text-green-400">  
                         <span>💻</span>  
                     </div>  
-                    <div class="overflow-hidden">  
-                        <h3 class="text-white font-black text-base group-hover:text-green-400 transition-colors">Web Development</h3>  
-                        <p class="text-gray-400 text-xs truncate mt-0.5">Custom websites & apps</p>  
-                        <span class="inline-flex items-center gap-1.5 text-[11px] text-green-400 font-extrabold mt-2 uppercase tracking-wide">  
-                            Visit Portal <i class="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>  
+                    <div class="overflow-hidden flex-grow">  
+                        <div class="flex items-center justify-between">  
+                            <h3 class="text-white font-black text-lg sm:text-xl group-hover:text-green-400 transition-colors">Web Development</h3>  
+                            <span class="text-[10px] bg-green-500/20 text-green-400 border border-green-500/30 px-2 py-0.5 rounded-full font-bold">Custom Web</span>  
+                        </div>  
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">High-speed responsive landing pages & UI apps</p>  
+                        <span class="inline-flex items-center gap-1.5 text-xs text-green-400 font-extrabold mt-3 uppercase tracking-wide">  
+                            Open Portal <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1.5 transition-transform"></i>  
                         </span>  
                     </div>  
-                </a>  
+                </div>  
 
-                <!-- 4. My Sales Board -->  
-                <a href="https://mysalesboard.in/?dist=DQnzkVsISihDgXv0wV5IVdZakwk1" target="_blank" rel="noopener noreferrer" class="portal-premium-card group" style="--accent-color:#eab308; --glow-color:rgba(234,179,8,0.3); --bg-hover:rgba(234,179,8,0.15);">  
+                <!-- 4. Sales Board (Right 2) -->  
+                <div onclick="openPortalViewer('My Sales Board', 'https://mysalesboard.in/?dist=DQnzkVsISihDgXv0wV5IVdZakwk1')" class="portal-premium-card group" style="--accent-color:#eab308; --glow-color:rgba(234,179,8,0.35); --bg-hover:rgba(234,179,8,0.18);">  
                     <div class="portal-icon-box border-yellow-500/30 text-brandGold">  
                         <span>📊</span>  
                     </div>  
-                    <div class="overflow-hidden">  
-                        <h3 class="text-white font-black text-base group-hover:text-brandGold transition-colors">Sales Board</h3>  
-                        <p class="text-gray-400 text-xs truncate mt-0.5">Boost business growth</p>  
-                        <span class="inline-flex items-center gap-1.5 text-[11px] text-brandGold font-extrabold mt-2 uppercase tracking-wide">  
-                            Visit Portal <i class="fas fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>  
+                    <div class="overflow-hidden flex-grow">  
+                        <div class="flex items-center justify-between">  
+                            <h3 class="text-white font-black text-lg sm:text-xl group-hover:text-brandGold transition-colors">Sales Board</h3>  
+                            <span class="text-[10px] bg-yellow-500/20 text-brandGold border border-yellow-500/30 px-2 py-0.5 rounded-full font-bold">Sales & Leads</span>  
+                        </div>  
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">Conversion funnels, sales tracking & promotion</p>  
+                        <span class="inline-flex items-center gap-1.5 text-xs text-brandGold font-extrabold mt-3 uppercase tracking-wide">  
+                            Open Portal <i class="fas fa-arrow-right text-[10px] group-hover:translate-x-1.5 transition-transform"></i>  
                         </span>  
                     </div>  
-                </a>  
+                </div>  
 
             </div>  
         </div>  
@@ -1114,6 +1145,38 @@ const CERTIFICATES = [
                 <p class="text-gray-400 max-w-2xl mx-auto mt-5">Download professional PDF guides at a special limited offer.</p>  
             </div>  
             <div id="ebookGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6"></div>  
+        </div>  
+    </section>  
+
+    <!-- =====================================================  
+         ⭐ LARGE ANIMATED GROWTH BANNER (PLACED BELOW EBOOK)  
+    ===================================================== -->  
+    <section class="growth-banner-large py-16 sm:py-20 relative">  
+        <div class="growth-icons-large">  
+            <i class="fas fa-heart gl1"></i>  
+            <i class="fas fa-comment-dots gl2"></i>  
+            <i class="fas fa-bolt gl3"></i>  
+            <i class="fas fa-fire gl4"></i>  
+            <i class="fas fa-thumbs-up gl5"></i>  
+        </div>  
+        
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">  
+            <div class="inline-flex items-center gap-2 bg-brandGold/20 border border-brandGold/40 text-brandGold px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-5">  
+                <i class="fas fa-rocket"></i> BOOST YOUR DIGITAL REACH  
+            </div>  
+            
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-white mb-4 leading-tight">  
+                Grow Your <span class="name-gradient">Social Media & Business</span>  
+            </h2>  
+            
+            <p class="text-gray-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">  
+                Get high-quality followers, real audience reach, content strategies, and lead-generating campaigns designed for fast growth.  
+            </p>  
+            
+            <a href="https://www.rkyshree.in/growth" target="_blank" rel="noopener noreferrer" class="growth-cta-btn inline-flex items-center gap-3 text-black font-black text-base sm:text-lg px-8 sm:px-12 py-4 rounded-full uppercase tracking-wider transition duration-300">  
+                <span>Start Growing Now</span>  
+                <i class="fas fa-arrow-right"></i>  
+            </a>  
         </div>  
     </section>  
 </main>  
@@ -1589,6 +1652,28 @@ function createHeroLogos(){
 }  
 createHeroLogos();  
 
+/* PORTAL IN-APP VIEWER SYSTEM */  
+const portalViewerModal = document.getElementById("portalViewerModal");  
+const portalIframe = document.getElementById("portalIframe");  
+const portalViewerTitle = document.getElementById("portalViewerTitle");  
+const portalViewerDirectBtn = document.getElementById("portalViewerDirectBtn");  
+const closePortalViewer = document.getElementById("closePortalViewer");  
+
+function openPortalViewer(title, url){  
+    portalViewerTitle.textContent = title;  
+    portalIframe.src = url;  
+    portalViewerDirectBtn.href = url;  
+    portalViewerModal.classList.add("active");  
+    document.body.style.overflow = "hidden";  
+}  
+
+function closePortal(){  
+    portalViewerModal.classList.remove("active");  
+    portalIframe.src = "";  
+    document.body.style.overflow = "";  
+}  
+closePortalViewer.addEventListener("click", closePortal);  
+
 /* PAGE NAVIGATION */  
 const homePage = document.getElementById("homePage");  
 const servicesPage = document.getElementById("servicesPage");  
@@ -1644,6 +1729,7 @@ function openPage(page){
         backButton.classList.add("show");  
     } else {  
         homePage.style.display = "block";  
+        window.scrollTo({ top:0, behavior:"smooth" });  
         history.pushState({page:"home"}, "", "#home");  
         backButton.classList.remove("show");  
     }  
@@ -1653,16 +1739,16 @@ function openPage(page){
 function loadHashPage(){  
     const hash = window.location.hash;  
     
-    if(hash === "#ebooks"){
-        hideAllPages();
-        homePage.style.display = "block";
-        backButton.classList.remove("show");
-        setTimeout(() => {
-            const el = document.getElementById("ebooks");
-            if(el) el.scrollIntoView({ behavior: "smooth" });
-        }, 100);
-        return;
-    }
+    if(hash === "#ebooks"){  
+        hideAllPages();  
+        homePage.style.display = "block";  
+        backButton.classList.remove("show");  
+        setTimeout(() => {  
+            const el = document.getElementById("ebooks");  
+            if(el) el.scrollIntoView({ behavior: "smooth" });  
+        }, 100);  
+        return;  
+    }  
 
     hideAllPages();  
     if(hash === "#services"){  
@@ -1689,16 +1775,16 @@ function loadHashPage(){
     }  
 }  
 
-/* Direct E-Book Nav Click */
-document.getElementById("navEbooksBtn").addEventListener("click", function(e){
-    e.preventDefault();
-    hideAllPages();
-    homePage.style.display = "block";
-    backButton.classList.remove("show");
-    history.pushState(null, "", "#ebooks");
-    const el = document.getElementById("ebooks");
-    if(el) el.scrollIntoView({ behavior: "smooth" });
-});
+/* Direct E-Book Nav Click */  
+document.getElementById("navEbooksBtn").addEventListener("click", function(e){  
+    e.preventDefault();  
+    hideAllPages();  
+    homePage.style.display = "block";  
+    backButton.classList.remove("show");  
+    history.pushState(null, "", "#ebooks");  
+    const el = document.getElementById("ebooks");  
+    if(el) el.scrollIntoView({ behavior: "smooth" });  
+});  
 
 document.querySelectorAll('a[href="#services"]').forEach(link=>{  
     link.addEventListener("click", e=>{ e.preventDefault(); openPage("services"); });  
@@ -1720,6 +1806,10 @@ document.querySelectorAll('a[href="#certificates"]').forEach(link=>{
 });  
 
 backButton.addEventListener("click", ()=>{  
+    if(portalViewerModal.classList.contains("active")){  
+        closePortal();  
+        return;  
+    }  
     if(window.location.hash && window.location.hash !== "#home"){  
         history.back();  
     } else {  
@@ -1785,8 +1875,6 @@ const instantDownloadBtn = document.getElementById("instantDownloadBtn");
 
 function openPayment(book){  
     paymentBookTitle.textContent = book.title;  
-      
-    // Set WhatsApp verification link with pre-filled message  
     const waMessage = encodeURIComponent(`नमस्ते आर. के. यादव जी, मैंने "${book.title}" के लिए ₹9 का पेमेंट कर दिया है। यह रहा स्क्रीनशॉट। कृपया मुझे e-book का एक्सेस प्रदान करें।`);  
     whatsappVerifyBtn.href = `https://wa.me/919451239239?text=${waMessage}`;  
     instantDownloadBtn.href = book.pdf;  
@@ -1918,7 +2006,11 @@ if(youtubeVideoId){
 
 /* KEYBOARD ESCAPE & IMAGE PROTECTION */  
 document.addEventListener("keydown", e=>{  
-    if(e.key==="Escape"){ closeCert(); closePayment(); }  
+    if(e.key==="Escape"){  
+        if(portalViewerModal.classList.contains("active")) closePortal();  
+        closeCert();  
+        closePayment();  
+    }  
 });  
 document.addEventListener("contextmenu", e=>{ if(e.target.tagName === "IMG") e.preventDefault(); });  
 document.addEventListener("dragstart", e=>{ if(e.target.tagName === "IMG") e.preventDefault(); });  
