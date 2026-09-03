@@ -68,14 +68,24 @@
             <h2 class="text-xl sm:text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3">⚡ Live Offers & Deals</h2>
         </div>
         
-        <div class="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden iframe-container p-1 sm:p-2 relative z-10">
-            <!-- Iframe adjusted to show all products and inner 'Load More' clearly -->
+        <div class="w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden iframe-container p-1 sm:p-2 relative z-10 min-h-[300px]">
+            
+            <!-- Loading Spinner (Shows while Iframe is loading) -->
+            <div id="iframeLoader" class="absolute inset-0 bg-white flex flex-col items-center justify-start pt-20 z-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-600 mb-4"></div>
+                <p class="text-gray-600 font-semibold animate-pulse text-sm sm:text-base text-center px-4">
+                    Live Deals लोड हो रहे हैं, कृपया कुछ सेकंड प्रतीक्षा करें...
+                </p>
+            </div>
+
+            <!-- Iframe (Fades in when fully loaded) -->
             <iframe 
                 src="https://inrdeals.com/embed/deals?user=arm532515116" 
                 class="w-full"
-                style="min-height: 1200px; height: 150vh; border:none;" 
+                style="min-height: 1200px; height: 150vh; border:none; opacity: 0; transition: opacity 0.5s ease-in-out;" 
                 scrolling="yes"
-                title="Live Deals">
+                title="Live Deals"
+                onload="document.getElementById('iframeLoader').style.display='none'; this.style.opacity='1';">
             </iframe>
         </div>
 
@@ -111,9 +121,6 @@
                कॉमा (,) लगाएँ और नीचे दी गई लाइन को कॉपी करके पेस्ट कर दें:
                
                , { image: "यहाँ_अपनी_इमेज_का_लिंक_डालें", link: "यहाँ_अपना_एफिलिएट_लिंक_डालें" }
-               
-               उदाहरण:
-               , { image: "https://example.com/photo.png", link: "https://fktr.in/xyz123" }
                =========================================================================
             */
         ];
@@ -129,7 +136,7 @@
 
             let gridHTML = '';
 
-            // सारे प्रोडक्ट एक साथ दिखाने के लिए लूप (बिना लोड मोर के)
+            // सारे प्रोडक्ट एक साथ दिखाने के लिए लूप
             DEALS_DATA.forEach((deal) => {
                 gridHTML += `
                     <div class="relative w-full rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-white border border-gray-100 group z-0">
