@@ -1372,6 +1372,16 @@ img{
 <body
     class="antialiased font-sans selection:bg-brandGold selection:text-black">
 
+<!-- =========================================================
+     SHARE BUTTON
+========================================================= -->
+<button
+    id="topShareBtn"
+    type="button"
+    class="absolute top-4 right-4 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-800 border border-gray-200 shadow-md px-4 py-2 rounded-full font-bold text-xs sm:text-sm hover:bg-brandGold transition-all">
+    <i class="fas fa-share-nodes text-brandBlue"></i>
+    <span>Share</span>
+</button>
 
 <!-- =========================================================
      SVG
@@ -1883,7 +1893,7 @@ const CERTIFICATES = [
 
 
     <header
-        class="text-center px-4 max-w-4xl mx-auto mb-2 z-10 w-full">
+        class="text-center px-4 max-w-4xl mx-auto mb-2 z-10 w-full mt-8 sm:mt-4">
 
         <h1
             class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 leading-tight mb-2 tracking-tight">
@@ -4337,6 +4347,33 @@ document.addEventListener(
 
 loadHashPage();
 
+
+/* =========================================================
+   WEB SHARE API (SHARE BUTTON)
+========================================================= */
+const topShareBtn = document.getElementById("topShareBtn");
+
+if(topShareBtn){
+    topShareBtn.addEventListener("click", async () => {
+        const shareData = {
+            title: "SHRAYNEX | Social Media Management",
+            text: "Strategy, Content, Branding & Growth — All Under One Roof.",
+            url: "https://www.rkyshree.in/"
+        };
+        
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                // If Web Share API is not supported (Desktop/Older browsers), copy to clipboard
+                await navigator.clipboard.writeText(shareData.url);
+                alert("Website link copied to clipboard!");
+            }
+        } catch (err) {
+            console.log("Share canceled or failed:", err);
+        }
+    });
+}
 
 </script>
 
