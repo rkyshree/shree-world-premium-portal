@@ -208,7 +208,7 @@ img { max-width: 100%; display: block; }
     </div>
 </div>
 
-<!-- FAST LOADER SCRIPT (यहाँ सही जगह पर किया गया है) -->
+<!-- FAST LOADER SCRIPT -->
 <script>
 (function(){
     const loader = document.getElementById("appLoader");
@@ -708,15 +708,37 @@ document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeCert();
 document.addEventListener("contextmenu", e => { if(e.target && e.target.tagName === "IMG") e.preventDefault(); });
 document.addEventListener("dragstart", e => { if(e.target && e.target.tagName === "IMG") e.preventDefault(); });
 
-/* SHARE BUTTON LOGIC */
+/* =========================================================
+   SHARE BUTTON LOGIC (WITH IMAGE ATTACHMENT)
+========================================================= */
 const topShareBtn = document.getElementById("topShareBtn");
 if(topShareBtn){
     topShareBtn.addEventListener("click", async () => {
+        // शेयर बटन दबाते ही लोडिंग इफ़ेक्ट दिखाने के लिए
+        const originalHtml = topShareBtn.innerHTML;
+        topShareBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Wait...</span>`;
+        
         const shareData = {
             title: CONFIG.shareTitle,
             text: CONFIG.shareText,
             url: CONFIG.websiteUrl
         };
+
+        try {
+            // इमेज को फेच करके फाइल में बदलना ताकि वह सीधे अटैच हो सके
+            const imageUrl = "https://i.ibb.co/wZScWNhb/file-0000000036888208bb6ae2acda8eda00.png";
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "shraynex-banner.png", { type: blob.type });
+
+            // अगर मोबाइल ब्राउज़र फाइल शेयरिंग सपोर्ट करता है
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                shareData.files = [file];
+            }
+        } catch (err) { 
+            console.log("Image attach नहीं हो पाई, सिर्फ टेक्स्ट और लिंक शेयर किया जा रहा है।"); 
+        }
+
         try {
             if (navigator.share) {
                 await navigator.share(shareData);
@@ -724,7 +746,12 @@ if(topShareBtn){
                 await navigator.clipboard.writeText(shareData.text + "\n" + shareData.url);
                 alert("Website link copied to clipboard!");
             }
-        } catch (err) { console.log("Share skipped"); }
+        } catch (err) { 
+            console.log("Share cancelled by user."); 
+        }
+        
+        // बटन को वापस नार्मल करना
+        topShareBtn.innerHTML = originalHtml;
     });
 }
 
