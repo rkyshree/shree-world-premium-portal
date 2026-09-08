@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0b0714">
+<title>SHRAYNEX Management System</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#08060d;
+ --card:#12101b;
+ --card2:#181523;
+ --border:rgba(255,255,255,.09);
+ --text:#fff;
+ --muted:#aaa3b8;
+ --primary:#8b5cf6;
+ --primary2:#c084fc;
+ --green:#22c55e;
+ --red:#ef4444;
+ --yellow:#f59e0b;
+ --blue:#38bdf8;
+}
+body{
+ font-family:Arial,"Noto Sans Devanagari",sans-serif;
+ background:linear-gradient(135deg,#08060d,#11091d);
+ color:var(--text);
+ min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login{
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+}
+.login-box{
+ width:100%;
+ max-width:430px;
+ background:rgba(18,16,27,.96);
+ border:1px solid var(--border);
+ border-radius:24px;
+ padding:30px 22px;
+ box-shadow:0 25px 80px rgba(0,0,0,.45);
+}
+.logo{
+ font-size:30px;
+ font-weight:900;
+ text-align:center;
+ background:linear-gradient(90deg,#a78bfa,#f0abfc);
+ -webkit-background-clip:text;
+ color:transparent;
+ letter-spacing:2px;
+}
+.login-box p{
+ text-align:center;
+ color:var(--muted);
+ margin:8px 0 25px;
+}
+.form-group{margin-bottom:15px}
+label{
+ display:block;
+ font-size:13px;
+ color:#d9d2e5;
+ margin-bottom:7px;
+}
+input,select,textarea{
+ width:100%;
+ padding:12px 13px;
+ background:#0d0b14;
+ border:1px solid var(--border);
+ color:white;
+ border-radius:11px;
+ outline:none;
+}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{
+ border-color:var(--primary);
+}
+.btn{
+ border:0;
+ border-radius:11px;
+ padding:11px 15px;
+ color:white;
+ background:linear-gradient(90deg,var(--primary),#a855f7);
+ font-weight:700;
+}
+.btn.full{width:100%}
+.btn.secondary{background:#24202e}
+.btn.green{background:#15803d}
+.btn.red{background:#b91c1c}
+.btn.blue{background:#0369a1}
+.btn.small{padding:7px 10px;font-size:12px}
+
+/* APP */
+.app{display:none;min-height:100vh}
+.sidebar{
+ position:fixed;
+ left:0;
+ top:0;
+ bottom:0;
+ width:245px;
+ background:#0d0a14;
+ border-right:1px solid var(--border);
+ padding:20px 14px;
+ z-index:20;
+}
+.side-logo{
+ font-size:22px;
+ font-weight:900;
+ color:#c4b5fd;
+ padding:8px 10px 25px;
+}
+.nav-btn{
+ width:100%;
+ background:none;
+ border:0;
+ color:#b8b1c4;
+ padding:12px;
+ border-radius:10px;
+ text-align:left;
+ margin:3px 0;
+}
+.nav-btn:hover,.nav-btn.active{
+ background:#211a31;
+ color:#fff;
+}
+.logout{
+ position:absolute;
+ bottom:20px;
+ left:14px;
+ right:14px;
+}
+.main{
+ margin-left:245px;
+ padding:20px;
+}
+.topbar{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ margin-bottom:22px;
+}
+.topbar h1{font-size:25px}
+.user-badge{
+ background:#191524;
+ border:1px solid var(--border);
+ padding:9px 12px;
+ border-radius:10px;
+ font-size:13px;
+}
+.mobile-menu{display:none}
+
+/* CARDS */
+.cards{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin-bottom:20px;
+}
+.stat{
+ background:linear-gradient(145deg,#14111e,#0f0c15);
+ border:1px solid var(--border);
+ border-radius:16px;
+ padding:18px;
+}
+.stat small{color:var(--muted)}
+.stat h2{margin-top:8px;font-size:27px}
+.stat.green h2{color:var(--green)}
+.stat.red h2{color:#f87171}
+.stat.blue h2{color:var(--blue)}
+.stat.yellow h2{color:var(--yellow)}
+
+.panel{
+ background:var(--card);
+ border:1px solid var(--border);
+ border-radius:17px;
+ padding:18px;
+ margin-bottom:18px;
+}
+.panel-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ margin-bottom:15px;
+}
+.panel-head h2{font-size:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{
+ padding:12px 9px;
+ border-bottom:1px solid var(--border);
+ text-align:left;
+ font-size:13px;
+}
+th{color:#c9bfd4}
+td{color:#eee}
+.badge{
+ display:inline-block;
+ padding:5px 8px;
+ border-radius:20px;
+ font-size:11px;
+ background:#292335;
+}
+.pending{color:#fbbf24}
+.working{color:#38bdf8}
+.review{color:#c084fc}
+.done{color:#4ade80}
+
+.modal{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.72);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ z-index:50;
+}
+.modal.show{display:flex}
+.modal-box{
+ width:100%;
+ max-width:600px;
+ max-height:90vh;
+ overflow:auto;
+ background:#15121e;
+ border:1px solid var(--border);
+ border-radius:20px;
+ padding:20px;
+}
+.modal-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:18px;
+}
+.close{
+ background:#292332;
+ border:0;
+ color:#fff;
+ width:35px;
+ height:35px;
+ border-radius:50%;
+}
+
+.search{
+ margin-bottom:12px;
+}
+.empty{
+ padding:25px;
+ text-align:center;
+ color:var(--muted);
+}
+
+/* MOBILE */
+@media(max-width:900px){
+ .sidebar{
+  width:220px;
+  transform:translateX(-100%);
+  transition:.25s;
+ }
+ .sidebar.open{transform:translateX(0)}
+ .main{margin-left:0;padding:15px}
+ .mobile-menu{
+  display:block;
+  background:#1c1728;
+  color:white;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 12px;
+ }
+ .cards{grid-template-columns:1fr 1fr}
+ .grid3{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+ .cards{grid-template-columns:1fr 1fr;gap:10px}
+ .stat{padding:14px}
+ .stat h2{font-size:21px}
+ .topbar h1{font-size:20px}
+ .grid2{grid-template-columns:1fr}
+ .panel{padding:14px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section class="login" id="loginPage">
+ <div class="login-box">
+  <div class="logo">SHRAYNEX</div>
+  <p>Social Media Agency • Management System</p>
+
+  <div class="form-group">
+   <label>Login Type</label>
+   <select id="loginRole">
+    <option value="owner">Owner / HR</option>
+    <option value="employee">Employee</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>Username</label>
+   <input id="loginUser" placeholder="Username">
+  </div>
+
+  <div class="form-group">
+   <label>Password</label>
+   <input id="loginPass" type="password" placeholder="Password">
+  </div>
+
+  <button class="btn full" onclick="login()">Login</button>
+
+  <div style="margin-top:18px;text-align:center;color:#777;font-size:12px">
+   Demo Owner Login: <b>admin</b> / <b>1234</b>
+  </div>
+ </div>
+</section>
+
+<!-- APP -->
+<div class="app" id="app">
+
+ <aside class="sidebar" id="sidebar">
+  <div class="side-logo">SHRAYNEX</div>
+
+  <button class="nav-btn active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+  <button class="nav-btn ownerOnly" onclick="showPage('employees',this)">👨‍💼 Employees</button>
+  <button class="nav-btn ownerOnly" onclick="showPage('clients',this)">👥 Clients</button>
+  <button class="nav-btn" onclick="showPage('projects',this)">📁 Projects</button>
+  <button class="nav-btn" onclick="showPage('tasks',this)">📋 Tasks</button>
+  <button class="nav-btn ownerOnly" onclick="showPage('payments',this)">💰 Payments</button>
+  <button class="nav-btn ownerOnly" onclick="showPage('salary',this)">💵 Salary</button>
+  <button class="nav-btn ownerOnly" onclick="showPage('reports',this)">📈 Reports</button>
+
+  <button class="nav-btn logout" onclick="logout()">🚪 Logout</button>
+ </aside>
+
+ <main class="main">
+
+  <div class="topbar">
+   <div style="display:flex;align-items:center;gap:10px">
+    <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+    <h1 id="pageTitle">Dashboard</h1>
+   </div>
+   <div class="user-badge" id="userBadge">Owner / HR</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <section id="page-dashboard" class="page">
+
+   <div class="cards">
+    <div class="stat">
+     <small>Total Employees</small>
+     <h2 id="statEmployees">0</h2>
+    </div>
+    <div class="stat blue">
+     <small>Total Clients</small>
+     <h2 id="statClients">0</h2>
+    </div>
+    <div class="stat yellow">
+     <small>Active Tasks</small>
+     <h2 id="statTasks">0</h2>
+    </div>
+    <div class="stat green">
+     <small>Net Profit</small>
+     <h2 id="statProfit">₹0</h2>
+    </div>
+   </div>
+
+   <div class="grid2">
+    <div class="panel">
+     <div class="panel-head">
+      <h2>📋 Recent Tasks</h2>
+      <button class="btn small" onclick="showPage('tasks')">View All</button>
+     </div>
+     <div id="dashboardTasks"></div>
+    </div>
+
+    <div class="panel">
+     <div class="panel-head">
+      <h2>💰 Financial Summary</h2>
+     </div>
+     <div class="grid2">
+      <div class="stat">
+       <small>Client Revenue</small>
+       <h2 id="dashRevenue">₹0</h2>
+      </div>
+      <div class="stat red">
+       <small>Expenses</small>
+       <h2 id="dashExpense">₹0</h2>
+      </div>
+     </div>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- EMPLOYEES -->
+  <section id="page-employees" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>👨‍💼 Employee Management</h2>
+     <button class="btn" onclick="openModal('employeeModal')">+ Add Employee</button>
+    </div>
+    <input class="search" id="employeeSearch" oninput="renderEmployees()" placeholder="Employee search...">
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Name</th>
+        <th>Mobile</th>
+        <th>Role</th>
+        <th>Salary</th>
+        <th>Status</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="employeeTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- CLIENTS -->
+  <section id="page-clients" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>👥 Client Management</h2>
+     <button class="btn" onclick="openModal('clientModal')">+ Add Client</button>
+    </div>
+    <input class="search" id="clientSearch" oninput="renderClients()" placeholder="Client search...">
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Client</th>
+        <th>Business</th>
+        <th>Mobile</th>
+        <th>Monthly Value</th>
+        <th>Status</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="clientTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="page-projects" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>📁 Projects</h2>
+     <button class="btn ownerOnly" onclick="openModal('projectModal')">+ Add Project</button>
+    </div>
+
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Project</th>
+        <th>Client</th>
+        <th>Value</th>
+        <th>Employee</th>
+        <th>Status</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="projectTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- TASKS -->
+  <section id="page-tasks" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>📋 Task Management</h2>
+     <button class="btn ownerOnly" onclick="openModal('taskModal')">+ Assign Task</button>
+    </div>
+
+    <div class="grid2" style="margin-bottom:15px">
+     <select id="taskFilter" onchange="renderTasks()">
+      <option value="">All Status</option>
+      <option value="Pending">Pending</option>
+      <option value="Working">Working</option>
+      <option value="Review">Review</option>
+      <option value="Done">Done</option>
+     </select>
+     <input id="taskSearch" oninput="renderTasks()" placeholder="Search task...">
+    </div>
+
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Task</th>
+        <th>Employee</th>
+        <th>Deadline</th>
+        <th>Client</th>
+        <th>Status</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="taskTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- PAYMENTS -->
+  <section id="page-payments" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>💰 Client Payments</h2>
+     <button class="btn" onclick="openModal('paymentModal')">+ Add Payment</button>
+    </div>
+
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Client</th>
+        <th>Amount</th>
+        <th>Date</th>
+        <th>Method</th>
+        <th>Note</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="paymentTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- SALARY -->
+  <section id="page-salary" class="page hidden">
+
+   <div class="panel">
+    <div class="panel-head">
+     <h2>💵 Employee Salary</h2>
+     <button class="btn" onclick="openModal('salaryModal')">+ Add Salary Payment</button>
+    </div>
+
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>Employee</th>
+        <th>Amount</th>
+        <th>Month</th>
+        <th>Status</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="salaryTable"></tbody>
+     </table>
+    </div>
+   </div>
+
+  </section>
+
+  <!-- REPORTS -->
+  <section id="page-reports" class="page hidden">
+
+   <div class="cards">
+    <div class="stat green">
+     <small>Total Revenue</small>
+     <h2 id="reportRevenue">₹0</h2>
+    </div>
+    <div class="stat red">
+     <small>Total Salary</small>
+     <h2 id="reportSalary">₹0</h2>
+    </div>
+    <div class="stat yellow">
+     <small>Other Expenses</small>
+     <h2 id="reportExpenses">₹0</h2>
+    </div>
+    <div class="stat blue">
+     <small>Net Profit</small>
+     <h2 id="reportProfit">₹0</h2>
+    </div>
+   </div>
+
+   <div class="panel">
+    <h2 style="margin-bottom:10px">📊 Business Formula</h2>
+    <p style="color:var(--muted);line-height:1.8">
+     Net Profit = Client Revenue − Employee Salary − Other Expenses
+    </p>
+   </div>
+
+  </section>
+
+ </main>
+</div>
+
+
+<!-- EMPLOYEE MODAL -->
+<div class="modal" id="employeeModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Add Employee</h2>
+   <button class="close" onclick="closeModal('employeeModal')">×</button>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Name</label>
+    <input id="empName">
+   </div>
+   <div class="form-group">
+    <label>Mobile</label>
+    <input id="empMobile">
+   </div>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Role</label>
+    <select id="empRole">
+     <option>Graphic Designer</option>
+     <option>Photo Editor</option>
+     <option>Video Editor</option>
+     <option>Social Media Manager</option>
+     <option>Basic Excel</option>
+     <option>Content Writer</option>
+     <option>SEO</option>
+     <option>Website Management</option>
+     <option>Digital Marketing</option>
+     <option>Admin Work</option>
+    </select>
+   </div>
+   <div class="form-group">
+    <label>Monthly Salary</label>
+    <input id="empSalary" type="number">
+   </div>
+  </div>
+
+  <button class="btn full" onclick="addEmployee()">Save Employee</button>
+ </div>
+</div>
+
+
+<!-- CLIENT MODAL -->
+<div class="modal" id="clientModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Add Client</h2>
+   <button class="close" onclick="closeModal('clientModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Client Name</label>
+   <input id="clientName">
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Business</label>
+    <input id="clientBusiness" placeholder="Gym / Restaurant / Coaching...">
+   </div>
+   <div class="form-group">
+    <label>Mobile</label>
+    <input id="clientMobile">
+   </div>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Monthly Value</label>
+    <input id="clientValue" type="number">
+   </div>
+   <div class="form-group">
+    <label>Status</label>
+    <select id="clientStatus">
+     <option>Active</option>
+     <option>Inactive</option>
+     <option>Pending</option>
+    </select>
+   </div>
+  </div>
+
+  <button class="btn full" onclick="addClient()">Save Client</button>
+ </div>
+</div>
+
+
+<!-- PROJECT MODAL -->
+<div class="modal" id="projectModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Add Project</h2>
+   <button class="close" onclick="closeModal('projectModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Project Name</label>
+   <input id="projectName" placeholder="Social Media Management">
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Client</label>
+    <select id="projectClient"></select>
+   </div>
+   <div class="form-group">
+    <label>Project Value</label>
+    <input id="projectValue" type="number">
+   </div>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Assign Employee</label>
+    <select id="projectEmployee"></select>
+   </div>
+   <div class="form-group">
+    <label>Status</label>
+    <select id="projectStatus">
+     <option>Active</option>
+     <option>Pending</option>
+     <option>Completed</option>
+    </select>
+   </div>
+  </div>
+
+  <button class="btn full" onclick="addProject()">Save Project</button>
+ </div>
+</div>
+
+
+<!-- TASK MODAL -->
+<div class="modal" id="taskModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Assign New Task</h2>
+   <button class="close" onclick="closeModal('taskModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Task</label>
+   <input id="taskName" placeholder="3 Instagram Posters">
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Employee</label>
+    <select id="taskEmployee"></select>
+   </div>
+   <div class="form-group">
+    <label>Client</label>
+    <select id="taskClient"></select>
+   </div>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Deadline</label>
+    <input id="taskDeadline" type="datetime-local">
+   </div>
+   <div class="form-group">
+    <label>Status</label>
+    <select id="taskStatus">
+     <option>Pending</option>
+     <option>Working</option>
+     <option>Review</option>
+     <option>Done</option>
+    </select>
+   </div>
+  </div>
+
+  <div class="form-group">
+   <label>Instructions</label>
+   <textarea id="taskNote" placeholder="काम के बारे में instructions..."></textarea>
+  </div>
+
+  <button class="btn full" onclick="addTask()">Assign Task</button>
+ </div>
+</div>
+
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="paymentModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Add Client Payment</h2>
+   <button class="close" onclick="closeModal('paymentModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Client</label>
+   <select id="paymentClient"></select>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Amount</label>
+    <input id="paymentAmount" type="number">
+   </div>
+   <div class="form-group">
+    <label>Date</label>
+    <input id="paymentDate" type="date">
+   </div>
+  </div>
+
+  <div class="form-group">
+   <label>Payment Method</label>
+   <select id="paymentMethod">
+    <option>UPI</option>
+    <option>Bank Transfer</option>
+    <option>Cash</option>
+    <option>Other</option>
+   </select>
+  </div>
+
+  <div class="form-group">
+   <label>Note</label>
+   <input id="paymentNote">
+  </div>
+
+  <button class="btn full" onclick="addPayment()">Save Payment</button>
+ </div>
+</div>
+
+
+<!-- SALARY MODAL -->
+<div class="modal" id="salaryModal">
+ <div class="modal-box">
+  <div class="modal-head">
+   <h2>Add Salary Payment</h2>
+   <button class="close" onclick="closeModal('salaryModal')">×</button>
+  </div>
+
+  <div class="form-group">
+   <label>Employee</label>
+   <select id="salaryEmployee"></select>
+  </div>
+
+  <div class="grid2">
+   <div class="form-group">
+    <label>Amount</label>
+    <input id="salaryAmount" type="number">
+   </div>
+   <div class="form-group">
+    <label>Month</label>
+    <input id="salaryMonth" type="month">
+   </div>
+  </div>
+
+  <div class="form-group">
+   <label>Status</label>
+   <select id="salaryStatus">
+    <option>Paid</option>
+    <option>Pending</option>
+   </select>
+  </div>
+
+  <button class="btn full" onclick="addSalary()">Save Salary</button>
+ </div>
+</div>
+
+
+<script>
+/* =========================
+   DATABASE - LOCAL STORAGE
+========================= */
+
+const DB_KEY="shraynexDB_v1";
+
+let db=JSON.parse(localStorage.getItem(DB_KEY)) || {
+ employees:[],
+ clients:[],
+ projects:[],
+ tasks:[],
+ payments:[],
+ salaries:[]
+};
+
+let currentRole="";
+let currentUser="";
+
+function saveDB(){
+ localStorage.setItem(DB_KEY,JSON.stringify(db));
+ renderAll();
+}
+
+function money(n){
+ return "₹"+Number(n||0).toLocaleString("en-IN");
+}
+
+function uid(prefix){
+ return prefix+Date.now()+Math.floor(Math.random()*999);
+}
+
+/* =========================
+   LOGIN
+========================= */
+
+function login(){
+ const role=document.getElementById("loginRole").value;
+ const user=document.getElementById("loginUser").value.trim();
+ const pass=document.getElementById("loginPass").value;
+
+ if(role==="owner"){
+  if(user!=="admin" || pass!=="1234"){
+   alert("Owner Login गलत है.\nDemo: admin / 1234");
+   return;
+  }
+
+  currentRole="owner";
+  currentUser="Administrator";
+ }else{
+  if(!user || !pass){
+   alert("Employee username और password डालें.");
+   return;
+  }
+
+  const emp=db.employees.find(e=>e.username===user && e.password===pass);
+
+  if(!emp){
+   alert("Employee Login गलत है.");
+   return;
+  }
+
+  currentRole="employee";
+  currentUser=emp.name;
+ }
+
+ document.getElementById("loginPage").style.display="none";
+ document.getElementById("app").style.display="block";
+
+ document.getElementById("userBadge").textContent=
+ currentRole==="owner" ? "👑 Owner / HR" : "👤 "+currentUser;
+
+ document.querySelectorAll(".ownerOnly").forEach(el=>{
+  el.style.display=currentRole==="owner" ? "" : "none";
+ });
+
+ showPage("dashboard");
+ renderAll();
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showPage(page,btn){
+
+ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+
+ const target=document.getElementById("page-"+page);
+ if(target) target.classList.remove("hidden");
+
+ const titles={
+  dashboard:"Dashboard",
+  employees:"Employees",
+  clients:"Clients",
+  projects:"Projects",
+  tasks:"Tasks",
+  payments:"Payments",
+  salary:"Salary",
+  reports:"Reports"
+ };
+
+ document.getElementById("pageTitle").textContent=titles[page]||"Dashboard";
+
+ document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+ if(btn) btn.classList.add("active");
+
+ document.getElementById("sidebar").classList.remove("open");
+
+ if(page==="dashboard") renderDashboard();
+ if(page==="employees") renderEmployees();
+ if(page==="clients") renderClients();
+ if(page==="projects") renderProjects();
+ if(page==="tasks") renderTasks();
+ if(page==="payments") renderPayments();
+ if(page==="salary") renderSalary();
+ if(page==="reports") renderReports();
+}
+
+function toggleSidebar(){
+ document.getElementById("sidebar").classList.toggle("open");
+}
+
+function logout(){
+ currentRole="";
+ currentUser="";
+ document.getElementById("app").style.display="none";
+ document.getElementById("loginPage").style.display="flex";
+}
+
+
+/* =========================
+   MODALS
+========================= */
+
+function openModal(id){
+ populateSelects();
+ document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+ document.getElementById(id).classList.remove("show");
+}
+
+document.querySelectorAll(".modal").forEach(m=>{
+ m.addEventListener("click",e=>{
+  if(e.target===m) m.classList.remove("show");
+ });
+});
+
+
+/* =========================
+   EMPLOYEES
+========================= */
+
+function addEmployee(){
+
+ const name=document.getElementById("empName").value.trim();
+ const mobile=document.getElementById("empMobile").value.trim();
+ const role=document.getElementById("empRole").value;
+ const salary=Number(document.getElementById("empSalary").value);
+
+ if(!name || !mobile || !salary){
+  alert("Name, Mobile और Salary भरें.");
+  return;
+ }
+
+ const username="emp"+Math.floor(1000+Math.random()*9000);
+ const password=Math.floor(100000+Math.random()*900000).toString();
+
+ db.employees.push({
+  id:uid("EMP"),
+  name,
+  mobile,
+  role,
+  salary,
+  status:"Active",
+  username,
+  password
+ });
+
+ saveDB();
+
+ document.getElementById("empName").value="";
+ document.getElementById("empMobile").value="";
+ document.getElementById("empSalary").value="";
+
+ closeModal("employeeModal");
+
+ alert(
+  "Employee Added!\n\n"+
+  "Username: "+username+
+  "\nPassword: "+password
+ );
+}
+
+function deleteEmployee(id){
+ if(!confirm("Employee delete करें?")) return;
+
+ db.employees=db.employees.filter(e=>e.id!==id);
+ saveDB();
+}
+
+function renderEmployees(){
+
+ const search=(document.getElementById("employeeSearch")?.value||"").toLowerCase();
+
+ const rows=db.employees.filter(e=>
+  e.name.toLowerCase().includes(search) ||
+  e.role.toLowerCase().includes(search)
+ ).map(e=>`
+  <tr>
+   <td><b>${e.name}</b><br><small>${e.username}</small></td>
+   <td>${e.mobile}</td>
+   <td>${e.role}</td>
+   <td>${money(e.salary)}</td>
+   <td><span class="badge done">${e.status}</span></td>
+   <td>
+    <button class="btn small blue" onclick="sendLogin('${e.mobile}','${e.username}','${e.password}')">WhatsApp</button>
+    <button class="btn small red" onclick="deleteEmployee('${e.id}')">Delete</button>
+   </td>
+  </tr>
+ `).join("");
+
+ document.getElementById("employeeTable").innerHTML=
+ rows || `<tr><td colspan="6"><div class="empty">No Employees</div></td></tr>`;
+}
+
+function sendLogin(mobile,user,password){
+
+ const msg=
+ `SHRAYNEX Employee Login\n\n`+
+ `Username: ${user}\n`+
+ `Password: ${password}\n\n`+
+ `कृपया अपने login details सुरक्षित रखें।`;
+
+ window.open(
+  "https://wa.me/91"+mobile.replace(/\D/g,"")+"?text="+encodeURIComponent(msg),
+  "_blank"
+ );
+}
+
+
+/* =========================
+   CLIENTS
+========================= */
+
+function addClient(){
+
+ const name=document.getElementById("clientName").value.trim();
+ const business=document.getElementById("clientBusiness").value.trim();
+ const mobile=document.getElementById("clientMobile").value.trim();
+ const value=Number(document.getElementById("clientValue").value);
+ const status=document.getElementById("clientStatus").value;
+
+ if(!name || !mobile){
+  alert("Client Name और Mobile भरें.");
+  return;
+ }
+
+ db.clients.push({
+  id:uid("CLI"),
+  name,
+  business,
+  mobile,
+  value,
+  status
+ });
+
+ saveDB();
+
+ ["clientName","clientBusiness","clientMobile","clientValue"]
+ .forEach(id=>document.getElementById(id).value="");
+
+ closeModal("clientModal");
+}
+
+function deleteClient(id){
+ if(!confirm("Client delete करें?"))return;
+ db.clients=db.clients.filter(c=>c.id!==id);
+ saveDB();
+}
+
+function renderClients(){
+
+ const search=(document.getElementById("clientSearch")?.value||"").toLowerCase();
+
+ const rows=db.clients.filter(c=>
+  c.name.toLowerCase().includes(search) ||
+  c.business.toLowerCase().includes(search)
+ ).map(c=>`
+ <tr>
+  <td><b>${c.name}</b></td>
+  <td>${c.business||"-"}</td>
+  <td>${c.mobile}</td>
+  <td>${money(c.value)}</td>
+  <td><span class="badge">${c.status}</span></td>
+  <td>
+   <button class="btn small red" onclick="deleteClient('${c.id}')">Delete</button>
+  </td>
+ </tr>
+ `).join("");
+
+ document.getElementById("clientTable").innerHTML=
+ rows || `<tr><td colspan="6"><div class="empty">No Clients</div></td></tr>`;
+}
+
+
+/* =========================
+   PROJECTS
+========================= */
+
+function addProject(){
+
+ const name=document.getElementById("projectName").value.trim();
+ const client=document.getElementById("projectClient").value;
+ const value=Number(document.getElementById("projectValue").value);
+ const employee=document.getElementById("projectEmployee").value;
+ const status=document.getElementById("projectStatus").value;
+
+ if(!name || !client){
+  alert("Project Name और Client चुनें.");
+  return;
+ }
+
+ db.projects.push({
+  id:uid("PRO"),
+  name,
+  client,
+  value,
+  employee,
+  status
+ });
+
+ saveDB();
+ closeModal("projectModal");
+
+ document.getElementById("projectName").value="";
+ document.getElementById("projectValue").value="";
+}
+
+function deleteProject(id){
+ if(!confirm("Project delete करें?"))return;
+ db.projects=db.projects.filter(p=>p.id!==id);
+ saveDB();
+}
+
+function renderProjects(){
+
+ const rows=db.projects.map(p=>{
+
+  const c=db.clients.find(x=>x.id===p.client);
+  const e=db.employees.find(x=>x.id===p.employee);
+
+  return `
+  <tr>
+   <td><b>${p.name}</b></td>
+   <td>${c?.name||"-"}</td>
+   <td>${money(p.value)}</td>
+   <td>${e?.name||"-"}</td>
+   <td><span class="badge">${p.status}</span></td>
+   <td><button class="btn small red" onclick="deleteProject('${p.id}')">Delete</button></td>
+  </tr>
+  `;
+ }).join("");
+
+ document.getElementById("projectTable").innerHTML=
+ rows || `<tr><td colspan="6"><div class="empty">No Projects</div></td></tr>`;
+}
+
+
+/* =========================
+   TASKS
+========================= */
+
+function addTask(){
+
+ const name=document.getElementById("taskName").value.trim();
+ const employee=document.getElementById("taskEmployee").value;
+ const client=document.getElementById("taskClient").value;
+ const deadline=document.getElementById("taskDeadline").value;
+ const status=document.getElementById("taskStatus").value;
+ const note=document.getElementById("taskNote").value;
+
+ if(!name || !employee || !deadline){
+  alert("Task, Employee और Deadline जरूरी है.");
+  return;
+ }
+
+ db.tasks.push({
+  id:uid("TSK"),
+  name,
+  employee,
+  client,
+  deadline,
+  status,
+  note,
+  created:new Date().toISOString()
+ });
+
+ saveDB();
+ closeModal("taskModal");
+
+ document.getElementById("taskName").value="";
+ document.getElementById("taskNote").value="";
+}
+
+function changeTaskStatus(id,status){
+
+ const task=db.tasks.find(t=>t.id===id);
+ if(!task)return;
+
+ task.status=status;
+ saveDB();
+}
+
+function deleteTask(id){
+ if(!confirm("Task delete करें?"))return;
+ db.tasks=db.tasks.filter(t=>t.id!==id);
+ saveDB();
+}
+
+function taskBadge(status){
+
+ const cls={
+  Pending:"pending",
+  Working:"working",
+  Review:"review",
+  Done:"done"
+ }[status]||"";
+
+ return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function renderTasks(){
+
+ const filter=document.getElementById("taskFilter")?.value||"";
+ const search=(document.getElementById("taskSearch")?.value||"").toLowerCase();
+
+ let list=db.tasks;
+
+ if(currentRole==="employee"){
+  const emp=db.employees.find(e=>e.name===currentUser);
+  if(emp) list=list.filter(t=>t.employee===emp.id);
+ }
+
+ if(filter) list=list.filter(t=>t.status===filter);
+
+ list=list.filter(t=>{
+  const e=db.employees.find(x=>x.id===t.employee);
+  return t.name.toLowerCase().includes(search) ||
+  (e?.name||"").toLowerCase().includes(search);
+ });
+
+ const rows=list.map(t=>{
+
+  const e=db.employees.find(x=>x.id===t.employee);
+  const c=db.clients.find(x=>x.id===t.client);
+
+  return `
+  <tr>
+   <td>
+    <b>${t.name}</b>
+    ${t.note?`<br><small>${t.note}</small>`:""}
+   </td>
+   <td>${e?.name||"-"}</td>
+   <td>${formatDate(t.deadline)}</td>
+   <td>${c?.name||"-"}</td>
+   <td>
+    <select onchange="changeTaskStatus('${t.id}',this.value)">
+     <option ${t.status==="Pending"?"selected":""}>Pending</option>
+     <option ${t.status==="Working"?"selected":""}>Working</option>
+     <option ${t.status==="Review"?"selected":""}>Review</option>
+     <option ${t.status==="Done"?"selected":""}>Done</option>
+    </select>
+   </td>
+   <td>
+    <button class="btn small blue" onclick="sendTaskWhatsApp('${t.id}')">WhatsApp</button>
+    ${currentRole==="owner"?
+    `<button class="btn small red" onclick="deleteTask('${t.id}')">Delete</button>`:""}
+   </td>
+  </tr>
+  `;
+ }).join("");
+
+ document.getElementById("taskTable").innerHTML=
+ rows || `<tr><td colspan="6"><div class="empty">No Tasks</div></td></tr>`;
+}
+
+function sendTaskWhatsApp(id){
+
+ const t=db.tasks.find(x=>x.id===id);
+ if(!t)return;
+
+ const e=db.employees.find(x=>x.id===t.employee);
+ if(!e)return;
+
+ const c=db.clients.find(x=>x.id===t.client);
+
+ const msg=
+ `SHRAYNEX – New Task\n\n`+
+ `Task: ${t.name}\n`+
+ `Client: ${c?.name||"Internal"}\n`+
+ `Deadline: ${formatDate(t.deadline)}\n`+
+ `Status: ${t.status}\n\n`+
+ `Instructions: ${t.note||"As discussed."}`;
+
+ window.open(
+  "https://wa.me/91"+e.mobile.replace(/\D/g,"")+"?text="+encodeURIComponent(msg),
+  "_blank"
+ );
+}
+
+
+/* =========================
+   PAYMENTS
+========================= */
+
+function addPayment(){
+
+ const client=document.getElementById("paymentClient").value;
+ const amount=Number(document.getElementById("paymentAmount").value);
+ const date=document.getElementById("paymentDate").value;
+ const method=document.getElementById("paymentMethod").value;
+ const note=document.getElementById("paymentNote").value;
+
+ if(!client || !amount){
+  alert("Client और Amount भरें.");
+  return;
+ }
+
+ db.payments.push({
+  id:uid("PAY"),
+  client,
+  amount,
+  date:date||new Date().toISOString().slice(0,10),
+  method,
+  note
+ });
+
+ saveDB();
+ closeModal("paymentModal");
+}
+
+function deletePayment(id){
+ if(!confirm("Payment delete करें?"))return;
+ db.payments=db.payments.filter(x=>x.id!==id);
+ saveDB();
+}
+
+function renderPayments(){
+
+ const rows=db.payments.map(p=>{
+  const c=db.clients.find(x=>x.id===p.client);
+
+  return `
+  <tr>
+   <td>${c?.name||"-"}</td>
+   <td><b>${money(p.amount)}</b></td>
+   <td>${p.date}</td>
+   <td>${p.method}</td>
+   <td>${p.note||"-"}</td>
+   <td><button class="btn small red" onclick="deletePayment('${p.id}')">Delete</button></td>
+  </tr>
+  `;
+ }).join("");
+
+ document.getElementById("paymentTable").innerHTML=
+ rows || `<tr><td colspan="6"><div class="empty">No Payments</div></td></tr>`;
+}
+
+
+/* =========================
+   SALARY
+========================= */
+
+function addSalary(){
+
+ const employee=document.getElementById("salaryEmployee").value;
+ const amount=Number(document.getElementById("salaryAmount").value);
+ const month=document.getElementById("salaryMonth").value;
+ const status=document.getElementById("salaryStatus").value;
+
+ if(!employee || !amount || !month){
+  alert("Employee, Amount और Month भरें.");
+  return;
+ }
+
+ db.salaries.push({
+  id:uid("SAL"),
+  employee,
+  amount,
+  month,
+  status
+ });
+
+ saveDB();
+ closeModal("salaryModal");
+}
+
+function deleteSalary(id){
+ if(!confirm("Salary record delete करें?"))return;
+ db.salaries=db.salaries.filter(x=>x.id!==id);
+ saveDB();
+}
+
+function renderSalary(){
+
+ const rows=db.salaries.map(s=>{
+  const e=db.employees.find(x=>x.id===s.employee);
+
+  return `
+  <tr>
+   <td>${e?.name||"-"}</td>
+   <td><b>${money(s.amount)}</b></td>
+   <td>${s.month}</td>
+   <td><span class="badge ${s.status==="Paid"?"done":"pending"}">${s.status}</span></td>
+   <td><button class="btn small red" onclick="deleteSalary('${s.id}')">Delete</button></td>
+  </tr>
+  `;
+ }).join("");
+
+ document.getElementById("salaryTable").innerHTML=
+ rows || `<tr><td colspan="5"><div class="empty">No Salary Records</div></td></tr>`;
+}
+
+
+/* =========================
+   REPORTS
+========================= */
+
+function totals(){
+
+ const revenue=db.payments.reduce((a,b)=>a+Number(b.amount||0),0);
+
+ const salary=db.salaries
+ .filter(x=>x.status==="Paid")
+ .reduce((a,b)=>a+Number(b.amount||0),0);
+
+ const expenses=0;
+
+ return {
+  revenue,
+  salary,
+  expenses,
+  profit:revenue-salary-expenses
+ };
+}
+
+function renderReports(){
+
+ const t=totals();
+
+ document.getElementById("reportRevenue").textContent=money(t.revenue);
+ document.getElementById("reportSalary").textContent=money(t.salary);
+ document.getElementById("reportExpenses").textContent=money(t.expenses);
+ document.getElementById("reportProfit").textContent=money(t.profit);
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function renderDashboard(){
+
+ document.getElementById("statEmployees").textContent=db.employees.length;
+ document.getElementById("statClients").textContent=db.clients.length;
+
+ let tasks=db.tasks;
+
+ if(currentRole==="employee"){
+  const emp=db.employees.find(e=>e.name===currentUser);
+  if(emp)tasks=tasks.filter(t=>t.employee===emp.id);
+ }
+
+ const active=tasks.filter(t=>t.status!=="Done").length;
+
+ document.getElementById("statTasks").textContent=active;
+
+ const t=totals();
+
+ document.getElementById("statProfit").textContent=money(t.profit);
+ document.getElementById("dashRevenue").textContent=money(t.revenue);
+ document.getElementById("dashExpense").textContent=money(t.salary);
+
+ document.getElementById("dashboardTasks").innerHTML=
+ tasks.slice(-5).reverse().map(x=>{
+  const e=db.employees.find(y=>y.id===x.employee);
+
+  return `
+   <div style="padding:12px 0;border-bottom:1px solid var(--border)">
+    <b>${x.name}</b>
+    <div style="display:flex;justify-content:space-between;margin-top:6px">
+     <small style="color:var(--muted)">${e?.name||""}</small>
+     ${taskBadge(x.status)}
+    </div>
+   </div>
+  `;
+ }).join("") || `<div class="empty">No Tasks</div>`;
+}
+
+
+/* =========================
+   SELECT OPTIONS
+========================= */
+
+function populateSelects(){
+
+ const empOptions=
+ `<option value="">Select Employee</option>`+
+ db.employees.map(e=>
+  `<option value="${e.id}">${e.name} — ${e.role}</option>`
+ ).join("");
+
+ const clientOptions=
+ `<option value="">Select Client</option>`+
+ db.clients.map(c=>
+  `<option value="${c.id}">${c.name}</option>`
+ ).join("");
+
+ ["projectEmployee","taskEmployee","salaryEmployee"]
+ .forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.innerHTML=empOptions;
+ });
+
+ ["projectClient","taskClient","paymentClient"]
+ .forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.innerHTML=clientOptions;
+ });
+}
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function formatDate(date){
+
+ if(!date)return "-";
+
+ try{
+  return new Date(date).toLocaleString("en-IN",{
+   day:"2-digit",
+   month:"short",
+   hour:"2-digit",
+   minute:"2-digit"
+  });
+ }catch{
+  return date;
+ }
+}
+
+function renderAll(){
+ renderDashboard();
+ renderEmployees();
+ renderClients();
+ renderProjects();
+ renderTasks();
+ renderPayments();
+ renderSalary();
+ renderReports();
+}
+
+
+/* =========================
+   DEMO DATA
+========================= */
+
+if(!localStorage.getItem(DB_KEY)){
+
+ db.employees=[
+  {
+   id:"EMP001",
+   name:"Rahul",
+   mobile:"9876543210",
+   role:"Graphic Designer",
+   salary:6000,
+   status:"Active",
+   username:"rahul",
+   password:"123456"
+  }
+ ];
+
+ db.clients=[
+  {
+   id:"CLI001",
+   name:"ABC Gym",
+   business:"Fitness",
+   mobile:"9123456789",
+   value:10000,
+   status:"Active"
+  }
+ ];
+
+ db.tasks=[
+  {
+   id:"TSK001",
+   name:"3 Instagram Posters",
+   employee:"EMP001",
+   client:"CLI001",
+   deadline:new Date(Date.now()+86400000).toISOString(),
+   status:"Working",
+   note:"Fitness promotion posters",
+   created:new Date().toISOString()
+  }
+ ];
+
+ db.projects=[
+  {
+   id:"PRO001",
+   name:"Social Media Management",
+   client:"CLI001",
+   value:10000,
+   employee:"EMP001",
+   status:"Active"
+  }
+ ];
+
+ db.payments=[
+  {
+   id:"PAY001",
+   client:"CLI001",
+   amount:10000,
+   date:new Date().toISOString().slice(0,10),
+   method:"UPI",
+   note:"Monthly Social Media"
+  }
+ ];
+
+ db.salaries=[];
+
+ saveDB();
+}
+
+/* Initial dashboard */
+renderAll();
+</script>
+
+</body>
+</html>
