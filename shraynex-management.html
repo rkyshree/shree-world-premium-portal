@@ -31,6 +31,7 @@
     .btn.warn{background:#d97706}
     .btn.danger{background:#dc2626}
     .btn.small{width:auto;padding:9px 12px;margin:0;font-size:13px}
+    #logoutBtn{white-space:nowrap}
     .error{background:#fef2f2;color:#b91c1c;padding:10px 12px;border-radius:10px;margin-top:12px;font-size:13px}
     .info{background:#eff6ff;color:#1d4ed8;padding:10px 12px;border-radius:10px;margin-top:12px;font-size:13px}
     header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 16px}
@@ -251,7 +252,7 @@
   } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
   import {
     getFirestore, doc, getDoc, setDoc, addDoc, collection,
-    query, where, orderBy, onSnapshot, updateDoc, serverTimestamp,
+    query, where, onSnapshot, updateDoc, serverTimestamp,
     runTransaction
   } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
@@ -272,6 +273,7 @@
   // Employee login के लिए synthetic Firebase email.
   // यह real email नहीं है; Firebase Authentication में internal login identity है.
   const EMPLOYEE_DOMAIN = "@employee.rkyshree-2f74b.firebaseapp.com";
+  const OWNER_EMAIL = "shraynexofficial@gmail.com";
 
   let currentUser = null;
   let currentProfile = null;
@@ -291,6 +293,13 @@
       const d = v?.toDate ? v.toDate() : new Date(v);
       return isNaN(d) ? "-" : d.toLocaleString("hi-IN",{dateStyle:"medium",timeStyle:"short"});
     }catch{return "-"}
+  }
+  function toMillis(v){
+    try{
+      if(v?.toMillis) return v.toMillis();
+      const n = new Date(v || 0).getTime();
+      return Number.isFinite(n) ? n : 0;
+    }catch{return 0}
   }
   function money(v){ return "₹" + Number(v || 0).toLocaleString("en-IN"); }
 
@@ -319,7 +328,9 @@
       "auth/email-already-in-use":"यह Employee ID पहले से मौजूद है।",
       "auth/weak-password":"Password बहुत कमजोर है।",
       "auth/too-many-requests":"बहुत बार कोशिश हुई है। थोड़ी देर बाद फिर कोशिश करें।",
-      "permission-denied":"Firebase Firestore permission denied. Rules चेक करें।"
+      "permission-denied":"Firebase Firestore permission denied. Rules चेक करें।",
+      "firestore/permission-denied":"Firebase Firestore permission denied. Rules चेक करें।",
+      "failed-precondition":"Firestore index/configuration की जरूरत है। Firebase Console में check करें।"
     };
     return map[code] || err?.message || "कुछ गलत हुआ।";
   }
@@ -333,7 +344,10 @@
 
     try{
       const email = mode === "owner" ? id : id.toLowerCase() + EMPLOYEE_DOMAIN;
-      await signInWithEmailAndPassword(auth, email, pass);
+      // User enters 5-digit PIN; Firebase internally requires at least 6 characters.
+      // We append one fixed internal character so the visible employee password remains 5 digits.
+      const firebasePass = mode === "employee" ? pass + "0" : pass;
+      await signInWithEmailAndPassword(auth, email, firebasePass);
     }catch(err){
       $("loginError").textContent = friendlyError(err);
       $("loginError").classList.remove("hidden");
@@ -351,10 +365,26 @@
     unsubscribeFns = [];
   }
 
-  async function loadProfile(uid){
-    const snap = await getDoc(doc(db,"users",uid));
-    if(!snap.exists()) throw new Error("आपका user profile Firestore में नहीं मिला।");
-    return {uid, ...snap.data()};
+  async function loadProfile(uid, user){
+    const ref = doc(db,"users",uid);
+    const snap = await getDoc(ref);
+    if(snap.exists()) return {uid, ...snap.data()};
+
+    // Owner account को पहली बार login पर profile स्वतः बनाएं।
+    if((user?.email || "").toLowerCase() === OWNER_EMAIL.toLowerCase()){
+      const ownerProfile = {
+        name: "Rajan",
+        email: OWNER_EMAIL,
+        role: "owner",
+        status: "Active",
+        createdAt: serverTimestamp()
+      };
+      await setDoc(ref, ownerProfile, {merge:true});
+      const ownerSnap = await getDoc(ref);
+      if(ownerSnap.exists()) return {uid, ...ownerSnap.data()};
+    }
+
+    throw new Error("आपका user profile Firestore में नहीं मिला।");
   }
 
   onAuthStateChanged(auth, async user=>{
@@ -367,7 +397,10 @@
     }
     try{
       currentUser = user;
-      currentProfile = await loadProfile(user.uid);
+      currentProfile = await loadProfile(user.uid, user);
+      if(currentProfile.role !== "owner" && currentProfile.role !== "employee") {
+        throw new Error("User role सही नहीं है।");
+      }
       show($("loginScreen"), false);
       show($("app"), true);
       renderDashboard();
@@ -402,7 +435,7 @@
 
   function loadOwnerData(){
     const usersQ = query(collection(db,"users"), where("role","==","employee"));
-    const tasksQ = query(collection(db,"tasks"), orderBy("createdAt","desc"));
+    const tasksQ = query(collection(db,"tasks"));
 
     unsubscribeFns.push(onSnapshot(usersQ, snap=>{
       const employees = snap.docs.map(d=>({uid:d.id,...d.data()}));
@@ -414,7 +447,7 @@
     }, err=>showCollectionError(err,"employeeTable")));
 
     unsubscribeFns.push(onSnapshot(tasksQ, snap=>{
-      const tasks = snap.docs.map(d=>({id:d.id,...d.data()}));
+      const tasks = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
       window._ownerTasks = tasks;
       renderOwnerTasks(tasks);
       updateOwnerStats();
@@ -549,6 +582,9 @@
 
     const employeeId = letters.slice(0,3) + "1215";
     const password = mobile.slice(0,5);
+    // Firebase Authentication requires 6+ characters. Employee still enters only 5 digits;
+    // the app appends a fixed internal character for Firebase authentication.
+    const firebasePassword = password + "0";
     const syntheticEmail = employeeId.toLowerCase() + EMPLOYEE_DOMAIN;
 
     try{
@@ -565,7 +601,7 @@
         || initializeApp(firebaseConfig, secondaryName);
       const secondaryAuth = getAuth(secondaryApp);
 
-      const cred = await createUserWithEmailAndPassword(secondaryAuth, syntheticEmail, password);
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, syntheticEmail, firebasePassword);
       const uid = cred.user.uid;
 
       await setDoc(doc(db,"users",uid),{
@@ -633,24 +669,22 @@
   function loadEmployeeData(){
     const tasksQ = query(
       collection(db,"tasks"),
-      where("employeeId","==",currentUser.uid),
-      orderBy("createdAt","desc")
+      where("employeeId","==",currentUser.uid)
     );
     const paymentsQ = query(
       collection(db,"payments"),
-      where("employeeId","==",currentUser.uid),
-      orderBy("paidAt","desc")
+      where("employeeId","==",currentUser.uid)
     );
 
     unsubscribeFns.push(onSnapshot(tasksQ, snap=>{
-      const tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
+      const tasks=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>toMillis(b.createdAt)-toMillis(a.createdAt));
       window._myTasks=tasks;
       renderEmployeeTasks(tasks);
       updateEmployeeStats();
     }, err=>showCollectionError(err,"employeeTasks")));
 
     unsubscribeFns.push(onSnapshot(paymentsQ, snap=>{
-      const pays=snap.docs.map(d=>({id:d.id,...d.data()}));
+      const pays=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>toMillis(b.paidAt)-toMillis(a.paidAt));
       window._myPayments=pays;
       renderPayments(pays);
       updateEmployeeStats();
