@@ -1,3351 +1,763 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SHRAYNEX Employee Management</title>
-
-<style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Arial,Helvetica,sans-serif;
-}
-
-body{
-    background:#080d18;
-    color:#fff;
-}
-
-button,
-input,
-textarea,
-select{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-.hidden{
-    display:none!important;
-}
-
-
-/* ================= LOGIN ================= */
-
-.login-page{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-
-    background:
-    radial-gradient(circle at top,#243d78 0,#080d18 55%);
-}
-
-.login-box{
-    width:100%;
-    max-width:420px;
-
-    background:#111a2b;
-    border:1px solid #263756;
-
-    padding:30px;
-    border-radius:22px;
-
-    box-shadow:0 25px 70px #0009;
-}
-
-.logo{
-    text-align:center;
-    font-size:31px;
-    font-weight:900;
-    letter-spacing:2px;
-}
-
-.logo span{
-    color:#4d9aff;
-}
-
-.login-title{
-    text-align:center;
-    margin-top:8px;
-    color:#91a2c2;
-    margin-bottom:25px;
-}
-
-.login-tabs{
-    display:flex;
-    gap:8px;
-    margin-bottom:20px;
-}
-
-.login-tabs button{
-    flex:1;
-    padding:11px;
-    border:0;
-    border-radius:10px;
-    background:#202d47;
-    color:#aebbd0;
-}
-
-.login-tabs button.active{
-    background:#287cff;
-    color:#fff;
-}
-
-label{
-    display:block;
-    margin-top:14px;
-    color:#b8c5db;
-    font-size:14px;
-}
-
-input,
-textarea,
-select{
-    width:100%;
-    margin-top:7px;
-
-    background:#0b1220;
-    color:#fff;
-
-    border:1px solid #2b3b5a;
-
-    padding:12px;
-    border-radius:10px;
-
-    outline:none;
-}
-
-textarea{
-    min-height:100px;
-    resize:vertical;
-}
-
-.btn{
-    border:0;
-    border-radius:10px;
-
-    background:#287cff;
-    color:#fff;
-
-    padding:12px 16px;
-
-    font-weight:700;
-}
-
-.btn:hover{
-    opacity:.9;
-}
-
-.btn-success{
-    background:#159957;
-}
-
-.btn-warning{
-    background:#d99100;
-}
-
-.btn-danger{
-    background:#e53945;
-}
-
-.btn-dark{
-    background:#303d57;
-}
-
-.full{
-    width:100%;
-    margin-top:20px;
-}
-
-.error{
-    text-align:center;
-    color:#ff6e79;
-    margin-top:15px;
-    font-size:14px;
-}
-
-
-/* ================= APP ================= */
-
-.app{
-    min-height:100vh;
-}
-
-.sidebar{
-    width:250px;
-
-    position:fixed;
-    top:0;
-    bottom:0;
-    left:0;
-
-    background:#10192a;
-    border-right:1px solid #263756;
-
-    padding:20px;
-
-    z-index:100;
-}
-
-.sidebar-logo{
-    font-size:25px;
-    font-weight:900;
-    margin-bottom:30px;
-}
-
-.sidebar-logo span{
-    color:#4d9aff;
-}
-
-.nav-btn{
-    width:100%;
-    border:0;
-
-    background:transparent;
-    color:#aebbd0;
-
-    text-align:left;
-
-    padding:13px;
-    border-radius:10px;
-
-    margin-bottom:8px;
-}
-
-.nav-btn:hover,
-.nav-btn.active{
-    background:#203254;
-    color:#fff;
-}
-
-.main{
-    margin-left:250px;
-    padding:25px;
-}
-
-.topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    margin-bottom:25px;
-}
-
-.topbar h1{
-    font-size:25px;
-}
-
-.user{
-    color:#91a2c2;
-    font-size:13px;
-    margin-top:5px;
-}
-
-
-/* ================= CARDS ================= */
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-
-    margin-bottom:20px;
-}
-
-.card{
-    background:#111a2b;
-    border:1px solid #263756;
-
-    border-radius:16px;
-    padding:20px;
-}
-
-.card small{
-    color:#91a2c2;
-}
-
-.card h2{
-    margin-top:8px;
-    font-size:28px;
-}
-
-
-/* ================= SECTION ================= */
-
-.section{
-    background:#111a2b;
-    border:1px solid #263756;
-
-    border-radius:16px;
-
-    padding:20px;
-    margin-bottom:20px;
-}
-
-.section-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    gap:10px;
-
-    margin-bottom:18px;
-}
-
-.section-head h2{
-    font-size:19px;
-}
-
-
-/* ================= TABLE ================= */
-
-.table-wrap{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:700px;
-}
-
-th,
-td{
-    padding:13px;
-
-    border-bottom:1px solid #263756;
-
-    text-align:left;
-
-    font-size:14px;
-}
-
-th{
-    color:#91a2c2;
-}
-
-.badge{
-    display:inline-block;
-
-    background:#263756;
-
-    padding:6px 10px;
-
-    border-radius:20px;
-
-    font-size:12px;
-}
-
-.badge.green{
-    background:#135d3c;
-}
-
-.badge.orange{
-    background:#674700;
-}
-
-.badge.blue{
-    background:#194b8e;
-}
-
-.empty{
-    text-align:center;
-    color:#74839f;
-    padding:25px;
-}
-
-
-/* ================= TASK CARDS ================= */
-
-.task-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.task-card{
-    background:#0d1524;
-    border:1px solid #293a59;
-
-    padding:18px;
-    border-radius:15px;
-}
-
-.task-card h3{
-    margin-bottom:8px;
-}
-
-.task-description{
-    color:#9aa9c1;
-    line-height:1.5;
-    margin:10px 0;
-}
-
-.task-money{
-    font-size:22px;
-    font-weight:800;
-    margin:10px 0;
-}
-
-.task-meta{
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-    margin-bottom:12px;
-}
-
-.task-actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-}
-
-
-/* ================= MODAL ================= */
-
-.modal{
-    position:fixed;
-    inset:0;
-
-    background:#000b;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:20px;
-
-    z-index:999;
-}
-
-.modal-box{
-    width:100%;
-    max-width:600px;
-
-    max-height:90vh;
-    overflow:auto;
-
-    background:#111a2b;
-
-    border:1px solid #30415f;
-
-    border-radius:18px;
-
-    padding:25px;
-}
-
-.modal-head{
-    display:flex;
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:10px;
-}
-
-.close{
-    border:0;
-
-    width:35px;
-    height:35px;
-
-    border-radius:50%;
-
-    background:#2d3b55;
-
-    color:#fff;
-
-    font-size:20px;
-}
-
-
-/* ================= EMPLOYEE ID ================= */
-
-.generated-id{
-    background:#0a1323;
-    border:1px dashed #418cff;
-
-    padding:15px;
-
-    border-radius:12px;
-
-    margin-top:15px;
-
-    text-align:center;
-}
-
-.generated-id strong{
-    display:block;
-
-    font-size:25px;
-
-    color:#4d9aff;
-
-    margin-top:5px;
-}
-
-
-/* ================= MOBILE ================= */
-
-.mobile-menu{
-    display:none;
-
-    border:0;
-    background:#293a59;
-    color:#fff;
-
-    padding:9px 12px;
-
-    border-radius:9px;
-}
-
-@media(max-width:900px){
-
-    .sidebar{
-        transform:translateX(-100%);
-        transition:.25s;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHRAYNEX Employee Management</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#f4f7fb;color:#172033}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer;border:0}
+    .hidden{display:none!important}
+    .app{min-height:100vh}
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0f172a,#1e3a8a)}
+    .login-card{width:100%;max-width:430px;background:#fff;border-radius:24px;padding:26px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+    .brand{text-align:center;margin-bottom:20px}
+    .brand-logo{width:64px;height:64px;margin:auto;border-radius:18px;background:#111827;color:#fff;display:grid;place-items:center;font-weight:900;font-size:24px}
+    .brand h1{margin:12px 0 4px;font-size:25px}
+    .brand p{margin:0;color:#64748b}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;background:#eef2ff;border-radius:12px;padding:4px;margin:18px 0}
+    .tab{padding:11px;border-radius:9px;background:transparent;color:#475569;font-weight:700}
+    .tab.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+    input,textarea,select{width:100%;border:1px solid #dbe3ef;border-radius:11px;padding:12px 13px;outline:none;background:#fff}
+    textarea{min-height:100px;resize:vertical}
+    input:focus,textarea:focus,select:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+    .btn{width:100%;padding:13px 16px;border-radius:11px;background:#2563eb;color:#fff;font-weight:800;margin-top:16px}
+    .btn:hover{filter:brightness(.96)}
+    .btn.secondary{background:#0f172a}
+    .btn.success{background:#16a34a}
+    .btn.warn{background:#d97706}
+    .btn.danger{background:#dc2626}
+    .btn.small{width:auto;padding:9px 12px;margin:0;font-size:13px}
+    .error{background:#fef2f2;color:#b91c1c;padding:10px 12px;border-radius:10px;margin-top:12px;font-size:13px}
+    .info{background:#eff6ff;color:#1d4ed8;padding:10px 12px;border-radius:10px;margin-top:12px;font-size:13px}
+    header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 16px}
+    .topbar{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .top-brand{display:flex;align-items:center;gap:10px}
+    .top-logo{width:42px;height:42px;border-radius:12px;background:#111827;color:#fff;display:grid;place-items:center;font-weight:900}
+    .top-brand strong{display:block}
+    .top-brand small{color:#64748b}
+    main{max-width:1200px;margin:auto;padding:18px 16px 40px}
+    .welcome{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+    .welcome h2{margin:0 0 4px;font-size:22px}
+    .welcome p{margin:0;color:#64748b}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+    .stat{background:#fff;border:1px solid #e7edf5;border-radius:16px;padding:16px}
+    .stat small{color:#64748b}
+    .stat strong{display:block;font-size:25px;margin-top:7px}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .card{background:#fff;border:1px solid #e7edf5;border-radius:18px;padding:18px}
+    .card h3{margin:0 0 14px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .full{grid-column:1/-1}
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:650px}
+    th,td{text-align:left;padding:11px;border-bottom:1px solid #edf1f6;font-size:13px;vertical-align:top}
+    th{color:#64748b;font-size:12px;text-transform:uppercase}
+    .badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}
+    .badge.pending{background:#fff7ed;color:#c2410c}
+    .badge.working{background:#eff6ff;color:#1d4ed8}
+    .badge.completed{background:#ecfdf5;color:#15803d}
+    .badge.paid{background:#dcfce7;color:#166534}
+    .badge.active{background:#ecfdf5;color:#15803d}
+    .task-list{display:grid;gap:12px}
+    .task{border:1px solid #e5e7eb;border-radius:15px;padding:15px}
+    .task-head{display:flex;justify-content:space-between;gap:10px}
+    .task h4{margin:0 0 6px}
+    .task p{margin:5px 0;color:#475569;white-space:pre-wrap}
+    .meta{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0;color:#64748b;font-size:12px}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .empty{text-align:center;padding:28px;color:#64748b}
+    .notice{padding:12px;border-radius:12px;background:#f8fafc;color:#475569;font-size:13px;margin-bottom:12px}
+    .modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+    .modal-box{background:#fff;width:100%;max-width:460px;border-radius:20px;padding:20px}
+    .credentials{background:#f8fafc;border:1px dashed #94a3b8;border-radius:14px;padding:14px;margin-top:12px}
+    .credentials code{font-size:17px;font-weight:900}
+    .footer{text-align:center;color:#94a3b8;font-size:12px;margin-top:25px}
+    @media(max-width:800px){
+      .stats{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns:1fr}
     }
-
-    .sidebar.open{
-        transform:translateX(0);
+    @media(max-width:520px){
+      main{padding:14px 12px 30px}
+      .stats{gap:8px}
+      .stat{padding:12px}
+      .stat strong{font-size:20px}
+      .form-grid{grid-template-columns:1fr}
+      .full{grid-column:auto}
+      .welcome{align-items:flex-start}
+      .welcome .btn{flex-shrink:0}
+      .top-brand small{display:none}
     }
-
-    .main{
-        margin-left:0;
-        padding:15px;
-    }
-
-    .mobile-menu{
-        display:inline-block;
-        margin-right:8px;
-    }
-
-    .cards{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .task-grid{
-        grid-template-columns:1fr;
-    }
-
-}
-
-@media(max-width:550px){
-
-    .cards{
-        grid-template-columns:1fr;
-    }
-
-    .topbar{
-        align-items:flex-start;
-    }
-
-    .topbar h1{
-        font-size:20px;
-    }
-
-    .login-box{
-        padding:22px;
-    }
-
-}
-
-</style>
+  </style>
 </head>
-
-
 <body>
-
-
-<!-- =====================================================
-     LOGIN
-===================================================== -->
-
-<div id="loginPage" class="login-page">
-
-    <div class="login-box">
-
-        <div class="logo">
-            SHRAY<span>NEX</span>
-        </div>
-
-        <div class="login-title">
-            Employee Management System
-        </div>
-
-
-        <div class="login-tabs">
-
-            <button
-                id="ownerTab"
-                class="active"
-                onclick="setLoginType('owner')">
-
-                Owner
-
-            </button>
-
-            <button
-                id="employeeTab"
-                onclick="setLoginType('employee')">
-
-                Employee
-
-            </button>
-
-        </div>
-
-
-        <!-- OWNER LOGIN -->
-
-        <div id="ownerLogin">
-
-            <label>Owner Email</label>
-
-            <input
-                id="ownerEmail"
-                type="email"
-                placeholder="Owner email">
-
-
-            <label>Password</label>
-
-            <input
-                id="ownerPassword"
-                type="password"
-                placeholder="Owner password">
-
-
-            <button
-                class="btn full"
-                onclick="ownerLogin()">
-
-                Owner Login
-
-            </button>
-
-        </div>
-
-
-        <!-- EMPLOYEE LOGIN -->
-
-        <div id="employeeLogin" class="hidden">
-
-            <label>Employee ID</label>
-
-            <input
-                id="employeeId"
-                placeholder="Example: RAJ1215"
-                style="text-transform:uppercase">
-
-
-            <label>Password</label>
-
-            <input
-                id="employeePassword"
-                type="password"
-                placeholder="Mobile के पहले 5 अंक">
-
-
-            <button
-                class="btn full"
-                onclick="employeeLogin()">
-
-                Employee Login
-
-            </button>
-
-        </div>
-
-
-        <div id="loginError" class="error"></div>
-
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <h1>SHRAYNEX</h1>
+      <p>Employee Management System</p>
     </div>
 
+    <div class="tabs">
+      <button id="ownerTab" class="tab active" type="button">👑 Owner</button>
+      <button id="employeeTab" class="tab" type="button">👨‍💼 Employee</button>
+    </div>
+
+    <form id="loginForm">
+      <label id="loginIdLabel">Owner Email</label>
+      <input id="loginId" type="email" placeholder="shraynexofficial@gmail.com" required>
+
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="Password" required>
+
+      <button class="btn" type="submit">Login</button>
+      <div id="loginError" class="error hidden"></div>
+      <div class="info">Employee login में Email की जगह Employee ID डालें, जैसे <b>RAH1215</b>.</div>
+    </form>
+  </div>
 </div>
-
-
-
-<!-- =====================================================
-     APP
-===================================================== -->
 
 <div id="app" class="app hidden">
-
-
-    <!-- SIDEBAR -->
-
-    <aside id="sidebar" class="sidebar">
-
-        <div class="sidebar-logo">
-            SHRAY<span>NEX</span>
+  <header>
+    <div class="topbar">
+      <div class="top-brand">
+        <div class="top-logo">S</div>
+        <div>
+          <strong>SHRAYNEX</strong>
+          <small>Employee Management System</small>
         </div>
-
-
-        <button
-            class="nav-btn active"
-            onclick="showPage('dashboard')">
-
-            📊 Dashboard
-
-        </button>
-
-
-        <button
-            id="employeeNav"
-            class="nav-btn"
-            onclick="showPage('employees')">
-
-            👥 Employees
-
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="showPage('tasks')">
-
-            ✅ Tasks
-
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="showPage('payments')">
-
-            💰 My Payments
-
-        </button>
-
-
-        <button
-            class="nav-btn"
-            onclick="logout()">
-
-            🚪 Logout
-
-        </button>
-
-    </aside>
-
-
-
-    <!-- MAIN -->
-
-    <main class="main">
-
-
-        <div class="topbar">
-
-            <div>
-
-                <button
-                    class="mobile-menu"
-                    onclick="toggleSidebar()">
-
-                    ☰
-
-                </button>
-
-                <h1 id="pageTitle">
-                    Dashboard
-                </h1>
-
-                <div
-                    id="userInfo"
-                    class="user">
-                </div>
-
-            </div>
-
-
-            <button
-                class="btn btn-dark"
-                onclick="location.reload()">
-
-                ↻
-
-            </button>
-
-        </div>
-
-
-
-        <!-- =================================================
-             DASHBOARD
-        ================================================= -->
-
-        <section id="dashboardPage">
-
-
-            <div class="cards">
-
-
-                <div class="card">
-
-                    <small>
-                        Total Tasks
-                    </small>
-
-                    <h2 id="totalTasks">
-                        0
-                    </h2>
-
-                </div>
-
-
-                <div class="card">
-
-                    <small>
-                        Pending
-                    </small>
-
-                    <h2 id="pendingTasks">
-                        0
-                    </h2>
-
-                </div>
-
-
-                <div class="card">
-
-                    <small>
-                        Completed
-                    </small>
-
-                    <h2 id="completedTasks">
-                        0
-                    </h2>
-
-                </div>
-
-
-                <div class="card">
-
-                    <small>
-                        My Earnings
-                    </small>
-
-                    <h2 id="totalEarnings">
-                        ₹0
-                    </h2>
-
-                </div>
-
-            </div>
-
-
-            <!-- OWNER STATS -->
-
-            <div
-                id="ownerStats"
-                class="cards hidden">
-
-
-                <div class="card">
-
-                    <small>
-                        Employees
-                    </small>
-
-                    <h2 id="employeeCount">
-                        0
-                    </h2>
-
-                </div>
-
-
-                <div class="card">
-
-                    <small>
-                        Paid Amount
-                    </small>
-
-                    <h2 id="paidAmount">
-                        ₹0
-                    </h2>
-
-                </div>
-
-
-                <div class="card">
-
-                    <small>
-                        Pending Payment
-                    </small>
-
-                    <h2 id="pendingPayment">
-                        ₹0
-                    </h2>
-
-                </div>
-
-
-            </div>
-
-
-            <div class="section">
-
-                <div class="section-head">
-
-                    <h2>
-                        Recent Tasks
-                    </h2>
-
-                </div>
-
-                <div
-                    id="recentTasks"
-                    class="task-grid">
-                </div>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             EMPLOYEES
-        ================================================= -->
-
-        <section
-            id="employeesPage"
-            class="hidden">
-
-
-            <div class="section">
-
-                <div class="section-head">
-
-                    <h2>
-                        Employees
-                    </h2>
-
-                    <button
-                        class="btn"
-                        onclick="openEmployeeModal()">
-
-                        + Add Employee
-
-                    </button>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Name</th>
-
-                                <th>Employee ID</th>
-
-                                <th>Phone</th>
-
-                                <th>Role</th>
-
-                                <th>Salary</th>
-
-                                <th>Status</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="employeeTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             TASKS
-        ================================================= -->
-
-        <section
-            id="tasksPage"
-            class="hidden">
-
-
-            <div class="section">
-
-                <div class="section-head">
-
-                    <h2>
-                        Tasks
-                    </h2>
-
-                    <button
-                        id="assignTaskBtn"
-                        class="btn"
-                        onclick="openTaskModal()">
-
-                        + Assign Task
-
-                    </button>
-
-                </div>
-
-
-                <div
-                    id="taskGrid"
-                    class="task-grid">
-                </div>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =================================================
-             PAYMENTS
-        ================================================= -->
-
-        <section
-            id="paymentsPage"
-            class="hidden">
-
-
-            <div class="section">
-
-                <div class="section-head">
-
-                    <h2>
-                        Payment History
-                    </h2>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Task</th>
-
-                                <th>Amount</th>
-
-                                <th>Status</th>
-
-                                <th>Date</th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="paymentTable">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-
-        </section>
-
-
-    </main>
-
-</div>
-
-
-
-<!-- =====================================================
-     MODAL
-===================================================== -->
-
-<div
-    id="modal"
-    class="modal hidden">
-
-
-    <div class="modal-box">
-
-        <div class="modal-head">
-
-            <h2 id="modalTitle">
-                Add
-            </h2>
-
-            <button
-                class="close"
-                onclick="closeModal()">
-
-                ×
-
-            </button>
-
-        </div>
-
-
-        <div id="modalBody">
-        </div>
-
+      </div>
+      <button id="logoutBtn" class="btn small secondary">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="welcome">
+      <div>
+        <h2 id="welcomeTitle">Dashboard</h2>
+        <p id="welcomeSub">Loading...</p>
+      </div>
     </div>
 
+    <div id="stats" class="stats"></div>
+    <div id="ownerView" class="hidden">
+      <div class="grid">
+        <section class="card">
+          <h3>➕ नया Employee बनाएं</h3>
+          <div class="notice">Employee ID = नाम के पहले 3 अक्षर + <b>1215</b><br>Password = मोबाइल नंबर के पहले 5 अंक</div>
+          <form id="employeeForm">
+            <div class="form-grid">
+              <div>
+                <label>Employee Name</label>
+                <input id="empName" required placeholder="Rahul Kumar">
+              </div>
+              <div>
+                <label>Mobile Number</label>
+                <input id="empMobile" required inputmode="numeric" maxlength="10" placeholder="9451234567">
+              </div>
+              <div class="full">
+                <label>Employee Email (optional)</label>
+                <input id="empEmail" type="email" placeholder="employee@gmail.com">
+              </div>
+            </div>
+            <button class="btn" type="submit">Create Employee</button>
+            <div id="employeeMsg"></div>
+          </form>
+        </section>
+
+        <section class="card">
+          <h3>📋 नया Task Assign करें</h3>
+          <form id="taskForm">
+            <div class="form-grid">
+              <div class="full">
+                <label>Task Name</label>
+                <input id="taskName" required placeholder="Instagram Poster Design">
+              </div>
+              <div class="full">
+                <label>Detailed Instructions</label>
+                <textarea id="taskDescription" required placeholder="Task में क्या-क्या करना है..."></textarea>
+              </div>
+              <div>
+                <label>Commission / Payment (₹)</label>
+                <input id="taskAmount" type="number" min="0" step="1" required placeholder="500">
+              </div>
+              <div>
+                <label>Deadline</label>
+                <input id="taskDeadline" type="datetime-local" required>
+              </div>
+              <div class="full">
+                <label>Assign Employee</label>
+                <select id="taskEmployee" required>
+                  <option value="">पहले employee चुनें</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn success" type="submit">Assign Task</button>
+            <div id="taskMsg"></div>
+          </form>
+        </section>
+
+        <section class="card full">
+          <h3>👥 Employees</h3>
+          <div id="employeeTable"></div>
+        </section>
+
+        <section class="card full">
+          <h3>📝 सभी Tasks</h3>
+          <div id="ownerTasks"></div>
+        </section>
+      </div>
+    </div>
+
+    <div id="employeeView" class="hidden">
+      <section class="card">
+        <h3>📋 मेरे Tasks</h3>
+        <div id="employeeTasks"></div>
+      </section>
+      <section class="card" style="margin-top:16px">
+        <h3>💰 मेरी Payment History</h3>
+        <div id="employeePayments"></div>
+      </section>
+    </div>
+
+    <div class="footer">SHRAYNEX Social Media Agency • Firebase Cloud System</div>
+  </main>
 </div>
 
-
+<div id="credentialModal" class="modal hidden">
+  <div class="modal-box">
+    <h3 style="margin-top:0">✅ Employee बन गया</h3>
+    <p>इन details को employee को दें:</p>
+    <div class="credentials">
+      <div>Employee ID</div>
+      <code id="newEmployeeId"></code>
+      <br><br>
+      <div>Password</div>
+      <code id="newEmployeePassword"></code>
+    </div>
+    <button id="closeModal" class="btn success">Done</button>
+  </div>
+</div>
 
 <script type="module">
-
-
-/* =====================================================
-   FIREBASE IMPORTS
-===================================================== */
-
-import {
-    initializeApp,
-    getApps
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-
-import {
-    getFirestore,
-    collection,
-    doc,
-    getDoc,
-    setDoc,
-    addDoc,
-    updateDoc,
-    onSnapshot,
-    query,
-    where,
-    serverTimestamp,
+  import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged,
+    signOut, createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, addDoc, collection,
+    query, where, orderBy, onSnapshot, updateDoc, serverTimestamp,
     runTransaction
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+    authDomain: "rkyshree-2f74b.firebaseapp.com",
+    projectId: "rkyshree-2f74b",
+    storageBucket: "rkyshree-2f74b.firebasestorage.app",
+    messagingSenderId: "354823113610",
+    appId: "1:354823113610:web:cca2d8d5ffa68a8d9c9673",
+    measurementId: "G-ZB0CVF7R6L"
+  };
 
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-/* =====================================================
-   YOUR FIREBASE CONFIG
-===================================================== */
+  // Employee login के लिए synthetic Firebase email.
+  // यह real email नहीं है; Firebase Authentication में internal login identity है.
+  const EMPLOYEE_DOMAIN = "@employee.rkyshree-2f74b.firebaseapp.com";
 
-const firebaseConfig = {
+  let currentUser = null;
+  let currentProfile = null;
+  let unsubscribeFns = [];
 
-    apiKey:
-        "YOUR_API_KEY",
+  const $ = id => document.getElementById(id);
 
-    authDomain:
-        "YOUR_PROJECT.firebaseapp.com",
-
-    projectId:
-        "YOUR_PROJECT_ID",
-
-    storageBucket:
-        "YOUR_PROJECT.firebasestorage.app",
-
-    messagingSenderId:
-        "YOUR_MESSAGING_SENDER_ID",
-
-    appId:
-        "YOUR_APP_ID"
-
-};
-
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-const app =
-    initializeApp(firebaseConfig);
-
-
-const auth =
-    getAuth(app);
-
-
-const db =
-    getFirestore(app);
-
-
-
-/* =====================================================
-   GLOBAL VARIABLES
-===================================================== */
-
-let currentUser = null;
-
-let currentRole = null;
-
-let currentProfile = null;
-
-let employees = [];
-
-let tasks = [];
-
-let payments = [];
-
-let loginType = "owner";
-
-
-
-/* =====================================================
-   LOGIN TYPE
-===================================================== */
-
-window.setLoginType =
-function(type){
-
-    loginType = type;
-
-
-    document
-        .getElementById("ownerLogin")
-        .classList.toggle(
-            "hidden",
-            type !== "owner"
-        );
-
-
-    document
-        .getElementById("employeeLogin")
-        .classList.toggle(
-            "hidden",
-            type !== "employee"
-        );
-
-
-    document
-        .getElementById("ownerTab")
-        .classList.toggle(
-            "active",
-            type === "owner"
-        );
-
-
-    document
-        .getElementById("employeeTab")
-        .classList.toggle(
-            "active",
-            type === "employee"
-        );
-
-
-    document
-        .getElementById("loginError")
-        .textContent = "";
-
-};
-
-
-
-/* =====================================================
-   OWNER LOGIN
-===================================================== */
-
-window.ownerLogin =
-async function(){
-
-    const email =
-        document
-        .getElementById("ownerEmail")
-        .value
-        .trim();
-
-
-    const password =
-        document
-        .getElementById("ownerPassword")
-        .value;
-
-
-    if(!email || !password){
-
-        showLoginError(
-            "Email और Password भरें।"
-        );
-
-        return;
-    }
-
-
+  function show(el, yes=true){ el.classList.toggle("hidden", !yes); }
+  function esc(v){
+    return String(v ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
+  function formatDate(v){
+    if(!v) return "-";
     try{
-
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        showLoginError(
-            "Owner login failed."
-        );
-
-    }
-
-};
-
-
-
-/* =====================================================
-   EMPLOYEE LOGIN
-===================================================== */
-
-window.employeeLogin =
-async function(){
-
-    const id =
-        document
-        .getElementById("employeeId")
-        .value
-        .trim()
-        .toUpperCase();
-
-
-    const password =
-        document
-        .getElementById("employeePassword")
-        .value;
-
-
-    if(!id || !password){
-
-        showLoginError(
-            "Employee ID और Password भरें।"
-        );
-
-        return;
-    }
-
-
-    try{
-
-        /*
-          Employee ID को
-          Firebase internal email में बदला जा रहा है.
-        */
-
-        const email =
-            id.toLowerCase()
-            + "@employee.shraynex.local";
-
-
-        await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        showLoginError(
-            "गलत Employee ID या Password."
-        );
-
-    }
-
-};
-
-
-
-/* =====================================================
-   AUTH STATE
-===================================================== */
-
-onAuthStateChanged(
-    auth,
-    async user => {
-
-        if(!user){
-
-            document
-                .getElementById("loginPage")
-                .classList.remove("hidden");
-
-            document
-                .getElementById("app")
-                .classList.add("hidden");
-
-            return;
-        }
-
-
-        currentUser = user;
-
-
-        await loadProfile();
-
-    }
-);
-
-
-
-/* =====================================================
-   LOAD PROFILE
-===================================================== */
-
-async function loadProfile(){
-
-    const ref =
-        doc(
-            db,
-            "users",
-            currentUser.uid
-        );
-
-
-    const snap =
-        await getDoc(ref);
-
-
-    if(!snap.exists()){
-
-        alert(
-            "User profile नहीं मिला।"
-        );
-
-        await signOut(auth);
-
-        return;
-    }
-
-
-    currentProfile =
-        snap.data();
-
-
-    currentRole =
-        currentProfile.role;
-
-
-    document
-        .getElementById("loginPage")
-        .classList.add("hidden");
-
-
-    document
-        .getElementById("app")
-        .classList.remove("hidden");
-
-
-    document
-        .getElementById("userInfo")
-        .textContent =
-        `${currentProfile.name} • ${
-            currentRole === "owner"
-            ? "OWNER"
-            : "EMPLOYEE"
-        }`;
-
-
-    setupRole();
-
-
-    startRealtime();
-
-}
-
-
-
-/* =====================================================
-   ROLE SETUP
-===================================================== */
-
-function setupRole(){
-
-    const owner =
-        currentRole === "owner";
-
-
-    document
-        .getElementById("employeeNav")
-        .style.display =
-        owner ? "block" : "none";
-
-
-    document
-        .getElementById("ownerStats")
-        .classList.toggle(
-            "hidden",
-            !owner
-        );
-
-
-    document
-        .getElementById("assignTaskBtn")
-        .style.display =
-        owner ? "block" : "none";
-
-}
-
-
-
-/* =====================================================
-   REALTIME DATA
-===================================================== */
-
-function startRealtime(){
-
-
-    /*
-      EMPLOYEES
-    */
-
-    onSnapshot(
-        collection(db,"users"),
-        snapshot => {
-
-            employees =
-                snapshot.docs
-                .map(d => ({
-                    id:d.id,
-                    ...d.data()
-                }))
-                .filter(
-                    e =>
-                    e.role === "employee"
-                );
-
-
-            renderEmployees();
-
-            updateDashboard();
-
-        }
-    );
-
-
-
-    /*
-      TASKS
-    */
-
-    if(currentRole === "owner"){
-
-        onSnapshot(
-            collection(db,"tasks"),
-            snapshot => {
-
-                tasks =
-                    snapshot.docs
-                    .map(d => ({
-                        id:d.id,
-                        ...d.data()
-                    }));
-
-
-                renderTasks();
-
-                renderRecentTasks();
-
-                updateDashboard();
-
-            }
-        );
-
-    }else{
-
-        const q =
-            query(
-                collection(db,"tasks"),
-                where(
-                    "employeeId",
-                    "==",
-                    currentUser.uid
-                )
-            );
-
-
-        onSnapshot(
-            q,
-            snapshot => {
-
-                tasks =
-                    snapshot.docs
-                    .map(d => ({
-                        id:d.id,
-                        ...d.data()
-                    }));
-
-
-                renderTasks();
-
-                renderRecentTasks();
-
-                updateDashboard();
-
-            }
-        );
-
-    }
-
-
-
-    /*
-      PAYMENTS
-    */
-
-    if(currentRole === "owner"){
-
-        onSnapshot(
-            collection(db,"payments"),
-            snapshot => {
-
-                payments =
-                    snapshot.docs
-                    .map(d => ({
-                        id:d.id,
-                        ...d.data()
-                    }));
-
-
-                renderPayments();
-
-                updateDashboard();
-
-            }
-        );
-
-    }else{
-
-        const q =
-            query(
-                collection(db,"payments"),
-                where(
-                    "employeeId",
-                    "==",
-                    currentUser.uid
-                )
-            );
-
-
-        onSnapshot(
-            q,
-            snapshot => {
-
-                payments =
-                    snapshot.docs
-                    .map(d => ({
-                        id:d.id,
-                        ...d.data()
-                    }));
-
-
-                renderPayments();
-
-                updateDashboard();
-
-            }
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   EMPLOYEES
-===================================================== */
-
-function renderEmployees(){
-
-    const tbody =
-        document
-        .getElementById("employeeTable");
-
-
-    if(!tbody) return;
-
-
-    if(!employees.length){
-
-        tbody.innerHTML =
-        `
-        <tr>
-            <td colspan="6"
-                class="empty">
-                अभी कोई employee नहीं है।
-            </td>
-        </tr>
-        `;
-
-        return;
-    }
-
-
-    tbody.innerHTML =
-        employees
-        .map(e => `
-
-        <tr>
-
-            <td>
-                ${safe(e.name)}
-            </td>
-
-            <td>
-                <b>
-                    ${safe(e.employeeId)}
-                </b>
-            </td>
-
-            <td>
-                ${safe(e.phone)}
-            </td>
-
-            <td>
-                ${safe(e.jobRole)}
-            </td>
-
-            <td>
-                ${money(e.salary)}
-            </td>
-
-            <td>
-                <span class="badge green">
-                    ${safe(e.status || "Active")}
-                </span>
-            </td>
-
-        </tr>
-
-        `)
-        .join("");
-
-}
-
-
-
-/* =====================================================
-   ADD EMPLOYEE MODAL
-===================================================== */
-
-window.openEmployeeModal =
-function(){
-
-    document
-        .getElementById("modalTitle")
-        .textContent =
-        "Add New Employee";
-
-
-    document
-        .getElementById("modalBody")
-        .innerHTML = `
-
-        <label>
-            Employee Name
-        </label>
-
-        <input
-            id="newName"
-            placeholder="Rajan Yadav">
-
-
-        <label>
-            Mobile Number
-        </label>
-
-        <input
-            id="newPhone"
-            inputmode="numeric"
-            maxlength="10"
-            placeholder="9451239239"
-            oninput="generateEmployeePreview()">
-
-
-        <label>
-            Job Role
-        </label>
-
-        <input
-            id="newJobRole"
-            placeholder="Graphic Designer">
-
-
-        <label>
-            Monthly Salary
-        </label>
-
-        <input
-            id="newSalary"
-            type="number"
-            placeholder="8000">
-
-
-        <div
-            id="employeePreview"
-            class="generated-id">
-
-            Name और mobile डालें
-
-        </div>
-
-
-        <button
-            class="btn full"
-            onclick="createEmployee()">
-
-            Create Employee
-
-        </button>
-
-        `;
-
-
-    openModal();
-
-};
-
-
-
-/* =====================================================
-   GENERATE ID PREVIEW
-===================================================== */
-
-window.generateEmployeePreview =
-function(){
-
-    const name =
-        document
-        .getElementById("newName")
-        .value
-        .trim();
-
-
-    const phone =
-        document
-        .getElementById("newPhone")
-        .value
-        .trim();
-
-
-    let id =
-        "EMP1215";
-
-
-    if(name.length >= 3){
-
-        id =
-            name
-            .replace(
-                /[^a-zA-Z]/g,
-                ""
-            )
-            .substring(0,3)
-            .toUpperCase()
-            + "1215";
-
-    }
-
-
-    let password =
-        phone.length >= 5
-        ? phone.substring(0,5)
-        : "-----";
-
-
-    document
-        .getElementById("employeePreview")
-        .innerHTML = `
-
-            Employee ID
-
-            <strong>
-                ${id}
-            </strong>
-
-            Password
-
-            <strong>
-                ${password}
-            </strong>
-
-        `;
-
-};
-
-
-
-/* =====================================================
-   CREATE EMPLOYEE
-===================================================== */
-
-window.createEmployee =
-async function(){
-
-    const name =
-        document
-        .getElementById("newName")
-        .value
-        .trim();
-
-
-    const phone =
-        document
-        .getElementById("newPhone")
-        .value
-        .trim();
-
-
-    const jobRole =
-        document
-        .getElementById("newJobRole")
-        .value
-        .trim();
-
-
-    const salary =
-        Number(
-            document
-            .getElementById("newSalary")
-            .value || 0
-        );
-
-
-    if(name.length < 3){
-
-        alert(
-            "कम से कम 3 अक्षर का नाम डालें।"
-        );
-
-        return;
-    }
-
-
-    if(!/^\d{10}$/.test(phone)){
-
-        alert(
-            "10 digit mobile number डालें।"
-        );
-
-        return;
-    }
-
-
-    const cleanName =
-        name
-        .replace(
-            /[^a-zA-Z]/g,
-            ""
-        );
-
-
-    const employeeId =
-        cleanName
-        .substring(0,3)
-        .toUpperCase()
-        + "1215";
-
-
-    const password =
-        phone.substring(0,5);
-
-
-    const email =
-        employeeId.toLowerCase()
-        + "@employee.shraynex.local";
-
-
-    try{
-
-
-        /*
-          Secondary Auth
-
-          Owner logout नहीं होगा.
-        */
-
-        const secondaryApp =
-            getApps().find(
-                a =>
-                a.name === "EmployeeCreationApp"
-            )
-            ||
-            initializeApp(
-                firebaseConfig,
-                "EmployeeCreationApp"
-            );
-
-
-        const secondaryAuth =
-            getAuth(
-                secondaryApp
-            );
-
-
-        /*
-          Firebase Account
-        */
-
-        const credential =
-            await createUserWithEmailAndPassword(
-                secondaryAuth,
-                email,
-                password
-            );
-
-
-        /*
-          Firestore Profile
-        */
-
-        await setDoc(
-            doc(
-                db,
-                "users",
-                credential.user.uid
-            ),
-            {
-
-                name:name,
-
-                employeeId:employeeId,
-
-                email:email,
-
-                phone:phone,
-
-                jobRole:jobRole,
-
-                salary:salary,
-
-                role:"employee",
-
-                status:"Active",
-
-                createdAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        await signOut(
-            secondaryAuth
-        );
-
-
-        closeModal();
-
-
-        alert(
-            `Employee Successfully Created!
-
-ID: ${employeeId}
-Password: ${password}
-
-यह ID और Password employee को दें।`
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        if(
-            error.code ===
-            "auth/email-already-in-use"
-        ){
-
-            alert(
-                "यह Employee ID पहले से मौजूद है।"
-            );
-
-        }else{
-
-            alert(
-                "Employee create failed:\n"
-                + error.message
-            );
-
-        }
-
-    }
-
-};
-
-
-
-/* =====================================================
-   TASK MODAL
-===================================================== */
-
-window.openTaskModal =
-function(){
-
-    if(currentRole !== "owner")
-        return;
-
-
-    document
-        .getElementById("modalTitle")
-        .textContent =
-        "Assign New Task";
-
-
-    document
-        .getElementById("modalBody")
-        .innerHTML = `
-
-        <label>
-            Task Name
-        </label>
-
-        <input
-            id="taskName"
-            placeholder="Instagram Poster Design">
-
-
-        <label>
-            Employee
-        </label>
-
-        <select id="taskEmployee">
-
-            <option value="">
-                Employee Select करें
-            </option>
-
-            ${
-                employees
-                .map(
-                    e => `
-                    <option
-                        value="${e.id}">
-                        ${safe(e.name)}
-                        —
-                        ${safe(e.employeeId)}
-                    </option>
-                    `
-                )
-                .join("")
-            }
-
-        </select>
-
-
-        <label>
-            काम का पूरा विवरण
-        </label>
-
-        <textarea
-            id="taskDescription"
-            placeholder="Employee को क्या करना है, पूरी जानकारी यहां लिखें..."></textarea>
-
-
-        <label>
-            Commission / Payment
-        </label>
-
-        <input
-            id="taskAmount"
-            type="number"
-            placeholder="500">
-
-
-        <label>
-            Deadline
-        </label>
-
-        <input
-            id="taskDeadline"
-            type="date">
-
-
-        <button
-            class="btn full"
-            onclick="createTask()">
-
-            Assign Task
-
-        </button>
-
-        `;
-
-
-    openModal();
-
-};
-
-
-
-/* =====================================================
-   CREATE TASK
-===================================================== */
-
-window.createTask =
-async function(){
-
-    const name =
-        document
-        .getElementById("taskName")
-        .value
-        .trim();
-
-
-    const employeeId =
-        document
-        .getElementById("taskEmployee")
-        .value;
-
-
-    const description =
-        document
-        .getElementById("taskDescription")
-        .value
-        .trim();
-
-
-    const amount =
-        Number(
-            document
-            .getElementById("taskAmount")
-            .value || 0
-        );
-
-
-    const deadline =
-        document
-        .getElementById("taskDeadline")
-        .value;
-
-
-    if(!name){
-
-        alert("Task name डालें।");
-
-        return;
-    }
-
-
-    if(!employeeId){
-
-        alert("Employee select करें।");
-
-        return;
-    }
-
-
-    if(amount <= 0){
-
-        alert(
-            "Commission amount डालें।"
-        );
-
-        return;
-    }
-
-
-    await addDoc(
-        collection(db,"tasks"),
-        {
-
-            name:name,
-
-            description:description,
-
-            employeeId:employeeId,
-
-            amount:amount,
-
-            deadline:deadline,
-
-            status:"Assigned",
-
-            paymentStatus:"Pending",
-
-            createdAt:
-                serverTimestamp(),
-
-            updatedAt:
-                serverTimestamp()
-
-        }
-    );
-
-
-    closeModal();
-
-
-    alert(
-        "Task employee को assign कर दिया गया।"
-    );
-
-};
-
-
-
-/* =====================================================
-   RENDER TASKS
-===================================================== */
-
-function renderTasks(){
-
-    const grid =
-        document
-        .getElementById("taskGrid");
-
-
-    if(!grid) return;
-
-
-    if(!tasks.length){
-
-        grid.innerHTML =
-        `
-        <div class="empty">
-            अभी कोई task नहीं है।
-        </div>
-        `;
-
-        return;
-    }
-
-
-    grid.innerHTML =
-        tasks
-        .map(t => {
-
-            const employee =
-                employees.find(
-                    e =>
-                    e.id === t.employeeId
-                );
-
-
-            return `
-
-            <div class="task-card">
-
-                <h3>
-                    ${safe(t.name)}
-                </h3>
-
-
-                ${
-                    currentRole === "owner"
-
-                    ?
-
-                    `<div class="task-meta">
-
-                        <span class="badge blue">
-                            ${safe(
-                                employee
-                                ? employee.name
-                                : "Employee"
-                            )}
-                        </span>
-
-                    </div>`
-
-                    :
-
-                    ""
-
-                }
-
-
-                <div class="task-description">
-
-                    ${safe(
-                        t.description
-                        || "कोई description नहीं।"
-                    )}
-
-                </div>
-
-
-                <div class="task-money">
-
-                    ₹${Number(
-                        t.amount || 0
-                    ).toLocaleString("en-IN")}
-
-                </div>
-
-
-                <div class="task-meta">
-
-                    <span class="badge">
-
-                        Deadline:
-                        ${safe(
-                            t.deadline
-                            || "Not set"
-                        )}
-
-                    </span>
-
-
-                    <span class="badge ${
-                        t.status === "Completed"
-                        ? "green"
-                        :
-                        t.status === "Working"
-                        ? "blue"
-                        :
-                        "orange"
-                    }">
-
-                        ${safe(
-                            t.status
-                            || "Assigned"
-                        )}
-
-                    </span>
-
-
-                    <span class="badge">
-
-                        Payment:
-                        ${safe(
-                            t.paymentStatus
-                            || "Pending"
-                        )}
-
-                    </span>
-
-                </div>
-
-
-                <div class="task-actions">
-
-                    ${taskButtons(t)}
-
-                </div>
-
-            </div>
-
-            `;
-
-        })
-        .join("");
-
-}
-
-
-
-/* =====================================================
-   TASK BUTTONS
-===================================================== */
-
-function taskButtons(t){
-
-    if(currentRole === "owner"){
-
-        if(
-            t.status === "Completed"
-            &&
-            t.paymentStatus !== "Paid"
-        ){
-
-            return `
-
-                <button
-                    class="btn btn-success"
-                    onclick="payTask('${t.id}')">
-
-                    💰 Mark Payment Paid
-
-                </button>
-
-            `;
-
-        }
-
-
-        return `
-
-            <span class="badge">
-                ${safe(
-                    t.status || "Assigned"
-                )}
-            </span>
-
-        `;
-
-    }
-
-
-    /* EMPLOYEE */
-
-    if(t.status === "Assigned"){
-
-        return `
-
-            <button
-                class="btn"
-                onclick="startTask('${t.id}')">
-
-                ▶ Start Working
-
-            </button>
-
-        `;
-
-    }
-
-
-    if(t.status === "Working"){
-
-        return `
-
-            <button
-                class="btn btn-success"
-                onclick="submitTask('${t.id}')">
-
-                ✓ Submit Task
-
-            </button>
-
-        `;
-
-    }
-
-
-    if(t.status === "Completed"){
-
-        return `
-
-            <span class="badge green">
-                ✓ Submitted — Payment Pending
-            </span>
-
-        `;
-
-    }
-
-
-    return "";
-
-}
-
-
-
-/* =====================================================
-   START TASK
-===================================================== */
-
-window.startTask =
-async function(taskId){
-
-    try{
-
-        await runTransaction(
-            db,
-            async transaction => {
-
-                const taskRef =
-                    doc(
-                        db,
-                        "tasks",
-                        taskId
-                    );
-
-
-                const snap =
-                    await transaction.get(
-                        taskRef
-                    );
-
-
-                if(!snap.exists()){
-
-                    throw new Error(
-                        "Task नहीं मिला।"
-                    );
-
-                }
-
-
-                const task =
-                    snap.data();
-
-
-                /*
-                  सिर्फ assigned employee
-                  ही task start कर सकता है.
-                */
-
-                if(
-                    task.employeeId
-                    !==
-                    currentUser.uid
-                ){
-
-                    throw new Error(
-                        "यह task आपके लिए नहीं है।"
-                    );
-
-                }
-
-
-                if(
-                    task.status !==
-                    "Assigned"
-                ){
-
-                    throw new Error(
-                        "यह task पहले ही start हो चुका है।"
-                    );
-
-                }
-
-
-                transaction.update(
-                    taskRef,
-                    {
-
-                        status:"Working",
-
-                        startedAt:
-                            serverTimestamp(),
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    }
-                );
-
-            }
-        );
-
-
-        alert(
-            "Task Working में चला गया।"
-        );
-
-
-    }catch(error){
-
-        alert(
-            error.message
-        );
-
-    }
-
-};
-
-
-
-/* =====================================================
-   SUBMIT TASK
-===================================================== */
-
-window.submitTask =
-async function(taskId){
-
-    const confirmSubmit =
-        confirm(
-            "क्या आपने यह task पूरा कर लिया है?"
-        );
-
-
-    if(!confirmSubmit)
-        return;
-
-
-    try{
-
-        await runTransaction(
-            db,
-            async transaction => {
-
-                const taskRef =
-                    doc(
-                        db,
-                        "tasks",
-                        taskId
-                    );
-
-
-                const snap =
-                    await transaction.get(
-                        taskRef
-                    );
-
-
-                if(!snap.exists()){
-
-                    throw new Error(
-                        "Task नहीं मिला।"
-                    );
-
-                }
-
-
-                const task =
-                    snap.data();
-
-
-                if(
-                    task.employeeId
-                    !==
-                    currentUser.uid
-                ){
-
-                    throw new Error(
-                        "यह task आपका नहीं है।"
-                    );
-
-                }
-
-
-                if(
-                    task.status !==
-                    "Working"
-                ){
-
-                    throw new Error(
-                        "Task Working status में नहीं है।"
-                    );
-
-                }
-
-
-                transaction.update(
-                    taskRef,
-                    {
-
-                        status:"Completed",
-
-                        paymentStatus:
-                            "Pending",
-
-                        completedAt:
-                            serverTimestamp(),
-
-                        updatedAt:
-                            serverTimestamp()
-
-                    }
-                );
-
-            }
-        );
-
-
-        alert(
-            "Task successfully submit हो गया।"
-        );
-
-
-    }catch(error){
-
-        alert(
-            error.message
-        );
-
-    }
-
-};
-
-
-
-/* =====================================================
-   OWNER PAYMENT
-===================================================== */
-
-window.payTask =
-async function(taskId){
-
-    if(currentRole !== "owner")
-        return;
-
-
-    try{
-
-        const taskRef =
-            doc(
-                db,
-                "tasks",
-                taskId
-            );
-
-
-        const taskSnap =
-            await getDoc(taskRef);
-
-
-        if(!taskSnap.exists()){
-
-            alert(
-                "Task नहीं मिला।"
-            );
-
-            return;
-        }
-
-
-        const task =
-            taskSnap.data();
-
-
-        if(
-            task.status !==
-            "Completed"
-        ){
-
-            alert(
-                "Employee ने अभी task submit नहीं किया है।"
-            );
-
-            return;
-        }
-
-
-        if(
-            task.paymentStatus ===
-            "Paid"
-        ){
-
-            alert(
-                "Payment पहले ही paid है।"
-            );
-
-            return;
-        }
-
-
-        await updateDoc(
-            taskRef,
-            {
-
-                paymentStatus:"Paid",
-
-                paidAt:
-                    serverTimestamp(),
-
-                updatedAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        /*
-          Payment record
-        */
-
-        await addDoc(
-            collection(db,"payments"),
-            {
-
-                taskId:taskId,
-
-                taskName:task.name,
-
-                employeeId:
-                    task.employeeId,
-
-                amount:
-                    task.amount,
-
-                status:"Paid",
-
-                paidAt:
-                    serverTimestamp()
-
-            }
-        );
-
-
-        alert(
-            "Payment Paid mark कर दिया गया।"
-        );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        alert(
-            "Payment update failed."
-        );
-
-    }
-
-};
-
-
-
-/* =====================================================
-   RECENT TASKS
-===================================================== */
-
-function renderRecentTasks(){
-
-    const box =
-        document
-        .getElementById("recentTasks");
-
-
-    if(!box) return;
-
-
-    const recent =
-        [...tasks]
-        .reverse()
-        .slice(0,4);
-
-
-    if(!recent.length){
-
-        box.innerHTML =
-        `
-        <div class="empty">
-            कोई task नहीं।
-        </div>
-        `;
-
-        return;
-    }
-
-
-    box.innerHTML =
-        recent
-        .map(t => `
-
-            <div class="task-card">
-
-                <h3>
-                    ${safe(t.name)}
-                </h3>
-
-                <div class="task-money">
-
-                    ₹${Number(
-                        t.amount || 0
-                    ).toLocaleString("en-IN")}
-
-                </div>
-
-                <span class="badge">
-
-                    ${safe(
-                        t.status
-                        || "Assigned"
-                    )}
-
-                </span>
-
-            </div>
-
-        `)
-        .join("");
-
-}
-
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-function updateDashboard(){
-
-    const total =
-        tasks.length;
-
-
-    const pending =
-        tasks.filter(
-            t =>
-            t.status === "Assigned"
-            ||
-            t.status === "Working"
-        ).length;
-
-
-    const completed =
-        tasks.filter(
-            t =>
-            t.status === "Completed"
-        ).length;
-
-
-    const earnings =
-        tasks
-        .filter(
-            t =>
-            t.paymentStatus === "Paid"
-        )
-        .reduce(
-            (sum,t) =>
-            sum +
-            Number(t.amount || 0),
-            0
-        );
-
-
-    document
-        .getElementById("totalTasks")
-        .textContent =
-        total;
-
-
-    document
-        .getElementById("pendingTasks")
-        .textContent =
-        pending;
-
-
-    document
-        .getElementById("completedTasks")
-        .textContent =
-        completed;
-
-
-    document
-        .getElementById("totalEarnings")
-        .textContent =
-        money(earnings);
-
-
-    if(currentRole === "owner"){
-
-        const paid =
-            payments
-            .reduce(
-                (sum,p) =>
-                sum +
-                Number(
-                    p.amount || 0
-                ),
-                0
-            );
-
-
-        const pendingPay =
-            tasks
-            .filter(
-                t =>
-                t.status === "Completed"
-                &&
-                t.paymentStatus !== "Paid"
-            )
-            .reduce(
-                (sum,t) =>
-                sum +
-                Number(
-                    t.amount || 0
-                ),
-                0
-            );
-
-
-        document
-            .getElementById("employeeCount")
-            .textContent =
-            employees.length;
-
-
-        document
-            .getElementById("paidAmount")
-            .textContent =
-            money(paid);
-
-
-        document
-            .getElementById("pendingPayment")
-            .textContent =
-            money(pendingPay);
-
-    }
-
-}
-
-
-
-/* =====================================================
-   PAYMENTS TABLE
-===================================================== */
-
-function renderPayments(){
-
-    const tbody =
-        document
-        .getElementById("paymentTable");
-
-
-    if(!tbody) return;
-
-
-    if(!payments.length){
-
-        tbody.innerHTML =
-        `
-        <tr>
-
-            <td
-                colspan="4"
-                class="empty">
-
-                अभी कोई payment नहीं है।
-
-            </td>
-
-        </tr>
-        `;
-
-        return;
-    }
-
-
-    tbody.innerHTML =
-        payments
-        .map(p => `
-
-        <tr>
-
-            <td>
-                ${safe(
-                    p.taskName
-                )}
-            </td>
-
-            <td>
-                ${money(p.amount)}
-            </td>
-
-            <td>
-
-                <span
-                    class="badge green">
-
-                    ${safe(
-                        p.status
-                        || "Paid"
-                    )}
-
-                </span>
-
-            </td>
-
-            <td>
-                Paid
-            </td>
-
-        </tr>
-
-        `)
-        .join("");
-
-}
-
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-window.showPage =
-function(page){
-
-    const pages = [
-        "dashboard",
-        "employees",
-        "tasks",
-        "payments"
-    ];
-
-
-    pages.forEach(
-        p => {
-
-            document
-                .getElementById(
-                    p + "Page"
-                )
-                .classList.add(
-                    "hidden"
-                );
-
-        }
-    );
-
-
-    document
-        .getElementById(
-            page + "Page"
-        )
-        .classList.remove(
-            "hidden"
-        );
-
-
-    const titles = {
-
-        dashboard:"Dashboard",
-
-        employees:"Employees",
-
-        tasks:"Tasks",
-
-        payments:"Payments"
-
+      const d = v?.toDate ? v.toDate() : new Date(v);
+      return isNaN(d) ? "-" : d.toLocaleString("hi-IN",{dateStyle:"medium",timeStyle:"short"});
+    }catch{return "-"}
+  }
+  function money(v){ return "₹" + Number(v || 0).toLocaleString("en-IN"); }
+
+  function setLoginMode(mode){
+    const owner = mode === "owner";
+    $("ownerTab").classList.toggle("active", owner);
+    $("employeeTab").classList.toggle("active", !owner);
+    $("loginIdLabel").textContent = owner ? "Owner Email" : "Employee ID";
+    $("loginId").type = owner ? "email" : "text";
+    $("loginId").placeholder = owner ? "shraynexofficial@gmail.com" : "RAH1215";
+    $("loginPassword").placeholder = owner ? "Owner Password" : "Employee Password";
+    $("loginForm").dataset.mode = mode;
+    $("loginError").classList.add("hidden");
+  }
+
+  $("ownerTab").onclick = () => setLoginMode("owner");
+  $("employeeTab").onclick = () => setLoginMode("employee");
+
+  function friendlyError(err){
+    const code = err?.code || "";
+    const map = {
+      "auth/invalid-credential":"Email/ID या password गलत है।",
+      "auth/user-not-found":"User नहीं मिला।",
+      "auth/wrong-password":"Password गलत है।",
+      "auth/invalid-email":"Email/Employee ID सही डालें।",
+      "auth/email-already-in-use":"यह Employee ID पहले से मौजूद है।",
+      "auth/weak-password":"Password बहुत कमजोर है।",
+      "auth/too-many-requests":"बहुत बार कोशिश हुई है। थोड़ी देर बाद फिर कोशिश करें।",
+      "permission-denied":"Firebase Firestore permission denied. Rules चेक करें।"
     };
+    return map[code] || err?.message || "कुछ गलत हुआ।";
+  }
 
+  $("loginForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const mode = e.currentTarget.dataset.mode || "owner";
+    const id = $("loginId").value.trim();
+    const pass = $("loginPassword").value.trim();
+    $("loginError").classList.add("hidden");
 
-    document
-        .getElementById("pageTitle")
-        .textContent =
-        titles[page];
+    try{
+      const email = mode === "owner" ? id : id.toLowerCase() + EMPLOYEE_DOMAIN;
+      await signInWithEmailAndPassword(auth, email, pass);
+    }catch(err){
+      $("loginError").textContent = friendlyError(err);
+      $("loginError").classList.remove("hidden");
+    }
+  });
 
-
-    document
-        .getElementById("sidebar")
-        .classList.remove(
-            "open"
-        );
-
-};
-
-
-
-/* =====================================================
-   SIDEBAR
-===================================================== */
-
-window.toggleSidebar =
-function(){
-
-    document
-        .getElementById("sidebar")
-        .classList.toggle(
-            "open"
-        );
-
-};
-
-
-
-/* =====================================================
-   MODAL
-===================================================== */
-
-function openModal(){
-
-    document
-        .getElementById("modal")
-        .classList.remove(
-            "hidden"
-        );
-
-}
-
-
-window.closeModal =
-function(){
-
-    document
-        .getElementById("modal")
-        .classList.add(
-            "hidden"
-        );
-
-};
-
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-window.logout =
-async function(){
-
+  $("logoutBtn").onclick = async () => {
     await signOut(auth);
+  };
 
-};
+  $("closeModal").onclick = () => show($("credentialModal"), false);
 
+  function clearSubscriptions(){
+    unsubscribeFns.forEach(fn => { try{fn()}catch{} });
+    unsubscribeFns = [];
+  }
 
+  async function loadProfile(uid){
+    const snap = await getDoc(doc(db,"users",uid));
+    if(!snap.exists()) throw new Error("आपका user profile Firestore में नहीं मिला।");
+    return {uid, ...snap.data()};
+  }
 
-/* =====================================================
-   HELPERS
-===================================================== */
+  onAuthStateChanged(auth, async user=>{
+    clearSubscriptions();
+    if(!user){
+      currentUser = null; currentProfile = null;
+      show($("loginScreen"), true);
+      show($("app"), false);
+      return;
+    }
+    try{
+      currentUser = user;
+      currentProfile = await loadProfile(user.uid);
+      show($("loginScreen"), false);
+      show($("app"), true);
+      renderDashboard();
+    }catch(err){
+      alert(friendlyError(err));
+      await signOut(auth);
+    }
+  });
 
-function money(value){
+  function renderDashboard(){
+    const owner = currentProfile.role === "owner";
+    $("welcomeTitle").textContent = owner ? "👑 Owner Dashboard" : "👨‍💼 Employee Dashboard";
+    $("welcomeSub").textContent = `${currentProfile.name || "User"} • ${owner ? "Owner" : "Employee"}`;
+    show($("ownerView"), owner);
+    show($("employeeView"), !owner);
 
-    return "₹" +
-        Number(value || 0)
-        .toLocaleString("en-IN");
+    if(owner){
+      loadOwnerData();
+    }else{
+      loadEmployeeData();
+    }
+  }
 
-}
+  function renderStats(data){
+    $("stats").innerHTML = data.map(x=>`
+      <div class="stat">
+        <small>${esc(x.label)}</small>
+        <strong>${esc(x.value)}</strong>
+      </div>
+    `).join("");
+  }
 
+  function loadOwnerData(){
+    const usersQ = query(collection(db,"users"), where("role","==","employee"));
+    const tasksQ = query(collection(db,"tasks"), orderBy("createdAt","desc"));
 
-function safe(value){
+    unsubscribeFns.push(onSnapshot(usersQ, snap=>{
+      const employees = snap.docs.map(d=>({uid:d.id,...d.data()}));
+      window._employees = employees;
+      $("taskEmployee").innerHTML = `<option value="">Employee चुनें</option>` +
+        employees.map(e=>`<option value="${esc(e.uid)}">${esc(e.name)} (${esc(e.employeeId || "")})</option>`).join("");
+      renderEmployees(employees);
+      updateOwnerStats();
+    }, err=>showCollectionError(err,"employeeTable")));
 
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+    unsubscribeFns.push(onSnapshot(tasksQ, snap=>{
+      const tasks = snap.docs.map(d=>({id:d.id,...d.data()}));
+      window._ownerTasks = tasks;
+      renderOwnerTasks(tasks);
+      updateOwnerStats();
+    }, err=>showCollectionError(err,"ownerTasks")));
 
-}
+    renderStats([
+      {label:"Employees",value:"..."},
+      {label:"Total Tasks",value:"..."},
+      {label:"Completed",value:"..."},
+      {label:"Paid",value:"..."}
+    ]);
+  }
 
+  function updateOwnerStats(){
+    const employees = window._employees || [];
+    const tasks = window._ownerTasks || [];
+    const paid = tasks.filter(t=>t.paymentStatus==="Paid").reduce((s,t)=>s+Number(t.amount||0),0);
+    renderStats([
+      {label:"Employees",value:employees.length},
+      {label:"Total Tasks",value:tasks.length},
+      {label:"Completed",value:tasks.filter(t=>t.status==="Completed").length},
+      {label:"Paid",value:money(paid)}
+    ]);
+  }
 
-function showLoginError(message){
+  function renderEmployees(list){
+    if(!list.length){
+      $("employeeTable").innerHTML = `<div class="empty">अभी कोई employee नहीं है।</div>`;
+      return;
+    }
+    $("employeeTable").innerHTML = `
+      <div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Employee ID</th><th>Mobile</th><th>Status</th></tr></thead>
+        <tbody>${list.map(e=>`
+          <tr>
+            <td><b>${esc(e.name)}</b><br><small>${esc(e.email || "")}</small></td>
+            <td><b>${esc(e.employeeId)}</b></td>
+            <td>${esc(e.mobile)}</td>
+            <td><span class="badge active">${esc(e.status || "Active")}</span></td>
+          </tr>`).join("")}
+        </tbody>
+      </table></div>`;
+  }
 
-    document
-        .getElementById("loginError")
-        .textContent =
-        message;
+  function statusBadge(status){
+    const cls = status==="Working" ? "working" : status==="Completed" ? "completed" : "pending";
+    return `<span class="badge ${cls}">${esc(status || "Pending")}</span>`;
+  }
+  function paymentBadge(status){
+    return `<span class="badge ${status==="Paid" ? "paid" : "pending"}">${esc(status || "Pending")}</span>`;
+  }
 
-}
+  function renderOwnerTasks(tasks){
+    if(!tasks.length){
+      $("ownerTasks").innerHTML = `<div class="empty">अभी कोई task नहीं है।</div>`;
+      return;
+    }
+    const emps = Object.fromEntries((window._employees||[]).map(e=>[e.uid,e]));
+    $("ownerTasks").innerHTML = `<div class="task-list">` + tasks.map(t=>{
+      const emp = emps[t.employeeId];
+      const canPay = t.status==="Completed" && t.paymentStatus!=="Paid";
+      return `<div class="task">
+        <div class="task-head">
+          <div><h4>${esc(t.name)}</h4><div>${statusBadge(t.status)} ${paymentBadge(t.paymentStatus)}</div></div>
+          <b>${money(t.amount)}</b>
+        </div>
+        <p>${esc(t.description)}</p>
+        <div class="meta">
+          <span>👤 ${esc(emp?.name || t.employeeName || "-")}</span>
+          <span>🆔 ${esc(emp?.employeeId || "")}</span>
+          <span>⏰ Deadline: ${formatDate(t.deadline)}</span>
+          <span>📅 Created: ${formatDate(t.createdAt)}</span>
+        </div>
+        ${canPay ? `<div class="actions"><button class="btn small success pay-btn" data-id="${esc(t.id)}">💰 Mark Payment Paid</button></div>` : ""}
+      </div>`;
+    }).join("") + `</div>`;
 
+    document.querySelectorAll(".pay-btn").forEach(btn=>{
+      btn.onclick = () => markPaid(btn.dataset.id);
+    });
+  }
 
+  async function markPaid(taskId){
+    if(!confirm("क्या इस task का payment Paid करना है?")) return;
+    try{
+      await runTransaction(db, async tx=>{
+        const ref = doc(db,"tasks",taskId);
+        const snap = await tx.get(ref);
+        if(!snap.exists()) throw new Error("Task नहीं मिला।");
+        const t = snap.data();
+        if(t.paymentStatus==="Paid") return;
+        tx.update(ref,{
+          paymentStatus:"Paid",
+          paidAt:serverTimestamp(),
+          paidBy:currentUser.uid,
+          updatedAt:serverTimestamp()
+        });
+        const payRef = doc(collection(db,"payments"));
+        tx.set(payRef,{
+          taskId,
+          employeeId:t.employeeId,
+          employeeName:t.employeeName || "",
+          taskName:t.name,
+          amount:Number(t.amount||0),
+          status:"Paid",
+          paidAt:serverTimestamp(),
+          createdAt:serverTimestamp()
+        });
+      });
+      alert("Payment Paid कर दिया गया। ✅");
+    }catch(err){ alert(friendlyError(err)); }
+  }
+
+  $("employeeForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const name = $("empName").value.trim();
+    const mobile = $("empMobile").value.replace(/\D/g,"");
+    const optionalEmail = $("empEmail").value.trim();
+    const msg = $("employeeMsg");
+    msg.innerHTML = "";
+
+    if(!name || mobile.length!==10){
+      msg.innerHTML = `<div class="error">नाम और 10 digit mobile number सही डालें।</div>`;
+      return;
+    }
+
+    const letters = name.replace(/[^A-Za-z]/g,"").toUpperCase();
+    if(letters.length < 3){
+      msg.innerHTML = `<div class="error">Employee name में कम से कम 3 English letters रखें, जैसे Rahul.</div>`;
+      return;
+    }
+
+    const employeeId = letters.slice(0,3) + "1215";
+    const password = mobile.slice(0,5);
+    const syntheticEmail = employeeId.toLowerCase() + EMPLOYEE_DOMAIN;
+
+    try{
+      // Duplicate ID check
+      const existing = await getDoc(doc(db,"employeeIds",employeeId));
+      if(existing.exists()){
+        msg.innerHTML = `<div class="error">Employee ID ${esc(employeeId)} पहले से मौजूद है। दूसरा नाम दें।</div>`;
+        return;
+      }
+
+      // Secondary Firebase app/auth so owner logout न हो
+      const secondaryName = "EmployeeCreationApp";
+      const secondaryApp = getApps().find(a=>a.name===secondaryName)
+        || initializeApp(firebaseConfig, secondaryName);
+      const secondaryAuth = getAuth(secondaryApp);
+
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, syntheticEmail, password);
+      const uid = cred.user.uid;
+
+      await setDoc(doc(db,"users",uid),{
+        name,
+        mobile,
+        email: optionalEmail,
+        employeeId,
+        role:"employee",
+        status:"Active",
+        loginEmail:syntheticEmail,
+        createdAt:serverTimestamp(),
+        createdBy:currentUser.uid
+      });
+
+      await setDoc(doc(db,"employeeIds",employeeId),{
+        uid,
+        employeeId,
+        createdAt:serverTimestamp()
+      });
+
+      await signOut(secondaryAuth);
+
+      $("newEmployeeId").textContent = employeeId;
+      $("newEmployeePassword").textContent = password;
+      show($("credentialModal"), true);
+      $("employeeForm").reset();
+    }catch(err){
+      msg.innerHTML = `<div class="error">${esc(friendlyError(err))}</div>`;
+    }
+  });
+
+  $("taskForm").addEventListener("submit", async e=>{
+    e.preventDefault();
+    const msg = $("taskMsg");
+    msg.innerHTML = "";
+    const employeeId = $("taskEmployee").value;
+    const emp = (window._employees||[]).find(x=>x.uid===employeeId);
+    if(!emp){
+      msg.innerHTML = `<div class="error">Employee चुनें।</div>`;
+      return;
+    }
+
+    try{
+      await addDoc(collection(db,"tasks"),{
+        name:$("taskName").value.trim(),
+        description:$("taskDescription").value.trim(),
+        amount:Number($("taskAmount").value||0),
+        deadline:new Date($("taskDeadline").value),
+        employeeId:emp.uid,
+        employeeName:emp.name,
+        employeeCode:emp.employeeId,
+        status:"Pending",
+        paymentStatus:"Pending",
+        createdBy:currentUser.uid,
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      });
+      msg.innerHTML = `<div class="info">Task successfully assign हो गया। ✅</div>`;
+      $("taskForm").reset();
+    }catch(err){
+      msg.innerHTML = `<div class="error">${esc(friendlyError(err))}</div>`;
+    }
+  });
+
+  function loadEmployeeData(){
+    const tasksQ = query(
+      collection(db,"tasks"),
+      where("employeeId","==",currentUser.uid),
+      orderBy("createdAt","desc")
+    );
+    const paymentsQ = query(
+      collection(db,"payments"),
+      where("employeeId","==",currentUser.uid),
+      orderBy("paidAt","desc")
+    );
+
+    unsubscribeFns.push(onSnapshot(tasksQ, snap=>{
+      const tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
+      window._myTasks=tasks;
+      renderEmployeeTasks(tasks);
+      updateEmployeeStats();
+    }, err=>showCollectionError(err,"employeeTasks")));
+
+    unsubscribeFns.push(onSnapshot(paymentsQ, snap=>{
+      const pays=snap.docs.map(d=>({id:d.id,...d.data()}));
+      window._myPayments=pays;
+      renderPayments(pays);
+      updateEmployeeStats();
+    }, err=>showCollectionError(err,"employeePayments")));
+
+    renderStats([
+      {label:"My Tasks",value:"..."},
+      {label:"Working",value:"..."},
+      {label:"Completed",value:"..."},
+      {label:"My Earnings",value:"..."}
+    ]);
+  }
+
+  function updateEmployeeStats(){
+    const tasks=window._myTasks||[];
+    const pays=window._myPayments||[];
+    const earnings=pays.reduce((s,p)=>s+Number(p.amount||0),0);
+    renderStats([
+      {label:"My Tasks",value:tasks.length},
+      {label:"Working",value:tasks.filter(t=>t.status==="Working").length},
+      {label:"Completed",value:tasks.filter(t=>t.status==="Completed").length},
+      {label:"My Earnings",value:money(earnings)}
+    ]);
+  }
+
+  function renderEmployeeTasks(tasks){
+    if(!tasks.length){
+      $("employeeTasks").innerHTML=`<div class="empty">आपको अभी कोई task assign नहीं किया गया है।</div>`;
+      return;
+    }
+    $("employeeTasks").innerHTML=`<div class="task-list">`+tasks.map(t=>{
+      const isCompleted=t.status==="Completed";
+      const start=t.status==="Pending";
+      return `<div class="task">
+        <div class="task-head">
+          <div><h4>${esc(t.name)}</h4>${statusBadge(t.status)} ${paymentBadge(t.paymentStatus)}</div>
+          <b>${money(t.amount)}</b>
+        </div>
+        <p>${esc(t.description)}</p>
+        <div class="meta">
+          <span>⏰ Deadline: ${formatDate(t.deadline)}</span>
+          <span>📅 Created: ${formatDate(t.createdAt)}</span>
+        </div>
+        ${!isCompleted ? `<div class="actions">
+          ${start ? `<button class="btn small" data-start="${esc(t.id)}">▶ Start Task</button>` : ""}
+          ${t.status==="Working" ? `<button class="btn small success" data-submit="${esc(t.id)}">✅ Submit / Complete</button>` : ""}
+        </div>` : `<div class="notice">Task submit हो चुका है। Payment: <b>${esc(t.paymentStatus || "Pending")}</b></div>`}
+      </div>`;
+    }).join("")+`</div>`;
+
+    document.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>startTask(b.dataset.start));
+    document.querySelectorAll("[data-submit]").forEach(b=>b.onclick=()=>submitTask(b.dataset.submit));
+  }
+
+  async function startTask(taskId){
+    try{
+      const ref=doc(db,"tasks",taskId);
+      const snap=await getDoc(ref);
+      if(!snap.exists()) throw new Error("Task नहीं मिला।");
+      if(snap.data().employeeId!==currentUser.uid) throw new Error("यह task आपका नहीं है।");
+      await updateDoc(ref,{status:"Working",startedAt:serverTimestamp(),updatedAt:serverTimestamp()});
+    }catch(err){alert(friendlyError(err));}
+  }
+
+  async function submitTask(taskId){
+    if(!confirm("क्या आपने task पूरा कर लिया है? Submit करने के बाद status Completed होगा।")) return;
+    try{
+      const ref=doc(db,"tasks",taskId);
+      await runTransaction(db,async tx=>{
+        const snap=await tx.get(ref);
+        if(!snap.exists()) throw new Error("Task नहीं मिला।");
+        const t=snap.data();
+        if(t.employeeId!==currentUser.uid) throw new Error("यह task आपका नहीं है।");
+        if(t.status==="Completed") return;
+        tx.update(ref,{
+          status:"Completed",
+          completedAt:serverTimestamp(),
+          paymentStatus:"Pending",
+          updatedAt:serverTimestamp()
+        });
+      });
+      alert("Task Completed और payment Pending कर दिया गया। ✅");
+    }catch(err){alert(friendlyError(err));}
+  }
+
+  function renderPayments(pays){
+    if(!pays.length){
+      $("employeePayments").innerHTML=`<div class="empty">अभी कोई payment नहीं हुई है।</div>`;
+      return;
+    }
+    $("employeePayments").innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Task</th><th>Amount</th><th>Status</th><th>Paid Date</th></tr></thead>
+      <tbody>${pays.map(p=>`
+        <tr>
+          <td><b>${esc(p.taskName)}</b></td>
+          <td>${money(p.amount)}</td>
+          <td>${paymentBadge(p.status)}</td>
+          <td>${formatDate(p.paidAt)}</td>
+        </tr>`).join("")}</tbody>
+    </table></div>`;
+  }
+
+  function showCollectionError(id,err){
+    $(id).innerHTML=`<div class="error">${esc(friendlyError(err))}</div>`;
+  }
+
+  setLoginMode("owner");
 </script>
-
 </body>
 </html>
