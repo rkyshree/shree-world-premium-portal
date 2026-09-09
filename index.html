@@ -174,6 +174,7 @@ body {
 
 /* =========================================================
    STARTUP SPLASH
+   MINIMUM DISPLAY = 5 SECONDS
 ========================================================= */
 
 #appLoader {
@@ -352,7 +353,7 @@ body {
 }
 
 
-/* Ring */
+/* Rotating Ring */
 
 .splash-ring {
 
@@ -961,6 +962,7 @@ body {
 
 <!-- =========================================================
      STARTUP SPLASH
+     MINIMUM 5 SECOND
 ========================================================= -->
 
 <div id="appLoader"
@@ -1933,6 +1935,26 @@ body {
 <script>
 
 /* =========================================================
+   SPLASH TIMER
+   IMPORTANT:
+   SPLASH_MIN_TIME = 5000 = 5 SECONDS
+========================================================= */
+
+const SPLASH_MIN_TIME = 5000;
+
+
+/*
+   Timer page ke script start hote hi start hota hai.
+   Isse images/fonts ke load hone ke baad 5 sec
+   count hona start nahi hota.
+*/
+
+let splashStartTime = performance.now();
+
+let splashHidden = false;
+
+
+/* =========================================================
    CONFIG
 ========================================================= */
 
@@ -2145,8 +2167,6 @@ const CONFIG = {
 
 /* =========================================================
    SERVICE WORKER
-   IMPORTANT:
-   File name = service-worker.js
 ========================================================= */
 
 if ("serviceWorker" in navigator) {
@@ -2193,10 +2213,8 @@ if ("serviceWorker" in navigator) {
 
 /* =========================================================
    SPLASH
+   EXACT MINIMUM 5 SECONDS
 ========================================================= */
-
-let splashHidden = false;
-
 
 function hideLoader(){
 
@@ -2220,24 +2238,61 @@ function hideLoader(){
     }
 
 
-    splashHidden = true;
+    const elapsed =
+        performance.now() -
+        splashStartTime;
+
+
+    const remaining =
+        Math.max(
+            0,
+            SPLASH_MIN_TIME -
+            elapsed
+        );
 
 
     /*
-       Fast startup.
-       Page ko unnecessary images
-       load hone ka wait nahi.
+       5 second complete hone ke baad
+       hi hide hoga.
     */
 
     setTimeout(
         () => {
 
+            if(splashHidden){
+
+                return;
+
+            }
+
+
+            splashHidden = true;
+
+
             loader.classList.add(
                 "hide"
             );
 
+
+            /*
+               Animation complete hone ke baad
+               DOM ko clean rakhein.
+            */
+
+            setTimeout(
+                () => {
+
+                    loader.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                },
+                400
+            );
+
         },
-        320
+        remaining
     );
 
 }
@@ -2251,11 +2306,31 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
 
+        /*
+           IMPORTANT:
+           Website ready ho gayi hai,
+           lekin Splash minimum 5 sec rahega.
+        */
+
         hideLoader();
 
         attachLinkLoaders();
 
     }
+);
+
+
+/* =========================================================
+   SAFETY FALLBACK
+========================================================= */
+
+setTimeout(
+    () => {
+
+        hideLoader();
+
+    },
+    SPLASH_MIN_TIME + 100
 );
 
 
@@ -2281,6 +2356,8 @@ window.addEventListener(
                 );
 
             }
+
+            splashHidden = true;
 
         }
 
@@ -2385,11 +2462,6 @@ function attachLinkLoaders(){
                         }
 
 
-                        /*
-                           Same-origin normal links
-                           par startup loader.
-                        */
-
                         try{
 
                             const url =
@@ -2420,12 +2492,29 @@ function attachLinkLoaders(){
 
                             if(loader){
 
+                                /*
+                                   Internal page change par
+                                   Splash timer dobara 5 sec se
+                                   start hoga.
+                                */
+
                                 loader.classList.remove(
                                     "hide"
                                 );
 
+
+                                loader.setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+
                                 splashHidden =
                                     false;
+
+
+                                splashStartTime =
+                                    performance.now();
 
                             }
 
@@ -3546,11 +3635,6 @@ function closeModal(id){
     );
 
 
-    /*
-       Check if another modal
-       is still open.
-    */
-
     const certModal =
         document.getElementById(
             "certificateModal"
@@ -3772,10 +3856,6 @@ async function shareWebsite(){
         }
 
 
-        /*
-           Fallback copy
-        */
-
         await copyText(
             CONFIG.websiteUrl,
             null
@@ -3943,10 +4023,6 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        /*
-           Important links
-        */
-
         if(todayDealsBtn){
 
             todayDealsBtn.href =
@@ -3971,15 +4047,17 @@ document.addEventListener(
         }
 
 
-        /*
-           Dynamic links
-        */
-
         attachLinkLoaders();
 
 
         console.log(
             "SHRAYNEX website loaded successfully."
+        );
+
+        console.log(
+            "Splash minimum time:",
+            SPLASH_MIN_TIME / 1000,
+            "seconds"
         );
 
     }
