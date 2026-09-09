@@ -1847,6 +1847,25 @@
 
           </div>
 
+          <!-- PENDING REGISTRATION REQUESTS -->
+          <div class="content-card">
+            <h3>Pending Registration Requests</h3>
+            <div class="info-note">यहाँ उन लोगों की लिस्ट है जिन्होंने नया अकाउंट माँगा है। Approve करने पर इनका ID और Password अपने आप जनरेट हो जाएगा।</div>
+            
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>WhatsApp Number</th>
+                    <th>Request Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adminRequestsTable"></tbody>
+              </table>
+            </div>
+          </div>
 
           <!-- CREATE EMPLOYEE -->
 
@@ -2914,6 +2933,8 @@
   let allPayments = [];
 
   let allWithdrawals = [];
+  
+  let allRequests = []; // For pending employee requests
 
   let loginIntent = null;
 
@@ -5616,6 +5637,20 @@
               db,
               "withdrawalRequests"
             )
+          ),
+          
+          getDocs(
+            query(
+              collection(
+                db, 
+                "employeeRequests"
+              ), 
+              where(
+                "status", 
+                "==", 
+                "pending"
+              )
+            )
           )
 
         ]);
@@ -5664,6 +5699,15 @@
               ...d.data()
             })
           );
+          
+      allRequests =
+        snaps[4].docs
+          .map(
+            d => ({
+              id:d.id,
+              ...d.data()
+            })
+          );
 
 
       $("adminEmployeeCount")
@@ -5705,6 +5749,8 @@
       renderAdminSubmissions();
 
       renderAdminWithdrawals();
+      
+      renderAdminRequests(); // New function call
 
 
       $("taskEmployeeSelect")
@@ -5757,7 +5803,7 @@
 
 
   /* =========================================================
-     CREATE EMPLOYEE
+     CREATE EMPLOYEE (MANUAL)
      ========================================================= */
 
   $("createEmployeeForm")
@@ -6182,6 +6228,102 @@
 
     };
 
+
+  /* =========================================================
+     ADMIN REGISTRATION REQUESTS
+     ========================================================= */
+
+  function renderAdminRequests() {
+    $("adminRequestsTable").innerHTML = allRequests.length ? allRequests.map(r => `
+      <tr>
+        <td><strong>${escapeHtml(r.name)}</strong></td>
+        <td>${escapeHtml(r.whatsapp)}</td>
+        <td>${formatDate(r.createdAt)}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-success" style="padding:6px 10px; font-size:12px;" onclick="approveRequest('${r.id}')" type="button">Approve</button>
+            <button class="btn btn-danger" style="padding:6px 10px; font-size:12px;" onclick="rejectRequest('${r.id}')" type="button">Reject</button>
+          </div>
+        </td>
+      </tr>
+    `).join("") : `<tr><td colspan="4" class="empty">No pending registration requests.</td></tr>`;
+  }
+
+  // Approve Request & Generate Credentials
+  window.approveRequest = async (requestId) => {
+    const req = allRequests.find(r => r.id === requestId);
+    if (!req) return;
+
+    let employeeId = generateEmployeeId(req.name, req.whatsapp);
+    
+    // Check for duplicate ID and append random number if it exists
+    if (allEmployees.find(e => String(e.employeeId).toUpperCase() === employeeId)) {
+      employeeId = employeeId + Math.floor(Math.random() * 100);
+    }
+
+    const password = req.whatsapp + "@";
+    const email = employeeId.toLowerCase() + DOMAIN;
+
+    showLoader(true);
+    let creatorApp = null;
+    try {
+      creatorApp = initializeApp(firebaseConfig, "SHRAYNEX_CREATOR_" + Date.now());
+      const creatorAuth = getAuth(creatorApp);
+      
+      const empCred = await createUserWithEmailAndPassword(creatorAuth, email, password);
+
+      await setDoc(doc(db, "users", empCred.user.uid), {
+        name: req.name,
+        whatsapp: req.whatsapp,
+        employeeId: employeeId,
+        role: "employee",
+        status: "active",
+        mustChangePassword: true,
+        createdAt: serverTimestamp()
+      });
+
+      await updateDoc(doc(db, "employeeRequests", requestId), {
+        status: "approved",
+        approvedAt: serverTimestamp()
+      });
+
+      await signOut(creatorAuth);
+      await deleteApp(creatorApp);
+      creatorApp = null;
+
+      $("createdEmployeeName").textContent = req.name;
+      $("createdEmployeeId").textContent = employeeId;
+      $("createdEmployeePassword").textContent = password;
+      $("credentialModal").classList.add("show");
+
+      toast("Request Approved! Account Created.");
+      await loadAdminData();
+
+    } catch (err) {
+      toast(getFirebaseErrorMessage(err, "approve request"));
+      if (creatorApp) { try { await deleteApp(creatorApp); } catch {} }
+    } finally {
+      showLoader(false);
+    }
+  };
+
+  // Reject Request
+  window.rejectRequest = async (requestId) => {
+    if (!confirm("क्या आप वाकई इस रिक्वेस्ट को रिजेक्ट करना चाहते हैं?")) return;
+    showLoader(true);
+    try {
+      await updateDoc(doc(db, "employeeRequests", requestId), {
+        status: "rejected",
+        rejectedAt: serverTimestamp()
+      });
+      toast("Request Rejected.");
+      await loadAdminData();
+    } catch (err) {
+      toast(getFirebaseErrorMessage(err, "reject request"));
+    } finally {
+      showLoader(false);
+    }
+  };
 
   /* =========================================================
      TASK TYPE
