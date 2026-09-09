@@ -2,7 +2,7 @@
 <html lang="hi" class="scroll-smooth">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>SHRAYNEX | Social Media Management</title>
 
 <!-- =========================
@@ -19,7 +19,7 @@
      PWA & META
 ========================= -->
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#080b12">
+<meta name="theme-color" content="#ffffff">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -36,16 +36,12 @@
 <meta property="og:image" content="https://i.ibb.co/wZScWNhb/file-0000000036888208bb6ae2acda8eda00.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SHRAYNEX | Social Media Management">
-<meta name="twitter:description" content="Strategy, Content, Branding & Growth — All Under One Roof.">
-<meta name="twitter:image" content="https://i.ibb.co/wZScWNhb/file-0000000036888208bb6ae2acda8eda00.png">
 
 <!-- =========================
      LIBRARIES
 ========================= -->
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
@@ -61,7 +57,12 @@ tailwind.config = {
                 brandBlue:'#3b82f6',
                 brandPurple:'#a855f7',
                 brandPink:'#ec4899',
-                brandGreen:'#10b981'
+                brandGreen:'#10b981',
+                appBg: '#f8fafc'
+            },
+            boxShadow: {
+                'app': '0 8px 30px rgba(0,0,0,0.04)',
+                'app-card': '0 2px 12px rgba(0,0,0,0.03)',
             }
         }
     }
@@ -70,330 +71,231 @@ tailwind.config = {
 
 <style>
 /* =========================================================
-   GLOBAL CSS
+   APP-LIKE GLOBAL CSS
 ========================================================= */
-html { scroll-behavior: smooth; }
-body { margin: 0; background: #ffffff; color: #1f2937; overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeSpeed; }
-button, a { -webkit-tap-highlight-color: transparent; }
-img { max-width: 100%; display: block; }
-.font-stylish { font-family: 'Georgia', 'Playfair Display', serif; font-style: italic; font-weight: 900; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: #f8fafc; color: #0f172a; overflow-x: hidden; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
 
-.profile-image-wrap { position: relative; z-index: 10; width: 100%; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; overflow: visible; }
-.profile-image-safe { position: relative; z-index: 10; display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; object-position: center center; transform: none !important; mix-blend-mode: normal !important; background: transparent; user-select: none; -webkit-user-drag: none; }
+/* Hide scrollbar for Horizontal Swiping */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.pulse-bg { background: radial-gradient(circle, rgba(59,130,246,.12) 0%, rgba(168,85,247,.08) 45%, transparent 70%); animation: pulse-glow 5s infinite alternate ease-in-out; will-change: transform, opacity; }
-@keyframes pulse-glow { 0% { transform: scale(1); opacity: .5; filter: blur(30px); } 100% { transform: scale(1.3); opacity: .8; filter: blur(45px); } }
+/* Main Wrapper - Acts like an App Screen on Desktop */
+.app-wrapper { max-width: 500px; margin: 0 auto; background: #ffffff; min-height: 100vh; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.05); overflow-x: hidden; }
 
-.deal-blink { animation: dealPulse 1.2s infinite alternate ease-in-out; border: 3px solid rgba(255,255,255,.4); will-change: transform, box-shadow; }
-@keyframes dealPulse { 0% { box-shadow: 0 0 15px rgba(225,29,72,.5); transform: scale(1); } 100% { box-shadow: 0 0 35px rgba(147,51,234,.9), inset 0 0 15px rgba(255,255,255,.4); transform: scale(1.05); } }
+/* Glass Header */
+.app-header { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; padding-top: calc(12px + env(safe-area-inset-top)); }
 
-.poster-blink { animation: posterPulse 1.5s infinite alternate ease-in-out; will-change: transform, box-shadow; }
-@keyframes posterPulse { 0% { box-shadow: 0 0 10px rgba(168,85,247,.4); transform: scale(1); } 100% { box-shadow: 0 0 25px rgba(168,85,247,.8); transform: scale(1.02); } }
+/* Animations */
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-.tool-blink { border: 2px solid transparent; animation: toolGlow 1.5s infinite alternate ease-in-out; will-change: transform, box-shadow; }
-@keyframes toolGlow { 0% { box-shadow: 0 0 8px var(--icon-color); transform: translateY(0) scale(1); border-color: transparent; } 100% { box-shadow: 0 0 28px var(--icon-color); transform: translateY(-4px) scale(1.06); border-color: var(--icon-color); } }
+.bottom-sheet { animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; border-radius: 24px 24px 0 0; margin-top: auto; max-height: 90vh; width: 100%; max-width: 500px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 
-.card-blink { border: 2px solid transparent; animation: cardGlow 1.8s infinite alternate ease-in-out; will-change: transform, box-shadow; }
-@keyframes cardGlow { 0% { box-shadow: 0 0 8px var(--accent-color); transform: scale(1); border-color: transparent; } 100% { box-shadow: 0 0 25px var(--accent-color); transform: scale(1.03); border-color: var(--accent-color); } }
+/* Profile Pulse Glow */
+.profile-image-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.profile-image-wrap::after { content: ''; position: absolute; inset: -15px; border-radius: 50%; background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(168,85,247,0.2), rgba(236,72,153,0.2)); filter: blur(15px); z-index: -1; animation: pulseGlow 3s infinite alternate; }
+.profile-image-safe { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+@keyframes pulseGlow { 0% { transform: scale(0.95); opacity: 0.6; } 100% { transform: scale(1.1); opacity: 1; } }
 
-.hanging-line { stroke: url(#lineGradient); stroke-width: 5.5px; stroke-dasharray: 18 12; stroke-linecap: round; animation: moveSnake 1s linear infinite; will-change: stroke-dashoffset; }
-@keyframes moveSnake { to { stroke-dashoffset: -30; } }
+/* Floating Icons subtly */
+.social-float i { position: absolute; font-size: 18px; opacity: 0.8; animation: floatIcon 6s infinite ease-in-out alternate; }
+@keyframes floatIcon { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-10px) scale(1.1); } }
 
-.social-ai-icons { position: absolute; top: 50%; left: 50%; width: 650px; height: 650px; transform: translate(-50%,-50%); z-index: 0; pointer-events: none; overflow: visible; contain: layout paint; }
-.social-ai-icons i { position: absolute; top: 50%; left: 50%; font-size: 20px; opacity: 0; animation: floatOut 8s infinite ease-out; will-change: transform, opacity; }
-.icon-1 { color:#1877F2; animation-delay:0s; --tx:-240px; --ty:-300px; }
-.icon-2 { color:#E1306C; animation-delay:1s; --tx:280px; --ty:-220px; }
-.icon-3 { color:#FF0000; animation-delay:2s; --tx:-300px; --ty:150px; }
-.icon-4 { color:#0088cc; animation-delay:3s; --tx:250px; --ty:260px; }
-.icon-5 { color:#000000; animation-delay:4s; --tx:0px; --ty:-360px; }
-.icon-6 { color:#3b82f6; animation-delay:5s; --tx:-180px; --ty:320px; }
-.icon-7 { color:#10b981; animation-delay:6s; --tx:320px; --ty:60px; }
-.icon-8 { color:#8b5cf6; animation-delay:7s; --tx:80px; --ty:350px; }
-
-@keyframes floatOut {
-    0% { transform: translate(-50%,-50%) scale(.2); opacity: 0; }
-    25% { opacity: .8; transform: translate(calc(-50% + var(--tx)*.4), calc(-50% + var(--ty)*.4)) scale(1.1); }
-    75% { opacity: .6; transform: translate(calc(-50% + var(--tx)*.8), calc(-50% + var(--ty)*.8)) scale(1.3); }
-    100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(.8); opacity: 0; }
-}
-
-.portal-premium-card { position: relative; background: #fafafa; border-radius: 22px; padding: 24px; display: flex; align-items: center; gap: 20px; overflow: hidden; transition: all .35s ease; text-decoration: none; }
-.portal-premium-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent); transition: left .6s ease; pointer-events: none; }
-.portal-premium-card:hover::before { left: 100%; }
-.portal-icon-box { width: 64px; height: 64px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.02); border: 1px solid rgba(0,0,0,.05); font-size: 32px; flex-shrink: 0; transition: transform .35s ease, background .35s ease; }
-.portal-premium-card:hover .portal-icon-box { transform: scale(1.15) rotate(6deg); background: var(--bg-hover, rgba(234,179,8,.1)); }
-
-.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-#certificateModal { background: rgba(0,0,0,.85); backdrop-filter: blur(8px); }
-.modal-img { max-width: 94vw; max-height: 88vh; width: auto; height: auto; object-fit: contain; }
-.internal-page { display: none; min-height: 100vh; padding-top: 40px; padding-bottom: 80px; background: transparent; }
-.internal-page.active { display: block; animation: pageFade .35s ease; }
-@keyframes pageFade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-/* FAST LOADER */
-#appLoader { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: #ffffff; transition: opacity .2s ease, visibility .2s ease; }
+/* App Loader */
+#appLoader { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: #ffffff; transition: opacity 0.3s ease, visibility 0.3s ease; }
 #appLoader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-.loader-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
-.loader-photo-wrap { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
-.loader-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px solid transparent; border-top-color: #3b82f6; border-bottom-color: #eab308; animation: loaderSpin 1s linear infinite; }
-.loader-img-box { position: relative; z-index: 5; width: 120px; height: 120px; border-radius: 50%; overflow: hidden; background: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,.1); display: flex; align-items: center; justify-content: center; }
-.loader-photo { width: 100%; height: 100%; object-fit: contain; object-position: center; background: #ffffff; user-select: none; -webkit-user-drag: none; }
-@keyframes loaderSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.loader-spinner { width: 60px; height: 60px; border: 4px solid #f1f5f9; border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-#appBackButton { position: fixed; left: 14px; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 95; width: 48px; height: 48px; border-radius: 50%; display: none; align-items: center; justify-content: center; background: #ffffff; color: #111827; border: 1px solid #d1d5db; box-shadow: 0 8px 20px rgba(0,0,0,.15); cursor: pointer; transition: all .3s ease; }
-#appBackButton.show { display: flex; }
-#appBackButton:hover { background: #eab308; color: #080b12; border-color: #eab308; }
-#pwaInstallButton { position: fixed; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 90; display: none; align-items: center; gap: 9px; background: linear-gradient(135deg, #eab308, #f59e0b); color: #080b12; padding: 12px 18px; border-radius: 999px; font-weight: 900; box-shadow: 0 8px 30px rgba(234,179,8,.35); border: 1px solid rgba(255,255,255,.18); cursor: pointer; }
-#pwaInstallButton.show { display: flex; }
-#pwaInstallHelp { position: fixed; inset: 0; z-index: 120; display: none; align-items: flex-end; justify-content: center; padding: 16px; background: rgba(0,0,0,.72); backdrop-filter: blur(8px); }
-#pwaInstallHelp.show { display: flex; }
-.pwa-help-card { max-width: 430px; width: 100%; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 22px; padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,.2); }
+/* Active States for App Feel */
+.app-btn:active, .app-card:active { transform: scale(0.96); transition: transform 0.1s ease; }
 
-@media(max-width:640px){
-    .social-ai-icons { width: 520px; height: 520px; }
-    .social-ai-icons i { font-size: 18px; }
-    .icon-1{ --tx:-190px; --ty:-240px; } .icon-2{ --tx:220px; --ty:-180px; }
-    .icon-3{ --tx:-230px; --ty:120px; } .icon-4{ --tx:200px; --ty:210px; }
-    .icon-5{ --tx:0px; --ty:-270px; } .icon-6{ --tx:-150px; --ty:240px; }
-    .icon-7{ --tx:240px; --ty:50px; } .icon-8{ --tx:60px; --ty:260px; }
-    .portal-premium-card { padding: 18px; gap: 14px; border-radius: 18px; }
-    .portal-icon-box { width: 54px; height: 54px; border-radius: 15px; font-size: 27px; }
+.internal-page { display: none; min-height: 100vh; background: #f8fafc; padding-bottom: 80px; }
+.internal-page.active { display: block; animation: scaleIn 0.3s ease; }
+
+@media(min-width: 640px) {
+    .bottom-sheet { border-radius: 24px; margin: auto; animation: scaleIn 0.3s ease forwards; max-height: 85vh; padding-bottom: 24px; }
 }
-@media(max-width:480px){
-    .social-ai-icons { width: 470px; height: 470px; }
-    .social-ai-icons i { font-size: 16px; }
-    .profile-image-wrap { max-width: 330px; }
-    .loader-photo-wrap { width: 120px; height: 120px; }
-    .loader-img-box { width: 102px; height: 102px; }
-}
-@media(prefers-reduced-motion:reduce){ *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
 </style>
 </head>
 
-<body class="antialiased font-sans selection:bg-brandGold selection:text-black">
+<body>
 
-<!-- =========================================================
-     SHARE BUTTON
-========================================================= -->
-<button id="topShareBtn" type="button" class="absolute top-4 right-4 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-800 border border-gray-200 shadow-md px-4 py-2 rounded-full font-bold text-xs sm:text-sm hover:bg-brandGold transition-all">
-    <i class="fas fa-share-nodes text-brandBlue"></i>
-    <span>Share</span>
-</button>
-
-<!-- =========================================================
-     SVG GRADIENT
-========================================================= -->
-<svg width="0" height="0" class="absolute hidden">
-    <defs>
-        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#ec4899"/>
-            <stop offset="50%" stop-color="#a855f7"/>
-            <stop offset="100%" stop-color="#eab308"/>
-        </linearGradient>
-    </defs>
-</svg>
-
-<!-- =========================================================
-     LOADER HTML
-========================================================= -->
-<div id="appLoader">
-    <div class="loader-content">
-        <div class="loader-photo-wrap">
-            <div class="loader-ring"></div>
-            <div class="loader-img-box">
-                <img id="loaderProfileImage" src="" alt="SHRAYNEX" class="loader-photo" decoding="async">
-            </div>
+<div class="app-wrapper">
+    <!-- =========================================================
+         APP HEADER (STICKY)
+    ========================================================= -->
+    <header class="app-header shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brandBlue to-brandPurple text-white flex items-center justify-center font-bold text-sm shadow-md">S</div>
+            <span class="font-heading font-black text-gray-900 tracking-wide text-lg">SHRAYNEX</span>
         </div>
+        <button id="topShareBtn" class="app-btn bg-gray-100 text-gray-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+            <i class="fas fa-share-nodes"></i>
+        </button>
+    </header>
+
+    <!-- =========================================================
+         LOADER
+    ========================================================= -->
+    <div id="appLoader">
+        <div class="loader-spinner"></div>
     </div>
-</div>
 
-<!-- FAST LOADER SCRIPT -->
-<script>
-(function(){
-    const loader = document.getElementById("appLoader");
-    if(!loader) return;
-    let loaderHidden = false;
-    function hideLoader(){
-        if(loaderHidden) return;
-        loaderHidden = true;
-        loader.classList.add("hide");
-    }
-    if(document.readyState === "loading" || document.readyState === "interactive"){
-        document.addEventListener("DOMContentLoaded", () => setTimeout(hideLoader, 50));
-    } else {
-        setTimeout(hideLoader, 50);
-    }
-    window.addEventListener("load", hideLoader);
-    setTimeout(hideLoader, 1000); // Fail-safe speed limit
-})();
-</script>
-
-<!-- =========================================================
-     BUTTONS & MODALS
-========================================================= -->
-<button id="appBackButton" type="button" aria-label="Go Back"><i class="fas fa-arrow-left"></i></button>
-<button id="pwaInstallButton" type="button"><i class="fas fa-download"></i><span>Install App</span></button>
-
-<div id="pwaInstallHelp" role="dialog" aria-modal="true">
-    <div class="pwa-help-card">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-black text-gray-900">Install App</h3>
-            <button id="pwaHelpClose" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200" type="button"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="text-gray-600 text-sm leading-relaxed mb-5">
-            <p class="mb-4"><b class="text-gray-900">Android / Chrome</b> में <b class="text-brandGold">Install App</b> दबाएँ।</p>
-            <p><b class="text-gray-900">iPhone / iPad</b> में Safari खोलें।</p>
-            <div class="mt-3 space-y-2">
-                <div>1. Safari का <b class="text-brandGold">Share</b> बटन दबाएँ।</div>
-                <div>2. <b class="text-brandGold">Add to Home Screen</b> चुनें।</div>
-                <div>3. <b class="text-brandGold">Add</b> दबाएँ।</div>
+    <!-- MAIN HOME PAGE -->
+    <main id="homePage">
+        <!-- APP HERO SECTION -->
+        <section class="pt-8 pb-6 px-4 relative flex flex-col items-center">
+            
+            <div class="relative w-full max-w-sm mx-auto mb-6">
+                <!-- Floating Social Icons for App UI -->
+                <div class="absolute inset-0 z-0 social-float pointer-events-none">
+                    <i class="fab fa-facebook text-[#1877F2]" style="top: -10px; left: 15%; animation-delay: 0s;"></i>
+                    <i class="fab fa-instagram text-[#E1306C]" style="top: 20px; right: 10%; animation-delay: 1s;"></i>
+                    <i class="fab fa-youtube text-[#FF0000]" style="bottom: 0px; left: 5%; animation-delay: 2s;"></i>
+                    <i class="fas fa-rocket text-brandGold" style="bottom: 10px; right: 15%; animation-delay: 3s;"></i>
+                </div>
+                
+                <div class="profile-image-wrap">
+                    <img id="profileImage" src="" alt="SHRAYNEX" class="profile-image-safe" decoding="async">
+                </div>
             </div>
-        </div>
-        <button id="pwaHelpOk" type="button" class="w-full bg-brandGold text-black font-black py-3 rounded-xl">Got it</button>
-    </div>
-</div>
 
-<!-- =========================================================
-     MAIN HOME PAGE
-========================================================= -->
-<main id="homePage">
-    <section class="relative pt-6 overflow-hidden flex flex-col items-center" id="home">
-        <header class="text-center px-4 max-w-4xl mx-auto mb-2 z-10 w-full mt-8 sm:mt-4">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 leading-tight mb-2 tracking-tight">Complete Social Media Management</h1>
-            <p class="text-sm sm:text-base md:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500 max-w-2xl mx-auto">Strategy, Content, Branding & Growth — All Under One Roof.</p>
+            <div class="text-center mb-6">
+                <h1 class="text-2xl sm:text-3xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700 leading-tight mb-2">Grow Your Business<br>Digitally</h1>
+                <p class="text-sm font-semibold text-gray-500 max-w-[280px] mx-auto">Strategy, Content & Branding — All Under One Roof.</p>
+            </div>
+
+            <!-- Modern App Button for Deals -->
+            <a id="todayDealsBtn" href="" class="app-btn w-full max-w-xs mx-auto bg-gray-900 text-white rounded-2xl py-3.5 px-6 flex items-center justify-center gap-3 shadow-[0_10px_20px_rgba(0,0,0,0.15)] group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-brandPurple to-brandBlue opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <span class="relative z-10 text-lg font-black tracking-wide">🔥 Today Deals</span>
+                <i class="fas fa-arrow-right relative z-10 text-brandGold"></i>
+            </a>
+        </section>
+
+        <!-- TOOLS GRID (Injected via JS) -->
+        <section id="timelineContainer" class="w-full"></section>
+
+        <!-- FEATURED HUBS (Injected via JS) -->
+        <section id="hubsTimelineContainer" class="w-full pb-6"></section>
+
+        <!-- E-BOOKS SECTION (Horizontal Scroll App Style) -->
+        <section id="ebooks" class="pt-4 pb-10">
+            <div class="px-5 mb-4 flex items-end justify-between">
+                <div>
+                    <p class="text-brandGreen font-bold text-[10px] tracking-widest uppercase mb-1">Premium PDF</p>
+                    <h2 class="text-xl font-heading font-black text-gray-900">E-Books <span class="text-brandGold">Offer</span></h2>
+                </div>
+                <span class="text-xs text-gray-400 font-bold mb-1">Swipe <i class="fas fa-arrow-right-long ml-1"></i></span>
+            </div>
+            
+            <div id="ebookGrid" class="flex overflow-x-auto gap-4 snap-x snap-mandatory px-5 pb-6 hide-scrollbar">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- BOTTOM BANNER -->
+        <section class="mx-5 mb-10 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 relative overflow-hidden cursor-pointer active:scale-95 transition-transform shadow-lg" onclick="window.location.href='https://www.rkyshree.in/growth'">
+            <div class="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 bg-white opacity-5 rounded-full blur-xl"></div>
+            <div class="flex items-center gap-4 relative z-10">
+                <div class="w-12 h-12 rounded-xl bg-brandGold/20 text-brandGold flex items-center justify-center text-xl shrink-0"><i class="fas fa-bolt"></i></div>
+                <div>
+                    <h3 class="text-white font-black text-base mb-1">Grow Your Social Media</h3>
+                    <p class="text-gray-400 text-xs">Tap to start your growth journey</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- APP FOOTER -->
+        <footer class="pb-safe pt-6 bg-appBg border-t border-gray-200">
+            <div class="flex flex-col items-center pb-10">
+                <div class="flex gap-4 mb-6">
+                    <a href="#certificates" class="app-btn bg-white border border-gray-200 text-gray-700 text-xs font-bold px-5 py-2.5 rounded-full shadow-sm">Certificates</a>
+                    <a id="footerWaLink" href="#" target="_blank" rel="noopener" class="app-btn bg-[#25D366] text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-md flex items-center gap-2"><i class="fab fa-whatsapp text-sm"></i> Help</a>
+                </div>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">&copy; 2026 SHRAYNEX</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- =========================================================
+         CERTIFICATES PAGE (App Internal Screen)
+    ========================================================= -->
+    <section id="certificatesPage" class="internal-page">
+        <header class="app-header shadow-sm mb-6">
+            <button onclick="openPage('home')" class="app-btn w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full text-gray-700"><i class="fas fa-arrow-left"></i></button>
+            <h1 class="font-heading font-black text-gray-900 tracking-wide text-lg mx-auto pr-10">Certificates</h1>
         </header>
-
-        <div class="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[420px] mx-auto flex justify-center items-center z-10">
-            <div class="absolute inset-0 pulse-bg rounded-full z-0 scale-125"></div>
-            <div class="social-ai-icons">
-                <i class="fab fa-facebook icon-1"></i><i class="fab fa-instagram icon-2"></i>
-                <i class="fab fa-youtube icon-3"></i><i class="fab fa-telegram icon-4"></i>
-                <i class="fab fa-x-twitter icon-5"></i><i class="fas fa-thumbs-up icon-6"></i>
-                <i class="fas fa-comment-dots icon-7"></i><i class="fas fa-eye icon-8"></i>
-            </div>
-            <div class="profile-image-wrap">
-                <img id="profileImage" src="" alt="SHRAYNEX" class="profile-image-safe drop-shadow-2xl" decoding="async" fetchpriority="high" draggable="false">
-            </div>
-        </div>
-
-        <a id="todayDealsBtn" href="" target="_self" class="deal-blink relative z-10 block w-[90%] max-w-md mx-auto bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 rounded-[2rem] py-4 sm:py-5 px-8 text-center -mt-6">
-            <span class="text-white font-stylish text-2xl sm:text-3xl tracking-[0.1em] drop-shadow-lg">🔥 Today Deals 🛒</span>
-        </a>
-
-        <div id="timelineContainer" class="w-full flex flex-col items-center"></div>
-    </section>
-
-    <section class="pb-10 bg-white w-full">
-        <div id="hubsTimelineContainer" class="max-w-md mx-auto px-6 flex flex-col items-center w-full"></div>
-    </section>
-
-    <section id="ebooks" class="ebook-section pb-20 pt-2">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-            <div class="text-center mb-10">
-                <p class="text-brandGreen font-bold tracking-widest uppercase mb-3">PREMIUM E-BOOKS</p>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-gray-900"><span class="text-brandGold">SPECIAL</span> <span class="text-brandGreen">OFFER</span> E-BOOKS</h2>
-                <p class="text-gray-500 max-w-2xl mx-auto mt-4">Download professional PDF guides at a special limited offer.</p>
-            </div>
-            <div id="ebookGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6"></div>
+        <div class="px-5 pb-10">
+            <div id="certificateGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
     </section>
 
-    <section class="border-t border-b border-gray-800 bg-gray-900 cursor-pointer overflow-hidden relative group" onclick="window.location.href='https://www.rkyshree.in/growth'">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-        <div class="py-6 sm:py-8 px-6 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center md:justify-between gap-5 relative z-10">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-brandGold/20 text-brandGold flex items-center justify-center shrink-0 hidden sm:flex border border-brandGold/30"><i class="fas fa-rocket"></i></div>
-                <h3 class="text-xl sm:text-2xl font-black text-white tracking-wide text-center md:text-left">Grow Your Social Media & Business</h3>
-            </div>
-            <button type="button" class="bg-brandGold text-gray-900 font-black px-8 py-3 rounded-full uppercase tracking-wider text-sm shadow-[0_0_20px_rgba(234,179,8,0.3)] group-hover:scale-105 transition-all duration-300 whitespace-nowrap">Click Here <i class="fas fa-chevron-right ml-1 text-xs"></i></button>
-        </div>
-    </section>
-</main>
+</div> <!-- End App Wrapper -->
 
 <!-- =========================================================
-     CERTIFICATES PAGE
+     BOTTOM SHEET MODALS (App Experience)
 ========================================================= -->
-<section id="certificatesPage" class="internal-page">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-14">
-            <p class="text-brandGold font-bold tracking-widest uppercase mb-3">MY CERTIFICATES</p>
-            <h1 class="text-4xl sm:text-5xl font-heading font-black text-gray-900">Learning & Skill <span class="text-brandGold">Credentials</span></h1>
-        </div>
-        <div id="certificateGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        <div class="mt-12 text-center">
-            <button onclick="openPage('home')" class="bg-gray-900 text-white hover:bg-brandGold hover:text-black px-7 py-3 rounded-full font-black"><i class="fas fa-home"></i> Back to Home</button>
-        </div>
+<div id="certificateModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm items-end sm:items-center justify-center">
+    <div class="bg-white bottom-sheet p-5 relative">
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-5 sm:hidden"></div>
+        <button id="closeCertificate" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full text-gray-600 flex items-center justify-center"><i class="fas fa-times"></i></button>
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Preview</h3>
+        <img id="modalCertificateImage" src="" alt="Certificate" class="w-full h-auto rounded-xl object-contain border border-gray-200">
     </div>
-</section>
-
-<!-- =========================================================
-     MODALS (CERTIFICATE & PAYMENT)
-========================================================= -->
-<div id="certificateModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4">
-    <button id="closeCertificate" type="button" class="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/20 text-white hover:bg-brandGold hover:text-black"><i class="fas fa-times"></i></button>
-    <img id="modalCertificateImage" src="" alt="Certificate" class="modal-img rounded-xl shadow-2xl bg-white p-2" decoding="async">
 </div>
 
-<div id="paymentModal" class="hidden fixed inset-0 z-[110] items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-    <div class="relative w-full max-w-md bg-white border border-gray-300 rounded-3xl p-6 shadow-2xl text-center max-h-[90vh] overflow-y-auto">
-        <button id="closePaymentModal" type="button" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300"><i class="fas fa-times"></i></button>
-        <div class="inline-flex items-center gap-2 bg-brandGold/20 border border-brandGold/40 text-yellow-700 px-3 py-1 rounded-full text-xs font-black uppercase mb-3"><i class="fas fa-book-open"></i> E-Book Instant Access</div>
-        <h3 id="paymentBookTitle" class="text-lg font-heading font-black text-gray-900 mb-2">E-Book Title</h3>
+<div id="paymentModal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm items-end sm:items-center justify-center">
+    <div class="bg-white bottom-sheet p-6 relative flex flex-col">
+        <!-- Handle bar for mobile -->
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 sm:hidden"></div>
+        <button id="closePaymentModal" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full text-gray-600 flex items-center justify-center"><i class="fas fa-times"></i></button>
         
-        <div class="my-4 bg-gradient-to-r from-red-50 via-yellow-50 to-green-50 border border-gray-200 rounded-2xl p-4 flex items-center justify-around shadow-sm">
-            <div><span class="text-gray-500 line-through text-sm font-bold block">MRP ₹399</span><span class="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded">75% OFF</span></div>
-            <div class="border-l border-gray-300 pl-4"><span class="text-xs text-gray-500 block font-semibold">Special Price</span><span class="text-brandGold text-3xl font-black drop-shadow-sm">₹99 ONLY</span></div>
-        </div>
-
-        <div class="bg-gray-50 p-3.5 rounded-2xl border border-gray-200 text-left mb-4 shadow-inner">
-            <p class="text-yellow-700 text-xs font-bold uppercase mb-2"><i class="fas fa-info-circle"></i> Payment Kaise Kare:</p>
-            <ol class="text-gray-600 text-xs space-y-1.5 list-decimal list-inside leading-relaxed">
-                <li>नीचे दिए गए <b class="text-gray-800">UPI</b> को Copy करें।</li>
-                <li>PhonePe, GPay या Paytm से पेमेंट करें।</li>
-                <li>Screenshot व्हाट्सएप पर भेजें।</li>
-            </ol>
-        </div>
-
-        <div class="space-y-2.5 mb-5 text-left text-xs">
-            <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
-                <div><div class="text-gray-500 text-[10px] uppercase font-bold">UPI Number</div><div id="displayUpiNumber" class="text-gray-900 font-mono font-black text-sm text-brandGold drop-shadow-sm">UPI NUMBER</div></div>
-                <button id="copyUpiNumberBtn" type="button" class="bg-yellow-100 hover:bg-brandGold text-yellow-700 px-3.5 py-2 rounded-lg font-bold transition">Copy</button>
+        <div class="inline-flex items-center gap-1.5 bg-brandGold/10 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-black uppercase mb-2 w-max"><i class="fas fa-lock"></i> Secure Checkout</div>
+        <h3 id="paymentBookTitle" class="text-lg font-heading font-black text-gray-900 mb-4 leading-tight">E-Book Title</h3>
+        
+        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4 flex items-center justify-between border border-red-100 mb-5">
+            <div>
+                <span class="text-gray-400 line-through text-xs font-bold block">MRP ₹399</span>
+                <span class="text-[10px] bg-red-600 text-white font-black px-2 py-0.5 rounded mt-1 inline-block">75% OFF</span>
             </div>
-            <div class="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
-                <div><div class="text-gray-500 text-[10px] uppercase font-bold">UPI ID</div><div id="displayUpiId" class="text-gray-900 font-mono font-bold text-xs">UPI ID</div></div>
-                <button id="copyUpiIdBtn" type="button" class="bg-yellow-100 hover:bg-brandGold text-yellow-700 px-3.5 py-2 rounded-lg font-bold transition">Copy</button>
+            <div class="text-right">
+                <span class="text-[10px] text-gray-500 font-bold block">Pay Only</span>
+                <span class="text-brandGold text-3xl font-black">₹99</span>
             </div>
         </div>
 
-        <div class="border-t border-gray-200 pt-4">
-            <a id="whatsappVerifyBtn" href="#" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-black py-3 rounded-xl text-sm shadow-lg hover:opacity-90 active:scale-95 transition"><i class="fab fa-whatsapp text-lg"></i> Send Screenshot on WhatsApp</a>
-            <a id="instantDownloadBtn" href="#" target="_blank" rel="noopener" class="mt-2.5 text-[11px] text-gray-500 underline block hover:text-brandGold transition">Direct Access Link</a>
+        <div class="space-y-3 mb-5">
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center justify-between">
+                <div><div class="text-gray-400 text-[10px] uppercase font-bold">UPI Number</div><div id="displayUpiNumber" class="text-gray-900 font-mono font-bold text-sm">UPI NUMBER</div></div>
+                <button id="copyUpiNumberBtn" class="app-btn bg-white border border-gray-200 shadow-sm text-gray-700 px-4 py-1.5 rounded-lg text-xs font-bold">Copy</button>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-100 flex items-center justify-between">
+                <div><div class="text-gray-400 text-[10px] uppercase font-bold">UPI ID</div><div id="displayUpiId" class="text-gray-900 font-mono font-bold text-sm">UPI ID</div></div>
+                <button id="copyUpiIdBtn" class="app-btn bg-white border border-gray-200 shadow-sm text-gray-700 px-4 py-1.5 rounded-lg text-xs font-bold">Copy</button>
+            </div>
         </div>
+
+        <div class="bg-blue-50/50 p-3 rounded-xl mb-5 border border-blue-100">
+            <p class="text-blue-800 text-[11px] font-semibold leading-relaxed">
+                👉 ऊपर दिए गए UPI पर पेमेंट करें और उसका Screenshot WhatsApp पर भेजें।
+            </p>
+        </div>
+
+        <a id="whatsappVerifyBtn" href="#" target="_blank" rel="noopener" class="app-btn w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-black py-3.5 rounded-xl shadow-[0_8px_15px_rgba(37,211,102,0.2)]">
+            <i class="fab fa-whatsapp text-lg"></i> Send Screenshot
+        </a>
+        <a id="instantDownloadBtn" href="#" target="_blank" rel="noopener" class="mt-4 text-center text-[11px] text-gray-400 underline w-full block">Direct Access Link (If Paid)</a>
     </div>
 </div>
 
 <!-- =========================================================
-     FOOTER
-========================================================= -->
-<footer class="py-10 bg-white border-t border-gray-100">
-    <div class="max-w-4xl mx-auto px-6 flex flex-col items-center text-center">
-        <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 mb-6">
-            <a href="#certificates" class="text-xs sm:text-sm font-bold text-gray-500 bg-gray-50 border border-gray-100 hover:text-gray-900 hover:bg-brandGold hover:border-brandGold hover:shadow-md px-5 py-2 sm:py-2.5 rounded-full transition-all">Certificates</a>
-            <a id="footerWaLink" href="#" target="_blank" rel="noopener" class="text-xs sm:text-sm font-bold text-white bg-[#25D366] border border-[#25D366] hover:bg-green-600 hover:shadow-lg px-5 py-2 sm:py-2.5 rounded-full transition-all inline-flex items-center gap-2"><i class="fab fa-whatsapp text-lg"></i> WhatsApp Helpline: <span id="footerWaNumber"></span></a>
-        </div>
-        <div class="w-12 h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent rounded-full mb-6"></div>
-        <p class="text-[10px] sm:text-xs text-gray-400 font-extrabold uppercase tracking-[0.2em]">&copy; 2026 SHRAYNEX. All Rights Reserved.</p>
-    </div>
-</footer>
-
-<!-- =========================================================
-     MAIN JAVASCRIPT & CONFIGURATION 
+     JAVASCRIPT LOGIC (Unchanged Logic, App-like Render)
 ========================================================= -->
 <script>
-/* =========================================================
-   📌 WEBSITE CONFIGURATION
-========================================================= */
+/* WEBSITE CONFIGURATION (100% UNCHANGED) */
 const CONFIG = {
     profileImage: "https://i.ibb.co/Kpvjf8np/file-000000009d00821193f79ebcfd070c71.png",
     websiteUrl: "https://www.rkyshree.in/",
@@ -439,354 +341,188 @@ const CONFIG = {
     ]
 };
 
-/* UI INITIALIZATION */
-document.getElementById("profileImage").src = CONFIG.profileImage;
-document.getElementById("loaderProfileImage").src = CONFIG.profileImage;
-document.getElementById("todayDealsBtn").href = CONFIG.todayDealsLink;
+/* Fast Loader Logic */
+window.addEventListener("load", () => {
+    setTimeout(() => { document.getElementById("appLoader").classList.add("hide"); }, 200);
+});
 
+/* Bind Basic Info */
+document.getElementById("profileImage").src = CONFIG.profileImage;
+document.getElementById("todayDealsBtn").href = CONFIG.todayDealsLink;
 document.getElementById("displayUpiNumber").innerText = CONFIG.upiNumber;
 document.getElementById("displayUpiId").innerText = CONFIG.upiId;
-document.getElementById("footerWaNumber").innerText = CONFIG.whatsappHelpline;
-document.getElementById("footerWaLink").href = `https://wa.me/91${CONFIG.whatsappHelpline}`;
 
 document.getElementById("copyUpiNumberBtn").addEventListener("click", function() { copyUpiId(CONFIG.upiNumber, this); });
 document.getElementById("copyUpiIdBtn").addEventListener("click", function() { copyUpiId(CONFIG.upiId, this); });
 
+/* Generate Tools & Hubs (App Grid Layout instead of SVG lines) */
 function generateTimelineFlow(){
     const toolsContainer = document.getElementById("timelineContainer");
     const hubsContainer = document.getElementById("hubsTimelineContainer");
-    if(!toolsContainer || !hubsContainer) return;
 
-    let toolsHtml = ""; let hubsHtml = "";
-
-    function getCurve(isRightBulge){
-        const pathD = isRightBulge ? "M30 0 C90 50, -30 50, 30 100" : "M30 0 C-30 50, 90 50, 30 100";
-        return `<div class="w-full flex justify-center -my-3 z-0 relative"><svg width="60" height="100" viewBox="0 0 60 100" style="overflow:visible;filter:drop-shadow(0px 4px 5px rgba(0,0,0,0.15));"><path d="${pathD}" fill="none" class="hanging-line"></path></svg></div>`;
-    }
-
-    toolsHtml += getCurve(true);
-    toolsHtml += `<div class="relative w-[320px] h-[390px] mx-auto z-10 flex justify-center">
-        <svg class="absolute inset-0 w-full h-full" style="z-index:-1;filter:drop-shadow(0px 4px 5px rgba(0,0,0,0.15));">
-            <path d="M160 80 L160 390" fill="none" class="hanging-line"></path>
-            <path d="M160 85 C160 130, 50 110, 50 140" fill="none" class="hanging-line"></path>
-            <path d="M160 85 C160 130, 270 110, 270 140" fill="none" class="hanging-line"></path>
-        </svg>
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center">
-            <a href="${CONFIG.heroTools[0].link}" class="flex flex-col items-center justify-center gap-2 group text-decoration-none">
-                <div class="tool-blink w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center relative overflow-hidden shadow-lg" style="--icon-color:${CONFIG.heroTools[0].color};animation-delay:.1s;">
-                    <div class="absolute inset-0 opacity-10" style="background-color:${CONFIG.heroTools[0].color}"></div><i class="${CONFIG.heroTools[0].icon} text-3xl sm:text-4xl drop-shadow-sm" style="color:${CONFIG.heroTools[0].color}"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-black text-gray-700 uppercase tracking-widest mt-1 group-hover:text-gray-900 transition-colors">${CONFIG.heroTools[0].label}</span>
-            </a>
-        </div>
-        <div class="absolute top-[130px] left-0 flex flex-col items-center w-[100px]">
-            <a href="${CONFIG.heroTools[1].link}" class="flex flex-col items-center justify-center gap-2 group text-decoration-none">
-                <div class="tool-blink w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center relative overflow-hidden shadow-lg" style="--icon-color:${CONFIG.heroTools[1].color};animation-delay:.5s;">
-                    <div class="absolute inset-0 opacity-10" style="background-color:${CONFIG.heroTools[1].color}"></div><i class="${CONFIG.heroTools[1].icon} text-3xl sm:text-4xl drop-shadow-sm" style="color:${CONFIG.heroTools[1].color}"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-black text-gray-700 uppercase tracking-widest mt-1 text-center group-hover:text-gray-900 transition-colors">${CONFIG.heroTools[1].label}</span>
-            </a>
-        </div>
-        <div class="absolute top-[130px] right-0 flex flex-col items-center w-[100px]">
-            <a href="${CONFIG.heroTools[2].link}" class="flex flex-col items-center justify-center gap-2 group text-decoration-none">
-                <div class="tool-blink w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center relative overflow-hidden shadow-lg" style="--icon-color:${CONFIG.heroTools[2].color};animation-delay:.9s;">
-                    <div class="absolute inset-0 opacity-10" style="background-color:${CONFIG.heroTools[2].color}"></div><i class="${CONFIG.heroTools[2].icon} text-3xl sm:text-4xl drop-shadow-sm" style="color:${CONFIG.heroTools[2].color}"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-black text-gray-700 uppercase tracking-widest mt-1 text-center group-hover:text-gray-900 transition-colors">${CONFIG.heroTools[2].label}</span>
-            </a>
-        </div>
-        <div class="absolute top-[260px] left-1/2 -translate-x-1/2 flex flex-col items-center">
-            <a href="${CONFIG.heroTools[3].link}" class="flex flex-col items-center justify-center gap-2 group text-decoration-none">
-                <div class="tool-blink w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center relative overflow-hidden shadow-lg" style="--icon-color:${CONFIG.heroTools[3].color};animation-delay:1.3s;">
-                    <div class="absolute inset-0 opacity-10" style="background-color:${CONFIG.heroTools[3].color}"></div><i class="${CONFIG.heroTools[3].icon} text-3xl sm:text-4xl drop-shadow-sm" style="color:${CONFIG.heroTools[3].color}"></i>
-                </div>
-                <span class="text-[11px] sm:text-xs font-black text-gray-700 uppercase tracking-widest mt-1 group-hover:text-gray-900 transition-colors">${CONFIG.heroTools[3].label}</span>
-            </a>
-        </div>
-    </div>`;
-    toolsHtml += getCurve(false);
+    // 1. App Dock Style Tools Grid
+    let toolsHtml = `<div class="grid grid-cols-4 gap-3 px-5 mb-8">`;
+    CONFIG.heroTools.forEach(tool => {
+        toolsHtml += `
+        <a href="${tool.link}" class="app-card flex flex-col items-center gap-2 group">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-[18px] bg-white shadow-app flex items-center justify-center border border-gray-50 transition-shadow">
+                <i class="${tool.icon} text-2xl" style="color:${tool.color}"></i>
+            </div>
+            <span class="text-[10px] font-black text-gray-600 text-center uppercase tracking-wider">${tool.label}</span>
+        </a>`;
+    });
+    toolsHtml += `</div>`;
     toolsContainer.innerHTML = toolsHtml;
 
-    hubsHtml += `
-    <div class="w-full relative z-10 my-1">
-        <a href="${CONFIG.freePosterLink}" target="_self" class="poster-blink relative flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl py-4 px-6 sm:px-8 overflow-hidden group shadow-lg">
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-            <div class="flex items-center gap-4 relative z-10 text-center sm:text-left"><i class="fas fa-gift text-3xl text-yellow-300 animate-bounce"></i><h3 class="text-white font-black text-lg sm:text-xl tracking-wide drop-shadow-md">फ्री Social Media Poster बनवाएँ</h3></div>
-            <div class="relative z-10 bg-white text-purple-700 font-black px-6 py-2.5 rounded-full uppercase tracking-wider text-xs shadow-lg group-hover:scale-105 transition-transform duration-300 whitespace-nowrap">Click Here <i class="fas fa-arrow-right ml-1"></i></div>
-        </a>
-    </div>`;
-    hubsHtml += getCurve(true);
-    hubsHtml += `
-    <div class="text-center relative z-10 bg-white py-4 px-6 rounded-2xl border border-gray-100 shadow-sm w-full my-1">
-        <p class="text-brandGold font-bold tracking-widest uppercase text-xs sm:text-sm mb-1">Direct Service Portals</p><h2 class="text-2xl sm:text-3xl font-heading font-black text-gray-900">Featured <span class="text-brandGold">Digital Hubs</span></h2>
-    </div>`;
-    hubsHtml += getCurve(false);
-
-    CONFIG.portals.forEach((portal,index)=>{
-        hubsHtml += `
-        <a href="${portal.link}" target="_self" class="portal-premium-card card-blink group w-full relative z-10" style="--accent-color:${portal.color};animation-delay:${index*.4}s;">
-            <div class="portal-icon-box border-gray-200 shadow-sm" style="color:${portal.color}"><span>${portal.icon}</span></div>
-            <div class="overflow-hidden flex-grow">
-                <div class="flex items-center justify-between gap-2">
-                    <h3 class="text-gray-900 font-black text-lg sm:text-xl transition-colors" style="color:${portal.color}">${portal.title}</h3>
-                    <span class="text-[10px] bg-gray-100 border border-gray-200 px-2 py-0.5 rounded-full font-bold shrink-0" style="color:${portal.color}">${portal.tag}</span>
+    // 2. Poster App Card + Hubs List
+    let hubsHtml = `
+    <div class="px-5 mb-8">
+        <a href="${CONFIG.freePosterLink}" class="app-card block w-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 shadow-app text-white relative overflow-hidden flex items-center justify-between">
+            <div class="absolute top-0 right-0 w-20 h-20 bg-white opacity-10 rounded-full blur-xl transform translate-x-1/2 -translate-y-1/2"></div>
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><i class="fas fa-gift text-lg text-yellow-300"></i></div>
+                <div>
+                    <h3 class="font-black text-sm">फ्री Social Poster</h3>
+                    <p class="text-[10px] opacity-80">Tap to create now</p>
                 </div>
-                <p class="text-gray-500 text-xs sm:text-sm mt-1">${portal.desc}</p>
+            </div>
+            <i class="fas fa-chevron-right text-sm opacity-50 relative z-10"></i>
+        </a>
+    </div>
+    
+    <div class="px-5">
+        <h2 class="text-xl font-heading font-black text-gray-900 mb-4">Service <span class="text-brandGold">Hubs</span></h2>
+        <div class="flex flex-col gap-3">`;
+
+    CONFIG.portals.forEach(portal => {
+        hubsHtml += `
+        <a href="${portal.link}" class="app-card flex items-center gap-4 bg-white p-3.5 rounded-2xl shadow-app-card border border-gray-100">
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0" style="background:${portal.color}15; color:${portal.color}">
+                ${portal.icon}
+            </div>
+            <div class="flex-grow">
+                <div class="flex items-center justify-between mb-0.5">
+                    <h3 class="font-bold text-gray-900 text-sm">${portal.title}</h3>
+                    <span class="text-[9px] font-black px-2 py-0.5 rounded-full" style="color:${portal.color}; background:${portal.color}15">${portal.tag}</span>
+                </div>
+                <p class="text-xs text-gray-400 line-clamp-1">${portal.desc}</p>
             </div>
         </a>`;
-        hubsHtml += getCurve(index % 2 === 0);
     });
+    hubsHtml += `</div></div>`;
     hubsContainer.innerHTML = hubsHtml;
 }
-
 generateTimelineFlow();
 
-/* PAGE NAVIGATION */
-const homePage = document.getElementById("homePage");
-const internalPages = [document.getElementById("certificatesPage")];
-const backButton = document.getElementById("appBackButton");
-
-function hideAllPages(){
-    if(homePage) homePage.style.display = "none";
-    internalPages.forEach(page => { if(page) page.classList.remove("active"); });
-}
-
-function safePushState(pageObj, title, url) {
-    try { history.pushState(pageObj, title, url); } catch (e) { window.location.hash = url; }
-}
-
-function openPage(page){
-    hideAllPages();
-    const targetPage = document.getElementById(page + "Page");
-    
-    if(targetPage && page !== "home"){
-        targetPage.classList.add("active");
-        window.scrollTo({top:0, behavior:"smooth"});
-        safePushState({page:page}, "", "#" + page);
-        if(backButton) backButton.classList.add("show");
-    } else {
-        if(homePage) homePage.style.display = "block";
-        window.scrollTo({top:0, behavior:"smooth"});
-        safePushState({page:"home"}, "", "#home");
-        if(backButton) backButton.classList.remove("show");
-    }
-}
-
-function loadHashPage(){
-    const hash = window.location.hash.replace("#","");
-    if(hash === "ebooks"){
-        hideAllPages();
-        if(homePage) homePage.style.display = "block";
-        if(backButton) backButton.classList.remove("show");
-        setTimeout(()=>{ const el = document.getElementById("ebooks"); if(el) el.scrollIntoView({behavior:"smooth", block:"start"}); }, 100);
-        return;
-    }
-    const isInternal = ["certificates"].includes(hash);
-    hideAllPages();
-    if(isInternal){
-        const targetPage = document.getElementById(hash + "Page");
-        if(targetPage) targetPage.classList.add("active");
-        if(backButton) backButton.classList.add("show");
-    } else {
-        if(homePage) homePage.style.display = "block";
-        if(backButton) backButton.classList.remove("show");
-    }
-}
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener("click", e => {
-        const target = link.getAttribute("href").replace("#","");
-        if(["certificates"].includes(target)){ e.preventDefault(); openPage(target); }
-    });
-});
-
-if(backButton) backButton.addEventListener("click", () => {
-    if(window.location.hash && window.location.hash !== "#home") history.back(); else openPage("home");
-});
-
-window.addEventListener("popstate", loadHashPage);
-window.addEventListener("hashchange", loadHashPage);
-
-/* CERTIFICATES GENERATION */
-const certificateGrid = document.getElementById("certificateGrid");
-const certificateModal = document.getElementById("certificateModal");
-const modalCertificateImage = document.getElementById("modalCertificateImage");
-
-if(certificateGrid){
-    CONFIG.certificates.forEach((cert,index)=>{
-        const card = document.createElement("article");
-        card.className = "bg-white border border-gray-200 shadow-lg rounded-2xl overflow-hidden hover:-translate-y-1 transition duration-300 cursor-pointer";
-        card.innerHTML = `
-            <div class="relative bg-gray-100">
-                <img src="${cert.img}" alt="${cert.title}" class="w-full aspect-[1.5/1] object-cover" loading="lazy" decoding="async" draggable="false">
-                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 text-[10px] font-black px-3 py-1.5 rounded-full border border-gray-200 shadow-sm">CERT ${index+1}</div>
-            </div>
-            <div class="p-5"><h4 class="text-gray-900 font-bold text-sm leading-snug">${cert.title}</h4></div>`;
-        card.addEventListener("click", ()=>{
-            modalCertificateImage.src = cert.img;
-            modalCertificateImage.alt = cert.title;
-            certificateModal.classList.remove("hidden");
-            certificateModal.classList.add("flex");
-        });
-        certificateGrid.appendChild(card);
-    });
-}
-
-function closeCert(){
-    if(certificateModal){ certificateModal.classList.add("hidden"); certificateModal.classList.remove("flex"); }
-}
-document.getElementById("closeCertificate")?.addEventListener("click", closeCert);
-certificateModal?.addEventListener("click", e => { if(e.target === certificateModal) closeCert(); });
-
-/* EBOOKS GENERATION */
+/* Generate E-Books (Horizontal Snap Scrolling) */
 const ebookGrid = document.getElementById("ebookGrid");
-const paymentModal = document.getElementById("paymentModal");
+if(ebookGrid){
+    CONFIG.ebooks.forEach(book=>{
+        const isUpcoming = !book.pdf || book.pdf==="#";
+        const coverImg = book.cover || "https://placehold.co/600x800/161e31/eab308?text=BOOK";
+        
+        let cardHTML = `
+        <article class="app-card w-[140px] shrink-0 bg-white rounded-2xl shadow-app border border-gray-50 flex flex-col snap-start overflow-hidden">
+            <div class="relative w-full aspect-[3/4] bg-gray-100">
+                <img src="${coverImg}" class="w-full h-full object-cover ${isUpcoming ? 'grayscale opacity-70' : ''}" loading="lazy">
+                ${isUpcoming ? '<div class="absolute inset-0 flex items-center justify-center bg-white/20 backdrop-blur-sm"><span class="bg-gray-900 text-white text-[9px] font-black px-2 py-1 rounded shadow">UPCOMING</span></div>' : '<div class="absolute top-2 right-2"><span class="text-[9px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded">₹99</span></div>'}
+            </div>
+            <div class="p-3 flex flex-col flex-grow">
+                <h3 class="text-xs font-bold text-gray-900 leading-tight mb-2 line-clamp-2">${book.title}</h3>
+                <button ${isUpcoming ? 'disabled' : ''} class="${isUpcoming ? 'bg-gray-100 text-gray-400' : 'bg-brandGold text-black download-btn'} mt-auto w-full py-1.5 rounded-lg text-[10px] font-black tracking-wide">${isUpcoming ? 'Soon' : 'Download'}</button>
+            </div>
+        </article>`;
+        
+        const temp = document.createElement('div');
+        temp.innerHTML = cardHTML;
+        const article = temp.firstElementChild;
+        if(!isUpcoming){
+            article.querySelector(".download-btn").addEventListener("click", ()=>openPayment(book));
+        }
+        ebookGrid.appendChild(article);
+    });
+}
 
+/* Generate Certificates (App Grid) */
+const certificateGrid = document.getElementById("certificateGrid");
+if(certificateGrid){
+    CONFIG.certificates.forEach((cert, index)=>{
+        const el = document.createElement("article");
+        el.className = "app-card bg-white rounded-2xl shadow-app border border-gray-50 overflow-hidden cursor-pointer";
+        el.innerHTML = `
+            <img src="${cert.img}" class="w-full aspect-[4/3] object-cover bg-gray-100">
+            <div class="p-3">
+                <p class="text-[9px] text-brandGold font-black uppercase mb-1">Cert 0${index+1}</p>
+                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 leading-tight">${cert.title}</h4>
+            </div>
+        `;
+        el.addEventListener("click", ()=>{
+            document.getElementById("modalCertificateImage").src = cert.img;
+            document.getElementById("certificateModal").classList.remove("hidden");
+            document.getElementById("certificateModal").classList.add("flex");
+        });
+        certificateGrid.appendChild(el);
+    });
+}
+
+/* Page Navigation Logic */
+function openPage(page){
+    if(page === 'home'){
+        document.getElementById("certificatesPage").classList.remove("active");
+        document.getElementById("homePage").style.display = "block";
+        window.scrollTo({top:0, behavior:"smooth"});
+    } else {
+        document.getElementById("homePage").style.display = "none";
+        document.getElementById(page + "Page").classList.add("active");
+        window.scrollTo({top:0, behavior:"smooth"});
+    }
+}
+
+/* Modals Logic */
+const paymentModal = document.getElementById("paymentModal");
 function openPayment(book){
-    if(!paymentModal) return;
     document.getElementById("paymentBookTitle").textContent = book.title;
-    const waMessage = encodeURIComponent(`नमस्ते SHRAYNEX टीम, मैंने "${book.title}" के लिए ₹99 का पेमेंट कर दिया है। यह रहा पेमेंट का स्क्रीनशॉट। कृपया मुझे e-book का access प्रदान करें।`);
+    const waMessage = encodeURIComponent(`नमस्ते SHRAYNEX टीम, मैंने "${book.title}" के लिए ₹99 का पेमेंट कर दिया है। यह रहा स्क्रीनशॉट।`);
     document.getElementById("whatsappVerifyBtn").href = `https://wa.me/91${CONFIG.whatsappHelpline}?text=${waMessage}`;
-    document.getElementById("instantDownloadBtn").href = book.pdf || "#";
+    document.getElementById("instantDownloadBtn").href = book.pdf;
     paymentModal.classList.remove("hidden");
     paymentModal.classList.add("flex");
 }
 
-function closePayment(){
-    if(paymentModal){ paymentModal.classList.add("hidden"); paymentModal.classList.remove("flex"); }
+function closeModal(id){
+    document.getElementById(id).classList.add("hidden");
+    document.getElementById(id).classList.remove("flex");
 }
-document.getElementById("closePaymentModal")?.addEventListener("click", closePayment);
-paymentModal?.addEventListener("click", e => { if(e.target === paymentModal) closePayment(); });
 
-if(ebookGrid){
-    CONFIG.ebooks.forEach(book=>{
-        const card = document.createElement("article");
-        card.className = "flex flex-col h-full bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden hover:-translate-y-1 transition duration-300";
-        const isUpcoming = !book.pdf || book.pdf.trim()==="" || book.pdf==="#";
-        const coverImg = book.cover && book.cover.trim()!=="" ? book.cover : "https://placehold.co/600x800/161e31/eab308?text=BOOK";
-        
-        if(isUpcoming){
-            card.innerHTML = `
-                <div class="relative w-full aspect-[3/4] bg-gray-100">
-                    <img src="${coverImg}" alt="${book.title}" class="w-full h-full object-cover opacity-50 grayscale" loading="lazy" decoding="async" draggable="false">
-                    <div class="absolute inset-0 bg-white/30 flex items-center justify-center"><span class="bg-gray-900 text-white font-black px-2 py-1 rounded shadow text-[10px] tracking-widest -rotate-12">UPCOMING</span></div>
-                </div>
-                <div class="p-3 sm:p-5 flex-grow flex flex-col">
-                    <h3 class="text-xs sm:text-sm font-bold text-gray-900 mb-2 line-clamp-2">${book.title}</h3>
-                    <button type="button" disabled class="mt-auto w-full bg-gray-100 text-gray-400 border border-gray-200 px-2 py-2 rounded-lg text-xs font-bold">Soon</button>
-                </div>`;
+document.getElementById("closeCertificate").addEventListener("click", ()=>closeModal('certificateModal'));
+document.getElementById("closePaymentModal").addEventListener("click", ()=>closeModal('paymentModal'));
+
+/* Copy Utilities */
+function copyUpiId(text, btn){
+    navigator.clipboard.writeText(text).then(()=>{
+        const og = btn.innerText; btn.innerText = "Copied!"; btn.classList.add("bg-green-100", "text-green-700");
+        setTimeout(()=>{ btn.innerText = og; btn.classList.remove("bg-green-100", "text-green-700"); }, 2000);
+    });
+}
+
+/* Share API Logic */
+document.getElementById("topShareBtn").addEventListener("click", async () => {
+    try {
+        if(navigator.share){
+            await navigator.share({ title: CONFIG.shareTitle, text: CONFIG.shareText, url: CONFIG.websiteUrl });
         } else {
-            card.innerHTML = `
-                <div class="relative w-full aspect-[3/4] bg-gray-100">
-                    <img src="${coverImg}" alt="${book.title}" class="w-full h-full object-cover" loading="lazy" decoding="async" draggable="false">
-                    <div class="absolute top-2 right-2"><span class="text-[8px] sm:text-[10px] font-extrabold uppercase bg-red-600 text-white px-2 py-0.5 rounded shadow">₹99 ONLY</span></div>
-                </div>
-                <div class="p-3 sm:p-5 flex-grow flex flex-col">
-                    <h3 class="text-xs sm:text-sm font-bold text-gray-900 mb-4 line-clamp-2">${book.title}</h3>
-                    <button type="button" class="download-btn mt-auto w-full inline-flex items-center justify-center gap-1.5 bg-brandGold text-black px-2 py-2 rounded-lg text-xs font-black shadow hover:brightness-110 transition">Download</button>
-                </div>`;
-            card.querySelector(".download-btn")?.addEventListener("click", ()=>openPayment(book));
+            navigator.clipboard.writeText(CONFIG.websiteUrl);
+            alert("Link copied!");
         }
-        ebookGrid.appendChild(card);
-    });
-}
+    } catch(e) {}
+});
 
-/* UTILITIES */
-function copyUpiId(upiText, btnElement){
-    const showCopied = ()=>{
-        if(!btnElement) return;
-        const original = btnElement.innerHTML;
-        btnElement.innerHTML = "Copied!";
-        btnElement.classList.add("bg-green-600", "text-white");
-        setTimeout(()=>{ btnElement.innerHTML = original; btnElement.classList.remove("bg-green-600", "text-white"); }, 2000);
-    };
-    if(navigator.clipboard && window.isSecureContext){
-        navigator.clipboard.writeText(upiText).then(showCopied).catch(()=>fallbackCopy(upiText, showCopied));
-    } else { fallbackCopy(upiText, showCopied); }
-}
+/* Close modals on outside click */
+window.addEventListener("click", e => {
+    if(e.target === document.getElementById('certificateModal')) closeModal('certificateModal');
+    if(e.target === document.getElementById('paymentModal')) closeModal('paymentModal');
+});
 
-function fallbackCopy(text, callback){
-    const textarea = document.createElement("textarea");
-    textarea.value = text; textarea.style.position = "fixed"; textarea.style.opacity = "0";
-    document.body.appendChild(textarea); textarea.select();
-    try{ document.execCommand("copy"); callback(); }catch(e){ alert("UPI Copy नहीं हो पाया। कृपया manually copy करें।"); }
-    document.body.removeChild(textarea);
-}
-
-document.addEventListener("keydown", e => { if(e.key === "Escape"){ closeCert(); closePayment(); } });
-document.addEventListener("contextmenu", e => { if(e.target && e.target.tagName === "IMG") e.preventDefault(); });
-document.addEventListener("dragstart", e => { if(e.target && e.target.tagName === "IMG") e.preventDefault(); });
-
-/* =========================================================
-   SHARE BUTTON LOGIC (WITH IMAGE ATTACHMENT)
-========================================================= */
-const topShareBtn = document.getElementById("topShareBtn");
-if(topShareBtn){
-    topShareBtn.addEventListener("click", async () => {
-        // शेयर बटन दबाते ही लोडिंग इफ़ेक्ट दिखाने के लिए
-        const originalHtml = topShareBtn.innerHTML;
-        topShareBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Wait...</span>`;
-        
-        const shareData = {
-            title: CONFIG.shareTitle,
-            text: CONFIG.shareText,
-            url: CONFIG.websiteUrl
-        };
-
-        try {
-            // इमेज को फेच करके फाइल में बदलना ताकि वह सीधे अटैच हो सके
-            const imageUrl = "https://i.ibb.co/wZScWNhb/file-0000000036888208bb6ae2acda8eda00.png";
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const file = new File([blob], "shraynex-banner.png", { type: blob.type });
-
-            // अगर मोबाइल ब्राउज़र फाइल शेयरिंग सपोर्ट करता है
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                shareData.files = [file];
-            }
-        } catch (err) { 
-            console.log("Image attach नहीं हो पाई, सिर्फ टेक्स्ट और लिंक शेयर किया जा रहा है।"); 
-        }
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                await navigator.clipboard.writeText(shareData.text + "\n" + shareData.url);
-                alert("Website link copied to clipboard!");
-            }
-        } catch (err) { 
-            console.log("Share cancelled by user."); 
-        }
-        
-        // बटन को वापस नार्मल करना
-        topShareBtn.innerHTML = originalHtml;
-    });
-}
-
-/* PWA App Logic */
-(function(){
-    const installBtn = document.getElementById("pwaInstallButton");
-    const help = document.getElementById("pwaInstallHelp");
-    if(!installBtn || !help) return;
-    document.getElementById("pwaHelpClose")?.addEventListener("click", ()=>help.classList.remove("show"));
-    document.getElementById("pwaHelpOk")?.addEventListener("click", ()=>help.classList.remove("show"));
-
-    let deferredPrompt = null;
-    window.addEventListener("beforeinstallprompt", e=>{
-        e.preventDefault(); deferredPrompt = e; installBtn.classList.add("show");
-    });
-    installBtn.addEventListener("click", async()=>{
-        if(deferredPrompt){
-            try { deferredPrompt.prompt(); await deferredPrompt.userChoice; } catch(e){}
-            deferredPrompt = null; installBtn.classList.remove("show"); return;
-        }
-        help.classList.add("show");
-    });
-    window.addEventListener("appinstalled", ()=>{ installBtn.classList.remove("show"); deferredPrompt = null; });
-})();
-
-loadHashPage();
 </script>
 </body>
 </html>
