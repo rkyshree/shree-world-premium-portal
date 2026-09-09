@@ -1,0 +1,1664 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SHRAYNEX - Financial Advisor Platform</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e5edff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                            dark: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+        }
+
+        /* Hide views by default */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Bottom Nav Safe Area */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 80px);
+        }
+
+        /* Loader */
+        .loader {
+            border-top-color: #3b82f6;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col relative">
+
+    <!-- Full Screen Loader -->
+    <div id="globalLoader" class="fixed inset-0 z-50 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center hidden">
+        <div class="w-12 h-12 border-4 border-slate-200 rounded-full loader mb-4"></div>
+        <p class="text-slate-600 font-medium animate-pulse" id="loaderText">Loading SHRAYNEX...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-md pointer-events-none"></div>
+
+    <!-- Global Modal -->
+    <div id="globalModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300" id="globalModalContent">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800" id="modalTitle">Notice</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-5" id="modalBody">
+                <!-- Content injected here -->
+            </div>
+            <div class="p-4 border-t border-slate-100 flex justify-end gap-3 bg-slate-50" id="modalActions">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors font-medium">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation (Desktop & Mobile header) -->
+    <nav class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="navigate('home')">
+                    <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-white font-bold text-xl">S</div>
+                    <span class="font-extrabold text-xl tracking-tight text-brand-dark">SHRAYNEX</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8" id="desktopMenu">
+                    <a href="#" onclick="navigate('home')" class="text-slate-600 hover:text-brand-600 font-medium">Home</a>
+                    <a href="#" onclick="navigate('products')" class="text-slate-600 hover:text-brand-600 font-medium">Products</a>
+                    <a href="#support" class="text-slate-600 hover:text-brand-600 font-medium">Support</a>
+                    
+                    <div id="authNavButtons" class="flex gap-3">
+                        <button onclick="navigate('login')" class="px-5 py-2 rounded-full border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium transition-all">Login</button>
+                        <button onclick="navigate('register')" class="px-5 py-2 rounded-full gradient-bg text-white shadow-md hover:shadow-lg font-medium transition-all">Get Started</button>
+                    </div>
+
+                    <div id="userNavButtons" class="hidden flex items-center gap-4">
+                        <button onclick="navigate('dashboard')" class="text-brand-600 font-bold hover:text-brand-900">Dashboard</button>
+                        <div class="relative group cursor-pointer" onclick="navigate('profile')">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 border-2 border-brand-500 overflow-hidden">
+                                <img src="https://placehold.co/100x100/e2e8f0/475569?text=U" alt="Profile" id="navProfileImg" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-slate-600 hover:text-brand-600 focus:outline-none" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Dropdown -->
+        <div id="mobileDropdown" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-3 shadow-lg absolute w-full">
+            <a href="#" onclick="navigate('home'); toggleMobileMenu()" class="block text-slate-700 font-medium p-2 rounded hover:bg-slate-50">Home</a>
+            <div id="mobileAuthNav">
+                <a href="#" onclick="navigate('login'); toggleMobileMenu()" class="block text-brand-600 font-medium p-2 rounded hover:bg-brand-50">Login</a>
+                <a href="#" onclick="navigate('register'); toggleMobileMenu()" class="block text-brand-600 font-medium p-2 rounded hover:bg-brand-50">Register</a>
+            </div>
+            <a href="#" onclick="handleLogout(); toggleMobileMenu()" id="mobileLogoutBtn" class="hidden block text-red-500 font-medium p-2 rounded hover:bg-red-50">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8">
+        
+        <section id="view-home" class="view-section active">
+            <!-- Hero -->
+            <div class="relative rounded-3xl overflow-hidden bg-brand-dark text-white shadow-2xl mb-12">
+                <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMTBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMCAxMGg0ME0xMCAwdjQwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBmaWxsPSJub25lIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PC9zdmc+')]"></div>
+                <div class="relative z-10 px-6 py-16 md:py-24 text-center max-w-3xl mx-auto flex flex-col items-center">
+                    <div class="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-sm font-medium mb-6 text-brand-100">
+                        <i class="fas fa-rocket mr-2"></i> India's Premier Fintech Platform
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Your Digital Partner for <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Financial Services</span></h1>
+                    <p class="text-lg md:text-xl text-slate-300 mb-10">Join SHRAYNEX today. Refer financial products like Credit Cards, Loans, and Accounts to earn unmatched commissions.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                        <button onclick="navigate('register')" class="w-full sm:w-auto px-8 py-4 rounded-xl gradient-bg text-white font-bold text-lg hover:shadow-lg hover:scale-105 transition-all">Get Started Now</button>
+                        <button onclick="navigate('login')" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white font-bold text-lg hover:bg-white/20 transition-all">Login to Dashboard</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How it works -->
+            <div class="mb-16">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-slate-800">How SHRAYNEX Works</h2>
+                    <p class="text-slate-500 mt-2">Start earning in 4 simple steps</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 text-brand-600 flex items-center justify-center text-2xl mx-auto mb-4 font-bold">01</div>
+                        <h3 class="font-bold text-lg mb-2">Register</h3>
+                        <p class="text-slate-500 text-sm">Create your free SHRAYNEX account in seconds.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mx-auto mb-4 font-bold">02</div>
+                        <h3 class="font-bold text-lg mb-2">Complete Profile</h3>
+                        <p class="text-slate-500 text-sm">Update your KYC and bank details for smooth payouts.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl mx-auto mb-4 font-bold">03</div>
+                        <h3 class="font-bold text-lg mb-2">Explore Products</h3>
+                        <p class="text-slate-500 text-sm">Find top credit cards, loans, and banking products.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 text-center hover:shadow-md transition-shadow">
+                        <div class="w-16 h-16 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mx-auto mb-4 font-bold">04</div>
+                        <h3 class="font-bold text-lg mb-2">Earn</h3>
+                        <p class="text-slate-500 text-sm">Generate leads, track status, and withdraw earnings.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories preview -->
+            <div class="mb-16">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Top Categories</h2>
+                        <p class="text-slate-500 mt-1">Wide range of financial products</p>
+                    </div>
+                    <button onclick="navigate('products')" class="text-brand-600 font-medium hover:underline hidden sm:block">View All <i class="fas fa-arrow-right text-sm"></i></button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl p-6 text-white cursor-pointer hover:scale-105 transition-transform shadow-md">
+                        <i class="fas fa-credit-card text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-bold text-lg">Credit Cards</h3>
+                        <p class="text-blue-100 text-sm mt-1">Up to ₹3000/sale</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl p-6 text-white cursor-pointer hover:scale-105 transition-transform shadow-md">
+                        <i class="fas fa-hand-holding-dollar text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-bold text-lg">Loans</h3>
+                        <p class="text-purple-100 text-sm mt-1">High Commissions</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-teal-500 to-teal-700 rounded-2xl p-6 text-white cursor-pointer hover:scale-105 transition-transform shadow-md">
+                        <i class="fas fa-building-columns text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-bold text-lg">Banking</h3>
+                        <p class="text-teal-100 text-sm mt-1">Zero Balance A/c</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl p-6 text-white cursor-pointer hover:scale-105 transition-transform shadow-md">
+                        <i class="fas fa-shield-halved text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-bold text-lg">Insurance</h3>
+                        <p class="text-orange-100 text-sm mt-1">Health & Life</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Footer Section -->
+            <div id="support" class="bg-slate-900 rounded-3xl p-8 md:p-12 text-white text-center">
+                <h2 class="text-3xl font-bold mb-4">Need Help?</h2>
+                <p class="text-slate-400 mb-8 max-w-xl mx-auto">Our support team is always ready to help you grow your financial advisory business.</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="https://wa.me/919451239239" target="_blank" class="px-6 py-3 rounded-xl bg-[#25D366] text-white font-bold flex items-center justify-center gap-2 hover:bg-[#1ebd5a] transition-colors">
+                        <i class="fab fa-whatsapp text-xl"></i> WhatsApp Support
+                    </a>
+                    <a href="mailto:shraynexofficial@gmail.com" class="px-6 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white font-bold flex items-center justify-center gap-2 hover:bg-slate-700 transition-colors">
+                        <i class="fas fa-envelope"></i> Email Us
+                    </a>
+                </div>
+                <div class="mt-12 text-slate-500 text-sm border-t border-slate-800 pt-8">
+                    &copy; 2026 SHRAYNEX. All Rights Reserved.<br>
+                    Email: shraynexofficial@gmail.com | Phone: +91 9451239239
+                </div>
+            </div>
+        </section>
+
+        <section id="view-login" class="view-section max-w-md mx-auto py-10">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                <div class="text-center mb-8">
+                    <div class="w-12 h-12 rounded-xl gradient-bg mx-auto flex items-center justify-center text-white font-bold text-2xl mb-4">S</div>
+                    <h2 class="text-2xl font-bold text-slate-800">Welcome Back</h2>
+                    <p class="text-slate-500 text-sm mt-1">Login to your SHRAYNEX dashboard</p>
+                </div>
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute left-3 top-3 text-slate-400"></i>
+                            <input type="email" id="loginEmail" required class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Enter your email">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                        <div class="relative">
+                            <i class="fas fa-lock absolute left-3 top-3 text-slate-400"></i>
+                            <input type="password" id="loginPassword" required class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Enter your password">
+                            <button type="button" onclick="togglePassword('loginPassword')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <label class="flex items-center text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="mr-2 rounded border-slate-300 text-brand-600 focus:ring-brand-500"> Remember Me
+                        </label>
+                        <a href="#" class="text-brand-600 font-medium hover:underline">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl gradient-bg text-white font-bold hover:shadow-lg transition-all flex justify-center items-center gap-2">
+                        <span>Login Securely</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div class="mt-6 text-center text-sm text-slate-600">
+                    Don't have an account? <a href="#" onclick="navigate('register')" class="text-brand-600 font-bold hover:underline">Create Account</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-register" class="view-section max-w-lg mx-auto py-10">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-slate-800">Join SHRAYNEX</h2>
+                    <p class="text-slate-500 text-sm mt-1">Start your journey as a financial advisor</p>
+                </div>
+                <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Full Name (As per PAN)</label>
+                        <input type="text" id="regName" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Enter your full name">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                            <input type="email" id="regEmail" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Email">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+                            <input type="tel" id="regMobile" required pattern="[0-9]{10}" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="10-digit number">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                            <input type="password" id="regPassword" required minlength="6" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Create password">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Confirm Password</label>
+                            <input type="password" id="regConfirmPassword" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all" placeholder="Confirm password">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Referral Code (Optional)</label>
+                        <input type="text" id="regReferral" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:outline-none transition-all uppercase" placeholder="e.g. SHRAY123">
+                    </div>
+                    <div class="pt-2">
+                        <label class="flex items-start text-sm text-slate-600 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 mr-2 rounded border-slate-300 text-brand-600 focus:ring-brand-500"> 
+                            <span>I agree to the <a href="#" class="text-brand-600 hover:underline">Terms & Conditions</a> and <a href="#" class="text-brand-600 hover:underline">Privacy Policy</a> of SHRAYNEX.</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full py-3 mt-4 rounded-xl gradient-bg text-white font-bold hover:shadow-lg transition-all">Create Account</button>
+                </form>
+                <div class="mt-6 text-center text-sm text-slate-600">
+                    Already have an account? <a href="#" onclick="navigate('login')" class="text-brand-600 font-bold hover:underline">Login here</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-dashboard" class="view-section">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800" id="dashWelcome">Dashboard</h2>
+                    <p class="text-slate-500 text-sm">Overview of your business</p>
+                </div>
+                <button onclick="navigate('leads')" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm">
+                    <i class="fas fa-plus mr-1"></i> Add Lead
+                </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-50 rounded-full opacity-50"></div>
+                    <div class="text-sm font-medium text-slate-500 mb-1">Wallet Balance</div>
+                    <div class="text-2xl font-bold text-slate-800" id="dashWalletBalance">₹0</div>
+                    <button onclick="navigate('wallet')" class="text-xs text-brand-600 font-medium mt-3 hover:underline">Withdraw <i class="fas fa-arrow-right text-[10px]"></i></button>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-green-50 rounded-full opacity-50"></div>
+                    <div class="text-sm font-medium text-slate-500 mb-1">Total Earnings</div>
+                    <div class="text-2xl font-bold text-green-600" id="dashTotalEarnings">₹0</div>
+                    <div class="text-xs text-slate-400 mt-3">Lifetime approved</div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-purple-50 rounded-full opacity-50"></div>
+                    <div class="text-sm font-medium text-slate-500 mb-1">Pending Earnings</div>
+                    <div class="text-2xl font-bold text-purple-600" id="dashPendingEarnings">₹0</div>
+                    <div class="text-xs text-slate-400 mt-3">In process leads</div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-orange-50 rounded-full opacity-50"></div>
+                    <div class="text-sm font-medium text-slate-500 mb-1">Total Withdrawn</div>
+                    <div class="text-2xl font-bold text-slate-800" id="dashTotalWithdrawn">₹0</div>
+                    <div class="text-xs text-slate-400 mt-3">Successfully paid out</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Recent Leads -->
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-lg text-slate-800">Recent Leads</h3>
+                        <button onclick="navigate('leads')" class="text-sm text-brand-600 font-medium hover:underline">View All</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs uppercase text-slate-400 bg-slate-50">
+                                    <th class="p-3 rounded-tl-lg">Customer</th>
+                                    <th class="p-3">Product</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 rounded-tr-lg">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashLeadsTableBody" class="text-sm">
+                                <!-- Dynamic rows -->
+                                <tr><td colspan="4" class="text-center p-4 text-slate-400">No leads yet. Start earning!</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Quick Actions / Promos -->
+                <div class="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl shadow-md p-6 text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-10 -mt-10"></div>
+                    <h3 class="font-bold text-lg mb-2">Refer & Earn</h3>
+                    <p class="text-indigo-200 text-sm mb-6">Invite friends to SHRAYNEX and earn 5% of their lifetime earnings!</p>
+                    
+                    <div class="bg-white/10 p-3 rounded-xl border border-white/20 mb-4 flex justify-between items-center">
+                        <span class="font-mono text-lg tracking-wider" id="dashRefCode">SHRAY...</span>
+                        <button onclick="copyReferral()" class="text-white hover:text-brand-300 p-2"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <button class="w-full py-2.5 bg-white text-indigo-900 rounded-xl font-bold shadow hover:bg-slate-100 transition-colors text-sm" onclick="shareReferral()">
+                        Share via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-products" class="view-section">
+            <div class="mb-6 flex flex-col md:flex-row justify-between md:items-end gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Financial Products</h2>
+                    <p class="text-slate-500 text-sm">Select a product to share or add a lead</p>
+                </div>
+                <!-- Categories filter -->
+                <div class="flex gap-2 overflow-x-auto pb-2 -mb-2 scrollbar-hide" id="productCategories">
+                    <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-brand-600 text-white shadow-sm filter-btn" data-filter="all">All</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 filter-btn" data-filter="Credit Card">Credit Cards</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 filter-btn" data-filter="Loan">Loans</button>
+                    <button class="px-4 py-1.5 rounded-full text-sm font-medium bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 filter-btn" data-filter="Banking">Banking</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productsContainer">
+                <!-- Products dynamically rendered here -->
+                <div class="col-span-full text-center py-10 text-slate-400"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><br>Loading Products...</div>
+            </div>
+        </section>
+
+        <section id="view-leads" class="view-section">
+            <div class="mb-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">My Leads</h2>
+                    <p class="text-slate-500 text-sm">Manage and track your customer applications</p>
+                </div>
+                <button onclick="toggleLeadForm()" class="gradient-bg text-white px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all">
+                    <i class="fas fa-plus mr-1"></i> New Lead
+                </button>
+            </div>
+
+            <!-- Add Lead Form (Hidden by default) -->
+            <div id="addLeadFormContainer" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 hidden">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                    <h3 class="font-bold text-lg text-slate-800">Create New Lead</h3>
+                    <button onclick="toggleLeadForm()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="addLeadForm" onsubmit="submitLead(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Customer Name</label>
+                            <input type="text" id="leadName" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-500 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+                            <input type="tel" id="leadMobile" required pattern="[0-9]{10}" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-500 outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Select Product</label>
+                            <select id="leadProduct" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-500 outline-none text-sm">
+                                <option value="">Loading products...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">City</label>
+                            <input type="text" id="leadCity" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-500 outline-none text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Notes (Optional)</label>
+                        <textarea id="leadNotes" rows="2" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-brand-500 outline-none text-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium shadow-md">Submit Lead</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Leads List -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase font-medium border-b border-slate-200">
+                                <th class="p-4">Date</th>
+                                <th class="p-4">Customer Details</th>
+                                <th class="p-4">Product</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Commission</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody" class="text-sm divide-y divide-slate-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-wallet" class="view-section">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">My Wallet</h2>
+                <p class="text-slate-500 text-sm">Manage earnings and withdrawals</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Balance Card -->
+                <div class="md:col-span-2 bg-gradient-to-r from-slate-900 to-brand-900 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+                    <i class="fas fa-wallet absolute right-8 top-8 text-6xl opacity-10"></i>
+                    <div class="text-slate-300 font-medium mb-1">Available Balance</div>
+                    <div class="text-4xl font-bold mb-8" id="walletAvailableBalance">₹0.00</div>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="openWithdrawModal()" class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-100 transition-colors shadow">
+                            Withdraw Funds
+                        </button>
+                        <button onclick="navigate('profile')" class="bg-white/10 border border-white/20 text-white px-6 py-2.5 rounded-xl font-medium text-sm hover:bg-white/20 transition-colors">
+                            Update Bank Details
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Summary Card -->
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-center space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <div class="text-slate-500 text-sm font-medium">Pending Balance</div>
+                        <div class="text-lg font-bold text-orange-500" id="walletPending">₹0.00</div>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <div class="text-slate-500 text-sm font-medium">Total Earned</div>
+                        <div class="text-lg font-bold text-green-600" id="walletEarned">₹0.00</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-slate-500 text-sm font-medium">Total Withdrawn</div>
+                        <div class="text-lg font-bold text-slate-700" id="walletWithdrawn">₹0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                <h3 class="font-bold text-lg text-slate-800 mb-4 border-b border-slate-100 pb-3">Withdrawal History</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs uppercase text-slate-400 bg-slate-50">
+                                <th class="p-3 rounded-tl-lg">Date</th>
+                                <th class="p-3">Amount</th>
+                                <th class="p-3">Bank Info</th>
+                                <th class="p-3 rounded-tr-lg">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawalsTableBody" class="text-sm divide-y divide-slate-100">
+                           <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-profile" class="view-section max-w-3xl mx-auto">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Profile & KYC</h2>
+                <p class="text-slate-500 text-sm">Manage your personal and bank details</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                <div class="p-6 border-b border-slate-100 flex items-center gap-4">
+                    <div class="w-20 h-20 rounded-full bg-slate-200 border-4 border-brand-100 flex items-center justify-center text-2xl font-bold text-slate-500">
+                        <span id="profileInitials">U</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl text-slate-800" id="profileNameDisplay">User Name</h3>
+                        <p class="text-slate-500 text-sm" id="profileEmailDisplay">user@example.com</p>
+                        <div class="mt-2 inline-block px-2 py-1 rounded bg-yellow-100 text-yellow-700 text-xs font-bold border border-yellow-200" id="kycStatusBadge">
+                            KYC Pending
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="profileForm" onsubmit="saveProfile(event)" class="p-6 space-y-6">
+                    <!-- Personal Info -->
+                    <div>
+                        <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="fas fa-user-circle text-slate-400"></i> Personal Details</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Full Name</label>
+                                <input type="text" id="profName" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Mobile Number</label>
+                                <input type="text" id="profMobile" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">PAN Card Number</label>
+                                <input type="text" id="profPan" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm uppercase" placeholder="ABCDE1234F">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Aadhaar Number</label>
+                                <input type="text" id="profAadhaar" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm" placeholder="1234 5678 9012">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Info -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <h4 class="font-bold text-slate-700 mb-3 flex items-center gap-2"><i class="fas fa-university text-slate-400"></i> Bank & Payout Details</h4>
+                        <p class="text-xs text-slate-500 mb-4">Required for processing your withdrawal requests securely.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Account Holder Name</label>
+                                <input type="text" id="profBankName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Bank Name</label>
+                                <input type="text" id="profBank" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Account Number</label>
+                                <input type="password" id="profAccNo" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">IFSC Code</label>
+                                <input type="text" id="profIfsc" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm uppercase">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-medium text-slate-500 mb-1">UPI ID (Optional)</label>
+                                <input type="text" id="profUpi" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500 text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100 flex justify-end">
+                        <button type="submit" class="gradient-bg text-white px-6 py-2.5 rounded-lg font-bold shadow-md hover:shadow-lg transition-all">Save & Submit KYC</button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center">
+                 <button onclick="handleLogout()" class="text-red-500 font-medium hover:underline"><i class="fas fa-sign-out-alt"></i> Logout from device</button>
+            </div>
+        </section>
+
+        <section id="view-admin" class="view-section">
+            <div class="mb-6 flex justify-between items-center border-b-2 border-red-500 pb-2">
+                <div>
+                    <h2 class="text-2xl font-bold text-red-600"><i class="fas fa-shield-alt"></i> SHRAYNEX Admin Control</h2>
+                    <p class="text-slate-500 text-sm">Superuser access panel</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
+                    <div class="text-3xl font-bold text-brand-600" id="adminStatUsers">0</div>
+                    <div class="text-xs text-slate-500 uppercase mt-1">Total Users</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
+                    <div class="text-3xl font-bold text-purple-600" id="adminStatLeads">0</div>
+                    <div class="text-xs text-slate-500 uppercase mt-1">Total Leads</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
+                    <div class="text-3xl font-bold text-orange-500" id="adminStatPendingW">0</div>
+                    <div class="text-xs text-slate-500 uppercase mt-1">Pending Withdrawals</div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
+                    <div class="text-3xl font-bold text-green-600" id="adminStatPaid">₹0</div>
+                    <div class="text-xs text-slate-500 uppercase mt-1">Total Paid Out</div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="flex border-b border-slate-200 mb-4 overflow-x-auto">
+                <button class="admin-tab active px-4 py-2 font-medium text-brand-600 border-b-2 border-brand-600" onclick="switchAdminTab('leadsTab', this)">Manage Leads</button>
+                <button class="admin-tab px-4 py-2 font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700" onclick="switchAdminTab('withdrawalsTab', this)">Withdrawals</button>
+                <button class="admin-tab px-4 py-2 font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700" onclick="switchAdminTab('usersTab', this)">Users</button>
+            </div>
+
+            <!-- Leads Management -->
+            <div id="leadsTab" class="admin-content block">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="p-3">Lead Info</th>
+                                <th class="p-3">User (Agent)</th>
+                                <th class="p-3">Product</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminLeadsBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Withdrawals Management -->
+            <div id="withdrawalsTab" class="admin-content hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="p-3">Request Date</th>
+                                <th class="p-3">Agent ID</th>
+                                <th class="p-3">Amount</th>
+                                <th class="p-3">Bank Details</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminWithdrawalsBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users Management -->
+            <div id="usersTab" class="admin-content hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="p-3">User</th>
+                                <th class="p-3">Contact</th>
+                                <th class="p-3">Joined</th>
+                                <th class="p-3">KYC</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="bottomNav" class="fixed bottom-0 w-full bg-white border-t border-slate-200 pb-safe z-40 hidden md:hidden flex justify-around shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <button onclick="navigate('dashboard')" class="nav-btn flex flex-col items-center py-3 px-2 text-slate-400 w-1/4" data-target="dashboard">
+            <i class="fas fa-chart-pie text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Dash</span>
+        </button>
+        <button onclick="navigate('products')" class="nav-btn flex flex-col items-center py-3 px-2 text-slate-400 w-1/4" data-target="products">
+            <i class="fas fa-boxes text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Products</span>
+        </button>
+        <button onclick="navigate('leads')" class="nav-btn flex flex-col items-center py-3 px-2 text-slate-400 w-1/4" data-target="leads">
+            <i class="fas fa-users text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Leads</span>
+        </button>
+        <button onclick="navigate('wallet')" class="nav-btn flex flex-col items-center py-3 px-2 text-slate-400 w-1/4" data-target="wallet">
+            <i class="fas fa-wallet text-xl mb-1"></i>
+            <span class="text-[10px] font-medium">Wallet</span>
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, onSnapshot, addDoc, serverTimestamp, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment specifics
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'shraynex-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { /* Fallback empty config */ };
+        
+        let app, auth, db;
+        let currentUser = null;
+        let currentProfile = null;
+        
+        // Data stores
+        let globalProducts = [];
+        let globalLeads = [];
+        let globalWithdrawals = [];
+        let globalUsers = [];
+        
+        const ADMIN_EMAIL = 'shraynexofficial@gmail.com';
+
+        // Base Data Seeding (Mock products)
+        const defaultProducts = [
+            { id: 'p1', category: 'Credit Card', name: 'HDFC Millennia Credit Card', description: '5% Cashback on Amazon, Flipkart. Lifetime free condition.', commission: 1500, logo: 'fa-credit-card', color: 'text-blue-600', bg: 'bg-blue-50' },
+            { id: 'p2', category: 'Credit Card', name: 'SBI SimplyCLICK', description: '10X Reward Points on online spends.', commission: 1200, logo: 'fa-credit-card', color: 'text-sky-600', bg: 'bg-sky-50' },
+            { id: 'p3', category: 'Credit Card', name: 'Axis My Zone', description: 'Lifetime free offer with Swiggy discounts.', commission: 1800, logo: 'fa-credit-card', color: 'text-purple-600', bg: 'bg-purple-50' },
+            { id: 'p4', category: 'Loan', name: 'Bajaj Personal Loan', description: 'Instant approval up to ₹25 Lakhs.', commission: 2500, logo: 'fa-hand-holding-dollar', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            { id: 'p5', category: 'Banking', name: 'Kotak 811 Zero Balance', description: 'Open savings account digitally in 5 mins.', commission: 350, logo: 'fa-building-columns', color: 'text-red-600', bg: 'bg-red-50' },
+            { id: 'p6', category: 'Banking', name: 'AU Small Finance Bank', description: 'High interest rates up to 7% on savings.', commission: 400, logo: 'fa-building-columns', color: 'text-orange-600', bg: 'bg-orange-50' }
+        ];
+
+        window.showLoader = function(text = "Loading...") {
+            document.getElementById('loaderText').innerText = text;
+            document.getElementById('globalLoader').classList.remove('hidden');
+        }
+        
+        window.hideLoader = function() {
+            document.getElementById('globalLoader').classList.add('hidden');
+        }
+
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-slate-800 text-white';
+            let icon = 'fa-info-circle';
+            
+            if (type === 'success') { bgClass = 'bg-green-600 text-white'; icon = 'fa-check-circle'; }
+            if (type === 'error') { bgClass = 'bg-red-600 text-white'; icon = 'fa-exclamation-circle'; }
+            if (type === 'warning') { bgClass = 'bg-orange-500 text-white'; icon = 'fa-exclamation-triangle'; }
+
+            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-[-20px] opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span class="font-medium text-sm flex-1">${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+            });
+            
+            // Auto remove
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        window.showModal = function(title, contentHTML, actionsHTML = null) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerHTML = contentHTML;
+            
+            if (actionsHTML) {
+                document.getElementById('modalActions').innerHTML = actionsHTML;
+            } else {
+                document.getElementById('modalActions').innerHTML = `<button onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 font-medium">Close</button>`;
+            }
+
+            const modal = document.getElementById('globalModal');
+            const content = document.getElementById('globalModalContent');
+            
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before animating opacity
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        window.closeModal = function() {
+            const modal = document.getElementById('globalModal');
+            const content = document.getElementById('globalModalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        window.toggleMobileMenu = function() {
+            const menu = document.getElementById('mobileDropdown');
+            menu.classList.toggle('hidden');
+        }
+
+        window.togglePassword = function(id) {
+            const el = document.getElementById(id);
+            if (el.type === 'password') {
+                el.type = 'text';
+            } else {
+                el.type = 'password';
+            }
+        }
+
+        // Routing Logic
+        window.navigate = function(viewId) {
+            // Check auth requirements
+            const authRequired = ['dashboard', 'leads', 'wallet', 'profile', 'admin'];
+            const noAuthAllowed = ['login', 'register'];
+            
+            if (authRequired.includes(viewId) && (!currentUser || currentUser.isAnonymous)) {
+                showToast("Please login to access this area", "warning");
+                viewId = 'login';
+            }
+            if (noAuthAllowed.includes(viewId) && currentUser && !currentUser.isAnonymous) {
+                viewId = 'dashboard';
+            }
+
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Show target
+            const target = document.getElementById(`view-${viewId}`);
+            if(target) target.classList.add('active');
+            
+            window.scrollTo(0,0);
+            updateNavState(viewId);
+            
+            // Execute view-specific logic
+            if (viewId === 'products') renderProducts();
+            if (viewId === 'dashboard') calculateWallet();
+            if (viewId === 'admin') renderAdmin();
+        }
+
+        function updateNavState(viewId) {
+            // Top Nav
+            if (currentUser && !currentUser.isAnonymous) {
+                document.getElementById('authNavButtons').classList.add('hidden');
+                document.getElementById('userNavButtons').classList.remove('hidden');
+                document.getElementById('mobileAuthNav').classList.add('hidden');
+                document.getElementById('mobileLogoutBtn').classList.remove('hidden');
+                document.getElementById('bottomNav').classList.remove('hidden');
+                
+                // Admin mode check
+                if(currentUser.email === ADMIN_EMAIL) {
+                    let adminBtn = document.getElementById('navAdminBtn');
+                    if(!adminBtn) {
+                        adminBtn = document.createElement('button');
+                        adminBtn.id = 'navAdminBtn';
+                        adminBtn.className = 'text-red-600 font-bold ml-4 border border-red-500 px-3 py-1 rounded-full text-sm hover:bg-red-50';
+                        adminBtn.innerText = 'Admin';
+                        adminBtn.onclick = () => navigate('admin');
+                        document.getElementById('userNavButtons').prepend(adminBtn);
+                    }
+                }
+            } else {
+                document.getElementById('authNavButtons').classList.remove('hidden');
+                document.getElementById('userNavButtons').classList.add('hidden');
+                document.getElementById('mobileAuthNav').classList.remove('hidden');
+                document.getElementById('mobileLogoutBtn').classList.add('hidden');
+                document.getElementById('bottomNav').classList.add('hidden');
+            }
+
+            // Bottom Nav Highlights
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const icon = btn.querySelector('i');
+                const text = btn.querySelector('span');
+                if (btn.dataset.target === viewId) {
+                    btn.classList.add('text-brand-600');
+                    btn.classList.remove('text-slate-400');
+                    if(icon) { icon.classList.add('text-brand-600'); icon.classList.remove('text-slate-400'); }
+                } else {
+                    btn.classList.remove('text-brand-600');
+                    btn.classList.add('text-slate-400');
+                    if(icon) { icon.classList.remove('text-brand-600'); icon.classList.add('text-slate-400'); }
+                }
+            });
+        }
+
+        async function initApp() {
+            try {
+                showLoader("Initializing System...");
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Setup Auth Listener
+                onAuthStateChanged(auth, async (user) => {
+                    currentUser = user;
+                    
+                    if (user && !user.isAnonymous) {
+                        // User is logged in properly
+                        await fetchUserProfile(user.uid);
+                        setupRealtimeListeners();
+                        navigate('dashboard');
+                    } else if (user && user.isAnonymous) {
+                        // Stay on home, allow them to view public pages, but wait for them to register/login
+                        navigate('home');
+                        setupPublicListeners();
+                    } else {
+                        navigate('home');
+                    }
+                    hideLoader();
+                });
+
+                // Rule 3: Auth Before Queries. Force Custom Token or Anon login first.
+                if (typeof __initial_auth_token !== 'undefined' && !auth.currentUser) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error("Initialization Error:", error);
+                hideLoader();
+                showToast("System initialization failed.", "error");
+            }
+        }
+
+        window.handleRegister = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const mobile = document.getElementById('regMobile').value;
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirmPassword').value;
+            const refCode = document.getElementById('regReferral').value;
+
+            if (password !== confirm) {
+                showToast("Passwords do not match", "error");
+                return;
+            }
+
+            showLoader("Creating Account...");
+            try {
+                // If currently anonymous, we need to switch. Creating an account logs them in automatically.
+                const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                
+                // Save Profile Data
+                const userProfile = {
+                    uid: userCred.user.uid,
+                    name: name,
+                    email: email,
+                    mobile: mobile,
+                    referralCode: 'SHRAY' + Math.floor(Math.random() * 90000 + 10000),
+                    referredBy: refCode || '',
+                    kycStatus: 'Pending',
+                    role: email === ADMIN_EMAIL ? 'admin' : 'agent',
+                    createdAt: serverTimestamp()
+                };
+
+                // Rule 1: Strict Paths - Saving user data
+                const userRef = doc(db, 'artifacts', appId, 'public', 'users', userCred.user.uid);
+                await setDoc(userRef, userProfile);
+                
+                showToast("Account created successfully!", "success");
+                // onAuthStateChanged will handle navigation
+            } catch (error) {
+                hideLoader();
+                let msg = "Registration failed.";
+                if (error.code === 'auth/email-already-in-use') msg = "Email already in use. Please login.";
+                showToast(msg, "error");
+            }
+        }
+
+        window.handleLogin = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showLoader("Authenticating...");
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Welcome back!", "success");
+                // onAuthStateChanged handles nav
+            } catch (error) {
+                hideLoader();
+                showToast("Invalid credentials. Please try again.", "error");
+            }
+        }
+
+        window.handleLogout = async function() {
+            showLoader("Logging out...");
+            try {
+                await signOut(auth);
+                // Sign back in anonymously to satisfy system rules for public access
+                await signInAnonymously(auth);
+                showToast("Logged out successfully");
+            } catch (error) {
+                hideLoader();
+                showToast("Logout failed", "error");
+            }
+        }
+
+        async function fetchUserProfile(uid) {
+            try {
+                const userRef = doc(db, 'artifacts', appId, 'public', 'users', uid);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    currentProfile = docSnap.data();
+                    
+                    // Update UI elements
+                    document.getElementById('dashWelcome').innerText = `Welcome, ${currentProfile.name.split(' ')[0]}`;
+                    document.getElementById('dashRefCode').innerText = currentProfile.referralCode || 'N/A';
+                    
+                    document.getElementById('profileNameDisplay').innerText = currentProfile.name;
+                    document.getElementById('profileEmailDisplay').innerText = currentProfile.email;
+                    document.getElementById('profileInitials').innerText = currentProfile.name.charAt(0).toUpperCase();
+                    
+                    // Populate Profile Form
+                    document.getElementById('profName').value = currentProfile.name;
+                    document.getElementById('profMobile').value = currentProfile.mobile;
+                    if(currentProfile.kycData) {
+                        document.getElementById('profPan').value = currentProfile.kycData.pan || '';
+                        document.getElementById('profAadhaar').value = currentProfile.kycData.aadhaar || '';
+                        document.getElementById('profBankName').value = currentProfile.kycData.bankHolder || '';
+                        document.getElementById('profBank').value = currentProfile.kycData.bankName || '';
+                        document.getElementById('profAccNo').value = currentProfile.kycData.accountNo || '';
+                        document.getElementById('profIfsc').value = currentProfile.kycData.ifsc || '';
+                        document.getElementById('profUpi').value = currentProfile.kycData.upi || '';
+                    }
+
+                    const badge = document.getElementById('kycStatusBadge');
+                    if (currentProfile.kycStatus === 'Verified') {
+                        badge.className = "mt-2 inline-block px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-bold border border-green-200";
+                        badge.innerText = "KYC Verified";
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching profile", error);
+            }
+        }
+
+        function setupPublicListeners() {
+            // Products (Always accessible)
+            const prodRef = collection(db, 'artifacts', appId, 'public', 'products');
+            onSnapshot(prodRef, (snapshot) => {
+                if(snapshot.empty && globalProducts.length === 0) {
+                    // Seed initial if empty
+                    defaultProducts.forEach(p => {
+                        addDoc(prodRef, p);
+                    });
+                } else {
+                    globalProducts = [];
+                    snapshot.forEach(doc => {
+                        globalProducts.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderProducts();
+                    updateProductDropdown();
+                }
+            }, (error) => console.error("Products listen error", error));
+        }
+
+        function setupRealtimeListeners() {
+            setupPublicListeners(); // Make sure products are loaded
+            
+            // All Leads (We use public collection and filter in memory per Rule 2)
+            const leadsRef = collection(db, 'artifacts', appId, 'public', 'leads');
+            onSnapshot(leadsRef, (snapshot) => {
+                globalLeads = [];
+                snapshot.forEach(doc => {
+                    globalLeads.push({ id: doc.id, ...doc.data() });
+                });
+                renderUserLeads();
+                calculateWallet();
+                if(currentUser && currentUser.email === ADMIN_EMAIL) renderAdmin();
+            }, (error) => console.error("Leads error", error));
+
+            // All Withdrawals
+            const wRef = collection(db, 'artifacts', appId, 'public', 'withdrawals');
+            onSnapshot(wRef, (snapshot) => {
+                globalWithdrawals = [];
+                snapshot.forEach(doc => {
+                    globalWithdrawals.push({ id: doc.id, ...doc.data() });
+                });
+                renderUserWithdrawals();
+                calculateWallet();
+                if(currentUser && currentUser.email === ADMIN_EMAIL) renderAdmin();
+            }, (error) => console.error("Withdrawals error", error));
+
+            // All Users (For admin)
+            if(currentUser && currentUser.email === ADMIN_EMAIL) {
+                const uRef = collection(db, 'artifacts', appId, 'public', 'users');
+                onSnapshot(uRef, (snapshot) => {
+                    globalUsers = [];
+                    snapshot.forEach(doc => {
+                        globalUsers.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderAdmin();
+                }, (error) => console.error("Users error", error));
+            }
+        }
+
+        function renderProducts(filter = 'all') {
+            const container = document.getElementById('productsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const filtered = filter === 'all' ? globalProducts : globalProducts.filter(p => p.category === filter);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-500">No products available in this category.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-md transition-shadow relative overflow-hidden group";
+                card.innerHTML = `
+                    <div class="absolute top-0 right-0 p-3">
+                        <span class="text-xs font-bold px-2 py-1 bg-green-100 text-green-700 rounded-lg border border-green-200">₹${p.commission} Comm.</span>
+                    </div>
+                    <div class="w-14 h-14 ${p.bg} ${p.color} rounded-xl flex items-center justify-center text-2xl mb-4">
+                        <i class="fas ${p.logo}"></i>
+                    </div>
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">${p.name}</h3>
+                    <p class="text-xs text-brand-600 font-medium mb-3">${p.category}</p>
+                    <p class="text-sm text-slate-500 mb-6 flex-grow">${p.description}</p>
+                    
+                    <div class="flex gap-2 mt-auto">
+                        <button onclick="shareProduct('${p.name}', ${p.commission})" class="flex-1 py-2 border border-slate-200 rounded-lg text-slate-600 font-medium text-sm hover:bg-slate-50">
+                            <i class="fas fa-share-nodes"></i> Share
+                        </button>
+                        <button onclick="navigate('leads'); toggleLeadForm(); selectProductInForm('${p.id}')" class="flex-1 py-2 bg-brand-50 text-brand-700 rounded-lg font-medium text-sm hover:bg-brand-100">
+                            Add Lead
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Filter button setup
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-brand-600', 'text-white', 'shadow-sm');
+                    b.classList.add('bg-white', 'text-slate-600');
+                });
+                e.target.classList.add('bg-brand-600', 'text-white', 'shadow-sm');
+                e.target.classList.remove('bg-white', 'text-slate-600');
+                renderProducts(e.target.dataset.filter);
+            });
+        });
+
+        window.toggleLeadForm = function() {
+            const form = document.getElementById('addLeadFormContainer');
+            form.classList.toggle('hidden');
+        }
+        
+        function updateProductDropdown() {
+            const select = document.getElementById('leadProduct');
+            if(!select) return;
+            select.innerHTML = '<option value="">Select a product</option>';
+            globalProducts.forEach(p => {
+                select.innerHTML += `<option value="${p.name}" data-comm="${p.commission}">${p.name} - (Earn ₹${p.commission})</option>`;
+            });
+        }
+        
+        window.selectProductInForm = function(pid) {
+            const p = globalProducts.find(x => x.id === pid);
+            if(p) {
+                const select = document.getElementById('leadProduct');
+                select.value = p.name;
+            }
+        }
+
+        window.submitLead = async function(e) {
+            e.preventDefault();
+            if(!currentUser || currentUser.isAnonymous) return;
+
+            const productSelect = document.getElementById('leadProduct');
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const commission = parseInt(selectedOption.getAttribute('data-comm')) || 0;
+
+            const leadData = {
+                userId: currentUser.uid,
+                agentName: currentProfile.name,
+                customerName: document.getElementById('leadName').value,
+                mobile: document.getElementById('leadMobile').value,
+                product: productSelect.value,
+                commissionAmt: commission,
+                city: document.getElementById('leadCity').value,
+                notes: document.getElementById('leadNotes').value,
+                status: 'Processing',
+                date: new Date().toISOString()
+            };
+
+            try {
+                const ref = collection(db, 'artifacts', appId, 'public', 'leads');
+                await addDoc(ref, leadData);
+                showToast("Lead submitted successfully!", "success");
+                document.getElementById('addLeadForm').reset();
+                toggleLeadForm();
+            } catch (error) {
+                showToast("Failed to add lead", "error");
+            }
+        }
+
+        function renderUserLeads() {
+            if(!currentUser) return;
+            
+            // In memory filter per rules
+            const myLeads = globalLeads.filter(l => l.userId === currentUser.uid).sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            const fullBody = document.getElementById('leadsTableBody');
+            const dashBody = document.getElementById('dashLeadsTableBody');
+            
+            if(fullBody) fullBody.innerHTML = '';
+            if(dashBody) dashBody.innerHTML = '';
+            
+            if(myLeads.length === 0) {
+                if(fullBody) fullBody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No leads added yet.</td></tr>`;
+                return;
+            }
+
+            myLeads.forEach((l, index) => {
+                const date = new Date(l.date).toLocaleDateString('en-IN');
+                
+                let statusClass = "bg-orange-100 text-orange-700";
+                if(l.status === 'Approved' || l.status === 'Paid') statusClass = "bg-green-100 text-green-700";
+                if(l.status === 'Rejected') statusClass = "bg-red-100 text-red-700";
+
+                const trFull = `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 text-xs font-medium text-slate-500">${date}</td>
+                        <td class="p-4">
+                            <div class="font-bold text-slate-800">${l.customerName}</div>
+                            <div class="text-xs text-slate-500">${l.mobile}</div>
+                        </td>
+                        <td class="p-4 font-medium text-slate-700">${l.product}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded text-xs font-bold ${statusClass}">${l.status}</span>
+                        </td>
+                        <td class="p-4 text-right font-bold text-slate-800">₹${l.commissionAmt}</td>
+                    </tr>
+                `;
+                if(fullBody) fullBody.innerHTML += trFull;
+
+                if(index < 5 && dashBody) {
+                    const trDash = `
+                        <tr class="border-b border-slate-50 last:border-0">
+                            <td class="p-3 font-medium">${l.customerName}</td>
+                            <td class="p-3 text-slate-500 text-xs">${l.product}</td>
+                            <td class="p-3"><span class="text-[10px] uppercase font-bold ${statusClass.replace('px-2 py-1','px-1 py-0.5')} rounded">${l.status}</span></td>
+                            <td class="p-3 text-right text-xs text-slate-400">${date}</td>
+                        </tr>
+                    `;
+                    dashBody.innerHTML += trDash;
+                }
+            });
+        }
+
+        function calculateWallet() {
+            if(!currentUser || !currentProfile) return;
+
+            const myLeads = globalLeads.filter(l => l.userId === currentUser.uid);
+            const myWithdrawals = globalWithdrawals.filter(w => w.userId === currentUser.uid);
+
+            let totalEarned = 0;
+            let pendingEarned = 0;
+            let totalWithdrawn = 0;
+            let processingWithdrawals = 0;
+
+            myLeads.forEach(l => {
+                if(l.status === 'Paid') totalEarned += l.commissionAmt;
+                if(l.status === 'Approved' || l.status === 'Processing') pendingEarned += l.commissionAmt;
+            });
+
+            myWithdrawals.forEach(w => {
+                if(w.status === 'Paid') totalWithdrawn += w.amount;
+                if(w.status === 'Pending') processingWithdrawals += w.amount;
+            });
+
+            const availableBal = totalEarned - totalWithdrawn - processingWithdrawals;
+
+            // Dashboard
+            const formatRs = (num) => '₹' + num.toLocaleString('en-IN');
+            
+            if(document.getElementById('dashWalletBalance')) document.getElementById('dashWalletBalance').innerText = formatRs(availableBal);
+            if(document.getElementById('dashTotalEarnings')) document.getElementById('dashTotalEarnings').innerText = formatRs(totalEarned);
+            if(document.getElementById('dashPendingEarnings')) document.getElementById('dashPendingEarnings').innerText = formatRs(pendingEarned);
+            if(document.getElementById('dashTotalWithdrawn')) document.getElementById('dashTotalWithdrawn').innerText = formatRs(totalWithdrawn);
+
+            // Wallet Page
+            if(document.getElementById('walletAvailableBalance')) document.getElementById('walletAvailableBalance').innerText = formatRs(availableBal);
+            if(document.getElementById('walletEarned')) document.getElementById('walletEarned').innerText = formatRs(totalEarned);
+            if(document.getElementById('walletPending')) document.getElementById('walletPending').innerText = formatRs(pendingEarned);
+            if(document.getElementById('walletWithdrawn')) document.getElementById('walletWithdrawn').innerText = formatRs(totalWithdrawn);
+
+            // Save to global for use in withdrawal
+            window.currentAvailableBalance = availableBal;
+        }
+
+        window.openWithdrawModal = function() {
+            if(!currentProfile || !currentProfile.kycData || !currentProfile.kycData.accountNo) {
+                showModal("Bank Details Required", `
+                    <div class="text-center py-4">
+                        <i class="fas fa-university text-4xl text-orange-400 mb-3"></i>
+                        <p class="text-slate-600 mb-4">Please update your bank details in the profile section before requesting a withdrawal.</p>
+                        <button onclick="closeModal(); navigate('profile')" class="gradient-bg text-white px-6 py-2 rounded-lg font-medium">Update Profile</button>
+                    </div>
+                `, " ");
+                return;
+            }
+
+            if(window.currentAvailableBalance < 500) {
+                showToast("Minimum withdrawal amount is ₹500", "warning");
+                return;
+            }
+
+            const html = `
+                <div class="space-y-4">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex justify-between items-center">
+                        <span class="text-blue-800 text-sm font-medium">Available to Withdraw</span>
+                        <span class="text-xl font-bold text-blue-900">₹${window.currentAvailableBalance}</span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Enter Amount</label>
+                        <input type="number" id="wdAmount" min="500" max="${window.currentAvailableBalance}" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-brand-500" value="${window.currentAvailableBalance}">
+                    </div>
+                    <div class="text-xs text-slate-500">
+                        Money will be transferred to Account ending in <b>${currentProfile.kycData.accountNo.slice(-4)}</b>.
+                    </div>
+                </div>
+            `;
+            const actions = `
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 font-medium">Cancel</button>
+                <button onclick="processWithdrawal()" class="px-4 py-2 gradient-bg text-white rounded-lg shadow font-medium">Confirm Request</button>
+            `;
+            showModal("Request Withdrawal", html, actions);
+        }
+
+        window.processWithdrawal = async function() {
+            const amt = parseInt(document.getElementById('wdAmount').value);
+            if(amt < 500 || amt > window.currentAvailableBalance) {
+                showToast("Invalid amount", "error");
+                return;
+            }
+
+            try {
+                closeModal();
+                showLoader("Processing Request...");
+                
+                const wData = {
+                    userId: currentUser.uid,
+                    agentName: currentProfile.name,
+                    amount: amt,
+                    bankDetails: `${currentProfile.kycData.bankName} - XXXX${currentProfile.kycData.accountNo.slice(-4)}`,
+                    status: 'Pending',
+                    date: new Date().toISOString()
+                };
+
+                const ref = collection(db, 'artifacts', appId, 'public', 'withdrawals');
+                await addDoc(ref, wData);
+                
+                hideLoader();
+                showToast("Withdrawal request submitted", "success");
+            } catch(e) {
+                hideLoader();
+                showToast("Error processing request", "error");
+            }
+        }
+
+        function renderUserWithdrawals() {
+            if(!currentUser) return;
+            const myWds = globalWithdrawals.filter(w => w.userId === currentUser.uid).sort((a,b) => new Date(b.date) - new Date(a.date));
+            const body = document.getElementById('withdrawalsTableBody');
+            if(!body) return;
+            
+            body.innerHTML = '';
+            if(myWds.length === 0) {
+                body.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-500">No withdrawal history.</td></tr>`;
+                return;
+            }
+
+            myWds.forEach(w => {
+                const date = new Date(w.date).toLocaleDateString('en-IN');
+                let statusClass = "bg-orange-100 text-orange-700";
+                if(w.status === 'Paid') statusClass = "bg-green-100 text-green-700";
+                if(w.status === 'Rejected') statusClass = "bg-red-100 text-red-700";
+
+                body.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 text-xs text-slate-500">${date}</td>
+                        <td class="p-3 font-bold text-slate-800">₹${w.amount}</td>
+                        <td class="p-3 text-xs text-slate-600">${w.bankDetails}</td>
+                        <td class="p-3"><span class="px-2 py-1 rounded text-[10px] uppercase font-bold ${statusClass}">${w.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.saveProfile = async function(e) {
+            e.preventDefault();
+            if(!currentUser) return;
+            
+            showLoader("Saving Profile...");
+            try {
+                const kycData = {
+                    pan: document.getElementById('profPan').value.toUpperCase(),
+                    aadhaar: document.getElementById('profAadhaar').value,
+                    bankHolder: document.getElementById('profBankName').value,
+                    bankName: document.getElementById('profBank').value,
+                    accountNo: document.getElementById('profAccNo').value,
+                    ifsc: document.getElementById('profIfsc').value.toUpperCase(),
+                    upi: document.getElementById('profUpi').value
+                };
+
+                const userRef = doc(db, 'artifacts', appId, 'public', 'users', currentUser.uid);
+                await updateDoc(userRef, { kycData: kycData, kycStatus: 'Submitted' });
+                
+                hideLoader();
+                showToast("Profile & Bank details updated successfully", "success");
+                document.getElementById('kycStatusBadge').innerText = "KYC Submitted";
+                document.getElementById('kycStatusBadge').className = "mt-2 inline-block px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs font-bold border border-blue-200";
+            } catch(e) {
+                hideLoader();
+                showToast("Failed to update profile", "error");
+            }
+        }
+
+        window.copyReferral = function() {
+            if(currentProfile && currentProfile.referralCode) {
+                try {
+                    const input = document.createElement('input');
+                    input.value = currentProfile.referralCode;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    showToast("Referral code copied!", "success");
+                } catch(e) {
+                    showToast("Unable to copy", "error");
+                }
+            }
+        }
+
+        window.shareReferral = function() {
+            if(currentProfile) {
+                const text = `Join SHRAYNEX and start earning money by referring financial products. Use my code: ${currentProfile.referralCode}.`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            }
+        }
+        
+        window.shareProduct = function(name, comm) {
+            const text = `Check out this amazing offer for ${name} on SHRAYNEX. Let me know if you want to apply!`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        window.switchAdminTab = function(tabId, btnElement) {
+            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('text-brand-600', 'border-brand-600');
+                el.classList.add('text-slate-500', 'border-transparent');
+            });
+            btnElement.classList.add('text-brand-600', 'border-brand-600');
+            btnElement.classList.remove('text-slate-500', 'border-transparent');
+        }
+
+        function renderAdmin() {
+            if(!currentUser || currentUser.email !== ADMIN_EMAIL) return;
+
+            // Update Stats
+            document.getElementById('adminStatUsers').innerText = globalUsers.length;
+            document.getElementById('adminStatLeads').innerText = globalLeads.length;
+            
+            const pendingW = globalWithdrawals.filter(w => w.status === 'Pending');
+            document.getElementById('adminStatPendingW').innerText = pendingW.length;
+            
+            const totalPaid = globalWithdrawals.filter(w => w.status === 'Paid').reduce((sum, w) => sum + w.amount, 0);
+            document.getElementById('adminStatPaid').innerText = '₹' + totalPaid.toLocaleString('en-IN');
+
+            // Render Leads
+            const lBody = document.getElementById('adminLeadsBody');
+            lBody.innerHTML = '';
+            globalLeads.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3"><div class="font-bold">${l.customerName}</div><div class="text-xs">${l.mobile}</div></td>
+                    <td class="p-3 text-xs">${l.agentName}<br>${l.userId.substring(0,6)}...</td>
+                    <td class="p-3 text-xs">${l.product}<br>₹${l.commissionAmt}</td>
+                    <td class="p-3"><span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100">${l.status}</span></td>
+                    <td class="p-3 text-right">
+                        <select onchange="updateAdminDoc('leads', '${l.id}', this.value)" class="text-xs border p-1 rounded">
+                            <option value="">Action</option>
+                            <option value="Approved">Approve</option>
+                            <option value="Paid">Mark Paid</option>
+                            <option value="Rejected">Reject</option>
+                        </select>
+                    </td>
+                `;
+                lBody.appendChild(tr);
+            });
+
+            // Render Withdrawals
+            const wBody = document.getElementById('adminWithdrawalsBody');
+            wBody.innerHTML = '';
+            globalWithdrawals.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(w => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 text-xs">${new Date(w.date).toLocaleDateString()}</td>
+                    <td class="p-3 text-xs">${w.agentName}</td>
+                    <td class="p-3 font-bold text-red-600">₹${w.amount}</td>
+                    <td class="p-3 text-xs max-w-[150px] truncate">${w.bankDetails}</td>
+                    <td class="p-3"><span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100">${w.status}</span></td>
+                    <td class="p-3 text-right">
+                        ${w.status === 'Pending' ? `
+                            <button onclick="updateAdminDoc('withdrawals', '${w.id}', 'Paid')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">Pay</button>
+                            <button onclick="updateAdminDoc('withdrawals', '${w.id}', 'Rejected')" class="bg-red-500 text-white px-2 py-1 rounded text-xs mt-1">Reject</button>
+                        ` : '-'}
+                    </td>
+                `;
+                wBody.appendChild(tr);
+            });
+
+            // Render Users
+            const uBody = document.getElementById('adminUsersBody');
+            uBody.innerHTML = '';
+            globalUsers.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3"><div class="font-bold">${u.name}</div><div class="text-xs text-slate-500">${u.email}</div></td>
+                    <td class="p-3 text-xs">${u.mobile}</td>
+                    <td class="p-3 text-xs">${u.referralCode}</td>
+                    <td class="p-3"><span class="px-2 py-1 text-[10px] font-bold rounded bg-slate-100">${u.kycStatus || 'Pending'}</span></td>
+                `;
+                uBody.appendChild(tr);
+            });
+        }
+
+        window.updateAdminDoc = async function(collectionName, docId, status) {
+            if(!status) return;
+            try {
+                const ref = doc(db, 'artifacts', appId, 'public', collectionName, docId);
+                await updateDoc(ref, { status: status });
+                showToast(`Updated to ${status}`, "success");
+            } catch(e) {
+                showToast("Update failed", "error");
+            }
+        }
+
+        // Initialize App on load
+        window.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
+```
