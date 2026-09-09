@@ -123,7 +123,7 @@
       box-shadow: var(--shadow-sm);
     }
 
-    /* ================= LOGIN PAGE (Professional & Clean) ================= */
+    /* ================= LOGIN PAGE ================= */
     #loginPage{
       flex: 1;
       display: flex;
@@ -431,7 +431,7 @@
     </button>
   </header>
 
-  <!-- ================= LOADER (Initially visible to check auth state) ================= -->
+  <!-- ================= LOADER ================= -->
   <div id="loader">
     <div class="spinner"></div>
     <div style="font-size:15px; font-weight:600; color:#4b5563;">Loading...</div>
@@ -454,7 +454,7 @@
         <form id="employeeLoginForm">
           <div class="form-group">
             <label>Employee ID</label>
-            <input id="employeeLoginId" type="text" placeholder="e.g. RAJAN94" autocomplete="username" required />
+            <input id="employeeLoginId" type="text" placeholder="Enter Employee ID" autocomplete="username" required />
           </div>
           <div class="form-group">
             <label>Password</label>
@@ -480,11 +480,11 @@
         <form id="employeeRegistrationForm">
           <div class="form-group">
             <label>Full Name</label>
-            <input id="registerName" type="text" placeholder="e.g. Rajan Yadav" required />
+            <input id="registerName" type="text" placeholder="Full Name" required />
           </div>
           <div class="form-group">
             <label>WhatsApp Number</label>
-            <input id="registerWhatsapp" type="tel" inputmode="numeric" maxlength="10" placeholder="e.g. 9876543210" required />
+            <input id="registerWhatsapp" type="tel" inputmode="numeric" maxlength="10" placeholder="WhatsApp Number" required />
           </div>
           <button class="btn btn-primary btn-block" type="submit">Submit Request</button>
         </form>
@@ -572,13 +572,6 @@
             <div class="content-card">
               <h3>Recent Tasks</h3>
               <div id="dashboardTaskList" class="task-list"></div>
-            </div>
-
-            <div class="content-card">
-              <h3>Recent Notifications</h3>
-              <div id="notificationList">
-                <div class="empty">No new notification.</div>
-              </div>
             </div>
           </div>
 
@@ -703,8 +696,8 @@
               <div class="info-note">System will generate Employee ID and Password automatically. Example: Rajan + 98... → RAJAN98</div>
               <form id="createEmployeeForm">
                 <div class="form-grid">
-                  <div class="form-group"><label>Employee Name</label><input id="newEmployeeName" type="text" required /></div>
-                  <div class="form-group"><label>WhatsApp Number</label><input id="newEmployeeWhatsapp" type="tel" maxlength="10" required /></div>
+                  <div class="form-group"><label>Employee Name</label><input id="newEmployeeName" type="text" placeholder="Full Name" required /></div>
+                  <div class="form-group"><label>WhatsApp Number</label><input id="newEmployeeWhatsapp" type="tel" maxlength="10" placeholder="10-digit Number" required /></div>
                 </div>
                 <button class="btn btn-primary" type="submit">+ Create Employee</button>
               </form>
@@ -796,8 +789,8 @@
       </div>
       <form id="adminLoginForm">
         <div class="modal-body">
-          <div class="form-group"><label>Admin Email</label><input id="adminEmail" type="email" required /></div>
-          <div class="form-group"><label>Password</label><input id="adminPassword" type="password" required /></div>
+          <div class="form-group"><label>Admin Email</label><input id="adminEmail" type="email" placeholder="Admin Email" required /></div>
+          <div class="form-group"><label>Password</label><input id="adminPassword" type="password" placeholder="Password" required /></div>
           <div id="adminLoginMessage" class="status-message"></div>
         </div>
         <div class="modal-footer">
@@ -846,7 +839,7 @@
         <div class="modal-body">
           <div class="info-note">Available Balance: <strong id="modalWithdrawBalance">₹0</strong></div>
           <div class="form-group"><label>Amount (₹)</label><input id="withdrawAmount" type="number" min="1" required /></div>
-          <div class="form-group"><label>UPI ID or Bank Details</label><textarea id="withdrawDetails" required></textarea></div>
+          <div class="form-group"><label>UPI ID or Bank Details</label><textarea id="withdrawDetails" placeholder="Enter UPI ID..." required></textarea></div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-close="withdrawalModal">Cancel</button>
@@ -938,7 +931,6 @@
       appId: "1:354823113610:web:cca2d8d5ffa68a8d9c9673"
     };
 
-    const OWNER_UID = "EJXTSqQweAcZg14FHY1WrN9ehh52";
     const OWNER_EMAIL = "shraynexofficial@gmail.com";
     const DOMAIN = "@employee.rkyshree-2f74b.firebaseapp.com";
 
@@ -1031,8 +1023,7 @@
       $("adminDashboard").classList.remove("hidden");
     }
 
-    /* FIREBASE AUTH STATE (Fix for refresh) */
-    // Code starts execution here basically: Loader is visible by default in HTML
+    /* FIREBASE AUTH STATE (Admin Fixed Here) */
     showLoader(true); 
     onAuthStateChanged(auth, async user => {
       if(!user){
@@ -1043,13 +1034,15 @@
       }
       currentUser = user;
       try{
-        if(user.uid === OWNER_UID){
+        // === ADMIN LOGIN FIX: Checking Email directly instead of UID ===
+        if(user.email && user.email.toLowerCase() === OWNER_EMAIL.toLowerCase()){
           showAdminPortal();
           await loadAdminData();
           showLoader(false);
           return;
         }
 
+        // Employee Login Check
         const profileSnap = await getDoc(doc(db, "users", user.uid));
         if(!profileSnap.exists() || profileSnap.data().role !== "employee" || profileSnap.data().status === "suspended"){
           await signOut(auth);
@@ -1091,7 +1084,6 @@
 
       showLoader(true);
       try{
-        // Add request without querying first to avoid Permission Denied on read for unauth users
         await addDoc(collection(db, "employeeRequests"), {
           name, whatsapp, status: "pending", createdAt: serverTimestamp()
         });
@@ -1180,11 +1172,9 @@
     /* DATA LOADING - STRICT PRIVACY FOR EMPLOYEES */
     async function loadEmployeeData(){
       try{
-        // Load only global tasks OR personal tasks for this specific UID
         const taskSnap = await getDocs(collection(db, "tasks"));
         allTasks = taskSnap.docs.map(d => ({id:d.id, ...d.data()})).filter(t => t.type === 'global' || t.employeeId === currentUser.uid);
         
-        // Strict UID filtering
         const uidQuery = q => query(collection(db, q), where("employeeId", "==", currentUser.uid));
         
         const subSnap = await getDocs(uidQuery("taskSubmissions"));
@@ -1344,7 +1334,9 @@
       if(e.target === overlay && overlay.id !== "changePasswordModal") overlay.classList.remove("show");
     }));
 
-    /* ADMIN FUNCTIONS (Rest of the admin logic is kept mostly identical since requested changes were for Login & UI) */
+    /* =====================================================
+       FULL ADMIN FUNCTIONS RESTORED
+    ===================================================== */
     async function loadAdminData(){
       const snaps = await Promise.all([ getDocs(collection(db, "users")), getDocs(collection(db, "tasks")), getDocs(collection(db, "taskSubmissions")), getDocs(collection(db, "withdrawalRequests")) ]);
       allEmployees = snaps[0].docs.map(d=>({id:d.id,...d.data()})).filter(u=>u.role==="employee");
@@ -1357,11 +1349,169 @@
       $("adminSubmissionCount").textContent = allSubmissions.filter(s=>s.status==="Submitted").length;
       $("adminWithdrawalCount").textContent = allWithdrawals.filter(w=>w.status==="Pending").length;
 
-      $("adminEmployeeTable").innerHTML = allEmployees.map(e => `<tr><td><strong>${escapeHtml(e.name)}</strong></td><td>${escapeHtml(e.employeeId)}</td><td>${escapeHtml(e.whatsapp)}</td><td><span class="pill ${e.status==='suspended'?'red':'green'}">${e.status}</span></td><td><button class="btn btn-light" style="padding:4px 8px; font-size:12px;" onclick="alert('Manage feature in database')">Edit</button></td></tr>`).join("");
-      
+      renderAdminEmployees();
+      renderAdminTasks();
+      renderAdminSubmissions();
+      renderAdminWithdrawals();
+
       $("taskEmployeeSelect").innerHTML = `<option value="">Select...</option>` + allEmployees.map(e => `<option value="${e.id}">${e.name} - ${e.employeeId}</option>`).join("");
       $("taskType").addEventListener("change", () => $("personalEmployeeGroup").style.display = $("taskType").value === "personal" ? "block" : "none");
     }
+
+    /* Admin: Create Employee */
+    $("createEmployeeForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const name = $("newEmployeeName").value.trim();
+      const whatsapp = normalizeMobile($("newEmployeeWhatsapp").value);
+      if(name.length < 2 || whatsapp.length !== 10) return toast("Enter valid details.");
+      
+      const employeeId = generateEmployeeId(name, whatsapp);
+      const password = whatsapp + "@";
+      const email = employeeId.toLowerCase() + DOMAIN;
+
+      showLoader(true);
+      let creatorApp = null;
+      try{
+        creatorApp = initializeApp(firebaseConfig, "SHRAYNEX_CREATOR_" + Date.now());
+        const creatorAuth = getAuth(creatorApp);
+        const empCred = await createUserWithEmailAndPassword(creatorAuth, email, password);
+        await setDoc(doc(db, "users", empCred.user.uid), {
+          name, whatsapp, employeeId, role: "employee", status: "active", mustChangePassword: true, createdAt: serverTimestamp()
+        });
+        await signOut(creatorAuth); await deleteApp(creatorApp);
+        
+        $("createdEmployeeName").textContent = name;
+        $("createdEmployeeId").textContent = employeeId;
+        $("createdEmployeePassword").textContent = password;
+        $("credentialModal").classList.add("show");
+        $("createEmployeeForm").reset();
+        await loadAdminData();
+      }catch(err){ toast("Error creating employee."); if(creatorApp) deleteApp(creatorApp); }
+      showLoader(false);
+    });
+
+    /* Admin: Render Employees */
+    function renderAdminEmployees(){
+      $("adminEmployeeTable").innerHTML = allEmployees.length ? allEmployees.map(e => {
+        const suspended = e.status === "suspended";
+        return `<tr>
+          <td><strong>${escapeHtml(e.name)}</strong></td><td>${escapeHtml(e.employeeId)}</td><td>${escapeHtml(e.whatsapp)}</td>
+          <td><span class="pill ${suspended?'red':'green'}">${suspended?'Suspended':'Active'}</span></td>
+          <td><button class="btn ${suspended?'btn-success':'btn-warning'}" style="padding:6px 10px; font-size:12px;" onclick="toggleEmployeeStatus('${e.id}', '${suspended?'active':'suspended'}')">${suspended?'Activate':'Suspend'}</button></td>
+        </tr>`;
+      }).join("") : '<tr><td colspan="5">No employees found.</td></tr>';
+    }
+
+    window.toggleEmployeeStatus = async (uid, status) => {
+      if(!confirm(`Are you sure you want to ${status==='suspended'?'suspend':'activate'} this employee?`)) return;
+      showLoader(true);
+      try{ await updateDoc(doc(db, "users", uid), {status}); toast("Status updated."); await loadAdminData(); }
+      catch(e){ toast("Update failed."); }
+      showLoader(false);
+    };
+
+    /* Admin: Create & Render Tasks */
+    $("createTaskForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const type = $("taskType").value, empId = $("taskEmployeeSelect").value;
+      if(type === "personal" && !empId) return toast("Select an employee.");
+      showLoader(true);
+      try{
+        await addDoc(collection(db, "tasks"), {
+          type, title: $("taskTitle").value.trim(), description: $("taskDescription").value.trim(),
+          amount: Number($("taskAmount").value), deadline: $("taskDeadline").value,
+          employeeId: type==="personal"?empId:null, employeeName: type==="personal"?allEmployees.find(emp=>emp.id===empId)?.name:"",
+          status: "open", createdAt: serverTimestamp()
+        });
+        $("createTaskForm").reset(); $("personalEmployeeGroup").style.display="none";
+        toast("Task Created!"); await loadAdminData();
+      }catch(err){ toast("Error creating task."); }
+      showLoader(false);
+    });
+
+    function renderAdminTasks(){
+      $("adminTaskTable").innerHTML = allTasks.length ? allTasks.map(t => `<tr>
+        <td><strong>${escapeHtml(t.title)}</strong><div style="font-size:12px; color:#6b7280; margin-top:4px;">${escapeHtml(t.description).slice(0,60)}...</div></td>
+        <td><span class="pill">${t.type==="global"?"Global":"Personal"}</span></td><td>${t.type==="global"?"All":escapeHtml(t.employeeName||'-')}</td>
+        <td>${formatMoney(t.amount)}</td><td><span class="pill ${t.status==="closed"?'red':'green'}">${escapeHtml(t.status||"open")}</span></td>
+        <td>${t.status==="closed"?"":`<button class="btn btn-light" style="padding:6px 10px; font-size:12px;" onclick="closeTask('${t.id}')">Close</button>`}</td>
+      </tr>`).join("") : '<tr><td colspan="6">No tasks found.</td></tr>';
+    }
+
+    window.closeTask = async (taskId) => {
+      if(!confirm("Close this task?")) return;
+      showLoader(true);
+      try{ await updateDoc(doc(db, "tasks", taskId), {status: "closed", closedAt: serverTimestamp()}); toast("Task closed."); await loadAdminData(); }
+      catch(e){ toast("Failed to close task."); }
+      showLoader(false);
+    };
+
+    /* Admin: Submissions & Reviews */
+    function renderAdminSubmissions(){
+      const subs = allSubmissions.filter(s => s.status !== "Approved");
+      $("adminSubmissionTable").innerHTML = subs.length ? subs.map(s => `<tr>
+        <td>${escapeHtml(s.employeeName||'Employee')}</td><td>${escapeHtml(allTasks.find(t=>t.id===s.taskId)?.title||'Task')}</td>
+        <td>${s.submissionLink?`<a href="${escapeHtml(s.submissionLink)}" target="_blank" style="color:var(--primary); font-weight:600;">View Work</a>`:"-"}</td>
+        <td><span class="pill ${s.status==="Revision"?'red':'orange'}">${escapeHtml(s.status)}</span></td>
+        <td><button class="btn btn-primary" style="padding:6px 10px; font-size:12px;" onclick="openReviewModal('${s.id}')">Review</button></td>
+      </tr>`).join("") : '<tr><td colspan="5">No pending submissions.</td></tr>';
+    }
+
+    window.openReviewModal = (id) => {
+      const sub = allSubmissions.find(s => s.id === id); if(!sub) return;
+      $("reviewSubmissionId").value = id; $("reviewNote").value = sub.adminNote || "";
+      $("reviewSubmissionContent").innerHTML = `<div class="info-note"><strong>Employee:</strong> ${escapeHtml(sub.employeeName)}<br><br><strong>Link:</strong> ${sub.submissionLink?`<a href="${escapeHtml(sub.submissionLink)}" target="_blank">Open Link</a>`:'None'}<br><br><strong>Note:</strong> ${escapeHtml(sub.note||'None')}</div>`;
+      $("reviewModal").classList.add("show");
+    };
+
+    const processReview = async (status) => {
+      const id = $("reviewSubmissionId").value, note = $("reviewNote").value.trim();
+      const sub = allSubmissions.find(s => s.id === id); if(!sub) return;
+      showLoader(true);
+      try{
+        await updateDoc(doc(db, "taskSubmissions", id), { status, adminNote: note, reviewedAt: serverTimestamp() });
+        if(status === "Approved" && !allPayments.find(p=>p.submissionId===id)){
+          const task = allTasks.find(t=>t.id===sub.taskId);
+          await addDoc(collection(db, "payments"), {
+            employeeId: sub.employeeId, employeeName: sub.employeeName, taskId: sub.taskId, submissionId: id,
+            taskTitle: task?.title||"Task", amount: Number(task?.amount||0), status: "Paid", createdAt: serverTimestamp()
+          });
+        }
+        $("reviewModal").classList.remove("show"); toast(status==="Approved"?"Approved & Paid":"Sent for Revision"); await loadAdminData();
+      }catch(e){ toast("Review failed."); }
+      showLoader(false);
+    };
+
+    $("approveSubmissionBtn").addEventListener("click", () => processReview("Approved"));
+    $("revisionBtn").addEventListener("click", () => processReview("Revision"));
+
+    /* Admin: Withdrawals */
+    function renderAdminWithdrawals(){
+      const reqs = allWithdrawals.filter(w => w.status === "Pending");
+      $("adminWithdrawalTable").innerHTML = reqs.length ? reqs.map(w => `<tr>
+        <td><strong>${escapeHtml(w.employeeName)}</strong><br><small style="color:var(--muted)">${escapeHtml(w.paymentDetails)}</small></td>
+        <td>${formatMoney(w.amount)}</td><td><span class="pill orange">Pending</span></td>
+        <td><input id="txn_${w.id}" type="text" placeholder="Txn ID" style="padding:6px; font-size:12px; width:130px;" /></td>
+        <td><div style="display:flex; gap:5px;"><button class="btn btn-success" style="padding:6px 10px; font-size:12px;" onclick="confirmWithdrawal('${w.id}')">Confirm</button>
+        <button class="btn btn-danger" style="padding:6px 10px; font-size:12px;" onclick="rejectWithdrawal('${w.id}')">Reject</button></div></td>
+      </tr>`).join("") : '<tr><td colspan="5">No pending requests.</td></tr>';
+    }
+
+    window.confirmWithdrawal = async (id) => {
+      const txn = $("txn_"+id)?.value.trim(); if(!txn) return toast("Enter Transaction ID");
+      showLoader(true);
+      try{ await updateDoc(doc(db, "withdrawalRequests", id), { status: "Confirmed", transactionId: txn, confirmedAt: serverTimestamp() }); toast("Confirmed!"); await loadAdminData(); }
+      catch(e){ toast("Confirmation failed."); }
+      showLoader(false);
+    };
+
+    window.rejectWithdrawal = async (id) => {
+      if(!confirm("Reject this request?")) return;
+      showLoader(true);
+      try{ await updateDoc(doc(db, "withdrawalRequests", id), { status: "Rejected", rejectedAt: serverTimestamp() }); toast("Rejected."); await loadAdminData(); }
+      catch(e){ toast("Rejection failed."); }
+      showLoader(false);
+    };
 
   </script>
 </body>
