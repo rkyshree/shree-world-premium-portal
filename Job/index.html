@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#070b17">
 <meta name="description" content="SHRAYNEX - Social Media Agency, Digital Marketing, Design, Video Editing, Web Development & Freelance Job Network">
 <title>SHRAYNEX | Digital Agency & Professional Job Network</title>
@@ -38,6 +38,7 @@
 
 html{
   scroll-behavior:smooth;
+  overflow-x: hidden;
 }
 
 body{
@@ -49,6 +50,7 @@ body{
   color:var(--text);
   line-height:1.6;
   overflow-x:hidden;
+  width: 100vw;
 }
 
 body:before{
@@ -153,6 +155,7 @@ button{
   padding:12px 18px;
   font-weight:800;
   transition:.2s;
+  text-align:center;
 }
 
 .btn:hover{
@@ -233,7 +236,7 @@ button{
 }
 
 .hero h1{
-  font-size:clamp(45px,7vw,82px);
+  font-size:clamp(40px,7vw,82px);
   line-height:1.02;
   letter-spacing:-4px;
   margin-bottom:25px;
@@ -276,6 +279,7 @@ button{
   background:rgba(79,140,255,.13);
   filter:blur(100px);
   pointer-events:none;
+  overflow:hidden;
 }
 
 /* STATS */
@@ -310,6 +314,7 @@ button{
 /* SECTIONS */
 section{
   padding:100px 0;
+  overflow-x: hidden;
 }
 
 .section-head{
@@ -682,6 +687,43 @@ footer{
   box-shadow:0 40px 120px rgba(0,0,0,.55);
 }
 
+/* FULL PAGE MODAL FOR LOGIN */
+.modal.full-page-modal{
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  border-radius: 0;
+  border: none;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.full-page-modal .modal-header{
+  border-bottom: 1px solid var(--line);
+  background: rgba(5,8,22,.9);
+  padding: 20px 25px;
+}
+
+.full-page-modal .modal-body-wrap{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: auto;
+}
+
+.full-page-modal .modal-body{
+  width: min(450px, 100%);
+  background: var(--card);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
 .modal-header{
   padding:20px 22px;
   border-bottom:1px solid var(--line);
@@ -751,7 +793,8 @@ footer{
   inset:0;
   z-index:4000;
   background:#050816;
-  overflow:auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .portal-shell{
@@ -824,6 +867,7 @@ footer{
   max-width:1450px;
   width:100%;
   margin:auto;
+  overflow-x: hidden; /* Prevent portal right scroll */
 }
 
 .portal-section{
@@ -880,6 +924,8 @@ footer{
   border-radius:18px;
   padding:20px;
   margin-bottom:18px;
+  width: 100%;
+  overflow: hidden; 
 }
 
 .panel-title{
@@ -900,7 +946,9 @@ footer{
 }
 
 .table-wrap{
-  overflow:auto;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table{
@@ -917,6 +965,7 @@ footer{
   letter-spacing:.7px;
   padding:11px;
   border-bottom:1px solid var(--line);
+  white-space: nowrap;
 }
 
 .data-table td{
@@ -932,6 +981,7 @@ footer{
   border-radius:7px;
   font-size:9px;
   font-weight:800;
+  white-space: nowrap;
 }
 
 .status.open,
@@ -967,6 +1017,8 @@ footer{
   border:1px solid var(--line);
   border-radius:18px;
   background:rgba(11,17,34,.85);
+  display: flex;
+  flex-direction: column;
 }
 
 .job-card h3{
@@ -1167,21 +1219,29 @@ footer{
     flex-direction:column;
     gap:7px;
   }
-
+  
+  /* Portal Responsive Settings */
   .portal-layout{
     grid-template-columns:1fr;
   }
 
+  /* Hide scrollbar for sidebar but allow scrolling */
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
   .sidebar{
     position:sticky;
     top:70px;
     z-index:10;
     display:flex;
-    overflow:auto;
+    overflow-x:auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
     gap:5px;
     border-right:0;
     border-bottom:1px solid var(--line);
-    padding:8px;
+    padding:8px 13px;
+    background:#070b18;
   }
 
   .sidebar button{
@@ -1192,6 +1252,7 @@ footer{
 
   .portal-main{
     padding:18px;
+    max-width: 100vw;
   }
 
   .dashboard-grid{
@@ -1204,6 +1265,11 @@ footer{
 
   .search-row{
     grid-template-columns:1fr;
+  }
+  
+  /* Full page login modal fixes on mobile */
+  .modal-overlay {
+    padding: 0;
   }
 }
 
@@ -1729,86 +1795,94 @@ footer{
 </footer>
 
 
-<!-- ================= LOGIN MODAL ================= -->
+<!-- ================= LOGIN FULL-PAGE MODAL ================= -->
 <div class="modal-overlay" id="loginModal">
 
-  <div class="modal auth-box">
+  <div class="modal full-page-modal">
 
     <div class="modal-header">
-      <h3>SHRAYNEX Portal</h3>
+      <div class="logo">
+        <span class="logo-mark">S</span>
+        <span>SHRAYNEX PORTAL</span>
+      </div>
       <button class="close-btn" onclick="closeModal('loginModal')">×</button>
     </div>
 
-    <div class="modal-body">
+    <div class="modal-body-wrap">
+      <div class="modal-body">
 
-      <div class="auth-tabs">
+        <h3 style="margin-bottom: 20px; font-size: 22px;">Welcome Back</h3>
 
-        <button class="auth-tab active" id="employeeTab" onclick="switchLogin('employee')">
-          EMPLOYEE
-        </button>
+        <div class="auth-tabs">
 
-        <button class="auth-tab" id="ownerTab" onclick="switchLogin('owner')">
-          OWNER
-        </button>
+          <button class="auth-tab active" id="employeeTab" onclick="switchLogin('employee')">
+            EMPLOYEE
+          </button>
+
+          <button class="auth-tab" id="ownerTab" onclick="switchLogin('owner')">
+            OWNER
+          </button>
+
+        </div>
+
+
+        <!-- EMPLOYEE LOGIN -->
+
+        <form id="employeeLoginForm">
+
+          <div class="field">
+            <label>EMPLOYEE ID</label>
+            <input id="employeeLoginId" placeholder="Example: RAJAN94" required>
+          </div>
+
+          <br>
+
+          <div class="field">
+            <label>PASSWORD</label>
+            <input id="employeeLoginPassword" type="password" placeholder="Example: RAJAN9451" required>
+          </div>
+
+          <br>
+
+          <button class="btn btn-primary" style="width:100%" type="submit">
+            Login as Employee
+          </button>
+
+          <div class="login-help">
+            Employee ID format: Name + first 2 mobile digits.<br>
+            Example: RAJAN + 94 = RAJAN94<br><br>
+            Password format: First name (Capital) + first 4 digits of mobile.<br>
+            Example: RAJAN + 9451 = RAJAN9451
+          </div>
+
+        </form>
+
+
+        <!-- OWNER LOGIN -->
+
+        <form id="ownerLoginForm" style="display:none">
+
+          <div class="field">
+            <label>OWNER EMAIL</label>
+            <input id="ownerEmail" type="email" placeholder="Owner email" required>
+          </div>
+
+          <br>
+
+          <div class="field">
+            <label>PASSWORD</label>
+            <input id="ownerPassword" type="password" placeholder="Owner password" required>
+          </div>
+
+          <br>
+
+          <button class="btn btn-primary" style="width:100%" type="submit">
+            Login as Owner
+          </button>
+
+        </form>
 
       </div>
-
-
-      <!-- EMPLOYEE LOGIN -->
-
-      <form id="employeeLoginForm">
-
-        <div class="field">
-          <label>EMPLOYEE ID</label>
-          <input id="employeeLoginId" placeholder="Example: RAJAN94" required>
-        </div>
-
-        <br>
-
-        <div class="field">
-          <label>PASSWORD</label>
-          <input id="employeeLoginPassword" type="password" placeholder="Example: 9451239239@" required>
-        </div>
-
-        <br>
-
-        <button class="btn btn-primary" style="width:100%" type="submit">
-          Login as Employee
-        </button>
-
-        <div class="login-help">
-          Employee ID format: Name + first 2 mobile digits.<br>
-          Example: RAJAN + 94 = RAJAN94<br><br>
-          Password format: Complete registered mobile number + @
-        </div>
-
-      </form>
-
-
-      <!-- OWNER LOGIN -->
-
-      <form id="ownerLoginForm" style="display:none">
-
-        <div class="field">
-          <label>OWNER EMAIL</label>
-          <input id="ownerEmail" type="email" placeholder="Owner email" required>
-        </div>
-
-        <br>
-
-        <div class="field">
-          <label>PASSWORD</label>
-          <input id="ownerPassword" type="password" placeholder="Owner password" required>
-        </div>
-
-        <br>
-
-        <button class="btn btn-primary" style="width:100%" type="submit">
-          Login as Owner
-        </button>
-
-      </form>
-
     </div>
 
   </div>
@@ -1819,7 +1893,7 @@ footer{
 <!-- ================= GENERAL MODAL ================= -->
 <div class="modal-overlay" id="generalModal">
 
-  <div class="modal">
+  <div class="modal" style="width:min(650px,95%)">
 
     <div class="modal-header">
       <h3 id="generalModalTitle">Information</h3>
@@ -1842,7 +1916,7 @@ footer{
 
       <div class="logo">
         <span class="logo-mark">S</span>
-        <span>SHRAYNEX PORTAL</span>
+        <span>SHRAYNEX</span>
       </div>
 
       <div class="portal-user">
@@ -1988,7 +2062,7 @@ footer{
 
           </div>
 
-          <div class="panel">
+          <div class="panel" style="padding: 0; border: none; background: transparent;">
 
             <div id="submissionsContainer"></div>
 
@@ -2249,404 +2323,84 @@ let unsubscribeFunctions = [];
 const services = [
 
   // SOCIAL MEDIA
-  {
-    title:"Social Media Management",
-    category:"Social Media",
-    desc:"Complete management of your social media presence.",
-    tag:"Management"
-  },
-  {
-    title:"Social Media Strategy",
-    category:"Social Media",
-    desc:"Platform-specific content and growth strategy.",
-    tag:"Strategy"
-  },
-  {
-    title:"Social Media Marketing",
-    category:"Social Media",
-    desc:"Campaign planning and digital promotion.",
-    tag:"Marketing"
-  },
-  {
-    title:"Social Media Growth",
-    category:"Social Media",
-    desc:"Organic content and audience growth strategy.",
-    tag:"Growth"
-  },
-  {
-    title:"Instagram Management",
-    category:"Social Media",
-    desc:"Instagram content, captions, reels and management.",
-    tag:"Instagram"
-  },
-  {
-    title:"Facebook Management",
-    category:"Social Media",
-    desc:"Professional Facebook page management.",
-    tag:"Facebook"
-  },
-  {
-    title:"YouTube Management",
-    category:"Social Media",
-    desc:"Channel content, thumbnails and optimization.",
-    tag:"YouTube"
-  },
-  {
-    title:"LinkedIn Management",
-    category:"Social Media",
-    desc:"Professional LinkedIn content and positioning.",
-    tag:"LinkedIn"
-  },
-  {
-    title:"Community Management",
-    category:"Social Media",
-    desc:"Audience engagement and community handling.",
-    tag:"Community"
-  },
-  {
-    title:"Social Media Audit",
-    category:"Social Media",
-    desc:"Review of existing social media performance.",
-    tag:"Audit"
-  },
+  { title:"Social Media Management", category:"Social Media", desc:"Complete management of your social media presence.", tag:"Management" },
+  { title:"Social Media Strategy", category:"Social Media", desc:"Platform-specific content and growth strategy.", tag:"Strategy" },
+  { title:"Social Media Marketing", category:"Social Media", desc:"Campaign planning and digital promotion.", tag:"Marketing" },
+  { title:"Social Media Growth", category:"Social Media", desc:"Organic content and audience growth strategy.", tag:"Growth" },
+  { title:"Instagram Management", category:"Social Media", desc:"Instagram content, captions, reels and management.", tag:"Instagram" },
+  { title:"Facebook Management", category:"Social Media", desc:"Professional Facebook page management.", tag:"Facebook" },
+  { title:"YouTube Management", category:"Social Media", desc:"Channel content, thumbnails and optimization.", tag:"YouTube" },
+  { title:"LinkedIn Management", category:"Social Media", desc:"Professional LinkedIn content and positioning.", tag:"LinkedIn" },
+  { title:"Community Management", category:"Social Media", desc:"Audience engagement and community handling.", tag:"Community" },
+  { title:"Social Media Audit", category:"Social Media", desc:"Review of existing social media performance.", tag:"Audit" },
 
   // DESIGN
-  {
-    title:"Graphic Design",
-    category:"Design & Branding",
-    desc:"Professional visual design for digital platforms.",
-    tag:"Design"
-  },
-  {
-    title:"Poster Design",
-    category:"Design & Branding",
-    desc:"Promotional, business and social media posters.",
-    tag:"Design"
-  },
-  {
-    title:"Banner Design",
-    category:"Design & Branding",
-    desc:"Web, social media and promotional banners.",
-    tag:"Design"
-  },
-  {
-    title:"Logo Design",
-    category:"Design & Branding",
-    desc:"Professional logos and visual marks.",
-    tag:"Branding"
-  },
-  {
-    title:"Brand Identity",
-    category:"Design & Branding",
-    desc:"Complete visual identity for your business.",
-    tag:"Branding"
-  },
-  {
-    title:"Brand Kit",
-    category:"Design & Branding",
-    desc:"Fonts, colors, logo usage and brand assets.",
-    tag:"Branding"
-  },
-  {
-    title:"Thumbnail Design",
-    category:"Design & Branding",
-    desc:"High-impact thumbnails for YouTube and social media.",
-    tag:"YouTube"
-  },
-  {
-    title:"Photo Editing",
-    category:"Design & Branding",
-    desc:"Professional image correction and enhancement.",
-    tag:"Photo"
-  },
-  {
-    title:"Product Photo Editing",
-    category:"Design & Branding",
-    desc:"E-commerce and product image editing.",
-    tag:"E-commerce"
-  },
-  {
-    title:"Photo Retouching",
-    category:"Design & Branding",
-    desc:"Professional retouching and image cleanup.",
-    tag:"Photo"
-  },
-  {
-    title:"Background Removal",
-    category:"Design & Branding",
-    desc:"Clean background removal and replacement.",
-    tag:"Photo"
-  },
+  { title:"Graphic Design", category:"Design & Branding", desc:"Professional visual design for digital platforms.", tag:"Design" },
+  { title:"Poster Design", category:"Design & Branding", desc:"Promotional, business and social media posters.", tag:"Design" },
+  { title:"Banner Design", category:"Design & Branding", desc:"Web, social media and promotional banners.", tag:"Design" },
+  { title:"Logo Design", category:"Design & Branding", desc:"Professional logos and visual marks.", tag:"Branding" },
+  { title:"Brand Identity", category:"Design & Branding", desc:"Complete visual identity for your business.", tag:"Branding" },
+  { title:"Brand Kit", category:"Design & Branding", desc:"Fonts, colors, logo usage and brand assets.", tag:"Branding" },
+  { title:"Thumbnail Design", category:"Design & Branding", desc:"High-impact thumbnails for YouTube and social media.", tag:"YouTube" },
+  { title:"Photo Editing", category:"Design & Branding", desc:"Professional image correction and enhancement.", tag:"Photo" },
+  { title:"Product Photo Editing", category:"Design & Branding", desc:"E-commerce and product image editing.", tag:"E-commerce" },
+  { title:"Photo Retouching", category:"Design & Branding", desc:"Professional retouching and image cleanup.", tag:"Photo" },
+  { title:"Background Removal", category:"Design & Branding", desc:"Clean background removal and replacement.", tag:"Photo" },
 
   // VIDEO CONTENT
-  {
-    title:"Video Editing",
-    category:"Video & Content",
-    desc:"Professional editing for social and digital content.",
-    tag:"Video"
-  },
-  {
-    title:"Reels Editing",
-    category:"Video & Content",
-    desc:"Short-form reels designed for social platforms.",
-    tag:"Reels"
-  },
-  {
-    title:"Shorts Editing",
-    category:"Video & Content",
-    desc:"YouTube Shorts and vertical video editing.",
-    tag:"Shorts"
-  },
-  {
-    title:"YouTube Video Editing",
-    category:"Video & Content",
-    desc:"Long-form YouTube video production and editing.",
-    tag:"YouTube"
-  },
-  {
-    title:"Motion Graphics",
-    category:"Video & Content",
-    desc:"Animated graphics and motion design.",
-    tag:"Motion"
-  },
-  {
-    title:"Intro / Outro",
-    category:"Video & Content",
-    desc:"Professional branded intro and outro videos.",
-    tag:"Branding"
-  },
-  {
-    title:"Promotional Videos",
-    category:"Video & Content",
-    desc:"Business and product promotional video content.",
-    tag:"Promotion"
-  },
-  {
-    title:"Video Ads",
-    category:"Video & Content",
-    desc:"Short advertising creatives for campaigns.",
-    tag:"Advertising"
-  },
-  {
-    title:"UGC Creative Editing",
-    category:"Video & Content",
-    desc:"UGC-style short-form creative editing.",
-    tag:"UGC"
-  },
-  {
-    title:"Script Writing",
-    category:"Video & Content",
-    desc:"Scripts for videos, reels and promotional content.",
-    tag:"Content"
-  },
-  {
-    title:"Content Creation",
-    category:"Video & Content",
-    desc:"Creative content for social media platforms.",
-    tag:"Content"
-  },
-  {
-    title:"Content Strategy",
-    category:"Video & Content",
-    desc:"Content planning based on goals and audience.",
-    tag:"Strategy"
-  },
+  { title:"Video Editing", category:"Video & Content", desc:"Professional editing for social and digital content.", tag:"Video" },
+  { title:"Reels Editing", category:"Video & Content", desc:"Short-form reels designed for social platforms.", tag:"Reels" },
+  { title:"Shorts Editing", category:"Video & Content", desc:"YouTube Shorts and vertical video editing.", tag:"Shorts" },
+  { title:"YouTube Video Editing", category:"Video & Content", desc:"Long-form YouTube video production and editing.", tag:"YouTube" },
+  { title:"Motion Graphics", category:"Video & Content", desc:"Animated graphics and motion design.", tag:"Motion" },
+  { title:"Intro / Outro", category:"Video & Content", desc:"Professional branded intro and outro videos.", tag:"Branding" },
+  { title:"Promotional Videos", category:"Video & Content", desc:"Business and product promotional video content.", tag:"Promotion" },
+  { title:"Video Ads", category:"Video & Content", desc:"Short advertising creatives for campaigns.", tag:"Advertising" },
+  { title:"UGC Creative Editing", category:"Video & Content", desc:"UGC-style short-form creative editing.", tag:"UGC" },
+  { title:"Script Writing", category:"Video & Content", desc:"Scripts for videos, reels and promotional content.", tag:"Content" },
+  { title:"Content Creation", category:"Video & Content", desc:"Creative content for social media platforms.", tag:"Content" },
+  { title:"Content Strategy", category:"Video & Content", desc:"Content planning based on goals and audience.", tag:"Strategy" },
 
   // COPYWRITING
-  {
-    title:"Copywriting",
-    category:"Copywriting",
-    desc:"Conversion-focused copy for digital businesses.",
-    tag:"Copy"
-  },
-  {
-    title:"Caption Writing",
-    category:"Copywriting",
-    desc:"Engaging social media captions.",
-    tag:"Social"
-  },
-  {
-    title:"Ad Copy",
-    category:"Copywriting",
-    desc:"Copy for advertising campaigns and creatives.",
-    tag:"Ads"
-  },
-  {
-    title:"Creative Copy",
-    category:"Copywriting",
-    desc:"Creative messaging for brands and campaigns.",
-    tag:"Creative"
-  },
-  {
-    title:"Website Copy",
-    category:"Copywriting",
-    desc:"Professional website content and messaging.",
-    tag:"Web"
-  },
+  { title:"Copywriting", category:"Copywriting", desc:"Conversion-focused copy for digital businesses.", tag:"Copy" },
+  { title:"Caption Writing", category:"Copywriting", desc:"Engaging social media captions.", tag:"Social" },
+  { title:"Ad Copy", category:"Copywriting", desc:"Copy for advertising campaigns and creatives.", tag:"Ads" },
+  { title:"Creative Copy", category:"Copywriting", desc:"Creative messaging for brands and campaigns.", tag:"Creative" },
+  { title:"Website Copy", category:"Copywriting", desc:"Professional website content and messaging.", tag:"Web" },
 
   // ADS
-  {
-    title:"Performance Marketing",
-    category:"Ads & Marketing",
-    desc:"Performance-oriented digital marketing campaigns.",
-    tag:"Performance"
-  },
-  {
-    title:"Meta Ads",
-    category:"Ads & Marketing",
-    desc:"Facebook and Instagram advertising campaigns.",
-    tag:"Meta"
-  },
-  {
-    title:"Google Ads",
-    category:"Ads & Marketing",
-    desc:"Google search and display campaign management.",
-    tag:"Google"
-  },
-  {
-    title:"YouTube Ads",
-    category:"Ads & Marketing",
-    desc:"YouTube video advertising campaigns.",
-    tag:"YouTube"
-  },
-  {
-    title:"Campaign Setup",
-    category:"Ads & Marketing",
-    desc:"Campaign structure, targeting and creative setup.",
-    tag:"Campaign"
-  },
-  {
-    title:"Campaign Optimization",
-    category:"Ads & Marketing",
-    desc:"Performance analysis and campaign optimization.",
-    tag:"Optimization"
-  },
-  {
-    title:"Lead Generation",
-    category:"Ads & Marketing",
-    desc:"Digital strategies for generating business leads.",
-    tag:"Leads"
-  },
-  {
-    title:"Influencer Marketing",
-    category:"Ads & Marketing",
-    desc:"Influencer and creator campaign coordination.",
-    tag:"Influencer"
-  },
-  {
-    title:"Creator Collaboration",
-    category:"Ads & Marketing",
-    desc:"Campaign collaboration with digital creators.",
-    tag:"Creator"
-  },
+  { title:"Performance Marketing", category:"Ads & Marketing", desc:"Performance-oriented digital marketing campaigns.", tag:"Performance" },
+  { title:"Meta Ads", category:"Ads & Marketing", desc:"Facebook and Instagram advertising campaigns.", tag:"Meta" },
+  { title:"Google Ads", category:"Ads & Marketing", desc:"Google search and display campaign management.", tag:"Google" },
+  { title:"YouTube Ads", category:"Ads & Marketing", desc:"YouTube video advertising campaigns.", tag:"YouTube" },
+  { title:"Campaign Setup", category:"Ads & Marketing", desc:"Campaign structure, targeting and creative setup.", tag:"Campaign" },
+  { title:"Campaign Optimization", category:"Ads & Marketing", desc:"Performance analysis and campaign optimization.", tag:"Optimization" },
+  { title:"Lead Generation", category:"Ads & Marketing", desc:"Digital strategies for generating business leads.", tag:"Leads" },
+  { title:"Influencer Marketing", category:"Ads & Marketing", desc:"Influencer and creator campaign coordination.", tag:"Influencer" },
+  { title:"Creator Collaboration", category:"Ads & Marketing", desc:"Campaign collaboration with digital creators.", tag:"Creator" },
 
   // SEO WEB
-  {
-    title:"SEO",
-    category:"SEO & Web",
-    desc:"Search engine optimization for digital visibility.",
-    tag:"SEO"
-  },
-  {
-    title:"Local SEO",
-    category:"SEO & Web",
-    desc:"Local search visibility optimization.",
-    tag:"Local SEO"
-  },
-  {
-    title:"Google Business Profile",
-    category:"SEO & Web",
-    desc:"Business profile optimization and content.",
-    tag:"Local"
-  },
-  {
-    title:"Website Development",
-    category:"SEO & Web",
-    desc:"Responsive modern business websites.",
-    tag:"Development"
-  },
-  {
-    title:"Landing Page Development",
-    category:"SEO & Web",
-    desc:"Conversion-focused landing pages.",
-    tag:"Landing Page"
-  },
-  {
-    title:"E-commerce Website",
-    category:"SEO & Web",
-    desc:"Online stores and product selling websites.",
-    tag:"E-commerce"
-  },
-  {
-    title:"WordPress Website",
-    category:"SEO & Web",
-    desc:"Professional WordPress website solutions.",
-    tag:"WordPress"
-  },
-  {
-    title:"Website Maintenance",
-    category:"SEO & Web",
-    desc:"Updates, content changes and website maintenance.",
-    tag:"Maintenance"
-  },
+  { title:"SEO", category:"SEO & Web", desc:"Search engine optimization for digital visibility.", tag:"SEO" },
+  { title:"Local SEO", category:"SEO & Web", desc:"Local search visibility optimization.", tag:"Local SEO" },
+  { title:"Google Business Profile", category:"SEO & Web", desc:"Business profile optimization and content.", tag:"Local" },
+  { title:"Website Development", category:"SEO & Web", desc:"Responsive modern business websites.", tag:"Development" },
+  { title:"Landing Page Development", category:"SEO & Web", desc:"Conversion-focused landing pages.", tag:"Landing Page" },
+  { title:"E-commerce Website", category:"SEO & Web", desc:"Online stores and product selling websites.", tag:"E-commerce" },
+  { title:"WordPress Website", category:"SEO & Web", desc:"Professional WordPress website solutions.", tag:"WordPress" },
+  { title:"Website Maintenance", category:"SEO & Web", desc:"Updates, content changes and website maintenance.", tag:"Maintenance" },
 
   // STRATEGY
-  {
-    title:"Competitor Research",
-    category:"Growth & Strategy",
-    desc:"Research competitors and identify opportunities.",
-    tag:"Research"
-  },
-  {
-    title:"Hashtag Research",
-    category:"Growth & Strategy",
-    desc:"Relevant hashtag and content discovery.",
-    tag:"Research"
-  },
-  {
-    title:"Analytics & Reporting",
-    category:"Growth & Strategy",
-    desc:"Performance reports and digital insights.",
-    tag:"Analytics"
-  },
-  {
-    title:"Reputation Management",
-    category:"Growth & Strategy",
-    desc:"Professional online reputation support.",
-    tag:"Reputation"
-  },
-  {
-    title:"Digital Marketing Consulting",
-    category:"Growth & Strategy",
-    desc:"Strategic digital marketing consultation.",
-    tag:"Consulting"
-  },
+  { title:"Competitor Research", category:"Growth & Strategy", desc:"Research competitors and identify opportunities.", tag:"Research" },
+  { title:"Hashtag Research", category:"Growth & Strategy", desc:"Relevant hashtag and content discovery.", tag:"Research" },
+  { title:"Analytics & Reporting", category:"Growth & Strategy", desc:"Performance reports and digital insights.", tag:"Analytics" },
+  { title:"Reputation Management", category:"Growth & Strategy", desc:"Professional online reputation support.", tag:"Reputation" },
+  { title:"Digital Marketing Consulting", category:"Growth & Strategy", desc:"Strategic digital marketing consultation.", tag:"Consulting" },
 
   // BUSINESS SUPPORT
-  {
-    title:"Email Marketing",
-    category:"Business Support",
-    desc:"Email content and campaign support.",
-    tag:"Email"
-  },
-  {
-    title:"WhatsApp Business Setup",
-    category:"Business Support",
-    desc:"Business profile and communication setup.",
-    tag:"WhatsApp"
-  },
-  {
-    title:"Digital Business Setup",
-    category:"Business Support",
-    desc:"Support for building your digital business presence.",
-    tag:"Business"
-  },
-  {
-    title:"Freelance Creative Services",
-    category:"Business Support",
-    desc:"Professional creative work for businesses and agencies.",
-    tag:"Freelance"
-  }
+  { title:"Email Marketing", category:"Business Support", desc:"Email content and campaign support.", tag:"Email" },
+  { title:"WhatsApp Business Setup", category:"Business Support", desc:"Business profile and communication setup.", tag:"WhatsApp" },
+  { title:"Digital Business Setup", category:"Business Support", desc:"Support for building your digital business presence.", tag:"Business" },
+  { title:"Freelance Creative Services", category:"Business Support", desc:"Professional creative work for businesses and agencies.", tag:"Freelance" }
 
 ];
 
@@ -2683,14 +2437,12 @@ function renderServiceFilters(){
   const box = document.getElementById("serviceFilters");
 
   box.innerHTML = categories.map((cat,index)=>`
-
     <button
       class="filter-btn ${index===0 ? "active":""}"
       onclick="filterServices('${escapeAttribute(cat)}',this)"
     >
       ${escapeHtml(cat)}
     </button>
-
   `).join("");
 }
 
@@ -2711,42 +2463,28 @@ window.filterServices = function(category,button){
 
 
 function renderServices(list){
-
   const box = document.getElementById("servicesGrid");
-
   box.innerHTML = list.map(s=>`
-
     <div class="service-card">
-
       <div class="service-icon">
         ${iconForCategory(s.category)}
       </div>
-
       <h3>${escapeHtml(s.title)}</h3>
-
       <p>${escapeHtml(s.desc)}</p>
-
       <span class="service-tag">
         ${escapeHtml(s.tag)}
       </span>
-
     </div>
-
   `).join("");
 }
 
 
 function populateServiceSelects(){
-
   const options = services.map(s=>
     `<option value="${escapeAttribute(s.title)}">${escapeHtml(s.title)}</option>`
   ).join("");
-
-  document.getElementById("appService").innerHTML =
-    `<option value="">Select your primary expertise</option>${options}`;
-
-  document.getElementById("newEmployeeService").innerHTML =
-    options;
+  document.getElementById("appService").innerHTML = `<option value="">Select your primary expertise</option>${options}`;
+  document.getElementById("newEmployeeService").innerHTML = options;
 }
 
 
@@ -2756,9 +2494,7 @@ function populateServiceSelects(){
 
 document.getElementById("applicationForm")
 .addEventListener("submit",function(e){
-
   e.preventDefault();
-
   const name = document.getElementById("appName").value.trim();
   const mobile = document.getElementById("appMobile").value.trim();
   const city = document.getElementById("appCity").value.trim();
@@ -2771,23 +2507,16 @@ document.getElementById("applicationForm")
     return;
   }
 
-  const message =
-`SHRAYNEX PROFESSIONAL APPLICATION
-
+  const message = `SHRAYNEX PROFESSIONAL APPLICATION
 Name: ${name}
 Mobile: ${mobile}
 City: ${city}
 Work Mode: ${mode}
 Primary Expertise: ${service}
-
 Professional Summary:
 ${summary}`;
 
-  window.open(
-    "https://wa.me/919451239239?text="+encodeURIComponent(message),
-    "_blank"
-  );
-
+  window.open("https://wa.me/919451239239?text="+encodeURIComponent(message), "_blank");
 });
 
 
@@ -2796,51 +2525,26 @@ ${summary}`;
 ========================================================= */
 
 window.openLogin = function(){
-
-  document.getElementById("loginModal")
-    .classList.add("show");
-
+  document.getElementById("loginModal").classList.add("show");
   switchLogin("employee");
 };
 
-
 window.switchLogin = function(type){
-
-  const employee =
-    type==="employee";
-
-  document.getElementById("employeeLoginForm")
-    .style.display = employee ? "block" : "none";
-
-  document.getElementById("ownerLoginForm")
-    .style.display = employee ? "none" : "block";
-
-  document.getElementById("employeeTab")
-    .classList.toggle("active",employee);
-
-  document.getElementById("ownerTab")
-    .classList.toggle("active",!employee);
+  const employee = type==="employee";
+  document.getElementById("employeeLoginForm").style.display = employee ? "block" : "none";
+  document.getElementById("ownerLoginForm").style.display = employee ? "none" : "block";
+  document.getElementById("employeeTab").classList.toggle("active",employee);
+  document.getElementById("ownerTab").classList.toggle("active",!employee);
 };
-
 
 window.closeModal = function(id){
-
-  document.getElementById(id)
-    ?.classList.remove("show");
-
+  document.getElementById(id)?.classList.remove("show");
 };
 
-
 function showGeneral(title,html){
-
-  document.getElementById("generalModalTitle")
-    .textContent = title;
-
-  document.getElementById("generalModalBody")
-    .innerHTML = html;
-
-  document.getElementById("generalModal")
-    .classList.add("show");
+  document.getElementById("generalModalTitle").textContent = title;
+  document.getElementById("generalModalBody").innerHTML = html;
+  document.getElementById("generalModal").classList.add("show");
 }
 
 
@@ -2850,17 +2554,10 @@ function showGeneral(title,html){
 
 document.getElementById("employeeLoginForm")
 .addEventListener("submit",async e=>{
-
   e.preventDefault();
 
-  const employeeId =
-    document.getElementById("employeeLoginId")
-      .value.trim()
-      .toUpperCase();
-
-  const password =
-    document.getElementById("employeeLoginPassword")
-      .value.trim();
+  const employeeId = document.getElementById("employeeLoginId").value.trim().toUpperCase();
+  const password = document.getElementById("employeeLoginPassword").value.trim();
 
   if(!employeeId || !password){
     showToast("Employee ID and password required.");
@@ -2868,28 +2565,13 @@ document.getElementById("employeeLoginForm")
   }
 
   try{
-
     showToast("Logging in...");
-
-    const email =
-      employeeId.toLowerCase()+DOMAIN;
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
+    const email = employeeId.toLowerCase()+DOMAIN;
+    await signInWithEmailAndPassword(auth, email, password);
   }catch(error){
-
     console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
+    showToast(firebaseErrorMessage(error));
   }
-
 });
 
 
@@ -2899,35 +2581,16 @@ document.getElementById("employeeLoginForm")
 
 document.getElementById("ownerLoginForm")
 .addEventListener("submit",async e=>{
-
   e.preventDefault();
-
-  const email =
-    document.getElementById("ownerEmail")
-      .value.trim();
-
-  const password =
-    document.getElementById("ownerPassword")
-      .value;
+  const email = document.getElementById("ownerEmail").value.trim();
+  const password = document.getElementById("ownerPassword").value;
 
   try{
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
+    await signInWithEmailAndPassword(auth, email, password);
   }catch(error){
-
     console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
+    showToast(firebaseErrorMessage(error));
   }
-
 });
 
 
@@ -2936,29 +2599,20 @@ document.getElementById("ownerLoginForm")
 ========================================================= */
 
 onAuthStateChanged(auth,async user=>{
-
   if(!user){
-
     currentUser = null;
     currentProfile = null;
     currentRole = null;
-
     closePortal();
-
     return;
   }
 
   currentUser = user;
 
   try{
-
-    const profileSnap =
-      await getDoc(
-        doc(db,"users",user.uid)
-      );
+    const profileSnap = await getDoc(doc(db,"users",user.uid));
 
     if(!profileSnap.exists()){
-
       await setDoc(
         doc(db,"users",user.uid),
         {
@@ -2969,53 +2623,31 @@ onAuthStateChanged(auth,async user=>{
         },
         {merge:true}
       );
-
       currentProfile = {
         uid:user.uid,
         email:user.email || "",
         role:user.uid===OWNER_UID ? "owner" : "employee"
       };
-
     }else{
-
       currentProfile = {
         uid:user.uid,
         ...profileSnap.data()
       };
-
     }
 
-    currentRole =
-      user.uid===OWNER_UID
-      ? "owner"
-      : (currentProfile.role || "employee");
+    currentRole = user.uid===OWNER_UID ? "owner" : (currentProfile.role || "employee");
 
-    if(
-      currentRole==="employee" &&
-      currentProfile.status==="Suspended"
-    ){
-
+    if(currentRole==="employee" && currentProfile.status==="Suspended"){
       await signOut(auth);
-
-      showToast(
-        "Your employee account is currently suspended."
-      );
-
+      showToast("Your employee account is currently suspended.");
       return;
     }
 
     openPortal();
-
   }catch(error){
-
     console.error(error);
-
-    showToast(
-      "Unable to load profile."
-    );
-
+    showToast("Unable to load profile.");
   }
-
 });
 
 
@@ -3024,49 +2656,27 @@ onAuthStateChanged(auth,async user=>{
 ========================================================= */
 
 function openPortal(){
-
-  document.getElementById("loginModal")
-    .classList.remove("show");
-
-  document.getElementById("portal")
-    .style.display="block";
-
+  document.getElementById("loginModal").classList.remove("show");
+  document.getElementById("portal").style.display="block";
   document.body.style.overflow="hidden";
 
-  document.getElementById("portalUserName")
-    .textContent =
-      currentProfile?.name ||
-      currentProfile?.employeeId ||
-      currentProfile?.email ||
-      "User";
+  document.getElementById("portalUserName").textContent =
+      currentProfile?.name || currentProfile?.employeeId || currentProfile?.email || "User";
 
-  document.getElementById("portalAvatar")
-    .textContent =
-      (
-        currentProfile?.name ||
-        currentProfile?.employeeId ||
-        "S"
-      ).charAt(0).toUpperCase();
-
+  document.getElementById("portalAvatar").textContent =
+      (currentProfile?.name || currentProfile?.employeeId || "S").charAt(0).toUpperCase();
 
   setupPortalForRole();
-
 }
 
 
 function closePortal(){
-
-  document.getElementById("portal")
-    .style.display="none";
-
+  document.getElementById("portal").style.display="none";
   document.body.style.overflow="";
-
   unsubscribeFunctions.forEach(fn=>{
     try{fn();}catch(e){}
   });
-
   unsubscribeFunctions = [];
-
 }
 
 
@@ -3075,58 +2685,25 @@ function closePortal(){
 ========================================================= */
 
 function setupPortalForRole(){
-
   const isOwner = currentRole==="owner";
-
-  document.querySelectorAll(
-    ".sidebar button"
-  ).forEach(btn=>{
-
+  document.querySelectorAll(".sidebar button").forEach(btn=>{
     const section = btn.dataset.section;
-
     if(!isOwner){
-
-      btn.style.display =
-        ["dashboard","jobs","submissions","payments","profile"]
-        .includes(section)
-        ? "block"
-        : "none";
-
+      btn.style.display = ["dashboard","jobs","submissions","payments","profile"].includes(section) ? "block" : "none";
     }else{
-
-      btn.style.display =
-        ["dashboard","jobs","submissions","employees","payments","profile"]
-        .includes(section)
-        ? "block"
-        : "none";
-
+      btn.style.display = ["dashboard","jobs","submissions","employees","payments","profile"].includes(section) ? "block" : "none";
     }
-
   });
 
-
   if(isOwner){
-
-    document.getElementById("dashboardTitle")
-      .textContent="Owner Dashboard";
-
-    document.getElementById("dashboardSubtitle")
-      .textContent="Manage employees, projects, submissions and payouts.";
-
+    document.getElementById("dashboardTitle").textContent="Owner Dashboard";
+    document.getElementById("dashboardSubtitle").textContent="Manage employees, projects, submissions and payouts.";
     loadOwnerData();
-
   }else{
-
-    document.getElementById("dashboardTitle")
-      .textContent="Employee Dashboard";
-
-    document.getElementById("dashboardSubtitle")
-      .textContent="Manage your projects, submissions and earnings.";
-
+    document.getElementById("dashboardTitle").textContent="Employee Dashboard";
+    document.getElementById("dashboardSubtitle").textContent="Manage your projects, submissions and earnings.";
     loadEmployeeData();
-
   }
-
 }
 
 
@@ -3135,23 +2712,13 @@ function setupPortalForRole(){
 ========================================================= */
 
 window.switchPortalSection = function(section,button){
-
-  document.querySelectorAll(".portal-section")
-    .forEach(s=>s.classList.remove("active"));
-
-  document.getElementById(
-    "portal-"+section
-  )?.classList.add("active");
-
-  document.querySelectorAll(".sidebar button")
-    .forEach(b=>b.classList.remove("active"));
-
+  document.querySelectorAll(".portal-section").forEach(s=>s.classList.remove("active"));
+  document.getElementById("portal-"+section)?.classList.add("active");
+  document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
   button?.classList.add("active");
-
   if(section==="profile"){
     renderProfile();
   }
-
 };
 
 
@@ -3160,127 +2727,47 @@ window.switchPortalSection = function(section,button){
 ========================================================= */
 
 function loadOwnerData(){
-
   clearListeners();
 
-  const employeeQuery =
-    query(
-      collection(db,"users"),
-      where("role","==","employee")
-    );
-
-  const taskQuery =
-    collection(db,"tasks");
-
-  const subQuery =
-    collection(db,"taskSubmissions");
-
-  const paymentQuery =
-    collection(db,"payments");
-
-  const withdrawalQuery =
-    collection(db,"withdrawalRequests");
-
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      employeeQuery,
-      snap=>{
-        employees =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderOwnerEmployees();
-        renderOwnerStats();
-      },
-      console.error
-    )
-
+    onSnapshot(query(collection(db,"users"), where("role","==","employee")), snap=>{
+      employees = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderOwnerEmployees();
+      renderOwnerStats();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      taskQuery,
-      snap=>{
-        tasks =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderOwnerStats();
-        renderOwnerJobs();
-      },
-      console.error
-    )
-
+    onSnapshot(collection(db,"tasks"), snap=>{
+      tasks = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderOwnerStats();
+      renderOwnerJobs();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      subQuery,
-      snap=>{
-        submissions =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderOwnerStats();
-        renderSubmissions();
-      },
-      console.error
-    )
-
+    onSnapshot(collection(db,"taskSubmissions"), snap=>{
+      submissions = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderOwnerStats();
+      renderSubmissions();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      paymentQuery,
-      snap=>{
-        payments =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderPayments();
-        renderOwnerStats();
-      },
-      console.error
-    )
-
+    onSnapshot(collection(db,"payments"), snap=>{
+      payments = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderPayments();
+      renderOwnerStats();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      withdrawalQuery,
-      snap=>{
-        withdrawals =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderWithdrawals();
-        renderOwnerStats();
-      },
-      console.error
-    )
-
+    onSnapshot(collection(db,"withdrawalRequests"), snap=>{
+      withdrawals = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderWithdrawals();
+      renderOwnerStats();
+    })
   );
-
 }
 
 
@@ -3289,124 +2776,42 @@ function loadOwnerData(){
 ========================================================= */
 
 function loadEmployeeData(){
-
   clearListeners();
-
   const uid = currentUser.uid;
 
-
-  const taskQuery =
-    collection(db,"tasks");
-
-  const submissionQuery =
-    query(
-      collection(db,"taskSubmissions"),
-      where("employeeId","==",uid)
-    );
-
-  const paymentQuery =
-    query(
-      collection(db,"payments"),
-      where("employeeId","==",uid)
-    );
-
-  const withdrawalQuery =
-    query(
-      collection(db,"withdrawalRequests"),
-      where("employeeId","==",uid)
-    );
-
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      taskQuery,
-      snap=>{
-
-        tasks =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderEmployeeJobs();
-        renderEmployeeStats();
-
-      },
-      console.error
-    )
-
+    onSnapshot(collection(db,"tasks"), snap=>{
+      tasks = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderEmployeeJobs();
+      renderEmployeeStats();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      submissionQuery,
-      snap=>{
-
-        submissions =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderEmployeeSubmissions();
-        renderEmployeeStats();
-
-      },
-      console.error
-    )
-
+    onSnapshot(query(collection(db,"taskSubmissions"), where("employeeId","==",uid)), snap=>{
+      submissions = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderEmployeeSubmissions();
+      renderEmployeeStats();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      paymentQuery,
-      snap=>{
-
-        payments =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderEmployeeStats();
-        renderPayments();
-
-      },
-      console.error
-    )
-
+    onSnapshot(query(collection(db,"payments"), where("employeeId","==",uid)), snap=>{
+      payments = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderEmployeeStats();
+      renderPayments();
+    })
   );
 
-
   unsubscribeFunctions.push(
-
-    onSnapshot(
-      withdrawalQuery,
-      snap=>{
-
-        withdrawals =
-          snap.docs.map(d=>({
-            id:d.id,
-            ...d.data()
-          }));
-
-        renderEmployeeStats();
-        renderWithdrawals();
-
-      },
-      console.error
-    )
-
+    onSnapshot(query(collection(db,"withdrawalRequests"), where("employeeId","==",uid)), snap=>{
+      withdrawals = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderEmployeeStats();
+      renderWithdrawals();
+    })
   );
-
 
   renderProfile();
-
 }
 
 
@@ -3415,69 +2820,22 @@ function loadEmployeeData(){
 ========================================================= */
 
 function renderOwnerStats(){
+  const openJobs = tasks.filter(t=>t.status!=="Closed").length;
+  const pendingReviews = submissions.filter(s=>s.status==="Submitted" || s.status==="Review").length;
+  const pendingPayouts = withdrawals.filter(w=>w.status==="Pending").length;
+  const totalPaid = payments.reduce((sum,p)=>sum + Number(p.amount||0), 0);
 
-  const openJobs =
-    tasks.filter(t=>t.status!=="Closed").length;
+  document.getElementById("dashboardStats").innerHTML=`
+    <div class="dashboard-card"><span>Total Employees</span><strong>${employees.length}</strong></div>
+    <div class="dashboard-card"><span>Open Projects</span><strong>${openJobs}</strong></div>
+    <div class="dashboard-card"><span>Pending Reviews</span><strong>${pendingReviews}</strong></div>
+    <div class="dashboard-card"><span>Total Paid</span><strong>₹${formatMoney(totalPaid)}</strong></div>
+  `;
 
-  const pendingReviews =
-    submissions.filter(
-      s=>s.status==="Submitted" ||
-         s.status==="Review"
-    ).length;
-
-  const pendingPayouts =
-    withdrawals.filter(
-      w=>w.status==="Pending"
-    ).length;
-
-  const totalPaid =
-    payments.reduce(
-      (sum,p)=>sum + Number(p.amount||0),
-      0
-    );
-
-
-  document.getElementById("dashboardStats")
-    .innerHTML=`
-
-      <div class="dashboard-card">
-        <span>Total Employees</span>
-        <strong>${employees.length}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Open Projects</span>
-        <strong>${openJobs}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Pending Reviews</span>
-        <strong>${pendingReviews}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Total Paid</span>
-        <strong>₹${formatMoney(totalPaid)}</strong>
-      </div>
-
-    `;
-
-
-  document.getElementById("recentActivity")
-    .innerHTML=`
-
-      <div class="notice">
-        ${pendingPayouts}
-        payout request(s) currently pending.
-      </div>
-
-      <div class="empty">
-        Use the sidebar to manage employees, projects,
-        submissions and payments.
-      </div>
-
-    `;
-
+  document.getElementById("recentActivity").innerHTML=`
+    <div class="notice">${pendingPayouts} payout request(s) currently pending.</div>
+    <div class="empty">Use the sidebar to manage employees, projects, submissions and payments.</div>
+  `;
 }
 
 
@@ -3486,89 +2844,23 @@ function renderOwnerStats(){
 ========================================================= */
 
 function renderEmployeeStats(){
-
   const uid = currentUser.uid;
+  const lifetime = payments.filter(p=>p.employeeId===uid && p.status==="Paid").reduce((sum,p)=>sum+Number(p.amount||0), 0);
+  const paidOut = withdrawals.filter(w=>w.employeeId===uid && w.status==="Paid").reduce((sum,w)=>sum+Number(w.amount||0), 0);
+  const pending = withdrawals.filter(w=>w.employeeId===uid && w.status==="Pending").reduce((sum,w)=>sum+Number(w.amount||0), 0);
+  const available = Math.max(0, lifetime-paidOut-pending);
+  const myTasks = tasks.filter(t=>t.scope==="global" || t.employeeId===uid);
 
-  const lifetime =
-    payments
-      .filter(p=>p.employeeId===uid && p.status==="Paid")
-      .reduce(
-        (sum,p)=>sum+Number(p.amount||0),
-        0
-      );
+  document.getElementById("dashboardStats").innerHTML=`
+    <div class="dashboard-card"><span>Lifetime Earnings</span><strong>₹${formatMoney(lifetime)}</strong></div>
+    <div class="dashboard-card"><span>Available Balance</span><strong>₹${formatMoney(available)}</strong></div>
+    <div class="dashboard-card"><span>Pending Payout</span><strong>₹${formatMoney(pending)}</strong></div>
+    <div class="dashboard-card"><span>Available Jobs</span><strong>${myTasks.filter(t=>t.status!=="Closed").length}</strong></div>
+  `;
 
-  const paidOut =
-    withdrawals
-      .filter(w=>
-        w.employeeId===uid &&
-        w.status==="Paid"
-      )
-      .reduce(
-        (sum,w)=>sum+Number(w.amount||0),
-        0
-      );
-
-  const pending =
-    withdrawals
-      .filter(w=>
-        w.employeeId===uid &&
-        w.status==="Pending"
-      )
-      .reduce(
-        (sum,w)=>sum+Number(w.amount||0),
-        0
-      );
-
-  const available =
-    Math.max(
-      0,
-      lifetime-paidOut-pending
-    );
-
-
-  const myTasks =
-    tasks.filter(t=>
-      t.scope==="global" ||
-      t.employeeId===uid
-    );
-
-
-  document.getElementById("dashboardStats")
-    .innerHTML=`
-
-      <div class="dashboard-card">
-        <span>Lifetime Earnings</span>
-        <strong>₹${formatMoney(lifetime)}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Available Balance</span>
-        <strong>₹${formatMoney(available)}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Pending Payout</span>
-        <strong>₹${formatMoney(pending)}</strong>
-      </div>
-
-      <div class="dashboard-card">
-        <span>Available Jobs</span>
-        <strong>${myTasks.filter(t=>t.status!=="Closed").length}</strong>
-      </div>
-
-    `;
-
-
-  document.getElementById("recentActivity")
-    .innerHTML=`
-
-      <div class="notice">
-        Your available balance can be requested through the payout
-        request process. Payment is subject to owner approval.
-      </div>
-
-    `;
-
+  document.getElementById("recentActivity").innerHTML=`
+    <div class="notice">Your available balance can be requested through the payout request process. Payment is subject to owner approval.</div>
+  `;
 }
 
 
@@ -3578,299 +2870,103 @@ function renderEmployeeStats(){
 
 document.getElementById("employeeCreateForm")
 .addEventListener("submit",async e=>{
-
   e.preventDefault();
-
   if(currentRole!=="owner"){
     showToast("Owner access required.");
     return;
   }
 
-  const name =
-    document.getElementById("newEmployeeName")
-      .value.trim();
+  const name = document.getElementById("newEmployeeName").value.trim();
+  const mobile = document.getElementById("newEmployeeMobile").value.trim();
+  const city = document.getElementById("newEmployeeCity").value.trim();
+  const service = document.getElementById("newEmployeeService").value;
 
-  const mobile =
-    document.getElementById("newEmployeeMobile")
-      .value.trim();
-
-  const city =
-    document.getElementById("newEmployeeCity")
-      .value.trim();
-
-  const service =
-    document.getElementById("newEmployeeService")
-      .value;
-
-
-  if(!name){
-    showToast("Employee name required.");
-    return;
-  }
-
-  if(!/^\d{10}$/.test(mobile)){
-    showToast("Mobile must be exactly 10 digits.");
-    return;
-  }
-
+  if(!name){ showToast("Employee name required."); return; }
+  if(!/^\d{10}$/.test(mobile)){ showToast("Mobile must be exactly 10 digits."); return; }
 
   /*
-    ========================================================
-    EMPLOYEE ID FORMAT
-
-    Customer name + first 2 mobile digits
-
-    RAJAN YADAV
-    9451239239
-
-    => RAJAN94
-    ========================================================
+    EMPLOYEE ID FORMAT: Name first 4 letters + first 2 mobile digits
   */
-
-  const employeeId =
-    generateEmployeeId(name,mobile);
-
+  const employeeId = generateEmployeeId(name,mobile);
 
   /*
-    PASSWORD FORMAT
-
-    COMPLETE MOBILE + @
-
-    9451239239
-    =>
-    9451239239@
+    PASSWORD FORMAT: First Name (capitalized) + first 4 mobile digits
   */
-
-  const employeePassword =
-    mobile+"@";
-
-
-  const employeeEmail =
-    employeeId.toLowerCase()+DOMAIN;
-
+  const firstName = name.split(" ")[0].toUpperCase().replace(/[^A-Z]/g,"");
+  const employeePassword = firstName + mobile.substring(0,4);
+  const employeeEmail = employeeId.toLowerCase()+DOMAIN;
 
   try{
-
     showToast("Creating employee account...");
 
-
-    /*
-      Check duplicate employee ID first
-    */
-
-    const existingQuery =
-      query(
-        collection(db,"users"),
-        where("employeeId","==",employeeId)
-      );
-
-    const existingSnap =
-      await getDocs(existingQuery);
-
-
+    const existingQuery = query(collection(db,"users"), where("employeeId","==",employeeId));
+    const existingSnap = await getDocs(existingQuery);
     if(!existingSnap.empty){
-
-      showToast(
-        "Employee ID already exists. Use a different name/mobile."
-      );
-
+      showToast("Employee ID already exists. Use a different name/mobile.");
       return;
     }
 
+    const creatorApp = getApps().find(a=>a.name==="SHRAYNEX_CREATOR") || initializeApp(firebaseConfig,"SHRAYNEX_CREATOR");
+    const creatorAuth = getAuth(creatorApp);
+    const credential = await createUserWithEmailAndPassword(creatorAuth, employeeEmail, employeePassword);
+    const employeeUid = credential.user.uid;
 
-    /*
-      Create Firebase user using secondary app.
-    */
-
-    const creatorApp =
-      getApps().find(
-        a=>a.name==="SHRAYNEX_CREATOR"
-      ) ||
-      initializeApp(
-        firebaseConfig,
-        "SHRAYNEX_CREATOR"
-      );
-
-
-    const creatorAuth =
-      getAuth(creatorApp);
-
-
-    const credential =
-      await createUserWithEmailAndPassword(
-        creatorAuth,
-        employeeEmail,
-        employeePassword
-      );
-
-
-    const employeeUid =
-      credential.user.uid;
-
-
-    await setDoc(
-      doc(db,"users",employeeUid),
-      {
-        uid:employeeUid,
-        role:"employee",
-
-        name:name,
-
-        employeeId:employeeId,
-
-        email:employeeEmail,
-
-        mobile:mobile,
-
-        city:city,
-
-        service:service,
-
-        status:"Active",
-
-        createdAt:serverTimestamp(),
-
-        loginFormat:"name_first_4_letters_plus_first_2_mobile_digits",
-
-        passwordFormat:"complete_mobile_number_plus_at_symbol"
-      }
-    );
-
+    await setDoc(doc(db,"users",employeeUid), {
+      uid:employeeUid,
+      role:"employee",
+      name:name,
+      employeeId:employeeId,
+      email:employeeEmail,
+      mobile:mobile,
+      city:city,
+      service:service,
+      status:"Active",
+      createdAt:serverTimestamp(),
+      loginFormat:"name_first_4_letters_plus_first_2_mobile_digits",
+      passwordFormat:"first_name_capitalized_plus_first_4_mobile_digits"
+    });
 
     await signOut(creatorAuth);
+    document.getElementById("employeeCreateForm").reset();
 
-
-    document.getElementById("employeeCreateForm")
-      .reset();
-
-
-    showGeneral(
-      "Employee Account Created",
-      `
-
-        <div class="notice">
-          Employee account successfully created.
-        </div>
-
-        <div class="panel">
-
-          <p style="font-size:12px;color:#8792a9">
-            EMPLOYEE NAME
-          </p>
-
-          <h3 style="margin:5px 0 17px">
-            ${escapeHtml(name)}
-          </h3>
-
-
-          <p style="font-size:12px;color:#8792a9">
-            EMPLOYEE ID
-          </p>
-
-          <h2 style="margin:5px 0 17px;color:#8db5ff">
-            ${escapeHtml(employeeId)}
-          </h2>
-
-
-          <p style="font-size:12px;color:#8792a9">
-            PASSWORD
-          </p>
-
-          <h2 style="margin:5px 0 17px;color:#70f8bd">
-            ${escapeHtml(employeePassword)}
-          </h2>
-
-
-          <p style="font-size:11px;color:#66728b">
-            Email login:
-            ${escapeHtml(employeeEmail)}
-          </p>
-
-        </div>
-
-
-        <button
-          class="btn btn-primary"
-          onclick="copyCredentials(
-            '${escapeAttribute(employeeId)}',
-            '${escapeAttribute(employeePassword)}'
-          )"
-        >
-          Copy Login Details
-        </button>
-
-      `
-    );
-
-
+    showGeneral("Employee Account Created",`
+      <div class="notice">Employee account successfully created.</div>
+      <div class="panel">
+        <p style="font-size:12px;color:#8792a9">EMPLOYEE NAME</p>
+        <h3 style="margin:5px 0 17px">${escapeHtml(name)}</h3>
+        <p style="font-size:12px;color:#8792a9">EMPLOYEE ID</p>
+        <h2 style="margin:5px 0 17px;color:#8db5ff">${escapeHtml(employeeId)}</h2>
+        <p style="font-size:12px;color:#8792a9">PASSWORD</p>
+        <h2 style="margin:5px 0 17px;color:#70f8bd">${escapeHtml(employeePassword)}</h2>
+      </div>
+      <button class="btn btn-primary" onclick="copyCredentials('${escapeAttribute(employeeId)}','${escapeAttribute(employeePassword)}')">
+        Copy Login Details
+      </button>
+    `);
   }catch(error){
-
     console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
+    showToast(firebaseErrorMessage(error));
   }
-
 });
 
 
-/* =========================================================
-   EMPLOYEE ID GENERATOR
-========================================================= */
-
 function generateEmployeeId(name,mobile){
-
-  const cleanName =
-    name
-      .toUpperCase()
-      .replace(/[^A-Z]/g,"");
-
-  let prefix =
-    cleanName.substring(0,4);
-
-  /*
-    If name has less than 4 English letters,
-    pad with X.
-  */
-
-  while(prefix.length<4){
-    prefix += "X";
-  }
-
-  const firstTwo =
-    mobile.substring(0,2);
-
+  const cleanName = name.toUpperCase().replace(/[^A-Z]/g,"");
+  let prefix = cleanName.substring(0,4);
+  while(prefix.length<4){ prefix += "X"; }
+  const firstTwo = mobile.substring(0,2);
   return prefix+firstTwo;
-
 }
 
 
-/* =========================================================
-   COPY CREDENTIALS
-========================================================= */
-
 window.copyCredentials = async function(id,password){
-
-  const text =
-`SHRAYNEX Employee Login
-
-Employee ID: ${id}
-Password: ${password}`;
-
+  const text = `SHRAYNEX Employee Login\nEmployee ID: ${id}\nPassword: ${password}`;
   try{
-
     await navigator.clipboard.writeText(text);
-
     showToast("Login credentials copied.");
-
   }catch(e){
-
     showToast(text);
-
   }
-
 };
 
 
@@ -3879,119 +2975,37 @@ Password: ${password}`;
 ========================================================= */
 
 function renderOwnerEmployees(){
-
-  const tbody =
-    document.getElementById("employeesTable");
-
-
+  const tbody = document.getElementById("employeesTable");
   if(!employees.length){
-
-    tbody.innerHTML=`
-      <tr>
-        <td colspan="6">
-          <div class="empty">
-            No employees found.
-          </div>
-        </td>
-      </tr>
-    `;
-
+    tbody.innerHTML=`<tr><td colspan="6"><div class="empty">No employees found.</div></td></tr>`;
     return;
   }
-
-
-  tbody.innerHTML =
-    employees.map(emp=>`
-
-      <tr>
-
-        <td>
-          <strong>
-            ${escapeHtml(emp.name || "—")}
-          </strong>
-        </td>
-
-        <td>
-          ${escapeHtml(emp.employeeId || "—")}
-        </td>
-
-        <td>
-          ${escapeHtml(emp.mobile || "—")}
-        </td>
-
-        <td>
-          ${escapeHtml(emp.service || "—")}
-        </td>
-
-        <td>
-          <span class="status ${
-            emp.status==="Suspended"
-            ? "suspended"
-            : "active"
-          }">
-            ${escapeHtml(emp.status || "Active")}
-          </span>
-        </td>
-
-        <td>
-
-          <button
-            class="btn btn-secondary btn-small"
-            onclick="toggleEmployeeStatus(
-              '${escapeAttribute(emp.uid || emp.id)}',
-              '${escapeAttribute(emp.status || "Active")}'
-            )"
-          >
-            ${emp.status==="Suspended"
-              ? "Activate"
-              : "Suspend"
-            }
-          </button>
-
-        </td>
-
-      </tr>
-
-    `).join("");
-
+  tbody.innerHTML = employees.map(emp=>`
+    <tr>
+      <td><strong>${escapeHtml(emp.name || "—")}</strong></td>
+      <td>${escapeHtml(emp.employeeId || "—")}</td>
+      <td>${escapeHtml(emp.mobile || "—")}</td>
+      <td>${escapeHtml(emp.service || "—")}</td>
+      <td>
+        <span class="status ${emp.status==="Suspended" ? "suspended" : "active"}">
+          ${escapeHtml(emp.status || "Active")}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-secondary btn-small" onclick="toggleEmployeeStatus('${escapeAttribute(emp.uid || emp.id)}','${escapeAttribute(emp.status || "Active")}')">
+          ${emp.status==="Suspended" ? "Activate" : "Suspend"}
+        </button>
+      </td>
+    </tr>
+  `).join("");
 }
 
-
-/* =========================================================
-   EMPLOYEE STATUS
-========================================================= */
-
 window.toggleEmployeeStatus = async function(uid,status){
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
+  if(currentRole!=="owner") return;
   try{
-
-    await updateDoc(
-      doc(db,"users",uid),
-      {
-        status:
-          status==="Suspended"
-          ? "Active"
-          : "Suspended",
-        statusUpdatedAt:serverTimestamp()
-      }
-    );
-
+    await updateDoc(doc(db,"users",uid), { status: status==="Suspended" ? "Active" : "Suspended", statusUpdatedAt:serverTimestamp() });
     showToast("Employee status updated.");
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
 
 
@@ -4000,207 +3014,48 @@ window.toggleEmployeeStatus = async function(uid,status){
 ========================================================= */
 
 function createProjectModal(){
+  const employeeOptions = employees.map(emp=>`<option value="${escapeAttribute(emp.uid)}">${escapeHtml(emp.name || emp.employeeId)} — ${escapeHtml(emp.employeeId || "")}</option>`).join("");
+  const categoryOptions = categories.filter(c=>c!=="All").map(c=>`<option value="${escapeAttribute(c)}">${escapeHtml(c)}</option>`).join("");
 
-  const employeeOptions =
-    employees.map(emp=>`
-      <option value="${escapeAttribute(emp.uid)}">
-        ${escapeHtml(emp.name || emp.employeeId)}
-        — ${escapeHtml(emp.employeeId || "")}
-      </option>
-    `).join("");
+  showGeneral("Create New Project",`
+    <form id="projectCreateForm">
+      <div class="form-grid">
+        <div class="field full"><label>PROJECT TITLE *</label><input id="projectTitle" required></div>
+        <div class="field"><label>CATEGORY</label><select id="projectCategory">${categoryOptions}</select></div>
+        <div class="field"><label>PAYMENT AMOUNT *</label><input id="projectAmount" type="number" min="0" step="1" required></div>
+        <div class="field"><label>SCOPE</label><select id="projectScope"><option value="global">All Eligible Employees</option><option value="personal">Specific Employee</option></select></div>
+        <div class="field"><label>ASSIGN EMPLOYEE</label><select id="projectEmployee"><option value="">Select Employee</option>${employeeOptions}</select></div>
+        <div class="field full"><label>DEADLINE</label><input id="projectDeadline" type="datetime-local"></div>
+        <div class="field full"><label>PROJECT BRIEF / REQUIREMENTS</label><textarea id="projectBrief"></textarea></div>
+      </div>
+      <br><button class="btn btn-primary" type="submit">Publish Project</button>
+    </form>
+  `);
 
-
-  const categoryOptions =
-    categories
-      .filter(c=>c!=="All")
-      .map(c=>`
-        <option value="${escapeAttribute(c)}">
-          ${escapeHtml(c)}
-        </option>
-      `).join("");
-
-
-  showGeneral(
-    "Create New Project",
-    `
-
-      <form id="projectCreateForm">
-
-        <div class="form-grid">
-
-          <div class="field full">
-            <label>PROJECT TITLE *</label>
-            <input id="projectTitle" required>
-          </div>
-
-          <div class="field">
-            <label>CATEGORY</label>
-            <select id="projectCategory">
-              ${categoryOptions}
-            </select>
-          </div>
-
-          <div class="field">
-            <label>PAYMENT AMOUNT *</label>
-            <input
-              id="projectAmount"
-              type="number"
-              min="0"
-              step="1"
-              required
-            >
-          </div>
-
-          <div class="field">
-            <label>SCOPE</label>
-            <select id="projectScope">
-              <option value="global">
-                All Eligible Employees
-              </option>
-              <option value="personal">
-                Specific Employee
-              </option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>ASSIGN EMPLOYEE</label>
-            <select id="projectEmployee">
-              <option value="">
-                Select Employee
-              </option>
-              ${employeeOptions}
-            </select>
-          </div>
-
-          <div class="field full">
-            <label>DEADLINE</label>
-            <input id="projectDeadline" type="datetime-local">
-          </div>
-
-          <div class="field full">
-            <label>PROJECT BRIEF / REQUIREMENTS</label>
-            <textarea id="projectBrief"></textarea>
-          </div>
-
-        </div>
-
-        <br>
-
-        <button
-          class="btn btn-primary"
-          type="submit"
-        >
-          Publish Project
-        </button>
-
-      </form>
-
-    `
-  );
-
-
-  document.getElementById("projectCreateForm")
-    .addEventListener("submit",createProject);
-
+  document.getElementById("projectCreateForm").addEventListener("submit",createProject);
 }
 
-
 async function createProject(e){
-
   e.preventDefault();
+  const title = document.getElementById("projectTitle").value.trim();
+  const category = document.getElementById("projectCategory").value;
+  const amount = Number(document.getElementById("projectAmount").value);
+  const scope = document.getElementById("projectScope").value;
+  const employeeId = document.getElementById("projectEmployee").value;
+  const deadline = document.getElementById("projectDeadline").value;
+  const brief = document.getElementById("projectBrief").value.trim();
 
-
-  const title =
-    document.getElementById("projectTitle")
-      .value.trim();
-
-  const category =
-    document.getElementById("projectCategory")
-      .value;
-
-  const amount =
-    Number(
-      document.getElementById("projectAmount")
-        .value
-    );
-
-  const scope =
-    document.getElementById("projectScope")
-      .value;
-
-  const employeeId =
-    document.getElementById("projectEmployee")
-      .value;
-
-  const deadline =
-    document.getElementById("projectDeadline")
-      .value;
-
-  const brief =
-    document.getElementById("projectBrief")
-      .value.trim();
-
-
-  if(!title || amount<0){
-
-    showToast("Please enter valid project details.");
-
-    return;
-
-  }
-
-
-  if(
-    scope==="personal" &&
-    !employeeId
-  ){
-
-    showToast(
-      "Select an employee for a personal project."
-    );
-
-    return;
-
-  }
-
+  if(!title || amount<0){ showToast("Please enter valid project details."); return; }
+  if(scope==="personal" && !employeeId){ showToast("Select an employee for a personal project."); return; }
 
   try{
-
-    await addDoc(
-      collection(db,"tasks"),
-      {
-        title,
-        category,
-        amount,
-        scope,
-        employeeId:
-          scope==="personal"
-          ? employeeId
-          : null,
-        deadline:deadline || null,
-        brief,
-        status:"Open",
-        createdBy:currentUser.uid,
-        createdAt:serverTimestamp()
-      }
-    );
-
-
+    await addDoc(collection(db,"tasks"), {
+      title, category, amount, scope, employeeId: scope==="personal" ? employeeId : null,
+      deadline:deadline || null, brief, status:"Open", createdBy:currentUser.uid, createdAt:serverTimestamp()
+    });
     closeModal("generalModal");
-
     showToast("Project published successfully.");
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 }
 
 
@@ -4209,165 +3064,50 @@ async function createProject(e){
 ========================================================= */
 
 function renderOwnerJobs(){
-
-  const box =
-    document.getElementById("jobsContainer");
-
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
+  const box = document.getElementById("jobsContainer");
+  if(currentRole!=="owner") return;
 
   box.innerHTML = `
     <div style="grid-column:1/-1">
-
       <div class="panel">
-
         <div class="panel-title">
-
-          <div>
-            <h3>Project Management</h3>
-            <p>Create and manage work.</p>
-          </div>
-
-          <button
-            class="btn btn-primary btn-small"
-            onclick="createProjectModal()"
-          >
-            + New Project
-          </button>
-
+          <div><h3>Project Management</h3><p>Create and manage work.</p></div>
+          <button class="btn btn-primary btn-small" onclick="createProjectModal()">+ New Project</button>
         </div>
-
         <div class="table-wrap">
-
           <table class="data-table">
-
             <thead>
-              <tr>
-                <th>Project</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Scope</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
+              <tr><th>Project</th><th>Category</th><th>Amount</th><th>Scope</th><th>Status</th><th>Action</th></tr>
             </thead>
-
             <tbody>
-
-              ${
-                tasks.length
-                ? tasks.map(task=>`
-
+              ${tasks.length ? tasks.map(task=>`
                   <tr>
-
+                    <td><strong>${escapeHtml(task.title || "Untitled")}</strong></td>
+                    <td>${escapeHtml(task.category || "—")}</td>
+                    <td class="money">₹${formatMoney(task.amount)}</td>
+                    <td>${task.scope==="personal" ? "Personal" : "Global"}</td>
+                    <td><span class="status ${task.status==="Closed" ? "closed" : "open"}">${escapeHtml(task.status || "Open")}</span></td>
                     <td>
-                      <strong>
-                        ${escapeHtml(task.title || "Untitled")}
-                      </strong>
-                    </td>
-
-                    <td>
-                      ${escapeHtml(task.category || "—")}
-                    </td>
-
-                    <td class="money">
-                      ₹${formatMoney(task.amount)}
-                    </td>
-
-                    <td>
-                      ${task.scope==="personal"
-                        ? "Personal"
-                        : "Global"
-                      }
-                    </td>
-
-                    <td>
-                      <span class="status ${
-                        task.status==="Closed"
-                        ? "closed"
-                        : "open"
-                      }">
-                        ${escapeHtml(task.status || "Open")}
-                      </span>
-                    </td>
-
-                    <td>
-
-                      <button
-                        class="btn btn-secondary btn-small"
-                        onclick="toggleTaskStatus(
-                          '${task.id}',
-                          '${escapeAttribute(task.status || "Open")}'
-                        )"
-                      >
-                        ${
-                          task.status==="Closed"
-                          ? "Reopen"
-                          : "Close"
-                        }
+                      <button class="btn btn-secondary btn-small" onclick="toggleTaskStatus('${task.id}','${escapeAttribute(task.status || "Open")}')">
+                        ${task.status==="Closed" ? "Reopen" : "Close"}
                       </button>
-
-                    </td>
-
-                  </tr>
-
-                `).join("")
-                :
-                `
-                  <tr>
-                    <td colspan="6">
-                      <div class="empty">
-                        No projects created yet.
-                      </div>
                     </td>
                   </tr>
-                `
+                `).join("") : `<tr><td colspan="6"><div class="empty">No projects created yet.</div></td></tr>`
               }
-
             </tbody>
-
           </table>
-
         </div>
-
       </div>
-
     </div>
   `;
-
 }
 
-
 window.toggleTaskStatus = async function(taskId,status){
-
   try{
-
-    await updateDoc(
-      doc(db,"tasks",taskId),
-      {
-        status:
-          status==="Closed"
-          ? "Open"
-          : "Closed",
-        updatedAt:serverTimestamp()
-      }
-    );
-
+    await updateDoc(doc(db,"tasks",taskId), { status: status==="Closed" ? "Open" : "Closed", updatedAt:serverTimestamp() });
     showToast("Project status updated.");
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
 
 
@@ -4376,1516 +3116,342 @@ window.toggleTaskStatus = async function(taskId,status){
 ========================================================= */
 
 window.renderEmployeeJobs = function(){
-
-  if(currentRole!=="employee"){
-    return;
-  }
-
-
-  const search =
-    (
-      document.getElementById("jobSearch")
-        ?.value || ""
-    ).toLowerCase();
-
-
-  const category =
-    document.getElementById("jobCategory")
-      ?.value || "";
-
-
+  if(currentRole!=="employee") return;
+  const search = (document.getElementById("jobSearch")?.value || "").toLowerCase();
+  const category = document.getElementById("jobCategory")?.value || "";
   const uid = currentUser.uid;
 
-
-  /*
-    Global tasks or assigned tasks
-  */
-
-  let list =
-    tasks.filter(task=>
-      task.status!=="Closed" &&
-      (
-        task.scope==="global" ||
-        task.employeeId===uid
-      )
-    );
-
-
-  /*
-    Already accepted / submitted tasks
-    can still appear with their status.
-  */
-
-
+  let list = tasks.filter(task=> task.status!=="Closed" && (task.scope==="global" || task.employeeId===uid) );
   if(search){
-
-    list =
-      list.filter(task=>
-        String(task.title||"")
-          .toLowerCase()
-          .includes(search) ||
-
-        String(task.brief||"")
-          .toLowerCase()
-          .includes(search)
-      );
-
+    list = list.filter(task=> String(task.title||"").toLowerCase().includes(search) || String(task.brief||"").toLowerCase().includes(search) );
   }
+  if(category){ list = list.filter(task=>task.category===category); }
 
-
-  if(category){
-
-    list =
-      list.filter(
-        task=>task.category===category
-      );
-
-  }
-
-
-  const box =
-    document.getElementById("jobsContainer");
-
-
+  const box = document.getElementById("jobsContainer");
   if(!list.length){
+    box.innerHTML=`<div class="empty" style="grid-column:1/-1">No matching projects available.</div>`;
+    return;
+  }
 
-    box.innerHTML=`
-      <div class="empty" style="grid-column:1/-1">
-        No matching projects available.
+  box.innerHTML = list.map(task=>{
+    const sub = submissions.find(s=> s.taskId===task.id && s.employeeId===uid);
+    let action="";
+    if(!sub){
+      action=`<button class="btn btn-primary btn-small" onclick="acceptTask('${task.id}')">Accept Project</button>`;
+    }else if(sub.status==="Accepted" || sub.status==="Revision"){
+      action=`<button class="btn btn-primary btn-small" onclick="submitTask('${task.id}')">${sub.status==="Revision" ? "Resubmit Work" : "Submit Work"}</button>`;
+    }else{
+      action=`<span class="status ${sub.status==="Approved" ? "approved" : "review"}">${escapeHtml(sub.status || "Submitted")}</span>`;
+    }
+    return `
+      <div class="job-card">
+        <span class="status open" style="align-self:flex-start;">${escapeHtml(task.category || "Project")}</span>
+        <h3>${escapeHtml(task.title || "Untitled Project")}</h3>
+        <p>${escapeHtml(task.brief || "No brief provided.")}</p>
+        <div class="job-meta">
+          <span>Reward</span>
+          <span class="money">₹${formatMoney(task.amount)}</span>
+        </div>
+        ${task.deadline ? `<div style="font-size:10px;color:#6f7b94">Deadline: ${escapeHtml(formatDate(task.deadline))}</div>` : ""}
+        <div class="action-row" style="margin-top:auto;">${action}</div>
       </div>
     `;
-
-    return;
-
-  }
-
-
-  box.innerHTML =
-    list.map(task=>{
-
-      const sub =
-        submissions.find(
-          s=>
-            s.taskId===task.id &&
-            s.employeeId===uid
-        );
-
-
-      let action="";
-
-      if(!sub){
-
-        action=`
-          <button
-            class="btn btn-primary btn-small"
-            onclick="acceptTask('${task.id}')"
-          >
-            Accept Project
-          </button>
-        `;
-
-      }else if(
-        sub.status==="Accepted" ||
-        sub.status==="Revision"
-      ){
-
-        action=`
-          <button
-            class="btn btn-primary btn-small"
-            onclick="submitTask('${task.id}')"
-          >
-            ${sub.status==="Revision"
-              ? "Resubmit Work"
-              : "Submit Work"
-            }
-          </button>
-        `;
-
-      }else{
-
-        action=`
-          <span class="status ${
-            sub.status==="Approved"
-            ? "approved"
-            : "review"
-          }">
-            ${escapeHtml(sub.status || "Submitted")}
-          </span>
-        `;
-
-      }
-
-
-      return `
-
-        <div class="job-card">
-
-          <span class="status open">
-            ${escapeHtml(task.category || "Project")}
-          </span>
-
-          <h3>
-            ${escapeHtml(task.title || "Untitled Project")}
-          </h3>
-
-          <p>
-            ${escapeHtml(task.brief || "No brief provided.")}
-          </p>
-
-          <div class="job-meta">
-
-            <span>
-              Reward
-            </span>
-
-            <span class="money">
-              ₹${formatMoney(task.amount)}
-            </span>
-
-          </div>
-
-          ${
-            task.deadline
-            ? `
-              <div style="font-size:10px;color:#6f7b94">
-                Deadline:
-                ${escapeHtml(formatDate(task.deadline))}
-              </div>
-            `
-            : ""
-          }
-
-          <div class="action-row">
-            ${action}
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("");
-
+  }).join("");
 };
 
-
-/* =========================================================
-   POPULATE JOB CATEGORY
-========================================================= */
 
 function populateJobCategory(){
-
-  const select =
-    document.getElementById("jobCategory");
-
-  select.innerHTML =
-    `<option value="">All Categories</option>`+
-    categories
-      .filter(c=>c!=="All")
-      .map(c=>
-        `<option value="${escapeAttribute(c)}">
-          ${escapeHtml(c)}
-        </option>`
-      ).join("");
-
+  const select = document.getElementById("jobCategory");
+  select.innerHTML = `<option value="">All Categories</option>`+ categories.filter(c=>c!=="All").map(c=>`<option value="${escapeAttribute(c)}">${escapeHtml(c)}</option>`).join("");
 }
 
-
-/* =========================================================
-   ACCEPT TASK
-========================================================= */
-
 window.acceptTask = async function(taskId){
+  if(currentRole!=="employee") return;
+  const task = tasks.find(t=>t.id===taskId);
+  if(!task){ showToast("Project not found."); return; }
+  if(task.status==="Closed"){ showToast("This project is closed."); return; }
 
-  if(currentRole!=="employee"){
-    return;
-  }
-
-  const task =
-    tasks.find(t=>t.id===taskId);
-
-  if(!task){
-    showToast("Project not found.");
-    return;
-  }
-
-  if(task.status==="Closed"){
-    showToast("This project is closed.");
-    return;
-  }
-
-
-  const subId =
-    taskId+"_"+currentUser.uid;
-
-
+  const subId = taskId+"_"+currentUser.uid;
   try{
-
-    await setDoc(
-      doc(db,"taskSubmissions",subId),
-      {
-        taskId,
-        employeeId:currentUser.uid,
-        employeeName:
-          currentProfile.name || "",
-        status:"Accepted",
-        paymentStatus:"Unpaid",
-        acceptedAt:serverTimestamp()
-      },
-      {merge:true}
-    );
-
-
+    await setDoc(doc(db,"taskSubmissions",subId), { taskId, employeeId:currentUser.uid, employeeName: currentProfile.name || "", status:"Accepted", paymentStatus:"Unpaid", acceptedAt:serverTimestamp() }, {merge:true} );
     showToast("Project accepted.");
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
-
-
-/* =========================================================
-   SUBMIT TASK
-========================================================= */
 
 window.submitTask = function(taskId){
+  const existing = submissions.find(s=> s.taskId===taskId && s.employeeId===currentUser.uid );
+  showGeneral("Submit Project Work",`
+    <form id="submitWorkForm">
+      <div class="notice">Submit your final work link, note or HTML/code according to the project requirements.</div>
+      <div class="field"><label>WORK NOTE *</label><textarea id="submissionNote" required placeholder="Explain what you completed...">${escapeHtml(existing?.note || "")}</textarea></div><br>
+      <div class="field"><label>WORK / PORTFOLIO LINK</label><input id="submissionLink" value="${escapeAttribute(existing?.link || "")}" placeholder="https://..."></div><br>
+      <div class="field"><label>HTML / CODE (OPTIONAL)</label><textarea id="submissionCode" placeholder="Paste code if requested...">${escapeHtml(existing?.htmlCode || "")}</textarea></div><br>
+      <button class="btn btn-primary" type="submit">Submit for Review</button>
+    </form>
+  `);
 
-  const existing =
-    submissions.find(
-      s=>
-        s.taskId===taskId &&
-        s.employeeId===currentUser.uid
-    );
+  document.getElementById("submitWorkForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const note = document.getElementById("submissionNote").value.trim();
+    const link = document.getElementById("submissionLink").value.trim();
+    const htmlCode = document.getElementById("submissionCode").value;
+    if(!note){ showToast("Work note is required."); return; }
 
-
-  showGeneral(
-    "Submit Project Work",
-    `
-
-      <form id="submitWorkForm">
-
-        <div class="notice">
-          Submit your final work link, note or HTML/code
-          according to the project requirements.
-        </div>
-
-        <div class="field">
-          <label>WORK NOTE *</label>
-          <textarea
-            id="submissionNote"
-            required
-            placeholder="Explain what you completed..."
-          >${escapeHtml(existing?.note || "")}</textarea>
-        </div>
-
-        <br>
-
-        <div class="field">
-          <label>WORK / PORTFOLIO LINK</label>
-          <input
-            id="submissionLink"
-            value="${escapeAttribute(existing?.link || "")}"
-            placeholder="https://..."
-          >
-        </div>
-
-        <br>
-
-        <div class="field">
-          <label>HTML / CODE (OPTIONAL)</label>
-          <textarea
-            id="submissionCode"
-            placeholder="Paste code if requested..."
-          >${escapeHtml(existing?.htmlCode || "")}</textarea>
-        </div>
-
-        <br>
-
-        <button
-          class="btn btn-primary"
-          type="submit"
-        >
-          Submit for Review
-        </button>
-
-      </form>
-
-    `
-  );
-
-
-  document.getElementById("submitWorkForm")
-    .addEventListener("submit",async e=>{
-
-      e.preventDefault();
-
-      const note =
-        document.getElementById("submissionNote")
-          .value.trim();
-
-      const link =
-        document.getElementById("submissionLink")
-          .value.trim();
-
-      const htmlCode =
-        document.getElementById("submissionCode")
-          .value;
-
-
-      if(!note){
-
-        showToast("Work note is required.");
-
-        return;
-
-      }
-
-
-      try{
-
-        const subId =
-          taskId+"_"+currentUser.uid;
-
-
-        await setDoc(
-          doc(db,"taskSubmissions",subId),
-          {
-            taskId,
-            employeeId:currentUser.uid,
-            employeeName:
-              currentProfile.name || "",
-            note,
-            link:safeUrl(link),
-            htmlCode,
-            status:"Submitted",
-            submittedAt:serverTimestamp()
-          },
-          {merge:true}
-        );
-
-
-        closeModal("generalModal");
-
-        showToast("Work submitted for review.");
-
-      }catch(error){
-
-        console.error(error);
-
-        showToast(
-          firebaseErrorMessage(error)
-        );
-
-      }
-
-    });
-
+    try{
+      const subId = taskId+"_"+currentUser.uid;
+      await setDoc(doc(db,"taskSubmissions",subId), { taskId, employeeId:currentUser.uid, employeeName: currentProfile.name || "", note, link:safeUrl(link), htmlCode, status:"Submitted", submittedAt:serverTimestamp() }, {merge:true} );
+      closeModal("generalModal");
+      showToast("Work submitted for review.");
+    }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
+  });
 };
 
 
 /* =========================================================
-   EMPLOYEE SUBMISSIONS
+   SUBMISSIONS RENDERERS
 ========================================================= */
 
 function renderEmployeeSubmissions(){
-
-  if(currentRole!=="employee"){
-    return;
-  }
-
-
-  const box =
-    document.getElementById(
-      "submissionsContainer"
-    );
-
-
-  if(!submissions.length){
-
-    box.innerHTML=`
-      <div class="empty">
-        You have not submitted any project yet.
-      </div>
-    `;
-
-    return;
-
-  }
-
+  if(currentRole!=="employee") return;
+  const box = document.getElementById("submissionsContainer");
+  if(!submissions.length){ box.innerHTML=`<div class="panel"><div class="empty">You have not submitted any project yet.</div></div>`; return; }
 
   box.innerHTML = `
-
+  <div class="panel">
     <div class="table-wrap">
-
       <table class="data-table">
-
-        <thead>
-          <tr>
-            <th>Project</th>
-            <th>Status</th>
-            <th>Payment</th>
-            <th>Submitted</th>
-          </tr>
-        </thead>
-
+        <thead><tr><th>Project</th><th>Status</th><th>Payment</th><th>Submitted</th></tr></thead>
         <tbody>
-
-          ${
-            submissions.map(sub=>{
-
-              const task =
-                tasks.find(
-                  t=>t.id===sub.taskId
-                );
-
-              return `
-
-                <tr>
-
-                  <td>
-                    ${escapeHtml(
-                      task?.title || sub.taskId
-                    )}
-                  </td>
-
-                  <td>
-
-                    <span class="status ${
-                      sub.status==="Approved"
-                      ? "approved"
-                      : sub.status==="Revision"
-                      ? "revision"
-                      : "review"
-                    }">
-
-                      ${escapeHtml(
-                        sub.status || "Submitted"
-                      )}
-
-                    </span>
-
-                  </td>
-
-                  <td>
-
-                    <span class="status ${
-                      sub.paymentStatus==="Paid"
-                      ? "paid"
-                      : "pending"
-                    }">
-
-                      ${escapeHtml(
-                        sub.paymentStatus || "Unpaid"
-                      )}
-
-                    </span>
-
-                  </td>
-
-                  <td>
-                    ${formatDate(
-                      sub.submittedAt
-                    )}
-                  </td>
-
-                </tr>
-
-              `;
-
-            }).join("")
-          }
-
+          ${submissions.map(sub=>{
+            const task = tasks.find(t=>t.id===sub.taskId);
+            return `
+              <tr>
+                <td>${escapeHtml(task?.title || sub.taskId)}</td>
+                <td><span class="status ${sub.status==="Approved" ? "approved" : sub.status==="Revision" ? "revision" : "review"}">${escapeHtml(sub.status || "Submitted")}</span></td>
+                <td><span class="status ${sub.paymentStatus==="Paid" ? "paid" : "pending"}">${escapeHtml(sub.paymentStatus || "Unpaid")}</span></td>
+                <td>${formatDate(sub.submittedAt)}</td>
+              </tr>
+            `;
+          }).join("")}
         </tbody>
-
       </table>
-
     </div>
-
+  </div>
   `;
-
 }
-
-
-/* =========================================================
-   OWNER SUBMISSIONS
-========================================================= */
 
 function renderSubmissions(){
-
-  const box =
-    document.getElementById(
-      "submissionsContainer"
-    );
-
-
-  if(currentRole!=="owner"){
-    renderEmployeeSubmissions();
-    return;
-  }
-
-
-  if(!submissions.length){
-
-    box.innerHTML=`
-      <div class="empty">
-        No submissions waiting for review.
-      </div>
-    `;
-
-    return;
-
-  }
-
+  const box = document.getElementById("submissionsContainer");
+  if(currentRole!=="owner"){ renderEmployeeSubmissions(); return; }
+  if(!submissions.length){ box.innerHTML=`<div class="panel"><div class="empty">No submissions waiting for review.</div></div>`; return; }
 
   box.innerHTML=`
-
+  <div class="panel">
     <div class="table-wrap">
-
       <table class="data-table">
-
-        <thead>
-          <tr>
-            <th>Employee</th>
-            <th>Project</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
+        <thead><tr><th>Employee</th><th>Project</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
         <tbody>
-
-          ${
-            submissions.map(sub=>{
-
-              const task =
-                tasks.find(
-                  t=>t.id===sub.taskId
-                );
-
-              return `
-
-                <tr>
-
-                  <td>
-                    ${escapeHtml(
-                      sub.employeeName ||
-                      sub.employeeId
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHtml(
-                      task?.title || "Project"
-                    )}
-                  </td>
-
-                  <td class="money">
-                    ₹${formatMoney(
-                      task?.amount || 0
-                    )}
-                  </td>
-
-                  <td>
-
-                    <span class="status ${
-                      sub.status==="Approved"
-                      ? "approved"
-                      : sub.status==="Revision"
-                      ? "revision"
-                      : "review"
-                    }">
-
-                      ${escapeHtml(
-                        sub.status || "Submitted"
-                      )}
-
-                    </span>
-
-                  </td>
-
-                  <td>
-
-                    <div class="action-row">
-
-                      <button
-                        class="btn btn-success btn-small"
-                        onclick="approveSubmission(
-                          '${sub.id}',
-                          '${sub.taskId}',
-                          '${sub.employeeId}',
-                          ${Number(task?.amount||0)}
-                        )"
-                      >
-                        Approve & Credit
-                      </button>
-
-                      <button
-                        class="btn btn-danger btn-small"
-                        onclick="requestRevision('${sub.id}')"
-                      >
-                        Revision
-                      </button>
-
-                      ${
-                        sub.link
-                        ? `
-                          <a
-                            class="btn btn-secondary btn-small"
-                            href="${escapeAttribute(
-                              safeUrl(sub.link)
-                            )}"
-                            target="_blank"
-                            rel="noopener"
-                          >
-                            View
-                          </a>
-                        `
-                        : ""
-                      }
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              `;
-
-            }).join("")
-          }
-
+          ${submissions.map(sub=>{
+            const task = tasks.find(t=>t.id===sub.taskId);
+            return `
+              <tr>
+                <td>${escapeHtml(sub.employeeName || sub.employeeId)}</td>
+                <td>${escapeHtml(task?.title || "Project")}</td>
+                <td class="money">₹${formatMoney(task?.amount || 0)}</td>
+                <td><span class="status ${sub.status==="Approved" ? "approved" : sub.status==="Revision" ? "revision" : "review"}">${escapeHtml(sub.status || "Submitted")}</span></td>
+                <td>
+                  <div class="action-row">
+                    <button class="btn btn-success btn-small" onclick="approveSubmission('${sub.id}', '${sub.taskId}', '${sub.employeeId}', ${Number(task?.amount||0)})">Approve & Credit</button>
+                    <button class="btn btn-danger btn-small" onclick="requestRevision('${sub.id}')">Revision</button>
+                    ${sub.link ? `<a class="btn btn-secondary btn-small" href="${escapeAttribute(safeUrl(sub.link))}" target="_blank" rel="noopener">View</a>` : ""}
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join("")}
         </tbody>
-
       </table>
-
     </div>
-
+  </div>
   `;
-
 }
 
-
-/* =========================================================
-   APPROVE SUBMISSION
-========================================================= */
-
-window.approveSubmission = async function(
-  subId,
-  taskId,
-  employeeId,
-  amount
-){
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
-
-  if(!confirm(
-    `Approve this work and credit ₹${amount}?`
-  )){
-    return;
-  }
-
-
+window.approveSubmission = async function(subId,taskId,employeeId,amount){
+  if(currentRole!=="owner") return;
+  if(!confirm(`Approve this work and credit ₹${amount}?`)) return;
   try{
+    await runTransaction(db, async transaction=>{
+      const subRef = doc(db, "taskSubmissions", subId);
+      const paymentRef = doc(db, "payments", `${taskId}_${employeeId}`);
+      const subSnap = await transaction.get(subRef);
+      if(!subSnap.exists()){ throw new Error("Submission not found."); }
+      const sub = subSnap.data();
+      if(sub.paymentStatus==="Paid") return;
 
-    await runTransaction(
-      db,
-      async transaction=>{
-
-        const subRef =
-          doc(
-            db,
-            "taskSubmissions",
-            subId
-          );
-
-        const paymentRef =
-          doc(
-            db,
-            "payments",
-            `${taskId}_${employeeId}`
-          );
-
-
-        const subSnap =
-          await transaction.get(subRef);
-
-
-        if(!subSnap.exists()){
-
-          throw new Error(
-            "Submission not found."
-          );
-
-        }
-
-
-        const sub =
-          subSnap.data();
-
-
-        /*
-          IDMPOTENCY:
-          If already paid, don't credit again.
-        */
-
-        if(sub.paymentStatus==="Paid"){
-
-          return;
-
-        }
-
-
-        transaction.update(
-          subRef,
-          {
-            status:"Approved",
-            paymentStatus:"Paid",
-            paidAt:serverTimestamp()
-          }
-        );
-
-
-        transaction.set(
-          paymentRef,
-          {
-            taskId,
-            employeeId,
-            amount:Number(amount),
-            status:"Paid",
-            createdAt:serverTimestamp()
-          },
-          {
-            merge:true
-          }
-        );
-
-      }
-    );
-
-
-    showToast(
-      "Work approved and payment credited."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+      transaction.update(subRef, { status:"Approved", paymentStatus:"Paid", paidAt:serverTimestamp() });
+      transaction.set(paymentRef, { taskId, employeeId, amount:Number(amount), status:"Paid", createdAt:serverTimestamp() }, { merge:true } );
+    });
+    showToast("Work approved and payment credited.");
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
-
-
-/* =========================================================
-   REQUEST REVISION
-========================================================= */
 
 window.requestRevision = async function(subId){
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
-
-  const note =
-    prompt(
-      "Enter revision instructions:"
-    );
-
-
-  if(note===null){
-    return;
-  }
-
-
+  if(currentRole!=="owner") return;
+  const note = prompt("Enter revision instructions:");
+  if(note===null) return;
   try{
-
-    await updateDoc(
-      doc(
-        db,
-        "taskSubmissions",
-        subId
-      ),
-      {
-        status:"Revision",
-        revisionNote:note,
-        revisionRequestedAt:serverTimestamp()
-      }
-    );
-
-
-    showToast(
-      "Revision requested."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+    await updateDoc(doc(db,"taskSubmissions",subId), { status:"Revision", revisionNote:note, revisionRequestedAt:serverTimestamp() });
+    showToast("Revision requested.");
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
 
 
 /* =========================================================
-   PAYMENTS
+   PAYMENTS / WITHDRAWALS
 ========================================================= */
 
 function renderPayments(){
-
-  const box =
-    document.getElementById(
-      "paymentsContainer"
-    );
-
-
+  const box = document.getElementById("paymentsContainer");
   let list = payments;
-
-
-  if(currentRole==="employee"){
-
-    list =
-      payments.filter(
-        p=>p.employeeId===currentUser.uid
-      );
-
-  }
-
-
-  if(!list.length){
-
-    box.innerHTML=`
-      <div class="empty">
-        No payment records found.
-      </div>
-    `;
-
-    return;
-
-  }
-
+  if(currentRole==="employee"){ list = payments.filter(p=>p.employeeId===currentUser.uid); }
+  if(!list.length){ box.innerHTML=`<div class="empty">No payment records found.</div>`; return; }
 
   box.innerHTML=`
-
     <div class="table-wrap">
-
       <table class="data-table">
-
         <thead>
-
           <tr>
-
             <th>Project</th>
-
-            ${
-              currentRole==="owner"
-              ? "<th>Employee</th>"
-              : ""
-            }
-
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Date</th>
-
+            ${currentRole==="owner" ? "<th>Employee</th>" : ""}
+            <th>Amount</th><th>Status</th><th>Date</th>
           </tr>
-
         </thead>
-
         <tbody>
-
-          ${
-            list.map(payment=>{
-
-              const task =
-                tasks.find(
-                  t=>t.id===payment.taskId
-                );
-
-              const employee =
-                employees.find(
-                  e=>e.uid===payment.employeeId
-                );
-
-
-              return `
-
-                <tr>
-
-                  <td>
-                    ${escapeHtml(
-                      task?.title ||
-                      payment.taskId ||
-                      "Project"
-                    )}
-                  </td>
-
-                  ${
-                    currentRole==="owner"
-                    ? `
-                      <td>
-                        ${escapeHtml(
-                          employee?.name ||
-                          payment.employeeId
-                        )}
-                      </td>
-                    `
-                    : ""
-                  }
-
-                  <td class="money">
-                    ₹${formatMoney(payment.amount)}
-                  </td>
-
-                  <td>
-                    <span class="status paid">
-                      ${escapeHtml(
-                        payment.status || "Paid"
-                      )}
-                    </span>
-                  </td>
-
-                  <td>
-                    ${formatDate(payment.createdAt)}
-                  </td>
-
-                </tr>
-
-              `;
-
-            }).join("")
-          }
-
+          ${list.map(payment=>{
+            const task = tasks.find(t=>t.id===payment.taskId);
+            const employee = employees.find(e=>e.uid===payment.employeeId);
+            return `
+              <tr>
+                <td>${escapeHtml(task?.title || payment.taskId || "Project")}</td>
+                ${currentRole==="owner" ? `<td>${escapeHtml(employee?.name || payment.employeeId)}</td>` : ""}
+                <td class="money">₹${formatMoney(payment.amount)}</td>
+                <td><span class="status paid">${escapeHtml(payment.status || "Paid")}</span></td>
+                <td>${formatDate(payment.createdAt)}</td>
+              </tr>
+            `;
+          }).join("")}
         </tbody>
-
       </table>
-
     </div>
-
   `;
-
 }
-
-
-/* =========================================================
-   WITHDRAWALS
-========================================================= */
 
 function renderWithdrawals(){
-
-  const box =
-    document.getElementById(
-      "withdrawalsContainer"
-    );
-
-
-  let list =
-    currentRole==="owner"
-    ? withdrawals
-    : withdrawals.filter(
-        w=>w.employeeId===currentUser.uid
-      );
-
-
+  const box = document.getElementById("withdrawalsContainer");
+  let list = currentRole==="owner" ? withdrawals : withdrawals.filter(w=>w.employeeId===currentUser.uid);
   let html="";
 
-
   if(currentRole==="employee"){
-
-    const lifetime =
-      payments
-        .filter(
-          p=>
-            p.employeeId===currentUser.uid &&
-            p.status==="Paid"
-        )
-        .reduce(
-          (sum,p)=>sum+Number(p.amount||0),
-          0
-        );
-
-    const paidOut =
-      withdrawals
-        .filter(
-          w=>
-            w.employeeId===currentUser.uid &&
-            w.status==="Paid"
-        )
-        .reduce(
-          (sum,w)=>sum+Number(w.amount||0),
-          0
-        );
-
-    const pending =
-      withdrawals
-        .filter(
-          w=>
-            w.employeeId===currentUser.uid &&
-            w.status==="Pending"
-        )
-        .reduce(
-          (sum,w)=>sum+Number(w.amount||0),
-          0
-        );
-
-    const available =
-      Math.max(
-        0,
-        lifetime-paidOut-pending
-      );
-
+    const lifetime = payments.filter(p=> p.employeeId===currentUser.uid && p.status==="Paid").reduce((sum,p)=>sum+Number(p.amount||0),0);
+    const paidOut = withdrawals.filter(w=> w.employeeId===currentUser.uid && w.status==="Paid").reduce((sum,w)=>sum+Number(w.amount||0),0);
+    const pending = withdrawals.filter(w=> w.employeeId===currentUser.uid && w.status==="Pending").reduce((sum,w)=>sum+Number(w.amount||0),0);
+    const available = Math.max(0, lifetime-paidOut-pending);
 
     html += `
-
-      <div class="notice">
-        Available payout balance:
-        <strong>₹${formatMoney(available)}</strong>
-      </div>
-
-      <button
-        class="btn btn-primary btn-small"
-        onclick="openWithdrawalModal(${available})"
-      >
-        Request Payout
-      </button>
-
+      <div class="notice">Available payout balance: <strong>₹${formatMoney(available)}</strong></div>
+      <button class="btn btn-primary btn-small" onclick="openWithdrawalModal(${available})">Request Payout</button>
       <br><br>
-
     `;
-
   }
 
-
-  if(!list.length){
-
-    html += `
-      <div class="empty">
-        No withdrawal requests found.
-      </div>
-    `;
-
-    box.innerHTML=html;
-
-    return;
-
-  }
-
+  if(!list.length){ html += `<div class="empty">No withdrawal requests found.</div>`; box.innerHTML=html; return; }
 
   html += `
-
     <div class="table-wrap">
-
       <table class="data-table">
-
         <thead>
-
           <tr>
-
-            ${
-              currentRole==="owner"
-              ? "<th>Employee</th>"
-              : ""
-            }
-
-            <th>Amount</th>
-            <th>Status</th>
-            <th>UPI / Details</th>
-            <th>Transaction ID</th>
-            <th>Action</th>
-
+            ${currentRole==="owner" ? "<th>Employee</th>" : ""}
+            <th>Amount</th><th>Status</th><th>UPI / Details</th><th>Transaction ID</th><th>Action</th>
           </tr>
-
         </thead>
-
         <tbody>
-
-          ${
-            list.map(w=>{
-
-              const employee =
-                employees.find(
-                  e=>e.uid===w.employeeId
-                );
-
-
-              return `
-
-                <tr>
-
-                  ${
-                    currentRole==="owner"
-                    ? `
-                      <td>
-                        ${escapeHtml(
-                          employee?.name ||
-                          w.employeeId
-                        )}
-                      </td>
-                    `
-                    : ""
-                  }
-
-                  <td class="money">
-                    ₹${formatMoney(w.amount)}
-                  </td>
-
-                  <td>
-
-                    <span class="status ${
-                      w.status==="Paid"
-                      ? "paid"
-                      : w.status==="Rejected"
-                      ? "rejected"
-                      : "pending"
-                    }">
-
-                      ${escapeHtml(
-                        w.status || "Pending"
-                      )}
-
-                    </span>
-
-                  </td>
-
-                  <td>
-                    ${escapeHtml(
-                      w.payoutDetails || "—"
-                    )}
-                  </td>
-
-                  <td>
-                    ${escapeHtml(
-                      w.transactionId || "—"
-                    )}
-                  </td>
-
-                  <td>
-
-                    ${
-                      currentRole==="owner" &&
-                      w.status==="Pending"
-                      ? `
-
-                        <div class="action-row">
-
-                          <button
-                            class="btn btn-success btn-small"
-                            onclick="markWithdrawalPaid('${w.id}')"
-                          >
-                            Mark Paid
-                          </button>
-
-                          <button
-                            class="btn btn-danger btn-small"
-                            onclick="rejectWithdrawal('${w.id}')"
-                          >
-                            Reject
-                          </button>
-
-                        </div>
-
-                      `
-                      : "—"
-                    }
-
-                  </td>
-
-                </tr>
-
-              `;
-
-            }).join("")
-          }
-
+          ${list.map(w=>{
+            const employee = employees.find(e=>e.uid===w.employeeId);
+            return `
+              <tr>
+                ${currentRole==="owner" ? `<td>${escapeHtml(employee?.name || w.employeeId)}</td>` : ""}
+                <td class="money">₹${formatMoney(w.amount)}</td>
+                <td><span class="status ${w.status==="Paid" ? "paid" : w.status==="Rejected" ? "rejected" : "pending"}">${escapeHtml(w.status || "Pending")}</span></td>
+                <td>${escapeHtml(w.payoutDetails || "—")}</td>
+                <td>${escapeHtml(w.transactionId || "—")}</td>
+                <td>
+                  ${currentRole==="owner" && w.status==="Pending" ? `
+                    <div class="action-row">
+                      <button class="btn btn-success btn-small" onclick="markWithdrawalPaid('${w.id}')">Mark Paid</button>
+                      <button class="btn btn-danger btn-small" onclick="rejectWithdrawal('${w.id}')">Reject</button>
+                    </div>
+                  ` : "—"}
+                </td>
+              </tr>
+            `;
+          }).join("")}
         </tbody>
-
       </table>
-
     </div>
-
   `;
-
-
   box.innerHTML=html;
-
 }
 
-
-/* =========================================================
-   WITHDRAWAL MODAL
-========================================================= */
-
 window.openWithdrawalModal = function(available){
+  showGeneral("Request Payout",`
+    <div class="notice">Available balance: <strong>₹${formatMoney(available)}</strong></div>
+    <form id="withdrawalForm">
+      <div class="field"><label>AMOUNT *</label><input id="withdrawAmount" type="number" min="1" max="${available}" required></div><br>
+      <div class="field"><label>UPI ID / PAYOUT DETAILS *</label><input id="withdrawDetails" required placeholder="example@upi"></div><br>
+      <button class="btn btn-primary" type="submit">Submit Payout Request</button>
+    </form>
+  `);
 
-  showGeneral(
-    "Request Payout",
-    `
+  document.getElementById("withdrawalForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const amount = Number(document.getElementById("withdrawAmount").value);
+    const details = document.getElementById("withdrawDetails").value.trim();
+    if(amount<=0 || amount>available){ showToast("Invalid withdrawal amount."); return; }
 
-      <div class="notice">
-        Available balance:
-        <strong>₹${formatMoney(available)}</strong>
-      </div>
-
-      <form id="withdrawalForm">
-
-        <div class="field">
-          <label>AMOUNT *</label>
-          <input
-            id="withdrawAmount"
-            type="number"
-            min="1"
-            max="${available}"
-            required
-          >
-        </div>
-
-        <br>
-
-        <div class="field">
-          <label>UPI ID / PAYOUT DETAILS *</label>
-          <input
-            id="withdrawDetails"
-            required
-            placeholder="example@upi"
-          >
-        </div>
-
-        <br>
-
-        <button
-          class="btn btn-primary"
-          type="submit"
-        >
-          Submit Payout Request
-        </button>
-
-      </form>
-
-    `
-  );
-
-
-  document.getElementById("withdrawalForm")
-    .addEventListener("submit",async e=>{
-
-      e.preventDefault();
-
-
-      const amount =
-        Number(
-          document.getElementById("withdrawAmount")
-            .value
-        );
-
-      const details =
-        document.getElementById("withdrawDetails")
-          .value.trim();
-
-
-      if(
-        amount<=0 ||
-        amount>available
-      ){
-
-        showToast(
-          "Invalid withdrawal amount."
-        );
-
-        return;
-
-      }
-
-
-      try{
-
-        await addDoc(
-          collection(db,"withdrawalRequests"),
-          {
-            employeeId:currentUser.uid,
-            amount,
-            payoutDetails:details,
-            status:"Pending",
-            createdAt:serverTimestamp()
-          }
-        );
-
-
-        closeModal("generalModal");
-
-        showToast(
-          "Payout request submitted."
-        );
-
-      }catch(error){
-
-        console.error(error);
-
-        showToast(
-          firebaseErrorMessage(error)
-        );
-
-      }
-
-    });
-
+    try{
+      await addDoc(collection(db,"withdrawalRequests"), { employeeId:currentUser.uid, amount, payoutDetails:details, status:"Pending", createdAt:serverTimestamp() });
+      closeModal("generalModal");
+      showToast("Payout request submitted.");
+    }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
+  });
 };
-
-
-/* =========================================================
-   MARK WITHDRAWAL PAID
-========================================================= */
 
 window.markWithdrawalPaid = async function(id){
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
-
-  const transactionId =
-    prompt(
-      "Enter payment transaction ID:"
-    );
-
-
-  if(!transactionId){
-    return;
-  }
-
-
+  if(currentRole!=="owner") return;
+  const transactionId = prompt("Enter payment transaction ID:");
+  if(!transactionId) return;
   try{
-
-    await runTransaction(
-      db,
-      async transaction=>{
-
-        const ref =
-          doc(
-            db,
-            "withdrawalRequests",
-            id
-          );
-
-
-        const snap =
-          await transaction.get(ref);
-
-
-        if(!snap.exists()){
-          throw new Error(
-            "Withdrawal request not found."
-          );
-        }
-
-
-        const data =
-          snap.data();
-
-
-        if(data.status==="Paid"){
-          return;
-        }
-
-
-        transaction.update(
-          ref,
-          {
-            status:"Paid",
-            transactionId,
-            paidAt:serverTimestamp()
-          }
-        );
-
-      }
-    );
-
-
-    showToast(
-      "Withdrawal marked as paid."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+    await runTransaction(db, async transaction=>{
+      const ref = doc(db,"withdrawalRequests",id);
+      const snap = await transaction.get(ref);
+      if(!snap.exists()){ throw new Error("Withdrawal request not found."); }
+      const data = snap.data();
+      if(data.status==="Paid") return;
+      transaction.update(ref, { status:"Paid", transactionId, paidAt:serverTimestamp() });
+    });
+    showToast("Withdrawal marked as paid.");
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
 
-
-/* =========================================================
-   REJECT WITHDRAWAL
-========================================================= */
-
 window.rejectWithdrawal = async function(id){
-
-  if(currentRole!=="owner"){
-    return;
-  }
-
-
-  const reason =
-    prompt(
-      "Enter rejection reason:"
-    );
-
-
-  if(reason===null){
-    return;
-  }
-
-
+  if(currentRole!=="owner") return;
+  const reason = prompt("Enter rejection reason:");
+  if(reason===null) return;
   try{
-
-    await updateDoc(
-      doc(
-        db,
-        "withdrawalRequests",
-        id
-      ),
-      {
-        status:"Rejected",
-        rejectionReason:reason,
-        rejectedAt:serverTimestamp()
-      }
-    );
-
-
-    showToast(
-      "Withdrawal request rejected."
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      firebaseErrorMessage(error)
-    );
-
-  }
-
+    await updateDoc(doc(db,"withdrawalRequests",id), { status:"Rejected", rejectionReason:reason, rejectedAt:serverTimestamp() });
+    showToast("Withdrawal request rejected.");
+  }catch(error){ console.error(error); showToast(firebaseErrorMessage(error)); }
 };
 
 
@@ -5894,157 +3460,40 @@ window.rejectWithdrawal = async function(id){
 ========================================================= */
 
 function renderProfile(){
-
-  const box =
-    document.getElementById(
-      "profileContainer"
-    );
-
-
-  if(!currentProfile){
-
-    box.innerHTML=
-      `<div class="empty">Profile unavailable.</div>`;
-
-    return;
-
-  }
-
+  const box = document.getElementById("profileContainer");
+  if(!currentProfile){ box.innerHTML=`<div class="empty">Profile unavailable.</div>`; return; }
 
   if(currentRole==="owner"){
-
     box.innerHTML=`
-
-      <div class="notice">
-        OWNER ACCOUNT
-      </div>
-
-      <h2 style="margin-bottom:7px">
-        SHRAYNEX Owner
-      </h2>
-
-      <p style="color:#7e8aa3;font-size:12px">
-        ${escapeHtml(
-          currentProfile.email ||
-          OWNER_EMAIL
-        )}
-      </p>
-
+      <div class="notice">OWNER ACCOUNT</div>
+      <h2 style="margin-bottom:7px">SHRAYNEX Owner</h2>
+      <p style="color:#7e8aa3;font-size:12px">${escapeHtml(currentProfile.email || OWNER_EMAIL)}</p>
     `;
-
     return;
-
   }
-
 
   box.innerHTML=`
-
-    <div class="notice">
-      EMPLOYEE ACCOUNT — ${escapeHtml(
-        currentProfile.status || "Active"
-      )}
-    </div>
-
+    <div class="notice">EMPLOYEE ACCOUNT — ${escapeHtml(currentProfile.status || "Active")}</div>
     <div class="form-grid">
-
-      <div class="field">
-        <label>NAME</label>
-        <input
-          value="${escapeAttribute(
-            currentProfile.name || ""
-          )}"
-          readonly
-        >
-      </div>
-
-      <div class="field">
-        <label>EMPLOYEE ID</label>
-        <input
-          value="${escapeAttribute(
-            currentProfile.employeeId || ""
-          )}"
-          readonly
-        >
-      </div>
-
-      <div class="field">
-        <label>MOBILE</label>
-        <input
-          value="${escapeAttribute(
-            currentProfile.mobile || ""
-          )}"
-          readonly
-        >
-      </div>
-
-      <div class="field">
-        <label>CITY</label>
-        <input
-          value="${escapeAttribute(
-            currentProfile.city || ""
-          )}"
-          readonly
-        >
-      </div>
-
-      <div class="field full">
-        <label>PRIMARY SERVICE</label>
-        <input
-          value="${escapeAttribute(
-            currentProfile.service || ""
-          )}"
-          readonly
-        >
-      </div>
-
+      <div class="field"><label>NAME</label><input value="${escapeAttribute(currentProfile.name || "")}" readonly></div>
+      <div class="field"><label>EMPLOYEE ID</label><input value="${escapeAttribute(currentProfile.employeeId || "")}" readonly></div>
+      <div class="field"><label>MOBILE</label><input value="${escapeAttribute(currentProfile.mobile || "")}" readonly></div>
+      <div class="field"><label>CITY</label><input value="${escapeAttribute(currentProfile.city || "")}" readonly></div>
+      <div class="field full"><label>PRIMARY SERVICE</label><input value="${escapeAttribute(currentProfile.service || "")}" readonly></div>
     </div>
-
     <br>
-
     <div class="notice">
-
       <strong>Login format</strong><br><br>
-
-      Employee ID =
-      First 4 letters of name +
-      first 2 digits of mobile.<br>
-
-      Example:
-      RAJAN + 94 = RAJAN94<br><br>
-
-      Password =
-      Complete mobile number + @<br>
-
-      Example:
-      9451239239@
-
+      Employee ID = First 4 letters of name + first 2 digits of mobile.<br>
+      Example: RAJAN + 94 = RAJAN94<br><br>
+      Password = First name (Capital) + first 4 digits of mobile.<br>
+      Example: RAJAN + 9451 = RAJAN9451
     </div>
-
   `;
-
 }
 
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
 window.logoutUser = async function(){
-
-  try{
-
-    await signOut(auth);
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      "Unable to logout."
-    );
-
-  }
-
+  try{ await signOut(auth); }catch(error){ console.error(error); showToast("Unable to logout."); }
 };
 
 
@@ -6052,266 +3501,68 @@ window.logoutUser = async function(){
    UTILITIES
 ========================================================= */
 
-function clearListeners(){
-
-  unsubscribeFunctions.forEach(fn=>{
-    try{
-      fn();
-    }catch(e){}
-  });
-
-  unsubscribeFunctions=[];
-
-}
-
-
-function formatMoney(value){
-
-  return Number(value||0)
-    .toLocaleString("en-IN",{
-      maximumFractionDigits:0
-    });
-
-}
-
-
+function clearListeners(){ unsubscribeFunctions.forEach(fn=>{try{fn();}catch(e){}}); unsubscribeFunctions=[]; }
+function formatMoney(value){ return Number(value||0).toLocaleString("en-IN",{maximumFractionDigits:0}); }
 function formatDate(value){
-
-  if(!value){
-    return "—";
-  }
-
+  if(!value) return "—";
   try{
-
-    if(
-      typeof value==="object" &&
-      typeof value.toDate==="function"
-    ){
-      return value
-        .toDate()
-        .toLocaleString("en-IN");
-    }
-
-    return new Date(value)
-      .toLocaleString("en-IN");
-
-  }catch(e){
-
-    return "—";
-
-  }
-
+    if(typeof value==="object" && typeof value.toDate==="function") return value.toDate().toLocaleString("en-IN");
+    return new Date(value).toLocaleString("en-IN");
+  }catch(e){ return "—"; }
 }
-
-
-function escapeHtml(value){
-
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
-
-function escapeAttribute(value){
-
-  return escapeHtml(value)
-    .replace(/\n/g," ")
-    .replace(/\r/g," ");
-
-}
-
-
+function escapeHtml(value){ return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
+function escapeAttribute(value){ return escapeHtml(value).replace(/\n/g," ").replace(/\r/g," "); }
 function safeUrl(url){
-
-  if(!url){
-    return "";
-  }
-
+  if(!url) return "";
   try{
-
-    const parsed =
-      new URL(url);
-
-    if(
-      parsed.protocol==="http:" ||
-      parsed.protocol==="https:"
-    ){
-
-      return parsed.href;
-
-    }
-
+    const parsed = new URL(url);
+    if(parsed.protocol==="http:" || parsed.protocol==="https:") return parsed.href;
   }catch(e){}
-
   return "";
-
 }
-
-
 function firebaseErrorMessage(error){
-
-  const code =
-    error?.code || "";
-
+  const code = error?.code || "";
   const map = {
-
-    "auth/invalid-credential":
-      "Invalid login credentials.",
-
-    "auth/invalid-login-credentials":
-      "Invalid login credentials.",
-
-    "auth/user-not-found":
-      "Account not found.",
-
-    "auth/wrong-password":
-      "Incorrect password.",
-
-    "auth/email-already-in-use":
-      "This Employee ID already exists.",
-
-    "auth/weak-password":
-      "Password does not meet Firebase requirements.",
-
-    "auth/invalid-email":
-      "Invalid email format.",
-
-    "auth/too-many-requests":
-      "Too many attempts. Please try again later.",
-
-    "permission-denied":
-      "Firestore permission denied. Check Firebase Rules.",
-
-    "permission-denied":
-      "Permission denied. Check Firebase Rules."
-
+    "auth/invalid-credential":"Invalid login credentials.",
+    "auth/invalid-login-credentials":"Invalid login credentials.",
+    "auth/user-not-found":"Account not found.",
+    "auth/wrong-password":"Incorrect password.",
+    "auth/email-already-in-use":"This Employee ID already exists.",
+    "auth/weak-password":"Password does not meet Firebase requirements.",
+    "auth/invalid-email":"Invalid email format.",
+    "auth/too-many-requests":"Too many attempts. Please try again later.",
+    "permission-denied":"Permission denied. Check Firebase Rules."
   };
-
-  return map[code] ||
-    error?.message ||
-    "Something went wrong.";
-
+  return map[code] || error?.message || "Something went wrong.";
 }
-
-
-/* =========================================================
-   TOAST
-========================================================= */
 
 window.showToast = function(message){
-
-  const container =
-    document.getElementById(
-      "toastContainer"
-    );
-
-
-  const toast =
-    document.createElement("div");
-
-
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
   toast.className="toast";
-
   toast.textContent=message;
-
-
   container.appendChild(toast);
-
-
-  setTimeout(()=>{
-    toast.remove();
-  },3500);
-
+  setTimeout(()=>{toast.remove();},3500);
 };
 
+window.toggleFaq = function(button){ button.parentElement.classList.toggle("open"); };
 
-/* =========================================================
-   FAQ
-========================================================= */
-
-window.toggleFaq = function(button){
-
-  const item =
-    button.parentElement;
-
-  item.classList.toggle("open");
-
-};
-
-
-/* =========================================================
-   ESCAPE KEY
-========================================================= */
-
-document.addEventListener(
-  "keydown",
-  e=>{
-
-    if(e.key==="Escape"){
-
-      document.querySelectorAll(
-        ".modal-overlay.show"
-      ).forEach(modal=>{
-        modal.classList.remove("show");
-      });
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   INITIAL UI
-========================================================= */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){ document.querySelectorAll(".modal-overlay.show").forEach(modal=>{modal.classList.remove("show");}); }
+});
 
 renderServiceFilters();
 renderServices(services);
 populateServiceSelects();
 populateJobCategory();
 
-
-/* =========================================================
-   OWNER QUICK PROJECT BUTTON
-   Added dynamically into jobs section
-========================================================= */
-
-
-/* =========================================================
-   CLOSE MODAL WHEN CLICKING OUTSIDE
-========================================================= */
-
-document.querySelectorAll(
-  ".modal-overlay"
-).forEach(overlay=>{
-
-  overlay.addEventListener(
-    "click",
-    e=>{
-
-      if(e.target===overlay){
-
-        overlay.classList.remove("show");
-
-      }
-
-    }
-  );
-
+document.querySelectorAll(".modal-overlay").forEach(overlay=>{
+  overlay.addEventListener("click",e=>{
+    if(e.target===overlay) overlay.classList.remove("show");
+  });
 });
 
-
-/* =========================================================
-   EXPOSE SOME FUNCTIONS
-========================================================= */
-
-window.createProjectModal =
-  createProjectModal;
-
+window.createProjectModal = createProjectModal;
 </script>
 
 </body>
