@@ -12,10 +12,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://i.ibb.co">
 
-<!-- Splash Logo preload -->
+<!-- Splash Logo & Hero Image preload -->
 <link rel="preload" as="image" href="https://i.ibb.co/pBRHjG89/file-000000003a708208be36d260bf0c9247.png" fetchpriority="high">
-<!-- Main Profile Image -->
 <link rel="preload" as="image" href="https://i.ibb.co/Kpvjf8np/file-000000009d00821193f79ebcfd070c71.png" fetchpriority="high">
 
 <!-- =========================================================
@@ -32,17 +32,15 @@
 <link rel="icon" type="image/png" href="https://i.ibb.co/pBRHjG89/file-000000003a708208be36d260bf0c9247.png">
 
 <!-- =========================================================
-     SOCIAL PREVIEW (SHARE POSTER FIX)
+     SOCIAL PREVIEW
 ========================================================= -->
 <meta property="og:title" content="SHRAYNEX | Growth & Deals">
 <meta property="og:description" content="Strategy, Content, Branding & Today's Best Deals — All Under One Roof.">
 <meta property="og:url" content="https://www.rkyshree.in/">
 <meta property="og:type" content="website">
-<!-- Share Poster Image -->
 <meta property="og:image" content="https://i.ibb.co/wZScWNhb/file-0000000036888208bb6ae2acda8eda00.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<!-- Twitter Share Support -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SHRAYNEX | Growth & Deals">
 <meta name="twitter:description" content="Strategy, Content, Branding & Today's Best Deals — All Under One Roof.">
@@ -83,13 +81,14 @@ tailwind.config = {
 html { scroll-behavior:smooth; -webkit-tap-highlight-color:transparent; }
 body { margin:0; background:#e2e8f0; color:#0f172a; overflow-x:hidden; font-family:"Plus Jakarta Sans",sans-serif; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
 .fast-render { content-visibility: auto; contain-intrinsic-size: 1000px; }
+a, button { touch-action: manipulation; } /* Removes 300ms tap delay */
 
-/* SPLASH SCREEN (FAST 2 SEC) */
-#appLoader { position:fixed; inset:0; width:100%; height:100dvh; min-height:100vh; z-index:999999; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#080b12; opacity:1; visibility:visible; pointer-events:auto; transition: opacity .25s ease, visibility .25s ease; }
+/* SPLASH SCREEN */
+#appLoader { position:fixed; inset:0; width:100%; height:100dvh; min-height:100vh; z-index:999999; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#080b12; opacity:1; visibility:visible; pointer-events:auto; transition: opacity .25s ease, visibility .25s ease; will-change: opacity, visibility; }
 #appLoader.hide { opacity:0; visibility:hidden; pointer-events:none; }
-.splash-bg { position:absolute; inset:-30%; background: radial-gradient(circle at 50% 40%, rgba(59,130,246,.24), transparent 25%), radial-gradient(circle at 20% 80%, rgba(168,85,247,.18), transparent 30%), radial-gradient(circle at 90% 20%, rgba(236,72,153,.14), transparent 28%), #080b12; animation: splashBackground 5s ease-in-out infinite alternate; }
-@keyframes splashBackground { from { transform:scale(1); } to { transform:scale(1.06); } }
-.splash-content { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; animation: splashContent .4s cubic-bezier(.16,1,.3,1); }
+.splash-bg { position:absolute; inset:-30%; background: radial-gradient(circle at 50% 40%, rgba(59,130,246,.24), transparent 25%), radial-gradient(circle at 20% 80%, rgba(168,85,247,.18), transparent 30%), radial-gradient(circle at 90% 20%, rgba(236,72,153,.14), transparent 28%), #080b12; animation: splashBackground 5s ease-in-out infinite alternate; will-change: transform; transform: translateZ(0); }
+@keyframes splashBackground { from { transform:scale(1) translateZ(0); } to { transform:scale(1.06) translateZ(0); } }
+.splash-content { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; animation: splashContent .4s cubic-bezier(.16,1,.3,1); will-change: transform, opacity; }
 @keyframes splashContent { from { opacity:0; transform: translateY(10px) scale(.98); } to { opacity:1; transform: translateY(0) scale(1); } }
 .splash-logo-wrap { position:relative; width:105px; height:105px; display:flex; align-items:center; justify-content:center; margin-bottom:22px; }
 .splash-ring { position:absolute; inset:0; border-radius:50%; border:2px solid rgba(255,255,255,.08); border-top-color:#3b82f6; border-right-color:#a855f7; animation: splashRotate 1.2s linear infinite; }
@@ -108,17 +107,17 @@ body { margin:0; background:#e2e8f0; color:#0f172a; overflow-x:hidden; font-fami
 
 /* APP WRAPPER */
 .app-wrapper { width:100%; max-width:480px; margin:0 auto; background:#f8fafc; background-image: linear-gradient(180deg, #ffffff 0%, #f1f5f9 20%, #e2e8f0 100%); min-height:100dvh; position:relative; box-shadow: 0 0 40px rgba(0,0,0,.1); overflow-x:hidden; display:flex; flex-direction:column; }
-.app-header { position:sticky; top:0; z-index:50; background: rgba(255,255,255,.65); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom: 1px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:space-between; padding: 12px 20px; padding-top: calc(12px + env(safe-area-inset-top)); box-shadow: 0 4px 30px rgba(0,0,0,.03); }
+.app-header { position:sticky; top:0; z-index:50; background: rgba(255,255,255,.65); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom: 1px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:space-between; padding: 12px 20px; padding-top: calc(12px + env(safe-area-inset-top)); box-shadow: 0 4px 30px rgba(0,0,0,.03); transform: translateZ(0); }
 
-/* GLASS CARD */
-.glass-card { background: rgba(255,255,255,.55); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border: 1px solid rgba(255,255,255,.8); box-shadow: 0 10px 30px rgba(0,0,0,.03); border-radius:20px; transition: transform .1s ease; }
+/* GLASS CARD - GPU Accelerated */
+.glass-card { background: rgba(255,255,255,.55); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border: 1px solid rgba(255,255,255,.8); box-shadow: 0 10px 30px rgba(0,0,0,.03); border-radius:20px; transition: transform .1s ease; transform: translateZ(0); }
 
 /* ANIMATIONS */
 @keyframes slideUp { from { transform:translateY(100%); } to { transform:translateY(0); } }
 @keyframes scaleIn { from { transform:scale(.97); opacity:0; } to { transform:scale(1); opacity:1; } }
-.job-blink { animation: softBlink 1.8s infinite alternate ease-in-out; }
+.job-blink { animation: softBlink 1.8s infinite alternate ease-in-out; will-change: transform, box-shadow; }
 @keyframes softBlink { 0% { box-shadow: 0 4px 15px rgba(236,72,153,.15); transform:translateY(0); } 100% { box-shadow: 0 10px 25px rgba(236,72,153,.5); transform:translateY(-2px); } }
-.bottom-sheet { animation: slideUp .25s cubic-bezier(.16,1,.3,1) forwards; border-radius: 24px 24px 0 0; margin-top:auto; max-height:90vh; width:100%; max-width:480px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y:auto; }
+.bottom-sheet { animation: slideUp .25s cubic-bezier(.16,1,.3,1) forwards; border-radius: 24px 24px 0 0; margin-top:auto; max-height:90vh; width:100%; max-width:480px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); overflow-y:auto; transform: translateZ(0); }
 .app-btn:active, .glass-card:active { transform:scale(.96); transition: transform .05s ease; }
 
 /* PAGES */
@@ -132,7 +131,7 @@ body { margin:0; background:#e2e8f0; color:#0f172a; overflow-x:hidden; font-fami
 @media(min-width:640px) { .bottom-sheet { border-radius:24px; margin:auto; animation: scaleIn .2s ease forwards; max-height:85vh; padding-bottom:24px; } }
 
 /* IFRAME SCROLL FIX */
-.iframe-container { -webkit-overflow-scrolling: touch; overflow-y: scroll; }
+.iframe-container { -webkit-overflow-scrolling: touch; overflow-y: scroll; transform: translateZ(0); }
 </style>
 </head>
 <body>
@@ -311,7 +310,7 @@ body { margin:0; background:#e2e8f0; color:#0f172a; overflow-x:hidden; font-fami
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-5 sm:hidden"></div>
         <button id="closeCertificate" type="button" aria-label="Close certificate" class="absolute top-4 right-4 w-8 h-8 bg-gray-100/80 rounded-full text-gray-600 flex items-center justify-center"><i class="fas fa-times"></i></button>
         <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">Preview</h3>
-        <img id="modalCertificateImage" src="" alt="Certificate" class="w-full h-auto rounded-xl object-contain border border-gray-200 shadow-sm">
+        <img id="modalCertificateImage" src="" alt="Certificate" loading="lazy" decoding="async" class="w-full h-auto rounded-xl object-contain border border-gray-200 shadow-sm">
     </div>
 </div>
 
@@ -366,8 +365,8 @@ body { margin:0; background:#e2e8f0; color:#0f172a; overflow-x:hidden; font-fami
      JAVASCRIPT SETTINGS & LOGIC
 ========================================================= -->
 <script>
-/* SPLASH TIMER = 2000ms (2 SECONDS) */
-const SPLASH_MIN_TIME = 2000;
+/* SPLASH TIMER REDUCED FOR SPEED = 1000ms */
+const SPLASH_MIN_TIME = 1000;
 let splashStartTime = performance.now();
 let splashHidden = false;
 
@@ -435,7 +434,7 @@ const CONFIG = {
         { title:"Book 02 — Digital Marketing", cover:"https://i.ibb.co/F49dQ84j/file-0000000005bc8211a5669179463a4d73.png", pdf:"https://drive.google.com/file/d/1LbEAJyc2ygXYMpCgnZ6olSXFR6lGW4AG/view?usp=drivesdk" },
         { title:"Book 03 — Fitter NSQF Full Course", cover:"https://i.ibb.co/FqhcGHZ9/file-00000000c0d08208a91e58694d95f82e.png", pdf:"https://drive.google.com/file/d/1GedpIDHNkqmVUS_BjFyaYnSe0NBntDhM/view?usp=drivesdk" },
         { title:"Book 05 — Social Media Growth", cover:"https://i.ibb.co/CsH0ZhYS/file-00000000c5108211b5837c247f290de8.png", pdf:"https://drive.google.com/file/d/1_reEc2oZe1UPaJdKRxAs-PTfOwEVC8bD/view?usp=drivesdk" },
-        { title:"Book 10 — AI Tools Guide", cover:"https://i.ibb.co/RkkbGLc5/file-00000000e7308211b4802c49eb734781.png", pdf:"https://drive.google.com/file/d/1jufJsWxHLtdXBkz4VjljLNsnoR7S1UZu/view?usp=drivesdk" }
+        { title:"Book 06 — AI Tools Guide", cover:"https://i.ibb.co/RkkbGLc5/file-00000000e7308211b4802c49eb734781.png", pdf:"https://drive.google.com/file/d/1jufJsWxHLtdXBkz4VjljLNsnoR7S1UZu/view?usp=drivesdk" }
     ],
 
     certificates: [
@@ -450,7 +449,7 @@ const CONFIG = {
 };
 
 /* =========================================================
-   DEALS RENDER LOGIC
+   DEALS RENDER LOGIC (Optimized)
 ========================================================= */
 let currentDealIndex = 0;
 
@@ -472,7 +471,7 @@ function renderDeals() {
                             src="${deal.image}" 
                             alt="Deal" 
                             class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" 
-                            loading="lazy"
+                            loading="lazy" decoding="async"
                             onerror="this.src='https://placehold.co/400x400/eeeeee/999999?text=Image+Not+Found'"
                         >
                     </div>
@@ -486,7 +485,8 @@ function renderDeals() {
         `;
     }
 
-    dealsGrid.innerHTML += gridHTML;
+    // Faster DOM insertion
+    dealsGrid.insertAdjacentHTML('beforeend', gridHTML);
     currentDealIndex = endIndex;
 
     if (currentDealIndex >= CONFIG.deals.data.length) {
@@ -510,7 +510,7 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-// BFCache (Back Forward Cache) Fix for instant back button
+// BFCache (Back Forward Cache) Fix
 window.addEventListener("pageshow", (e) => {
     if (e.persisted) {
         const loader = document.getElementById("appLoader");
@@ -535,11 +535,17 @@ function hideLoader(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    hideLoader();
-    attachLinkLoaders();
-    renderDeals();
+    // Non-blocking initialization for speed
+    setTimeout(() => {
+        attachLinkLoaders();
+        generateLayout();
+        renderEbooks();
+        renderCertificates();
+        renderDeals();
+        hideLoader();
+    }, 0);
 });
-setTimeout(() => hideLoader(), SPLASH_MIN_TIME + 50); // Fallback
+setTimeout(() => hideLoader(), SPLASH_MIN_TIME + 50);
 
 /* =========================================================
    FAST LINK LOADER (NO DELAY)
@@ -563,7 +569,6 @@ function attachLinkLoaders(){
                     splashHidden = false;
                     splashStartTime = performance.now();
                 }
-                // Reduced delay to 10ms for instant feel
                 setTimeout(() => window.location.href = url.href, 10);
             } catch(error) {}
         });
@@ -580,7 +585,6 @@ if(dUpiId) dUpiId.innerText = CONFIG.upiId;
 const fWaLink = document.getElementById("footerWaLink");
 if(fWaLink) fWaLink.href = `https://wa.me/91${CONFIG.whatsappHelpline}`;
 
-// Copy function
 async function copyText(text, button){
     try{
         if(navigator.clipboard && window.isSecureContext) {
@@ -607,7 +611,7 @@ async function copyText(text, button){
 document.getElementById("copyUpiNumberBtn")?.addEventListener("click", function(){ copyText(CONFIG.upiNumber, this); });
 document.getElementById("copyUpiIdBtn")?.addEventListener("click", function(){ copyText(CONFIG.upiId, this); });
 
-// Generate Layout (Hubs & Tools)
+// Generate Layout Optimized
 function generateLayout(){
     const hubs = document.getElementById("hubsTimelineContainer");
     const tools = document.getElementById("bottomToolsContainer");
@@ -659,11 +663,12 @@ function generateLayout(){
     toolsHtml += `</div>`;
     tools.innerHTML = toolsHtml;
 }
-generateLayout();
 
-// Ebooks Load
-const ebookGrid = document.getElementById("ebookGrid");
-if(ebookGrid){
+// Ebooks Load Optimized
+function renderEbooks() {
+    const ebookGrid = document.getElementById("ebookGrid");
+    if(!ebookGrid) return;
+    const fragment = document.createDocumentFragment();
     CONFIG.ebooks.forEach(book => {
         const isUpcoming = !book.pdf || book.pdf === "#";
         const cover = book.cover || "https://placehold.co/600x800/161e31/eab308?text=BOOK";
@@ -671,7 +676,7 @@ if(ebookGrid){
         card.className = "glass-card w-[140px] shrink-0 flex flex-col snap-start overflow-hidden border border-white/80";
         card.innerHTML = `
             <div class="relative w-full aspect-[3/4] bg-white/20">
-                <img src="${cover}" alt="${book.title}" class="w-full h-full object-cover ${isUpcoming ? "grayscale opacity-70" : ""}" loading="lazy">
+                <img src="${cover}" alt="${book.title}" loading="lazy" decoding="async" class="w-full h-full object-cover ${isUpcoming ? "grayscale opacity-70" : ""}">
                 ${isUpcoming ? `<div class="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm"><span class="bg-gray-900/80 text-white text-[9px] font-black px-2 py-1 rounded">UPCOMING</span></div>` : `<div class="absolute top-2 right-2"><span class="text-[9px] font-black bg-red-600/90 text-white px-1.5 py-0.5 rounded">₹99</span></div>`}
             </div>
             <div class="p-3 flex flex-col flex-grow bg-white/40">
@@ -682,18 +687,21 @@ if(ebookGrid){
         if(!isUpcoming){
             card.querySelector(".download-btn").addEventListener("click", () => openPayment(book));
         }
-        ebookGrid.appendChild(card);
+        fragment.appendChild(card);
     });
+    ebookGrid.appendChild(fragment);
 }
 
-// Certificates Load
-const certGrid = document.getElementById("certificateGrid");
-if(certGrid){
+// Certificates Load Optimized
+function renderCertificates() {
+    const certGrid = document.getElementById("certificateGrid");
+    if(!certGrid) return;
+    const fragment = document.createDocumentFragment();
     CONFIG.certificates.forEach((cert,i) => {
         const el = document.createElement("article");
         el.className = "glass-card overflow-hidden cursor-pointer p-1.5 pb-3";
         el.innerHTML = `
-            <img src="${cert.img}" alt="${cert.title}" loading="lazy" class="w-full aspect-[4/3] object-cover rounded-xl border border-white/50 shadow-sm">
+            <img src="${cert.img}" alt="${cert.title}" loading="lazy" decoding="async" class="w-full aspect-[4/3] object-cover rounded-xl border border-white/50 shadow-sm">
             <div class="px-2 pt-2">
                 <p class="text-[9px] text-brandGold font-black uppercase mb-0.5">Cert ${String(i+1).padStart(2,"0")}</p>
                 <h4 class="text-[11px] font-bold text-gray-800 line-clamp-2 leading-tight">${cert.title}</h4>
@@ -704,8 +712,9 @@ if(certGrid){
             m.classList.remove("hidden"); m.classList.add("flex");
             document.body.style.overflow = "hidden";
         });
-        certGrid.appendChild(el);
+        fragment.appendChild(el);
     });
+    certGrid.appendChild(fragment);
 }
 
 function openPage(page){
