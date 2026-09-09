@@ -385,15 +385,15 @@
 <!-- ================= PORTAL ================= -->
 <section id="portalPage" class="hidden">
 
-  <!-- MOBILE APP TOP BAR (Shows only on mobile for employees) -->
+  <!-- MOBILE APP TOP BAR -->
   <div class="mobile-nav-top">
     <!-- Profile Info -->
     <div class="mobile-profile-trigger" data-section="profile">
       <div class="avatar">👤</div>
       <span>Hi, <strong id="mobileUserName">User</strong></span>
     </div>
-    <!-- REFRESH BUTTON instead of Bell -->
-    <div id="mobileRefreshBtn" style="font-size: 22px; color: #4b5563; padding-right: 5px; cursor: pointer;" title="Refresh Data">
+    <!-- REFRESH BUTTON -->
+    <div id="mobileRefreshBtn" style="font-size: 22px; color: var(--primary); padding-right: 5px; cursor: pointer;" title="Refresh Data">
       🔄
     </div>
   </div>
@@ -444,13 +444,17 @@
               <div class="stat-label">Completed</div>
               <div class="stat-value" id="statCompleted">0</div>
             </div>
+            <!-- Permanent Total Earned -->
             <div class="stat-card">
               <div class="stat-label">Total Earned</div>
               <div class="stat-value" id="statEarned" style="color:var(--success);">₹0</div>
+              <small style="color: var(--muted); font-size: 11px;">(Lifetime Earnings)</small>
             </div>
-            <div class="stat-card">
-              <div class="stat-label">Available Balance</div>
+            <!-- Active Wallet Balance -->
+            <div class="stat-card" style="border: 2px solid var(--primary);">
+              <div class="stat-label">Active Wallet Balance</div>
               <div class="stat-value" id="statBalance" style="color:var(--primary);">₹0</div>
+              <small style="color: var(--muted); font-size: 11px;">(Available to withdraw)</small>
             </div>
           </div>
           <div class="content-card">
@@ -531,7 +535,7 @@
           </div>
           <div class="stats-grid">
             <div class="stat-card" style="border-left:4px solid var(--primary);">
-              <div class="stat-label">Wallet Balance</div>
+              <div class="stat-label">Active Wallet Balance</div>
               <div class="stat-value" id="withdrawBalance">₹0</div>
             </div>
           </div>
@@ -700,7 +704,6 @@
                   <label>Instructions</label>
                   <textarea id="taskDescription" placeholder="Write complete task instructions..." required></textarea>
                 </div>
-                <!-- NEW LINK FIELD FOR ADMIN -->
                 <div class="form-group full">
                   <label>Task Link (Optional)</label>
                   <input id="taskLink" type="url" placeholder="https://example.com/share-link">
@@ -720,12 +723,12 @@
 
           <!-- TASK MANAGEMENT -->
           <div class="content-card">
-            <h3>Active Tasks</h3>
+            <h3>Manage Active Tasks</h3>
             <div class="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Task</th>
+                    <th>Task Headline</th>
                     <th>Type</th>
                     <th>Assigned To</th>
                     <th>Reward</th>
@@ -835,6 +838,27 @@
   </div>
 </div>
 
+<!-- ================= EMPLOYEE TASK VIEW MODAL (NEW APP STYLE) ================= -->
+<div class="modal-overlay" id="employeeTaskDetailModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Task Details</h3>
+      <button class="modal-close" onclick="closeTaskDetailModal()" type="button">×</button>
+    </div>
+    <div class="modal-body">
+      <h2 id="detailTaskTitle" style="font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 5px;"></h2>
+      <div style="color: var(--success); font-weight: 700; font-size: 16px; margin-bottom: 20px;">Reward: <span id="detailTaskAmount"></span></div>
+      
+      <p id="detailTaskDesc" style="font-size: 14.5px; color: #4b5563; line-height: 1.6; white-space: pre-wrap;"></p>
+      
+      <div id="detailTaskLinkArea"></div>
+    </div>
+    <div class="modal-footer" id="detailTaskActionArea" style="justify-content: center;">
+      <!-- Action buttons injected here -->
+    </div>
+  </div>
+</div>
+
 <!-- ================= SUBMIT WORK MODAL ================= -->
 <div class="modal-overlay" id="submitWorkModal">
   <div class="modal">
@@ -862,7 +886,7 @@
   </div>
 </div>
 
-<!-- ================= WITHDRAWAL MODAL (UPDATED) ================= -->
+<!-- ================= WITHDRAWAL MODAL ================= -->
 <div class="modal-overlay" id="withdrawalModal">
   <div class="modal">
     <div class="modal-head">
@@ -894,6 +918,68 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-light" data-close="withdrawalModal">Cancel</button>
         <button class="btn btn-primary" type="submit">Send Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= ADMIN EDIT EMPLOYEE MODAL ================= -->
+<div class="modal-overlay" id="adminEditEmployeeModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Edit Employee</h3>
+      <button class="modal-close" data-close="adminEditEmployeeModal" type="button">×</button>
+    </div>
+    <form id="adminEditEmployeeForm">
+      <div class="modal-body">
+        <input type="hidden" id="editEmpId">
+        <div class="form-group">
+          <label>Employee Name</label>
+          <input id="editEmpName" type="text" required>
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <input id="editEmpWhatsapp" type="text" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-close="adminEditEmployeeModal">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= ADMIN EDIT TASK MODAL ================= -->
+<div class="modal-overlay" id="adminEditTaskModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Edit Task</h3>
+      <button class="modal-close" data-close="adminEditTaskModal" type="button">×</button>
+    </div>
+    <form id="adminEditTaskForm">
+      <div class="modal-body">
+        <input type="hidden" id="editTaskId">
+        <div class="form-group">
+          <label>Task Headline</label>
+          <input id="editTaskTitle" type="text" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="editTaskDescription" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Task Link</label>
+          <input id="editTaskLink" type="url">
+        </div>
+        <div class="form-group">
+          <label>Reward Amount (₹)</label>
+          <input id="editTaskAmount" type="number" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-close="adminEditTaskModal">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save Changes</button>
       </div>
     </form>
   </div>
@@ -984,7 +1070,7 @@
 <script type="module">
   import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-  import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+  import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
@@ -1171,10 +1257,7 @@
 
   // Mobile App Refresh Button Event
   $("mobileRefreshBtn").addEventListener("click", async () => {
-    showLoader(true);
-    await loadEmployeeData();
-    showLoader(false);
-    toast("Data Refreshed Successfully!");
+    showLoader(true); await loadEmployeeData(); showLoader(false); toast("Data Refreshed!");
   });
 
   function updateEmployeeHeader(){
@@ -1201,7 +1284,6 @@
     $("employeeTaskList").innerHTML = tasks.length ? tasks.map(createEmployeeTaskHtml).join("") : `<div class="empty">No tasks assigned.</div>`;
   }
 
-  // GLOBAL Copy Link Function for HTML Buttons
   window.copyTaskLink = (link) => {
     if(!link) return;
     navigator.clipboard.writeText(link).then(() => { toast("Link Copied!"); }).catch(() => { toast("Failed to copy link."); });
@@ -1210,44 +1292,65 @@
   function createEmployeeTaskHtml(task){
     const sub = allSubmissions.find(s => s.taskId === task.id);
     let statusHtml = '<span class="pill blue">Available</span>';
-    let action = `<button class="btn btn-primary" onclick="acceptTask('${task.id}')" type="button">Accept Task</button>`;
 
     if(sub){
-      if(sub.status === "Approved"){ statusHtml = '<span class="pill green">Approved</span>'; action = '<span class="pill green">Payment Credited</span>'; }
-      else if(sub.status === "Revision"){ statusHtml = '<span class="pill red">Needs Revision</span>'; action = `<button class="btn btn-warning" onclick="openSubmitModal('${task.id}')" type="button">Resubmit Work</button>`; }
-      else if(sub.status === "Accepted"){ statusHtml = '<span class="pill orange">Accepted</span>'; action = `<button class="btn btn-primary" onclick="openSubmitModal('${task.id}')" type="button">Submit Work</button>`; }
-      else{ statusHtml = '<span class="pill orange">Under Review</span>'; action = '<span class="pill">Pending Admin Review</span>'; }
-    }
-    
-    // Check if task has a link, show link copy box
-    let linkBoxHtml = "";
-    if(task.link){
-      linkBoxHtml = `
-        <div class="link-copy-box">
-          <input type="text" readonly value="${escapeHtml(task.link)}">
-          <button onclick="copyTaskLink('${escapeHtml(task.link)}')">Copy Link</button>
-        </div>
-      `;
+      if(sub.status === "Approved"){ statusHtml = '<span class="pill green">Approved</span>'; }
+      else if(sub.status === "Revision"){ statusHtml = '<span class="pill red">Needs Revision</span>'; }
+      else if(sub.status === "Accepted"){ statusHtml = '<span class="pill orange">Accepted</span>'; }
+      else{ statusHtml = '<span class="pill orange">Under Review</span>'; }
     }
 
+    // Only render headline and View button in the list
     return `
       <div class="task-card">
         <div class="task-top">
           <div style="width: 100%;">
             <div class="task-title">${escapeHtml(task.title)}</div>
-            <div class="task-desc">${escapeHtml(task.description)}</div>
-            ${linkBoxHtml}
+            <div class="task-desc" style="font-weight:600; color:var(--success);">Reward: ${formatMoney(task.amount)}</div>
           </div>
           <div>${statusHtml}</div>
         </div>
-        <div class="task-meta">
-          <span class="pill green">${formatMoney(task.amount)}</span>
-          ${task.deadline ? `<span class="pill">Deadline: ${escapeHtml(task.deadline)}</span>` : ""}
+        <div class="task-actions" style="border-top:none; padding-top:5px; margin-top:5px;">
+          <button class="btn btn-light btn-block" style="border:1px solid var(--primary); color:var(--primary);" onclick="openTaskDetail('${task.id}')" type="button">View Task</button>
         </div>
-        <div class="task-actions">${action}</div>
       </div>
     `;
   }
+
+  window.openTaskDetail = taskId => {
+    const task = allTasks.find(t => t.id === taskId); if(!task) return;
+    const sub = allSubmissions.find(s => s.taskId === taskId);
+
+    $("detailTaskTitle").textContent = task.title;
+    $("detailTaskAmount").textContent = formatMoney(task.amount);
+    $("detailTaskDesc").textContent = task.description;
+
+    let linkHtml = "";
+    if(task.link){
+      linkHtml = `
+        <div class="link-copy-box" style="margin-top: 15px;">
+          <input type="text" readonly value="${escapeHtml(task.link)}">
+          <button onclick="copyTaskLink('${escapeHtml(task.link)}')">Copy Link</button>
+        </div>
+        <div class="success-note" style="margin-top: 15px; font-size: 13px;">
+          यह लिंक अपने कस्टमर को शेयर करें या खुद इस लिंक को कॉपी करके ब्राउज़र में जाकर ओपन करके खुद अप्लाई करें, तो भी आपको कमीशन मिल जाएगा और अगर आप किसी को सेल करते हैं तो भी आपको कमीशन मिल जाएगा।
+        </div>
+      `;
+    }
+    $("detailTaskLinkArea").innerHTML = linkHtml;
+
+    let actionBtn = `<button class="btn btn-primary btn-block" onclick="acceptTask('${task.id}'); closeTaskDetailModal();" style="width:100%;">Accept Task</button>`;
+    if(sub){
+      if(sub.status === "Approved"){ actionBtn = '<span class="pill green" style="display:block; text-align:center; padding:10px;">Payment Credited</span>'; }
+      else if(sub.status === "Revision"){ actionBtn = `<button class="btn btn-warning btn-block" onclick="closeTaskDetailModal(); openSubmitModal('${task.id}')" style="width:100%;">Resubmit Work</button>`; }
+      else if(sub.status === "Accepted"){ actionBtn = `<button class="btn btn-primary btn-block" onclick="closeTaskDetailModal(); openSubmitModal('${task.id}')" style="width:100%;">Submit Work</button>`; }
+      else{ actionBtn = '<span class="pill orange" style="display:block; text-align:center; padding:10px;">Pending Admin Review</span>'; }
+    }
+    $("detailTaskActionArea").innerHTML = actionBtn;
+    $("employeeTaskDetailModal").classList.add("show");
+  }
+
+  window.closeTaskDetailModal = () => { $("employeeTaskDetailModal").classList.remove("show"); }
 
   window.acceptTask = async taskId => {
     if(!currentUser || !currentProfile) return; const task = allTasks.find(t => t.id === taskId); if(!task) return;
@@ -1292,7 +1395,6 @@
     $("withdrawalForm").reset(); $("modalWithdrawBalance").textContent = formatMoney(balance); $("withdrawAmount").max = String(balance); $("withdrawalModal").classList.add("show");
   });
 
-  // UPDATED WITHDRAWAL LOGIC
   $("withdrawalForm").addEventListener("submit", async e => {
     e.preventDefault();
     const amt = Number($("withdrawAmount").value);
@@ -1302,11 +1404,8 @@
     
     if(!Number.isFinite(amt) || amt <= 0){ toast("Valid amount डालें।"); return; }
     if(amt > balance){ toast(`Available balance ${formatMoney(balance)} है।`); return; }
-    
-    // Ensure at least one details is filled
     if(!upi && bank.length < 5){ toast("कृपया UPI ID या Bank Details में से कोई एक भरें।"); return; }
     
-    // Combine details for Admin Panel
     let finalDetails = "";
     if(upi) finalDetails += `[UPI]: ${upi}\n`;
     if(bank) finalDetails += `[Bank]:\n${bank}`;
@@ -1367,16 +1466,42 @@
     }catch(err){ toast(getFirebaseErrorMessage(err)); if(creatorApp){ try{ await deleteApp(creatorApp); }catch{} } } finally{ showLoader(false); }
   });
 
+  // Admin Employees Table & Edits
   function renderAdminEmployees(){
     $("adminEmployeeTable").innerHTML = allEmployees.length ? allEmployees.map(e => {
       const suspended = e.status === "suspended";
-      return `<tr><td><strong>${escapeHtml(e.name)}</strong></td><td>${escapeHtml(e.employeeId)}</td><td>${escapeHtml(e.whatsapp)}</td><td><span class="pill ${suspended ? "red" : "green"}">${suspended ? "Suspended" : "Active"}</span></td><td><button class="btn ${suspended ? "btn-success" : "btn-warning"}" style="padding:6px 10px; font-size:12px;" onclick="toggleEmployeeStatus('${e.id}', '${suspended ? "active" : "suspended"}')" type="button">${suspended ? "Activate" : "Suspend"}</button></td></tr>`;
+      return `<tr><td><strong>${escapeHtml(e.name)}</strong></td><td>${escapeHtml(e.employeeId)}</td><td>${escapeHtml(e.whatsapp)}</td><td><span class="pill ${suspended ? "red" : "green"}">${suspended ? "Suspended" : "Active"}</span></td>
+      <td>
+        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+          <button class="btn btn-light" style="padding:6px 10px; font-size:12px;" onclick="editEmployee('${e.id}')" type="button">Edit</button>
+          <button class="btn ${suspended ? "btn-success" : "btn-warning"}" style="padding:6px 10px; font-size:12px;" onclick="toggleEmployeeStatus('${e.id}', '${suspended ? "active" : "suspended"}')" type="button">${suspended ? "Open" : "Close"}</button>
+          <button class="btn btn-danger" style="padding:6px 10px; font-size:12px;" onclick="deleteEmployee('${e.id}')" type="button">Del</button>
+        </div>
+      </td></tr>`;
     }).join("") : `<tr><td colspan="5">No employees found.</td></tr>`;
   }
+
+  window.editEmployee = empId => {
+    const emp = allEmployees.find(e => e.id === empId); if(!emp) return;
+    $("editEmpId").value = emp.id; $("editEmpName").value = emp.name; $("editEmpWhatsapp").value = emp.whatsapp;
+    $("adminEditEmployeeModal").classList.add("show");
+  }
+
+  $("adminEditEmployeeForm").addEventListener("submit", async e => {
+    e.preventDefault(); const id = $("editEmpId").value; const name = $("editEmpName").value.trim(); const whatsapp = normalizeMobile($("editEmpWhatsapp").value);
+    if(name.length < 2 || !isValidMobile(whatsapp)) return; showLoader(true);
+    try{ await updateDoc(doc(db, "users", id), { name, whatsapp }); $("adminEditEmployeeModal").classList.remove("show"); toast("Employee Updated!"); await loadAdminData(); }
+    catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
+  });
 
   window.toggleEmployeeStatus = async (uid, status) => {
     if(!confirm(`Are you sure you want to change status?`)) return; showLoader(true);
     try{ await updateDoc(doc(db, "users", uid), { status }); toast("Employee status updated."); await loadAdminData(); } catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
+  };
+
+  window.deleteEmployee = async uid => {
+    if(!confirm(`WARNING: Are you sure you want to completely DELETE this employee? This cannot be undone.`)) return; showLoader(true);
+    try{ await deleteDoc(doc(db, "users", uid)); toast("Employee Deleted."); await loadAdminData(); } catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
   };
 
   function renderAdminRequests() {
@@ -1409,17 +1534,14 @@
     const personal = $("taskType").value === "personal"; $("personalEmployeeGroup").style.display = personal ? "block" : "none"; if(!personal) $("taskEmployeeSelect").value = "";
   });
 
-  // UPDATED TASK CREATION WITH LINK
   $("createTaskForm").addEventListener("submit", async e => {
     e.preventDefault();
     const type = $("taskType").value; const empId = $("taskEmployeeSelect").value;
     const title = $("taskTitle").value.trim(); const description = $("taskDescription").value.trim();
-    const link = $("taskLink").value.trim(); // Get Link
+    const link = $("taskLink").value.trim();
     const amount = Number($("taskAmount").value); const deadline = $("taskDeadline").value;
     if(!title || !description || !Number.isFinite(amount) || amount < 0) return;
-    if(type === "personal" && !empId) return;
-    const employee = allEmployees.find(emp => emp.id === empId);
-    
+    if(type === "personal" && !empId) return; const employee = allEmployees.find(emp => emp.id === empId);
     showLoader(true);
     try{
       await addDoc(collection(db, "tasks"), { type, title, description, link, amount, deadline, employeeId: type === "personal" ? empId : null, employeeName: type === "personal" ? employee?.name || "" : "", status: "open", createdAt: serverTimestamp() });
@@ -1427,13 +1549,39 @@
     }catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
   });
 
+  // Admin Tasks Table & Edits
   function renderAdminTasks(){
-    $("adminTaskTable").innerHTML = allTasks.length ? allTasks.map(t => `<tr><td><strong>${escapeHtml(t.title)}</strong><div style="font-size:12px; color:#6b7280; margin-top:4px;">${escapeHtml(t.description || "").slice(0,80)}...</div>${t.link ? `<a href="${escapeHtml(t.link)}" target="_blank" style="font-size:11px; color:var(--primary);">[Task Link]</a>` : ''}</td><td><span class="pill">${t.type === "global" ? "Global" : "Personal"}</span></td><td>${t.type === "global" ? "All Active" : escapeHtml(t.employeeName || "-")}</td><td>${formatMoney(t.amount)}</td><td><span class="pill ${t.status === "closed" ? "red" : "green"}">${escapeHtml(t.status || "open")}</span></td><td>${t.status === "closed" ? "" : `<button class="btn btn-light" style="padding:6px 10px; font-size:12px;" onclick="closeTask('${t.id}')" type="button">Close</button>`}</td></tr>`).join("") : `<tr><td colspan="6">No tasks found.</td></tr>`;
+    $("adminTaskTable").innerHTML = allTasks.length ? allTasks.map(t => `<tr><td><strong>${escapeHtml(t.title)}</strong><div style="font-size:12px; color:#6b7280; margin-top:4px;">${escapeHtml(t.description || "").slice(0,50)}...</div>${t.link ? `<a href="${escapeHtml(t.link)}" target="_blank" style="font-size:11px; color:var(--primary);">[Task Link]</a>` : ''}</td><td><span class="pill">${t.type === "global" ? "Global" : "Personal"}</span></td><td>${t.type === "global" ? "All Active" : escapeHtml(t.employeeName || "-")}</td><td>${formatMoney(t.amount)}</td><td><span class="pill ${t.status === "closed" ? "red" : "green"}">${escapeHtml(t.status || "open")}</span></td>
+    <td>
+      <div style="display:flex; gap:5px; flex-wrap:wrap;">
+        <button class="btn btn-light" style="padding:6px 10px; font-size:12px;" onclick="editTask('${t.id}')" type="button">Edit</button>
+        <button class="btn ${t.status === "closed" ? "btn-success" : "btn-warning"}" style="padding:6px 10px; font-size:12px;" onclick="toggleTaskStatus('${t.id}', '${t.status === "closed" ? "open" : "closed"}')" type="button">${t.status === "closed" ? "Open" : "Close"}</button>
+        <button class="btn btn-danger" style="padding:6px 10px; font-size:12px;" onclick="deleteTask('${t.id}')" type="button">Del</button>
+      </div>
+    </td></tr>`).join("") : `<tr><td colspan="6">No tasks found.</td></tr>`;
   }
 
-  window.closeTask = async taskId => {
-    if(!confirm("क्या आप इस task को close करना चाहते हैं?")) return; showLoader(true);
-    try{ await updateDoc(doc(db, "tasks", taskId), { status: "closed", closedAt: serverTimestamp() }); toast("Task closed."); await loadAdminData(); } catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
+  window.editTask = taskId => {
+    const task = allTasks.find(t => t.id === taskId); if(!task) return;
+    $("editTaskId").value = task.id; $("editTaskTitle").value = task.title; $("editTaskDescription").value = task.description; $("editTaskLink").value = task.link || ""; $("editTaskAmount").value = task.amount;
+    $("adminEditTaskModal").classList.add("show");
+  }
+
+  $("adminEditTaskForm").addEventListener("submit", async e => {
+    e.preventDefault(); const id = $("editTaskId").value; const title = $("editTaskTitle").value.trim(); const description = $("editTaskDescription").value.trim(); const link = $("editTaskLink").value.trim(); const amount = Number($("editTaskAmount").value);
+    if(!title || !description || !Number.isFinite(amount)) return; showLoader(true);
+    try{ await updateDoc(doc(db, "tasks", id), { title, description, link, amount }); $("adminEditTaskModal").classList.remove("show"); toast("Task Updated!"); await loadAdminData(); }
+    catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
+  });
+
+  window.toggleTaskStatus = async (taskId, status) => {
+    if(!confirm(`Are you sure you want to change task status?`)) return; showLoader(true);
+    try{ await updateDoc(doc(db, "tasks", taskId), { status }); toast("Task status updated."); await loadAdminData(); } catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
+  };
+
+  window.deleteTask = async taskId => {
+    if(!confirm(`WARNING: Delete this task?`)) return; showLoader(true);
+    try{ await deleteDoc(doc(db, "tasks", taskId)); toast("Task Deleted."); await loadAdminData(); } catch(err){ toast(getFirebaseErrorMessage(err)); } finally{ showLoader(false); }
   };
 
   function renderAdminSubmissions(){
@@ -1498,6 +1646,8 @@
       document.querySelectorAll(`[data-section="${sectionId}"]`).forEach(b => b.classList.add("active"));
       Object.values(sectionMap).forEach(id => { const el = $(id); if(el) el.classList.add("hidden"); });
       const targetEl = $(sectionMap[sectionId]); if(targetEl) targetEl.classList.remove("hidden");
+      $("mainSidebar").classList.remove("mobile-open");
+      $("mobileSidebarOverlay").classList.remove("show");
     });
   });
 
