@@ -1,4 +1,4 @@
-const CACHE_NAME = "rkyadav-pwa-v3";
+const CACHE_NAME = "rkyadav-pwa-v4";
 
 const APP_FILES = [
     "./",
@@ -11,186 +11,144 @@ const APP_FILES = [
    INSTALL
 ===================================================== */
 
-self.addEventListener(
-    "install",
-    event => {
+self.addEventListener("install", event => {
 
-        event.waitUntil(
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(APP_FILES))
+    );
 
-            caches
-                .open(CACHE_NAME)
-                .then(
-                    cache =>
-                    cache.addAll(APP_FILES)
-                )
+    // New Service Worker ko turant activate kare
+    self.skipWaiting();
 
-        );
-
-        self.skipWaiting();
-
-    }
-);
+});
 
 
 /* =====================================================
    ACTIVATE
 ===================================================== */
 
-self.addEventListener(
-    "activate",
-    event => {
+self.addEventListener("activate", event => {
 
-        event.waitUntil(
+    event.waitUntil(
 
-            caches
-                .keys()
-                .then(
-                    keys =>
-                    Promise.all(
+        caches.keys().then(keys => {
 
-                        keys
-                        .filter(
-                            key =>
-                            key !== CACHE_NAME
-                        )
-                        .map(
-                            key =>
-                            caches.delete(key)
-                        )
+            return Promise.all(
 
-                    )
-                )
+                keys
+                    .filter(key => key !== CACHE_NAME)
+                    .map(key => caches.delete(key))
 
-        );
+            );
 
-        self.clients.claim();
+        })
 
-    }
-);
+    );
+
+    // Sabhi open pages par naya SW turant control le
+    self.clients.claim();
+
+});
 
 
 /* =====================================================
    FETCH
 ===================================================== */
 
-self.addEventListener(
-    "fetch",
-    event => {
+self.addEventListener("fetch", event => {
 
-        const request =
-        event.request;
+    const request = event.request;
 
-
-        if(
-            request.method !== "GET"
-        ){
-
-            return;
-
-        }
+    // Sirf GET requests handle kare
+    if (request.method !== "GET") {
+        return;
+    }
 
 
-        /* HTML */
+    /* =================================================
+       HTML / PAGE
+    ================================================= */
 
-        if(
-            request.mode === "navigate"
-        ){
-
-            event.respondWith(
-
-                fetch(request)
-
-                .then(
-                    response => {
-
-                        const copy =
-                        response.clone();
-
-                        caches
-                        .open(CACHE_NAME)
-                        .then(
-                            cache =>
-                            cache.put(
-                                request,
-                                copy
-                            )
-                        );
-
-                        return response;
-
-                    }
-                )
-
-                .catch(
-                    () =>
-                    caches
-                    .match(request)
-                    .then(
-                        response =>
-                        response ||
-                        caches.match(
-                            "./index.html"
-                        )
-                    )
-                )
-
-            );
-
-            return;
-
-        }
-
-
-        /* Other files */
+    if (request.mode === "navigate") {
 
         event.respondWith(
 
-            caches
-            .match(request)
-            .then(
-                cached => {
+            fetch(request)
 
-                    if(cached){
+                .then(response => {
 
-                        return cached;
+                    const copy = response.clone();
 
-                    }
+                    caches.open(CACHE_NAME)
+                        .then(cache => {
+                            cache.put(request, copy);
+                        });
 
+                    return response;
 
-                    return fetch(request)
+                })
 
-                    .then(
-                        response => {
+                .catch(() => {
 
-                            if(
-                                response &&
-                                response.status === 200
-                            ){
+                    return caches.match(request)
+                        .then(response => {
 
-                                const copy =
-                                response.clone();
+                            return response ||
+                                   caches.match("./index.html");
 
-                                caches
-                                .open(CACHE_NAME)
-                                .then(
-                                    cache =>
-                                    cache.put(
-                                        request,
-                                        copy
-                                    )
-                                );
+                        });
 
-                            }
-
-                            return response;
-
-                        }
-                    );
-
-                }
-            )
+                })
 
         );
 
+        return;
+
     }
-);
+
+
+    /* =================================================
+       OTHER FILES
+    ================================================= */
+
+    event.respondWith(
+
+        caches.match(request)
+
+            .then(cached => {
+
+                if (cached) {
+                    return cached;
+                }
+
+
+                return fetch(request)
+
+                    .then(response => {
+
+                        // Valid response ko cache kare
+                        if (
+                            response &&
+                            response.status === 200 &&
+                            response.type !== "opaque"
+                        ) {
+
+                            const copy = response.clone();
+
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    cache.put(request, copy);
+                                });
+
+                        }
+
+                        return response;
+
+                    });
+
+            })
+
+    );
+
+});
