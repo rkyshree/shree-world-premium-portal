@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -47,26 +47,58 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Smooth transitions */
-        .page-transition { transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; }
-        .hide-view { opacity: 0; pointer-events: none; position: absolute; width: 100%; transform: translateY(20px); }
-        .show-view { opacity: 1; pointer-events: auto; position: relative; transform: translateY(0); }
+        /* Smooth View Transitions */
+        .page-transition { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .hide-view { opacity: 0; pointer-events: none; position: absolute; width: 100%; transform: scale(0.98); visibility: hidden; }
+        .show-view { opacity: 1; pointer-events: auto; position: relative; transform: scale(1); visibility: visible; }
         
-        /* Iframe loading pulse */
-        .iframe-container { background: url('https://placehold.co/800x600/f8fafc/94a3b8?text=Loading+Book...') center center no-repeat; background-size: cover; }
-        .dark .iframe-container { background: url('https://placehold.co/800x600/0f172a/475569?text=Loading+Book...') center center no-repeat; background-size: cover; }
+        /* Iframe styling for Google Docs */
+        .docs-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: #ffffff; /* Docs are usually white */
+        }
+        
+        /* Loading animation for iframe */
+        .iframe-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 0;
+        }
+        .spinner {
+            border: 4px solid rgba(79, 70, 229, 0.2);
+            border-left-color: #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Book Cover Aspect Ratio */
+        .book-cover {
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-950 dark:text-gray-200 transition-colors duration-300 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
+    <nav class="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- Logo & Brand -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="showDashboard()">
-                    <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-                        <i class="fa-solid fa-book-open text-xl"></i>
+                <!-- Logo & Brand (Clickable to go home) -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="showDashboard()">
+                    <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-book-open-reader text-xl"></i>
                     </div>
                     <span class="font-bold text-2xl tracking-tight text-brand-900 dark:text-white">
                         श्री पाठशाला
@@ -75,21 +107,12 @@
 
                 <!-- Controls -->
                 <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Back to Dashboard Button (Hidden on Dashboard) -->
-                    <button id="backBtn" onclick="showDashboard()" class="hidden px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors">
-                        <i class="fa-solid fa-arrow-left mr-2"></i> <span class="hidden sm:inline">Dashboard</span>
-                    </button>
-                    
                     <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors shadow-inner">
+                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors shadow-inner">
                         <i id="themeIcon" class="fa-solid fa-moon"></i>
                     </button>
                 </div>
             </div>
-        </div>
-        <!-- Progress Bar for Reader -->
-        <div id="progressBarContainer" class="hidden h-1 bg-gray-200 dark:bg-gray-800 w-full">
-            <div id="progressBar" class="h-full bg-brand-600 transition-all duration-300 w-0"></div>
         </div>
     </nav>
 
@@ -97,7 +120,7 @@
     <main id="dashboardView" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full page-transition show-view">
         
         <!-- Welcome Banner -->
-        <div class="relative bg-brand-900 overflow-hidden rounded-2xl shadow-xl mb-12">
+        <div class="relative bg-gradient-to-r from-brand-900 to-brand-700 overflow-hidden rounded-2xl shadow-xl mb-12">
             <div class="absolute inset-0 opacity-20">
                 <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <polygon fill="currentColor" points="0,100 100,0 100,100"/>
@@ -105,182 +128,123 @@
             </div>
             <div class="relative z-10 px-6 py-10 sm:px-12 sm:py-16 text-white flex flex-col sm:flex-row items-center justify-between">
                 <div>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Welcome to Shree Pathshala</h1>
-                    <p class="text-brand-100 text-lg max-w-xl">Your premium digital library. Explore our collection of master guides, ebooks, and practical resources to upgrade your skills.</p>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold mb-3 drop-shadow-md">Welcome to Shree Pathshala</h1>
+                    <p class="text-brand-100 text-lg max-w-2xl">Read our premium collection of books directly from Google Docs. Fast, easy, and always updated.</p>
                 </div>
-                <div class="mt-6 sm:mt-0 hidden md:block text-6xl opacity-80">
+                <div class="mt-6 sm:mt-0 hidden md:block text-7xl opacity-80 drop-shadow-lg transform rotate-12">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Section Title -->
+        <!-- Section Title & Counter -->
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-layer-group text-brand-600"></i> Available Books
+                <i class="fa-solid fa-book text-brand-600"></i> Our Library
             </h2>
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-800 px-3 py-1 rounded-full" id="bookCount">Loading...</span>
+            <span class="text-sm font-semibold text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-brand-900/50 px-4 py-1.5 rounded-full" id="bookCount">Loading...</span>
         </div>
 
-        <!-- Book Grid (Injected via JS) -->
-        <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
-            <!-- Books will be rendered here -->
+        <!-- Book Grid (2 Columns on medium screens and up) -->
+        <!-- User requested "2 left 2 right", which implies a 2-column layout (grid-cols-2) -->
+        <div id="bookGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
+            <!-- Books will be injected here via JavaScript -->
         </div>
     </main>
 
-    <!-- VIEW 2: READER -->
-    <div id="readerView" class="flex-grow w-full page-transition hide-view flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden">
+    <!-- VIEW 2: GOOGLE DOCS READER -->
+    <div id="readerView" class="flex-grow w-full page-transition hide-view flex flex-col h-[calc(100vh-64px)] bg-gray-100 dark:bg-gray-950">
         
-        <!-- Mobile Sidebar Toggle -->
-        <div class="md:hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 p-3 flex justify-between items-center shadow-sm z-20">
-            <span class="font-semibold text-sm truncate pr-2" id="mobileBookTitle">Book Title</span>
-            <button onclick="toggleSidebar()" class="px-3 py-1.5 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400 rounded-md text-sm font-medium flex items-center gap-2">
-                <i class="fa-solid fa-list"></i> Chapters
+        <!-- Reader Header with Back Button -->
+        <div class="bg-white dark:bg-gray-900 px-4 sm:px-6 py-3 shadow-sm z-10 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 shrink-0">
+            <div class="flex items-center gap-4">
+                <button onclick="showDashboard()" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-md transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Back to Dashboard</span>
+                </button>
+                <div class="h-8 w-px bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
+                <h2 id="readerBookTitle" class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate max-w-[200px] sm:max-w-md lg:max-w-2xl">
+                    Book Title
+                </h2>
+            </div>
+            <button onclick="openExternalDoc()" class="text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors" title="Open in new tab">
+                <i class="fa-solid fa-external-link-alt text-lg"></i>
             </button>
         </div>
 
-        <!-- Sidebar (Table of Contents) -->
-        <aside id="sidebar" class="w-full md:w-80 lg:w-96 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col h-full absolute md:relative z-30 transition-transform duration-300 transform -translate-x-full md:translate-x-0">
-            <!-- Close button for mobile -->
-            <div class="md:hidden absolute top-4 right-4">
-                <button onclick="toggleSidebar()" class="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-300">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+        <!-- Google Docs Iframe Container -->
+        <div class="flex-1 w-full relative overflow-hidden">
+            <!-- Loader -->
+            <div id="iframeLoader" class="iframe-loader">
+                <div class="spinner mb-3"></div>
+                <p class="text-gray-500 dark:text-gray-400 font-medium animate-pulse">Loading Document...</p>
             </div>
             
-            <div class="p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                <h3 class="text-xs font-bold text-brand-600 dark:text-brand-400 tracking-wider uppercase mb-1">Table of Contents</h3>
-                <h2 id="sidebarBookTitle" class="font-bold text-lg leading-tight text-gray-900 dark:text-white">MS Excel Master Guide</h2>
-            </div>
-            
-            <div id="chapterList" class="flex-1 overflow-y-auto p-3 space-y-2">
-                <!-- Chapters injected here -->
-            </div>
-        </aside>
-
-        <!-- Main PDF Reader Area -->
-        <main class="flex-1 flex flex-col h-full bg-gray-100 dark:bg-gray-950 relative z-10">
-            <!-- Reader Header -->
-            <div class="bg-white dark:bg-gray-900 px-6 py-4 shadow-sm z-10 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
-                <div>
-                    <span id="currentChapterLabel" class="text-xs font-bold tracking-wide text-gray-500 dark:text-gray-400 uppercase">CHAPTER 01</span>
-                    <h2 id="currentChapterTitle" class="text-xl font-bold text-gray-900 dark:text-white mt-0.5 truncate max-w-[200px] sm:max-w-md md:max-w-lg lg:max-w-2xl">Excel Fundamentals</h2>
-                </div>
-                <!-- Pagination Desktop -->
-                <div class="hidden sm:flex gap-2">
-                    <button onclick="prevChapter()" id="btnPrev" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <button onclick="nextChapter()" id="btnNext" class="w-10 h-10 rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-400 hover:bg-brand-200 dark:hover:bg-brand-800 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- PDF Container -->
-            <div class="flex-1 w-full p-0 sm:p-4 md:p-6 overflow-hidden relative">
-                <div class="w-full h-full bg-white dark:bg-gray-900 sm:rounded-xl shadow-lg overflow-hidden iframe-container border border-gray-200 dark:border-gray-800 relative">
-                    <!-- Overlay hint for missing files -->
-                    <div id="fileMissingHint" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 dark:bg-gray-900/90 z-0 text-center p-6 hidden">
-                        <i class="fa-regular fa-file-pdf text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700 dark:text-gray-300">PDF File Not Found</h3>
-                        <p class="text-gray-500 dark:text-gray-400 mt-2 max-w-md">To view this book, ensure the PDF file is uploaded to the exact path specified in the configuration (e.g., <code class="bg-gray-200 dark:bg-gray-800 px-1 rounded text-sm text-brand-600">assets/book.pdf</code>) on your GitHub repository.</p>
-                    </div>
-                    
-                    <iframe id="pdfFrame" class="w-full h-full border-0 relative z-10 bg-transparent" title="PDF Reader" onload="hideHint()" onerror="showHint()"></iframe>
-                </div>
-            </div>
-
-            <!-- Mobile Pagination Bottom Bar -->
-            <div class="sm:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 flex justify-between gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-20">
-                <button onclick="prevChapter()" id="btnPrevMobile" class="flex-1 py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-800 font-medium disabled:opacity-50 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> Prev
-                </button>
-                <button onclick="nextChapter()" id="btnNextMobile" class="flex-1 py-3 px-4 rounded-lg bg-brand-600 text-white font-medium disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-brand-500/30">
-                    Next <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
-        </main>
-        
-        <!-- Mobile Sidebar Overlay -->
-        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-20 hidden md:hidden"></div>
+            <!-- The Iframe -->
+            <iframe 
+                id="docFrame" 
+                class="docs-iframe relative z-10 opacity-0 transition-opacity duration-500" 
+                title="Google Docs Reader"
+                onload="hideLoader()"
+                allowfullscreen>
+            </iframe>
+        </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC & DATABASE -->
     <script>
         // ==========================================
-        // DATABASE: Add or Modify Books Here
+        // 📚 DATABASE: Add your Google Docs Books Here
         // ==========================================
         const booksDatabase = [
             {
                 id: "excel-master",
                 title: "MS Excel Shortcut Keys",
-                subtitle: "Master Guide",
                 author: "R.K YADAV",
-                website: "www.rkyshree.in",
-                coverColor: "from-green-600 to-emerald-800",
-                icon: "fa-file-excel",
-                tags: ["Premium eBook", "400+ Shortcuts"],
+                tags: ["Premium", "Hindi & English"],
+                // Book Poster Image URL (Can be any online image or local path like 'assets/cover1.jpg')
+                coverImage: "https://i.ibb.co/kVktVDvQ/file-0000000070548208ab4b943f1b7bd3ec.png",
                 description: "From Basics to Advanced. 50+ Formulas, 10 Practical Projects, Charts & Dashboards. 'Excel पढ़कर याद नहीं होता; Excel बनाकर सीखा जाता है।'",
-                pdfUrl: "assets/book.pdf", // IMPORTANT: Place your actual PDF here relative to index.html
-                chapters: [
-                    { n: 1, title: "Excel Fundamentals & Keyboard Basics", page: 5 },
-                    { n: 2, title: "Essential Excel Shortcut Keys", page: 27 },
-                    { n: 3, title: "Excel Navigation Master", page: 62 },
-                    { n: 4, title: "Excel Selection Master", page: 91 },
-                    { n: 5, title: "Data Entry & Editing", page: 118 },
-                    { n: 6, title: "Professional Formatting", page: 152 },
-                    { n: 7, title: "Rows, Columns & Worksheets", page: 185 },
-                    { n: 8, title: "Find, Replace, Sort & Filter", page: 222 },
-                    { n: 9, title: "Formula & Function Master", page: 259 },
-                    { n: 10, title: "Paste Special Masterclass", page: 302 },
-                    { n: 11, title: "Excel Tables & Data Analysis", page: 335 },
-                    { n: 12, title: "Date, Time, Charts & Printing", page: 373 },
-                    { n: 13, title: "Advanced Excel Shortcuts", page: 422 },
-                    { n: 14, title: "Office & Job Masterclass", page: 468 },
-                    { n: 15, title: "10 Practical Projects", page: 506 }
-                ]
+                // Paste your Google Docs link here. The code will automatically convert it to preview mode.
+                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" 
             },
-            // Example of how to add a second book:
             {
-                id: "word-master",
+                id: "word-expert",
                 title: "MS Word Expert Guide",
-                subtitle: "Professional Typing & Formatting",
                 author: "R.K YADAV",
-                website: "www.rkyshree.in",
-                coverColor: "from-blue-600 to-indigo-800",
-                icon: "fa-file-word",
-                tags: ["New Release", "Formatting"],
+                tags: ["Formatting", "Typing"],
+                // Example Cover Image
+                coverImage: "https://placehold.co/600x900/0369a1/ffffff?text=MS+Word\nExpert+Guide",
                 description: "Master document creation, advanced formatting, mail merge, and keyboard shortcuts to become an MS Word professional.",
-                pdfUrl: "assets/word.pdf", // Create this file on your GitHub
-                chapters: [
-                    { n: 1, title: "Introduction to MS Word Interface", page: 1 },
-                    { n: 2, title: "Formatting Text and Paragraphs", page: 15 },
-                    { n: 3, title: "Working with Tables and Graphics", page: 30 },
-                    { n: 4, title: "Page Layout and Printing", page: 45 }
-                ]
+                // Just paste the regular Google Docs share link.
+                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real Word doc link
+            },
+            {
+                id: "powerpoint-pro",
+                title: "PowerPoint Pro Presentations",
+                author: "R.K YADAV",
+                tags: ["Presentation", "Design"],
+                coverImage: "https://placehold.co/600x900/b91c1c/ffffff?text=PowerPoint\nPro",
+                description: "Learn how to design stunning presentations, use animations effectively, and deliver your message with impact.",
+                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real PPT doc link
+            },
+            {
+                id: "tally-prime",
+                title: "Tally Prime Accounting",
+                author: "R.K YADAV",
+                tags: ["Accounting", "Business"],
+                coverImage: "https://placehold.co/600x900/15803d/ffffff?text=Tally+Prime\nAccounting",
+                description: "Complete guide to business accounting, inventory management, and GST taxation using Tally Prime software.",
+                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real Tally doc link
             }
+            // To add more books, just copy one of the blocks above, paste it below, and change the details!
         ];
 
-        // State Variables
-        let currentBook = null;
-        let currentChapterIndex = 0;
+        let currentBookUrl = "";
 
         // --- Initialization ---
         document.addEventListener("DOMContentLoaded", () => {
             initTheme();
             renderDashboard();
-            
-            // Check if user was reading a book previously
-            const savedBookId = localStorage.getItem("sp_currentBook");
-            const savedChapter = localStorage.getItem("sp_currentChapter");
-            
-            if (savedBookId) {
-                // Optional: Automatically open last read book. 
-                // For a dashboard feel, it's usually better to land on the dashboard.
-                // Comment out the next line if you want them to always land on Dashboard.
-                // openBook(savedBookId, savedChapter ? parseInt(savedChapter) : 0);
-            }
         });
 
         // --- Theme Management ---
@@ -310,38 +274,44 @@
         // --- Dashboard Logic ---
         function renderDashboard() {
             const grid = document.getElementById("bookGrid");
-            document.getElementById("bookCount").textContent = `${booksDatabase.length} Books`;
+            document.getElementById("bookCount").textContent = `${booksDatabase.length} Books Available`;
             grid.innerHTML = "";
 
+            // User requested 2 Left, 2 Right, which means a 2-column layout.
+            // Tailwind class 'md:grid-cols-2' handles this beautifully.
+            
             booksDatabase.forEach(book => {
-                const tagsHtml = book.tags.map(tag => `<span class="bg-white/20 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">${tag}</span>`).join('');
+                const tagsHtml = book.tags.map(tag => `<span class="bg-brand-100 text-brand-800 dark:bg-brand-900/60 dark:text-brand-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">${tag}</span>`).join('');
                 
                 const card = document.createElement("div");
-                card.className = "group bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 cursor-pointer flex flex-col h-full transform hover:-translate-y-1";
-                card.onclick = () => openBook(book.id, 0);
+                card.className = "group bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 cursor-pointer flex flex-col sm:flex-row transform hover:-translate-y-1 h-full";
+                
+                card.onclick = () => openBook(book);
 
                 card.innerHTML = `
-                    <div class="h-48 bg-gradient-to-br ${book.coverColor} p-6 flex flex-col justify-between relative overflow-hidden">
-                        <div class="absolute -right-10 -bottom-10 opacity-20 transform group-hover:scale-110 transition-transform duration-500">
-                            <i class="fa-solid ${book.icon} text-9xl text-white"></i>
-                        </div>
-                        <div class="flex gap-2 flex-wrap relative z-10">
-                            ${tagsHtml}
-                        </div>
-                        <div class="relative z-10 mt-auto">
-                            <h3 class="text-white font-black text-2xl leading-tight shadow-sm">${book.title}</h3>
-                            <p class="text-white/80 font-medium text-sm mt-1">${book.subtitle}</p>
+                    <!-- Left Side: Poster (Cover Image) -->
+                    <div class="sm:w-2/5 md:w-1/2 lg:w-2/5 relative overflow-hidden shrink-0">
+                        <img src="${book.coverImage}" alt="${book.title} Cover" class="book-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent sm:hidden flex items-end p-4">
+                            <h3 class="text-white font-bold text-xl">${book.title}</h3>
                         </div>
                     </div>
-                    <div class="p-5 flex flex-col flex-grow">
-                        <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-4 flex-grow">${book.description}</p>
-                        <div class="flex justify-between items-end border-t border-gray-100 dark:border-gray-800 pt-4 mt-auto">
-                            <div>
-                                <p class="text-xs text-gray-400 dark:text-gray-500">Author</p>
-                                <p class="font-bold text-sm text-gray-900 dark:text-white">${book.author}</p>
-                            </div>
-                            <button class="bg-gray-100 dark:bg-gray-800 text-brand-600 dark:text-brand-400 p-2 rounded-lg group-hover:bg-brand-600 group-hover:text-white transition-colors">
-                                <i class="fa-solid fa-book-open"></i> Read
+                    
+                    <!-- Right Side: Details -->
+                    <div class="p-6 flex flex-col flex-grow w-full">
+                        <div class="flex gap-2 flex-wrap mb-3">
+                            ${tagsHtml}
+                        </div>
+                        
+                        <h3 class="text-gray-900 dark:text-white font-black text-2xl leading-tight mb-1 hidden sm:block group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${book.title}</h3>
+                        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4"><i class="fa-solid fa-pen-nib mr-1"></i> ${book.author}</p>
+                        
+                        <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-4 mb-6 flex-grow leading-relaxed">${book.description}</p>
+                        
+                        <!-- Read Button -->
+                        <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+                            <button class="w-full bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white dark:bg-gray-800 dark:hover:bg-brand-600 dark:text-brand-400 dark:hover:text-white py-3 rounded-xl font-bold transition-all duration-300 flex justify-center items-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-book-open"></i> Read Book Now
                             </button>
                         </div>
                     </div>
@@ -350,159 +320,92 @@
             });
         }
 
-        // --- Navigation Between Views ---
-        function showDashboard() {
-            document.getElementById("readerView").classList.remove("show-view");
-            document.getElementById("readerView").classList.add("hide-view");
-            
-            setTimeout(() => {
-                document.getElementById("dashboardView").classList.remove("hide-view");
-                document.getElementById("dashboardView").classList.add("show-view");
-                document.getElementById("backBtn").classList.add("hidden");
-                document.getElementById("progressBarContainer").classList.add("hidden");
-                
-                // Clear iframe memory
-                document.getElementById("pdfFrame").src = "";
-                currentBook = null;
-            }, 300); // Wait for transition
+        // --- URL Formatter for Google Docs ---
+        // Converts standard share/edit links into clean preview links for iframe
+        function getCleanDocsUrl(url) {
+            if (!url) return "";
+            // If it's a google docs link containing /edit or /view
+            if (url.includes("docs.google.com/document/d/")) {
+                // Remove everything after the Document ID and append /preview
+                const baseUrl = url.split('/edit')[0].split('/view')[0];
+                return `${baseUrl}/preview`;
+            }
+            return url; // Return as is if not a standard Google Docs URL
         }
 
-        function openBook(bookId, chapterIndex = 0) {
-            currentBook = booksDatabase.find(b => b.id === bookId);
-            if (!currentBook) return;
-
-            currentChapterIndex = chapterIndex;
-            
-            // Save state
-            localStorage.setItem("sp_currentBook", bookId);
-
-            // Update UI elements
-            document.getElementById("sidebarBookTitle").textContent = currentBook.title;
-            document.getElementById("mobileBookTitle").textContent = currentBook.title;
-            
-            // Switch views
-            document.getElementById("dashboardView").classList.remove("show-view");
-            document.getElementById("dashboardView").classList.add("hide-view");
+        // --- Navigation Between Views ---
+        function showDashboard() {
+            // Smoothly hide reader
+            const readerView = document.getElementById("readerView");
+            readerView.classList.remove("show-view");
+            readerView.classList.add("hide-view");
             
             setTimeout(() => {
-                document.getElementById("readerView").classList.remove("hide-view");
-                document.getElementById("readerView").classList.add("show-view");
-                document.getElementById("backBtn").classList.remove("hidden");
-                document.getElementById("progressBarContainer").classList.remove("hidden");
+                // Show dashboard
+                const dashboardView = document.getElementById("dashboardView");
+                dashboardView.classList.remove("hide-view");
+                dashboardView.classList.add("show-view");
                 
-                renderSidebar();
-                loadChapter();
+                // Clear iframe to stop loading/playing audio in background
+                const iframe = document.getElementById("docFrame");
+                iframe.src = "";
+                iframe.classList.remove("opacity-100");
+                iframe.classList.add("opacity-0");
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 300); 
+        }
+
+        function openBook(book) {
+            // Set Titles
+            document.getElementById("readerBookTitle").textContent = book.title;
+            
+            // Format and Set Google Docs URL
+            const cleanUrl = getCleanDocsUrl(book.googleDocUrl);
+            currentBookUrl = cleanUrl; // Save for external link button
+            
+            // Show Loader, Hide Iframe Content initially
+            document.getElementById("iframeLoader").style.display = "flex";
+            const iframe = document.getElementById("docFrame");
+            iframe.classList.remove("opacity-100");
+            iframe.classList.add("opacity-0");
+            
+            // Load the document
+            iframe.src = cleanUrl;
+            
+            // Switch views
+            const dashboardView = document.getElementById("dashboardView");
+            dashboardView.classList.remove("show-view");
+            dashboardView.classList.add("hide-view");
+            
+            setTimeout(() => {
+                const readerView = document.getElementById("readerView");
+                readerView.classList.remove("hide-view");
+                readerView.classList.add("show-view");
+                window.scrollTo(0, 0);
             }, 300);
         }
 
-        // --- Reader Logic ---
-        function renderSidebar() {
-            const list = document.getElementById("chapterList");
-            list.innerHTML = "";
-
-            currentBook.chapters.forEach((chap, index) => {
-                const btn = document.createElement("button");
-                const isActive = index === currentChapterIndex;
-                
-                btn.className = `w-full text-left p-3 rounded-lg border transition-all duration-200 flex flex-col group ${
-                    isActive 
-                    ? "bg-brand-50 border-brand-200 dark:bg-brand-900/30 dark:border-brand-800" 
-                    : "bg-transparent border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
-                }`;
-                
-                btn.onclick = () => {
-                    currentChapterIndex = index;
-                    loadChapter();
-                    if (window.innerWidth < 768) toggleSidebar(); // Close sidebar on mobile
-                };
-
-                btn.innerHTML = `
-                    <span class="text-[10px] font-bold uppercase tracking-wider mb-1 ${isActive ? 'text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'}">Chapter ${String(chap.n).padStart(2, '0')}</span>
-                    <span class="text-sm font-semibold leading-tight ${isActive ? 'text-brand-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}">${chap.title}</span>
-                    <span class="text-xs text-gray-400 mt-2 block"><i class="fa-regular fa-file-pdf mr-1"></i> Page ${chap.page}</span>
-                `;
-                list.appendChild(btn);
-            });
+        // Called when iframe finishes loading
+        function hideLoader() {
+            // Sometimes iframe onload fires before actual content is visible, 
+            // a tiny timeout makes the transition smoother.
+            setTimeout(() => {
+                document.getElementById("iframeLoader").style.display = "none";
+                const iframe = document.getElementById("docFrame");
+                iframe.classList.remove("opacity-0");
+                iframe.classList.add("opacity-100");
+            }, 500);
         }
 
-        function loadChapter() {
-            if (!currentBook) return;
-            const chapter = currentBook.chapters[currentChapterIndex];
-            
-            // Update Headers
-            document.getElementById("currentChapterLabel").textContent = `CHAPTER ${String(chapter.n).padStart(2, '0')}`;
-            document.getElementById("currentChapterTitle").textContent = chapter.title;
-            
-            // Update Iframe Source (Using hash for PDF page)
-            // Show hint initially, hide on load
-            showHint(); 
-            const iframe = document.getElementById("pdfFrame");
-            iframe.src = `${currentBook.pdfUrl}#page=${chapter.page}&view=FitH`;
-            
-            // Update Progress Bar
-            const progress = ((currentChapterIndex + 1) / currentBook.chapters.length) * 100;
-            document.getElementById("progressBar").style.width = `${progress}%`;
-
-            // Update Buttons State
-            const isFirst = currentChapterIndex === 0;
-            const isLast = currentChapterIndex === currentBook.chapters.length - 1;
-            
-            document.getElementById("btnPrev").disabled = isFirst;
-            document.getElementById("btnPrevMobile").disabled = isFirst;
-            document.getElementById("btnNext").disabled = isLast;
-            document.getElementById("btnNextMobile").disabled = isLast;
-
-            // Re-render sidebar to highlight active chapter
-            renderSidebar();
-            
-            // Save progress
-            localStorage.setItem("sp_currentChapter", currentChapterIndex);
-        }
-
-        function nextChapter() {
-            if (currentBook && currentChapterIndex < currentBook.chapters.length - 1) {
-                currentChapterIndex++;
-                loadChapter();
+        // Option to open document in a new tab if iframe is blocked by browser policies
+        function openExternalDoc() {
+            if (currentBookUrl) {
+                window.open(currentBookUrl, '_blank');
             }
-        }
-
-        function prevChapter() {
-            if (currentBook && currentChapterIndex > 0) {
-                currentChapterIndex--;
-                loadChapter();
-            }
-        }
-
-        // --- UI Helpers ---
-        function toggleSidebar() {
-            const sidebar = document.getElementById("sidebar");
-            const overlay = document.getElementById("sidebarOverlay");
-            
-            // Check if currently hidden (off-screen left)
-            const isClosed = sidebar.classList.contains("-translate-x-full");
-            
-            if (isClosed) {
-                sidebar.classList.remove("-translate-x-full");
-                overlay.classList.remove("hidden");
-            } else {
-                sidebar.classList.add("-translate-x-full");
-                overlay.classList.add("hidden");
-            }
-        }
-
-        // Iframe Error Handling (Basic visual feedback if PDF isn't loaded)
-        function showHint() {
-            // Note: cross-origin iframe errors cannot be perfectly caught via JS due to CORS.
-            // But we show this immediately before load, and hide it when load succeeds.
-            document.getElementById("fileMissingHint").classList.remove("hidden");
-            document.getElementById("pdfFrame").style.opacity = "0";
-        }
-        
-        function hideHint() {
-            document.getElementById("fileMissingHint").classList.add("hidden");
-            document.getElementById("pdfFrame").style.opacity = "1";
         }
 
     </script>
 </body>
 </html>
+```
