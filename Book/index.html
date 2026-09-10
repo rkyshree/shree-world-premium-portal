@@ -1,316 +1,190 @@
-```html
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="hi" class="bg-gray-50">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#4f46e5">
-    <title>श्री पाठशाला (Shree Pathshala) - Digital Library</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>श्री पाठशाला - Shree Pathshala</title>
     
-    <!-- Tailwind CSS for Professional Styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Poppins (English) & Noto Sans Devanagari (Hindi) -->
+    <!-- Preconnect for super-fast Google Docs & Fonts loading -->
+    <link rel="preconnect" href="https://docs.google.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Poppins', 'Noto Sans Devanagari', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            900: '#312e81',
-                        }
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' } }
                 }
             }
         }
     </script>
+
     <style>
-        /* Custom scrollbar for a premium look */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* Premium Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Smooth View Transitions */
-        .page-transition { transition: opacity 0.4s ease, transform 0.4s ease; }
-        .hide-view { opacity: 0; pointer-events: none; position: absolute; width: 100%; transform: scale(0.98); visibility: hidden; }
+        .page-transition { transition: opacity 0.05s ease-out, transform 0.05s ease-out; }
+        .hide-view { opacity: 0; pointer-events: none; position: absolute; width: 100%; transform: scale(0.99); visibility: hidden; }
         .show-view { opacity: 1; pointer-events: auto; position: relative; transform: scale(1); visibility: visible; }
         
-        /* Iframe styling for Google Docs */
-        .docs-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: #ffffff; /* Docs are usually white */
-        }
-        
-        /* Loading animation for iframe */
-        .iframe-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 0;
-        }
-        .spinner {
-            border: 4px solid rgba(79, 70, 229, 0.2);
-            border-left-color: #4f46e5;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
+        .loader-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #16a34a; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Book Cover Aspect Ratio */
-        .book-cover {
-            aspect-ratio: 2 / 3;
-            object-fit: cover;
-            width: 100%;
-        }
+        /* Ensure iframe fills container perfectly without extra scrollbars */
+        .iframe-container { height: calc(100vh - 64px); }
+        @media (max-width: 640px) { .iframe-container { height: calc(100vh - 56px); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-950 dark:text-gray-200 transition-colors duration-300 font-sans antialiased min-h-screen flex flex-col">
+<body class="text-gray-900 h-screen flex flex-col overflow-hidden bg-gray-50">
 
-    <!-- Navigation Bar -->
-    <nav class="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo & Brand (Clickable to go home) -->
-                <div class="flex items-center gap-3 cursor-pointer group" onclick="showDashboard()">
-                    <div class="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-book-open-reader text-xl"></i>
-                    </div>
-                    <span class="font-bold text-2xl tracking-tight text-brand-900 dark:text-white">
-                        श्री पाठशाला
-                    </span>
-                </div>
-
-                <!-- Controls -->
-                <div class="flex items-center gap-2 sm:gap-4">
-                    <!-- Theme Toggle -->
-                    <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors shadow-inner">
-                        <i id="themeIcon" class="fa-solid fa-moon"></i>
-                    </button>
-                </div>
+    <nav class="bg-white px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-30 flex justify-between items-center shrink-0 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-md shadow-brand-500/30 text-white font-bold text-xl">
+                श्री
+            </div>
+            <div>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-gray-900 leading-tight">श्री पाठशाला</h1>
+                <p class="text-[10px] sm:text-xs text-brand-600 font-semibold uppercase tracking-wider">Premium E-Library</p>
             </div>
         </div>
     </nav>
 
-    <!-- VIEW 1: DASHBOARD -->
-    <main id="dashboardView" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full page-transition show-view">
+    <main class="flex-grow relative w-full h-full overflow-hidden">
         
-        <!-- Welcome Banner -->
-        <div class="relative bg-gradient-to-r from-brand-900 to-brand-700 overflow-hidden rounded-2xl shadow-xl mb-12">
-            <div class="absolute inset-0 opacity-20">
-                <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <polygon fill="currentColor" points="0,100 100,0 100,100"/>
-                </svg>
-            </div>
-            <div class="relative z-10 px-6 py-10 sm:px-12 sm:py-16 text-white flex flex-col sm:flex-row items-center justify-between">
-                <div>
-                    <h1 class="text-3xl sm:text-5xl font-extrabold mb-3 drop-shadow-md">Welcome to Shree Pathshala</h1>
-                    <p class="text-brand-100 text-lg max-w-2xl">Read our premium collection of books directly from Google Docs. Fast, easy, and always updated.</p>
+        <!-- ========================================== -->
+        <!-- VIEW 1: DASHBOARD (Book Grid)             -->
+        <!-- ========================================== -->
+        <div id="dashboardView" class="w-full h-full page-transition show-view overflow-y-auto pb-20">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-12">
+                
+                <div class="mb-8 text-center sm:text-left">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">FREE LIBRARY</h2>
+                    <p class="text-sm sm:text-base text-gray-500">Professional guides and masterclasses for your career.</p>
                 </div>
-                <div class="mt-6 sm:mt-0 hidden md:block text-7xl opacity-80 drop-shadow-lg transform rotate-12">
-                    <i class="fa-solid fa-graduation-cap"></i>
+
+                <!-- Book Grid (1 col on mobile, 2 cols on Desktop) -->
+                <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                    <!-- Books will be injected here by JavaScript -->
                 </div>
+
             </div>
         </div>
 
-        <!-- Section Title & Counter -->
-        <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-book text-brand-600"></i> Our Library
-            </h2>
-            <span class="text-sm font-semibold text-brand-700 dark:text-brand-300 bg-brand-100 dark:bg-brand-900/50 px-4 py-1.5 rounded-full" id="bookCount">Loading...</span>
+        <!-- ========================================== -->
+        <!-- VIEW 2: GOOGLE DOCS READER                -->
+        <!-- ========================================== -->
+        <div id="readerView" class="w-full h-full page-transition hide-view flex flex-col bg-gray-100">
+            
+            <div class="bg-white px-3 sm:px-4 py-2 sm:py-3 shadow-sm z-20 flex justify-between items-center border-b border-gray-200 shrink-0">
+                <div class="flex items-center gap-3 w-full">
+                    <!-- Back Button -->
+                    <button onclick="showDashboard()" class="px-3 py-2 sm:px-4 sm:py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 shrink-0">
+                        <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Back</span>
+                    </button>
+                    
+                    <div class="h-6 w-px bg-gray-300 mx-1"></div>
+                    
+                    <!-- Dynamic Book Title -->
+                    <h2 id="readerBookTitle" class="text-sm sm:text-lg font-bold text-gray-900 truncate flex-grow">
+                        Book Title
+                    </h2>
+                </div>
+            </div>
+
+            <div class="flex-1 w-full relative iframe-container bg-white">
+                <!-- Loading Animation -->
+                <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10 transition-opacity duration-300">
+                    <div class="loader-spinner mb-4"></div>
+                    <p class="text-sm font-medium text-gray-500 animate-pulse">किताब लोड हो रही है...</p>
+                </div>
+                
+                <!-- Google Docs Embed -->
+                <iframe id="docFrame" class="w-full h-full border-0 opacity-0 transition-opacity duration-500" onload="iframeLoaded()" allowfullscreen></iframe>
+            </div>
         </div>
 
-        <!-- Book Grid (2 Columns on medium screens and up) -->
-        <!-- User requested "2 left 2 right", which implies a 2-column layout (grid-cols-2) -->
-        <div id="bookGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
-            <!-- Books will be injected here via JavaScript -->
-        </div>
     </main>
 
-    <!-- VIEW 2: GOOGLE DOCS READER -->
-    <div id="readerView" class="flex-grow w-full page-transition hide-view flex flex-col h-[calc(100vh-64px)] bg-gray-100 dark:bg-gray-950">
-        
-        <!-- Reader Header with Back Button -->
-        <div class="bg-white dark:bg-gray-900 px-4 sm:px-6 py-3 shadow-sm z-10 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="showDashboard()" class="px-4 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-md transition-colors flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Back to Dashboard</span>
-                </button>
-                <div class="h-8 w-px bg-gray-300 dark:bg-gray-700 hidden sm:block"></div>
-                <h2 id="readerBookTitle" class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white truncate max-w-[200px] sm:max-w-md lg:max-w-2xl">
-                    Book Title
-                </h2>
-            </div>
-            <button onclick="openExternalDoc()" class="text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors" title="Open in new tab">
-                <i class="fa-solid fa-external-link-alt text-lg"></i>
-            </button>
-        </div>
-
-        <!-- Google Docs Iframe Container -->
-        <div class="flex-1 w-full relative overflow-hidden">
-            <!-- Loader -->
-            <div id="iframeLoader" class="iframe-loader">
-                <div class="spinner mb-3"></div>
-                <p class="text-gray-500 dark:text-gray-400 font-medium animate-pulse">Loading Document...</p>
-            </div>
-            
-            <!-- The Iframe -->
-            <iframe 
-                id="docFrame" 
-                class="docs-iframe relative z-10 opacity-0 transition-opacity duration-500" 
-                title="Google Docs Reader"
-                onload="hideLoader()"
-                allowfullscreen>
-            </iframe>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC & DATABASE -->
     <script>
-        // ==========================================
-        // 📚 DATABASE: Add your Google Docs Books Here
-        // ==========================================
+        // --- 1. Database of Books ---
+        // To add a new book, just copy a block and change the details!
         const booksDatabase = [
             {
-                id: "excel-master",
-                title: "MS Excel Shortcut Keys",
+                id: "book-1",
+                title: "MS Excel Shortcut Keys - Master Guide",
                 author: "R.K YADAV",
-                tags: ["Premium", "Hindi & English"],
-                // Book Poster Image URL (Can be any online image or local path like 'assets/cover1.jpg')
-                coverImage: "https://i.ibb.co/kVktVDvQ/file-0000000070548208ab4b943f1b7bd3ec.png",
-                description: "From Basics to Advanced. 50+ Formulas, 10 Practical Projects, Charts & Dashboards. 'Excel पढ़कर याद नहीं होता; Excel बनाकर सीखा जाता है।'",
-                // Paste your Google Docs link here. The code will automatically convert it to preview mode.
-                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" 
+                tag: "PREMIUM EBOOK",
+                coverImage: "https://i.ibb.co/kVktVDvQ/file-0000000070548208ab4b943f1b7bd3ec.png", // Your provided image
+                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" // Your provided doc
             },
             {
-                id: "word-expert",
-                title: "MS Word Expert Guide",
+                id: "book-2",
+                title: "Tally Prime Advanced Course",
                 author: "R.K YADAV",
-                tags: ["Formatting", "Typing"],
-                // Example Cover Image
-                coverImage: "https://placehold.co/600x900/0369a1/ffffff?text=MS+Word\nExpert+Guide",
-                description: "Master document creation, advanced formatting, mail merge, and keyboard shortcuts to become an MS Word professional.",
-                // Just paste the regular Google Docs share link.
-                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real Word doc link
+                tag: "ACCOUNTING",
+                coverImage: "https://placehold.co/600x800/1e293b/ffffff?text=Tally+Prime", // Dummy Cover
+                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" // Using same doc for demo
             },
             {
-                id: "powerpoint-pro",
-                title: "PowerPoint Pro Presentations",
-                author: "R.K YADAV",
-                tags: ["Presentation", "Design"],
-                coverImage: "https://placehold.co/600x900/b91c1c/ffffff?text=PowerPoint\nPro",
-                description: "Learn how to design stunning presentations, use animations effectively, and deliver your message with impact.",
-                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real PPT doc link
+                id: "book-3",
+                title: "Complete Web Development",
+                author: "Shree Pathshala",
+                tag: "PROGRAMMING",
+                coverImage: "https://placehold.co/600x800/2563eb/ffffff?text=Web+Dev", // Dummy Cover
+                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" // Using same doc for demo
             },
             {
-                id: "tally-prime",
-                title: "Tally Prime Accounting",
-                author: "R.K YADAV",
-                tags: ["Accounting", "Business"],
-                coverImage: "https://placehold.co/600x900/15803d/ffffff?text=Tally+Prime\nAccounting",
-                description: "Complete guide to business accounting, inventory management, and GST taxation using Tally Prime software.",
-                googleDocUrl: "https://docs.google.com/document/d/1O2-N7lZpGvA5x31R1vB20s0jE1n_Qn3n3Yf0O_3-4n8/preview" // Replace with real Tally doc link
+                id: "book-4",
+                title: "Digital Marketing",
+                author: "Shree Pathshala",
+                tag: "MARKETING",
+                coverImage: "https://placehold.co/600x800/dc2626/ffffff?text=Marketing", // Dummy Cover
+                googleDocUrl: "https://docs.google.com/document/d/18QvbwnUVRNwdKHToma_fimLK0i8q8c_Yd0OZOIyP-qk/edit?usp=drivesdk" // Using same doc for demo
             }
-            // To add more books, just copy one of the blocks above, paste it below, and change the details!
         ];
 
-        let currentBookUrl = "";
-
-        // --- Initialization ---
-        document.addEventListener("DOMContentLoaded", () => {
-            initTheme();
-            renderDashboard();
-        });
-
-        // --- Theme Management ---
-        function initTheme() {
-            const isDark = localStorage.getItem("sp_theme") === "dark" || 
-                           (!('sp_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            if (isDark) {
-                document.documentElement.classList.add("dark");
-                document.getElementById("themeIcon").className = "fa-solid fa-sun text-yellow-500";
-            }
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            html.classList.toggle("dark");
-            const isDark = html.classList.contains("dark");
-            localStorage.setItem("sp_theme", isDark ? "dark" : "light");
-            
-            const icon = document.getElementById("themeIcon");
-            if (isDark) {
-                icon.className = "fa-solid fa-sun text-yellow-500";
-            } else {
-                icon.className = "fa-solid fa-moon text-gray-600";
-            }
-        }
-
-        // --- Dashboard Logic ---
-        function renderDashboard() {
+        // --- 2. Render Dashboard ---
+        function renderBooks() {
             const grid = document.getElementById("bookGrid");
-            document.getElementById("bookCount").textContent = `${booksDatabase.length} Books Available`;
-            grid.innerHTML = "";
+            grid.innerHTML = ""; // Clear existing
 
-            // User requested 2 Left, 2 Right, which means a 2-column layout.
-            // Tailwind class 'md:grid-cols-2' handles this beautifully.
-            
             booksDatabase.forEach(book => {
-                const tagsHtml = book.tags.map(tag => `<span class="bg-brand-100 text-brand-800 dark:bg-brand-900/60 dark:text-brand-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">${tag}</span>`).join('');
+                // Pass the whole book object safely via stringify
+                const bookJson = encodeURIComponent(JSON.stringify(book));
                 
                 const card = document.createElement("div");
-                card.className = "group bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 cursor-pointer flex flex-col sm:flex-row transform hover:-translate-y-1 h-full";
+                card.className = "bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 group cursor-pointer";
+                card.onclick = () => openBook(JSON.parse(decodeURIComponent(bookJson)));
                 
-                card.onclick = () => openBook(book);
-
                 card.innerHTML = `
-                    <!-- Left Side: Poster (Cover Image) -->
-                    <div class="sm:w-2/5 md:w-1/2 lg:w-2/5 relative overflow-hidden shrink-0">
-                        <img src="${book.coverImage}" alt="${book.title} Cover" class="book-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent sm:hidden flex items-end p-4">
-                            <h3 class="text-white font-bold text-xl">${book.title}</h3>
-                        </div>
+                    <div class="w-full sm:w-1/3 aspect-[3/4] rounded-xl overflow-hidden shadow-md shrink-0 bg-gray-100 relative">
+                        <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
+                        <img src="${book.coverImage}" alt="Cover of ${book.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x800/e2e8f0/64748b?text=Cover+Missing'">
                     </div>
-                    
-                    <!-- Right Side: Details -->
-                    <div class="p-6 flex flex-col flex-grow w-full">
-                        <div class="flex gap-2 flex-wrap mb-3">
-                            ${tagsHtml}
-                        </div>
+                    <div class="flex flex-col justify-center flex-grow">
+                        <span class="text-[10px] font-bold tracking-wider text-brand-600 bg-brand-50 px-2 py-1 rounded-md w-max mb-3">${book.tag}</span>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 leading-snug mb-2 group-hover:text-brand-600 transition-colors">${book.title}</h3>
+                        <p class="text-sm text-gray-500 mb-6 font-medium">By ${book.author}</p>
                         
-                        <h3 class="text-gray-900 dark:text-white font-black text-2xl leading-tight mb-1 hidden sm:block group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${book.title}</h3>
-                        <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4"><i class="fa-solid fa-pen-nib mr-1"></i> ${book.author}</p>
-                        
-                        <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-4 mb-6 flex-grow leading-relaxed">${book.description}</p>
-                        
-                        <!-- Read Button -->
-                        <div class="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                            <button class="w-full bg-brand-50 hover:bg-brand-600 text-brand-700 hover:text-white dark:bg-gray-800 dark:hover:bg-brand-600 dark:text-brand-400 dark:hover:text-white py-3 rounded-xl font-bold transition-all duration-300 flex justify-center items-center gap-2 shadow-sm">
+                        <div class="mt-auto">
+                            <button class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-md shadow-gray-900/20 hover:shadow-brand-500/30 flex justify-center items-center gap-2">
                                 <i class="fa-solid fa-book-open"></i> Read Book Now
                             </button>
                         </div>
@@ -320,92 +194,85 @@
             });
         }
 
-        // --- URL Formatter for Google Docs ---
-        // Converts standard share/edit links into clean preview links for iframe
+        // --- 3. View Switcher & Core Logic ---
         function getCleanDocsUrl(url) {
+            // Converts /edit?usp=sharing to /preview for a clean, full-screen reading experience
             if (!url) return "";
-            // If it's a google docs link containing /edit or /view
-            if (url.includes("docs.google.com/document/d/")) {
-                // Remove everything after the Document ID and append /preview
-                const baseUrl = url.split('/edit')[0].split('/view')[0];
-                return `${baseUrl}/preview`;
+            if (url.includes('/edit')) {
+                return url.replace(/\/edit[^\/]*$/, '/preview');
             }
-            return url; // Return as is if not a standard Google Docs URL
-        }
-
-        // --- Navigation Between Views ---
-        function showDashboard() {
-            // Smoothly hide reader
-            const readerView = document.getElementById("readerView");
-            readerView.classList.remove("show-view");
-            readerView.classList.add("hide-view");
-            
-            setTimeout(() => {
-                // Show dashboard
-                const dashboardView = document.getElementById("dashboardView");
-                dashboardView.classList.remove("hide-view");
-                dashboardView.classList.add("show-view");
-                
-                // Clear iframe to stop loading/playing audio in background
-                const iframe = document.getElementById("docFrame");
-                iframe.src = "";
-                iframe.classList.remove("opacity-100");
-                iframe.classList.add("opacity-0");
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 300); 
+            return url;
         }
 
         function openBook(book) {
-            // Set Titles
+            // Set Header Title
             document.getElementById("readerBookTitle").textContent = book.title;
             
-            // Format and Set Google Docs URL
+            // Format URL for preview mode
             const cleanUrl = getCleanDocsUrl(book.googleDocUrl);
-            currentBookUrl = cleanUrl; // Save for external link button
             
-            // Show Loader, Hide Iframe Content initially
+            // Show Loader, Hide Iframe instantly
+            document.getElementById("iframeLoader").style.opacity = "1";
             document.getElementById("iframeLoader").style.display = "flex";
             const iframe = document.getElementById("docFrame");
             iframe.classList.remove("opacity-100");
             iframe.classList.add("opacity-0");
             
-            // Load the document
-            iframe.src = cleanUrl;
-            
-            // Switch views
+            // Switch views super fast (50ms)
             const dashboardView = document.getElementById("dashboardView");
+            const readerView = document.getElementById("readerView");
+            
             dashboardView.classList.remove("show-view");
             dashboardView.classList.add("hide-view");
             
             setTimeout(() => {
-                const readerView = document.getElementById("readerView");
                 readerView.classList.remove("hide-view");
                 readerView.classList.add("show-view");
-                window.scrollTo(0, 0);
-            }, 300);
+                
+                // Load doc AFTER UI transition to prevent lag
+                iframe.src = cleanUrl;
+            }, 50); 
         }
 
-        // Called when iframe finishes loading
-        function hideLoader() {
-            // Sometimes iframe onload fires before actual content is visible, 
-            // a tiny timeout makes the transition smoother.
+        function showDashboard() {
+            const dashboardView = document.getElementById("dashboardView");
+            const readerView = document.getElementById("readerView");
+            
+            // Switch views
+            readerView.classList.remove("show-view");
+            readerView.classList.add("hide-view");
+            
             setTimeout(() => {
-                document.getElementById("iframeLoader").style.display = "none";
+                dashboardView.classList.remove("hide-view");
+                dashboardView.classList.add("show-view");
+                
+                // Clear memory
                 const iframe = document.getElementById("docFrame");
+                iframe.src = "";
+            }, 50);
+        }
+
+        function iframeLoaded() {
+            // Called by the <iframe> onload event
+            const iframe = document.getElementById("docFrame");
+            const loader = document.getElementById("iframeLoader");
+            
+            // Ensure src isn't empty (which happens when returning to dashboard)
+            if (iframe.src && iframe.src !== window.location.href) {
+                // Fade out loader
+                loader.style.opacity = "0";
+                setTimeout(() => { loader.style.display = "none"; }, 300);
+                
+                // Fade in iframe
                 iframe.classList.remove("opacity-0");
                 iframe.classList.add("opacity-100");
-            }, 500);
-        }
-
-        // Option to open document in a new tab if iframe is blocked by browser policies
-        function openExternalDoc() {
-            if (currentBookUrl) {
-                window.open(currentBookUrl, '_blank');
             }
         }
 
+        // --- 4. Initialization ---
+        window.onload = () => {
+            renderBooks();
+        };
     </script>
 </body>
 </html>
-```
