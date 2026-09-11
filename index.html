@@ -362,6 +362,13 @@ a, button { touch-action: manipulation; } /* Removes 300ms tap delay */
 </div>
 
 <!-- =========================================================
+     PWA INSTALL BUTTON (NEWLY ADDED)
+========================================================= -->
+<button id="pwaInstallBtn" class="hidden fixed bottom-6 right-6 z-[9999] bg-brandGold text-gray-900 px-5 py-3 rounded-full shadow-2xl font-black items-center gap-2 border-2 border-white animate-bounce transition-transform transform hover:scale-105 active:scale-95">
+    <i class="fas fa-download"></i> Install App
+</button>
+
+<!-- =========================================================
      JAVASCRIPT SETTINGS & LOGIC
 ========================================================= -->
 <script>
@@ -780,6 +787,49 @@ document.addEventListener("error", function(e){
         e.target.style.objectFit = "contain";
     }
 }, true);
+
+
+/* =========================================================
+   PWA INSTALLATION LOGIC (NEWLY ADDED)
+========================================================= */
+let deferredPrompt;
+const installBtn = document.getElementById('pwaInstallBtn');
+
+// Listen for the install prompt event from browser
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent default browser popup
+    e.preventDefault();
+    // Stash the event
+    deferredPrompt = e;
+    // Show the button if not already running standalone
+    if (!window.matchMedia('(display-mode: standalone)').matches && !navigator.standalone) {
+        installBtn.classList.remove('hidden');
+        installBtn.classList.add('flex');
+    }
+});
+
+// User clicks the install button
+installBtn.addEventListener('click', async () => {
+    // Hide our button
+    installBtn.classList.add('hidden');
+    installBtn.classList.remove('flex');
+    
+    if (deferredPrompt) {
+        // Show the native browser prompt
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to install: ${outcome}`);
+        deferredPrompt = null;
+    }
+});
+
+// App installed successfully
+window.addEventListener('appinstalled', () => {
+    installBtn.classList.add('hidden');
+    installBtn.classList.remove('flex');
+    deferredPrompt = null;
+    console.log('PWA app installed successfully');
+});
 </script>
 
 </body>
