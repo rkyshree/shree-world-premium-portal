@@ -123,78 +123,107 @@
     </main>
 
     <script>
-        // --- 1. Database of Books ---
-        // To add a new book, just copy a block and change the details!
-        const booksDatabase = [
+        // --- 1. Database of Real Books ---
+        // बस यहाँ अपनी असली किताबें डालें। बाकी की 50 लिस्ट सिस्टम अपने आप "Coming Soon" बना देगा।
+        const myRealBooks = [
             {
                 id: "book-1",
                 title: "MS Excel Shortcut Keys - Master Guide",
                 author: "R.K YADAV",
                 tag: "PREMIUM EBOOK",
-                coverImage: "https://i.ibb.co/nsW1rDXx/1000682829-2-optimized-1000.png", // Your provided image
-                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" // Your provided doc
+                coverImage: "https://i.ibb.co/nsW1rDXx/1000682829-2-optimized-1000.png", 
+                googleDocUrl: "https://docs.google.com/document/d/1cmwMyZ03acEv21pMY9n3l6ODxsekpQiX8ihsfo2TmYo/edit?usp=drivesdk" 
             },
             {
                 id: "book-2",
                 title: "Tally Prime Advanced Course",
                 author: "R.K YADAV",
                 tag: "ACCOUNTING",
-                coverImage: "https://i.ibb.co/Tq7jkj9Z/1000682840-optimized-1000.png", // Dummy Cover
-                googleDocUrl: "https://docs.google.com/document/d/1FgComggGT0nN5a8-EQKh2SCS6yUvrZbx17nSK5VIzYk/edit?usp=drivesdk" // Using same doc for demo
+                coverImage: "https://i.ibb.co/Tq7jkj9Z/1000682840-optimized-1000.png", 
+                googleDocUrl: "https://docs.google.com/document/d/1FgComggGT0nN5a8-EQKh2SCS6yUvrZbx17nSK5VIzYk/edit?usp=drivesdk" 
             },
             {
                 id: "book-3",
                 title: "Complete Ai Course",
                 author: "R.K YADAV",
                 tag: "Ai Earning",
-                coverImage: "https://i.ibb.co/ycCjythg/1000682845-optimized-1000.png", // Dummy Cover
-                googleDocUrl: "https://docs.google.com/document/d/1kr6PHrVPxKYEOu2grb7qa8rPBz8LXZYvYOPY8nqA9cY/edit?usp=drivesdk" // Using same doc for demo
+                coverImage: "https://i.ibb.co/ycCjythg/1000682845-optimized-1000.png", 
+                googleDocUrl: "https://docs.google.com/document/d/1kr6PHrVPxKYEOu2grb7qa8rPBz8LXZYvYOPY8nqA9cY/edit?usp=drivesdk" 
             },
             {
                 id: "book-4",
                 title: "Digital Marketing",
                 author: "R.K YADAV",
                 tag: "MARKETING",
-                coverImage: "https://i.ibb.co/8nbyd1hN/Digital-Marketing-Ebook-Poster-3x4-under-100-KB.jpg", // Dummy Cover
-                googleDocUrl: "https://docs.google.com/document/d/18QvbwnUVRNwdKHToma_fimLK0i8q8c_Yd0OZOIyP-qk/edit?usp=drivesdk" // Using same doc for demo
+                coverImage: "https://i.ibb.co/8nbyd1hN/Digital-Marketing-Ebook-Poster-3x4-under-100-KB.jpg", 
+                googleDocUrl: "https://docs.google.com/document/d/18QvbwnUVRNwdKHToma_fimLK0i8q8c_Yd0OZOIyP-qk/edit?usp=drivesdk" 
             },
-              {
+            {
                 id: "book-5",
                 title: "Marriage List",
                 author: "R.K YADAV",
                 tag: "हर जरूरी काम एक जगह",
-                coverImage: "https://i.ibb.co/ycCjythg/1000682845-optimized-1000.png", // Dummy Cover
-                googleDocUrl: "https://docs.google.com/document/d/1q4G6lZ0w8jBVHxM8gMcHbQD9bS8VHbwq_2ue_JlhPvs/edit?usp=drivesdk" // Using same doc for demo
-            },
+                coverImage: "https://i.ibb.co/ycCjythg/1000682845-optimized-1000.png", 
+                googleDocUrl: "https://docs.google.com/document/d/1q4G6lZ0w8jBVHxM8gMcHbQD9bS8VHbwq_2ue_JlhPvs/edit?usp=drivesdk" 
+            }
         ];
 
-        // --- 2. Render Dashboard ---
+        // --- 2. Auto-Generate Coming Soon Books (Upto 50) ---
+        const TOTAL_BOOKS = 50;
+        const booksDatabase = [...myRealBooks];
+
+        for (let i = myRealBooks.length + 1; i <= TOTAL_BOOKS; i++) {
+            booksDatabase.push({
+                id: `book-${i}`,
+                title: `New Book ${i} - Coming Soon`,
+                author: "R.K YADAV",
+                tag: "COMING SOON ⏳",
+                coverImage: "", // Blank means placeholder image will show
+                googleDocUrl: "" // Blank means book is coming soon
+            });
+        }
+
+        // --- 3. Render Dashboard ---
         function renderBooks() {
             const grid = document.getElementById("bookGrid");
             grid.innerHTML = ""; // Clear existing
 
             booksDatabase.forEach(book => {
-                // Pass the whole book object safely via stringify
-                const bookJson = encodeURIComponent(JSON.stringify(book));
+                // Check if the book is real or coming soon
+                const isComingSoon = !book.googleDocUrl;
                 
+                // Fallback for Coming Soon cover image
+                const finalCoverImage = book.coverImage ? book.coverImage : 'https://placehold.co/600x800/e2e8f0/94a3b8?text=Coming+Soon';
+                
+                // Set UI styles based on availability
+                const tagStyles = isComingSoon ? "text-amber-600 bg-amber-50" : "text-brand-600 bg-brand-50";
+                const titleStyles = isComingSoon ? "text-gray-500" : "text-gray-900 group-hover:text-brand-600 transition-colors";
+                
+                const buttonHTML = isComingSoon 
+                    ? `<button disabled class="w-full sm:w-auto px-6 py-2.5 bg-gray-200 text-gray-500 font-semibold text-sm rounded-xl cursor-not-allowed flex justify-center items-center gap-2"><i class="fa-solid fa-lock"></i> Coming Soon</button>`
+                    : `<button class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-md shadow-gray-900/20 hover:shadow-brand-500/30 flex justify-center items-center gap-2"><i class="fa-solid fa-book-open"></i> Read Book Now</button>`;
+
                 const card = document.createElement("div");
-                card.className = "bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 hover:shadow-xl hover:border-brand-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 group cursor-pointer";
-                card.onclick = () => openBook(JSON.parse(decodeURIComponent(bookJson)));
+                card.className = `bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-5 group transition-all duration-300 ${isComingSoon ? 'opacity-80' : 'hover:shadow-xl hover:border-brand-200 cursor-pointer'}`;
+                
+                // Only add click event if the book is actually available
+                if(!isComingSoon) {
+                    const bookJson = encodeURIComponent(JSON.stringify(book));
+                    card.onclick = () => openBook(JSON.parse(decodeURIComponent(bookJson)));
+                }
                 
                 card.innerHTML = `
                     <div class="w-full sm:w-1/3 aspect-[3/4] rounded-xl overflow-hidden shadow-md shrink-0 bg-gray-100 relative">
                         <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
-                        <img src="${book.coverImage}" alt="Cover of ${book.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x800/e2e8f0/64748b?text=Cover+Missing'">
+                        <img src="${finalCoverImage}" alt="Cover of ${book.title}" class="w-full h-full object-cover transform ${!isComingSoon ? 'group-hover:scale-105' : ''} transition-transform duration-500">
                     </div>
                     <div class="flex flex-col justify-center flex-grow">
-                        <span class="text-[10px] font-bold tracking-wider text-brand-600 bg-brand-50 px-2 py-1 rounded-md w-max mb-3">${book.tag}</span>
-                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 leading-snug mb-2 group-hover:text-brand-600 transition-colors">${book.title}</h3>
+                        <span class="text-[10px] font-bold tracking-wider px-2 py-1 rounded-md w-max mb-3 ${tagStyles}">${book.tag}</span>
+                        <h3 class="text-lg sm:text-xl font-bold leading-snug mb-2 ${titleStyles}">${book.title}</h3>
                         <p class="text-sm text-gray-500 mb-6 font-medium">By ${book.author}</p>
                         
                         <div class="mt-auto">
-                            <button class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-md shadow-gray-900/20 hover:shadow-brand-500/30 flex justify-center items-center gap-2">
-                                <i class="fa-solid fa-book-open"></i> Read Book Now
-                            </button>
+                            ${buttonHTML}
                         </div>
                     </div>
                 `;
@@ -202,9 +231,8 @@
             });
         }
 
-        // --- 3. View Switcher & Core Logic ---
+        // --- 4. View Switcher & Core Logic ---
         function getCleanDocsUrl(url) {
-            // Converts /edit?usp=sharing to /preview for a clean, full-screen reading experience
             if (!url) return "";
             if (url.includes('/edit')) {
                 return url.replace(/\/edit[^\/]*$/, '/preview');
@@ -213,20 +241,15 @@
         }
 
         function openBook(book) {
-            // Set Header Title
             document.getElementById("readerBookTitle").textContent = book.title;
-            
-            // Format URL for preview mode
             const cleanUrl = getCleanDocsUrl(book.googleDocUrl);
             
-            // Show Loader, Hide Iframe instantly
             document.getElementById("iframeLoader").style.opacity = "1";
             document.getElementById("iframeLoader").style.display = "flex";
             const iframe = document.getElementById("docFrame");
             iframe.classList.remove("opacity-100");
             iframe.classList.add("opacity-0");
             
-            // Switch views super fast (50ms)
             const dashboardView = document.getElementById("dashboardView");
             const readerView = document.getElementById("readerView");
             
@@ -236,8 +259,6 @@
             setTimeout(() => {
                 readerView.classList.remove("hide-view");
                 readerView.classList.add("show-view");
-                
-                // Load doc AFTER UI transition to prevent lag
                 iframe.src = cleanUrl;
             }, 50); 
         }
@@ -246,7 +267,6 @@
             const dashboardView = document.getElementById("dashboardView");
             const readerView = document.getElementById("readerView");
             
-            // Switch views
             readerView.classList.remove("show-view");
             readerView.classList.add("hide-view");
             
@@ -254,30 +274,25 @@
                 dashboardView.classList.remove("hide-view");
                 dashboardView.classList.add("show-view");
                 
-                // Clear memory
                 const iframe = document.getElementById("docFrame");
                 iframe.src = "";
             }, 50);
         }
 
         function iframeLoaded() {
-            // Called by the <iframe> onload event
             const iframe = document.getElementById("docFrame");
             const loader = document.getElementById("iframeLoader");
             
-            // Ensure src isn't empty (which happens when returning to dashboard)
             if (iframe.src && iframe.src !== window.location.href) {
-                // Fade out loader
                 loader.style.opacity = "0";
                 setTimeout(() => { loader.style.display = "none"; }, 300);
                 
-                // Fade in iframe
                 iframe.classList.remove("opacity-0");
                 iframe.classList.add("opacity-100");
             }
         }
 
-        // --- 4. Initialization ---
+        // --- 5. Initialization ---
         window.onload = () => {
             renderBooks();
         };
