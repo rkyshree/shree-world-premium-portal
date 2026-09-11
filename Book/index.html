@@ -47,13 +47,13 @@
         .loader-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #16a34a; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Ensure iframe fills container perfectly without extra scrollbars */
         .iframe-container { height: calc(100vh - 64px); }
         @media (max-width: 640px) { .iframe-container { height: calc(100vh - 56px); } }
     </style>
 </head>
 <body class="text-gray-900 h-screen flex flex-col overflow-hidden bg-gray-50">
 
+    <!-- Navbar -->
     <nav class="bg-white px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-30 flex justify-between items-center shrink-0 border-b border-gray-200">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-md shadow-brand-500/30 text-white font-bold text-xl">
@@ -69,17 +69,27 @@
     <main class="flex-grow relative w-full h-full overflow-hidden">
         
         <!-- ========================================== -->
-        <!-- VIEW 1: DASHBOARD (Book Grid)             -->
+        <!-- VIEW 1: DASHBOARD (Search & Book Grid)    -->
         <!-- ========================================== -->
         <div id="dashboardView" class="w-full h-full page-transition show-view overflow-y-auto pb-20">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-12">
                 
-                <div class="mb-8 text-center sm:text-left">
+                <!-- Search Bar Section -->
+                <div class="mb-8">
+                    <div class="relative max-w-xl mx-auto sm:mx-0">
+                        <input type="text" id="searchInput" placeholder="किताब का नाम खोजें..." 
+                            class="w-full px-5 py-3.5 pl-12 rounded-2xl border border-gray-200 shadow-sm focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 outline-none transition-all text-gray-700 font-medium"
+                            onkeyup="handleSearch()">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+                    </div>
+                </div>
+
+                <div class="mb-6 text-center sm:text-left">
                     <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">FREE LIBRARY</h2>
                     <p class="text-sm sm:text-base text-gray-500">Professional guides and masterclasses for your career.</p>
                 </div>
 
-                <!-- Book Grid (1 col on mobile, 2 cols on Desktop) -->
+                <!-- Book Grid -->
                 <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     <!-- Books will be injected here by JavaScript -->
                 </div>
@@ -94,14 +104,12 @@
             
             <div class="bg-white px-3 sm:px-4 py-2 sm:py-3 shadow-sm z-20 flex justify-between items-center border-b border-gray-200 shrink-0">
                 <div class="flex items-center gap-3 w-full">
-                    <!-- Back Button -->
                     <button onclick="showDashboard()" class="px-3 py-2 sm:px-4 sm:py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center gap-2 shrink-0">
                         <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Back</span>
                     </button>
                     
                     <div class="h-6 w-px bg-gray-300 mx-1"></div>
                     
-                    <!-- Dynamic Book Title -->
                     <h2 id="readerBookTitle" class="text-sm sm:text-lg font-bold text-gray-900 truncate flex-grow">
                         Book Title
                     </h2>
@@ -109,13 +117,10 @@
             </div>
 
             <div class="flex-1 w-full relative iframe-container bg-white">
-                <!-- Loading Animation -->
                 <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10 transition-opacity duration-300">
                     <div class="loader-spinner mb-4"></div>
                     <p class="text-sm font-medium text-gray-500 animate-pulse">किताब लोड हो रही है...</p>
                 </div>
-                
-                <!-- Google Docs Embed -->
                 <iframe id="docFrame" class="w-full h-full border-0 opacity-0 transition-opacity duration-500" onload="iframeLoaded()" allowfullscreen></iframe>
             </div>
         </div>
@@ -123,9 +128,15 @@
     </main>
 
     <script>
-        // --- 1. Database of Real Books ---
-        // बस यहाँ अपनी असली किताबें डालें। बाकी की 50 लिस्ट सिस्टम अपने आप "Coming Soon" बना देगा।
+        // =========================================================================
+        // 📚 किताबों का डेटाबेस (यहाँ आप आसानी से नई किताबें जोड़ या बदल सकते हैं)
+        // =========================================================================
+        // नियम:
+        // 1. अगर आपको किताब चालू करनी है: तो 'coverImage' और 'googleDocUrl' दोनों डालें।
+        // 2. अगर किताब 'Coming Soon' में रखनी है: तो 'coverImage' और 'googleDocUrl' को खाली ("") छोड़ दें।
+
         const myRealBooks = [
+            // --- चालू किताबें (Available Books) ---
             {
                 id: "book-1",
                 title: "MS Excel Shortcut Keys - Master Guide",
@@ -165,57 +176,102 @@
                 tag: "हर जरूरी काम एक जगह",
                 coverImage: "https://i.ibb.co/ycCjythg/1000682845-optimized-1000.png", 
                 googleDocUrl: "https://docs.google.com/document/d/1q4G6lZ0w8jBVHxM8gMcHbQD9bS8VHbwq_2ue_JlhPvs/edit?usp=drivesdk" 
-            }
+            },
+            
+            // --- 20 नई किताबें (Coming Soon - Blur Effect के साथ) ---
+            { id: "book-6", title: "Rich Dad Poor Dad (Hindi)", author: "Robert Kiyosaki", tag: "FINANCE", coverImage: "", googleDocUrl: "" },
+            { id: "book-7", title: "Atomic Habits (Hindi)", author: "James Clear", tag: "SELF HELP", coverImage: "", googleDocUrl: "" },
+            { id: "book-8", title: "Bhagavad Gita As It Is", author: "A.C. Bhaktivedanta", tag: "SPIRITUAL", coverImage: "", googleDocUrl: "" },
+            { id: "book-9", title: "Python Basics for Beginners", author: "R.K YADAV", tag: "CODING", coverImage: "", googleDocUrl: "" },
+            { id: "book-10", title: "The Psychology of Money", author: "Morgan Housel", tag: "FINANCE", coverImage: "", googleDocUrl: "" },
+            { id: "book-11", title: "Video Editing Mastery", author: "R.K YADAV", tag: "SKILL", coverImage: "", googleDocUrl: "" },
+            { id: "book-12", title: "Canva Graphic Design", author: "R.K YADAV", tag: "DESIGN", coverImage: "", googleDocUrl: "" },
+            { id: "book-13", title: "Think and Grow Rich", author: "Napoleon Hill", tag: "BUSINESS", coverImage: "", googleDocUrl: "" },
+            { id: "book-14", title: "Learn English Speaking", author: "Shree Pathshala", tag: "LANGUAGE", coverImage: "", googleDocUrl: "" },
+            { id: "book-15", title: "Freelancing Guide 2026", author: "R.K YADAV", tag: "EARNING", coverImage: "", googleDocUrl: "" },
+            { id: "book-16", title: "Website Development", author: "R.K YADAV", tag: "CODING", coverImage: "", googleDocUrl: "" },
+            { id: "book-17", title: "Share Market Basic Guide", author: "Shree Pathshala", tag: "INVESTING", coverImage: "", googleDocUrl: "" },
+            { id: "book-18", title: "Time Management Skills", author: "Brian Tracy", tag: "PRODUCTIVITY", coverImage: "", googleDocUrl: "" },
+            { id: "book-19", title: "Social Media Growth", author: "R.K YADAV", tag: "MARKETING", coverImage: "", googleDocUrl: "" },
+            { id: "book-20", title: "The Power of Your Subconscious Mind", author: "Joseph Murphy", tag: "MINDSET", coverImage: "", googleDocUrl: "" },
+            { id: "book-21", title: "Mastering ChatGPT", author: "R.K YADAV", tag: "AI", coverImage: "", googleDocUrl: "" },
+            { id: "book-22", title: "Photo Editing with Photoshop", author: "R.K YADAV", tag: "DESIGN", coverImage: "", googleDocUrl: "" },
+            { id: "book-23", title: "Communication Skills", author: "Shree Pathshala", tag: "PERSONALITY", coverImage: "", googleDocUrl: "" },
+            { id: "book-24", title: "E-commerce Business Guide", author: "R.K YADAV", tag: "BUSINESS", coverImage: "", googleDocUrl: "" },
+            { id: "book-25", title: "Yoga & Meditation Basics", author: "Shree Pathshala", tag: "HEALTH", coverImage: "", googleDocUrl: "" }
         ];
 
-        // --- 2. Auto-Generate Coming Soon Books (Upto 50) ---
+        // --- बाकी किताबें (50 तक) सिस्टम खुद बनाएगा ---
         const TOTAL_BOOKS = 50;
-        const booksDatabase = [...myRealBooks];
+        let booksDatabase = [...myRealBooks];
 
         for (let i = myRealBooks.length + 1; i <= TOTAL_BOOKS; i++) {
             booksDatabase.push({
                 id: `book-${i}`,
-                title: `New Book ${i} - Coming Soon`,
+                title: `Premium Book ${i} - Coming Soon`,
                 author: "R.K YADAV",
                 tag: "COMING SOON ⏳",
-                coverImage: "", // Blank means placeholder image will show
-                googleDocUrl: "" // Blank means book is coming soon
+                coverImage: "", 
+                googleDocUrl: "" 
             });
         }
 
-        // --- 3. Render Dashboard ---
-        function renderBooks() {
+        // =========================================================================
+        // ⚙️ सिस्टम की कोडिंग (इसे बदलने की जरूरत नहीं है)
+        // =========================================================================
+
+        function renderBooks(booksToRender) {
             const grid = document.getElementById("bookGrid");
             grid.innerHTML = ""; // Clear existing
 
-            booksDatabase.forEach(book => {
-                // Check if the book is real or coming soon
+            // अगर सर्च में कोई किताब नहीं मिलती है
+            if (booksToRender.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-1 sm:col-span-2 flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa-solid fa-magnifying-glass-minus text-3xl text-gray-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-1">यह किताब अभी नहीं है</h3>
+                        <p class="text-gray-500 text-sm text-center max-w-xs">क्षमा करें, आप जो किताब खोज रहे हैं वह अभी हमारी लाइब्रेरी में उपलब्ध नहीं है।</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // किताबें रेंडर करना
+            booksToRender.forEach(book => {
                 const isComingSoon = !book.googleDocUrl;
                 
-                // Fallback for Coming Soon cover image
-                const finalCoverImage = book.coverImage ? book.coverImage : 'https://placehold.co/600x800/e2e8f0/94a3b8?text=Coming+Soon';
+                // Coming soon के लिए Placeholder Image और Blur Effect
+                const finalCoverImage = book.coverImage ? book.coverImage : 'https://placehold.co/600x800/e2e8f0/94a3b8?text=Shree+Pathshala';
+                const imageClass = isComingSoon ? 'blur-sm scale-110' : 'group-hover:scale-105';
                 
-                // Set UI styles based on availability
+                const blurOverlay = isComingSoon ? `
+                    <div class="absolute inset-0 z-20 flex items-center justify-center bg-black/10 backdrop-blur-[2px]">
+                        <span class="bg-gray-900/90 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-lg uppercase tracking-widest border border-white/20">Coming Soon</span>
+                    </div>
+                ` : '';
+
                 const tagStyles = isComingSoon ? "text-amber-600 bg-amber-50" : "text-brand-600 bg-brand-50";
                 const titleStyles = isComingSoon ? "text-gray-500" : "text-gray-900 group-hover:text-brand-600 transition-colors";
                 
                 const buttonHTML = isComingSoon 
-                    ? `<button disabled class="w-full sm:w-auto px-6 py-2.5 bg-gray-200 text-gray-500 font-semibold text-sm rounded-xl cursor-not-allowed flex justify-center items-center gap-2"><i class="fa-solid fa-lock"></i> Coming Soon</button>`
-                    : `<button class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-md shadow-gray-900/20 hover:shadow-brand-500/30 flex justify-center items-center gap-2"><i class="fa-solid fa-book-open"></i> Read Book Now</button>`;
+                    ? `<button disabled class="w-full sm:w-auto px-6 py-2.5 bg-gray-100 text-gray-400 font-semibold text-sm rounded-xl cursor-not-allowed flex justify-center items-center gap-2 border border-gray-200"><i class="fa-solid fa-lock text-xs"></i> जल्द आ रही है</button>`
+                    : `<button class="w-full sm:w-auto px-6 py-2.5 bg-gray-900 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition-colors shadow-md shadow-gray-900/20 hover:shadow-brand-500/30 flex justify-center items-center gap-2"><i class="fa-solid fa-book-open"></i> अभी पढ़ें</button>`;
 
                 const card = document.createElement("div");
-                card.className = `bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-5 group transition-all duration-300 ${isComingSoon ? 'opacity-80' : 'hover:shadow-xl hover:border-brand-200 cursor-pointer'}`;
+                card.className = `bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-5 group transition-all duration-300 ${isComingSoon ? 'opacity-90' : 'hover:shadow-xl hover:border-brand-200 cursor-pointer'}`;
                 
-                // Only add click event if the book is actually available
                 if(!isComingSoon) {
                     const bookJson = encodeURIComponent(JSON.stringify(book));
                     card.onclick = () => openBook(JSON.parse(decodeURIComponent(bookJson)));
                 }
                 
                 card.innerHTML = `
-                    <div class="w-full sm:w-1/3 aspect-[3/4] rounded-xl overflow-hidden shadow-md shrink-0 bg-gray-100 relative">
+                    <div class="w-full sm:w-1/3 aspect-[3/4] rounded-xl overflow-hidden shadow-sm shrink-0 bg-gray-200 relative">
+                        ${blurOverlay}
                         <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10"></div>
-                        <img src="${finalCoverImage}" alt="Cover of ${book.title}" class="w-full h-full object-cover transform ${!isComingSoon ? 'group-hover:scale-105' : ''} transition-transform duration-500">
+                        <img src="${finalCoverImage}" alt="Cover" class="w-full h-full object-cover transform ${imageClass} transition-transform duration-500">
                     </div>
                     <div class="flex flex-col justify-center flex-grow">
                         <span class="text-[10px] font-bold tracking-wider px-2 py-1 rounded-md w-max mb-3 ${tagStyles}">${book.tag}</span>
@@ -231,7 +287,24 @@
             });
         }
 
-        // --- 4. View Switcher & Core Logic ---
+        // --- Search Functionality ---
+        function handleSearch() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            
+            if (query === "") {
+                renderBooks(booksDatabase);
+                return;
+            }
+
+            const filteredBooks = booksDatabase.filter(book => 
+                book.title.toLowerCase().includes(query) || 
+                book.tag.toLowerCase().includes(query)
+            );
+            
+            renderBooks(filteredBooks);
+        }
+
+        // --- View Switcher Logic ---
         function getCleanDocsUrl(url) {
             if (!url) return "";
             if (url.includes('/edit')) {
@@ -292,9 +365,9 @@
             }
         }
 
-        // --- 5. Initialization ---
+        // --- On Load ---
         window.onload = () => {
-            renderBooks();
+            renderBooks(booksDatabase);
         };
     </script>
 </body>
