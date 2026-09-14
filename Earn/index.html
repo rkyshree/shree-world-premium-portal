@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,6 +92,7 @@
             <button onclick="toggleAuthModal()" class="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition">
                 Start Earning Today <i class="fas fa-arrow-right ml-2"></i>
             </button>
+            
             <div class="mt-8 text-sm text-gray-500 md:hidden">
                 <button onclick="showAdminLogin()" class="underline">Admin Login</button>
             </div>
@@ -135,11 +137,11 @@
                     <p class="text-[10px] text-gray-500">Reseller Mode</p>
                 </div>
             </div>
-            <div class="flex gap-4 text-gray-600">
-                <button><i class="fas fa-search"></i></button>
+            <div class="flex gap-3 text-gray-600">
+                <button onclick="showAppToast('Search coming soon!')"><i class="fas fa-search text-lg"></i></button>
                 <button class="relative" onclick="switchTab('cart')">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                    <i class="fas fa-shopping-cart text-lg"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
                 </button>
             </div>
         </header>
@@ -182,7 +184,7 @@
                 <!-- Feed / Products -->
                 <div class="px-4 pb-4">
                     <h4 class="font-bold text-gray-800 text-sm mb-3">Trending Catalogs</h4>
-                    <div id="product-feed" class="space-y-4">
+                    <div id="product-feed" class="space-y-5">
                         <!-- Products injected here via JS -->
                     </div>
                 </div>
@@ -218,8 +220,8 @@
                  </div>
                  <div id="orders-list" class="p-4 space-y-3">
                      <!-- Orders injected here -->
-                     <div class="text-center text-gray-500 text-sm mt-10 py-10" id="empty-orders-msg">
-                         <i class="fas fa-box-open text-4xl mb-3 opacity-20"></i>
+                     <div class="text-center text-gray-400 text-sm mt-10 py-10" id="empty-orders-msg">
+                         <i class="fas fa-box-open text-5xl mb-3 opacity-20"></i>
                          <p>No orders yet.</p>
                      </div>
                  </div>
@@ -230,85 +232,108 @@
                 <!-- Profile Header -->
                 <div class="bg-white p-6 border-b border-gray-100 flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-gray-500 text-white rounded-full flex items-center justify-center text-2xl font-bold" id="acc-initial">S</div>
+                        <div class="w-16 h-16 bg-gray-500 text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-inner" id="acc-initial">S</div>
                         <div>
-                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-1">Hi, <span id="acc-name">User</span>! <i class="fas fa-certificate text-primary text-xs"></i></h2>
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-1">Hi, <span id="acc-name">User</span>! <i class="fas fa-check-circle text-primary text-xs"></i></h2>
                             <p class="text-sm text-gray-500" id="acc-phone">9451239239</p>
                         </div>
                     </div>
-                    <button class="text-primary font-bold text-sm">EDIT PROFILE</button>
+                    <button onclick="openModal('edit-profile-modal')" class="text-primary font-bold text-xs uppercase tracking-wide border border-primary/30 px-3 py-1 rounded-full">Edit</button>
                 </div>
 
                 <!-- Menu Sections -->
                 <div class="bg-white mt-2 border-y border-gray-100">
-                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="fas fa-life-ring text-gray-600 w-5 text-center"></i>
-                        <span class="text-gray-800 text-sm font-medium">Help Center</span>
+                    <button onclick="openPageModal('About SHRAYNEX')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-building text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">About Us</span>
+                    </button>
+                    <button onclick="openPageModal('Help Center')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-life-ring text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Help Center / Contact Us</span>
+                    </button>
+                     <button onclick="openPageModal('Careers')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-briefcase text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Careers</span>
+                    </button>
+                    <button onclick="openPageModal('Blog')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
+                        <i class="fas fa-blog text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Blog</span>
                     </button>
                 </div>
 
                 <div class="bg-white mt-2 border-y border-gray-100">
-                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="fas fa-share text-gray-600 w-5 text-center"></i>
-                        <span class="text-gray-800 text-sm font-medium">Shared Catalogs</span>
+                    <button onclick="showAppToast('You have shared 0 catalogs')" class="w-full flex items-center justify-between p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-share text-gray-500 w-5 text-center"></i>
+                            <span class="text-gray-800 text-sm font-medium">Shared Catalogs</span>
+                        </div>
+                        <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full" id="stats-shared">0</span>
+                    </button>
+                    <button onclick="showAppToast('You have viewed 0 catalogs')" class="w-full flex items-center justify-between p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                         <div class="flex items-center gap-4">
+                            <i class="far fa-eye text-gray-500 w-5 text-center"></i>
+                            <span class="text-gray-800 text-sm font-medium">Viewed Catalogs</span>
+                         </div>
+                         <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-full" id="stats-views">0</span>
                     </button>
                     <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="far fa-heart text-gray-600 w-5 text-center"></i>
+                        <i class="far fa-heart text-gray-500 w-5 text-center"></i>
                         <span class="text-gray-800 text-sm font-medium">Liked Catalogs</span>
                     </button>
-                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="far fa-eye text-gray-600 w-5 text-center"></i>
-                        <span class="text-gray-800 text-sm font-medium">Recently Viewed Catalogs</span>
-                    </button>
                     <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
-                        <i class="fas fa-user-plus text-gray-600 w-5 text-center"></i>
+                        <i class="fas fa-user-plus text-gray-500 w-5 text-center"></i>
                         <span class="text-gray-800 text-sm font-medium">Followed Brands</span>
                     </button>
                 </div>
 
                 <div class="bg-white mt-2 border-y border-gray-100">
                     <button onclick="openModal('bank-modal')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="fas fa-university text-gray-600 w-5 text-center"></i>
+                        <i class="fas fa-university text-gray-500 w-5 text-center"></i>
                         <span class="text-gray-800 text-sm font-medium">Bank Details</span>
                     </button>
-                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50 justify-between">
+                    <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 text-left border-b border-gray-50">
                         <div class="flex items-center gap-4">
-                            <i class="fas fa-wallet text-gray-600 w-5 text-center"></i>
+                            <i class="fas fa-wallet text-gray-500 w-5 text-center"></i>
                             <span class="text-gray-800 text-sm font-medium">Wallet</span>
                         </div>
                         <span class="bg-blue-50 text-blue-600 text-xs font-bold px-2 py-1 rounded-full">₹<span id="wallet-balance">0</span></span>
                     </button>
                     <button onclick="openModal('transfer-history-modal')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
-                        <i class="far fa-clock text-gray-600 w-5 text-center"></i>
+                        <i class="fas fa-exchange-alt text-gray-500 w-5 text-center"></i>
                         <span class="text-gray-800 text-sm font-medium">Bank Transfer History</span>
                     </button>
                 </div>
                 
                  <div class="bg-white mt-2 border-y border-gray-100 mb-6">
-                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="fas fa-info-circle text-gray-600 w-5 text-center"></i>
-                        <span class="text-gray-800 text-sm font-medium">Legal</span>
+                    <button onclick="openPageModal('Terms & Conditions')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-file-contract text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Terms & Conditions</span>
                     </button>
-                     <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
-                        <i class="far fa-thumbs-up text-gray-600 w-5 text-center"></i>
-                        <span class="text-gray-800 text-sm font-medium">Rate Us</span>
+                    <button onclick="openPageModal('Privacy Policy')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-shield-alt text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Privacy Policy</span>
+                    </button>
+                    <button onclick="openPageModal('Return & Shipping')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-undo text-gray-500 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Return & Shipping Policy</span>
                     </button>
                     <button onclick="logoutUser()" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
                         <i class="fas fa-sign-out-alt text-red-500 w-5 text-center"></i>
-                        <span class="text-red-500 text-sm font-bold">Logout</span>
+                        <span class="text-red-500 text-sm font-medium">Logout</span>
                     </button>
                 </div>
                 
                 <div class="text-center pb-8 text-gray-400">
                     <h3 class="font-bold text-gray-800 text-lg">SHRAYNEX</h3>
-                    <p class="text-xs">App Version 1.0.0</p>
+                    <p class="text-xs">App Version 2.1.0</p>
+                    <p class="text-[10px] mt-1">shraynexofficial@gmail.com</p>
                 </div>
             </div>
 
             <!-- CART / CHECKOUT VIEWS (Overlays main content) -->
             <div id="cart-view" class="hidden absolute inset-0 bg-gray-50 z-20 flex-col">
                 <header class="bg-white px-4 py-3 border-b flex items-center gap-3 shrink-0">
-                    <button onclick="switchTab('home')" class="text-gray-600"><i class="fas fa-arrow-left"></i></button>
+                    <button onclick="switchTab('home')" class="text-gray-800 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i class="fas fa-arrow-left"></i></button>
                     <h2 class="font-bold text-lg">Cart</h2>
                 </header>
                 <!-- Checkout Progress -->
@@ -365,6 +390,24 @@
 
         <!-- OVERLAYS / MODALS -->
         
+        <!-- Edit Profile Modal -->
+        <div id="edit-profile-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden animate-fade-in relative shadow-xl">
+                 <button onclick="closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-gray-400 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
+                 <div class="p-6 pt-8">
+                     <h3 class="text-xl font-bold mb-1 text-gray-900">Edit Profile</h3>
+                     <p class="text-sm text-gray-500 mb-6">Update your personal details.</p>
+                     <div class="space-y-4">
+                         <div>
+                             <label class="text-xs font-bold text-gray-500 mb-1 block">FULL NAME</label>
+                             <input type="text" id="edit-name-input" class="w-full border-b-2 border-gray-300 focus:border-primary py-2 outline-none font-medium">
+                         </div>
+                     </div>
+                     <button onclick="saveProfile()" class="w-full bg-primary text-white font-bold py-3 mt-8 rounded-lg shadow-md">SAVE CHANGES</button>
+                 </div>
+            </div>
+        </div>
+
         <!-- Bank Details Modal -->
         <div id="bank-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
             <div class="bg-white rounded-xl w-full max-w-sm overflow-hidden animate-fade-in relative">
@@ -372,12 +415,12 @@
                  <div class="p-6 pt-8">
                      <h3 class="text-xl text-blue-500 font-medium mb-6">Bank Details</h3>
                      <div class="space-y-4">
-                         <input type="text" placeholder="Account Holder's Name" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
-                         <input type="number" placeholder="Account Number" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
-                         <input type="number" placeholder="Re-enter Account Number" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
-                         <input type="text" placeholder="IFSC Code" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500 uppercase">
+                         <input type="text" placeholder="Account Holder's Name" class="w-full border-b-2 border-gray-300 py-2 outline-none focus:border-blue-500 text-sm">
+                         <input type="number" placeholder="Account Number" class="w-full border-b-2 border-gray-300 py-2 outline-none focus:border-blue-500 text-sm">
+                         <input type="number" placeholder="Re-enter Account Number" class="w-full border-b-2 border-gray-300 py-2 outline-none focus:border-blue-500 text-sm">
+                         <input type="text" placeholder="IFSC Code" class="w-full border-b-2 border-gray-300 py-2 outline-none focus:border-blue-500 text-sm uppercase">
                      </div>
-                     <button onclick="closeModal('bank-modal'); showAppToast('Bank details saved');" class="w-full text-primary font-bold py-4 mt-6 border-t border-gray-100">SUBMIT</button>
+                     <button onclick="closeModal('bank-modal'); showAppToast('Bank details saved securely');" class="w-full text-primary font-bold py-4 mt-6 border-t border-gray-100">SUBMIT</button>
                  </div>
             </div>
         </div>
@@ -413,123 +456,147 @@
 
         <!-- Product Details View (Full Screen) -->
         <div id="product-details-view" class="fixed inset-0 bg-gray-50 z-40 hidden flex-col pb-[70px]">
-            <header class="bg-white px-4 py-3 border-b flex items-center justify-between shrink-0 absolute top-0 w-full z-10 bg-white/80 backdrop-blur-sm">
+            <header class="bg-white px-4 py-3 border-b flex items-center justify-between shrink-0 absolute top-0 w-full z-10 bg-white/90 backdrop-blur-md shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="closeProductDetails()" class="text-gray-800 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"><i class="fas fa-arrow-left"></i></button>
-                    <h2 class="font-medium text-sm truncate w-40" id="pd-title-header">Product Title</h2>
+                    <button onclick="closeProductDetails()" class="text-gray-800 bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+                    <h2 class="font-bold text-sm truncate w-40 text-gray-800" id="pd-title-header">Product Title</h2>
                 </div>
                 <div class="flex gap-3">
-                    <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm text-gray-600"><i class="far fa-heart"></i></button>
-                    <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm text-gray-600 relative" onclick="switchTab('cart'); closeProductDetails();">
+                    <button onclick="showAppToast('Saved to Liked Catalogs')" class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-gray-600"><i class="far fa-heart"></i></button>
+                    <button class="bg-gray-100 rounded-full w-9 h-9 flex items-center justify-center text-gray-600 relative" onclick="switchTab('cart'); closeProductDetails();">
                         <i class="fas fa-shopping-cart"></i>
                     </button>
                 </div>
             </header>
             
             <div class="overflow-y-auto flex-grow bg-white">
-                <div class="w-full aspect-[3/4] bg-gray-100 relative mt-12">
-                    <img id="pd-image" src="" class="w-full h-full object-cover" alt="Product">
+                <!-- Image Gallery -->
+                <div class="w-full aspect-square bg-gray-100 relative mt-[60px] overflow-hidden">
+                    <div id="pd-image-slider" class="w-full h-full flex transition-transform duration-300 ease-out">
+                        <!-- Images injected here -->
+                    </div>
+                    
+                    <!-- Slider Dots -->
+                    <div id="pd-slider-dots" class="absolute bottom-4 left-0 w-full flex justify-center gap-2">
+                         <!-- Dots injected here -->
+                    </div>
+
                     <!-- Action Buttons overlaid on image -->
-                    <div class="absolute right-4 top-4 flex flex-col gap-3">
-                         <button onclick="openShareModal()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-gray-700"><i class="fas fa-share"></i></button>
-                         <button class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center shadow-md text-white"><i class="fab fa-whatsapp text-lg"></i></button>
+                    <div class="absolute right-4 top-4 flex flex-col gap-3 z-10">
+                         <button onclick="openShareModal()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg text-gray-700"><i class="fas fa-share"></i></button>
+                         <button onclick="shareDirectlyToWhatsApp()" class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg text-white"><i class="fab fa-whatsapp text-xl"></i></button>
                     </div>
                 </div>
                 
                 <div class="p-4 border-b border-gray-100">
-                    <h1 id="pd-title" class="text-gray-800 text-lg mb-2">Product Name</h1>
+                    <h1 id="pd-title" class="text-gray-900 font-medium text-lg mb-2 leading-tight">Product Name</h1>
                     <div class="flex items-center gap-2 mb-3">
-                        <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded"><i class="fas fa-shopping-bag mr-1"></i>56 orders in last 7 days</span>
+                        <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-1 rounded"><i class="fas fa-shopping-bag mr-1"></i>High Demand</span>
                     </div>
                     <div class="flex items-baseline gap-2">
                         <span class="text-sm text-gray-400 line-through">₹<span id="pd-mrp">999</span></span>
-                        <span class="text-xl font-bold text-green-600">₹<span id="pd-price">0</span></span>
-                        <span class="text-sm text-gray-600">+ Free Delivery</span>
+                        <span class="text-2xl font-bold text-gray-900">₹<span id="pd-price">0</span></span>
+                        <span class="text-xs font-bold text-green-600 ml-2">+ Free Delivery</span>
                     </div>
                 </div>
 
                 <div class="p-4 border-b border-gray-100 bg-gray-50">
-                     <div class="bg-white rounded-xl border border-pink-100 p-4 relative">
-                         <div class="absolute -top-3 right-4 bg-white border border-primary text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">BRAND INFO</div>
-                         <div class="flex items-center gap-3 mb-4">
-                             <div class="w-12 h-12 bg-pink-100 rounded-lg flex flex-col items-center justify-center">
-                                 <span class="font-bold text-primary text-xs" id="pd-brand-icon">BN</span>
+                     <div class="bg-white rounded-xl border border-gray-200 p-4 relative shadow-sm">
+                         <div class="absolute -top-3 right-4 bg-white border border-primary text-primary text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">BRAND INFO</div>
+                         <div class="flex items-center gap-3 mb-4 mt-2">
+                             <div class="w-14 h-14 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex flex-col items-center justify-center border border-pink-200">
+                                 <span class="font-bold text-primary text-lg" id="pd-brand-icon">BN</span>
                              </div>
                              <div>
-                                 <h4 class="font-bold text-sm" id="pd-brand-name">Brand Name <i class="fas fa-check-circle text-primary text-[10px]"></i></h4>
-                                 <p class="text-[10px] text-gray-500">Since 2020</p>
+                                 <h4 class="font-bold text-base text-gray-900" id="pd-brand-name">Brand Name <i class="fas fa-check-circle text-blue-500 text-xs"></i></h4>
+                                 <p class="text-xs text-gray-500 mt-0.5">Trusted Supplier</p>
                              </div>
                          </div>
-                         <div class="flex bg-pink-50 rounded-lg p-2 justify-around text-xs">
+                         <div class="flex bg-gray-50 rounded-lg p-3 justify-around text-xs border border-gray-100">
                              <div class="text-center">
-                                 <p class="text-blue-500 font-bold"><i class="fas fa-chart-bar mr-1"></i>1.0K</p>
-                                 <p class="text-[9px] text-gray-500">Followers</p>
+                                 <p class="text-gray-800 font-bold text-sm"><i class="fas fa-star text-yellow-400 mr-1"></i>4.8</p>
+                                 <p class="text-[9px] text-gray-500 uppercase tracking-wide mt-1">Rating</p>
                              </div>
-                             <div class="text-center border-l border-pink-200 pl-4">
-                                 <p class="text-blue-500 font-bold"><i class="fas fa-map-marker-alt mr-1"></i>India</p>
-                                 <p class="text-[9px] text-gray-500">Location</p>
+                             <div class="w-px bg-gray-200"></div>
+                             <div class="text-center">
+                                 <p class="text-gray-800 font-bold text-sm"><i class="fas fa-map-marker-alt text-red-400 mr-1"></i>India</p>
+                                 <p class="text-[9px] text-gray-500 uppercase tracking-wide mt-1">Origin</p>
                              </div>
                          </div>
                      </div>
                 </div>
 
                 <div class="p-4 border-b border-gray-100">
-                    <div class="flex justify-between items-center mb-3">
-                        <h4 class="text-xs font-bold text-gray-500 tracking-wider">SIZES AVAILABLE</h4>
-                        <button class="text-primary text-xs font-bold">Size Chart ></button>
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xs font-bold text-gray-800 tracking-wider">SELECT SIZE</h4>
+                        <button class="text-primary text-xs font-bold underline">Size Chart</button>
                     </div>
-                    <div class="flex gap-3" id="pd-sizes">
+                    <div class="flex flex-wrap gap-3" id="pd-sizes">
                         <!-- Sizes JS injected -->
                     </div>
                 </div>
                 
-                <div class="p-4 mb-20">
-                    <h4 class="text-xs font-bold text-gray-500 tracking-wider mb-2">CATALOG DETAILS</h4>
-                    <p class="text-sm text-gray-600 leading-relaxed mb-2" id="pd-desc">Description here...</p>
-                    <button class="text-primary font-bold text-sm">show more</button>
+                <div class="p-4 mb-6">
+                    <h4 class="text-xs font-bold text-gray-800 tracking-wider mb-3">CATALOG DETAILS</h4>
+                    <div class="bg-gray-50 p-4 rounded-xl text-sm text-gray-700 leading-relaxed border border-gray-100">
+                        <p id="pd-desc" class="whitespace-pre-line">Description here...</p>
+                    </div>
                 </div>
             </div>
             
-            <div class="absolute bottom-0 w-full bg-white p-3 border-t border-gray-200 z-20">
-                <button onclick="addToCartFromDetails()" class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-md">
-                    <i class="fas fa-shopping-bag"></i> ORDER NOW
+            <div class="absolute bottom-0 w-full bg-white p-3 border-t border-gray-200 z-20 pb-safe shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)]">
+                <button onclick="addToCartFromDetails()" class="w-full bg-primary hover:bg-pink-700 transition-colors text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg text-lg">
+                    <i class="fas fa-shopping-bag"></i> Add to Order
                 </button>
             </div>
         </div>
 
         <!-- Share Margin Modal (Bottom Sheet) -->
-        <div id="share-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex-col justify-end">
-            <div class="bg-white rounded-t-2xl w-full slide-up-modal pb-safe" id="share-sheet">
-                <div class="p-4 border-b flex justify-between items-center">
-                    <h3 class="font-bold text-lg">Add Margin & Share</h3>
-                    <button onclick="closeShareModal()" class="text-gray-400 text-xl"><i class="fas fa-times"></i></button>
+        <div id="share-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col justify-end backdrop-blur-sm">
+            <div class="bg-white rounded-t-3xl w-full slide-up-modal pb-safe shadow-2xl" id="share-sheet">
+                <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-gray-900">Add Margin & Share</h3>
+                    <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-700 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="p-6">
-                    <div class="flex justify-between items-center mb-4 text-sm">
-                        <span class="text-gray-600">Wholesale Price:</span>
-                        <span class="font-bold">₹<span id="share-base-price">0</span></span>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-xs font-bold text-gray-500 mb-2">YOUR PROFIT MARGIN (₹)</label>
-                        <input type="number" id="margin-input" class="w-full border-b-2 border-gray-300 focus:border-primary outline-none py-2 text-xl font-bold text-center" value="100" onchange="updateSharePrice()">
-                    </div>
-                    <div class="flex justify-between items-center mb-6 p-3 bg-pink-50 rounded-lg">
-                        <span class="font-bold text-primary">Price for Customer:</span>
-                        <span class="font-bold text-xl text-primary">₹<span id="share-final-price">0</span></span>
+                    <div class="flex justify-between items-center mb-5 text-sm bg-gray-50 p-3 rounded-lg border border-gray-100">
+                        <span class="text-gray-600 font-medium">Base Price:</span>
+                        <span class="font-bold text-gray-900">₹<span id="share-base-price">0</span></span>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-3">
-                        <button class="bg-[#25D366] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-                            <i class="fab fa-whatsapp text-xl"></i> Share
-                        </button>
-                        <button onclick="copyLink()" class="bg-gray-100 text-gray-800 py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-                            <i class="fas fa-link"></i> Copy Link
+                    <div class="mb-6 relative">
+                        <label class="block text-xs font-bold text-primary mb-2 text-center tracking-wider">SET YOUR MARGIN (₹)</label>
+                        <div class="flex items-center justify-center border-b-2 border-primary pb-2 mx-10">
+                            <span class="text-xl font-bold text-gray-400 mr-1">+ ₹</span>
+                            <input type="number" id="margin-input" class="w-24 outline-none text-3xl font-bold text-center text-gray-900 bg-transparent p-0" value="100" oninput="updateSharePrice()">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-8 p-4 bg-gradient-to-r from-pink-50 to-primary/10 rounded-xl border border-pink-100">
+                        <span class="font-bold text-gray-800">Final Customer Price:</span>
+                        <span class="font-extrabold text-2xl text-primary">₹<span id="share-final-price">0</span></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="executeWhatsAppShare()" class="bg-[#25D366] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md hover:bg-[#20bd5a] transition">
+                            <i class="fab fa-whatsapp text-xl"></i> Share with Price on WhatsApp
                         </button>
                     </div>
                 </div>
             </div>
         </div>
         
+        <!-- Text Page Modal (For About, Policy etc) -->
+        <div id="page-modal" class="fixed inset-0 bg-white z-50 hidden flex-col">
+            <header class="bg-white px-4 py-3 border-b flex items-center gap-3 shrink-0 shadow-sm">
+                <button onclick="closeModal('page-modal')" class="text-gray-800 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="font-bold text-lg" id="page-modal-title">Page Title</h2>
+            </header>
+            <div class="p-6 overflow-y-auto text-gray-700 text-sm leading-relaxed" id="page-modal-content">
+                <!-- Content injected here -->
+            </div>
+        </div>
+
         <!-- App Toast Notification -->
         <div id="app-toast" class="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50 whitespace-nowrap">
             Message
@@ -539,51 +606,112 @@
 </div>
 
 <!-- ADMIN PANEL (Hidden by default, shown via Admin Login) -->
-<div id="admin-panel" class="hidden min-h-screen bg-gray-100">
-    <nav class="bg-gray-900 text-white p-4 flex justify-between items-center">
-        <h1 class="font-bold text-xl">SHRAYNEX <span class="text-primary text-sm">Admin</span></h1>
-        <button onclick="logoutAdmin()" class="bg-gray-800 px-4 py-1 rounded text-sm hover:bg-gray-700">Logout</button>
+<div id="admin-panel" class="hidden min-h-screen bg-gray-100 flex-col">
+    <nav class="bg-gray-900 text-white p-4 flex justify-between items-center shrink-0">
+        <h1 class="font-bold text-xl">SHRAYNEX <span class="bg-primary px-2 py-0.5 rounded text-xs ml-2">Admin Hub</span></h1>
+        <div class="flex gap-4">
+             <button onclick="switchAdminTab('admin-products')" id="adm-tab-btn-products" class="text-sm font-medium border-b-2 border-white pb-1">Products</button>
+             <button onclick="switchAdminTab('admin-orders')" id="adm-tab-btn-orders" class="text-sm font-medium text-gray-400 hover:text-white pb-1">Orders</button>
+        </div>
+        <button onclick="logoutAdmin()" class="bg-gray-800 px-4 py-1.5 rounded text-sm hover:bg-gray-700 flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </nav>
-    <div class="max-w-4xl mx-auto mt-8 p-4">
-        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2">Add New Catalog</h2>
-            <form id="admin-add-product-form" onsubmit="handleAdminSubmit(event)" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Product Title</label>
-                        <input type="text" id="admin-title" required class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Brand Name</label>
-                        <input type="text" id="admin-brand" required class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Wholesale Price (₹)</label>
-                        <input type="number" id="admin-price" required class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Image URL (Square preferred)</label>
-                        <input type="url" id="admin-img" required class="w-full border rounded p-2 text-sm" placeholder="https://...">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Available Sizes (comma separated)</label>
-                        <input type="text" id="admin-sizes" value="M, L, XL" required class="w-full border rounded p-2 text-sm">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-1">Description</label>
-                        <textarea id="admin-desc" required class="w-full border rounded p-2 text-sm h-24"></textarea>
+    
+    <div class="max-w-6xl mx-auto w-full p-4 flex-grow">
+        
+        <!-- Admin Products Tab -->
+        <div id="admin-products-view" class="block">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add Product Form -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-4">
+                        <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-800">Add New Catalog</h2>
+                        <form id="admin-add-product-form" onsubmit="handleAdminSubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">PRODUCT TITLE</label>
+                                <input type="text" id="admin-title" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">BRAND NAME</label>
+                                <input type="text" id="admin-brand" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">WHOLESALE PRICE (₹)</label>
+                                    <input type="number" id="admin-price" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">MRP (₹)</label>
+                                    <input type="number" id="admin-mrp" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL 1 (Main)</label>
+                                <input type="url" id="admin-img1" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary text-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL 2 (Optional)</label>
+                                <input type="url" id="admin-img2" class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary text-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL 3 (Optional)</label>
+                                <input type="url" id="admin-img3" class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary text-blue-500">
+                            </div>
+                             <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL 4 (Optional)</label>
+                                <input type="url" id="admin-img4" class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary text-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">SIZES (Comma separated)</label>
+                                <input type="text" id="admin-sizes" value="S, M, L, XL" required class="w-full border-b-2 border-gray-200 py-2 text-sm outline-none focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">DESCRIPTION</label>
+                                <textarea id="admin-desc" required class="w-full border-2 border-gray-200 rounded-lg p-2 text-sm outline-none focus:border-primary h-24 mt-1"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold shadow-md hover:bg-black transition">Publish to Resellers</button>
+                        </form>
                     </div>
                 </div>
-                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700">Add to App</button>
-            </form>
-        </div>
-        
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-bold mb-4 border-b pb-2">Current Active Catalogs</h2>
-            <div id="admin-product-list" class="space-y-2">
-                <!-- Admin view of products -->
+                
+                <!-- Product List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-800">Current Active Catalogs</h2>
+                        <div id="admin-product-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Admin view of products -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Admin Orders Tab -->
+        <div id="admin-orders-view" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                 <h2 class="text-lg font-bold mb-4 border-b pb-2 text-gray-800">Reseller Orders Management</h2>
+                 <div class="overflow-x-auto">
+                     <table class="w-full text-left text-sm text-gray-600">
+                         <thead class="text-xs uppercase bg-gray-50 text-gray-700">
+                             <tr>
+                                 <th class="px-4 py-3">Order ID</th>
+                                 <th class="px-4 py-3">Reseller</th>
+                                 <th class="px-4 py-3">Items</th>
+                                 <th class="px-4 py-3">Amount</th>
+                                 <th class="px-4 py-3">Status</th>
+                                 <th class="px-4 py-3">Action</th>
+                             </tr>
+                         </thead>
+                         <tbody id="admin-orders-table-body">
+                             <!-- Admin orders injected here -->
+                         </tbody>
+                     </table>
+                     <div id="admin-no-orders" class="text-center py-8 text-gray-400 hidden">
+                         No orders have been placed yet.
+                     </div>
+                 </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 
@@ -594,18 +722,20 @@
         <h3 class="text-xl font-bold mb-2" id="auth-title">Login to Resell</h3>
         <p class="text-sm text-gray-500 mb-6" id="auth-desc">Enter your details to access the platform.</p>
         
-        <input type="text" id="auth-input-id" placeholder="Phone Number / Email" class="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none focus:border-primary">
-        <input type="password" id="auth-input-pass" placeholder="Password (Admin only)" class="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none focus:border-primary hidden">
+        <input type="text" id="auth-input-id" placeholder="Phone Number" class="w-full border-b-2 border-gray-300 py-3 mb-4 outline-none focus:border-primary font-medium text-lg text-center tracking-widest">
+        <input type="password" id="auth-input-pass" placeholder="Admin Password" class="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none focus:border-primary hidden text-center">
         
-        <button onclick="processLogin()" class="w-full bg-primary text-white font-bold py-3 rounded-lg shadow-md" id="auth-submit-btn">Continue</button>
+        <button onclick="processLogin()" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl shadow-lg mt-2" id="auth-submit-btn">CONTINUE</button>
     </div>
 </div>
 
 <script>
     // --- STATE MANAGEMENT ---
     let currentUser = null; // null, 'reseller', 'admin'
+    let resellerProfile = { name: "Reseller", phone: "9451239239" };
+    let stats = { views: 0, shares: 0 };
     
-    // In-memory product database (simulating backend)
+    // In-memory product database (simulating backend, with multiple images)
     let products = [
         {
             id: 1,
@@ -613,9 +743,14 @@
             brand: "The DuoNext",
             price: 699,
             mrp: 865,
-            image: "https://placehold.co/600x800/5e5c64/ffffff?text=Kurti+Design",
+            images: [
+                "https://placehold.co/600x800/5e5c64/ffffff?text=Main+Photo",
+                "https://placehold.co/600x800/7a7880/ffffff?text=Side+Angle",
+                "https://placehold.co/600x800/8d8a93/ffffff?text=Back+Angle",
+                "https://placehold.co/600x800/a5a2ab/ffffff?text=Fabric+Detail"
+            ],
             sizes: ["L", "M", "XL", "2XL"],
-            desc: "Elegant and comfortable Linen Cotton Kurti featuring delicate white floral embroidery, a stylish V-neck with pin-tuck detailing, and a straight-cut silhouette. Perfect for daily wear, office wear, and casual occasions.\n\nKey Features:\nLinen Cotton Blend with Lining."
+            desc: "Elegant and comfortable Linen Cotton Kurti featuring delicate white floral embroidery, a stylish V-neck with pin-tuck detailing, and a straight-cut silhouette.\n\nPerfect for daily wear, office wear, and casual occasions.\n\nKey Features:\n- Premium Linen Cotton Blend\n- Inner Lining attached\n- Soft and breathable\n- Machine Washable"
         },
         {
             id: 2,
@@ -623,37 +758,47 @@
             brand: "JMD Collections",
             price: 625,
             mrp: 799,
-            image: "https://placehold.co/600x800/1e293b/ffffff?text=Denim+Dress",
+            images: [
+                "https://placehold.co/600x800/1e293b/ffffff?text=Denim+Dress",
+                "https://placehold.co/600x800/334155/ffffff?text=Belt+Detail"
+            ],
             sizes: ["S", "M", "L"],
-            desc: "Trendy denim dress with a stylish brown belt. Perfect for casual outings and parties."
+            desc: "Trendy denim dress with a stylish brown belt. Perfect for casual outings and parties.\n\nMaterial: Washed Denim\nFit: Regular Fit\nIncludes: 1 Dress, 1 PU Leather Belt"
         }
     ];
 
     let cart = [];
-    let orders = [];
+    let orders = []; // Shared array for reseller and admin simulation
     let currentSelectedProduct = null;
     let currentSelectedSize = null;
+    let currentImageIndex = 0;
 
     // --- NAVIGATION & VIEWS ---
     
     function init() {
         renderProducts();
-        updateAdminList();
+        updateAdminProductList();
+        updateAdminOrdersList();
     }
 
     function toggleAuthModal(isAdmin = false) {
         const modal = document.getElementById('auth-modal');
         const passField = document.getElementById('auth-input-pass');
         const title = document.getElementById('auth-title');
-        
+        const desc = document.getElementById('auth-desc');
+        const idField = document.getElementById('auth-input-id');
         if (modal.classList.contains('hidden')) {
             modal.classList.remove('hidden');
             if (isAdmin) {
                 title.innerText = "Admin Login";
+                desc.innerText = "Enter credentials to manage platform.";
+                idField.placeholder = "Admin ID";
                 passField.classList.remove('hidden');
                 document.getElementById('auth-submit-btn').onclick = () => processLogin('admin');
             } else {
-                title.innerText = "Login to Resell";
+                title.innerText = "Login / Signup";
+                desc.innerText = "Enter phone number to access SHRAYNEX reselling tools.";
+                idField.placeholder = "10 Digit Mobile Number";
                 passField.classList.add('hidden');
                 document.getElementById('auth-submit-btn').onclick = () => processLogin('reseller');
             }
@@ -662,13 +807,11 @@
         }
     }
 
-    function showAdminLogin() {
-        toggleAuthModal(true);
-    }
+    function showAdminLogin() { toggleAuthModal(true); }
 
     function processLogin(type) {
         const inputId = document.getElementById('auth-input-id').value;
-        if(!inputId) return alert("Please enter details");
+        if(!inputId) return showAppToast("Please enter details");
 
         toggleAuthModal();
         
@@ -677,25 +820,71 @@
             document.getElementById('landing-page').classList.add('hidden');
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('admin-panel').classList.add('flex');
+            updateAdminOrdersList();
         } else {
             currentUser = 'reseller';
+            resellerProfile.phone = inputId;
             document.getElementById('landing-page').classList.add('hidden');
             document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('flex');
             document.getElementById('app-view').classList.remove('hidden');
             
-            // Setup User Data in App
-            document.getElementById('acc-name').innerText = "Reseller";
-            document.getElementById('acc-phone').innerText = inputId;
-            document.getElementById('app-user-initial').innerText = "R";
-            document.getElementById('acc-initial').innerText = "R";
-            
+            updateProfileUI();
             switchTab('home');
+        }
+    }
+
+    function updateProfileUI() {
+        document.getElementById('acc-name').innerText = resellerProfile.name;
+        document.getElementById('acc-phone').innerText = resellerProfile.phone;
+        const initial = resellerProfile.name.charAt(0).toUpperCase();
+        document.getElementById('app-user-initial').innerText = initial;
+        document.getElementById('acc-initial').innerText = initial;
+    }
+
+    function openPageModal(title) {
+        document.getElementById('page-modal-title').innerText = title;
+        const content = document.getElementById('page-modal-content');
+        
+        let html = '';
+        if(title === 'About SHRAYNEX') {
+            html = `<h3 class="text-lg font-bold text-gray-900 mb-2">Welcome to SHRAYNEX</h3>
+                    <p class="mb-4">SHRAYNEX is India's leading platform empowering individuals to start their own online business with zero investment. We connect you directly with top micro-brands and wholesalers.</p>
+                    <p class="mb-4">Our mission is to make entrepreneurship accessible to everyone by handling sourcing, quality checks, and delivery, so you can focus purely on sharing and earning.</p>`;
+        } else if(title.includes('Terms')) {
+            html = `<h3 class="font-bold mb-2">1. Introduction</h3><p class="mb-4">By using the SHRAYNEX App, you agree to these terms...</p><h3 class="font-bold mb-2">2. Reseller Margins</h3><p>Margins are credited to your bank account 7 days after successful product delivery...</p>`;
+        } else if(title.includes('Return')) {
+             html = `<h3 class="font-bold mb-2">Easy 7-Day Returns</h3><p class="mb-4">We offer a no-questions-asked return policy within 7 days of delivery. The item must be unused and in original packaging.</p><h3 class="font-bold mb-2">Shipping</h3><p>Standard delivery takes 3-5 business days across India.</p>`;
+        } else {
+             html = `<p class="text-center text-gray-500 mt-10">Information for ${title} will be updated soon.</p>`;
+        }
+        
+        content.innerHTML = html;
+        document.getElementById('page-modal').classList.remove('hidden');
+        document.getElementById('page-modal').classList.add('flex');
+    }
+
+    function saveProfile() {
+        const newName = document.getElementById('edit-name-input').value;
+        if(newName.trim() !== '') {
+            resellerProfile.name = newName;
+            updateProfileUI();
+            closeModal('edit-profile-modal');
+            showAppToast("Profile updated successfully");
         }
     }
 
     function logoutUser() {
         currentUser = null;
         document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('landing-page').classList.remove('hidden');
+    }
+
+    function logoutAdmin() {
+        currentUser = null;
+        document.getElementById('admin-panel').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('flex');
         document.getElementById('landing-page').classList.remove('hidden');
     }
 
@@ -750,33 +939,32 @@
         
         products.forEach(p => {
             const el = document.createElement('div');
-            el.className = "bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden";
+            el.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden";
             el.innerHTML = `
-                <div class="flex items-center gap-2 p-3 border-b border-gray-50">
-                    <div class="w-8 h-8 bg-blue-100 rounded flex flex-col items-center justify-center text-[8px] font-bold text-blue-800 uppercase leading-none p-1 text-center line-clamp-2">
-                        ${p.brand.substring(0,3)}
+                <div class="flex items-center gap-3 p-4 border-b border-gray-50 bg-white">
+                    <div class="w-10 h-10 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center font-bold text-primary border border-pink-200">
+                        ${p.brand.substring(0,2).toUpperCase()}
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm">${p.brand}</h4>
-                        <p class="text-[10px] text-gray-500">Just updated</p>
+                        <h4 class="font-bold text-sm text-gray-900">${p.brand}</h4>
+                        <p class="text-[10px] text-gray-500 tracking-wide uppercase mt-0.5">Verified Supplier <i class="fas fa-check-circle text-blue-500"></i></p>
                     </div>
-                    <button class="ml-auto text-gray-400"><i class="fas fa-ellipsis-h"></i></button>
                 </div>
-                <div class="w-full aspect-[4/5] bg-gray-100 relative cursor-pointer" onclick="openProductDetails(${p.id})">
-                    <img src="${p.image}" class="w-full h-full object-cover">
+                <div class="w-full aspect-square bg-gray-100 relative cursor-pointer group" onclick="openProductDetails(${p.id})">
+                    <img src="${p.images[0]}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                    ${p.images.length > 1 ? `<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full"><i class="far fa-images"></i> 1/${p.images.length}</div>` : ''}
                 </div>
                 <div class="p-4">
-                    <p class="text-sm text-gray-800 line-clamp-1 mb-1 cursor-pointer" onclick="openProductDetails(${p.id})">${p.title}</p>
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="font-bold text-green-600">₹${p.price}</span>
-                        <span class="text-xs text-gray-500">+ Free Delivery</span>
-                        <span class="ml-auto bg-pink-50 text-primary text-[10px] font-bold px-2 py-1 rounded-full"><i class="fas fa-heart text-[8px]"></i> Love It</span>
+                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2 cursor-pointer leading-tight" onclick="openProductDetails(${p.id})">${p.title}</p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="text-lg font-extrabold text-gray-900">₹${p.price}</span>
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free Delivery</span>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="openShareModal(${p.id})" class="flex-1 bg-white border border-gray-300 py-2 rounded font-medium text-sm text-gray-700 flex items-center justify-center gap-2">
-                            <i class="fas fa-share text-gray-400"></i> Share
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="openProductDetails(${p.id})" class="bg-gray-100 py-2.5 rounded-xl font-bold text-sm text-gray-700">
+                            View Details
                         </button>
-                        <button class="flex-1 bg-green-500 text-white py-2 rounded font-medium text-sm flex items-center justify-center gap-2">
+                        <button onclick="openShareModal(${p.id})" class="bg-[#25D366] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1 shadow-sm hover:shadow-md transition">
                              <i class="fab fa-whatsapp text-lg"></i> Share
                         </button>
                     </div>
@@ -784,6 +972,97 @@
             `;
             feed.appendChild(el);
         });
+    }
+
+    function updateImageSlider() {
+        const slider = document.getElementById('pd-image-slider');
+        const dots = document.getElementById('pd-slider-dots');
+        slider.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+        
+        Array.from(dots.children).forEach((dot, idx) => {
+            if(idx === currentImageIndex) {
+                dot.classList.replace('bg-white/50', 'bg-white');
+                dot.classList.replace('w-2', 'w-4');
+            } else {
+                dot.classList.replace('bg-white', 'bg-white/50');
+                dot.classList.replace('w-4', 'w-2');
+            }
+        });
+    }
+
+    function openProductDetails(id) {
+        const p = products.find(x => x.id === id);
+        if(!p) return;
+        currentSelectedProduct = p;
+        currentSelectedSize = p.sizes[0]; // default
+        currentImageIndex = 0;
+        
+        // Track View
+        stats.views++;
+        document.getElementById('stats-views').innerText = stats.views;
+
+        document.getElementById('pd-title-header').innerText = p.title;
+        document.getElementById('pd-title').innerText = p.title;
+        document.getElementById('pd-price').innerText = p.price;
+        document.getElementById('pd-mrp').innerText = p.mrp;
+        document.getElementById('pd-brand-name').innerHTML = `${p.brand} <i class="fas fa-check-circle text-blue-500 text-xs"></i>`;
+        document.getElementById('pd-brand-icon').innerText = p.brand.substring(0,2).toUpperCase();
+        document.getElementById('pd-desc').innerText = p.desc;
+
+        // Setup Images
+        const slider = document.getElementById('pd-image-slider');
+        const dots = document.getElementById('pd-slider-dots');
+        slider.innerHTML = '';
+        dots.innerHTML = '';
+        
+        p.images.forEach((imgUrl, idx) => {
+            // Slider Image
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'min-w-full h-full';
+            imgDiv.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+            slider.appendChild(imgDiv);
+            
+            // Dot
+            const dot = document.createElement('button');
+            dot.className = `h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'w-4 bg-white' : 'w-2 bg-white/50'}`;
+            dot.onclick = (e) => { e.stopPropagation(); currentImageIndex = idx; updateImageSlider(); };
+            dots.appendChild(dot);
+        });
+        
+        // Swipe logic for slider
+        let startX;
+        slider.ontouchstart = e => startX = e.touches[0].clientX;
+        slider.ontouchend = e => {
+            let endX = e.changedTouches[0].clientX;
+            if(startX - endX > 50 && currentImageIndex < p.images.length -1) currentImageIndex++;
+            else if(endX - startX > 50 && currentImageIndex > 0) currentImageIndex--;
+            updateImageSlider();
+        };
+
+        const sizesContainer = document.getElementById('pd-sizes');
+        sizesContainer.innerHTML = '';
+        p.sizes.forEach(size => {
+            const btn = document.createElement('button');
+            const isSelected = size === currentSelectedSize;
+            btn.className = `w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-colors ${isSelected ? 'border-primary bg-primary/5 text-primary' : 'border-gray-200 text-gray-600 bg-white'}`;
+            btn.innerText = size;
+            btn.onclick = () => selectSize(size, btn);
+            sizesContainer.appendChild(btn);
+        });
+
+        document.getElementById('product-details-view').classList.remove('hidden');
+        document.getElementById('product-details-view').classList.add('flex');
+    }
+
+    function selectSize(size, btnEl) {
+        currentSelectedSize = size;
+        const container = document.getElementById('pd-sizes');
+        Array.from(container.children).forEach(c => {
+            c.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+            c.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+        });
+        btnEl.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
+        btnEl.classList.add('border-primary', 'bg-primary/5', 'text-primary');
     }
 
     function openProductDetails(id) {
@@ -837,9 +1116,16 @@
         const p = id ? products.find(x => x.id === id) : currentSelectedProduct;
         if(!p) return;
         
+        currentSelectedProduct = p; // Ensure this is set if called from list
         shareBase = p.price;
         document.getElementById('share-base-price').innerText = shareBase;
-        document.getElementById('margin-input').value = 100;
+        
+        // Auto calculate a suggested margin (e.g. 15%)
+        let suggestedMargin = Math.round(shareBase * 0.15);
+        // Round to nearest 10
+        suggestedMargin = Math.ceil(suggestedMargin / 10) * 10;
+        
+        document.getElementById('margin-input').value = suggestedMargin;
         updateSharePrice();
         
         document.getElementById('share-modal').classList.remove('hidden');
@@ -849,22 +1135,54 @@
         }, 10);
     }
 
-    function closeShareModal() {
-        document.getElementById('share-sheet').classList.remove('active');
-        setTimeout(() => {
-            document.getElementById('share-modal').classList.add('hidden');
-            document.getElementById('share-modal').classList.remove('flex');
-        }, 300);
-    }
-
     function updateSharePrice() {
         const margin = parseInt(document.getElementById('margin-input').value) || 0;
         document.getElementById('share-final-price').innerText = shareBase + margin;
     }
 
-    function copyLink() {
-        showAppToast("Link copied to clipboard!");
+    function executeWhatsAppShare() {
+        if(!currentSelectedProduct) return;
+        
+        // Track share stat
+        stats.shares++;
+        document.getElementById('stats-shared').innerText = stats.shares;
+        
+        const finalPrice = document.getElementById('share-final-price').innerText;
+        shareToWhatsApp(currentSelectedProduct, finalPrice);
         closeShareModal();
+    }
+    
+    function shareDirectlyToWhatsApp() {
+        if(!currentSelectedProduct) return;
+        // Share with base price + default 100 margin if direct share
+        const price = currentSelectedProduct.price + 100;
+        shareToWhatsApp(currentSelectedProduct, price);
+    }
+
+    function shareToWhatsApp(product, customerPrice) {
+        // Construct the message text
+        let text = `*${product.title}*\n\n`;
+        text += `✨ *Best Quality Assured*\n`;
+        text += `💰 Price: *₹${customerPrice}* (Free Delivery!)\n\n`;
+        text += `Available Sizes: ${product.sizes.join(', ')}\n\n`;
+        text += `*Description:*\n${product.desc.substring(0, 150)}...\n\n`;
+        text += `Click to view images and place order with me!`;
+
+        const encodedText = encodeURIComponent(text);
+        
+        // Check if device is mobile or desktop
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        let whatsappUrl = '';
+        if (isMobile) {
+            whatsappUrl = `whatsapp://send?text=${encodedText}`;
+        } else {
+            whatsappUrl = `https://web.whatsapp.com/send?text=${encodedText}`;
+        }
+
+        // Open WhatsApp intent
+        window.open(whatsappUrl, '_blank');
+        showAppToast("Opening WhatsApp...");
     }
 
     function addToCartFromDetails() {
@@ -907,23 +1225,23 @@
             html = `<div class="p-10 text-center text-gray-500 mt-10">
                 <i class="fas fa-shopping-cart text-5xl mb-4 opacity-20"></i>
                 <p>Your cart is empty.</p>
-                <button onclick="switchTab('home')" class="mt-4 border border-primary text-primary px-6 py-2 rounded font-medium">Browse Catalogs</button>
-            </div>`;
-            footer.classList.add('hidden');
-        } else {
-            html = `<div class="p-4"><h3 class="font-bold text-gray-800 mb-4">Order Items</h3>`;
+            html = `<div class="p-4"><h3 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wide border-b pb-2">Order Items</h3>`;
             cart.forEach((item, index) => {
                 total += item.price * item.qty;
                 html += `
-                    <div class="flex gap-4 bg-white p-3 rounded border border-gray-100 mb-3">
-                        <img src="${item.image}" class="w-20 h-24 object-cover rounded" alt="img">
-                        <div class="flex-grow">
-                            <p class="text-sm text-gray-800 line-clamp-1 mb-1">${item.title}</p>
-                            <p class="text-xs font-bold text-gray-900 mb-1">${item.brand}</p>
-                            <p class="text-primary font-bold mb-2">₹${item.price}</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500">Size: ${item.size} | Qty: ${item.qty}</span>
-                                <button onclick="removeFromCart(${index})" class="text-red-500 border border-red-200 rounded p-1 w-8 h-8 flex items-center justify-center"><i class="far fa-trash-alt"></i></button>
+                    <div class="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 mb-3 shadow-sm">
+                        <img src="${item.images[0]}" class="w-20 h-24 object-cover rounded-lg bg-gray-50 border border-gray-100" alt="img">
+                        <div class="flex-grow flex flex-col justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-800 line-clamp-2 leading-snug mb-1">${item.title}</p>
+                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-1">${item.brand}</p>
+                            </div>
+                            <div class="flex items-end justify-between mt-2">
+                                <div>
+                                    <p class="text-primary font-bold text-lg leading-none mb-1">₹${item.price}</p>
+                                    <span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Size: ${item.size} | Qty: ${item.qty}</span>
+                                </div>
+                                <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2"><i class="far fa-trash-alt text-lg"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1050,14 +1368,17 @@
         
         area.innerHTML = `
             <div class="h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in mt-10">
-                <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl mb-4">
+                <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner">
                     <i class="fas fa-check"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Order Successful!</h2>
-                <p class="text-gray-500 mb-6">Your order ID is <span class="font-bold">${orderId}</span>. You can track it in the Orders tab.</p>
-                <button onclick="switchTab('orders')" class="bg-primary text-white px-8 py-3 rounded-lg font-bold w-full">VIEW ORDERS</button>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h2>
+                <p class="text-gray-500 mb-8 text-sm">Your order ID is <span class="font-bold text-gray-800">${orderId}</span>.<br>Admin will verify and process it shortly.</p>
+                <button onclick="switchTab('orders')" class="bg-primary text-white px-8 py-3.5 rounded-xl font-bold w-full shadow-lg">VIEW MY ORDERS</button>
             </div>
         `;
+        
+        // Update admin view immediately if running in same session
+        updateAdminOrdersList();
     }
 
     function renderOrders() {
@@ -1076,23 +1397,32 @@
         
         // Reverse array to show newest first
         [...orders].reverse().forEach(o => {
+            // Determine status color
+            let statusColor = 'bg-yellow-100 text-yellow-700';
+            let icon = 'fa-clock';
+            if(o.status === 'Accepted') { statusColor = 'bg-blue-100 text-blue-700'; icon = 'fa-check-circle'; }
+            if(o.status === 'Shipped') { statusColor = 'bg-green-100 text-green-700'; icon = 'fa-truck'; }
+            if(o.status === 'Cancelled') { statusColor = 'bg-red-100 text-red-700'; icon = 'fa-times-circle'; }
+
             const html = `
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
                     <div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2">
-                        <span class="text-xs font-bold text-gray-500">Order ${o.id}</span>
-                        <span class="text-xs text-gray-400">${o.date}</span>
+                        <span class="text-xs font-bold text-gray-600">ID: ${o.id}</span>
+                        <span class="text-[10px] text-gray-400 font-medium">${o.date}</span>
                     </div>
-                    <div class="flex gap-3 mb-3">
-                        <img src="${o.items[0].image}" class="w-16 h-20 object-cover rounded bg-gray-100">
-                        <div>
-                            <p class="text-sm font-medium text-gray-800 line-clamp-1">${o.items[0].title}</p>
+                    <div class="flex gap-4 mb-4">
+                        <img src="${o.items[0].images[0]}" class="w-16 h-20 object-cover rounded-lg border border-gray-100">
+                        <div class="flex-grow">
+                            <p class="text-sm font-medium text-gray-800 line-clamp-2 leading-snug">${o.items[0].title}</p>
                             <p class="text-xs text-gray-500 mt-1">${o.items.length > 1 ? `+ ${o.items.length - 1} more items` : `Size: ${o.items[0].size}`}</p>
-                            <span class="inline-block mt-2 bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${o.status}</span>
+                            <div class="mt-2 inline-flex items-center gap-1 ${statusColor} text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                                <i class="fas ${icon}"></i> ${o.status}
+                            </div>
                         </div>
                     </div>
-                    <div class="flex justify-between items-center pt-2 border-t border-gray-50">
-                        <p class="text-xs text-gray-500">Total Amount</p>
-                        <p class="font-bold text-gray-900">₹${o.total}</p>
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-50">
+                        <p class="text-xs font-bold text-gray-400 uppercase">Order Total</p>
+                        <p class="font-extrabold text-gray-900 text-lg">₹${o.total}</p>
                     </div>
                 </div>
             `;
@@ -1102,16 +1432,43 @@
 
     // --- ADMIN LOGIC ---
 
+    function switchAdminTab(tabId) {
+        ['admin-products', 'admin-orders'].forEach(t => {
+            document.getElementById(`${t}-view`).classList.add('hidden');
+            document.getElementById(`${t}-view`).classList.remove('block');
+            document.getElementById(`adm-tab-btn-${t.split('-')[1]}`).classList.replace('border-b-2', 'text-gray-400');
+            document.getElementById(`adm-tab-btn-${t.split('-')[1]}`).classList.remove('border-white', 'text-white');
+        });
+        
+        document.getElementById(`${tabId}-view`).classList.remove('hidden');
+        document.getElementById(`${tabId}-view`).classList.add('block');
+        
+        const btnId = `adm-tab-btn-${tabId.split('-')[1]}`;
+        document.getElementById(btnId).classList.remove('text-gray-400');
+        document.getElementById(btnId).classList.add('border-b-2', 'border-white', 'text-white');
+    }
+
     function handleAdminSubmit(e) {
         e.preventDefault();
         
+        // Collect Images
+        let imgUrls = [];
+        const img1 = document.getElementById('admin-img1').value;
+        const img2 = document.getElementById('admin-img2').value;
+        const img3 = document.getElementById('admin-img3').value;
+        const img4 = document.getElementById('admin-img4').value;
+        if(img1) imgUrls.push(img1);
+        if(img2) imgUrls.push(img2);
+        if(img3) imgUrls.push(img3);
+        if(img4) imgUrls.push(img4);
+
         const newProduct = {
             id: Date.now(),
             title: document.getElementById('admin-title').value,
             brand: document.getElementById('admin-brand').value,
             price: parseInt(document.getElementById('admin-price').value),
-            mrp: parseInt(document.getElementById('admin-price').value) + 300,
-            image: document.getElementById('admin-img').value,
+            mrp: parseInt(document.getElementById('admin-mrp').value),
+            images: imgUrls,
             sizes: document.getElementById('admin-sizes').value.split(',').map(s => s.trim()),
             desc: document.getElementById('admin-desc').value
         };
@@ -1123,33 +1480,89 @@
         e.target.reset();
         
         // Update Views
-        updateAdminList();
+        updateAdminProductList();
         renderProducts(); // Update reseller view behind the scenes
         
-        alert("Product added successfully! Resellers can see it now.");
+        alert("Product added successfully! It is now live in the Reseller App.");
     }
 
-    function updateAdminList() {
+    function updateAdminProductList() {
         const list = document.getElementById('admin-product-list');
         list.innerHTML = '';
         products.forEach((p, idx) => {
             list.innerHTML += `
-                <div class="flex items-center gap-4 border p-3 rounded bg-gray-50">
-                    <img src="${p.image}" class="w-12 h-12 object-cover rounded">
-                    <div class="flex-grow">
-                        <p class="font-bold text-sm truncate">${p.title}</p>
-                        <p class="text-xs text-gray-500">${p.brand} | ₹${p.price}</p>
+                <div class="flex items-center gap-4 border border-gray-100 p-3 rounded-lg bg-white shadow-sm">
+                    <img src="${p.images[0]}" class="w-16 h-16 object-cover rounded bg-gray-50 border">
+                    <div class="flex-grow overflow-hidden">
+                        <p class="font-bold text-sm text-gray-800 truncate">${p.title}</p>
+                        <p class="text-xs font-bold text-primary mt-1">₹${p.price} <span class="text-gray-400 font-normal line-through ml-1">₹${p.mrp}</span></p>
+                        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wide">${p.brand} • ${p.images.length} Photos</p>
                     </div>
-                    <button onclick="deleteAdminProduct(${idx})" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button>
+                    <button onclick="deleteAdminProduct(${idx})" class="text-red-500 hover:bg-red-50 p-2 rounded transition"><i class="fas fa-trash"></i></button>
                 </div>
             `;
         });
     }
 
+    function updateAdminOrdersList() {
+        const tbody = document.getElementById('admin-orders-table-body');
+        const noOrders = document.getElementById('admin-no-orders');
+        
+        if(orders.length === 0) {
+            tbody.innerHTML = '';
+            noOrders.classList.remove('hidden');
+            return;
+        }
+        
+        noOrders.classList.add('hidden');
+        tbody.innerHTML = '';
+        
+        [...orders].reverse().forEach(o => {
+            let statusBadge = '';
+            if(o.status === 'Placed') statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-[10px] font-bold">Placed</span>`;
+            else if(o.status === 'Accepted') statusBadge = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-bold">Accepted</span>`;
+            else if(o.status === 'Shipped') statusBadge = `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-[10px] font-bold">Shipped</span>`;
+            else statusBadge = `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-[10px] font-bold">${o.status}</span>`;
+
+            tbody.innerHTML += `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium text-gray-900">${o.id}</td>
+                    <td class="px-4 py-3">
+                        <p class="font-medium">${resellerProfile.name}</p>
+                        <p class="text-[10px] text-gray-500">${resellerProfile.phone}</p>
+                    </td>
+                    <td class="px-4 py-3 text-xs">${o.items.length} items<br><span class="text-gray-400">Total ₹${o.total}</span></td>
+                    <td class="px-4 py-3 font-bold">₹${o.total}</td>
+                    <td class="px-4 py-3" id="admin-status-badge-${o.id}">${statusBadge}</td>
+                    <td class="px-4 py-3">
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs border border-gray-300 rounded p-1 outline-none">
+                            <option value="Placed" ${o.status==='Placed'?'selected':''}>Placed</option>
+                            <option value="Accepted" ${o.status==='Accepted'?'selected':''}>Accept</option>
+                            <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Ship</option>
+                            <option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancel</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function updateOrderStatus(orderId, newStatus) {
+        const order = orders.find(o => o.id === orderId);
+        if(order) {
+            order.status = newStatus;
+            updateAdminOrdersList(); // Refresh admin view
+            renderOrders(); // Refresh reseller view behind scenes
+            
+            // Show toast in admin panel
+            alert(`Order ${orderId} marked as ${newStatus}`);
+        }
+    }
+
     function deleteAdminProduct(idx) {
-        if(confirm("Are you sure you want to delete this catalog?")) {
+        if(confirm("Are you sure you want to remove this catalog from the app?")) {
             products.splice(idx, 1);
-            updateAdminList();
+            updateAdminProductList();
             renderProducts();
         }
     }
