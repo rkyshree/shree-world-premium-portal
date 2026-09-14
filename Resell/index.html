@@ -1,1495 +1,789 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <title>SHRAYNEX | Resell & Earn</title>
-    <meta name="description" content="SHRAYNEX - Start your online reselling business with zero investment. Discover products, add your margin and earn.">
-    <meta name="theme-color" content="#e11d48">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * { box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: #f8f9fa; color: #111827; overflow-x: hidden; }
-        .app, .customer-app { width: 100%; max-width: 520px; min-height: 100vh; margin: auto; background: #fff; position: relative; box-shadow: 0 0 30px rgba(0,0,0,.08); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-        
-        /* Modals & Loaders */
-        .loader { width: 22px; height: 22px; border: 3px solid #e5e7eb; border-top-color: #e11d48; border-radius: 50%; animation: spin .8s linear infinite; }
-        .loader-white { border-color: rgba(255,255,255,.3); border-top-color: #fff; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .modal { opacity: 0; pointer-events: none; transition: .25s ease; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .modal-box { transform: translateY(30px); transition: .25s ease; }
-        .modal.active .modal-box { transform: translateY(0); }
-        .modal-slide-up { transform: translateY(100%); transition: .3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .modal.active .modal-slide-up { transform: translateY(0); }
-        
-        .page { display: none; }
-        .page.active { display: block; }
-        
-        .input { width: 100%; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; outline: none; transition: .2s; background: #f9fafb; font-size: 14px; }
-        .input:focus { border-color: #e11d48; background: #fff; }
-        
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-confirmed { background: #dbeafe; color: #1d4ed8; }
-        .status-processing { background: #ede9fe; color: #6d28d9; }
-        .status-shipped { background: #e0e7ff; color: #4338ca; }
-        .status-delivered { background: #dcfce7; color: #15803d; }
-        .status-cancelled { background: #fee2e2; color: #b91c1c; }
-        
-        .top-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fff; border-bottom: 1px solid #f3f4f6; position: sticky; top: 0; z-index: 40; }
-        .brand-logo { font-size: 20px; font-weight: 800; color: #111827; letter-spacing: -0.5px; }
-        .brand-logo span { color: #e11d48; }
-        
-        .search-container { padding: 10px 16px; background: #fff; position: sticky; top: 53px; z-index: 30; }
-        
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 520px; background: #fff; border-top: 1px solid #e5e7eb; z-index: 40; display: flex; justify-content: space-around; padding: 8px 0; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #6b7280; font-size: 10px; font-weight: 600; background: none; border: none; padding: 4px 8px; cursor: pointer; }
-        .nav-item.active { color: #e11d48; }
-
-        /* Flipkart Style Grid */
-        .grid-feed { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; background: #f1f2f4; min-height: 100vh; padding-bottom: 80px; }
-        .flip-card { background: #fff; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; border: 1px solid #e5e7eb; }
-        .flip-card-img-wrap { position: relative; width: 100%; aspect-ratio: 3/4; background: #f8f9fa; }
-        .flip-card-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .flip-card-details { padding: 8px; display: flex; flex-direction: column; flex-grow: 1; }
-        .flip-brand { font-size: 11px; color: #878787; font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
-        .flip-title { font-size: 12px; color: #212121; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .flip-price-row { display: flex; align-items: baseline; gap: 6px; margin-top: auto; padding-top: 8px; }
-        .flip-price { font-size: 16px; font-weight: 700; color: #212121; }
-        .flip-mrp { font-size: 12px; color: #878787; text-decoration: line-through; }
-        .flip-discount { font-size: 12px; font-weight: 600; color: #388e3c; }
-        .flip-delivery { font-size: 10px; color: #212121; margin-top: 4px; background: #f1f2f4; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-
-        /* Product Detail Modal */
-        .size-btn { border: 1px solid #e5e7eb; background: #fff; color: #374151; width: 40px; height: 40px; border-radius: 50%; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .size-btn.selected { border-color: #e11d48; background: #fff1f2; color: #e11d48; }
-        
-        .profile-menu-item { display: flex; align-items: center; padding: 16px; background: #fff; color: #374151; text-decoration: none; border-bottom: 1px solid #f3f4f6; cursor: pointer; width: 100%; text-align: left;}
-        .profile-menu-item i { width: 24px; color: #6b7280; font-size: 18px; margin-right: 12px; text-align: center; }
-        .profile-section-divider { height: 8px; background: #f3f4f6; }
-        
-        /* Links Grid */
-        .quick-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .q-link-card { background: white; border: 1px solid #f3f4f6; border-radius: 16px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: 0.2s; }
-        .q-link-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .q-link-icon { font-size: 28px; margin-bottom: 8px; }
-        
-        .image-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
-        .image-slider img { flex: 0 0 100%; width: 100%; scroll-snap-align: start; object-fit: cover; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SHRAYNEX | Resell & Earn</title>
+<meta name="description" content="SHRAYNEX - Start your online reselling business with zero investment.">
+<meta name="theme-color" content="#e11d48">
+<!-- Preconnect for faster loading -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<!-- Tailwind & Fonts & Icons -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;overflow-x:hidden}
+.app{width:100%;max-width:520px;min-height:100vh;margin:auto;background:#fff;position:relative;box-shadow:0 0 30px rgba(0,0,0,.08)}
+.hide-scrollbar::-webkit-scrollbar{display:none}.hide-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
+.loader{width:22px;height:22px;border:3px solid #e5e7eb;border-top-color:#e11d48;border-radius:50%;animation:spin .8s linear infinite}
+.loader-white{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal{opacity:0;pointer-events:none;transition:.2s ease;z-index:9999;}.modal.active{opacity:1;pointer-events:auto}
+.modal-box{transform:translateY(30px);transition:.2s ease}.modal.active .modal-box{transform:translateY(0)}
+.page{display:none}.page.active{display:block}
+.bottom-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.product-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.product-slider img{min-width:100%;scroll-snap-align:center;object-fit:cover;}
+.input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;outline:none;transition:.2s;background:#fff}
+.input:focus{border-color:#e11d48;box-shadow:0 0 0 3px rgba(225,29,72,.1)}
+.card{border:1px solid #f1f5f9;border-radius:12px;background:#fff;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+/* Status Colors */
+.status-pending{background:#fef3c7;color:#92400e}.status-confirmed{background:#dbeafe;color:#1d4ed8}
+.status-processing{background:#ede9fe;color:#6d28d9}.status-shipped{background:#e0e7ff;color:#4338ca}
+.status-delivered{background:#dcfce7;color:#15803d}.status-cancelled{background:#fee2e2;color:#b91c1c}
+.admin-tab.active{background:#111827;color:#fff}
+/* Flipkart Style Grid */
+.grid-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.product-card-compact { cursor: pointer; display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+</style>
 </head>
 <body>
-
-<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[300] hidden">
-    <div id="toastText" class="bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl text-sm font-semibold">Notification</div>
+<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[9999] hidden">
+  <div id="toastText" class="bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl text-sm font-semibold">Notification</div>
 </div>
 
+<!-- LANDING PAGE -->
 <section id="landingPage" class="page active">
-    <div class="app pb-10">
-        <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b">
-            <div class="px-5 py-4 flex items-center justify-between">
-                <div>
-                    <div class="text-2xl font-extrabold tracking-tight text-rose-600">SHRAYNEX</div>
-                    <div class="text-[10px] text-gray-400 font-medium">RESELL • SHARE • EARN</div>
-                </div>
-                <button onclick="openAuthModal()" class="bg-gray-900 text-white px-4 py-2.5 rounded-full text-sm font-bold">Login</button>
-            </div>
-        </header>
-
-        <section class="px-6 py-10 bg-gradient-to-b from-rose-50 to-white">
-            <div class="inline-flex items-center gap-2 bg-white border border-rose-100 px-3 py-1.5 rounded-full text-xs font-bold text-rose-600 mb-5">
-                <span>🚀</span>Zero Investment Reselling
-            </div>
-            <h1 class="text-4xl font-extrabold leading-tight text-gray-900">Start Your <span class="text-rose-600">Online Business</span> Today</h1>
-            <p class="text-gray-600 mt-4 leading-relaxed">Discover products, add your own profit margin, share them with customers and grow your business.</p>
-            <button onclick="openAuthModal()" class="w-full mt-7 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg">Start Reselling →</button>
-        </section>
-
-        <!-- HOW SHRAYNEX WORKS SECTION -->
-        <section class="px-6 py-10 bg-white">
-            <h2 class="text-3xl font-extrabold text-gray-900 text-center">How <span class="text-rose-600">SHRAYNEX</span> Works</h2>
-            <p class="text-center text-gray-500 text-sm mt-2 mb-8">Start selling in three simple steps.</p>
-            
-            <div class="space-y-6">
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-xl shadow-inner">1</div>
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-lg">Discover Products</h3>
-                        <p class="text-sm text-gray-600 mt-1 leading-relaxed">Browse high-quality products available in the exclusive SHRAYNEX catalogue.</p>
-                    </div>
-                </div>
-                
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-xl shadow-inner">2</div>
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-lg">Add Your Margin</h3>
-                        <p class="text-sm text-gray-600 mt-1 leading-relaxed">Decide your customer selling price and instantly see your expected profit.</p>
-                    </div>
-                </div>
-                
-                <div class="flex gap-4">
-                    <div class="w-12 h-12 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-xl shadow-inner">3</div>
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-lg">Share & Earn</h3>
-                        <p class="text-sm text-gray-600 mt-1 leading-relaxed">Share products with your customers via WhatsApp and start earning on every sale.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- New Quick Links Section -->
-        <section class="px-5 py-8 bg-gray-50 border-t border-b">
-            <h2 class="text-xl font-extrabold text-gray-900 mb-6">Explore More</h2>
-            <div class="quick-links-grid">
-                <a href="https://www.rkyshree.in/growth" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">📈</div>
-                    <span class="text-xs font-bold text-gray-700">Growth</span>
-                </a>
-                <a href="https://www.rkyshree.in/Tools" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">🧰</div>
-                    <span class="text-xs font-bold text-gray-700">Tools</span>
-                </a>
-                <a href="https://www.rkyshree.in/Edvynox" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">🎓</div>
-                    <span class="text-xs font-bold text-gray-700">Edvynox</span>
-                </a>
-                <a href="https://www.rkyshree.in/Book" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">📚</div>
-                    <span class="text-xs font-bold text-gray-700">Books</span>
-                </a>
-                <a href="https://www.rkyshree.in/FreePoster" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">🖼️</div>
-                    <span class="text-xs font-bold text-gray-700">Free Poster</span>
-                </a>
-                <a href="https://www.rkyshree.in/Flight" target="_blank" class="q-link-card">
-                    <div class="q-link-icon">✈️</div>
-                    <span class="text-xs font-bold text-gray-700">Flight Booking</span>
-                </a>
-            </div>
-        </section>
-
-        <!-- Updated Footer with Professional Contact Info -->
-        <footer class="bg-gray-950 text-white px-6 py-10">
-            <h2 class="font-extrabold text-2xl mb-6">SHRAY<span class="text-rose-500">NEX</span></h2>
-            
-            <div class="space-y-4 mb-8">
-                <div class="flex items-start gap-3 text-gray-300 text-sm">
-                    <i class="fa-solid fa-location-dot mt-1 text-rose-500"></i>
-                    <p>Gorakhpur<br>Uttar Pradesh, India</p>
-                </div>
-                <div class="flex items-center gap-3 text-gray-300 text-sm">
-                    <i class="fa-solid fa-envelope text-rose-500"></i>
-                    <a href="mailto:shraynexofficial@gmail.com" class="hover:text-white">shraynexofficial@gmail.com</a>
-                </div>
-                <div class="flex items-center gap-3 text-gray-300 text-sm">
-                    <i class="fa-solid fa-phone text-rose-500"></i>
-                    <a href="tel:9451239239" class="hover:text-white">+91 9451239239</a>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-8 pt-6 border-t border-gray-800">
-                <button onclick="openPolicy('about')" class="text-left text-sm text-gray-400 hover:text-white">About Us</button>
-                <button onclick="openPolicy('privacy')" class="text-left text-sm text-gray-400 hover:text-white">Privacy Policy</button>
-                <button onclick="openPolicy('terms')" class="text-left text-sm text-gray-400 hover:text-white">Terms & Conditions</button>
-                <button onclick="openPolicy('help')" class="text-left text-sm text-gray-400 hover:text-white">Help & Support</button>
-            </div>
-
-            <div class="border-t border-gray-800 pt-6">
-                <button onclick="openAdminLogin()" class="w-full bg-gray-900 border border-gray-700 text-gray-300 py-3 rounded-xl font-bold text-sm hover:bg-gray-800 transition">
-                    ⚙️ Admin Panel
-                </button>
-            </div>
-            <div class="text-center text-[10px] text-gray-600 mt-8">© 2026 SHRAYNEX. All rights reserved.</div>
-        </footer>
-    </div>
-</section>
-
-<!-- AUTH MODAL (Unchanged Structure) -->
-<div id="authModal" class="modal fixed inset-0 z-[90] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center mb-5">
-            <div><h2 class="text-xl font-extrabold">Welcome to SHRAYNEX</h2><p id="authSubtitle" class="text-xs text-gray-500 mt-1">Login to your reseller account</p></div>
-            <button onclick="closeAuthModal()" class="text-2xl text-gray-400">×</button>
-        </div>
-        <div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl mb-5">
-            <button id="loginModeBtn" onclick="setAuthMode('login')" class="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm">Login</button>
-            <button id="signupModeBtn" onclick="setAuthMode('signup')" class="py-2.5 rounded-lg text-gray-500 font-bold text-sm">Create Account</button>
-        </div>
-        <button id="googleBtn" onclick="loginWithGoogle()" class="w-full border border-gray-300 rounded-xl py-3.5 flex items-center justify-center gap-3 font-semibold hover:bg-gray-50"></button>
-        <div class="flex items-center gap-3 my-5">
-            <div class="h-px bg-gray-200 flex-1"></div><span class="text-xs text-gray-400">OR</span><div class="h-px bg-gray-200 flex-1"></div>
-        </div>
-        <form id="emailForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
-            <div id="signupFields">
-                <input id="authName" type="text" class="input" placeholder="Full Name">
-                <input id="authPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input mt-3" placeholder="Mobile Number">
-            </div>
-            <input id="authEmail" type="email" class="input" placeholder="Email Address" required>
-            <input id="authPassword" type="password" minlength="6" class="input" placeholder="Password (min 6 chars)" required>
-            <button id="emailBtn" type="submit" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold">Login</button>
-            <button id="forgotBtn" type="button" onclick="forgotPassword()" class="w-full text-sm text-rose-600 font-semibold">Forgot Password?</button>
-        </form>
-    </div>
-</div>
-
-<section id="userPage" class="page">
-    <div class="app">
-        <header class="top-header">
-            <div class="brand-logo">SHRAY<span>NEX</span></div>
-            <div class="flex gap-4 text-gray-600 text-xl">
-                <i class="fa-regular fa-bell"></i>
-            </div>
-        </header>
-
-        <div id="approvalNotice" class="hidden mx-4 mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm">
-            <div class="font-bold text-amber-800">⏳ Account approval pending</div>
-            <p class="text-xs text-amber-700 mt-1">Browse products now. Order placement available after admin approval.</p>
-        </div>
-
-        <!-- HOME / FEED TAB (Flipkart Style Grid) -->
-        <div id="feedTab">
-            <div class="search-container shadow-sm">
-                <div class="flex items-center bg-gray-100 border border-gray-200 rounded-lg px-3 py-2">
-                    <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                    <input id="productSearch" oninput="filterProducts()" class="flex-1 bg-transparent border-none outline-none text-sm ml-2" placeholder="Search for products, brands...">
-                </div>
-            </div>
-
-            <!-- Products Grid -->
-            <div id="productFeed" class="grid-feed">
-                <!-- Skeleton Loader -->
-                <div class="flip-card animate-pulse">
-                    <div class="flip-card-img-wrap bg-gray-200"></div>
-                    <div class="flip-card-details">
-                        <div class="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div class="h-3 bg-gray-200 rounded w-full mb-4"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/3"></div>
-                    </div>
-                </div>
-                <div class="flip-card animate-pulse">
-                    <div class="flip-card-img-wrap bg-gray-200"></div>
-                    <div class="flip-card-details">
-                        <div class="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-                        <div class="h-3 bg-gray-200 rounded w-full mb-4"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ORDERS TAB -->
-        <div id="ordersTab" class="hidden bg-gray-50 min-h-screen pb-20">
-            <div class="bg-white p-4 border-b sticky top-[53px] z-30">
-                <h1 class="text-lg font-bold">My Orders</h1>
-            </div>
-            <div id="ordersList" class="p-3 space-y-3">
-                <div class="text-center py-12 text-gray-400">Loading orders...</div>
-            </div>
-        </div>
-
-        <!-- PROFILE TAB -->
-        <div id="profileTab" class="hidden bg-gray-50 min-h-screen pb-20">
-            <div class="bg-white p-4 flex items-center justify-between border-b sticky top-[53px] z-30">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200">
-                        <span id="profileAvatarInitial" class="text-2xl font-bold text-rose-600">S</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-1">
-                            <h2 class="font-bold text-gray-900 text-lg">Hi, <span id="profileName">User</span>!</h2>
-                            <i class="fa-solid fa-circle-check text-green-500 text-sm"></i>
-                        </div>
-                        <p id="profilePhone" class="text-gray-500 text-xs">9451239239</p>
-                    </div>
-                </div>
-                <button onclick="openProfileEdit()" class="text-rose-600 font-bold text-xs uppercase tracking-wide">Edit Profile</button>
-            </div>
-            
-            <div class="bg-white px-4 py-2 flex justify-between items-center text-xs border-b">
-                <span class="text-gray-500 font-medium">Account Status</span>
-                <span id="profileStatus" class="font-bold uppercase tracking-wide bg-amber-50 text-amber-600 px-2 py-1 rounded">PENDING</span>
-            </div>
-
-            <div class="profile-section-divider"></div>
-
-            <div class="bg-white">
-                <button onclick="openBankDetails()" class="profile-menu-item">
-                    <i class="fa-solid fa-building-columns"></i>
-                    <span class="font-medium text-sm flex-1">Bank Details</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-gray-300 mr-0"></i>
-                </button>
-                <div class="profile-menu-item">
-                    <i class="fa-solid fa-wallet"></i>
-                    <span class="font-medium text-sm flex-1">Wallet Balance</span>
-                    <span id="profileWallet" class="font-bold text-lg text-gray-900">₹0</span>
-                </div>
-                <div class="profile-menu-item border-none">
-                    <i class="fa-solid fa-money-bill-trend-up"></i>
-                    <span class="font-medium text-sm flex-1">Total Earnings</span>
-                    <span id="profileEarnings" class="font-bold text-green-600">₹0</span>
-                </div>
-            </div>
-            
-            <div class="bg-white p-4 border-t border-gray-100">
-                <button onclick="openWithdrawModal()" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold shadow-sm">Withdraw Money</button>
-            </div>
-
-            <div class="profile-section-divider"></div>
-            
-            <div class="bg-white">
-                 <h3 class="px-4 pt-4 pb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Quick Links</h3>
-                 <a href="https://www.rkyshree.in/growth" target="_blank" class="profile-menu-item">
-                    <i class="fa-solid fa-arrow-trend-up text-blue-500"></i>
-                    <span class="font-medium text-sm">Growth</span>
-                </a>
-                <a href="https://www.rkyshree.in/Tools" target="_blank" class="profile-menu-item">
-                    <i class="fa-solid fa-toolbox text-orange-500"></i>
-                    <span class="font-medium text-sm">Tools</span>
-                </a>
-                <a href="https://www.rkyshree.in/Edvynox" target="_blank" class="profile-menu-item">
-                    <i class="fa-solid fa-graduation-cap text-purple-500"></i>
-                    <span class="font-medium text-sm">Edvynox</span>
-                </a>
-                <a href="https://www.rkyshree.in/Book" target="_blank" class="profile-menu-item">
-                    <i class="fa-solid fa-book text-green-500"></i>
-                    <span class="font-medium text-sm">Books</span>
-                </a>
-                <a href="https://www.rkyshree.in/FreePoster" target="_blank" class="profile-menu-item">
-                    <i class="fa-solid fa-image text-rose-500"></i>
-                    <span class="font-medium text-sm">Free Poster</span>
-                </a>
-                 <a href="https://www.rkyshree.in/Flight" target="_blank" class="profile-menu-item border-none">
-                    <i class="fa-solid fa-plane-departure text-sky-500"></i>
-                    <span class="font-medium text-sm">Flight Booking</span>
-                </a>
-            </div>
-            
-            <div class="profile-section-divider"></div>
-
-            <div class="bg-white">
-                <button onclick="openPolicy('help')" class="profile-menu-item">
-                    <i class="fa-solid fa-headset text-gray-600"></i>
-                    <span class="font-medium text-sm">Help & Support</span>
-                </button>
-                <button onclick="openPolicy('terms')" class="profile-menu-item border-none">
-                    <i class="fa-solid fa-file-contract text-gray-600"></i>
-                    <span class="font-medium text-sm">Terms & Policies</span>
-                </button>
-            </div>
-
-            <div class="py-8 text-center">
-                <button onclick="logoutUser()" class="border border-red-200 text-red-500 px-8 py-2.5 rounded-full text-sm font-bold bg-red-50">Log Out</button>
-                <div class="text-xs text-gray-400 mt-6">SHRAYNEX App v7.0</div>
-            </div>
-        </div>
-
-        <!-- BOTTOM NAVIGATION -->
-        <nav class="bottom-nav">
-            <button onclick="switchUserTab('feed')" id="navFeed" class="nav-item active">
-                <i class="fa-solid fa-house text-lg mb-1"></i>
-                <span>Home</span>
-            </button>
-            <button onclick="switchUserTab('feed')" class="nav-item">
-                <i class="fa-solid fa-magnifying-glass text-lg mb-1"></i>
-                <span>Search</span>
-            </button>
-            <button onclick="switchUserTab('orders')" id="navOrders" class="nav-item">
-                <i class="fa-solid fa-bag-shopping text-lg mb-1"></i>
-                <span>Orders</span>
-            </button>
-            <button onclick="switchUserTab('profile')" id="navProfile" class="nav-item">
-                <i class="fa-regular fa-user text-lg mb-1"></i>
-                <span>Account</span>
-            </button>
-        </nav>
-    </div>
-</section>
-
-<!-- PRODUCT DETAIL MODAL (Full Screen Slide Up) -->
-<div id="productDetailModal" class="modal fixed inset-0 z-[100] bg-black/50 flex flex-col justify-end">
-    <div class="modal-slide-up bg-white w-full h-[95vh] max-w-md mx-auto rounded-t-2xl flex flex-col overflow-hidden relative">
-        
-        <!-- Header -->
-        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-10 bg-gradient-to-b from-black/50 to-transparent pointer-events-none">
-            <button onclick="closeProductDetail()" class="w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center pointer-events-auto backdrop-blur-sm"><i class="fa-solid fa-arrow-left"></i></button>
-            <div class="flex gap-3 pointer-events-auto">
-                <button class="w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm"><i class="fa-regular fa-heart"></i></button>
-            </div>
-        </div>
-
-        <div class="flex-1 overflow-y-auto pb-24">
-            <!-- Image Slider with Download Button -->
-            <div class="relative">
-                <div id="detailImageSlider" class="image-slider h-[450px] bg-gray-100">
-                    <!-- Images injected via JS -->
-                </div>
-                <button id="downloadBtn" onclick="downloadProductImages()" class="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm text-gray-900 border border-gray-200 shadow-xl px-4 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-gray-50 active:scale-95 transition-all z-10">
-                    <i class="fa-solid fa-download text-rose-600"></i> Download Photos
-                </button>
-            </div>
-            
-            <div class="p-4 border-b">
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1" id="detailBrand">BRAND</div>
-                <h1 class="text-lg font-semibold text-gray-900 leading-snug mb-3" id="detailTitle">Product Title</h1>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-2xl font-bold text-gray-900" id="detailPrice">₹0</span>
-                    <span class="text-sm text-gray-500 line-through" id="detailMrp">₹0</span>
-                    <span class="text-sm font-bold text-green-600" id="detailDiscount">0% off</span>
-                </div>
-                <div class="mt-2 text-xs font-semibold text-gray-700 bg-gray-100 inline-block px-2 py-1 rounded" id="detailDelivery">Free Delivery</div>
-            </div>
-
-            <div class="p-4 border-b">
-                <h3 class="font-bold text-gray-900 mb-3">Select Size</h3>
-                <div class="flex gap-3" id="sizeSelectorContainer">
-                    <button class="size-btn" onclick="selectSize('S', this)">S</button>
-                    <button class="size-btn selected" onclick="selectSize('M', this)">M</button>
-                    <button class="size-btn" onclick="selectSize('L', this)">L</button>
-                    <button class="size-btn" onclick="selectSize('XL', this)">XL</button>
-                    <button class="size-btn" onclick="selectSize('XXL', this)">XXL</button>
-                </div>
-                <p class="text-xs text-rose-600 mt-2 font-medium hidden" id="sizeWarning">Please select a size to continue</p>
-            </div>
-
-            <div class="p-4">
-                <h3 class="font-bold text-gray-900 mb-2">Product Details</h3>
-                <p class="text-sm text-gray-600 whitespace-pre-line" id="detailDescription">Details here.</p>
-            </div>
-        </div>
-
-        <!-- Sticky Bottom Action Bar -->
-        <div class="absolute bottom-0 w-full bg-white border-t p-3 flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-            <button onclick="openShareFromDetail()" class="flex-1 bg-green-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2">
-                <i class="fa-brands fa-whatsapp text-lg"></i> Share & Earn
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- SHARE MARGIN SETTER MODAL -->
-<div id="shareModal" class="modal fixed inset-0 z-[110] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center"><h2 class="text-xl font-bold">Set Customer Price</h2><button onclick="closeShareModal()" class="text-2xl text-gray-400">×</button></div>
-        
-        <div class="flex gap-4 mt-5">
-            <img id="shareProductImg" src="" class="w-16 h-20 object-cover rounded-lg border">
-            <div>
-                <p id="shareProductName" class="font-semibold text-sm text-gray-800 line-clamp-2">Product Name</p>
-                <p class="text-xs text-gray-500 mt-1">Base Price: <span class="font-bold text-gray-900">₹<span id="shareBasePrice">0</span></span></p>
-            </div>
-        </div>
-
-        <div class="bg-rose-50 rounded-xl p-4 mt-5 border border-rose-100">
-            <label class="text-sm font-semibold text-gray-800">Selling Price for Customer</label>
-            <div class="flex mt-2 relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>
-                <input id="sellingPrice" type="number" min="1" oninput="calculateProfit()" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-200 font-bold text-lg" placeholder="Enter amount (e.g. 999)">
-            </div>
-            <div class="mt-4 flex justify-between items-center pt-3 border-t border-rose-200">
-                <span class="text-sm font-semibold text-gray-600">Your Profit Margin</span>
-                <span id="profitAmount" class="font-extrabold text-green-600 text-xl">₹0</span>
-            </div>
-        </div>
-        <p class="text-xs text-gray-500 text-center mt-3">We will generate a link for your customer to place this order directly at this price.</p>
-        <button onclick="generateAndShareLink()" class="w-full mt-4 bg-green-500 text-white py-3.5 rounded-xl font-bold flex justify-center items-center gap-2 shadow-lg shadow-green-200">
-            <i class="fa-brands fa-whatsapp text-xl"></i> Share Link on WhatsApp
-        </button>
-    </div>
-</div>
-
-<!-- PROFILE EDIT MODAL -->
-<div id="profileEditModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center mb-5"><h2 class="text-xl font-bold">Edit Profile</h2><button onclick="closeProfileEdit()" class="text-2xl text-gray-400">×</button></div>
-        <form onsubmit="saveProfileDetails(event)" class="space-y-4">
-            <div><label class="text-xs font-bold text-gray-500 uppercase">Full Name</label><input id="editProfileName" class="input mt-1" required></div>
-            <div><label class="text-xs font-bold text-gray-500 uppercase">Mobile Number</label><input id="editProfilePhone" class="input mt-1" type="tel" maxlength="10" required></div>
-            <button type="submit" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold mt-2">Save Details</button>
-        </form>
-    </div>
-</div>
-
-<!-- BANK DETAILS MODAL -->
-<div id="bankDetailsModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center mb-5"><h2 class="text-xl font-bold">Bank Details</h2><button onclick="closeBankDetails()" class="text-2xl text-gray-400">×</button></div>
-        <p class="text-xs text-gray-500 mb-4">Add bank details to withdraw your earnings. Details must match your profile name.</p>
-        <form onsubmit="saveBankDetails(event)" class="space-y-4">
-            <input id="bankName" class="input" placeholder="Bank Name (e.g. State Bank of India)" required>
-            <input id="bankAccountNo" type="password" class="input" placeholder="Account Number" required>
-            <input id="bankAccountNoConfirm" type="text" class="input" placeholder="Confirm Account Number" required>
-            <input id="bankIfsc" class="input uppercase" placeholder="IFSC Code" required>
-            <input id="bankHolderName" class="input" placeholder="Account Holder Name" required>
-            <button type="submit" class="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold mt-2">Update Bank Details</button>
-        </form>
-    </div>
-</div>
-
-<!-- WITHDRAW MODAL -->
-<div id="withdrawModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center mb-5"><h2 class="text-xl font-bold">Withdraw Earnings</h2><button onclick="closeWithdrawModal()" class="text-2xl text-gray-400">×</button></div>
-        <div class="bg-gray-50 p-4 rounded-xl text-center mb-5 border">
-            <p class="text-xs text-gray-500 uppercase font-bold">Available Balance</p>
-            <p class="text-3xl font-extrabold text-green-600 mt-1" id="withdrawMaxBalance">₹0</p>
-        </div>
-        <form onsubmit="requestWithdrawal(event)" class="space-y-4">
-            <div>
-                <label class="text-xs font-bold text-gray-500 uppercase">Amount to Withdraw</label>
-                <div class="flex mt-1 relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>
-                    <input id="withdrawAmount" type="number" min="100" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-rose-500 font-bold text-lg" placeholder="Min ₹100" required>
-                </div>
-            </div>
-            <button type="submit" id="withdrawBtn" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold mt-2">Submit Request</button>
-        </form>
-    </div>
-</div>
-
-<!-- POLICY MODAL -->
-<div id="policyModal" class="modal fixed inset-0 z-[120] bg-black/60 flex items-center justify-center p-4">
-    <div class="modal-box bg-white w-full max-w-md max-h-[85vh] rounded-2xl overflow-hidden flex flex-col">
-        <div class="p-4 border-b flex justify-between items-center bg-gray-50"><h2 id="policyTitle" class="font-extrabold text-lg">Policy</h2><button onclick="closePolicy()" class="text-2xl text-gray-400">×</button></div>
-        <div id="policyContent" class="p-5 text-sm text-gray-600 leading-relaxed overflow-y-auto flex-1"></div>
-    </div>
-</div>
-
-<!-- CUSTOMER CHECKOUT STANDALONE APP (Shown when URL parameters are present) -->
-<div id="customerCheckoutPage" class="hidden customer-app bg-gray-50 min-h-screen">
-    <header class="bg-white p-4 text-center border-b shadow-sm sticky top-0 z-30">
-        <div class="text-xl font-extrabold tracking-tight text-gray-900">Secure Checkout</div>
-    </header>
-    
-    <div id="checkoutLoading" class="p-10 text-center">
-        <div class="loader border-rose-600 mx-auto"></div>
-        <p class="mt-4 text-gray-500 font-medium text-sm">Preparing your order...</p>
-    </div>
-
-    <div id="checkoutContent" class="hidden pb-24">
-        <!-- Product Summary -->
-        <div class="bg-white p-4 border-b">
-            <div class="flex gap-4">
-                <img id="coProductImg" src="" class="w-20 h-28 object-cover rounded border">
-                <div class="flex flex-col flex-1">
-                    <h2 id="coProductTitle" class="font-semibold text-sm text-gray-800 line-clamp-2">Product Name</h2>
-                    <div class="mt-auto">
-                        <span id="coPrice" class="text-xl font-extrabold text-gray-900">₹0</span>
-                        <span class="text-xs bg-green-50 text-green-700 font-bold px-2 py-1 rounded ml-2">Free Delivery</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Size Selection -->
-        <div class="bg-white p-4 border-b mt-2">
-            <h3 class="font-bold text-gray-900 mb-3 text-sm">1. Select Size</h3>
-            <div class="flex gap-3" id="coSizeContainer">
-                <button class="size-btn" onclick="coSelectSize('S', this)">S</button>
-                <button class="size-btn selected" onclick="coSelectSize('M', this)">M</button>
-                <button class="size-btn" onclick="coSelectSize('L', this)">L</button>
-                <button class="size-btn" onclick="coSelectSize('XL', this)">XL</button>
-                <button class="size-btn" onclick="coSelectSize('XXL', this)">XXL</button>
-            </div>
-        </div>
-
-        <!-- Address Form -->
-        <div class="bg-white p-4 border-b mt-2">
-            <h3 class="font-bold text-gray-900 mb-4 text-sm">2. Delivery Address</h3>
-            <form id="coForm" onsubmit="submitCustomerOrder(event)" class="space-y-4">
-                <input id="coName" class="input bg-white" placeholder="Full Name" required>
-                <input id="coPhone" class="input bg-white" type="tel" maxlength="10" pattern="[0-9]{10}" placeholder="Mobile Number" required>
-                <textarea id="coAddress" class="input bg-white min-h-[80px]" placeholder="Complete Delivery Address (House no, Street, Landmark)" required></textarea>
-                <div class="flex gap-3">
-                    <input id="coPincode" class="input bg-white w-1/2" type="tel" maxlength="6" pattern="[0-9]{6}" placeholder="Pincode" required>
-                    <input id="coCity" class="input bg-white w-1/2" placeholder="City" required>
-                </div>
-                
-                <!-- Quantity selection moved here to fit flow -->
-                 <div class="flex items-center justify-between border border-gray-200 p-3 rounded-xl mt-4">
-                    <span class="text-sm font-semibold">Quantity</span>
-                    <div class="flex items-center gap-4">
-                        <button type="button" onclick="coUpdateQty(-1)" class="w-8 h-8 rounded-full bg-gray-100 font-bold">-</button>
-                        <span id="coQty" class="font-bold">1</span>
-                        <button type="button" onclick="coUpdateQty(1)" class="w-8 h-8 rounded-full bg-gray-100 font-bold">+</button>
-                    </div>
-                </div>
-
-                <div class="bg-green-50 border border-green-100 p-4 rounded-xl mt-6">
-                    <div class="flex justify-between text-sm mb-1"><span class="text-gray-600">Total Amount</span><span class="font-bold" id="coTotalAmt">₹0</span></div>
-                    <div class="flex justify-between text-sm"><span class="text-gray-600">Payment Mode</span><span class="font-bold text-green-700">Cash on Delivery</span></div>
-                </div>
-            </form>
-        </div>
-
-        <div class="fixed bottom-0 w-full max-w-[520px] bg-white p-3 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-             <button onclick="document.getElementById('coForm').requestSubmit()" id="coSubmitBtn" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl text-lg shadow-lg">Place Order - COD</button>
-        </div>
-    </div>
-    
-    <!-- Success Screen -->
-    <div id="checkoutSuccess" class="hidden flex-col items-center justify-center min-h-screen p-6 text-center bg-white">
-        <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-4xl mb-6">✓</div>
-        <h2 class="text-2xl font-extrabold text-gray-900">Order Confirmed!</h2>
-        <p class="text-gray-500 mt-2">Your order has been placed successfully and will be delivered soon.</p>
-        <p class="text-sm font-bold mt-6 bg-gray-100 px-4 py-2 rounded-lg">Order ID: <span id="coSuccessId" class="text-rose-600">#000000</span></p>
-    </div>
-</div>
-
-
-<!-- ADMIN LOGIN -->
-<div id="adminLoginModal" class="modal fixed inset-0 z-[180] bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-        <div class="flex justify-between items-center"><div><h2 class="text-xl font-extrabold">⚙️ SHRAYNEX Admin</h2><p class="text-xs text-gray-500 mt-1">Authorized administrators only</p></div><button onclick="closeAdminLogin()" class="text-2xl text-gray-400">×</button></div>
-        <form onsubmit="handleAdminLogin(event)" class="space-y-3 mt-6">
-            <input id="adminEmail" type="email" class="input" placeholder="Admin Email" required>
-            <input id="adminPassword" type="password" minlength="6" class="input" placeholder="Admin Password" required>
-            <button id="adminLoginBtn" type="submit" class="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold">Admin Login</button>
-        </form>
-    </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="adminPanelModal" class="modal fixed inset-0 z-[170] bg-gray-100 overflow-y-auto">
-<div class="min-h-screen max-w-[1100px] mx-auto bg-gray-100">
-<header class="sticky top-0 z-30 bg-gray-950 text-white">
-<div class="px-4 py-4 flex items-center justify-between gap-3">
-<div><div class="font-extrabold text-lg">SHRAYNEX ADMIN</div><div id="adminIdentity" class="text-[10px] text-gray-400">Administrator</div></div>
-<div class="flex gap-2"><button onclick="refreshAdmin()" class="border border-gray-700 px-3 py-2 rounded-lg text-xs">↻ Refresh</button><button onclick="closeAdminPanel()" class="bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold">Close</button></div>
+<div class="app">
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b">
+<div class="px-5 py-4 flex items-center justify-between">
+<div><div class="text-2xl font-extrabold tracking-tight text-rose-600">SHRAYNEX</div><div class="text-[10px] text-gray-400 font-medium">RESELL • SHARE • EARN</div></div>
+<button onclick="openAuthModal()" class="bg-gray-900 text-white px-4 py-2 rounded-full text-sm font-bold">Login</button>
 </div>
 </header>
-<div class="p-4">
-<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-<div class="bg-white rounded-xl shadow-sm border p-4"><p class="text-xs text-gray-500">Pending Users</p><p id="statPendingUsers" class="text-2xl font-extrabold text-amber-600">0</p></div>
-<div class="bg-white rounded-xl shadow-sm border p-4"><p class="text-xs text-gray-500">Approved Users</p><p id="statApprovedUsers" class="text-2xl font-extrabold text-green-600">0</p></div>
-<div class="bg-white rounded-xl shadow-sm border p-4"><p class="text-xs text-gray-500">Orders</p><p id="statOrders" class="text-2xl font-extrabold">0</p></div>
-<div class="bg-white rounded-xl shadow-sm border p-4"><p class="text-xs text-gray-500">Withdrawal Req</p><p id="statPendingWithdraw" class="text-2xl font-extrabold text-rose-600">0</p></div>
-<div class="bg-white rounded-xl shadow-sm border p-4"><p class="text-xs text-gray-500">Revenue</p><p id="statRevenue" class="text-2xl font-extrabold">₹0</p></div>
-</div>
-<div class="flex gap-2 overflow-x-auto hide-scrollbar mt-5 pb-1">
-<button id="adminTabDashboard" onclick="switchAdminTab('dashboard')" class="admin-tab active shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold">Dashboard</button>
-<button id="adminTabUsers" onclick="switchAdminTab('users')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold border">Users</button>
-<button id="adminTabProducts" onclick="switchAdminTab('products')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold border">Products</button>
-<button id="adminTabOrders" onclick="switchAdminTab('orders')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold border">Orders</button>
-<button id="adminTabWallet" onclick="switchAdminTab('wallet')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold border">Wallet & Payouts</button>
-</div>
+<section class="px-6 py-10 bg-gradient-to-b from-rose-50 to-white">
+<h1 class="text-3xl font-extrabold leading-tight text-gray-900">Start Your <span class="text-rose-600">Online Business</span> Today</h1>
+<p class="text-gray-600 mt-3 text-sm">Discover products, add your margin, share on WhatsApp and grow your earnings.</p>
+<button onclick="openAuthModal()" class="w-full mt-6 bg-rose-600 text-white py-3.5 rounded-xl font-bold shadow-lg">Start Reselling →</button>
+</section>
 
-<!-- ADMIN DASHBOARD -->
-<div id="adminDashboardSection" class="admin-section mt-5"><div class="bg-white rounded-xl shadow-sm border p-5"><h2 class="font-extrabold text-lg">Admin Overview</h2><p class="text-sm text-gray-500 mt-1">Manage reseller approvals, catalogue, orders and wallet from here.</p><div id="adminRecentOrders" class="mt-5 space-y-3"></div></div></div>
-<!-- USERS -->
-<div id="adminUsersSection" class="admin-section hidden mt-5"><div class="bg-white rounded-xl shadow-sm border p-5"><div class="flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">Reseller Users</h2><p class="text-xs text-gray-500">Approve new accounts or suspend existing accounts.</p></div><input id="adminUserSearch" oninput="renderAdminUsers()" class="input md:max-w-xs border" placeholder="Search name / email / phone"></div><div id="adminUsersList" class="mt-5 space-y-3"></div></div></div>
-<!-- PRODUCTS -->
-<div id="adminProductsSection" class="admin-section hidden mt-5"><div class="bg-white rounded-xl shadow-sm border p-5"><div class="flex items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">Product Catalogue</h2><p class="text-xs text-gray-500">Add, edit, activate/deactivate or delete products.</p></div><button onclick="openProductEditor()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold">＋ Add Product</button></div><div id="adminProductsList" class="mt-5 space-y-3"></div></div></div>
-<!-- ORDERS -->
-<div id="adminOrdersSection" class="admin-section hidden mt-5"><div class="bg-white rounded-xl shadow-sm border p-5"><div class="flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">All Orders</h2><p class="text-xs text-gray-500">Update order status. Size details are visible here.</p></div><input id="adminOrderSearch" oninput="renderAdminOrders()" class="input md:max-w-xs border" placeholder="Search order / customer / reseller"></div><div id="adminOrdersList" class="mt-5 space-y-3"></div></div></div>
-<!-- WALLET -->
-<div id="adminWalletSection" class="admin-section hidden mt-5"><div class="bg-white rounded-xl shadow-sm border p-5"><h2 class="font-extrabold text-lg">Withdrawal Requests & Manual Wallet</h2><div id="adminWithdrawalsList" class="mt-5 mb-8 space-y-3"></div><hr class="my-5"><h3 class="font-bold mb-3">All Resellers Wallet</h3><div id="adminWalletUsers" class="space-y-3"></div></div></div>
+<!-- HOW IT WORKS SECTION -->
+<section class="px-6 py-8 bg-white border-t border-b border-gray-100">
+<h2 class="text-xl font-extrabold text-center">How SHRAYNEX Works</h2>
+<p class="text-center text-gray-500 text-xs mt-1 mb-6">Start selling in three simple steps.</p>
+<div class="space-y-4">
+<div class="flex gap-4 p-3 bg-gray-50 rounded-xl"><div class="w-10 h-10 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-lg">1</div><div><h3 class="font-bold text-sm">Discover Products</h3><p class="text-xs text-gray-500 mt-1">Browse products available in the SHRAYNEX catalogue.</p></div></div>
+<div class="flex gap-4 p-3 bg-gray-50 rounded-xl"><div class="w-10 h-10 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-lg">2</div><div><h3 class="font-bold text-sm">Add Your Margin</h3><p class="text-xs text-gray-500 mt-1">Decide your customer selling price and see your expected profit.</p></div></div>
+<div class="flex gap-4 p-3 bg-gray-50 rounded-xl"><div class="w-10 h-10 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold text-lg">3</div><div><h3 class="font-bold text-sm">Share & Earn</h3><p class="text-xs text-gray-500 mt-1">Share your product with customers through WhatsApp.</p></div></div>
+</div>
+</section>
 
-</div>
-</div>
-</div>
+<!-- LANDING LINKS SECTION -->
+<section class="px-6 py-8 grid grid-cols-2 gap-3 text-center">
+<a href="https://www.rkyshree.in/growth" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-arrow-trend-up text-blue-500 text-xl mb-1"></i><div class="text-xs font-bold">Growth</div></a>
+<a href="https://www.rkyshree.in/Tools" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-toolbox text-orange-500 text-xl mb-1"></i><div class="text-xs font-bold">Tools</div></a>
+<a href="https://www.rkyshree.in/Edvynox" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-graduation-cap text-purple-500 text-xl mb-1"></i><div class="text-xs font-bold">Edvynox</div></a>
+<a href="https://www.rkyshree.in/Book" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-book text-green-500 text-xl mb-1"></i><div class="text-xs font-bold">Books</div></a>
+<a href="https://www.rkyshree.in/FreePoster" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-image text-pink-500 text-xl mb-1"></i><div class="text-xs font-bold">Free Poster</div></a>
+<a href="https://www.rkyshree.in/Flight" target="_blank" class="p-3 border rounded-xl hover:bg-gray-50"><i class="fa-solid fa-plane text-cyan-500 text-xl mb-1"></i><div class="text-xs font-bold">Flight Booking</div></a>
+</section>
 
-<!-- PRODUCT EDITOR -->
-<div id="productEditorModal" class="modal fixed inset-0 z-[220] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[92vh] overflow-y-auto">
-<div class="flex justify-between items-center"><div><h2 id="productEditorTitle" class="text-xl font-extrabold">Add Product</h2></div><button onclick="closeProductEditor()" class="text-2xl text-gray-400">×</button></div>
-<form onsubmit="saveProduct(event)" class="space-y-3 mt-5">
-<input type="hidden" id="editProductId">
-<input id="productCategoryInput" class="input" placeholder="Brand Name (e.g. Snapnova Collection)" required>
-<textarea id="productTitleInput" class="input min-h-[60px]" placeholder="Full Product Title / Description" required></textarea>
-<div class="grid grid-cols-2 gap-3"><input id="productBasePriceInput" type="number" min="0" class="input" placeholder="Base Price (₹)" required><input id="productMrpInput" type="number" min="0" class="input" placeholder="MRP (₹)"></div>
-<div class="grid grid-cols-2 gap-3"><input id="productDiscountInput" type="number" min="0" max="99" step="0.01" class="input" placeholder="Discount %"><div class="input bg-gray-50 text-gray-500 text-sm flex items-center" id="productDiscountPreview">Discount info</div></div>
-<input id="productImagesInput" class="input" placeholder="Enter up to 4 Image URLs (comma separated)">
-<input id="productDeliveryInput" class="input" placeholder="Delivery Info (e.g. + Free Delivery)">
-<label class="flex items-center gap-3 border rounded-xl p-3"><input id="productActiveInput" type="checkbox" class="w-5 h-5" checked><span class="font-semibold text-sm">Product Visible</span></label>
-<button id="saveProductBtn" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold">Save</button>
+<footer class="bg-gray-950 text-white px-6 py-8 pb-16">
+<div class="flex items-center gap-3 mb-4">
+  <img src="https://ui-avatars.com/api/?name=S&background=e11d48&color=fff&rounded=true" class="w-10 h-10">
+  <div><h2 class="font-extrabold text-lg">SHRAYNEX</h2><p class="text-[10px] text-gray-400">Resell & Earn</p></div>
+</div>
+<div class="space-y-2 text-sm text-gray-300 mt-5">
+  <p><i class="fa-solid fa-envelope mr-2 text-gray-500"></i> shraynexofficial@gmail.com</p>
+  <p><i class="fa-solid fa-phone mr-2 text-gray-500"></i> +91 9451239239</p>
+  <p><i class="fa-solid fa-location-dot mr-2 text-gray-500"></i> Gorakhpur, Uttar Pradesh, India</p>
+</div>
+<div class="flex flex-wrap gap-4 mt-6 text-xs text-gray-400">
+  <button onclick="openPolicy('about')">About Us</button>
+  <button onclick="openPolicy('terms')">Terms & Conditions</button>
+  <button onclick="openPolicy('privacy')">Privacy Policy</button>
+  <button onclick="openPolicy('return')">Help Center</button>
+</div>
+<div class="border-t border-gray-800 mt-6 pt-5">
+<button onclick="openAdminLogin()" class="w-full text-gray-500 py-2 rounded-xl text-xs hover:bg-gray-900"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Panel</button>
+</div>
+</footer>
+</div>
+</section>
+
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 relative">
+<button onclick="closeAuthModal()" class="absolute top-4 right-5 text-2xl text-gray-400">&times;</button>
+<h2 class="text-xl font-extrabold mb-1">Welcome</h2>
+<p id="authSubtitle" class="text-xs text-gray-500 mb-4">Login to your reseller account</p>
+<div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl mb-4">
+<button id="loginModeBtn" onclick="setAuthMode('login')" class="py-2 rounded-lg bg-white shadow-sm font-bold text-sm">Login</button>
+<button id="signupModeBtn" onclick="setAuthMode('signup')" class="py-2 rounded-lg text-gray-500 font-bold text-sm">Sign Up</button>
+</div>
+<button id="googleBtn" onclick="loginWithGoogle()" class="w-full border border-gray-300 rounded-xl py-3 flex items-center justify-center gap-3 font-semibold text-sm hover:bg-gray-50"><i class="fa-brands fa-google text-blue-500"></i> Continue with Google</button>
+<div class="flex items-center gap-3 my-4"><div class="h-px bg-gray-200 flex-1"></div><span class="text-[10px] text-gray-400">OR</span><div class="h-px bg-gray-200 flex-1"></div></div>
+<form id="emailForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
+<div id="signupFields" class="hidden space-y-3">
+<input id="authName" type="text" class="input text-sm" placeholder="Full Name">
+<input id="authPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input text-sm" placeholder="Mobile Number">
+</div>
+<input id="authEmail" type="email" class="input text-sm" placeholder="Email Address" required>
+<input id="authPassword" type="password" minlength="6" class="input text-sm" placeholder="Password (min 6 chars)" required>
+<button id="emailBtn" type="submit" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold mt-2">Login</button>
+<button id="forgotBtn" type="button" onclick="forgotPassword()" class="w-full text-xs text-rose-600 font-semibold mt-2">Forgot Password?</button>
 </form>
 </div>
 </div>
 
+<!-- USER APP -->
+<section id="userPage" class="page">
+<div class="app min-h-screen bg-gray-50 pb-20">
+<header class="sticky top-0 z-30 bg-white border-b shadow-sm">
+<div class="px-4 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2"><div id="avatar" class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-sm">S</div><div><p id="userName" class="font-bold text-sm leading-none mt-1">Reseller</p></div></div>
+<div class="flex gap-3 text-gray-600 text-lg">
+  <button><i class="fa-regular fa-bell"></i></button>
+  <button><i class="fa-solid fa-cart-shopping"></i></button>
+</div>
+</div>
+<div class="px-4 pb-3">
+  <div class="relative">
+    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+    <input id="productSearch" oninput="filterProducts()" class="w-full bg-gray-100 rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none" placeholder="Search by Keyword or Product Code">
+  </div>
+</div>
+</header>
+
+<div id="approvalNotice" class="hidden mx-4 mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-sm">
+<div class="font-bold text-amber-800"><i class="fa-solid fa-clock mr-1"></i> Approval pending</div>
+<p class="text-xs text-amber-700 mt-1">Order placement will be available after admin approval.</p>
+</div>
+
+<!-- FEED TAB -->
+<div id="feedTab" class="px-3 py-4">
+<div id="productFeed" class="grid-products">
+  <!-- Skeletons -->
+  <div class="product-card-compact p-2"><div class="w-full aspect-[3/4] bg-gray-200 rounded animate-pulse"></div><div class="h-3 bg-gray-200 rounded mt-2 w-3/4"></div><div class="h-3 bg-gray-200 rounded mt-1 w-1/2"></div></div>
+  <div class="product-card-compact p-2"><div class="w-full aspect-[3/4] bg-gray-200 rounded animate-pulse"></div><div class="h-3 bg-gray-200 rounded mt-2 w-3/4"></div><div class="h-3 bg-gray-200 rounded mt-1 w-1/2"></div></div>
+</div>
+</div>
+
+<!-- ORDERS TAB -->
+<div id="ordersTab" class="hidden px-4 py-5">
+<h1 class="text-xl font-extrabold mb-4">My Orders</h1>
+<div id="ordersList" class="space-y-3"><div class="text-center py-12 text-gray-400">Loading orders...</div></div>
+</div>
+
+<!-- PROFILE TAB -->
+<div id="profileTab" class="hidden">
+<div class="bg-white p-5 border-b">
+  <div class="flex items-center gap-4">
+    <div id="profileAvatar" class="w-14 h-14 rounded-full bg-rose-600 text-white text-2xl font-bold flex items-center justify-center">S</div>
+    <div class="flex-1">
+      <h2 class="font-extrabold text-lg flex items-center gap-1">Hi, <span id="profileName">Reseller</span>! <i class="fa-solid fa-circle-check text-rose-500 text-sm"></i></h2>
+      <p id="profilePhone" class="text-xs text-gray-500 mt-0.5">—</p>
+    </div>
+    <button class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1.5 rounded-full">EDIT</button>
+  </div>
+</div>
+<div class="bg-white mt-2 border-y">
+  <button class="w-full flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-regular fa-life-ring text-gray-500 text-lg w-6 text-center"></i><span class="font-medium text-sm flex-1 text-left">Help Center</span></button>
+  <button class="w-full flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-building-columns text-gray-500 text-lg w-6 text-center"></i><span class="font-medium text-sm flex-1 text-left">Bank Details</span></button>
+  <button class="w-full flex items-center justify-between p-4 border-b hover:bg-gray-50"><div class="flex items-center gap-3"><i class="fa-solid fa-wallet text-gray-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Wallet</span></div><span id="profileWallet" class="text-xs font-bold bg-blue-50 text-blue-600 px-2 py-1 rounded">₹0</span></button>
+  <button class="w-full flex items-center gap-3 p-4 hover:bg-gray-50"><i class="fa-solid fa-clock-rotate-left text-gray-500 text-lg w-6 text-center"></i><span class="font-medium text-sm flex-1 text-left">Bank Transfer History</span></button>
+</div>
+
+<!-- IMPORTANT LINKS -->
+<div class="bg-white mt-2 border-y">
+  <div class="px-4 py-2 bg-gray-50 text-[10px] font-bold text-gray-500 uppercase">Tools & Useful Links</div>
+  <a href="https://www.rkyshree.in/growth" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-arrow-trend-up text-blue-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Growth</span></a>
+  <a href="https://www.rkyshree.in/Tools" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-toolbox text-orange-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Tools</span></a>
+  <a href="https://www.rkyshree.in/Edvynox" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-graduation-cap text-purple-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Edvynox</span></a>
+  <a href="https://www.rkyshree.in/Book" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-book text-green-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Books</span></a>
+  <a href="https://www.rkyshree.in/FreePoster" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-image text-pink-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Free Poster</span></a>
+  <a href="https://www.rkyshree.in/Flight" target="_blank" class="flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-plane text-cyan-500 text-lg w-6 text-center"></i><span class="font-medium text-sm">Flight Booking</span></a>
+</div>
+
+<div class="bg-white mt-2 border-y">
+  <button class="w-full flex items-center gap-3 p-4 border-b hover:bg-gray-50"><i class="fa-solid fa-file-contract text-gray-500 text-lg w-6 text-center"></i><span class="font-medium text-sm flex-1 text-left">Legal / Policies</span></button>
+  <button onclick="logoutUser()" class="w-full flex items-center gap-3 p-4 hover:bg-gray-50"><i class="fa-solid fa-power-off text-red-500 text-lg w-6 text-center"></i><span class="font-medium text-sm text-red-500 flex-1 text-left">Logout</span></button>
+</div>
+<div class="py-6 text-center text-xs text-gray-400 font-medium">SHRAYNEX Version 1.0.0</div>
+</div>
+
+<nav class="bottom-nav fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] bg-white border-t z-40">
+<div class="grid grid-cols-3">
+<button onclick="switchUserTab('feed')" id="navFeed" class="py-2.5 text-rose-600 flex flex-col items-center"><i class="fa-solid fa-house text-lg"></i><span class="text-[10px] font-semibold mt-1">Home</span></button>
+<button onclick="switchUserTab('orders')" id="navOrders" class="py-2.5 text-gray-400 flex flex-col items-center"><i class="fa-solid fa-bag-shopping text-lg"></i><span class="text-[10px] font-semibold mt-1">Orders</span></button>
+<button onclick="switchUserTab('profile')" id="navProfile" class="py-2.5 text-gray-400 flex flex-col items-center"><i class="fa-regular fa-user text-lg"></i><span class="text-[10px] font-semibold mt-1">Account</span></button>
+</div>
+</nav>
+</div>
+</section>
+
+<!-- FULL SCREEN PRODUCT DETAILS MODAL -->
+<div id="productDetailModal" class="modal fixed inset-0 bg-white flex flex-col z-[100] translate-x-full transition-transform duration-300">
+<header class="flex items-center gap-3 px-4 py-3 border-b bg-white z-10">
+  <button onclick="closeProductDetail()" class="text-xl text-gray-600"><i class="fa-solid fa-arrow-left"></i></button>
+  <h2 class="font-bold text-sm flex-1 truncate" id="pdTitle">Product Details</h2>
+</header>
+<div class="flex-1 overflow-y-auto pb-24 bg-gray-50 relative">
+  <div class="relative bg-white">
+    <div id="pdSlider" class="product-slider hide-scrollbar w-full h-[450px] bg-gray-100"></div>
+    <button onclick="downloadProductPhotos()" class="absolute bottom-4 right-4 bg-white/90 backdrop-blur shadow-lg px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 border"><i class="fa-solid fa-download"></i> Download</button>
+  </div>
+  <div class="p-4 bg-white mb-2 shadow-sm">
+    <h3 id="pdName" class="text-sm font-medium text-gray-700 leading-snug">Product Name</h3>
+    <div class="flex items-center gap-2 mt-2">
+      <span class="text-xl font-extrabold">₹<span id="pdBasePrice">0</span></span>
+      <span id="pdMrp" class="text-sm text-gray-400 line-through"></span>
+      <span id="pdDiscount" class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded"></span>
+    </div>
+    <p class="text-[10px] text-gray-500 mt-1">+ Free Delivery</p>
+  </div>
+  <div class="p-4 bg-white mb-2 shadow-sm">
+    <h4 class="font-bold text-sm mb-3">Select Size</h4>
+    <div class="flex gap-2" id="pdSizes">
+      <button class="border border-rose-600 text-rose-600 bg-rose-50 px-3 py-1 rounded font-bold text-xs">S</button>
+      <button class="border border-gray-300 px-3 py-1 rounded font-bold text-xs">M</button>
+      <button class="border border-gray-300 px-3 py-1 rounded font-bold text-xs">L</button>
+      <button class="border border-gray-300 px-3 py-1 rounded font-bold text-xs">XL</button>
+      <button class="border border-gray-300 px-3 py-1 rounded font-bold text-xs">XXL</button>
+    </div>
+  </div>
+  <div class="p-4 bg-white mb-2 shadow-sm">
+    <h4 class="font-bold text-sm mb-2">Product Description</h4>
+    <p id="pdDesc" class="text-xs text-gray-600 whitespace-pre-wrap"></p>
+  </div>
+</div>
+<div class="fixed bottom-0 w-full max-w-[520px] bg-white border-t p-3 grid grid-cols-2 gap-3 z-20">
+  <button onclick="openShare()" class="border border-green-500 text-green-600 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 bg-green-50"><i class="fa-brands fa-whatsapp text-lg"></i> Share & Earn</button>
+  <button onclick="openOrder()" class="bg-rose-600 text-white py-2.5 rounded-lg font-bold text-sm">Place Order</button>
+</div>
+</div>
+<style>
+  #productDetailModal.active { transform: translateX(0); opacity: 1; pointer-events: auto; }
+</style>
+
+<!-- SHARE MODAL -->
+<div id="shareModal" class="modal fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[110]">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5">
+<div class="flex justify-between items-center"><h2 class="text-lg font-extrabold">Add Your Profit</h2><button onclick="closeShareModal()" class="text-2xl text-gray-400">&times;</button></div>
+<div class="bg-gray-50 rounded-xl p-4 mt-4 border">
+<div class="flex justify-between text-sm"><span class="text-gray-500">Base Price (Wholesale)</span><span class="font-bold">₹<span id="shareBasePrice">0</span></span></div>
+<div class="mt-4"><label class="text-xs font-bold text-gray-600">Customer Price (Base + Profit)</label>
+<div class="flex mt-1"><span class="bg-gray-200 px-3 flex items-center rounded-l-lg border border-r-0 text-sm font-bold">₹</span><input id="sellingPrice" type="number" min="1" oninput="calculateProfit()" class="w-full px-3 py-2 border rounded-r-lg outline-none font-bold" placeholder="E.g. 799"></div></div>
+<div class="mt-3 pt-3 border-t flex justify-between"><span class="text-sm font-bold text-gray-700">Your Profit</span><span id="profitAmount" class="font-extrabold text-green-600 text-lg">₹0</span></div>
+</div>
+<button onclick="shareOnWhatsApp()" class="w-full mt-4 bg-green-500 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-xl"></i> Share on WhatsApp</button>
+</div>
+</div>
+
+<!-- ORDER MODAL -->
+<div id="orderModal" class="modal fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[110]">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5 max-h-[90vh] overflow-y-auto">
+<div class="flex justify-between items-center mb-4"><h2 class="text-lg font-extrabold">Place Order</h2><button onclick="closeOrderModal()" class="text-2xl text-gray-400">&times;</button></div>
+<form onsubmit="placeOrder(event)" class="space-y-3">
+<input id="customerName" class="input text-sm" placeholder="Customer Name" required>
+<input id="customerPhone" class="input text-sm" type="tel" maxlength="10" pattern="[0-9]{10}" placeholder="Customer Mobile Number" required>
+<textarea id="customerAddress" class="input text-sm min-h-[70px]" placeholder="Complete Delivery Address" required></textarea>
+<div class="grid grid-cols-2 gap-2">
+<input id="customerPincode" class="input text-sm" type="tel" maxlength="6" pattern="[0-9]{6}" placeholder="Pincode" required>
+<input id="orderQuantity" class="input text-sm" type="number" min="1" value="1" oninput="calculateOrderTotal()" placeholder="Qty" required>
+</div>
+<div><label class="text-xs font-bold text-gray-600">Price Quoted to Customer</label>
+<div class="flex mt-1"><span class="bg-gray-200 px-3 flex items-center rounded-l-lg border border-r-0 text-sm font-bold">₹</span><input id="orderSellingPriceInput" type="number" min="1" class="w-full px-3 py-2 border rounded-r-lg outline-none font-bold" placeholder="Selling Price" oninput="calculateOrderTotal()" required></div></div>
+<div class="bg-green-50 border border-green-100 rounded-lg p-3 mt-2 text-sm">
+<div class="flex justify-between mb-1"><span class="text-gray-600">Selling Price x Qty</span><span class="font-bold">₹<span id="orderSellingPrice">0</span></span></div>
+<div class="flex justify-between font-bold text-green-700"><span>Your Total Profit</span><span>₹<span id="orderProfit">0</span></span></div>
+</div>
+<button id="placeOrderBtn" type="submit" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold mt-2">Confirm Order</button>
+</form>
+</div>
+</div>
+
+<!-- POLICY MODAL -->
+<div id="policyModal" class="modal fixed inset-0 z-[120] bg-black/60 flex items-center justify-center p-4">
+<div class="modal-box bg-white w-full max-w-md max-h-[85vh] rounded-2xl overflow-hidden flex flex-col">
+<div class="p-4 border-b flex justify-between items-center"><h2 id="policyTitle" class="font-extrabold">Policy</h2><button onclick="closePolicy()" class="text-2xl text-gray-400">&times;</button></div>
+<div id="policyContent" class="p-5 text-sm text-gray-600 leading-relaxed overflow-y-auto"></div>
+</div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="adminLoginModal" class="modal fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-2xl p-6">
+<div class="flex justify-between items-center mb-4"><div><h2 class="text-lg font-extrabold"><i class="fa-solid fa-shield-halved text-rose-600 mr-2"></i>Admin Area</h2></div><button onclick="closeAdminLogin()" class="text-2xl text-gray-400">&times;</button></div>
+<form onsubmit="handleAdminLogin(event)" class="space-y-3">
+<input id="adminEmail" type="email" class="input text-sm" placeholder="Admin Email" required>
+<input id="adminPassword" type="password" class="input text-sm" placeholder="Admin Password" required>
+<button id="adminLoginBtn" type="submit" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold">Login to Panel</button>
+</form>
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanelModal" class="modal fixed inset-0 z-[190] bg-gray-100 overflow-y-auto">
+<div class="min-h-screen max-w-[1100px] mx-auto bg-gray-100">
+<header class="sticky top-0 z-30 bg-gray-950 text-white px-4 py-3 flex items-center justify-between">
+<div class="font-bold">Admin Panel</div>
+<div class="flex gap-2"><button onclick="refreshAdmin()" class="px-3 py-1 border border-gray-700 rounded text-xs"><i class="fa-solid fa-rotate-right"></i></button><button onclick="closeAdminPanel()" class="bg-rose-600 px-3 py-1 rounded text-xs font-bold">Close</button></div>
+</header>
+<div class="p-4">
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2 mb-4">
+<button onclick="switchAdminTab('users')" id="adminTabUsers" class="admin-tab active shrink-0 px-4 py-2 rounded-lg text-sm font-bold shadow-sm bg-white">Users & Wallets</button>
+<button onclick="switchAdminTab('products')" id="adminTabProducts" class="admin-tab shrink-0 px-4 py-2 rounded-lg text-sm font-bold shadow-sm bg-white text-gray-600">Products</button>
+<button onclick="switchAdminTab('orders')" id="adminTabOrders" class="admin-tab shrink-0 px-4 py-2 rounded-lg text-sm font-bold shadow-sm bg-white text-gray-600">Orders</button>
+</div>
+
+<!-- ADMIN USERS & WALLET -->
+<div id="adminUsersSection" class="admin-section">
+<div class="bg-white rounded-xl shadow-sm p-4">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">Manage Users</h2><input id="adminUserSearch" oninput="renderAdminUsers()" class="input w-auto text-sm py-1.5" placeholder="Search users..."></div>
+<div id="adminUsersList" class="space-y-3"></div>
+</div>
+</div>
+
+<!-- ADMIN PRODUCTS -->
+<div id="adminProductsSection" class="admin-section hidden">
+<div class="bg-white rounded-xl shadow-sm p-4">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">Catalogue</h2><button onclick="openProductEditor()" class="bg-rose-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold">+ Add</button></div>
+<div id="adminProductsList" class="space-y-3"></div>
+</div>
+</div>
+
+<!-- ADMIN ORDERS -->
+<div id="adminOrdersSection" class="admin-section hidden">
+<div class="bg-white rounded-xl shadow-sm p-4">
+<h2 class="font-bold text-lg mb-4">Manage Orders</h2>
+<div id="adminOrdersList" class="space-y-3"></div>
+</div>
+</div>
+
+</div></div></div>
+
+<!-- PRODUCT EDITOR -->
+<div id="productEditorModal" class="modal fixed inset-0 z-[220] bg-black/60 flex items-center justify-center p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-2xl p-5 max-h-[90vh] overflow-y-auto">
+<div class="flex justify-between items-center mb-4"><h2 id="productEditorTitle" class="font-bold text-lg">Add Product</h2><button onclick="closeProductEditor()" class="text-2xl text-gray-400">&times;</button></div>
+<form onsubmit="saveProduct(event)" class="space-y-3">
+<input type="hidden" id="editProductId">
+<input id="productTitleInput" class="input text-sm" placeholder="Brand / Short Title" required>
+<textarea id="productDescriptionInput" class="input text-sm min-h-[70px]" placeholder="Detailed Product Name & Description"></textarea>
+<div class="grid grid-cols-2 gap-2"><input id="productBasePriceInput" type="number" class="input text-sm" placeholder="Base Price" required><input id="productMrpInput" type="number" class="input text-sm" placeholder="MRP"></div>
+<input id="productImagesInput" class="input text-sm" placeholder="Up to 4 Image URLs (comma separated)" required>
+<input id="productCategoryInput" class="input text-sm" placeholder="Category (e.g., Kurti, Gadget)">
+<button id="saveProductBtn" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold mt-2">Save Product</button>
+</form>
+</div>
+</div>
+
+<!-- PRE-LOAD SCRIPT FOR UI (NO AWAIT BLOCKING) -->
+<script>
+// --- UI TOGGLES (INSTANT) ---
+window.openAuthModal = () => document.getElementById("authModal").classList.add("active");
+window.closeAuthModal = () => document.getElementById("authModal").classList.remove("active");
+
+window.openAdminLogin = () => {
+  const modal = document.getElementById("adminLoginModal");
+  if(modal) modal.classList.add("active");
+};
+window.closeAdminLogin = () => document.getElementById("adminLoginModal").classList.remove("active");
+
+window.openAdminPanel = () => { document.getElementById("adminPanelModal").classList.add("active"); if(window.refreshAdmin) window.refreshAdmin(); };
+window.closeAdminPanel = () => document.getElementById("adminPanelModal").classList.remove("active");
+
+window.openProductEditor = (id="") => {
+  document.getElementById("editProductId").value = id;
+  document.getElementById("productEditorTitle").innerText = id ? "Edit Product" : "Add Product";
+  if(!id) {
+    document.getElementById("productTitleInput").value = "";
+    document.getElementById("productDescriptionInput").value = "";
+    document.getElementById("productBasePriceInput").value = "";
+    document.getElementById("productMrpInput").value = "";
+    document.getElementById("productImagesInput").value = "";
+    document.getElementById("productCategoryInput").value = "";
+  }
+  document.getElementById("productEditorModal").classList.add("active");
+};
+window.closeProductEditor = () => document.getElementById("productEditorModal").classList.remove("active");
+
+window.closeShareModal = () => document.getElementById("shareModal").classList.remove("active");
+window.closeOrderModal = () => document.getElementById("orderModal").classList.remove("active");
+window.closeProductDetail = () => document.getElementById("productDetailModal").classList.remove("active");
+
+window.showToast = function(message) {
+  const t = document.getElementById("toast"), x = document.getElementById("toastText");
+  x.innerText = message; t.classList.remove("hidden");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => t.classList.add("hidden"), 3000);
+};
+
+window.switchUserTab = function(tab) {
+  ["feed", "orders", "profile"].forEach(x => document.getElementById(x+"Tab").classList.add("hidden"));
+  document.getElementById(tab+"Tab").classList.remove("hidden");
+  ["navFeed", "navOrders", "navProfile"].forEach(id => {
+    document.getElementById(id).classList.remove("text-rose-600"); 
+    document.getElementById(id).classList.add("text-gray-400");
+  });
+  const n = document.getElementById("nav" + tab.charAt(0).toUpperCase() + tab.slice(1));
+  n.classList.remove("text-gray-400"); n.classList.add("text-rose-600");
+};
+
+window.switchAdminTab = function(tab) {
+  ["users", "products", "orders"].forEach(x => {
+    document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden", x!==tab);
+    const b = document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));
+    if(x===tab) { b.classList.add("active"); b.classList.remove("bg-white", "text-gray-600"); }
+    else { b.classList.remove("active"); b.classList.add("bg-white", "text-gray-600"); }
+  });
+};
+
+window.openPolicy = function(type) {
+  const policies = {
+    about: {t: "About SHRAYNEX", c: "Zero investment reselling platform."},
+    terms: {t: "Terms & Conditions", c: "Resellers must provide accurate info."},
+    privacy: {t: "Privacy Policy", c: "We secure your personal data."},
+    return: {t: "Help Center", c: "Contact us at shraynexofficial@gmail.com or 9451239239."}
+  };
+  const p = policies[type];
+  if(p) {
+    document.getElementById("policyTitle").innerText = p.t;
+    document.getElementById("policyContent").innerText = p.c;
+    document.getElementById("policyModal").classList.add("active");
+  }
+};
+window.closePolicy = () => document.getElementById("policyModal").classList.remove("active");
+
+// Helpers
+window.money = v => Number(v||0).toLocaleString("en-IN");
+window.esc = v => String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+</script>
+
+<!-- FIREBASE MODULE -->
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import {
-  getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signInWithRedirect,
-  getRedirectResult,createUserWithEmailAndPassword,signInWithEmailAndPassword,
-  updateProfile,setPersistence,browserLocalPersistence,signOut, signInAnonymously
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import {
-  getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,
-  query,where,onSnapshot,serverTimestamp,runTransaction
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-  
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, getDocs} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
 const firebaseConfig={
   apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
   authDomain:"rkyshree-2f74b.firebaseapp.com",
   projectId:"rkyshree-2f74b",
   storageBucket:"rkyshree-2f74b.firebasestorage.app",
   messagingSenderId:"354823113610",
-  appId:"1:354823113610:web:1249f2952249ac1a9c9673",
-};
-  
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app),db=getFirestore(app);
-const googleProvider=new GoogleAuthProvider();
-googleProvider.setCustomParameters({prompt:"select_account"});
-await setPersistence(auth,browserLocalPersistence);
-
-const USERS="shraynex_users", PRODUCTS="shraynex_products", ORDERS="shraynex_orders", WALLET="shraynex_wallet_transactions", WITHDRAWALS="shraynex_withdrawals";
-let currentUser=null,currentUserData=null,selectedProduct=null;
-let allProducts=[],allAdminUsers=[],allAdminOrders=[],allAdminWithdrawals=[];
-let productsUnsubscribe=null,ordersUnsubscribe=null,userUnsubscribe=null;
-let authMode="login",adminMode=false;
-
-let currentSize = 'M'; // Default selected size
-let coCurrentSize = 'M'; // Customer checkout size
-let coCustomerProduct = null;
-let coResellerId = null;
-let coSellingPrice = null;
-let coQuantity = 1;
-
-window.showToast=function(msg){
-  const t=document.getElementById("toast"),x=document.getElementById("toastText");
-  x.innerText=msg;t.classList.remove("hidden");clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>t.classList.add("hidden"),3000);
+  appId:"1:354823113610:web:1249f2952249ac1a9c9673"
 };
 
-// Check for deep links immediately (Customer Checkout System)
-const urlParams = new URLSearchParams(window.location.search);
-const checkoutProductId = urlParams.get('p');
-const checkoutResellerId = urlParams.get('r');
-const checkoutSellingPrice = urlParams.get('sp');
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
 
-if(checkoutProductId && checkoutResellerId && checkoutSellingPrice) {
-    // Hide standard app, show customer checkout
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.getElementById("landingPage").style.display = 'none'; // Force hide
-    document.getElementById("customerCheckoutPage").classList.remove('hidden');
-    document.getElementById("customerCheckoutPage").classList.add('flex', 'flex-col');
-    initCustomerCheckout(checkoutProductId, checkoutResellerId, checkoutSellingPrice);
-}
+const USERS="shraynex_users", PRODUCTS="shraynex_products", ORDERS="shraynex_orders";
+let currentUser=null, currentUserData=null, selectedProduct=null;
+let allProducts=[], allAdminUsers=[], allAdminOrders=[];
 
-async function initCustomerCheckout(pId, rId, sp) {
-    coResellerId = rId;
-    coSellingPrice = Number(sp);
-    try {
-        // Sign in anonymously if not already signed in to allow reading products safely
-        if(!auth.currentUser) await signInAnonymously(auth);
-        
-        const docSnap = await getDoc(doc(db, PRODUCTS, pId));
-        if (docSnap.exists()) {
-            coCustomerProduct = {id: docSnap.id, ...docSnap.data()};
-            
-            // Populate UI
-            document.getElementById("coProductImg").src = coCustomerProduct.images?.[0] || 'https://placehold.co/200x300/f8f9fa/d1d5db?text=Image';
-            document.getElementById("coProductTitle").innerText = coCustomerProduct.title || "Product";
-            updateCustomerTotals();
-            
-            document.getElementById("checkoutLoading").classList.add("hidden");
-            document.getElementById("checkoutContent").classList.remove("hidden");
-        } else {
-            document.getElementById("checkoutLoading").innerHTML = `<div class="text-red-500 font-bold">Product not found or unavailable.</div>`;
-        }
-    } catch (e) {
-        document.getElementById("checkoutLoading").innerHTML = `<div class="text-red-500 font-bold">Error loading product.</div>`;
-    }
-}
-
-window.coSelectSize = function(size, btnElement) {
-    coCurrentSize = size;
-    const container = document.getElementById("coSizeContainer");
-    container.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
-    btnElement.classList.add('selected');
-};
-
-window.coUpdateQty = function(change) {
-    coQuantity = Math.max(1, coQuantity + change);
-    document.getElementById("coQty").innerText = coQuantity;
-    updateCustomerTotals();
-};
-
-function updateCustomerTotals() {
-    const total = coSellingPrice * coQuantity;
-    document.getElementById("coPrice").innerText = `₹${money(total)}`;
-    document.getElementById("coTotalAmt").innerText = `₹${money(total)}`;
-}
-
-window.submitCustomerOrder = async function(e) {
-    e.preventDefault();
-    if(!coCustomerProduct) return;
-    
-    const name = document.getElementById("coName").value.trim();
-    const phone = document.getElementById("coPhone").value.trim();
-    const address = document.getElementById("coAddress").value.trim();
-    const city = document.getElementById("coCity").value.trim();
-    const pincode = document.getElementById("coPincode").value.trim();
-    
-    const basePrice = Number(coCustomerProduct.basePrice || 0);
-    const profitPerItem = coSellingPrice - basePrice;
-    
-    if(profitPerItem < 0) return showToast("Invalid pricing error.");
-    
-    const btn = document.getElementById("coSubmitBtn");
-    btn.disabled = true;
-    btn.innerText = "Placing Order...";
-
-    try {
-        // Record order and correctly attribute the profit to the reseller ID provided in URL
-        const orderRef = await addDoc(collection(db, ORDERS), {
-            resellerId: coResellerId, 
-            resellerName: "Reseller Network", // Saving a DB read by not fetching reseller name right now
-            productId: coCustomerProduct.id,
-            productName: coCustomerProduct.title || "",
-            productImage: coCustomerProduct.images?.[0] || "",
-            customerName: name,
-            customerPhone: phone,
-            customerAddress: `${address}, ${city}`,
-            pincode: pincode,
-            size: coCurrentSize,
-            quantity: coQuantity,
-            basePrice: basePrice,
-            sellingPrice: coSellingPrice,
-            profit: profitPerItem * coQuantity,
-            status: "pending",
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-        });
-        
-        document.getElementById("checkoutContent").classList.add("hidden");
-        document.getElementById("checkoutSuccess").classList.remove("hidden");
-        document.getElementById("checkoutSuccess").classList.add("flex");
-        document.getElementById("coSuccessId").innerText = `#${orderRef.id.slice(0,8).toUpperCase()}`;
-        
-    } catch (err) {
-        showToast(getFirebaseError(err));
-        btn.disabled = false;
-        btn.innerText = "Place Order - COD";
-    }
-};
-
-function googleButtonHTML(){return `<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.22a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.93-4.2 2.93-7.39z"/><path fill="#34A853" d="M12 21.6c2.64 0 4.85-.87 6.47-2.34l-3.14-2.43c-.87.58-1.98.93-3.33.93-2.56 0-4.73-1.73-5.51-4.06H3.25v2.5A9.77 9.77 0 0 0 12 21.6z"/><path fill="#FBBC05" d="M6.49 13.7A5.88 5.88 0 0 1 6.18 12c0-.59.11-1.17.31-1.7V7.8H3.25A9.78 9.78 0 0 0 2.2 12c0 1.57.38 3.05 1.05 4.2l3.24-2.5z"/><path fill="#EA4335" d="M12 6.24c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.84 3.32 14.64 2.4 12 2.4a9.77 9.77 0 0 0-8.75 5.4l3.24 2.5C7.27 7.97 9.44 6.24 12 6.24z"/></svg>Continue with Google`;}
-window.openAuthModal=()=>document.getElementById("authModal").classList.add("active");
-window.closeAuthModal=()=>document.getElementById("authModal").classList.remove("active");
-window.setAuthMode=function(mode){
-  authMode=mode;
-  const l=document.getElementById("loginModeBtn"),s=document.getElementById("signupModeBtn"),f=document.getElementById("signupFields"),n=document.getElementById("authName"),p=document.getElementById("authPhone"),b=document.getElementById("emailBtn"),sub=document.getElementById("authSubtitle"),fb=document.getElementById("forgotBtn");
+// --- AUTH LOGIC ---
+window.setAuthMode = function(mode){
+  const l=document.getElementById("loginModeBtn"), s=document.getElementById("signupModeBtn");
+  const fields=document.getElementById("signupFields");
   if(mode==="signup"){
-    l.className="py-2.5 rounded-lg text-gray-500 font-bold text-sm";s.className="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm";
-    f.classList.remove("hidden");n.required=true;p.required=true;b.innerText="Create Account";fb.classList.add("hidden");sub.innerText="Create your account";
-  }else{
-    l.className="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm";s.className="py-2.5 rounded-lg text-gray-500 font-bold text-sm";
-    f.classList.add("hidden");n.required=false;p.required=false;b.innerText="Login";fb.classList.remove("hidden");sub.innerText="Login to your account";
+    l.className="py-2 rounded-lg text-gray-500 font-bold text-sm";
+    s.className="py-2 rounded-lg bg-white shadow-sm font-bold text-sm";
+    fields.classList.remove("hidden");
+    document.getElementById("emailBtn").innerText="Create Account";
+    document.getElementById("authSubtitle").innerText="Create a new account";
+  } else {
+    l.className="py-2 rounded-lg bg-white shadow-sm font-bold text-sm";
+    s.className="py-2 rounded-lg text-gray-500 font-bold text-sm";
+    fields.classList.add("hidden");
+    document.getElementById("emailBtn").innerText="Login";
+    document.getElementById("authSubtitle").innerText="Login to your account";
   }
 };
 
-window.loginWithGoogle=async function(){
-  const btn=document.getElementById("googleBtn");btn.disabled=true;btn.innerHTML='<div class="loader"></div>';
-  try{
-    const r=await signInWithPopup(auth,googleProvider);
-    if(r?.user) await createOrUpdateUser(r.user,{loginType:"google"});
-    closeAuthModal();showToast("Login successful");
-  }catch(e){
-    if(e.code==="auth/popup-blocked"||e.code==="auth/popup-closed-by-user"){
-      try{await signInWithRedirect(auth,googleProvider);return}catch(err){showToast(getFirebaseError(err))}
-    }else showToast(getFirebaseError(e));
-  }finally{btn.disabled=false;btn.innerHTML=googleButtonHTML();}
+window.loginWithGoogle = async function(){
+  try {
+    const res = await signInWithPopup(auth, googleProvider);
+    if(res.user) await createOrUpdateUser(res.user, {loginType:"google"});
+    closeAuthModal(); showToast("Google Login Success!");
+  } catch(e) { showToast(e.message); }
 };
 
-window.handleEmailAuth=async function(e){
+window.handleEmailAuth = async function(e){
   e.preventDefault();
-  const em=document.getElementById("authEmail").value.trim(),pw=document.getElementById("authPassword").value;
-  const nm=document.getElementById("authName").value.trim(),ph=document.getElementById("authPhone").value.trim();
-  const btn=document.getElementById("emailBtn");btn.disabled=true;btn.innerHTML='<div class="loader loader-white mx-auto"></div>';
-  try{
-    if(authMode==="signup"){
-      if(!nm)throw{code:"custom/missing-name"};if(!/^[0-9]{10}$/.test(ph))throw{code:"custom/invalid-phone"};
-      const c=await createUserWithEmailAndPassword(auth,em,pw);
-      await updateProfile(c.user,{displayName:nm});
-      await createOrUpdateUser(c.user,{name:nm,phone:ph,loginType:"email"});
-      closeAuthModal();showToast("Account created!");
-    }else{
-      const c=await signInWithEmailAndPassword(auth,em,pw);
-      await createOrUpdateUser(c.user,{loginType:"email"});
-      closeAuthModal();showToast("Login successful");
+  const email=document.getElementById("authEmail").value, pass=document.getElementById("authPassword").value;
+  try {
+    if(!document.getElementById("signupFields").classList.contains("hidden")){
+      const name=document.getElementById("authName").value, phone=document.getElementById("authPhone").value;
+      const res = await createUserWithEmailAndPassword(auth, email, pass);
+      await createOrUpdateUser(res.user, {name, phone, loginType:"email"});
+      showToast("Account Created! Pending Admin Approval.");
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
+      showToast("Login Successful!");
     }
-  }catch(e){showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText=authMode==="signup"?"Create Account":"Login";}
+    closeAuthModal();
+  } catch(e) { showToast(e.message); }
 };
 
-async function createOrUpdateUser(user,extra={}){
-  const ref=doc(db,USERS,user.uid),snap=await getDoc(ref);
+async function createOrUpdateUser(user, extra={}){
+  const ref=doc(db, USERS, user.uid), snap=await getDoc(ref);
   if(!snap.exists()){
-    const d={uid:user.uid,name:extra.name||user.displayName||"Reseller",email:user.email||"",phone:extra.phone||"",photoURL:user.photoURL||"",role:"reseller",status:"pending",walletBalance:0,totalEarnings:0,loginType:extra.loginType||"unknown",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
-    await setDoc(ref,d);currentUserData=d;
-  }else{
-    const old=snap.data(),u={updatedAt:serverTimestamp()};
-    if(extra.name&&!old.name)u.name=extra.name;if(extra.phone&&!old.phone)u.phone=extra.phone;
-    await setDoc(ref,u,{merge:true});currentUserData={...old,...u};
+    const data = {uid:user.uid, name:extra.name||user.displayName||"Reseller", email:user.email||"", phone:extra.phone||"", role:"reseller", status:"pending", walletBalance:0, createdAt:serverTimestamp()};
+    await setDoc(ref, data); currentUserData=data;
+  } else { currentUserData = snap.data(); }
+}
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if(user){
+    const snap = await getDoc(doc(db, USERS, user.uid));
+    if(snap.exists()){
+      currentUserData = snap.data();
+      document.getElementById("landingPage").classList.remove("active");
+      document.getElementById("userPage").classList.add("active");
+      updateProfileUI(); loadProducts(); loadOrders();
+    }
+  } else {
+    currentUserData = null;
+    document.getElementById("landingPage").classList.add("active");
+    document.getElementById("userPage").classList.remove("active");
+  }
+});
+
+function updateProfileUI() {
+  if(!currentUserData) return;
+  const name = currentUserData.name || "Reseller";
+  document.getElementById("userName").innerText = name;
+  document.getElementById("profileName").innerText = name;
+  document.getElementById("avatar").innerText = name.charAt(0).toUpperCase();
+  document.getElementById("profileAvatar").innerText = name.charAt(0).toUpperCase();
+  document.getElementById("profilePhone").innerText = currentUserData.phone || currentUserData.email || "";
+  document.getElementById("profileWallet").innerText = "₹" + money(currentUserData.walletBalance);
+  
+  if(currentUserData.status === "pending" && currentUserData.role !== "admin") {
+    document.getElementById("approvalNotice").classList.remove("hidden");
   }
 }
 
-// Only setup main app listener if NOT on checkout page
-if(!checkoutProductId) {
-    onAuthStateChanged(auth,async user=>{
-      // Ignore anonymous sign-ins for the main app UI
-      if(user && user.isAnonymous) return; 
-
-      currentUser=user;
-      if(user){
-        try{
-          await createOrUpdateUser(user);
-          const snap=await getDoc(doc(db,USERS,user.uid));
-          if(!snap.exists())throw new Error("Missing profile");
-          currentUserData=snap.data();
-          if(currentUserData.status==="suspended" && currentUserData.role!=="admin"){await signOut(auth);showLanding();return showToast("Account suspended.");}
-          
-          if(userUnsubscribe)userUnsubscribe();
-          userUnsubscribe=onSnapshot(doc(db,USERS,user.uid),snap=>{
-            if(!snap.exists())return;currentUserData=snap.data();updateProfileUI();
-            if(currentUserData.status==="suspended"&&currentUserData.role!=="admin"){signOut(auth);showLanding();showToast("Account suspended.");}
-          });
-          showUserApp();loadProducts();loadOrders();updateProfileUI();
-        }catch(e){showToast("Error loading account")}
-      }else{
-        if(userUnsubscribe)userUnsubscribe();if(productsUnsubscribe)productsUnsubscribe();if(ordersUnsubscribe)ordersUnsubscribe();
-        currentUserData=null;showLanding();
-      }
-    });
-}
-
-function showLanding(){document.getElementById("landingPage").classList.add("active");document.getElementById("userPage").classList.remove("active");}
-function showUserApp(){document.getElementById("landingPage").classList.remove("active");document.getElementById("userPage").classList.add("active");}
-
-function updateProfileUI(){
-  if(!currentUserData)return;
-  const name=currentUserData.name||currentUser?.displayName||"User";
-  document.getElementById("profileName").innerText=name.split(" ")[0];
-  document.getElementById("profileAvatarInitial").innerText=name.charAt(0).toUpperCase();
-  document.getElementById("profilePhone").innerText=currentUserData.phone||currentUserData.email||"—";
-  document.getElementById("profileStatus").innerText=currentUserData.status||"PENDING";
-  document.getElementById("profileStatus").className="text-xs font-bold uppercase "+(currentUserData.status==="approved"?"bg-green-50 text-green-600":"bg-amber-50 text-amber-600");
-  
-  const bal = currentUserData.walletBalance || 0;
-  document.getElementById("profileWallet").innerText="₹"+money(bal);
-  document.getElementById("withdrawMaxBalance").innerText="₹"+money(bal);
-  document.getElementById("profileEarnings").innerText="₹"+money(currentUserData.totalEarnings);
-  document.getElementById("approvalNotice").classList.toggle("hidden",currentUserData.status!=="pending");
-
-  // Populate edit forms
-  document.getElementById("editProfileName").value = currentUserData.name || "";
-  document.getElementById("editProfilePhone").value = currentUserData.phone || "";
-  document.getElementById("bankName").value = currentUserData.bankName || "";
-  document.getElementById("bankAccountNo").value = currentUserData.bankAccountNo || "";
-  document.getElementById("bankAccountNoConfirm").value = currentUserData.bankAccountNo || "";
-  document.getElementById("bankIfsc").value = currentUserData.bankIfsc || "";
-  document.getElementById("bankHolderName").value = currentUserData.bankHolderName || "";
-}
-
-window.openProfileEdit=()=>document.getElementById("profileEditModal").classList.add("active");
-window.closeProfileEdit=()=>document.getElementById("profileEditModal").classList.remove("active");
-window.saveProfileDetails = async function(e) {
-    e.preventDefault();
-    if(!currentUser) return;
-    const n = document.getElementById("editProfileName").value.trim();
-    const p = document.getElementById("editProfilePhone").value.trim();
-    try {
-        await updateDoc(doc(db, USERS, currentUser.uid), {name: n, phone: p, updatedAt: serverTimestamp()});
-        showToast("Profile updated!");
-        closeProfileEdit();
-    } catch(err) { showToast(getFirebaseError(err)); }
-}
-
-window.openBankDetails=()=>document.getElementById("bankDetailsModal").classList.add("active");
-window.closeBankDetails=()=>document.getElementById("bankDetailsModal").classList.remove("active");
-window.saveBankDetails = async function(e) {
-    e.preventDefault();
-    if(!currentUser) return;
-    const a1 = document.getElementById("bankAccountNo").value.trim();
-    const a2 = document.getElementById("bankAccountNoConfirm").value.trim();
-    if(a1 !== a2) return showToast("Account numbers do not match");
-    
-    try {
-        await updateDoc(doc(db, USERS, currentUser.uid), {
-            bankName: document.getElementById("bankName").value.trim(),
-            bankAccountNo: a1,
-            bankIfsc: document.getElementById("bankIfsc").value.trim().toUpperCase(),
-            bankHolderName: document.getElementById("bankHolderName").value.trim(),
-            updatedAt: serverTimestamp()
-        });
-        showToast("Bank details saved!");
-        closeBankDetails();
-    } catch(err) { showToast(getFirebaseError(err)); }
-}
-
-window.openWithdrawModal=()=>{
-    if(currentUserData?.walletBalance < 100) return showToast("Minimum ₹100 required to withdraw");
-    if(!currentUserData?.bankAccountNo) return showToast("Please add bank details first");
-    document.getElementById("withdrawModal").classList.add("active");
-};
-window.closeWithdrawModal=()=>document.getElementById("withdrawModal").classList.remove("active");
-window.requestWithdrawal = async function(e) {
-    e.preventDefault();
-    if(!currentUser || !currentUserData) return;
-    const amt = Number(document.getElementById("withdrawAmount").value);
-    if(amt < 100) return showToast("Minimum withdrawal is ₹100");
-    if(amt > (currentUserData.walletBalance||0)) return showToast("Insufficient balance");
-    
-    const btn = document.getElementById("withdrawBtn");
-    btn.disabled = true; btn.innerText = "Processing...";
-    
-    try {
-        await runTransaction(db, async tx => {
-            const userRef = doc(db, USERS, currentUser.uid);
-            const userSnap = await tx.get(userRef);
-            if(userSnap.data().walletBalance < amt) throw new Error("Insufficient balance");
-            
-            // Deduct
-            tx.update(userRef, { walletBalance: userSnap.data().walletBalance - amt });
-            
-            // Create Request
-            const wRef = doc(collection(db, WITHDRAWALS));
-            tx.set(wRef, {
-                userId: currentUser.uid,
-                userName: currentUserData.name,
-                amount: amt,
-                status: "pending",
-                bankDetails: `${currentUserData.bankName} | ${currentUserData.bankAccountNo} | ${currentUserData.bankIfsc}`,
-                createdAt: serverTimestamp()
-            });
-        });
-        showToast("Withdrawal requested successfully!");
-        closeWithdrawModal();
-        document.getElementById("withdrawAmount").value = "";
-    } catch(err) { showToast(err.message || "Error processing request"); }
-    finally { btn.disabled = false; btn.innerText = "Submit Request"; }
-}
-
-function renderProducts(list=allProducts){
-  const c=document.getElementById("productFeed");
-  if(!list.length){c.innerHTML='<div class="col-span-2 text-center py-16 text-gray-500">No products found.</div>';return}
-  c.innerHTML="";
-  list.forEach(p=>{
-    const imgUrl = p.images?.[0] || 'https://placehold.co/300x400/f8f9fa/d1d5db?text=Image';
-    const brand = p.category || "Brand";
-    const title = p.title || "Product details";
-    const price = Number(p.basePrice || 0);
-    const mrp = Number(p.mrp || 0);
-    const discount = p.discountPercent || (mrp > price ? Math.round((1 - price/mrp)*100) : 0);
-    
-    const card=document.createElement("div");
-    card.className="flip-card";
-    card.onclick = () => openProductDetail(p.id);
-    card.innerHTML=`
-        <div class="flip-card-img-wrap">
-            <img src="${esc(imgUrl)}" loading="lazy" alt="Product">
-            <button class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"><i class="fa-regular fa-heart"></i></button>
-        </div>
-        <div class="flip-card-details">
-            <div class="flip-brand">${esc(brand)}</div>
-            <div class="flip-title">${esc(title)}</div>
-            <div class="flip-price-row">
-                <span class="flip-price">₹${money(price)}</span>
-                ${mrp > price ? `<span class="flip-mrp">₹${money(mrp)}</span><span class="flip-discount">${discount}% off</span>` : ''}
-            </div>
-            <div><span class="flip-delivery">${esc(p.deliveryTime || "Free Delivery")}</span></div>
-        </div>
-    `;
-    c.appendChild(card);
+// --- PRODUCTS ---
+function loadProducts() {
+  onSnapshot(query(collection(db, PRODUCTS)), snap => {
+    allProducts = []; snap.forEach(d => allProducts.push({id:d.id, ...d.data()}));
+    renderProducts();
   });
 }
 
-function loadProducts(){
-  if(productsUnsubscribe)productsUnsubscribe();
-  const q=query(collection(db,PRODUCTS),where("active","==",true));
-  productsUnsubscribe=onSnapshot(q,snap=>{
-    allProducts=[];snap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
-    allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));renderProducts();
-  });
-}
-
-window.filterProducts=function(){
-  const v=document.getElementById("productSearch").value.toLowerCase().trim();
-  if(!v)return renderProducts();
-  renderProducts(allProducts.filter(p=>`${p.title||""} ${p.category||""}`.toLowerCase().includes(v)));
-};
-
-window.openProductDetail = function(id) {
-    selectedProduct = allProducts.find(p=>p.id===id);
-    if(!selectedProduct) return;
-    
-    document.getElementById("detailBrand").innerText = selectedProduct.category || "BRAND";
-    document.getElementById("detailTitle").innerText = selectedProduct.title || "Product";
-    document.getElementById("detailPrice").innerText = "₹" + money(selectedProduct.basePrice);
-    
-    const mrp = Number(selectedProduct.mrp || 0);
-    const price = Number(selectedProduct.basePrice || 0);
-    const discount = selectedProduct.discountPercent || (mrp > price ? Math.round((1 - price/mrp)*100) : 0);
-    
-    document.getElementById("detailMrp").innerText = mrp > price ? "₹" + money(mrp) : "";
-    document.getElementById("detailDiscount").innerText = mrp > price ? discount + "% off" : "";
-    document.getElementById("detailDelivery").innerText = selectedProduct.deliveryTime || "Free Delivery";
-    document.getElementById("detailDescription").innerText = selectedProduct.description || "Premium quality product.";
-    
-    // Images
-    const imgContainer = document.getElementById("detailImageSlider");
-    imgContainer.innerHTML = "";
-    const images = Array.isArray(selectedProduct.images) ? selectedProduct.images : [];
-    if(images.length > 0) {
-        images.forEach(url => {
-            imgContainer.innerHTML += `<img src="${esc(url)}" alt="Product View">`;
-        });
-    } else {
-        imgContainer.innerHTML = `<img src="https://placehold.co/400x500/f8f9fa/d1d5db?text=No+Image" alt="Placeholder">`;
-    }
-
-    // Reset size
-    currentSize = 'M';
-    document.getElementById("sizeSelectorContainer").querySelectorAll('.size-btn').forEach(btn => {
-        btn.classList.remove('selected');
-        if(btn.innerText === 'M') btn.classList.add('selected');
-    });
-    document.getElementById("sizeWarning").classList.add('hidden');
-
-    document.getElementById("productDetailModal").classList.add("active");
-}
-
-window.closeProductDetail = () => document.getElementById("productDetailModal").classList.remove("active");
-
-window.selectSize = function(size, btnElement) {
-    currentSize = size;
-    const container = document.getElementById("sizeSelectorContainer");
-    container.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('selected'));
-    btnElement.classList.add('selected');
-    document.getElementById("sizeWarning").classList.add('hidden');
-}
-
-window.openShareFromDetail = function() {
-    if(currentUserData?.status!=="approved")return showToast("Account approval required for sharing & selling.");
-    
-    // Set UI for share modal
-    document.getElementById("shareProductImg").src = selectedProduct.images?.[0] || 'https://placehold.co/100x100?text=IMG';
-    document.getElementById("shareProductName").innerText = selectedProduct.title || "Product";
-    document.getElementById("shareBasePrice").innerText = money(selectedProduct.basePrice);
-    document.getElementById("sellingPrice").value = "";
-    document.getElementById("profitAmount").innerText = "₹0";
-    
-    document.getElementById("shareModal").classList.add("active");
-}
-
-window.closeShareModal = () => document.getElementById("shareModal").classList.remove("active");
-
-window.downloadProductImages = async function() {
-    if (!selectedProduct || !selectedProduct.images || selectedProduct.images.length === 0) {
-        return showToast("No images to download.");
-    }
-    
-    const btn = document.getElementById('downloadBtn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-rose-600"></i> Downloading...';
-    btn.disabled = true;
-    
-    let successCount = 0;
-    
-    try {
-        for (let i = 0; i < selectedProduct.images.length; i++) {
-            const url = selectedProduct.images[i];
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Network response was not ok");
-                const blob = await response.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = blobUrl;
-                const cleanTitle = (selectedProduct.title || "shraynex_product").substring(0, 15).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-                a.download = `${cleanTitle}_${i+1}.jpg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-                successCount++;
-                await new Promise(r => setTimeout(r, 400));
-            } catch (err) {
-                console.warn("Cross-origin fetch blocked for", url, "- opening in new tab instead.");
-                // Fallback: If image server blocks JS download (CORS), open in a new tab so they can long-press and save to gallery
-                window.open(url, '_blank');
-                successCount++;
-            }
-        }
-        if (successCount > 0) showToast(`Images processed! Check your gallery or opened tabs.`);
-    } catch (error) {
-        showToast("Error processing images.");
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }
-};
-
-window.calculateProfit = function() {
-    if(!selectedProduct) return;
-    const base = Number(selectedProduct.basePrice || 0);
-    const sell = Number(document.getElementById("sellingPrice").value || 0);
-    document.getElementById("profitAmount").innerText = "₹" + money(Math.max(0, sell - base));
-}
-
-window.generateAndShareLink = function() {
-    if(!selectedProduct || !currentUser) return;
-    const sell = Number(document.getElementById("sellingPrice").value || 0);
-    const base = Number(selectedProduct.basePrice || 0);
-    
-    if(sell <= base) return showToast("Selling price must be greater than base price.");
-    
-    // Generate Custom Link
-    const baseUrl = window.location.origin + window.location.pathname;
-    const orderLink = `${baseUrl}?p=${selectedProduct.id}&r=${currentUser.uid}&sp=${sell}`;
-    
-    const msg = `🛒 *${selectedProduct.title}*\n\n✨ Size: S, M, L, XL, XXL\n💰 Price: ₹${sell} (Free Delivery)\n\n👇 *Click below to order directly:*\n${orderLink}`;
-    
-    window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");
-    closeShareModal();
-}
-
-function loadOrders(){
-  if(!currentUser)return;if(ordersUnsubscribe)ordersUnsubscribe();
-  const q=query(collection(db,ORDERS),where("resellerId","==",currentUser.uid));
-  ordersUnsubscribe=onSnapshot(q,snap=>{
-    const o=[];snap.forEach(d=>o.push({id:d.id,...d.data()}));o.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));renderOrders(o);
-  });
-}
-function renderOrders(orders){
-  const c=document.getElementById("ordersList");
-  if(!orders.length){c.innerHTML='<div class="text-center py-16 text-gray-500">No orders yet.</div>';return}
-  c.innerHTML=orders.map(o=>{
-    const st=String(o.status||"pending").toLowerCase();
-    const stColor = st==="delivered"?"text-green-600":st==="cancelled"?"text-red-600":"text-amber-600";
-    return `<div class="bg-white border border-gray-200 rounded-xl p-3 flex gap-3 shadow-[0_2px_4px_-2px_rgba(0,0,0,0.05)]">
-        ${o.productImage?`<img src="${esc(o.productImage)}" class="w-20 h-24 rounded border object-cover">`:'<div class="w-20 h-24 rounded bg-gray-100"></div>'}
-        <div class="flex-1 min-w-0 flex flex-col">
-            <div class="flex justify-between items-start">
-                <div class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">ID: ${esc(o.id.slice(0,8).toUpperCase())}</div>
-                <div class="text-[10px] font-bold uppercase ${stColor}">${esc(st)}</div>
-            </div>
-            <h3 class="font-semibold text-sm text-gray-800 line-clamp-2 mt-1">${esc(o.productName||"Product")}</h3>
-            <div class="mt-1 text-xs text-gray-500">Size: <span class="font-bold text-gray-800">${esc(o.size||"M")}</span> • Qty: ${o.quantity||1}</div>
-            <div class="mt-auto pt-2 flex justify-between items-end border-t mt-2">
-                <div>
-                    <div class="text-[10px] text-gray-500">Customer Price</div>
-                    <div class="font-bold text-sm">₹${money(o.sellingPrice * (o.quantity||1))}</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-[10px] text-gray-500">Your Profit</div>
-                    <div class="font-bold text-green-600 text-sm">₹${money(o.profit)}</div>
-                </div>
-            </div>
-        </div>
+function renderProducts(list = allProducts) {
+  const c = document.getElementById("productFeed");
+  c.innerHTML = list.map(p => {
+    const img = p.images && p.images[0] ? p.images[0] : 'https://placehold.co/400x500/f1f5f9/64748b?text=Product';
+    return `<div class="product-card-compact" onclick="openProductDetail('${p.id}')">
+      <div class="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden"><img src="${esc(img)}" class="w-full h-full object-cover"></div>
+      <div class="p-2"><div class="text-xs font-bold text-gray-800 truncate">${esc(p.title)}</div><div class="flex items-center gap-1 mt-1"><span class="font-extrabold text-sm">₹${money(p.basePrice)}</span>${p.mrp ? `<span class="text-[10px] text-gray-400 line-through">₹${money(p.mrp)}</span>` : ""}</div></div>
     </div>`;
   }).join("");
 }
 
-window.switchUserTab=function(tab){
-  ["feed","orders","profile"].forEach(x=>document.getElementById(x+"Tab").classList.add("hidden"));
-  document.getElementById(tab+"Tab").classList.remove("hidden");
-  const navItems = document.querySelectorAll('.bottom-nav .nav-item');
-  navItems.forEach(n=>n.classList.remove('active'));
-  if(tab==='feed') navItems[0].classList.add('active');
-  if(tab==='orders') navItems[2].classList.add('active');
-  if(tab==='profile') navItems[3].classList.add('active');
+window.filterProducts = () => {
+  const v = document.getElementById("productSearch").value.toLowerCase();
+  renderProducts(allProducts.filter(p => `${p.title} ${p.description}`.toLowerCase().includes(v)));
 };
 
-window.logoutUser=async function(){try{await signOut(auth);showToast("Logged out")}catch(e){}};
-window.openPolicy=function(type){ document.getElementById("policyModal").classList.add("active")};
-window.closePolicy=()=>document.getElementById("policyModal").classList.remove("active");
-
-window.openAdminLogin=()=>document.getElementById("adminLoginModal").classList.add("active");
-window.closeAdminLogin=()=>document.getElementById("adminLoginModal").classList.remove("active");
-window.handleAdminLogin=async function(e){
-  e.preventDefault();const em=document.getElementById("adminEmail").value.trim(),pw=document.getElementById("adminPassword").value;
-  const btn=document.getElementById("adminLoginBtn");btn.disabled=true;btn.innerText="Checking...";
-  try{
-    let u=auth.currentUser;if(!u||u.email!==em)u=(await signInWithEmailAndPassword(auth,em,pw)).user;
-    const s=await getDoc(doc(db,USERS,u.uid));
-    if(!s.exists()||s.data().role!=="admin"){throw{code:"custom/not-admin"}}
-    currentUser=u;currentUserData=s.data();adminMode=true;
-    closeAdminLogin();openAdminPanel();
-window.renderAdminUsers=function(){
-/* Existing rendering code omitted for brevity */
-  const v=(document.getElementById("adminUserSearch").value||"").toLowerCase().trim();
-  const list=allAdminUsers.filter(u=>`${u.name||""} ${u.email||""} ${u.phone||""}`.toLowerCase().includes(v));
-  const c=document.getElementById("adminUsersList");
-  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No users found.</div>';return}
-  c.innerHTML=list.map(u=>{
-    const st=u.role==="admin"?"admin":(u.status||"pending");
-    return `<div class="border rounded-xl p-4 bg-white mb-2"><div class="flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(u.name||"Reseller")} ${u.role==="admin"?'<span class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded-full">ADMIN</span>':""}</div><div class="text-xs text-gray-500 mt-1">${esc(u.phone||u.email||"—")}</div><div class="text-[10px] mt-2 font-bold uppercase ${st==="approved"?"text-green-600":st==="suspended"?"text-amber-600":"text-gray-500"}">STATUS: ${esc(st)}</div></div></div>
-    ${u.role!=="admin"?`<div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t">
-        ${u.status!=="approved"?`<button onclick="changeUserStatus('${u.id}','approved')" class="bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold">Approve</button>`:`<button onclick="changeUserStatus('${u.id}','suspended')" class="bg-amber-100 text-amber-700 py-2 rounded-lg text-xs font-bold">Suspend</button>`}
-        <button onclick="changeUserStatus('${u.id}', '${u.status==="suspended"?"approved":"suspended"}')" class="bg-gray-100 text-gray-700 py-2 rounded-lg text-xs font-bold">${u.status==="suspended"?"Restore":"Suspend"}</button>
-        <button onclick="adminDeleteUser('${u.id}')" class="bg-red-100 text-red-600 py-2 rounded-lg text-xs font-bold">Delete</button>
-    </div>`:""}</div>`;
-  }).join("");
+// --- PRODUCT DETAILS & SHARE ---
+window.openProductDetail = (id) => {
+  selectedProduct = allProducts.find(x => x.id === id);
+  if(!selectedProduct) return;
+  document.getElementById("pdTitle").innerText = selectedProduct.title;
+  document.getElementById("pdName").innerText = selectedProduct.description || selectedProduct.title;
+  document.getElementById("pdBasePrice").innerText = money(selectedProduct.basePrice);
+  document.getElementById("pdMrp").innerText = selectedProduct.mrp ? "₹"+money(selectedProduct.mrp) : "";
+  const disc = selectedProduct.mrp && selectedProduct.mrp > selectedProduct.basePrice ? Math.round((1 - selectedProduct.basePrice/selectedProduct.mrp)*100) : 0;
+  document.getElementById("pdDiscount").innerText = disc > 0 ? `${disc}% OFF` : "";
+  document.getElementById("pdDesc").innerText = selectedProduct.description || "No description provided.";
+  
+  const slider = document.getElementById("pdSlider");
+  const imgs = Array.isArray(selectedProduct.images) && selectedProduct.images.length > 0 ? selectedProduct.images : ['https://placehold.co/400x500'];
+  slider.innerHTML = imgs.map(img => `<img src="${esc(img)}" alt="img">`).join("");
+  
+  document.getElementById("productDetailModal").classList.add("active");
 };
 
-window.changeUserStatus=async function(uid,status){
-  if(!currentUserData||currentUserData.role!=="admin")return showToast("Admin permission required.");
-  try{await updateDoc(doc(db,USERS,uid),{status,updatedAt:serverTimestamp()});showToast("Status updated to: " + status);await refreshAdmin()}catch(e){showToast(getFirebaseError(e))}
-};
-
-window.adminDeleteUser = async function(uid) {
-    if(!confirm("Are you sure you want to completely DELETE this user profile?")) return;
+window.downloadProductPhotos = async () => {
+  if(!selectedProduct || !selectedProduct.images || !selectedProduct.images.length) return showToast("No images found.");
+  showToast("Downloading images to gallery...");
+  for(let i=0; i<selectedProduct.images.length; i++) {
     try {
-        await deleteDoc(doc(db, USERS, uid));
-        showToast("User profile deleted.");
-        await refreshAdmin();
-    } catch(e) { showToast(getFirebaseError(e)); }
+      const res = await fetch(selectedProduct.images[i], { mode: 'cors' });
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `Shraynex_${selectedProduct.title}_${i+1}.jpg`;
+      document.body.appendChild(a); a.click(); a.remove(); window.URL.revokeObjectURL(url);
+    } catch(e) {
+      window.open(selectedProduct.images[i], '_blank'); // Fallback opens in new tab
+    }
+  }
 };
 
-window.openProductEditor=function(id=""){
-  const p=id?allProducts.find(x=>x.id===id):null;
-  document.getElementById("editProductId").value=id;
-  document.getElementById("productTitleInput").value=p?.title||"";
-  document.getElementById("productBasePriceInput").value=p?.basePrice??"";
-  document.getElementById("productCategoryInput").value=p?.category||"";
-  document.getElementById("productImagesInput").value=Array.isArray(p?.images)?p.images.join(", "):"";
-  document.getElementById("productEditorModal").classList.add("active");
+window.openShare = () => {
+  document.getElementById("shareBasePrice").innerText = money(selectedProduct.basePrice);
+  document.getElementById("sellingPrice").value = "";
+  document.getElementById("profitAmount").innerText = "₹0";
+  document.getElementById("shareModal").classList.add("active");
 };
-window.closeProductEditor=()=>document.getElementById("productEditorModal").classList.remove("active");
-window.saveProduct=async function(e){
-  e.preventDefault();const id=document.getElementById("editProductId").value;
-  const data={
-    title:document.getElementById("productTitleInput").value.trim(),
-    basePrice:Number(document.getElementById("productBasePriceInput").value||0),
-    mrp:Number(document.getElementById("productMrpInput").value||0),
-    discountPercent:Number(document.getElementById("productDiscountInput").value||0),
-    category:document.getElementById("productCategoryInput").value.trim(),
-    images:document.getElementById("productImagesInput").value.split(",").map(x=>x.trim()).filter(Boolean),
-    deliveryTime:document.getElementById("productDeliveryInput").value.trim()||"Free Delivery",
-    active:document.getElementById("productActiveInput").checked,
-    updatedAt:serverTimestamp()
+window.calculateProfit = () => {
+  const sell = Number(document.getElementById("sellingPrice").value||0);
+  const base = Number(selectedProduct.basePrice||0);
+  document.getElementById("profitAmount").innerText = "₹" + money(Math.max(0, sell - base));
+};
+window.shareOnWhatsApp = () => {
+  const sell = Number(document.getElementById("sellingPrice").value||0);
+  if(sell <= selectedProduct.basePrice) return showToast("Selling price must be higher than base price.");
+  const msg = `🛍️ *${selectedProduct.title}*\n\n${selectedProduct.description||""}\n\n🔥 *Best Price: ₹${sell}*\n\nMessage me back here to place your order! \n\n${selectedProduct.images?.[0]||""}`;
+  window.open("https://wa.me/?text="+encodeURIComponent(msg), "_blank");
+  closeShareModal();
+};
+
+// --- ORDERS ---
+window.openOrder = () => {
+  if(currentUserData?.status !== "approved") return showToast("Account not approved for orders yet.");
+  document.getElementById("orderSellingPriceInput").value = "";
+  document.getElementById("orderModal").classList.add("active");
+};
+window.calculateOrderTotal = () => {
+  const sell = Number(document.getElementById("orderSellingPriceInput").value||0);
+  const qty = Number(document.getElementById("orderQuantity").value||1);
+  const base = Number(selectedProduct.basePrice||0);
+  document.getElementById("orderSellingPrice").innerText = money(sell * qty);
+  document.getElementById("orderProfit").innerText = money(Math.max(0, sell - base) * qty);
+};
+window.placeOrder = async (e) => {
+  e.preventDefault();
+  const sell = Number(document.getElementById("orderSellingPriceInput").value||0), qty = Number(document.getElementById("orderQuantity").value||1);
+  if(sell <= selectedProduct.basePrice) return showToast("Selling price too low.");
+  try {
+    await addDoc(collection(db, ORDERS), {
+      resellerId: currentUser.uid, resellerName: currentUserData.name,
+      productId: selectedProduct.id, productName: selectedProduct.title, productImage: selectedProduct.images?.[0]||"",
+      customerName: document.getElementById("customerName").value, customerPhone: document.getElementById("customerPhone").value,
+      customerAddress: document.getElementById("customerAddress").value, pincode: document.getElementById("customerPincode").value,
+      quantity: qty, basePrice: selectedProduct.basePrice, sellingPrice: sell, profit: (sell - selectedProduct.basePrice)*qty,
+      status: "pending", createdAt: serverTimestamp()
+    });
+    showToast("Order Placed Successfully!"); closeOrderModal(); window.switchUserTab('orders');
+  } catch(err) { showToast(err.message); }
+};
+
+function loadOrders() {
+  onSnapshot(query(collection(db, ORDERS), where("resellerId", "==", currentUser.uid)), snap => {
+    const c = document.getElementById("ordersList"); c.innerHTML="";
+    if(snap.empty) { c.innerHTML='<div class="text-center py-10 text-gray-400">No orders placed yet.</div>'; return; }
+    snap.forEach(d => {
+      const o = d.data();
+      c.innerHTML += `<div class="bg-white border rounded-xl p-3 flex gap-3 mb-3 shadow-sm">
+        <img src="${o.productImage}" class="w-16 h-20 object-cover rounded">
+        <div class="flex-1"><div class="font-bold text-sm">${o.productName}</div><div class="text-xs text-gray-500 mt-1">Customer: ${o.customerName}</div>
+        <div class="mt-2 text-xs font-bold px-2 py-1 bg-gray-100 rounded inline-block uppercase">${o.status}</div>
+        <div class="mt-2 text-xs font-bold text-green-600">Your Profit: ₹${o.profit}</div></div>
+      </div>`;
+    });
+  });
+}
+
+window.logoutUser = async () => { await signOut(auth); showToast("Logged out"); };
+
+// --- ADMIN PANEL ---
+window.handleAdminLogin = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("adminEmail").value, pass = document.getElementById("adminPassword").value;
+  try {
+    const u = (await signInWithEmailAndPassword(auth, email, pass)).user;
+    const snap = await getDoc(doc(db, USERS, u.uid));
+    if(snap.exists() && snap.data().role === "admin") {
+      closeAdminLogin(); openAdminPanel(); showToast("Admin Access Granted");
+    } else { throw new Error("Not an admin."); }
+  } catch(err) { showToast(err.message); }
+};
+
+window.refreshAdmin = async () => {
+  const uSnap = await getDocs(collection(db, USERS));
+  allAdminUsers = []; uSnap.forEach(d => allAdminUsers.push({id:d.id, ...d.data()}));
+  const oSnap = await getDocs(collection(db, ORDERS));
+  allAdminOrders = []; oSnap.forEach(d => allAdminOrders.push({id:d.id, ...d.data()}));
+  renderAdminUsers(); renderAdminProductsPanel(); renderAdminOrdersPanel();
+};
+
+window.renderAdminUsers = () => {
+  const v = document.getElementById("adminUserSearch").value.toLowerCase();
+  const list = allAdminUsers.filter(u => u.role!=="admin" && (u.name.toLowerCase().includes(v) || u.phone.includes(v)));
+  document.getElementById("adminUsersList").innerHTML = list.map(u => `
+    <div class="border rounded-lg p-3 text-sm">
+      <div class="font-bold">${u.name} <span class="text-xs text-gray-400 font-normal">(${u.phone})</span></div>
+      <div class="flex justify-between items-center mt-2">
+        <div>Status: <span class="font-bold ${u.status==='approved'?'text-green-600':'text-red-600'}">${u.status.toUpperCase()}</span></div>
+        <div class="font-bold text-blue-600">Wallet: ₹${money(u.walletBalance)}</div>
+      </div>
+      <div class="grid grid-cols-4 gap-2 mt-3">
+        <button onclick="adminAction('approve','${u.id}')" class="bg-green-100 text-green-700 py-1 rounded font-bold text-[10px]">Approve</button>
+        <button onclick="adminAction('suspend','${u.id}')" class="bg-red-100 text-red-700 py-1 rounded font-bold text-[10px]">Suspend</button>
+        <button onclick="adminAction('addFund','${u.id}')" class="bg-blue-100 text-blue-700 py-1 rounded font-bold text-[10px]">+ Fund</button>
+        <button onclick="adminAction('deleteUser','${u.id}')" class="bg-gray-800 text-white py-1 rounded font-bold text-[10px]">Delete</button>
+      </div>
+    </div>`).join("");
+};
+
+window.adminAction = async (action, uid) => {
+  try {
+    const ref = doc(db, USERS, uid);
+    if(action === 'approve') await updateDoc(ref, {status: 'approved'});
+    if(action === 'suspend') await updateDoc(ref, {status: 'suspended'});
+    if(action === 'deleteUser') { if(confirm("Delete user?")) await deleteDoc(ref); }
+    if(action === 'addFund') {
+      const u = allAdminUsers.find(x=>x.id===uid);
+      const amt = Number(prompt("Enter amount to add/deduct (+ or -):", "0"));
+      if(amt) await updateDoc(ref, {walletBalance: (u.walletBalance||0) + amt});
+    }
+    showToast("Updated successfully!"); refreshAdmin();
+  } catch(e) { showToast(e.message); }
+};
+
+window.saveProduct = async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editProductId").value;
+  const data = {
+    title: document.getElementById("productTitleInput").value, description: document.getElementById("productDescriptionInput").value,
+    basePrice: Number(document.getElementById("productBasePriceInput").value), mrp: Number(document.getElementById("productMrpInput").value),
+    images: document.getElementById("productImagesInput").value.split(",").map(s=>s.trim()).filter(Boolean),
+    category: document.getElementById("productCategoryInput").value, active: true
   };
-  try{
-    if(id)await updateDoc(doc(db,PRODUCTS,id),data);else await addDoc(collection(db,PRODUCTS),{...data,createdAt:serverTimestamp()});
-    closeProductEditor();refreshAdmin();
-  }catch(e){showToast(getFirebaseError(e))}
+  try {
+    if(id) await updateDoc(doc(db, PRODUCTS, id), data);
+    else await addDoc(collection(db, PRODUCTS), {...data, createdAt: serverTimestamp()});
+    closeProductEditor(); showToast("Product Saved!"); refreshAdmin();
+  } catch(err) { showToast(err.message); }
 };
 
-window.renderAdminProducts=function(){
-  document.getElementById("adminProductsList").innerHTML=allProducts.map(p=>`<div class="border p-2 flex gap-2"><img src="${p.images?.[0]||""}" class="w-16 h-16 object-cover bg-gray-100"><div class="flex-1"><div class="font-bold text-sm line-clamp-2">${p.title}</div><div class="text-xs">₹${p.basePrice} | ${p.category}</div></div><button onclick="openProductEditor('${p.id}')" class="border px-2 text-xs">Edit</button></div>`).join("");
-}
-
-window.renderAdminOrders=function(){
-    document.getElementById("adminOrdersList").innerHTML=allAdminOrders.map(o=>`<div class="border p-2 mb-2 text-sm bg-white rounded-lg">
-        <div class="font-bold line-clamp-1">${o.productName}</div>
-        <div class="text-xs text-gray-500">Size: ${o.size} | Qty: ${o.quantity} | Profit: ₹${o.profit}</div>
-        <div class="mt-2 text-xs">Cust: ${o.customerName} (${o.customerPhone})<br>${o.customerAddress}</div>
-        <select onchange="updateAdminOrderStatus('${o.id}', this.value)" class="mt-2 border p-1 rounded text-xs">
-            <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
-            <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
-            <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
-            <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
-        </select>
+function renderAdminProductsPanel() {
+  document.getElementById("adminProductsList").innerHTML = allProducts.map(p => `
+    <div class="border rounded-lg p-2 flex gap-3 text-sm">
+      <img src="${p.images?.[0]}" class="w-12 h-12 object-cover rounded">
+      <div class="flex-1"><div class="font-bold truncate">${p.title}</div><div>Base: ₹${p.basePrice}</div></div>
+      <div class="flex flex-col gap-1"><button onclick="openProductEditor('${p.id}')" class="text-blue-600 font-bold text-xs">Edit</button><button onclick="deleteDoc(doc(db, '${PRODUCTS}', '${p.id}')); refreshAdmin();" class="text-red-600 font-bold text-xs">Del</button></div>
     </div>`).join("");
 }
 
-window.updateAdminOrderStatus = async function(id, status) {
-    try {
-        await updateDoc(doc(db, ORDERS, id), {status, updatedAt: serverTimestamp()});
-        showToast("Status updated");
-    } catch(e) { showToast(getFirebaseError(e)); }
-}
-
-window.renderAdminWithdrawals = function() {
-    const list = allAdminWithdrawals;
-    const c = document.getElementById("adminWithdrawalsList");
-    if(!list.length) { c.innerHTML = '<div class="text-gray-500 text-xs">No withdrawal requests.</div>'; return; }
-    c.innerHTML = list.map(w => `<div class="border p-3 rounded-lg bg-white mb-2 text-sm">
-        <div class="flex justify-between font-bold"><span>${w.userName}</span><span class="text-rose-600">₹${w.amount}</span></div>
-        <div class="text-xs text-gray-500 mt-1">${w.bankDetails}</div>
-        <div class="mt-2 flex justify-between items-center">
-            <span class="text-xs uppercase font-bold text-gray-500">${w.status}</span>
-            ${w.status === 'pending' ? `<button onclick="completeWithdrawal('${w.id}', '${w.userId}', ${w.amount})" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">Mark Paid</button>` : ''}
-        </div>
+function renderAdminOrdersPanel() {
+  document.getElementById("adminOrdersList").innerHTML = allAdminOrders.map(o => `
+    <div class="border rounded-lg p-3 text-sm mb-2">
+      <div class="font-bold">${o.productName}</div>
+      <div class="text-xs text-gray-500 mt-1">By: ${o.resellerName} | Customer: ${o.customerName}</div>
+      <div class="mt-2">Profit: ₹${o.profit}</div>
+      <select onchange="updateDoc(doc(db, '${ORDERS}', '${o.id}'), {status: this.value}); refreshAdmin();" class="mt-2 border rounded p-1 text-xs w-full">
+        <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
+        <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+        <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+        <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+      </select>
     </div>`).join("");
 }
-
-window.completeWithdrawal = async function(wId, userId, amount) {
-    if(!confirm("Mark this withdrawal as paid? Ensure you have sent the money to their bank account.")) return;
-    try {
-        await updateDoc(doc(db, WITHDRAWALS, wId), {status: 'paid', updatedAt: serverTimestamp()});
-        showToast("Withdrawal marked paid");
-        refreshAdmin();
-    } catch(e) { showToast(getFirebaseError(e)); }
-}
-
-window.renderAdminWalletUsers = function() {
-    const list = allAdminUsers.filter(u=>u.role !== 'admin');
-    document.getElementById("adminWalletUsers").innerHTML = list.map(u => `<div class="border p-3 rounded-lg flex justify-between items-center text-sm bg-white mb-2">
-        <div><div class="font-bold">${u.name}</div><div class="text-xs text-gray-500 mt-1">Wallet: <span class="font-bold text-gray-900">₹${u.walletBalance || 0}</span></div></div>
-        <div class="flex gap-2">
-            <button onclick="adminAdjustFunds('${u.id}', 'add')" class="text-[10px] bg-green-600 font-bold text-white px-3 py-2 rounded-lg">+ ADD</button>
-            <button onclick="adminAdjustFunds('${u.id}', 'deduct')" class="text-[10px] bg-red-500 font-bold text-white px-3 py-2 rounded-lg">- DEDUCT</button>
-        </div>
-    </div>`).join("");
-}
-
-window.adminAdjustFunds = async function(uid, type) {
-    const actionName = type === 'add' ? 'ADD TO' : 'DEDUCT FROM';
-    const amount = Number(prompt(`Enter amount to ${actionName} this user's wallet:`, "0"));
-    if(!amount || amount <= 0) return;
-    
-    const multiplier = type === 'add' ? 1 : -1;
-    
-    try {
-        await runTransaction(db, async tx => {
-            const ref = doc(db, USERS, uid);
-            const snap = await tx.get(ref);
-            if(!snap.exists()) throw new Error("User not found");
-            
-            const currentBal = snap.data().walletBalance || 0;
-            const currentEarnings = snap.data().totalEarnings || 0;
-            
-            if(type === 'deduct' && currentBal < amount) {
-                throw new Error("Cannot deduct more than available balance!");
-            }
-            
-            tx.update(ref, {
-                walletBalance: currentBal + (amount * multiplier),
-                totalEarnings: type === 'add' ? currentEarnings + amount : currentEarnings,
-                updatedAt: serverTimestamp()
-            });
-        });
-        showToast(`Funds ${type === 'add' ? 'added' : 'deducted'} successfully`);
-        refreshAdmin();
-    } catch(e) { showToast(e.message || getFirebaseError(e)); }
-}
-
-function money(v){return Number(v||0).toLocaleString("en-IN")}
-function getTime(t){if(!t)return 0;if(typeof t.toMillis==="function")return t.toMillis();if(t.seconds)return t.seconds*1000;return new Date(t).getTime()||0}
-function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function getFirebaseError(e){ return e?.message||"Error"; }
-
-// Policy content handling (simulated for now, replace with actual modal content if needed)
-window.openPolicy = function(type) {
-    let title = "Policy";
-    let content = "Detailed policy content goes here.";
-    
-    if(type === 'about') { title = "About Us"; content = "SHRAYNEX is a zero-investment reselling platform connecting suppliers with resellers."; }
-    else if(type === 'privacy') { title = "Privacy Policy"; content = "We protect your data and do not share it with third parties without consent."; }
-    else if(type === 'terms') { title = "Terms & Conditions"; content = "By using this platform, you agree to abide by our reselling guidelines."; }
-    else if(type === 'help') { title = "Help & Support"; content = "Contact us at shraynexofficial@gmail.com or +91 9451239239 for assistance."; }
-    
-    document.getElementById('policyTitle').innerText = title;
-    document.getElementById('policyContent').innerHTML = `<div class="p-4">${content}</div>`;
-    document.getElementById('policyModal').classList.add('active');
-}
-window.closePolicy = function() {
-    document.getElementById('policyModal').classList.remove('active');
-}
-
 </script>
 </body>
 </html>
