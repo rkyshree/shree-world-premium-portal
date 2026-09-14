@@ -3,372 +3,1384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>SHRAYNEX | Resell & Earn</title>
-<meta name="description" content="SHRAYNEX - Start your online reselling business with zero investment. Discover products, add your margin and earn.">
-<meta name="theme-color" content="#e11d48">
+<meta name="theme-color" content="#050505">
+<title>SHRAYNEX - Reselling Platform</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;overflow-x:hidden}
-.app{width:100%;max-width:520px;min-height:100vh;margin:auto;background:#fff;position:relative;box-shadow:0 0 30px rgba(0,0,0,.08)}
-.hide-scrollbar::-webkit-scrollbar{display:none}.hide-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
-.loader{width:22px;height:22px;border:3px solid #e5e7eb;border-top-color:#e11d48;border-radius:50%;animation:spin .8s linear infinite}
-.loader-white{border-color:rgba(255,255,255,.3);border-top-color:#fff}
-@keyframes spin{to{transform:rotate(360deg)}}
-.modal{opacity:0;pointer-events:none;transition:.25s ease}.modal.active{opacity:1;pointer-events:auto}
-.modal-box{transform:translateY(30px);transition:.25s ease}.modal.active .modal-box{transform:translateY(0)}
-.page{display:none}.page.active{display:block}
-.bottom-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}
-.product-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.product-slider img{min-width:100%;scroll-snap-align:center}
-.input{width:100%;border:1px solid #d1d5db;border-radius:12px;padding:12px 14px;outline:none;transition:.2s;background:#fff}
-.input:focus{border-color:#e11d48;box-shadow:0 0 0 3px rgba(225,29,72,.1)}
-.card{border:1px solid #f1f5f9;border-radius:18px;background:#fff;box-shadow:0 6px 22px rgba(15,23,42,.06)}
-.skeleton{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 37%,#f1f5f9 63%);background-size:400% 100%;animation:skeleton 1.4s ease infinite}
-@keyframes skeleton{0%{background-position:100% 0}100%{background-position:-100% 0}}
-.status-pending{background:#fef3c7;color:#92400e}.status-confirmed{background:#dbeafe;color:#1d4ed8}
-.status-processing{background:#ede9fe;color:#6d28d9}.status-shipped{background:#e0e7ff;color:#4338ca}
-.status-delivered{background:#dcfce7;color:#15803d}.status-cancelled{background:#fee2e2;color:#b91c1c}
-.admin-tab.active{background:#111827;color:#fff}
-.small-scroll{max-height:58vh;overflow:auto}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  margin:0;
+  background:#f5f5f5;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#111;
+}
+
+::-webkit-scrollbar{
+  display:none;
+}
+
+.hide-scrollbar{
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.hide-scrollbar::-webkit-scrollbar{
+  display:none;
+}
+
+.glass{
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+}
+
+.modal-bg{
+  background:rgba(0,0,0,.65);
+  backdrop-filter:blur(5px);
+}
+
+.modal-box{
+  max-height:92vh;
+  overflow-y:auto;
+}
+
+.product-scroll{
+  display:flex;
+  overflow-x:auto;
+  gap:14px;
+  scroll-snap-type:x mandatory;
+  padding:4px 2px 12px;
+}
+
+.product-card{
+  min-width:82%;
+  max-width:82%;
+  scroll-snap-align:start;
+}
+
+@media(min-width:640px){
+  .product-card{
+    min-width:320px;
+    max-width:320px;
+  }
+}
+
+.img-scroll{
+  display:flex;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+}
+
+.img-scroll img{
+  min-width:100%;
+  scroll-snap-align:start;
+}
+
+.bottom-nav{
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+.spinner{
+  width:22px;
+  height:22px;
+  border:3px solid #ddd;
+  border-top-color:#111;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.toast{
+  animation:toastIn .25s ease;
+}
+
+@keyframes toastIn{
+  from{
+    transform:translateY(20px);
+    opacity:0;
+  }
+  to{
+    transform:translateY(0);
+    opacity:1;
+  }
+}
+
+input,select,textarea{
+  outline:none;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#111!important;
+  box-shadow:0 0 0 2px rgba(0,0,0,.08);
+}
+
+.size-btn.active{
+  background:#111;
+  color:white;
+  border-color:#111;
+}
+
+.qty-btn{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:#f1f1f1;
+  font-size:22px;
+  font-weight:bold;
+}
+
+.nav-active{
+  color:#111;
+  font-weight:bold;
+}
+
+.admin-table{
+  min-width:850px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[300] hidden">
-  <div id="toastText" class="bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl text-sm font-semibold">Notification</div>
+<!-- ================= LOADING ================= -->
+
+<div id="loadingScreen"
+     class="fixed inset-0 bg-black text-white z-[9999] flex flex-col items-center justify-center">
+  <div class="text-4xl font-black tracking-widest">SHRAYNEX</div>
+  <div class="text-gray-400 mt-2 text-sm">Reselling Platform</div>
+  <div class="spinner mt-6"></div>
 </div>
 
-<!-- LANDING -->
-<section id="landingPage" class="page active">
-<div class="app">
-<header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b">
-<div class="px-5 py-4 flex items-center justify-between">
-<div><div class="text-2xl font-extrabold tracking-tight text-rose-600">SHRAYNEX</div><div class="text-[10px] text-gray-400 font-medium">RESELL • SHARE • EARN</div></div>
-<button onclick="openAuthModal()" class="bg-gray-900 text-white px-4 py-2.5 rounded-full text-sm font-bold">Login</button>
-</div>
-</header>
 
-<section class="px-6 py-12 bg-gradient-to-b from-rose-50 to-white">
-<div class="inline-flex items-center gap-2 bg-white border border-rose-100 px-3 py-1.5 rounded-full text-xs font-bold text-rose-600 mb-5"><span>🚀</span>Zero Investment Reselling</div>
-<h1 class="text-4xl font-extrabold leading-tight text-gray-900">Start Your <span class="text-rose-600">Online Business</span> Today</h1>
-<p class="text-gray-600 mt-4 leading-relaxed">Discover products, add your own profit margin, share them with customers and grow your business.</p>
-<button onclick="openAuthModal()" class="w-full mt-7 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg">Start Reselling →</button>
-<div class="grid grid-cols-3 gap-3 mt-8">
-<div class="text-center"><div class="font-extrabold text-xl">₹0</div><div class="text-xs text-gray-500">Investment</div></div>
-<div class="text-center"><div class="font-extrabold text-xl">∞</div><div class="text-xs text-gray-500">Products</div></div>
-<div class="text-center"><div class="font-extrabold text-xl">24×7</div><div class="text-xs text-gray-500">Sharing</div></div>
-</div>
-</section>
+<!-- ================= AUTH SCREEN ================= -->
 
-<section class="px-6 py-10">
-<h2 class="text-2xl font-extrabold text-center">How SHRAYNEX Works</h2>
-<p class="text-center text-gray-500 text-sm mt-2 mb-8">Start selling in three simple steps.</p>
-<div class="space-y-5">
-<div class="flex gap-4"><div class="w-11 h-11 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold">1</div><div><h3 class="font-bold">Discover Products</h3><p class="text-sm text-gray-500 mt-1">Browse products available in the SHRAYNEX catalogue.</p></div></div>
-<div class="flex gap-4"><div class="w-11 h-11 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold">2</div><div><h3 class="font-bold">Add Your Margin</h3><p class="text-sm text-gray-500 mt-1">Decide your customer selling price and see your expected profit.</p></div></div>
-<div class="flex gap-4"><div class="w-11 h-11 shrink-0 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center font-extrabold">3</div><div><h3 class="font-bold">Share & Earn</h3><p class="text-sm text-gray-500 mt-1">Share your product with customers through WhatsApp.</p></div></div>
-</div>
-</section>
+<div id="authScreen" class="hidden min-h-screen bg-black text-white">
 
-<section class="px-6 py-10 bg-gray-900 text-white text-center">
-<h2 class="text-2xl font-extrabold">Ready to Start?</h2>
-<p class="text-gray-400 text-sm mt-2">Create your reseller account today.</p>
-<button onclick="openAuthModal();setAuthMode('signup')" class="mt-6 bg-rose-600 px-7 py-3 rounded-xl font-bold">Create Free Account</button>
-</section>
+  <div class="min-h-screen flex items-center justify-center p-5">
 
-<footer class="bg-gray-950 text-white px-6 py-10 pb-16">
-<h2 class="font-extrabold text-xl">SHRAYNEX</h2>
-<p class="text-gray-400 text-sm mt-3 leading-relaxed">A reseller platform designed to help individuals start and grow an online business.</p>
-<div class="grid grid-cols-2 gap-5 mt-8 text-sm">
-<div><h3 class="font-bold mb-3">Company</h3><button onclick="openPolicy('about')" class="block text-gray-400 mb-2">About Us</button><button onclick="openPolicy('contact')" class="block text-gray-400 mb-2">Contact</button><button onclick="openPolicy('careers')" class="block text-gray-400">Careers</button></div>
-<div><h3 class="font-bold mb-3">Legal</h3><button onclick="openPolicy('privacy')" class="block text-gray-400 mb-2">Privacy Policy</button><button onclick="openPolicy('terms')" class="block text-gray-400 mb-2">Terms</button><button onclick="openPolicy('return')" class="block text-gray-400">Shipping & Returns</button></div>
-</div>
+    <div class="w-full max-w-md">
 
-<!-- ADMIN OPTION AT THE VERY BOTTOM -->
-<div class="border-t border-gray-800 mt-8 pt-6">
-<button onclick="openAdminLogin()" class="w-full border border-gray-700 text-gray-300 py-3 rounded-xl font-bold text-sm hover:bg-gray-900">
-  ⚙️ Admin Panel
-</button>
-<p class="text-center text-[10px] text-gray-600 mt-3">Authorized administrators only</p>
-</div>
+      <div class="text-center mb-8">
+        <div class="text-4xl font-black tracking-widest">SHRAYNEX</div>
+        <p class="text-gray-400 mt-2">
+          Smart Reselling Platform
+        </p>
+      </div>
 
-<div class="border-t border-gray-800 mt-6 pt-6 text-xs text-gray-500">© 2026 SHRAYNEX. All rights reserved.</div>
-</footer>
-</div>
-</section>
+      <div class="bg-white text-black rounded-3xl p-6 shadow-2xl">
 
-<!-- AUTH MODAL -->
-<div id="authModal" class="modal fixed inset-0 z-[90] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-<div class="flex justify-between items-center mb-5"><div><h2 class="text-xl font-extrabold">Welcome to SHRAYNEX</h2><p id="authSubtitle" class="text-xs text-gray-500 mt-1">Login to your reseller account</p></div><button onclick="closeAuthModal()" class="text-2xl text-gray-400">×</button></div>
-<div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl mb-5">
-<button id="loginModeBtn" onclick="setAuthMode('login')" class="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm">Login</button>
-<button id="signupModeBtn" onclick="setAuthMode('signup')" class="py-2.5 rounded-lg text-gray-500 font-bold text-sm">Create Account</button>
-</div>
-<button id="googleBtn" onclick="loginWithGoogle()" class="w-full border border-gray-300 rounded-xl py-3.5 flex items-center justify-center gap-3 font-semibold hover:bg-gray-50"></button>
-<div class="flex items-center gap-3 my-5"><div class="h-px bg-gray-200 flex-1"></div><span class="text-xs text-gray-400">OR</span><div class="h-px bg-gray-200 flex-1"></div></div>
-<form id="emailForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
-<div id="signupFields">
-<input id="authName" type="text" class="input" placeholder="Full Name">
-<input id="authPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input mt-3" placeholder="Mobile Number">
-</div>
-<input id="authEmail" type="email" class="input" placeholder="Email Address" required>
-<input id="authPassword" type="password" minlength="6" class="input" placeholder="Password (minimum 6 characters)" required>
-<button id="emailBtn" type="submit" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold">Login</button>
-<button id="forgotBtn" type="button" onclick="forgotPassword()" class="w-full text-sm text-rose-600 font-semibold">Forgot Password?</button>
-</form>
-<p class="text-[11px] text-gray-400 text-center mt-4">By continuing, you agree to SHRAYNEX Terms & Privacy Policy.</p>
-</div>
-</div>
+        <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
+          <button id="loginTab"
+                  onclick="switchAuth('login')"
+                  class="flex-1 py-3 rounded-lg bg-black text-white font-bold">
+            Login
+          </button>
 
-<!-- USER APP -->
-<section id="userPage" class="page">
-<div class="app min-h-screen pb-24">
-<header class="sticky top-0 z-30 bg-white border-b">
-<div class="px-4 py-3 flex justify-between items-center">
-<div class="flex items-center gap-3"><div id="avatar" class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold">S</div><div><p class="text-[10px] text-gray-400">Welcome back</p><p id="userName" class="font-bold text-sm">Reseller</p></div></div>
-<button onclick="logoutUser()" class="text-xs border rounded-lg px-3 py-2 text-gray-600">Logout</button>
-</div>
-</header>
+          <button id="signupTab"
+                  onclick="switchAuth('signup')"
+                  class="flex-1 py-3 rounded-lg text-gray-600 font-bold">
+            Sign Up
+          </button>
+        </div>
 
-<div id="approvalNotice" class="hidden mx-4 mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200">
-<div class="font-bold text-amber-800">⏳ Account approval pending</div>
-<p class="text-xs text-amber-700 mt-1">You can browse products, but order placement will be available after admin approval.</p>
-</div>
+        <!-- LOGIN -->
 
-<div id="feedTab" class="px-4 py-5">
-<div class="mb-5"><h1 class="text-2xl font-extrabold">Products</h1><p class="text-sm text-gray-500">Pick a product and start reselling.</p></div>
-<div class="mb-5"><input id="productSearch" oninput="filterProducts()" class="input" placeholder="🔍 Search products..."></div>
-<div id="productFeed" class="space-y-6"><div class="card p-4"><div class="skeleton w-full aspect-[4/5] rounded-xl"></div><div class="skeleton h-5 w-3/4 rounded mt-4"></div><div class="skeleton h-4 w-1/2 rounded mt-3"></div></div></div>
-</div>
+        <form id="loginForm" onsubmit="loginUser(event)">
 
-<div id="ordersTab" class="hidden px-4 py-5">
-<h1 class="text-2xl font-extrabold">My Orders</h1><p class="text-sm text-gray-500 mt-1 mb-5">Track your reseller orders.</p>
-<div id="ordersList" class="space-y-4"><div class="text-center py-12 text-gray-400">Loading orders...</div></div>
-</div>
+          <label class="text-sm font-bold">Email</label>
+          <input id="loginEmail"
+                 type="email"
+                 required
+                 class="w-full border rounded-xl p-3 mt-1 mb-4"
+                 placeholder="Enter email">
 
-<div id="profileTab" class="hidden px-4 py-5">
-<h1 class="text-2xl font-extrabold">My Account</h1>
-<div class="card p-5 mt-5">
-<div class="flex items-center gap-4"><div id="profileAvatar" class="w-16 h-16 rounded-full bg-rose-600 text-white text-2xl font-bold flex items-center justify-center">S</div><div><h2 id="profileName" class="font-extrabold text-lg">Reseller</h2><p id="profileEmail" class="text-sm text-gray-500">—</p></div></div>
-<div class="border-t mt-5 pt-5 space-y-3">
-<div class="flex justify-between"><span class="text-gray-500">Mobile</span><span id="profilePhone" class="font-semibold">—</span></div>
-<div class="flex justify-between"><span class="text-gray-500">Account</span><span id="profileStatus" class="font-bold">—</span></div>
-</div>
-</div>
-<div class="grid grid-cols-2 gap-3 mt-4">
-<div class="card p-5"><p class="text-xs text-gray-500">Wallet Balance</p><p id="profileWallet" class="text-2xl font-extrabold text-rose-600 mt-1">₹0</p></div>
-<div class="card p-5"><p class="text-xs text-gray-500">Total Earnings</p><p id="profileEarnings" class="text-2xl font-extrabold text-green-600 mt-1">₹0</p></div>
-</div>
-<button onclick="logoutUser()" class="w-full mt-5 border border-red-200 text-red-600 py-3 rounded-xl font-bold">Logout</button>
-</div>
+          <label class="text-sm font-bold">Password</label>
+          <input id="loginPassword"
+                 type="password"
+                 required
+                 class="w-full border rounded-xl p-3 mt-1 mb-5"
+                 placeholder="Enter password">
 
-<nav class="bottom-nav fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] bg-white border-t z-40">
-<div class="grid grid-cols-3">
-<button onclick="switchUserTab('feed')" id="navFeed" class="py-3 text-rose-600 flex flex-col items-center"><span class="text-xl">🏠</span><span class="text-[10px] font-bold mt-1">Home</span></button>
-<button onclick="switchUserTab('orders')" id="navOrders" class="py-3 text-gray-400 flex flex-col items-center"><span class="text-xl">📦</span><span class="text-[10px] font-bold mt-1">Orders</span></button>
-<button onclick="switchUserTab('profile')" id="navProfile" class="py-3 text-gray-400 flex flex-col items-center"><span class="text-xl">👤</span><span class="text-[10px] font-bold mt-1">Account</span></button>
-</div>
-</nav>
-</div>
-</section>
+          <button type="submit"
+                  class="w-full bg-black text-white py-3 rounded-xl font-bold">
+            Login
+          </button>
 
-<!-- SHARE MODAL -->
-<div id="shareModal" class="modal fixed inset-0 z-[90] bg-black/60 flex items-end sm:items-center justify-center">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-<div class="flex justify-between items-center"><h2 class="text-xl font-extrabold">Share & Earn</h2><button onclick="closeShareModal()" class="text-2xl text-gray-400">×</button></div>
-<p id="shareProductName" class="font-semibold mt-5">Product</p>
-<div class="bg-gray-50 rounded-xl p-4 mt-4">
-<div class="flex justify-between text-sm"><span class="text-gray-500">Base Price</span><span class="font-bold">₹<span id="shareBasePrice">0</span></span></div>
-<div class="mt-4"><label class="text-sm font-semibold">Customer Selling Price</label><div class="flex mt-2"><span class="bg-gray-200 px-4 flex items-center rounded-l-xl">₹</span><input id="sellingPrice" type="number" min="1" oninput="calculateProfit()" class="w-full px-3 py-3 border rounded-r-xl outline-none" placeholder="Example: 799"></div></div>
-<div class="mt-4 flex justify-between"><span class="text-sm text-gray-500">Your Profit</span><span id="profitAmount" class="font-extrabold text-green-600">₹0</span></div>
-</div>
-<div class="grid grid-cols-2 gap-3 mt-5"><button onclick="closeShareModal()" class="border py-3 rounded-xl font-bold">Cancel</button><button onclick="shareOnWhatsApp()" class="bg-green-500 text-white py-3 rounded-xl font-bold">WhatsApp</button></div>
-</div>
+        </form>
+
+
+        <!-- SIGNUP -->
+
+        <form id="signupForm"
+              class="hidden"
+              onsubmit="signupUser(event)">
+
+          <label class="text-sm font-bold">Name</label>
+          <input id="signupName"
+                 type="text"
+                 required
+                 class="w-full border rounded-xl p-3 mt-1 mb-4"
+                 placeholder="Full name">
+
+          <label class="text-sm font-bold">Mobile</label>
+          <input id="signupPhone"
+                 type="tel"
+                 required
+                 maxlength="10"
+                 class="w-full border rounded-xl p-3 mt-1 mb-4"
+                 placeholder="10 digit mobile">
+
+          <label class="text-sm font-bold">Email</label>
+          <input id="signupEmail"
+                 type="email"
+                 required
+                 class="w-full border rounded-xl p-3 mt-1 mb-4"
+                 placeholder="Email address">
+
+          <label class="text-sm font-bold">Password</label>
+          <input id="signupPassword"
+                 type="password"
+                 required
+                 minlength="6"
+                 class="w-full border rounded-xl p-3 mt-1 mb-5"
+                 placeholder="Minimum 6 characters">
+
+          <button type="submit"
+                  class="w-full bg-black text-white py-3 rounded-xl font-bold">
+            Create Account
+          </button>
+
+        </form>
+
+
+        <div class="flex items-center gap-3 my-6">
+          <div class="h-px bg-gray-200 flex-1"></div>
+          <span class="text-gray-400 text-sm">OR</span>
+          <div class="h-px bg-gray-200 flex-1"></div>
+        </div>
+
+        <button onclick="googleLogin()"
+                class="w-full border border-gray-300 py-3 rounded-xl font-bold flex items-center justify-center gap-3">
+          <span class="text-lg">G</span>
+          Continue with Google
+        </button>
+
+      </div>
+
+      <p class="text-center text-gray-500 text-xs mt-6">
+        © 2026 SHRAYNEX
+      </p>
+
+    </div>
+  </div>
 </div>
 
-<!-- ORDER MODAL -->
-<div id="orderModal" class="modal fixed inset-0 z-[90] bg-black/60 flex items-end sm:items-center justify-center">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[92vh] overflow-y-auto">
-<div class="flex justify-between"><div><h2 class="text-xl font-extrabold">Place Order</h2><p id="orderProductName" class="text-sm text-gray-500 mt-1">Product</p></div><button onclick="closeOrderModal()" class="text-2xl text-gray-400">×</button></div>
-<form onsubmit="placeOrder(event)" class="space-y-4 mt-6">
-<input id="customerName" class="input" placeholder="Customer Name" required>
-<input id="customerPhone" class="input" type="tel" maxlength="10" pattern="[0-9]{10}" placeholder="Customer Mobile Number" required>
-<textarea id="customerAddress" class="input min-h-[100px]" placeholder="Complete Delivery Address" required></textarea>
-<input id="customerPincode" class="input" type="tel" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit Pincode" required>
-<input id="orderQuantity" class="input" type="number" min="1" value="1" oninput="calculateOrderTotal()" required>
-<div><label class="text-sm font-semibold">Customer Selling Price</label><div class="flex mt-2"><span class="bg-gray-200 px-4 flex items-center rounded-l-xl">₹</span><input id="orderSellingPriceInput" type="number" min="1" class="w-full px-3 py-3 border rounded-r-xl outline-none" placeholder="Example: 799" oninput="calculateOrderTotal()" required></div></div>
-<div class="bg-gray-50 rounded-xl p-4">
-<div class="flex justify-between"><span class="text-gray-500">Selling Price</span><span class="font-bold">₹<span id="orderSellingPrice">0</span></span></div>
-<div class="flex justify-between mt-2"><span class="text-gray-500">Quantity</span><span id="orderQtyDisplay" class="font-bold">1</span></div>
-<div class="flex justify-between mt-2"><span class="text-gray-500">Your Profit</span><span class="font-bold text-green-600">₹<span id="orderProfit">0</span></span></div>
-</div>
-<button id="placeOrderBtn" type="submit" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold">Place Order</button>
-</form>
-</div>
+
+<!-- ================= USER APP ================= -->
+
+<div id="userApp" class="hidden min-h-screen pb-24">
+
+  <!-- HEADER -->
+
+  <header class="bg-black text-white sticky top-0 z-40">
+
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+
+      <div>
+        <div class="font-black tracking-widest text-xl">
+          SHRAYNEX
+        </div>
+        <div id="headerGreeting"
+             class="text-xs text-gray-400">
+          Welcome
+        </div>
+      </div>
+
+      <button onclick="openWalletModal()"
+              class="bg-white text-black px-3 py-2 rounded-xl text-sm font-bold">
+        ₹<span id="headerWallet">0</span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main class="max-w-6xl mx-auto px-4 py-5">
+
+    <!-- HOME -->
+
+    <section id="homeSection">
+
+      <div class="mb-5">
+        <h1 class="text-2xl font-black">
+          Products
+        </h1>
+        <p class="text-gray-500 text-sm">
+          Swipe left/right and choose a product to resell
+        </p>
+      </div>
+
+      <div id="categoryContainer"></div>
+
+      <div id="emptyProducts"
+           class="hidden bg-white rounded-2xl p-10 text-center">
+        <div class="text-4xl mb-3">📦</div>
+        <div class="font-bold">No products available</div>
+        <div class="text-sm text-gray-500 mt-1">
+          Admin will add products soon.
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+
+    <section id="ordersSection" class="hidden">
+
+      <div class="mb-5">
+        <h1 class="text-2xl font-black">My Orders</h1>
+        <p class="text-gray-500 text-sm">
+          Track your reseller orders
+        </p>
+      </div>
+
+      <div id="userOrders"></div>
+
+    </section>
+
+
+    <!-- ACCOUNT -->
+
+    <section id="accountSection" class="hidden">
+
+      <div class="mb-5">
+        <h1 class="text-2xl font-black">My Account</h1>
+      </div>
+
+
+      <div class="bg-black text-white rounded-3xl p-6 mb-4">
+
+        <div class="flex items-center gap-4">
+
+          <div id="profileAvatar"
+               class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center text-2xl font-black">
+            U
+          </div>
+
+          <div class="flex-1">
+            <div id="profileName"
+                 class="font-bold text-lg">
+              User
+            </div>
+
+            <div id="profileEmail"
+                 class="text-gray-400 text-sm">
+              -
+            </div>
+
+            <div id="profilePhone"
+                 class="text-gray-400 text-sm">
+              -
+            </div>
+          </div>
+
+          <button onclick="openProfileModal()"
+                  class="bg-white text-black px-3 py-2 rounded-xl text-sm font-bold">
+            Edit
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- WALLET -->
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+
+        <div class="bg-white rounded-2xl p-5 border">
+          <div class="text-gray-500 text-sm">
+            Wallet Balance
+          </div>
+
+          <div class="text-2xl font-black mt-2">
+            ₹<span id="walletBalance">0</span>
+          </div>
+
+          <button onclick="openWithdrawModal()"
+                  class="mt-4 w-full bg-black text-white py-2 rounded-xl font-bold text-sm">
+            Withdraw
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border">
+          <div class="text-gray-500 text-sm">
+            Total Earnings
+          </div>
+
+          <div class="text-2xl font-black mt-2">
+            ₹<span id="totalEarnings">0</span>
+          </div>
+
+          <button onclick="openWalletModal()"
+                  class="mt-4 w-full border py-2 rounded-xl font-bold text-sm">
+            Wallet History
+          </button>
+        </div>
+
+      </div>
+
+
+      <!-- PROFILE OPTIONS -->
+
+      <div class="bg-white rounded-2xl border overflow-hidden">
+
+        <button onclick="openProfileModal()"
+                class="w-full p-4 flex justify-between border-b">
+          <span>👤 Edit Profile</span>
+          <span>›</span>
+        </button>
+
+        <button onclick="openWithdrawModal()"
+                class="w-full p-4 flex justify-between border-b">
+          <span>💰 Withdrawal</span>
+          <span>›</span>
+        </button>
+
+        <button onclick="openWalletModal()"
+                class="w-full p-4 flex justify-between border-b">
+          <span>📊 Wallet Transactions</span>
+          <span>›</span>
+        </button>
+
+        <button onclick="logoutUser()"
+                class="w-full p-4 flex justify-between text-red-600 font-bold">
+          <span>🚪 Logout</span>
+          <span>›</span>
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- BOTTOM NAV -->
+
+  <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t z-50">
+
+    <div class="max-w-6xl mx-auto grid grid-cols-3">
+
+      <button id="navHome"
+              onclick="showSection('home')"
+              class="py-3 text-center nav-active">
+        <div class="text-xl">🏠</div>
+        <div class="text-xs">Home</div>
+      </button>
+
+      <button id="navOrders"
+              onclick="showSection('orders')"
+              class="py-3 text-center text-gray-500">
+        <div class="text-xl">📦</div>
+        <div class="text-xs">Orders</div>
+      </button>
+
+      <button id="navAccount"
+              onclick="showSection('account')"
+              class="py-3 text-center text-gray-500">
+        <div class="text-xl">👤</div>
+        <div class="text-xs">Account</div>
+      </button>
+
+    </div>
+
+  </nav>
+
 </div>
 
-<!-- POLICY -->
-<div id="policyModal" class="modal fixed inset-0 z-[95] bg-black/60 flex items-center justify-center p-4">
-<div class="modal-box bg-white w-full max-w-md max-h-[85vh] rounded-2xl overflow-hidden">
-<div class="p-4 border-b flex justify-between"><h2 id="policyTitle" class="font-extrabold">Policy</h2><button onclick="closePolicy()" class="text-2xl text-gray-400">×</button></div>
-<div id="policyContent" class="p-5 text-sm text-gray-600 leading-relaxed overflow-y-auto max-h-[70vh]"></div>
-</div>
-</div>
 
-<!-- ADMIN LOGIN -->
-<div id="adminLoginModal" class="modal fixed inset-0 z-[180] bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6">
-<div class="flex justify-between items-center"><div><h2 class="text-xl font-extrabold">⚙️ SHRAYNEX Admin</h2><p class="text-xs text-gray-500 mt-1">Authorized administrators only</p></div><button onclick="closeAdminLogin()" class="text-2xl text-gray-400">×</button></div>
-<form onsubmit="handleAdminLogin(event)" class="space-y-3 mt-6">
-<input id="adminEmail" type="email" class="input" placeholder="Admin Email" required>
-<input id="adminPassword" type="password" minlength="6" class="input" placeholder="Admin Password" required>
-<button id="adminLoginBtn" type="submit" class="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold">Admin Login</button>
-</form>
-<p class="text-[11px] text-gray-400 mt-4 leading-relaxed">The account must have <b>role = admin</b> in the Firestore <b>shraynex_users</b> document. Do not put an admin password or role in this HTML.</p>
-</div>
-</div>
+<!-- ================= PRODUCT DETAILS MODAL ================= -->
 
-<!-- ADMIN PANEL -->
-<div id="adminPanelModal" class="modal fixed inset-0 z-[170] bg-gray-100 overflow-y-auto">
-<div class="min-h-screen max-w-[1100px] mx-auto bg-gray-100">
-<header class="sticky top-0 z-30 bg-gray-950 text-white">
-<div class="px-4 py-4 flex items-center justify-between gap-3">
-<div><div class="font-extrabold text-lg">SHRAYNEX ADMIN</div><div id="adminIdentity" class="text-[10px] text-gray-400">Administrator</div></div>
-<div class="flex gap-2"><button onclick="refreshAdmin()" class="border border-gray-700 px-3 py-2 rounded-lg text-xs">↻ Refresh</button><button onclick="closeAdminPanel()" class="bg-rose-600 px-3 py-2 rounded-lg text-xs font-bold">Close</button></div>
-</div>
-</header>
+<div id="productDetailsModal"
+     class="hidden fixed inset-0 modal-bg z-[100] p-3">
 
-<div class="p-4">
-<div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-<div class="card p-4"><p class="text-xs text-gray-500">Pending Users</p><p id="statPendingUsers" class="text-2xl font-extrabold text-amber-600">0</p></div>
-<div class="card p-4"><p class="text-xs text-gray-500">Approved Users</p><p id="statApprovedUsers" class="text-2xl font-extrabold text-green-600">0</p></div>
-<div class="card p-4"><p class="text-xs text-gray-500">Orders</p><p id="statOrders" class="text-2xl font-extrabold">0</p></div>
-<div class="card p-4"><p class="text-xs text-gray-500">Pending Orders</p><p id="statPendingOrders" class="text-2xl font-extrabold text-rose-600">0</p></div>
-<div class="card p-4"><p class="text-xs text-gray-500">Revenue</p><p id="statRevenue" class="text-2xl font-extrabold">₹0</p></div>
-</div>
+  <div class="modal-box bg-white rounded-3xl w-full max-w-lg mx-auto mt-3">
 
-<div class="flex gap-2 overflow-x-auto hide-scrollbar mt-5 pb-1">
-<button id="adminTabDashboard" onclick="switchAdminTab('dashboard')" class="admin-tab active shrink-0 px-4 py-2.5 rounded-xl text-sm font-bold">Dashboard</button>
-<button id="adminTabUsers" onclick="switchAdminTab('users')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold">Users</button>
-<button id="adminTabProducts" onclick="switchAdminTab('products')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold">Products</button>
-<button id="adminTabOrders" onclick="switchAdminTab('orders')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold">Orders</button>
-<button id="adminTabWallet" onclick="switchAdminTab('wallet')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold">Wallet</button>
-<button id="adminTabSettings" onclick="switchAdminTab('settings')" class="admin-tab shrink-0 px-4 py-2.5 rounded-xl bg-white text-gray-600 text-sm font-bold">Settings</button>
-</div>
+    <div class="sticky top-0 bg-white z-10 flex justify-between items-center p-4 border-b">
 
-<!-- ADMIN DASHBOARD -->
-<div id="adminDashboardSection" class="admin-section mt-5">
-<div class="card p-5">
-<h2 class="font-extrabold text-lg">Admin Overview</h2>
-<p class="text-sm text-gray-500 mt-1">Manage reseller approvals, catalogue, orders and wallet from here.</p>
-<div id="adminRecentOrders" class="mt-5 space-y-3"></div>
-</div>
-</div>
+      <div class="font-black">
+        Product Details
+      </div>
 
-<!-- USERS -->
-<div id="adminUsersSection" class="admin-section hidden mt-5">
-<div class="card p-5">
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-<div><h2 class="font-extrabold text-lg">Reseller Users</h2><p class="text-xs text-gray-500">Approve new accounts or suspend existing accounts.</p></div>
-<input id="adminUserSearch" oninput="renderAdminUsers()" class="input md:max-w-xs" placeholder="Search name / email / phone">
-</div>
-<div id="adminUsersList" class="mt-5 space-y-3"></div>
-</div>
-</div>
+      <button onclick="closeModal('productDetailsModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
 
-<!-- PRODUCTS -->
-<div id="adminProductsSection" class="admin-section hidden mt-5">
-<div class="card p-5">
-<div class="flex items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">Product Catalogue</h2><p class="text-xs text-gray-500">Add, edit, activate/deactivate or delete products.</p></div><button onclick="openProductEditor()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold">＋ Add Product</button></div>
-<div id="adminProductsList" class="mt-5 space-y-3"></div>
-</div>
-</div>
+    </div>
 
-<!-- ORDERS -->
-<div id="adminOrdersSection" class="admin-section hidden mt-5">
-<div class="card p-5">
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-3"><div><h2 class="font-extrabold text-lg">All Orders</h2><p class="text-xs text-gray-500">Update order status from pending to delivered/cancelled.</p></div><input id="adminOrderSearch" oninput="renderAdminOrders()" class="input md:max-w-xs" placeholder="Search order / customer / reseller"></div>
-<div id="adminOrdersList" class="mt-5 space-y-3"></div>
-</div>
-</div>
+    <div id="productDetailsContent"></div>
 
-<!-- WALLET -->
-<div id="adminWalletSection" class="admin-section hidden mt-5">
-<div class="card p-5">
-<h2 class="font-extrabold text-lg">Wallet & Earnings</h2>
-<p class="text-xs text-gray-500 mt-1">Credits are controlled by admin. Every adjustment creates a transaction record.</p>
-<div id="adminWalletUsers" class="mt-5 space-y-3"></div>
-</div>
-</div>
-
-<!-- SETTINGS -->
-<div id="adminSettingsSection" class="admin-section hidden mt-5">
-<div class="card p-5">
-<h2 class="font-extrabold text-lg">Platform Settings</h2>
-<p class="text-xs text-gray-500 mt-1">These settings are stored in <b>shraynex_settings/platform</b>.</p>
-<form onsubmit="saveAdminSettings(event)" class="space-y-3 mt-5">
-<input id="settingBusinessName" class="input" placeholder="Business Name">
-<input id="settingSupportEmail" type="email" class="input" placeholder="Support Email">
-<input id="settingSupportPhone" class="input" placeholder="Support Phone">
-<input id="settingDeliveryText" class="input" placeholder="Default Delivery Text">
-<button class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold">Save Settings</button>
-</form>
-</div>
-</div>
+  </div>
 
 </div>
-</div>
+
+
+<!-- ================= ORDER MODAL ================= -->
+
+<div id="orderModal"
+     class="hidden fixed inset-0 modal-bg z-[110] p-3">
+
+  <div class="modal-box bg-white rounded-3xl w-full max-w-lg mx-auto mt-5">
+
+    <div class="flex justify-between p-4 border-b">
+      <div class="font-black text-lg">
+        Place Order
+      </div>
+
+      <button onclick="closeModal('orderModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+    </div>
+
+    <form onsubmit="placeOrder(event)"
+          class="p-5">
+
+      <input type="hidden" id="orderProductId">
+      <input type="hidden" id="orderSize">
+
+      <div id="orderProductPreview"
+           class="mb-5"></div>
+
+
+      <label class="font-bold text-sm">
+        Customer Name
+      </label>
+
+      <input id="customerName"
+             required
+             class="w-full border rounded-xl p-3 mt-1 mb-4"
+             placeholder="Customer name">
+
+
+      <label class="font-bold text-sm">
+        Customer Mobile
+      </label>
+
+      <input id="customerPhone"
+             required
+             maxlength="10"
+             class="w-full border rounded-xl p-3 mt-1 mb-4"
+             placeholder="10 digit mobile">
+
+
+      <label class="font-bold text-sm">
+        Address
+      </label>
+
+      <textarea id="customerAddress"
+                required
+                rows="3"
+                class="w-full border rounded-xl p-3 mt-1 mb-4"
+                placeholder="Full delivery address"></textarea>
+
+
+      <label class="font-bold text-sm">
+        Pincode
+      </label>
+
+      <input id="customerPincode"
+             required
+             maxlength="6"
+             class="w-full border rounded-xl p-3 mt-1 mb-4"
+             placeholder="Pincode">
+
+
+      <!-- SIZE -->
+
+      <div id="orderSizeContainer"
+           class="mb-4"></div>
+
+
+      <!-- QUANTITY -->
+
+      <label class="font-bold text-sm">
+        Quantity
+      </label>
+
+      <div class="flex items-center gap-3 mt-2 mb-5">
+
+        <button type="button"
+                onclick="changeOrderQty(-1)"
+                class="qty-btn">
+          −
+        </button>
+
+        <input id="orderQuantity"
+               value="1"
+               readonly
+               class="w-16 text-center border rounded-xl p-2 font-bold">
+
+        <button type="button"
+                onclick="changeOrderQty(1)"
+                class="qty-btn">
+          +
+        </button>
+
+      </div>
+
+
+      <!-- SELLING PRICE -->
+
+      <label class="font-bold text-sm">
+        Customer Selling Price / Item
+      </label>
+
+      <input id="orderSellingPrice"
+             type="number"
+             min="0"
+             required
+             oninput="calculateOrderProfit()"
+             class="w-full border rounded-xl p-3 mt-1 mb-3"
+             placeholder="Enter selling price">
+
+
+      <div class="bg-gray-100 rounded-2xl p-4 mb-5">
+
+        <div class="flex justify-between text-sm">
+          <span>Base Price</span>
+          <b>₹<span id="orderBasePrice">0</span></b>
+        </div>
+
+        <div class="flex justify-between text-sm mt-2">
+          <span>Profit / Item</span>
+          <b>₹<span id="orderProfit">0</span></b>
+        </div>
+
+        <div class="flex justify-between mt-3 pt-3 border-t">
+          <span class="font-bold">Total Profit</span>
+          <b class="text-green-600">
+            ₹<span id="orderTotalProfit">0</span>
+          </b>
+        </div>
+
+      </div>
+
+
+      <button type="submit"
+              class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Place Order
+      </button>
+
+    </form>
+
+  </div>
 </div>
 
-<!-- PRODUCT EDITOR -->
-<div id="productEditorModal" class="modal fixed inset-0 z-[220] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[92vh] overflow-y-auto">
-<div class="flex justify-between items-center"><div><h2 id="productEditorTitle" class="text-xl font-extrabold">Add Product</h2><p class="text-xs text-gray-500 mt-1">Use a public image URL.</p></div><button onclick="closeProductEditor()" class="text-2xl text-gray-400">×</button></div>
-<form onsubmit="saveProduct(event)" class="space-y-3 mt-5">
-<input type="hidden" id="editProductId">
-<input id="productTitleInput" class="input" placeholder="Product Title" required>
-<textarea id="productDescriptionInput" class="input min-h-[90px]" placeholder="Description"></textarea>
-<div class="grid grid-cols-2 gap-3"><input id="productBasePriceInput" type="number" min="0" class="input" placeholder="Reseller Price / Base Price" required><input id="productMrpInput" type="number" min="0" class="input" placeholder="MRP"></div>
-<div class="grid grid-cols-2 gap-3"><input id="productDiscountInput" type="number" min="0" max="99" step="0.01" class="input" placeholder="Discount %"><div class="input bg-gray-50 text-gray-500 flex items-center" id="productDiscountPreview">Discount will show here</div></div>
-<input id="productCategoryInput" class="input" placeholder="Category">
-<input id="productImagesInput" class="input" placeholder="Image URLs (comma separated)">
-<input id="productDeliveryInput" class="input" placeholder="Delivery e.g. 3-7 Days">
-<input id="productStockInput" type="number" min="0" class="input" placeholder="Stock">
-<label class="flex items-center gap-3 border rounded-xl p-3"><input id="productActiveInput" type="checkbox" class="w-5 h-5" checked><span class="font-semibold text-sm">Product Active / Visible</span></label>
-<button id="saveProductBtn" class="w-full bg-rose-600 text-white py-3.5 rounded-xl font-bold">Save Product</button>
-</form>
-</div>
+
+<!-- ================= PROFILE MODAL ================= -->
+
+<div id="profileModal"
+     class="hidden fixed inset-0 modal-bg z-[120] p-3">
+
+  <div class="modal-box bg-white rounded-3xl w-full max-w-md mx-auto mt-10">
+
+    <div class="flex justify-between items-center p-4 border-b">
+
+      <div class="font-black text-lg">
+        Edit Profile
+      </div>
+
+      <button onclick="closeModal('profileModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+
+    </div>
+
+
+    <form onsubmit="saveProfile(event)"
+          class="p-5">
+
+      <label class="font-bold text-sm">
+        Full Name
+      </label>
+
+      <input id="editName"
+             required
+             class="w-full border rounded-xl p-3 mt-1 mb-4">
+
+
+      <label class="font-bold text-sm">
+        Mobile Number
+      </label>
+
+      <input id="editPhone"
+             required
+             maxlength="10"
+             class="w-full border rounded-xl p-3 mt-1 mb-4">
+
+
+      <label class="font-bold text-sm">
+        Profile Photo URL
+      </label>
+
+      <input id="editPhotoURL"
+             class="w-full border rounded-xl p-3 mt-1 mb-5"
+             placeholder="Optional image URL">
+
+
+      <div class="bg-yellow-50 rounded-xl p-3 text-xs text-yellow-800 mb-5">
+        Email address login के साथ जुड़ा रहेगा।
+      </div>
+
+
+      <button type="submit"
+              class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Save Changes
+      </button>
+
+    </form>
+
+  </div>
 </div>
 
-<!-- USER DETAILS -->
-<div id="userDetailsModal" class="modal fixed inset-0 z-[220] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
-<div class="flex justify-between"><div><h2 class="text-xl font-extrabold">User Details</h2><p id="userDetailsId" class="text-xs text-gray-400 mt-1"></p></div><button onclick="closeUserDetails()" class="text-2xl text-gray-400">×</button></div>
-<div id="userDetailsContent" class="mt-5"></div>
+
+<!-- ================= WITHDRAW MODAL ================= -->
+
+<div id="withdrawModal"
+     class="hidden fixed inset-0 modal-bg z-[130] p-3">
+
+  <div class="modal-box bg-white rounded-3xl w-full max-w-md mx-auto mt-6">
+
+    <div class="flex justify-between items-center p-4 border-b">
+
+      <div class="font-black text-lg">
+        Withdrawal
+      </div>
+
+      <button onclick="closeModal('withdrawModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+
+    </div>
+
+
+    <div class="p-5">
+
+      <div class="bg-black text-white rounded-2xl p-5 mb-5">
+
+        <div class="text-gray-400 text-sm">
+          Available Balance
+        </div>
+
+        <div class="text-3xl font-black mt-1">
+          ₹<span id="withdrawBalance">0</span>
+        </div>
+
+      </div>
+
+
+      <form onsubmit="submitWithdrawal(event)">
+
+        <label class="font-bold text-sm">
+          Withdrawal Amount
+        </label>
+
+        <input id="withdrawAmount"
+               type="number"
+               min="1"
+               required
+               class="w-full border rounded-xl p-3 mt-1 mb-4"
+               placeholder="Enter amount">
+
+
+        <label class="font-bold text-sm">
+          UPI ID
+        </label>
+
+        <input id="withdrawUPI"
+               required
+               class="w-full border rounded-xl p-3 mt-1 mb-4"
+               placeholder="example@upi">
+
+
+        <label class="font-bold text-sm">
+          Account Holder Name
+        </label>
+
+        <input id="withdrawHolder"
+               required
+               class="w-full border rounded-xl p-3 mt-1 mb-4"
+               placeholder="Account holder name">
+
+
+        <label class="font-bold text-sm">
+          Bank Account Number
+        </label>
+
+        <input id="withdrawAccount"
+               class="w-full border rounded-xl p-3 mt-1 mb-4"
+               placeholder="Optional if UPI used">
+
+
+        <label class="font-bold text-sm">
+          IFSC Code
+        </label>
+
+        <input id="withdrawIFSC"
+               class="w-full border rounded-xl p-3 mt-1 mb-5"
+               placeholder="Optional if UPI used">
+
+
+        <button type="submit"
+                class="w-full bg-black text-white py-3 rounded-xl font-bold">
+          Submit Withdrawal Request
+        </button>
+
+      </form>
+
+
+      <div class="mt-7">
+
+        <div class="font-black mb-3">
+          Withdrawal History
+        </div>
+
+        <div id="withdrawalHistory"></div>
+
+      </div>
+
+    </div>
+
+  </div>
 </div>
+
+
+<!-- ================= WALLET MODAL ================= -->
+
+<div id="walletModal"
+     class="hidden fixed inset-0 modal-bg z-[130] p-3">
+
+  <div class="modal-box bg-white rounded-3xl w-full max-w-md mx-auto mt-6">
+
+    <div class="flex justify-between items-center p-4 border-b">
+
+      <div class="font-black text-lg">
+        Wallet History
+      </div>
+
+      <button onclick="closeModal('walletModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+
+    </div>
+
+    <div class="p-5">
+
+      <div class="bg-black text-white rounded-2xl p-5 mb-5">
+
+        <div class="text-gray-400 text-sm">
+          Current Balance
+        </div>
+
+        <div class="text-3xl font-black">
+          ₹<span id="walletModalBalance">0</span>
+        </div>
+
+      </div>
+
+      <div id="walletTransactions"></div>
+
+    </div>
+
+  </div>
 </div>
+
+
+<!-- ================= ADMIN MODAL ================= -->
+
+<div id="adminModal"
+     class="hidden fixed inset-0 bg-gray-100 z-[200] overflow-y-auto">
+
+  <div class="min-h-screen">
+
+    <header class="bg-black text-white sticky top-0 z-50">
+
+      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+
+        <div>
+          <div class="font-black tracking-widest">
+            SHRAYNEX ADMIN
+          </div>
+          <div class="text-xs text-gray-400">
+            Control Panel
+          </div>
+        </div>
+
+        <button onclick="closeAdmin()"
+                class="bg-white text-black px-4 py-2 rounded-xl font-bold">
+          Close
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <main class="max-w-7xl mx-auto p-4">
+
+      <!-- ADMIN NAV -->
+
+      <div class="flex gap-2 overflow-x-auto mb-5">
+
+        <button onclick="adminTab('dashboard')"
+                class="admin-tab bg-black text-white px-4 py-2 rounded-xl">
+          Dashboard
+        </button>
+
+        <button onclick="adminTab('users')"
+                class="admin-tab bg-white px-4 py-2 rounded-xl">
+          Users
+        </button>
+
+        <button onclick="adminTab('products')"
+                class="admin-tab bg-white px-4 py-2 rounded-xl">
+          Products
+        </button>
+
+        <button onclick="adminTab('orders')"
+                class="admin-tab bg-white px-4 py-2 rounded-xl">
+          Orders
+        </button>
+
+        <button onclick="adminTab('withdrawals')"
+                class="admin-tab bg-white px-4 py-2 rounded-xl">
+          Withdrawals
+        </button>
+
+      </div>
+
+
+      <!-- DASHBOARD -->
+
+      <section id="adminDashboard">
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+          <div class="bg-white rounded-2xl p-5 border">
+            <div class="text-gray-500 text-sm">Users</div>
+            <div id="statUsers"
+                 class="text-3xl font-black mt-2">
+              0
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border">
+            <div class="text-gray-500 text-sm">Products</div>
+            <div id="statProducts"
+                 class="text-3xl font-black mt-2">
+              0
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border">
+            <div class="text-gray-500 text-sm">Orders</div>
+            <div id="statOrders"
+                 class="text-3xl font-black mt-2">
+              0
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-5 border">
+            <div class="text-gray-500 text-sm">Revenue</div>
+            <div id="statRevenue"
+                 class="text-3xl font-black mt-2">
+              ₹0
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- USERS -->
+
+      <section id="adminUsers"
+               class="hidden">
+
+        <div class="bg-white rounded-2xl border overflow-x-auto">
+
+          <table class="admin-table w-full text-sm">
+
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Name</th>
+                <th class="p-3 text-left">Email</th>
+                <th class="p-3 text-left">Mobile</th>
+                <th class="p-3 text-left">Role</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Wallet</th>
+                <th class="p-3 text-left">Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="adminUsersBody"></tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- PRODUCTS -->
+
+      <section id="adminProducts"
+               class="hidden">
+
+        <div class="flex justify-between items-center mb-4">
+
+          <h2 class="text-xl font-black">
+            Products
+          </h2>
+
+          <button onclick="openProductEditor()"
+                  class="bg-black text-white px-4 py-2 rounded-xl font-bold">
+            + Add Product
+          </button>
+
+        </div>
+
+        <div id="adminProductsList"
+             class="grid md:grid-cols-3 gap-4"></div>
+
+      </section>
+
+
+      <!-- ORDERS -->
+
+      <section id="adminOrders"
+               class="hidden">
+
+        <div class="bg-white rounded-2xl border overflow-x-auto">
+
+          <table class="admin-table w-full text-sm">
+
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="p-3 text-left">Order</th>
+                <th class="p-3 text-left">Product</th>
+                <th class="p-3 text-left">Customer</th>
+                <th class="p-3 text-left">Qty</th>
+                <th class="p-3 text-left">Profit</th>
+                <th class="p-3 text-left">Status</th>
+                <th class="p-3 text-left">Action</th>
+              </tr>
+            </thead>
+
+            <tbody id="adminOrdersBody"></tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+
+      <!-- WITHDRAWALS -->
+
+      <section id="adminWithdrawals"
+               class="hidden">
+
+        <h2 class="text-xl font-black mb-4">
+          Withdrawal Requests
+        </h2>
+
+        <div id="adminWithdrawalsList"
+             class="space-y-4"></div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+</div>
+
+
+<!-- ================= PRODUCT EDITOR ================= -->
+
+<div id="productEditorModal"
+     class="hidden fixed inset-0 modal-bg z-[250] p-3">
+
+  <div class="modal-box bg-white rounded-3xl w-full max-w-lg mx-auto mt-5">
+
+    <div class="flex justify-between items-center p-4 border-b">
+
+      <div class="font-black text-lg">
+        Product Editor
+      </div>
+
+      <button onclick="closeModal('productEditorModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+
+    </div>
+
+
+    <form onsubmit="saveProduct(event)"
+          class="p-5">
+
+      <input type="hidden"
+             id="editProductId">
+
+
+      <label class="font-bold text-sm">
+        Product Title
+      </label>
+
+      <input id="productTitle"
+             required
+             class="w-full border rounded-xl p-3 mt-1 mb-4"
+             placeholder="Product name">
+
+
+      <label class="font-bold text-sm">
+        Description
+      </label>
+
+      <textarea id="productDescription"
+                rows="4"
+                class="w-full border rounded-xl p-3 mt-1 mb-4"
+                placeholder="Product details"></textarea>
+
+
+      <div class="grid grid-cols-2 gap-3">
+
+        <div>
+          <label class="font-bold text-sm">
+            Base Price
+          </label>
+
+          <input id="productBasePrice"
+                 type="number"
+                 required
+                 class="w-full border rounded-xl p-3 mt-1 mb-4">
+        </div>
+
+        <div>
+          <label class="font-bold text-sm">
+            MRP
+          </label>
+
+          <input id="productMRP"
+                 type="number"
+                 class="w-full border rounded-xl p-3 mt-1 mb-4">
+        </div>
+
+      </div>
+
+
+      <div class="grid grid-cols-2 gap-3">
+
+        <div>
+          <label class="font-bold text-sm">
+            Category
+          </label>
+
+          <input id="productCategory"
+                 class="w-full border rounded-xl p-3 mt-1 mb-4"
+                 placeholder="Fashion">
+        </div>
+
+        <div>
+          <label class="font-bold text-sm">
+            Stock
+          </label>
+
+          <input id="productStock"
+                 type="number"
+                 value="0"
+                 class="w-full border rounded-xl p-3 mt-1 mb-4">
+        </div>
+
+      </div>
+
+
+      <label class="font-bold text-sm">
+        Delivery Time
+      </label>
+
+      <input id="productDelivery"
+             value="5-7 Days"
+             class="w-full border rounded-xl p-3 mt-1 mb-4">
+
+
+      <label class="font-bold text-sm">
+        Size Options
+      </label>
+
+      <input id="productSizes"
+             value="S,M,L,XL,XXL"
+             class="w-full border rounded-xl p-3 mt-1 mb-4"
+             placeholder="S,M,L,XL,XXL">
+
+      <div class="text-xs text-gray-500 mb-4">
+        अगर size नहीं है तो इस field को खाली छोड़ सकते हैं।
+      </div>
+
+
+      <label class="font-bold text-sm">
+        Product Image URLs
+      </label>
+
+      <textarea id="productImages"
+                rows="4"
+                required
+                class="w-full border rounded-xl p-3 mt-1 mb-5"
+                placeholder="Image URL 1, Image URL 2, Image URL 3, Image URL 4"></textarea>
+
+
+      <label class="flex items-center gap-3 mb-5">
+
+        <input id="productActive"
+               type="checkbox"
+               checked
+               class="w-5 h-5">
+
+        <span class="font-bold">
+          Product Active
+        </span>
+
+      </label>
+
+
+      <button type="submit"
+              class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Save Product
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+
+<!-- ================= ADMIN LOGIN ================= -->
+
+<div id="adminLoginModal"
+     class="hidden fixed inset-0 modal-bg z-[300] p-3">
+
+  <div class="bg-white rounded-3xl w-full max-w-md mx-auto mt-20 p-6">
+
+    <div class="flex justify-between items-center mb-5">
+
+      <div class="font-black text-xl">
+        Admin Login
+      </div>
+
+      <button onclick="closeModal('adminLoginModal')"
+              class="w-9 h-9 rounded-full bg-gray-100">
+        ✕
+      </button>
+
+    </div>
+
+    <form onsubmit="adminLogin(event)">
+
+      <input id="adminEmail"
+             type="email"
+             required
+             class="w-full border rounded-xl p-3 mb-4"
+             placeholder="Admin email">
+
+      <input id="adminPassword"
+             type="password"
+             required
+             class="w-full border rounded-xl p-3 mb-5"
+             placeholder="Password">
+
+      <button type="submit"
+              class="w-full bg-black text-white py-3 rounded-xl font-bold">
+        Login
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div id="toast"
+     class="hidden fixed bottom-24 left-1/2 -translate-x-1/2 z-[500] bg-black text-white px-5 py-3 rounded-xl shadow-xl text-sm font-bold">
+</div>
+
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import {getAnalytics} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
 import {
-  getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signInWithRedirect,
-  getRedirectResult,createUserWithEmailAndPassword,signInWithEmailAndPassword,
-  sendPasswordResetEmail,updateProfile,setPersistence,browserLocalPersistence,signOut
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
 import {
-  getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,
-  query,where,onSnapshot,serverTimestamp,runTransaction
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
+  serverTimestamp,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-const firebaseConfig={
+
+const firebaseConfig = {
   apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
   authDomain:"rkyshree-2f74b.firebaseapp.com",
   projectId:"rkyshree-2f74b",
@@ -378,551 +1390,3990 @@ const firebaseConfig={
   measurementId:"G-2PKR5PK39Y"
 };
 
-const app=initializeApp(firebaseConfig);
-try{getAnalytics(app)}catch(e){console.warn("Analytics unavailable",e)}
-const auth=getAuth(app),db=getFirestore(app);
-const googleProvider=new GoogleAuthProvider();
-googleProvider.setCustomParameters({prompt:"select_account"});
-await setPersistence(auth,browserLocalPersistence);
 
-const USERS="shraynex_users";
-const PRODUCTS="shraynex_products";
-const ORDERS="shraynex_orders";
-const WALLET="shraynex_wallet_transactions";
-const SETTINGS="shraynex_settings";
+const app = initializeApp(firebaseConfig);
 
-let currentUser=null,currentUserData=null,selectedProduct=null;
-let allProducts=[],allAdminUsers=[],allAdminOrders=[];
-let productsUnsubscribe=null,ordersUnsubscribe=null,userUnsubscribe=null;
-let authMode="login",adminMode=false;
+const auth = getAuth(app);
 
-window.showToast=function(message){
-  const t=document.getElementById("toast"),x=document.getElementById("toastText");
-  x.innerText=message;t.classList.remove("hidden");clearTimeout(window.toastTimer);
-  window.toastTimer=setTimeout(()=>t.classList.add("hidden"),3000);
+const db = getFirestore(app);
+
+const googleProvider = new GoogleAuthProvider();
+
+setPersistence(auth,browserLocalPersistence);
+
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let currentUser = null;
+let currentUserData = null;
+
+let products = [];
+let currentProduct = null;
+
+let orderSelectedSize = "";
+let orderQty = 1;
+
+let adminMode = false;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+window.money = function(value){
+  return Number(value || 0).toLocaleString("en-IN");
 };
 
-function googleButtonHTML(){return `<svg width="20" height="20" viewBox="0 0 24 24">
-<path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.22a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.93-4.2 2.93-7.39z"/>
-<path fill="#34A853" d="M12 21.6c2.64 0 4.85-.87 6.47-2.34l-3.14-2.43c-.87.58-1.98.93-3.33.93-2.56 0-4.73-1.73-5.51-4.06H3.25v2.5A9.77 9.77 0 0 0 12 21.6z"/>
-<path fill="#FBBC05" d="M6.49 13.7A5.88 5.88 0 0 1 6.18 12c0-.59.11-1.17.31-1.7V7.8H3.25A9.78 9.78 0 0 0 2.2 12c0 1.57.38 3.05 1.05 4.2l3.24-2.5z"/>
-<path fill="#EA4335" d="M12 6.24c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.84 3.32 14.64 2.4 12 2.4a9.77 9.77 0 0 0-8.75 5.4l3.24 2.5C7.27 7.97 9.44 6.24 12 6.24z"/></svg>Continue with Google`;}
 
-window.openAuthModal=()=>document.getElementById("authModal").classList.add("active");
-window.closeAuthModal=()=>document.getElementById("authModal").classList.remove("active");
+window.esc = function(value){
 
-window.setAuthMode=function(mode){
-  authMode=mode;
-  const l=document.getElementById("loginModeBtn"),s=document.getElementById("signupModeBtn");
-  const fields=document.getElementById("signupFields"),name=document.getElementById("authName"),phone=document.getElementById("authPhone");
-  const btn=document.getElementById("emailBtn"),sub=document.getElementById("authSubtitle"),forgot=document.getElementById("forgotBtn");
-  if(mode==="signup"){
-    l.className="py-2.5 rounded-lg text-gray-500 font-bold text-sm";
-    s.className="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm";
-    fields.classList.remove("hidden");name.required=true;phone.required=true;btn.innerText="Create Account";
-    forgot.classList.add("hidden");sub.innerText="Create your SHRAYNEX reseller account";
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+};
+
+
+window.showToast = function(message){
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+
+  toast.classList.remove("hidden");
+  toast.classList.add("toast");
+
+  setTimeout(()=>{
+    toast.classList.add("hidden");
+  },3000);
+};
+
+
+window.closeModal = function(id){
+  document.getElementById(id).classList.add("hidden");
+};
+
+
+window.openModal = function(id){
+  document.getElementById(id).classList.remove("hidden");
+};
+
+
+window.getFirebaseError = function(error){
+
+  const code = error?.code || "";
+
+  const map = {
+    "auth/email-already-in-use":"This email is already registered.",
+    "auth/invalid-email":"Invalid email address.",
+    "auth/weak-password":"Password should be at least 6 characters.",
+    "auth/invalid-credential":"Email or password is incorrect.",
+    "auth/user-not-found":"User not found.",
+    "auth/wrong-password":"Wrong password.",
+    "auth/popup-closed-by-user":"Google login popup closed."
+  };
+
+  return map[code] || error?.message || "Something went wrong.";
+};
+
+
+/* =========================================================
+   AUTH SCREEN
+========================================================= */
+
+window.switchAuth = function(type){
+
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+
+  const loginTab = document.getElementById("loginTab");
+  const signupTab = document.getElementById("signupTab");
+
+  if(type==="login"){
+
+    loginForm.classList.remove("hidden");
+    signupForm.classList.add("hidden");
+
+    loginTab.className =
+      "flex-1 py-3 rounded-lg bg-black text-white font-bold";
+
+    signupTab.className =
+      "flex-1 py-3 rounded-lg text-gray-600 font-bold";
+
   }else{
-    l.className="py-2.5 rounded-lg bg-white shadow-sm font-bold text-sm";
-    s.className="py-2.5 rounded-lg text-gray-500 font-bold text-sm";
-    fields.classList.add("hidden");name.required=false;phone.required=false;btn.innerText="Login";
-    forgot.classList.remove("hidden");sub.innerText="Login to your reseller account";
+
+    loginForm.classList.add("hidden");
+    signupForm.classList.remove("hidden");
+
+    signupTab.className =
+      "flex-1 py-3 rounded-lg bg-black text-white font-bold";
+
+    loginTab.className =
+      "flex-1 py-3 rounded-lg text-gray-600 font-bold";
   }
+
 };
 
-window.loginWithGoogle=async function(){
-  const btn=document.getElementById("googleBtn");btn.disabled=true;btn.innerHTML='<div class="loader"></div>';
-  try{
-    const result=await signInWithPopup(auth,googleProvider);
-    if(result?.user) await createOrUpdateUser(result.user,{loginType:"google"});
-    closeAuthModal();showToast("Google login successful");
-  }catch(e){
-    if(e.code==="auth/popup-blocked"||e.code==="auth/popup-closed-by-user"){
-      try{await signInWithRedirect(auth,googleProvider);return}catch(err){showToast(getFirebaseError(err))}
-    }else showToast(getFirebaseError(e));
-  }finally{btn.disabled=false;btn.innerHTML=googleButtonHTML();}
-};
 
-getRedirectResult(auth).then(async r=>{
-  if(r?.user){await createOrUpdateUser(r.user,{loginType:"google"});showToast("Google login successful");}
-}).catch(e=>console.warn("Redirect result",e));
+window.loginUser = async function(event){
 
-window.handleEmailAuth=async function(event){
   event.preventDefault();
-  const email=document.getElementById("authEmail").value.trim(),password=document.getElementById("authPassword").value;
-  const name=document.getElementById("authName").value.trim(),phone=document.getElementById("authPhone").value.trim();
-  const btn=document.getElementById("emailBtn");btn.disabled=true;btn.innerHTML='<div class="loader loader-white mx-auto"></div>';
+
   try{
-    if(authMode==="signup"){
-      if(!name)throw{code:"custom/missing-name"};
-      if(!/^[0-9]{10}$/.test(phone))throw{code:"custom/invalid-phone"};
-      const c=await createUserWithEmailAndPassword(auth,email,password);
-      await updateProfile(c.user,{displayName:name});
-      await createOrUpdateUser(c.user,{name,phone,loginType:"email"});
-      closeAuthModal();showToast("Account created. Waiting for admin approval.");
-    }else{
-      const c=await signInWithEmailAndPassword(auth,email,password);
-      await createOrUpdateUser(c.user,{loginType:"email"});
-      closeAuthModal();showToast("Login successful");
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    showToast("Login successful");
+
+  }catch(error){
+
+    alert(getFirebaseError(error));
+
+  }
+
+};
+
+
+window.signupUser = async function(event){
+
+  event.preventDefault();
+
+  try{
+
+    const name =
+      document.getElementById("signupName").value.trim();
+
+    const phone =
+      document.getElementById("signupPhone").value.trim();
+
+    const email =
+      document.getElementById("signupEmail").value.trim();
+
+    const password =
+      document.getElementById("signupPassword").value;
+
+
+    if(!/^\d{10}$/.test(phone)){
+      alert("Enter valid 10 digit mobile number.");
+      return;
     }
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText=authMode==="signup"?"Create Account":"Login";}
-};
 
-window.forgotPassword=async function(){
-  const email=document.getElementById("authEmail").value.trim();
-  if(!email)return showToast("Enter your email address first.");
-  try{await sendPasswordResetEmail(auth,email);showToast("Password reset email sent.")}catch(e){showToast(getFirebaseError(e))}
-};
 
-async function createOrUpdateUser(user,extra={}){
-  const ref=doc(db,USERS,user.uid),snap=await getDoc(ref);
-  if(!snap.exists()){
-    const data={
-      uid:user.uid,name:extra.name||user.displayName||"SHRAYNEX Reseller",
-      email:user.email||"",phone:extra.phone||"",photoURL:user.photoURL||"",
-      role:"reseller",status:"pending",walletBalance:0,totalEarnings:0,
-      loginType:extra.loginType||"unknown",createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-    };
-    await setDoc(ref,data);currentUserData=data;
-  }else{
-    const old=snap.data(),u={updatedAt:serverTimestamp()};
-    if(extra.name&&!old.name)u.name=extra.name;
-    if(extra.phone&&!old.phone)u.phone=extra.phone;
-    if(user.photoURL&&!old.photoURL)u.photoURL=user.photoURL;
-    await setDoc(ref,u,{merge:true});
-    currentUserData={...old,...u};
-  }
-}
+    const credential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-onAuthStateChanged(auth,async user=>{
-  currentUser=user;
-  if(user){
-    try{
-      await createOrUpdateUser(user);
-      const snap=await getDoc(doc(db,USERS,user.uid));
-      if(!snap.exists())throw new Error("User profile missing");
-      currentUserData=snap.data();
 
-      if(currentUserData.status==="suspended" && currentUserData.role!=="admin"){
-        await signOut(auth);showLanding();return showToast("Your account is suspended.");
+    await updateProfile(
+      credential.user,
+      {
+        displayName:name
       }
+    );
 
-      if(userUnsubscribe)userUnsubscribe();
-      userUnsubscribe=onSnapshot(doc(db,USERS,user.uid),snap=>{
-        if(!snap.exists())return;
-        currentUserData=snap.data();updateProfileUI();
-        if(currentUserData.status==="suspended"&&currentUserData.role!=="admin"){
-          signOut(auth);showLanding();showToast("Your account is suspended.");
-        }
-      });
 
-      showUserApp();loadProducts();loadOrders();updateProfileUI();
-    }catch(e){console.error(e);showToast("Unable to load your account. Check Firestore Rules.")}
-  }else{
-    if(userUnsubscribe){userUnsubscribe();userUnsubscribe=null}
-    if(productsUnsubscribe){productsUnsubscribe();productsUnsubscribe=null}
-    if(ordersUnsubscribe){ordersUnsubscribe();ordersUnsubscribe=null}
-    currentUserData=null;showLanding();
+    await setDoc(
+      doc(db,"shraynex_users",credential.user.uid),
+      {
+        uid:credential.user.uid,
+        name:name,
+        email:email,
+        phone:phone,
+        photoURL:"",
+        role:"reseller",
+        status:"pending",
+        walletBalance:0,
+        totalEarnings:0,
+        loginType:"email",
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    showToast("Account created successfully");
+
+  }catch(error){
+
+    alert(getFirebaseError(error));
+
   }
+
+};
+
+
+window.googleLogin = async function(){
+
+  try{
+
+    const result =
+      await signInWithPopup(
+        auth,
+        googleProvider
+      );
+
+    const user = result.user;
+
+    const ref =
+      doc(db,"shraynex_users",user.uid);
+
+    const snap =
+      await getDoc(ref);
+
+    if(!snap.exists()){
+
+      await setDoc(
+        ref,
+        {
+          uid:user.uid,
+          name:user.displayName || "Google User",
+          email:user.email || "",
+          phone:"",
+          photoURL:user.photoURL || "",
+          role:"reseller",
+          status:"pending",
+          walletBalance:0,
+          totalEarnings:0,
+          loginType:"google",
+          createdAt:serverTimestamp(),
+          updatedAt:serverTimestamp()
+        }
+      );
+
+    }
+
+  }catch(error){
+
+    alert(getFirebaseError(error));
+
+  }
+
+};
+
+
+window.logoutUser = async function(){
+
+  await signOut(auth);
+
+  showToast("Logged out");
+
+};
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+onAuthStateChanged(auth,async(user)=>{
+
+  document.getElementById("loadingScreen")
+    .classList.add("hidden");
+
+  if(user){
+
+    currentUser = user;
+
+    await loadCurrentUser();
+
+    document.getElementById("authScreen")
+      .classList.add("hidden");
+
+    document.getElementById("userApp")
+      .classList.remove("hidden");
+
+    await loadProducts();
+
+    await loadUserOrders();
+
+    updateProfileUI();
+
+  }else{
+
+    currentUser = null;
+    currentUserData = null;
+
+    document.getElementById("userApp")
+      .classList.add("hidden");
+
+    document.getElementById("authScreen")
+      .classList.remove("hidden");
+
+  }
+
 });
 
-function showLanding(){document.getElementById("landingPage").classList.add("active");document.getElementById("userPage").classList.remove("active")}
-function showUserApp(){document.getElementById("landingPage").classList.remove("active");document.getElementById("userPage").classList.add("active")}
+
+/* =========================================================
+   LOAD CURRENT USER
+========================================================= */
+
+async function loadCurrentUser(){
+
+  if(!currentUser) return;
+
+  const ref =
+    doc(db,"shraynex_users",currentUser.uid);
+
+  const snap =
+    await getDoc(ref);
+
+  if(snap.exists()){
+
+    currentUserData = {
+      id:snap.id,
+      ...snap.data()
+    };
+
+  }else{
+
+    currentUserData = {
+
+      uid:currentUser.uid,
+      name:currentUser.displayName || "User",
+      email:currentUser.email || "",
+      phone:"",
+      photoURL:"",
+      role:"reseller",
+      status:"pending",
+      walletBalance:0,
+      totalEarnings:0
+
+    };
+
+  }
+
+}
+
+
+/* =========================================================
+   PROFILE UI
+========================================================= */
 
 function updateProfileUI(){
-  if(!currentUserData)return;
-  const name=currentUserData.name||currentUser?.displayName||"Reseller";
-  const email=currentUserData.email||currentUser?.email||"—",phone=currentUserData.phone||"—";
-  const initial=name.charAt(0).toUpperCase();
-  ["userName","profileName"].forEach(id=>document.getElementById(id).innerText=name);
-  ["avatar","profileAvatar"].forEach(id=>document.getElementById(id).innerText=initial);
-  document.getElementById("profileEmail").innerText=email;document.getElementById("profilePhone").innerText=phone;
-  const status=currentUserData.status||"pending",el=document.getElementById("profileStatus");
-  el.innerText=status;el.className="font-bold "+(status==="approved"?"text-green-600":status==="suspended"?"text-red-600":"text-amber-600");
-  document.getElementById("profileWallet").innerText="₹"+money(currentUserData.walletBalance);
-  document.getElementById("profileEarnings").innerText="₹"+money(currentUserData.totalEarnings);
-  document.getElementById("approvalNotice").classList.toggle("hidden",status!=="pending");
+
+  if(!currentUserData) return;
+
+  const name =
+    currentUserData.name ||
+    currentUser.displayName ||
+    "User";
+
+  const email =
+    currentUserData.email ||
+    currentUser.email ||
+    "";
+
+  const phone =
+    currentUserData.phone || "-";
+
+  document.getElementById("headerGreeting")
+    .textContent =
+    "Hi, " + name;
+
+  document.getElementById("profileName")
+    .textContent = name;
+
+  document.getElementById("profileEmail")
+    .textContent = email;
+
+  document.getElementById("profilePhone")
+    .textContent = phone;
+
+  document.getElementById("walletBalance")
+    .textContent =
+    money(currentUserData.walletBalance);
+
+  document.getElementById("headerWallet")
+    .textContent =
+    money(currentUserData.walletBalance);
+
+  document.getElementById("totalEarnings")
+    .textContent =
+    money(currentUserData.totalEarnings);
+
+  document.getElementById("profileAvatar")
+    .textContent =
+    name.charAt(0).toUpperCase();
+
 }
 
-function loadProducts(){
-  if(productsUnsubscribe)productsUnsubscribe();
-  const q=query(collection(db,PRODUCTS),where("active","==",true));
-  productsUnsubscribe=onSnapshot(q,snap=>{
-    allProducts=[];snap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
-    allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));renderProducts();
-  },e=>{
-    console.error(e);document.getElementById("productFeed").innerHTML='<div class="text-center py-12 text-red-500">Unable to load products.<div class="text-xs text-gray-400 mt-2">Check Firestore Rules.</div></div>';
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+window.showSection = async function(section){
+
+  const sections = [
+    "homeSection",
+    "ordersSection",
+    "accountSection"
+  ];
+
+  sections.forEach(id=>{
+    document.getElementById(id)
+      .classList.add("hidden");
   });
-}
 
-function renderProducts(list=allProducts){
-  const c=document.getElementById("productFeed");
-  if(!list.length){c.innerHTML='<div class="text-center py-16"><div class="text-5xl">🛍️</div><h3 class="font-bold mt-4">No products found</h3><p class="text-sm text-gray-500 mt-1">New products will appear here.</p></div>';return}
-  c.innerHTML="";
-  list.forEach(p=>{
-    const images=Array.isArray(p.images)?p.images.filter(Boolean):[];
-    const imageHTML=images.length?images.map(img=>`<img src="${esc(img)}" class="w-full aspect-[4/5] object-cover" loading="lazy" alt="${esc(p.title||"Product")}" onerror="this.src='https://placehold.co/600x750/f1f5f9/64748b?text=SHRAYNEX'">`).join(""):'<div class="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>';
-    const card=document.createElement("div");card.className="card overflow-hidden";
-    card.innerHTML=`<div class="relative"><div class="product-slider hide-scrollbar">${imageHTML}</div>${images.length>1?'<div class="absolute bottom-3 right-3 bg-black/60 text-white px-2.5 py-1 rounded-full text-[10px]">Swipe →</div>':""}</div>
-    <div class="p-4"><h3 class="font-extrabold text-lg">${esc(p.title||"Product")}</h3>${p.description?`<p class="text-sm text-gray-500 mt-2">${esc(p.description)}</p>`:""}
-    <div class="flex items-center gap-2 mt-4 flex-wrap"><span class="text-2xl font-extrabold text-rose-600">₹${money(p.basePrice)}</span>${p.mrp?`<span class="text-sm text-gray-400 line-through">₹${money(p.mrp)}</span>`:""}${Number(p.discountPercent||0)>0?`<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full font-bold">${money(p.discountPercent)}% OFF</span>`:(Number(p.mrp)>Number(p.basePrice)?`<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full font-bold">${money((1-Number(p.basePrice)/Number(p.mrp))*100)}% OFF</span>`:"")}</div>
-    <div class="flex items-center justify-between mt-3"><span class="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full font-bold">🚚 ${esc(p.deliveryTime||"3-7 Days")}</span>${p.category?`<span class="text-xs text-gray-400">${esc(p.category)}</span>`:""}</div>
-    <div class="grid grid-cols-2 gap-2 mt-5"><button onclick="openShare('${p.id}')" class="bg-green-500 text-white py-3 rounded-xl font-bold text-sm">WhatsApp</button><button onclick="openOrder('${p.id}')" class="bg-rose-600 text-white py-3 rounded-xl font-bold text-sm">Order</button></div></div>`;
-    c.appendChild(card);
+
+  document.getElementById(
+    section+"Section"
+  ).classList.remove("hidden");
+
+
+  const navs = [
+    "navHome",
+    "navOrders",
+    "navAccount"
+  ];
+
+  navs.forEach(id=>{
+    document.getElementById(id)
+      .classList.remove("nav-active");
+
+    document.getElementById(id)
+      .classList.add("text-gray-500");
   });
-}
 
-window.filterProducts=function(){
-  const v=document.getElementById("productSearch").value.toLowerCase().trim();
-  if(!v)return renderProducts();
-  renderProducts(allProducts.filter(p=>`${p.title||""} ${p.category||""} ${p.description||""}`.toLowerCase().includes(v)));
-};
 
-window.openShare=function(id){
-  selectedProduct=allProducts.find(p=>p.id===id);if(!selectedProduct)return;
-  document.getElementById("shareProductName").innerText=selectedProduct.title||"Product";
-  document.getElementById("shareBasePrice").innerText=money(selectedProduct.basePrice);
-  document.getElementById("sellingPrice").value="";document.getElementById("profitAmount").innerText="₹0";
-  document.getElementById("shareModal").classList.add("active");
-};
-window.closeShareModal=()=>document.getElementById("shareModal").classList.remove("active");
-window.calculateProfit=function(){
-  if(!selectedProduct)return;const base=Number(selectedProduct.basePrice||0),sell=Number(document.getElementById("sellingPrice").value||0);
-  document.getElementById("profitAmount").innerText="₹"+money(Math.max(0,sell-base));
-};
-window.shareOnWhatsApp=function(){
-  if(!selectedProduct)return;const sell=Number(document.getElementById("sellingPrice").value||0),base=Number(selectedProduct.basePrice||0);
-  if(sell<=base)return showToast("Selling price must be higher than base price.");
-  const discount=Number(selectedProduct.discountPercent||0);const mrp=Number(selectedProduct.mrp||0);
-  const msg=`🛍️ *SHRAYNEX PRODUCT*\n\n*${selectedProduct.title}*\n\n💰 Price: ₹${sell}${mrp>sell?`\n🏷️ MRP: ₹${mrp}${discount?`\n🔥 Discount: ${discount}% OFF`:""}`:""}\n🚚 Delivery: ${selectedProduct.deliveryTime||"3-7 Days"}\n\nInterested? Message me to place your order.\n\n${selectedProduct.images?.[0]||""}`;
-  window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");closeShareModal();
+  const active =
+    document.getElementById(
+      "nav"+
+      section.charAt(0).toUpperCase()+
+      section.slice(1)
+    );
+
+  active.classList.add("nav-active");
+  active.classList.remove("text-gray-500");
+
+
+  if(section==="orders"){
+    await loadUserOrders();
+  }
+
 };
 
-window.openOrder=function(id){
-  if(currentUserData?.status!=="approved")return showToast("Your account must be approved before placing orders.");
-  selectedProduct=allProducts.find(p=>p.id===id);if(!selectedProduct)return;
-  document.getElementById("orderProductName").innerText=selectedProduct.title||"Product";
-  document.getElementById("orderSellingPriceInput").value="";document.getElementById("orderSellingPrice").innerText="0";
-  document.getElementById("orderProfit").innerText="0";document.getElementById("orderQtyDisplay").innerText="1";
-  document.getElementById("orderModal").classList.add("active");
-};
-window.closeOrderModal=()=>document.getElementById("orderModal").classList.remove("active");
-window.calculateOrderTotal=function(){
-  if(!selectedProduct)return;const base=Number(selectedProduct.basePrice||0),sell=Number(document.getElementById("orderSellingPriceInput").value||0),qty=Math.max(1,Number(document.getElementById("orderQuantity").value||1));
-  document.getElementById("orderSellingPrice").innerText=money(sell);document.getElementById("orderQtyDisplay").innerText=qty;document.getElementById("orderProfit").innerText=money(Math.max(0,sell-base)*qty);
-};
 
-window.placeOrder=async function(e){
-  e.preventDefault();
-  if(!currentUser||!selectedProduct)return showToast("Please login first.");
-  if(currentUserData?.status!=="approved")return showToast("Your account is waiting for approval.");
-  const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),address=document.getElementById("customerAddress").value.trim(),pincode=document.getElementById("customerPincode").value.trim();
-  const quantity=Number(document.getElementById("orderQuantity").value||1),selling=Number(document.getElementById("orderSellingPriceInput").value||0),base=Number(selectedProduct.basePrice||0);
-  if(selling<=base)return showToast("Selling price must be higher than base price.");
-  if(quantity<1)return showToast("Quantity must be at least 1.");
-  if(!/^[0-9]{10}$/.test(phone))return showToast("Enter a valid 10-digit customer mobile number.");
-  if(!/^[0-9]{6}$/.test(pincode))return showToast("Enter a valid pincode.");
-  const btn=document.getElementById("placeOrderBtn");btn.disabled=true;btn.innerText="Placing Order...";
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+window.loadProducts = async function(){
+
   try{
-    await addDoc(collection(db,ORDERS),{
-      resellerId:currentUser.uid,resellerName:currentUserData?.name||"",productId:selectedProduct.id,productName:selectedProduct.title||"",
-      productImage:selectedProduct.images?.[0]||"",customerName:name,customerPhone:phone,customerAddress:address,pincode,
-      quantity,basePrice:base,sellingPrice:selling,profit:(selling-base)*quantity,status:"pending",
-      createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+
+    const q =
+      query(
+        collection(db,"shraynex_products"),
+        where("active","==",true)
+      );
+
+    const snap =
+      await getDocs(q);
+
+    products = [];
+
+    snap.forEach(docSnap=>{
+
+      products.push({
+        id:docSnap.id,
+        ...docSnap.data()
+      });
+
     });
-    showToast("Order placed successfully!");closeOrderModal();document.getElementById("emailForm")?.reset();
-    ["customerName","customerPhone","customerAddress","customerPincode","orderSellingPriceInput"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("orderQuantity").value="1";switchUserTab("orders");
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText="Place Order";}
+
+
+    renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast("Unable to load products");
+
+  }
+
 };
 
-function loadOrders(){
-  if(!currentUser)return;if(ordersUnsubscribe)ordersUnsubscribe();
-  const q=query(collection(db,ORDERS),where("resellerId","==",currentUser.uid));
-  ordersUnsubscribe=onSnapshot(q,snap=>{
-    const orders=[];snap.forEach(d=>orders.push({id:d.id,...d.data()}));orders.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));renderOrders(orders);
-  },e=>{console.error(e);document.getElementById("ordersList").innerHTML='<div class="text-center py-10 text-red-500">Unable to load orders.</div>'});
-}
-function renderOrders(orders){
-  const c=document.getElementById("ordersList");if(!orders.length){c.innerHTML='<div class="text-center py-16"><div class="text-5xl">📦</div><h3 class="font-bold mt-4">No orders yet</h3><p class="text-sm text-gray-500 mt-1">Your customer orders will appear here.</p></div>';return}
-  c.innerHTML="";orders.forEach(o=>{
-    const st=String(o.status||"pending").toLowerCase(),safe=["pending","confirmed","processing","shipped","delivered","cancelled"].includes(st)?st:"pending";
-    const el=document.createElement("div");el.className="card p-4";
-    el.innerHTML=`<div class="flex gap-3">${o.productImage?`<img src="${esc(o.productImage)}" class="w-16 h-16 rounded-xl object-cover">`:'<div class="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center">🛍️</div>'}
-    <div class="flex-1 min-w-0"><h3 class="font-bold truncate">${esc(o.productName||"Product")}</h3><p class="text-xs text-gray-500 mt-1">Order #${esc(o.id.slice(0,8).toUpperCase())}</p><div class="mt-2"><span class="status-${safe} px-2.5 py-1 rounded-full text-[10px] font-bold uppercase">${esc(safe)}</span></div></div></div>
-    <div class="border-t mt-4 pt-4 grid grid-cols-2 gap-3"><div><p class="text-xs text-gray-400">Customer Price</p><p class="font-bold">₹${money(o.sellingPrice)}</p></div><div><p class="text-xs text-gray-400">Your Profit</p><p class="font-bold text-green-600">₹${money(o.profit)}</p></div></div><div class="text-xs text-gray-400 mt-3">Customer: ${esc(o.customerName||"—")}</div>`;
-    c.appendChild(el);
+
+function renderProducts(){
+
+  const container =
+    document.getElementById("categoryContainer");
+
+  const empty =
+    document.getElementById("emptyProducts");
+
+  container.innerHTML = "";
+
+
+  if(!products.length){
+
+    empty.classList.remove("hidden");
+    return;
+
+  }
+
+  empty.classList.add("hidden");
+
+
+  const categories = {};
+
+  products.forEach(product=>{
+
+    const category =
+      product.category || "All Products";
+
+    if(!categories[category]){
+      categories[category] = [];
+    }
+
+    categories[category].push(product);
+
   });
+
+
+  Object.keys(categories).forEach(category=>{
+
+    const section =
+      document.createElement("div");
+
+    section.className = "mb-7";
+
+
+    section.innerHTML = `
+
+      <div class="flex items-center justify-between mb-3">
+
+        <div>
+          <h2 class="font-black text-lg">
+            ${esc(category)}
+          </h2>
+
+          <p class="text-xs text-gray-500">
+            Swipe to explore
+          </p>
+        </div>
+
+        <div class="text-xs text-gray-400">
+          ← Swipe →
+        </div>
+
+      </div>
+
+      <div class="product-scroll hide-scrollbar">
+        ${categories[category]
+          .map(productCard)
+          .join("")}
+      </div>
+    `;
+
+
+    container.appendChild(section);
+
+  });
+
 }
-window.switchUserTab=function(tab){
-  ["feed","orders","profile"].forEach(x=>document.getElementById(x+"Tab").classList.add("hidden"));
-  document.getElementById(tab+"Tab").classList.remove("hidden");
-  ["navFeed","navOrders","navProfile"].forEach(id=>{document.getElementById(id).classList.remove("text-rose-600");document.getElementById(id).classList.add("text-gray-400")});
-  const n=document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1));n.classList.remove("text-gray-400");n.classList.add("text-rose-600");
-};
-window.logoutUser=async function(){try{await signOut(auth);showLanding();showToast("Logged out successfully")}catch(e){showToast(getFirebaseError(e))}};
 
-const policies={
-about:{title:"About SHRAYNEX",content:`<p>SHRAYNEX is a digital reselling platform designed to help individuals discover products and build their own online selling business.</p><p class="mt-4">Resellers can select products, add their own selling margin and share products with customers.</p>`},
-contact:{title:"Contact Us",content:`<p>For support and business enquiries:</p><div class="mt-4 space-y-2"><p><strong>Email:</strong> shraynexofficial@gmail.com</p><p><strong>Phone:</strong> 9451239239</p><p><strong>Location:</strong> Uttar Pradesh, India</p></div>`},
-careers:{title:"Careers",content:`<p>SHRAYNEX is building technology for the next generation of online entrepreneurs.</p><p class="mt-4">For opportunities, contact our team.</p>`},
-privacy:{title:"Privacy Policy",content:`<p>SHRAYNEX collects information required to create and operate reseller accounts and process orders.</p><p class="mt-4">We aim to protect account and customer information and use data only for legitimate platform operations.</p><p class="mt-4">Users should not upload or share sensitive personal information unnecessarily.</p>`},
-terms:{title:"Terms & Conditions",content:`<p>Resellers are responsible for communicating accurate product information and customer details.</p><p class="mt-4">Product availability, prices, delivery and returns may vary according to product and fulfilment policies.</p><p class="mt-4">Fraudulent activity, fake orders or misuse of the platform may result in account suspension.</p>`},
-return:{title:"Shipping & Returns",content:`<p>Shipping timelines may vary depending on product, seller and customer location.</p><p class="mt-4">Return eligibility depends on the applicable product and fulfilment policy.</p><p class="mt-4">Customers should report eligible issues according to the applicable return process.</p>`}
-};
-window.openPolicy=function(type){const p=policies[type];if(!p)return;document.getElementById("policyTitle").innerText=p.title;document.getElementById("policyContent").innerHTML=p.content;document.getElementById("policyModal").classList.add("active")};
-window.closePolicy=()=>document.getElementById("policyModal").classList.remove("active");
 
-/* ========================= ADMIN ========================= */
-window.openAdminLogin=function(){
-  document.getElementById("adminEmail").value=currentUser?.email||"";
-  document.getElementById("adminPassword").value="";
-  document.getElementById("adminLoginModal").classList.add("active");
-};
-window.closeAdminLogin=()=>document.getElementById("adminLoginModal").classList.remove("active");
+function productCard(p){
 
-window.handleAdminLogin=async function(e){
-  e.preventDefault();const email=document.getElementById("adminEmail").value.trim(),pass=document.getElementById("adminPassword").value;
-  const btn=document.getElementById("adminLoginBtn");btn.disabled=true;btn.innerText="Checking...";
+  const images =
+    Array.isArray(p.images)
+      ? p.images.filter(Boolean)
+      : [];
+
+  const firstImage =
+    images[0] ||
+    "https://via.placeholder.com/600x600?text=SHRAYNEX";
+
+  const mrp =
+    Number(p.mrp || 0);
+
+  const base =
+    Number(p.basePrice || 0);
+
+  const discount =
+    mrp > base
+      ? Math.round(
+          ((mrp-base)/mrp)*100
+        )
+      : Number(p.discountPercent || 0);
+
+
+  return `
+
+    <div class="product-card bg-white rounded-3xl border overflow-hidden shadow-sm"
+         onclick="openProductDetails('${p.id}')">
+
+      <div class="relative">
+
+        <img
+          src="${esc(firstImage)}"
+          class="w-full h-72 object-cover bg-gray-100"
+          onerror="this.src='https://via.placeholder.com/600x600?text=SHRAYNEX'"
+        >
+
+        ${
+          discount>0
+          ? `
+          <div class="absolute top-3 left-3 bg-black text-white px-3 py-1 rounded-full text-xs font-bold">
+            ${discount}% OFF
+          </div>
+          `
+          : ""
+        }
+
+      </div>
+
+
+      <div class="p-4">
+
+        <h3 class="font-black text-lg line-clamp-2">
+          ${esc(p.title || "Product")}
+        </h3>
+
+        <p class="text-gray-500 text-sm mt-1 line-clamp-2">
+          ${esc(p.description || "")}
+        </p>
+
+
+        <div class="flex items-end gap-2 mt-3">
+
+          <div class="text-2xl font-black">
+            ₹${money(base)}
+          </div>
+
+          ${
+            mrp>base
+            ? `
+              <div class="text-sm text-gray-400 line-through">
+                ₹${money(mrp)}
+              </div>
+            `
+            :""
+          }
+
+        </div>
+
+
+        <div class="text-xs text-gray-500 mt-2">
+          🚚 ${esc(p.deliveryTime || "5-7 Days")}
+        </div>
+
+
+        <div class="flex gap-2 mt-4">
+
+          <button
+            onclick="event.stopPropagation();openProductDetails('${p.id}')"
+            class="flex-1 border py-2 rounded-xl font-bold text-sm">
+            View Details
+          </button>
+
+          <button
+            onclick="event.stopPropagation();openOrderModal('${p.id}')"
+            class="flex-1 bg-black text-white py-2 rounded-xl font-bold text-sm">
+            Order
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+window.openProductDetails = function(productId){
+
+  const product =
+    products.find(p=>p.id===productId);
+
+  if(!product) return;
+
+  currentProduct = product;
+
+  const images =
+    Array.isArray(product.images)
+      ? product.images.filter(Boolean)
+      : [];
+
+  if(!images.length){
+    images.push(
+      "https://via.placeholder.com/600x600?text=SHRAYNEX"
+    );
+  }
+
+
+  const sizes =
+    Array.isArray(product.sizes)
+      ? product.sizes.filter(Boolean)
+      : [];
+
+
+  const base =
+    Number(product.basePrice || 0);
+
+  const mrp =
+    Number(product.mrp || 0);
+
+  const discount =
+    mrp>base
+      ? Math.round(
+          ((mrp-base)/mrp)*100
+        )
+      : Number(product.discountPercent || 0);
+
+
+  let sizeHTML = "";
+
+  if(sizes.length){
+
+    sizeHTML = `
+
+      <div class="mt-5">
+
+        <div class="font-black mb-2">
+          Select Size
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+
+          ${sizes.map((size,index)=>`
+
+            <button
+              type="button"
+              onclick="selectDetailSize('${esc(size)}')"
+              class="size-btn border px-4 py-2 rounded-xl font-bold ${index===0?'active':''}"
+              data-size="${esc(size)}">
+              ${esc(size)}
+            </button>
+
+          `).join("")}
+
+        </div>
+
+      </div>
+    `;
+
+    orderSelectedSize = sizes[0];
+
+  }else{
+
+    orderSelectedSize = "";
+
+    sizeHTML = `
+
+      <div class="mt-5">
+
+        <div class="font-black mb-2">
+          Size
+        </div>
+
+        <div class="bg-gray-100 rounded-xl p-3 text-sm">
+          Free Size / No Size
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  document.getElementById(
+    "productDetailsContent"
+  ).innerHTML = `
+
+    <div>
+
+      <!-- IMAGE SLIDER -->
+
+      <div class="img-scroll">
+
+        ${images.map(image=>`
+
+          <img
+            src="${esc(image)}"
+            class="w-full h-[420px] object-cover bg-gray-100"
+            onerror="this.src='https://via.placeholder.com/600x600?text=SHRAYNEX'"
+          >
+
+        `).join("")}
+
+      </div>
+
+
+      <div class="p-5">
+
+        <div class="flex justify-between gap-3">
+
+          <div>
+            <div class="text-xs text-gray-500 uppercase">
+              ${esc(product.category || "Product")}
+            </div>
+
+            <h1 class="text-2xl font-black mt-1">
+              ${esc(product.title || "")}
+            </h1>
+          </div>
+
+          ${
+            discount>0
+            ? `
+            <div class="bg-black text-white rounded-xl px-3 py-2 h-fit text-sm font-bold">
+              ${discount}% OFF
+            </div>
+            `
+            :""
+          }
+
+        </div>
+
+
+        <div class="flex items-end gap-3 mt-4">
+
+          <div class="text-3xl font-black">
+            ₹${money(base)}
+          </div>
+
+          ${
+            mrp>base
+            ? `
+            <div class="text-gray-400 line-through">
+              ₹${money(mrp)}
+            </div>
+            `
+            :""
+          }
+
+        </div>
+
+
+        <div class="grid grid-cols-2 gap-3 mt-4">
+
+          <div class="bg-gray-100 rounded-xl p-3">
+            <div class="text-xs text-gray-500">
+              Delivery
+            </div>
+            <div class="font-bold mt-1">
+              ${esc(product.deliveryTime || "5-7 Days")}
+            </div>
+          </div>
+
+          <div class="bg-gray-100 rounded-xl p-3">
+            <div class="text-xs text-gray-500">
+              Stock
+            </div>
+            <div class="font-bold mt-1">
+              ${
+                Number(product.stock||0)>0
+                ? product.stock
+                : "Available"
+              }
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="mt-6">
+
+          <div class="font-black mb-2">
+            Product Details
+          </div>
+
+          <div class="text-gray-600 text-sm leading-6 whitespace-pre-line">
+            ${esc(product.description || "No description available.")}
+          </div>
+
+        </div>
+
+
+        ${sizeHTML}
+
+
+        <!-- QUANTITY -->
+
+        <div class="mt-5">
+
+          <div class="font-black mb-2">
+            Quantity
+          </div>
+
+          <div class="flex items-center gap-3">
+
+            <button
+              onclick="changeDetailQty(-1)"
+              class="qty-btn">
+              −
+            </button>
+
+            <div id="detailQty"
+                 class="w-12 text-center font-black text-lg">
+              1
+            </div>
+
+            <button
+              onclick="changeDetailQty(1)"
+              class="qty-btn">
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- SELLING PRICE -->
+
+        <div class="mt-5">
+
+          <div class="font-black mb-2">
+            Your Selling Price / Item
+          </div>
+
+          <input
+            id="detailSellingPrice"
+            type="number"
+            value="${base}"
+            oninput="calculateDetailProfit()"
+            class="w-full border rounded-xl p-3">
+
+        </div>
+
+
+        <div class="bg-gray-100 rounded-2xl p-4 mt-4">
+
+          <div class="flex justify-between text-sm">
+            <span>Base Price</span>
+            <b>₹<span id="detailBasePrice">${money(base)}</span></b>
+          </div>
+
+          <div class="flex justify-between text-sm mt-2">
+            <span>Profit / Item</span>
+            <b class="text-green-600">
+              ₹<span id="detailProfit">0</span>
+            </b>
+          </div>
+
+          <div class="flex justify-between text-sm mt-2">
+            <span>Quantity</span>
+            <b>
+              <span id="detailQtySummary">1</span>
+            </b>
+          </div>
+
+          <div class="flex justify-between font-black mt-3 pt-3 border-t">
+            <span>Total Profit</span>
+            <span class="text-green-600">
+              ₹<span id="detailTotalProfit">0</span>
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="grid grid-cols-2 gap-3 mt-5">
+
+          <button
+            onclick="shareCurrentProduct()"
+            class="border py-3 rounded-xl font-bold">
+            WhatsApp
+          </button>
+
+          <button
+            onclick="orderCurrentProduct()"
+            class="bg-black text-white py-3 rounded-xl font-bold">
+            Place Order
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+
+  openModal("productDetailsModal");
+
+  calculateDetailProfit();
+
+};
+
+
+window.selectDetailSize = function(size){
+
+  orderSelectedSize = size;
+
+  document.querySelectorAll(".size-btn")
+    .forEach(btn=>{
+
+      btn.classList.remove("active");
+
+      if(btn.dataset.size===size){
+        btn.classList.add("active");
+      }
+
+    });
+
+};
+
+
+let detailQty = 1;
+
+
+window.changeDetailQty = function(change){
+
+  detailQty += change;
+
+  if(detailQty<1)
+    detailQty=1;
+
+
+  if(currentProduct &&
+     Number(currentProduct.stock||0)>0 &&
+     detailQty>Number(currentProduct.stock)){
+
+    detailQty =
+      Number(currentProduct.stock);
+
+  }
+
+
+  const el =
+    document.getElementById("detailQty");
+
+  const summary =
+    document.getElementById("detailQtySummary");
+
+  if(el) el.textContent=detailQty;
+
+  if(summary) summary.textContent=detailQty;
+
+  calculateDetailProfit();
+
+};
+
+
+function calculateDetailProfit(){
+
+  if(!currentProduct) return;
+
+  const base =
+    Number(currentProduct.basePrice || 0);
+
+  const selling =
+    Number(
+      document.getElementById(
+        "detailSellingPrice"
+      )?.value || base
+    );
+
+  const profit =
+    Math.max(0,selling-base);
+
+  const total =
+    profit*detailQty;
+
+
+  const profitEl =
+    document.getElementById("detailProfit");
+
+  const totalEl =
+    document.getElementById("detailTotalProfit");
+
+  if(profitEl)
+    profitEl.textContent=money(profit);
+
+  if(totalEl)
+    totalEl.textContent=money(total);
+
+}
+
+
+window.orderCurrentProduct = function(){
+
+  if(!currentProduct) return;
+
+  openOrderModal(
+    currentProduct.id,
+    true
+  );
+
+};
+
+
+window.shareCurrentProduct = function(){
+
+  if(!currentProduct) return;
+
+  const base =
+    Number(currentProduct.basePrice || 0);
+
+  const selling =
+    Number(
+      document.getElementById(
+        "detailSellingPrice"
+      )?.value || base
+    );
+
+  const profit =
+    Math.max(0,selling-base);
+
+
+  const message =
+
+`🛍️ ${currentProduct.title}
+
+💰 Price: ₹${selling}
+📦 Quantity: ${detailQty}
+${orderSelectedSize ? "📏 Size: "+orderSelectedSize+"\n" : ""}🚚 Delivery: ${currentProduct.deliveryTime || "5-7 Days"}
+
+✨ Premium Product
+📲 Order Now
+
+Reseller Profit: ₹${profit}`;
+
+
+  const url =
+    "https://wa.me/?text="+
+    encodeURIComponent(message);
+
+  window.open(url,"_blank");
+
+};
+
+
+/* =========================================================
+   ORDER MODAL
+========================================================= */
+
+window.openOrderModal = function(productId,fromDetails=false){
+
+  const product =
+    products.find(p=>p.id===productId);
+
+  if(!product) return;
+
+  currentProduct = product;
+
+  orderQty =
+    fromDetails
+      ? detailQty
+      : 1;
+
+
+  const sizes =
+    Array.isArray(product.sizes)
+      ? product.sizes.filter(Boolean)
+      : [];
+
+
+  if(!fromDetails){
+    orderSelectedSize =
+      sizes.length ? sizes[0] : "";
+  }
+
+
+  const image =
+    product.images?.[0] ||
+    "https://via.placeholder.com/300x300?text=SHRAYNEX";
+
+
+  document.getElementById(
+    "orderProductId"
+  ).value = product.id;
+
+
+  document.getElementById(
+    "orderQuantity"
+  ).value = orderQty;
+
+
+  document.getElementById(
+    "orderSellingPrice"
+  ).value =
+    Number(product.basePrice || 0);
+
+
+  document.getElementById(
+    "orderBasePrice"
+  ).textContent =
+    money(product.basePrice);
+
+
+  document.getElementById(
+    "orderProductPreview"
+  ).innerHTML = `
+
+    <div class="flex gap-3 bg-gray-100 rounded-2xl p-3">
+
+      <img
+        src="${esc(image)}"
+        class="w-20 h-20 rounded-xl object-cover">
+
+      <div class="flex-1">
+
+        <div class="font-black">
+          ${esc(product.title)}
+        </div>
+
+        <div class="text-sm text-gray-500 mt-1">
+          Base Price: ₹${money(product.basePrice)}
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+
+  if(sizes.length){
+
+    document.getElementById(
+      "orderSizeContainer"
+    ).innerHTML = `
+
+      <div class="font-bold text-sm mb-2">
+        Select Size
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+
+        ${sizes.map((size,index)=>`
+
+          <button
+            type="button"
+            onclick="selectOrderSize('${esc(size)}')"
+            class="order-size-btn border px-4 py-2 rounded-xl font-bold ${orderSelectedSize===size || (!orderSelectedSize&&index===0)?'bg-black text-white':''}"
+            data-size="${esc(size)}">
+            ${esc(size)}
+          </button>
+
+        `).join("")}
+
+      </div>
+    `;
+
+    if(!orderSelectedSize)
+      orderSelectedSize=sizes[0];
+
+  }else{
+
+    orderSelectedSize="";
+
+    document.getElementById(
+      "orderSizeContainer"
+    ).innerHTML = "";
+
+  }
+
+
+  calculateOrderProfit();
+
+  openModal("orderModal");
+
+};
+
+
+window.selectOrderSize = function(size){
+
+  orderSelectedSize=size;
+
+  document.querySelectorAll(
+    ".order-size-btn"
+  ).forEach(btn=>{
+
+    btn.classList.remove(
+      "bg-black",
+      "text-white"
+    );
+
+    if(btn.dataset.size===size){
+
+      btn.classList.add(
+        "bg-black",
+        "text-white"
+      );
+
+    }
+
+  });
+
+};
+
+
+window.changeOrderQty = function(change){
+
+  orderQty += change;
+
+  if(orderQty<1)
+    orderQty=1;
+
+
+  if(currentProduct &&
+     Number(currentProduct.stock||0)>0 &&
+     orderQty>Number(currentProduct.stock)){
+
+    orderQty =
+      Number(currentProduct.stock);
+
+  }
+
+
+  document.getElementById(
+    "orderQuantity"
+  ).value=orderQty;
+
+
+  calculateOrderProfit();
+
+};
+
+
+window.calculateOrderProfit = function(){
+
+  if(!currentProduct) return;
+
+  const base =
+    Number(currentProduct.basePrice || 0);
+
+  const selling =
+    Number(
+      document.getElementById(
+        "orderSellingPrice"
+      ).value || 0
+    );
+
+  const profit =
+    Math.max(0,selling-base);
+
+  const total =
+    profit*orderQty;
+
+
+  document.getElementById(
+    "orderProfit"
+  ).textContent=money(profit);
+
+  document.getElementById(
+    "orderTotalProfit"
+  ).textContent=money(total);
+
+};
+
+
+window.placeOrder = async function(event){
+
+  event.preventDefault();
+
+  if(!currentUser || !currentProduct)
+    return;
+
+
+  const customerName =
+    document.getElementById(
+      "customerName"
+    ).value.trim();
+
+  const customerPhone =
+    document.getElementById(
+      "customerPhone"
+    ).value.trim();
+
+  const customerAddress =
+    document.getElementById(
+      "customerAddress"
+    ).value.trim();
+
+  const pincode =
+    document.getElementById(
+      "customerPincode"
+    ).value.trim();
+
+  const sellingPrice =
+    Number(
+      document.getElementById(
+        "orderSellingPrice"
+      ).value
+    );
+
+
+  if(!/^\d{10}$/.test(customerPhone)){
+
+    alert("Enter valid customer mobile number.");
+
+    return;
+
+  }
+
+
+  if(!/^\d{6}$/.test(pincode)){
+
+    alert("Enter valid pincode.");
+
+    return;
+
+  }
+
+
+  const base =
+    Number(currentProduct.basePrice || 0);
+
+  if(sellingPrice<base){
+
+    alert(
+      "Selling price cannot be less than base price."
+    );
+
+    return;
+
+  }
+
+
+  const profitPerItem =
+    sellingPrice-base;
+
+  const totalProfit =
+    profitPerItem*orderQty;
+
+
   try{
-    let u=auth.currentUser;
-    if(!u||u.email!==email)u=(await signInWithEmailAndPassword(auth,email,pass)).user;
-    else{try{await signInWithEmailAndPassword(auth,email,pass)}catch(err){throw err}}
-    const snap=await getDoc(doc(db,USERS,u.uid));
-    if(!snap.exists()||snap.data().role!=="admin"){if(!currentUser)await signOut(auth);throw{code:"custom/not-admin"}}
-    if(snap.data().status==="suspended"){throw{code:"custom/admin-suspended"}}
-    currentUser=u;currentUserData=snap.data();adminMode=true;
-    closeAdminLogin();openAdminPanel();showToast("Admin login successful");
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText="Admin Login";}
+
+    await addDoc(
+      collection(db,"shraynex_orders"),
+      {
+        resellerId:currentUser.uid,
+        resellerName:
+          currentUserData?.name ||
+          currentUser.displayName ||
+          "",
+
+        productId:currentProduct.id,
+
+        productName:
+          currentProduct.title || "",
+
+        productImage:
+          currentProduct.images?.[0] || "",
+
+        customerName,
+        customerPhone,
+        customerAddress,
+        pincode,
+
+        size:orderSelectedSize || "",
+
+        quantity:orderQty,
+
+        basePrice:base,
+
+        sellingPrice,
+
+        profit:totalProfit,
+
+        status:"pending",
+
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    closeModal("orderModal");
+
+    showToast(
+      "Order placed successfully"
+    );
+
+
+    document.getElementById(
+      "customerName"
+    ).value="";
+
+    document.getElementById(
+      "customerPhone"
+    ).value="";
+
+    document.getElementById(
+      "customerAddress"
+    ).value="";
+
+    document.getElementById(
+      "customerPincode"
+    ).value="";
+
+
+    await loadUserOrders();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Order failed: "+
+      getFirebaseError(error)
+    );
+
+  }
+
 };
 
-window.openAdminPanel=function(){
-  if(!currentUserData||currentUserData.role!=="admin")return openAdminLogin();
-  document.getElementById("adminIdentity").innerText=(currentUserData.name||currentUser.email||"Administrator")+" • ADMIN";
-  document.getElementById("adminPanelModal").classList.add("active");refreshAdmin();
+
+/* =========================================================
+   USER ORDERS
+========================================================= */
+
+window.loadUserOrders = async function(){
+
+  if(!currentUser) return;
+
+  const container =
+    document.getElementById("userOrders");
+
+  container.innerHTML =
+    `<div class="bg-white rounded-2xl p-6 text-center">
+       <div class="spinner mx-auto"></div>
+     </div>`;
+
+
+  try{
+
+    const q =
+      query(
+        collection(db,"shraynex_orders"),
+        where(
+          "resellerId",
+          "==",
+          currentUser.uid
+        )
+      );
+
+
+    const snap =
+      await getDocs(q);
+
+
+    const orders=[];
+
+    snap.forEach(d=>{
+      orders.push({
+        id:d.id,
+        ...d.data()
+      });
+    });
+
+
+    orders.sort(
+      (a,b)=>
+        timestampValue(b.createdAt)-
+        timestampValue(a.createdAt)
+    );
+
+
+    if(!orders.length){
+
+      container.innerHTML = `
+
+        <div class="bg-white rounded-2xl p-10 text-center">
+
+          <div class="text-4xl">
+            📦
+          </div>
+
+          <div class="font-bold mt-3">
+            No orders yet
+          </div>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      orders.map(order=>`
+
+        <div class="bg-white rounded-2xl border p-4 mb-3">
+
+          <div class="flex gap-3">
+
+            <img
+              src="${esc(order.productImage || 'https://via.placeholder.com/100')}"
+              class="w-20 h-20 rounded-xl object-cover">
+
+            <div class="flex-1">
+
+              <div class="font-black">
+                ${esc(order.productName)}
+              </div>
+
+              <div class="text-xs text-gray-500 mt-1">
+                Order ID: ${esc(order.id)}
+              </div>
+
+              <div class="text-sm mt-2">
+                Qty: ${order.quantity || 1}
+                ${
+                  order.size
+                  ? " • Size: "+esc(order.size)
+                  :""
+                }
+              </div>
+
+            </div>
+
+            <div class="text-right">
+
+              <div class="font-black">
+                ₹${money(
+                  Number(order.sellingPrice||0)*
+                  Number(order.quantity||1)
+                )}
+              </div>
+
+              <div class="text-xs mt-2">
+                ${statusBadge(order.status)}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="bg-white p-5 rounded-xl">
+        Unable to load orders.
+      </div>`;
+
+  }
+
 };
-window.closeAdminPanel=()=>document.getElementById("adminPanelModal").classList.remove("active");
-window.refreshAdmin=async function(){
-  if(!currentUser||currentUserData?.role!=="admin")return;
-  const jobs=[["Users",loadAdminUsers],["Orders",loadAdminOrders],["Products",loadAdminProducts],["Settings",loadAdminSettings]];
-  const results=await Promise.allSettled(jobs.map(x=>x[1]()));
-  results.forEach((r,i)=>{if(r.status==="rejected")console.error("Admin "+jobs[i][0]+" load failed",r.reason)});
-  updateAdminStats();renderAdminRecentOrders();renderAdminUsers();renderAdminOrders();renderAdminProducts();renderAdminWalletUsers();
-  if(results.some(x=>x.status==="rejected"))showToast("Admin data load failed: Firestore Rules permission denied. Check SHRAYNEX Rules.");
+
+
+function statusBadge(status){
+
+  const colors = {
+
+    pending:"bg-yellow-100 text-yellow-700",
+    confirmed:"bg-blue-100 text-blue-700",
+    processing:"bg-purple-100 text-purple-700",
+    shipped:"bg-indigo-100 text-indigo-700",
+    delivered:"bg-green-100 text-green-700",
+    cancelled:"bg-red-100 text-red-700"
+
+  };
+
+
+  return `
+
+    <span class="${colors[status] || 'bg-gray-100 text-gray-700'} px-2 py-1 rounded-lg font-bold">
+      ${esc(status || "pending").toUpperCase()}
+    </span>
+
+  `;
+
+}
+
+
+function timestampValue(timestamp){
+
+  if(!timestamp) return 0;
+
+  if(timestamp.seconds)
+    return timestamp.seconds*1000;
+
+  if(timestamp.toMillis)
+    return timestamp.toMillis();
+
+  return 0;
+
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+window.openProfileModal = function(){
+
+  if(!currentUserData) return;
+
+  document.getElementById(
+    "editName"
+  ).value =
+    currentUserData.name || "";
+
+  document.getElementById(
+    "editPhone"
+  ).value =
+    currentUserData.phone || "";
+
+  document.getElementById(
+    "editPhotoURL"
+  ).value =
+    currentUserData.photoURL || "";
+
+  openModal("profileModal");
+
 };
+
+
+window.saveProfile = async function(event){
+
+  event.preventDefault();
+
+  if(!currentUser) return;
+
+
+  const name =
+    document.getElementById(
+      "editName"
+    ).value.trim();
+
+  const phone =
+    document.getElementById(
+      "editPhone"
+    ).value.trim();
+
+  const photoURL =
+    document.getElementById(
+      "editPhotoURL"
+    ).value.trim();
+
+
+  if(!name){
+
+    alert("Enter name.");
+    return;
+
+  }
+
+
+  if(!/^\d{10}$/.test(phone)){
+
+    alert(
+      "Enter valid 10 digit mobile."
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "shraynex_users",
+        currentUser.uid
+      ),
+      {
+        name,
+        phone,
+        photoURL,
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    await updateProfile(
+      currentUser,
+      {
+        displayName:name,
+        photoURL:photoURL || null
+      }
+    );
+
+
+    await loadCurrentUser();
+
+    updateProfileUI();
+
+    closeModal("profileModal");
+
+    showToast(
+      "Profile updated successfully"
+    );
+
+  }catch(error){
+
+    alert(getFirebaseError(error));
+
+  }
+
+};
+
+
+/* =========================================================
+   WALLET
+========================================================= */
+
+window.openWalletModal = async function(){
+
+  if(!currentUser) return;
+
+  document.getElementById(
+    "walletModalBalance"
+  ).textContent =
+    money(currentUserData?.walletBalance);
+
+
+  openModal("walletModal");
+
+  await loadWalletTransactions();
+
+};
+
+
+async function loadWalletTransactions(){
+
+  const container =
+    document.getElementById(
+      "walletTransactions"
+    );
+
+
+  try{
+
+    const q =
+      query(
+        collection(
+          db,
+          "shraynex_wallet_transactions"
+        ),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        )
+      );
+
+
+    const snap =
+      await getDocs(q);
+
+
+    const rows=[];
+
+    snap.forEach(d=>{
+      rows.push({
+        id:d.id,
+        ...d.data()
+      });
+    });
+
+
+    rows.sort(
+      (a,b)=>
+        timestampValue(b.createdAt)-
+        timestampValue(a.createdAt)
+    );
+
+
+    if(!rows.length){
+
+      container.innerHTML =
+        `<div class="text-center text-gray-500 p-5">
+          No wallet transactions yet.
+        </div>`;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      rows.map(tx=>{
+
+        const credit =
+          tx.type==="credit" ||
+          tx.type==="earning";
+
+        return `
+
+          <div class="flex justify-between gap-3 py-3 border-b">
+
+            <div>
+
+              <div class="font-bold">
+                ${esc(tx.description || tx.type || "Transaction")}
+              </div>
+
+              <div class="text-xs text-gray-500">
+                ${formatDate(tx.createdAt)}
+              </div>
+
+            </div>
+
+            <div class="font-black ${
+              credit
+              ? "text-green-600"
+              : "text-red-600"
+            }">
+
+              ${credit?"+":"-"}₹${money(tx.amount)}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="text-red-600">
+        Unable to load transactions.
+      </div>`;
+
+  }
+
+}
+
+
+/* =========================================================
+   WITHDRAWAL
+========================================================= */
+
+window.openWithdrawModal = async function(){
+
+  if(!currentUserData) return;
+
+  document.getElementById(
+    "withdrawBalance"
+  ).textContent =
+    money(currentUserData.walletBalance);
+
+
+  document.getElementById(
+    "withdrawAmount"
+  ).value="";
+
+
+  openModal("withdrawModal");
+
+  await loadWithdrawalHistory();
+
+};
+
+
+window.submitWithdrawal = async function(event){
+
+  event.preventDefault();
+
+  if(!currentUser || !currentUserData)
+    return;
+
+
+  const amount =
+    Number(
+      document.getElementById(
+        "withdrawAmount"
+      ).value
+    );
+
+  const upi =
+    document.getElementById(
+      "withdrawUPI"
+    ).value.trim();
+
+  const holder =
+    document.getElementById(
+      "withdrawHolder"
+    ).value.trim();
+
+  const account =
+    document.getElementById(
+      "withdrawAccount"
+    ).value.trim();
+
+  const ifsc =
+    document.getElementById(
+      "withdrawIFSC"
+    ).value.trim();
+
+
+  if(amount<=0){
+
+    alert("Enter valid amount.");
+    return;
+
+  }
+
+
+  if(amount >
+     Number(currentUserData.walletBalance||0)){
+
+    alert("Insufficient wallet balance.");
+    return;
+
+  }
+
+
+  try{
+
+    /* Prevent multiple pending requests */
+
+    const q =
+      query(
+        collection(
+          db,
+          "shraynex_withdrawals"
+        ),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        ),
+        where(
+          "status",
+          "==",
+          "pending"
+        )
+      );
+
+
+    const pendingSnap =
+      await getDocs(q);
+
+
+    if(!pendingSnap.empty){
+
+      alert(
+        "You already have a pending withdrawal request."
+      );
+
+      return;
+
+    }
+
+
+    await addDoc(
+      collection(
+        db,
+        "shraynex_withdrawals"
+      ),
+      {
+        userId:currentUser.uid,
+
+        userName:
+          currentUserData.name ||
+          currentUser.displayName ||
+          "",
+
+        userEmail:
+          currentUserData.email ||
+          currentUser.email ||
+          "",
+
+        userPhone:
+          currentUserData.phone || "",
+
+        amount,
+
+        upiId:upi,
+
+        accountHolder:holder,
+
+        accountNumber:account,
+
+        ifsc,
+
+        status:"pending",
+
+        createdAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    showToast(
+      "Withdrawal request submitted"
+    );
+
+
+    await loadWithdrawalHistory();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Withdrawal failed: "+
+      getFirebaseError(error)
+    );
+
+  }
+
+};
+
+
+async function loadWithdrawalHistory(){
+
+  const container =
+    document.getElementById(
+      "withdrawalHistory"
+    );
+
+
+  try{
+
+    const q =
+      query(
+        collection(
+          db,
+          "shraynex_withdrawals"
+        ),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        )
+      );
+
+
+    const snap =
+      await getDocs(q);
+
+
+    const rows=[];
+
+    snap.forEach(d=>{
+      rows.push({
+        id:d.id,
+        ...d.data()
+      });
+    });
+
+
+    rows.sort(
+      (a,b)=>
+        timestampValue(b.createdAt)-
+        timestampValue(a.createdAt)
+    );
+
+
+    if(!rows.length){
+
+      container.innerHTML =
+        `<div class="text-sm text-gray-500">
+          No withdrawal requests.
+        </div>`;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      rows.map(w=>`
+
+        <div class="border rounded-xl p-3 mb-2">
+
+          <div class="flex justify-between">
+
+            <div class="font-black">
+              ₹${money(w.amount)}
+            </div>
+
+            <div>
+              ${withdrawStatus(w.status)}
+            </div>
+
+          </div>
+
+          <div class="text-xs text-gray-500 mt-2">
+            UPI: ${esc(w.upiId || "-")}
+          </div>
+
+          <div class="text-xs text-gray-500">
+            ${formatDate(w.createdAt)}
+          </div>
+
+        </div>
+
+      `).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="text-red-600 text-sm">
+        Unable to load history.
+      </div>`;
+
+  }
+
+}
+
+
+function withdrawStatus(status){
+
+  const classes={
+
+    pending:"bg-yellow-100 text-yellow-700",
+    approved:"bg-blue-100 text-blue-700",
+    paid:"bg-green-100 text-green-700",
+    rejected:"bg-red-100 text-red-700"
+
+  };
+
+
+  return `
+
+    <span class="px-2 py-1 rounded-lg text-xs font-bold ${
+      classes[status] ||
+      "bg-gray-100 text-gray-700"
+    }">
+      ${esc(status || "pending").toUpperCase()}
+    </span>
+
+  `;
+
+}
+
+
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
+
+window.openAdminLogin = function(){
+
+  openModal("adminLoginModal");
+
+};
+
+
+window.adminLogin = async function(event){
+
+  event.preventDefault();
+
+  try{
+
+    const email =
+      document.getElementById(
+        "adminEmail"
+      ).value.trim();
+
+    const password =
+      document.getElementById(
+        "adminPassword"
+      ).value;
+
+
+    const credential =
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+
+    const snap =
+      await getDoc(
+        doc(
+          db,
+          "shraynex_users",
+          credential.user.uid
+        )
+      );
+
+
+    if(!snap.exists() ||
+       snap.data().role!=="admin"){
+
+      await signOut(auth);
+
+      alert(
+        "This account does not have admin access."
+      );
+
+      return;
+
+    }
+
+
+    closeModal("adminLoginModal");
+
+    openAdmin();
+
+  }catch(error){
+
+    alert(getFirebaseError(error));
+
+  }
+
+};
+
+
+/* =========================================================
+   ADMIN PANEL
+========================================================= */
+
+window.openAdmin = async function(){
+
+  adminMode=true;
+
+  openModal("adminModal");
+
+  await refreshAdmin();
+
+};
+
+
+window.closeAdmin = function(){
+
+  adminMode=false;
+
+  closeModal("adminModal");
+
+};
+
+
+window.adminTab = function(tab){
+
+  const ids=[
+    "adminDashboard",
+    "adminUsers",
+    "adminProducts",
+    "adminOrders",
+    "adminWithdrawals"
+  ];
+
+
+  ids.forEach(id=>{
+    document.getElementById(id)
+      .classList.add("hidden");
+  });
+
+
+  const map={
+    dashboard:"adminDashboard",
+    users:"adminUsers",
+    products:"adminProducts",
+    orders:"adminOrders",
+    withdrawals:"adminWithdrawals"
+  };
+
+
+  document.getElementById(
+    map[tab]
+  ).classList.remove("hidden");
+
+
+  if(tab==="users")
+    loadAdminUsers();
+
+  if(tab==="products")
+    loadAdminProducts();
+
+  if(tab==="orders")
+    loadAdminOrders();
+
+  if(tab==="withdrawals")
+    loadAdminWithdrawals();
+
+};
+
+
+async function refreshAdmin(){
+
+  await loadAdminStats();
+
+  await loadAdminUsers();
+
+  await loadAdminProducts();
+
+  await loadAdminOrders();
+
+  await loadAdminWithdrawals();
+
+}
+
+
+/* =========================================================
+   ADMIN STATS
+========================================================= */
+
+async function loadAdminStats(){
+
+  try{
+
+    const usersSnap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_users"
+        )
+      );
+
+
+    const productsSnap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_products"
+        )
+      );
+
+
+    const ordersSnap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_orders"
+        )
+      );
+
+
+    let revenue=0;
+
+    ordersSnap.forEach(d=>{
+
+      const o=d.data();
+
+      revenue +=
+        Number(o.sellingPrice||0)*
+        Number(o.quantity||1);
+
+    });
+
+
+    document.getElementById(
+      "statUsers"
+    ).textContent =
+      usersSnap.size;
+
+
+    document.getElementById(
+      "statProducts"
+    ).textContent =
+      productsSnap.size;
+
+
+    document.getElementById(
+      "statOrders"
+    ).textContent =
+      ordersSnap.size;
+
+
+    document.getElementById(
+      "statRevenue"
+    ).textContent =
+      "₹"+money(revenue);
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =========================================================
+   ADMIN USERS
+========================================================= */
 
 async function loadAdminUsers(){
-  const snap=await getDocsCompat(collection(db,USERS));allAdminUsers=[];snap.forEach(d=>allAdminUsers.push({id:d.id,...d.data()}));
+
+  const tbody =
+    document.getElementById(
+      "adminUsersBody"
+    );
+
+
+  try{
+
+    const snap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_users"
+        )
+      );
+
+
+    tbody.innerHTML =
+      snap.docs.map(d=>{
+
+        const u=d.data();
+
+        return `
+
+          <tr class="border-t">
+
+            <td class="p-3 font-bold">
+              ${esc(u.name || "-")}
+            </td>
+
+            <td class="p-3">
+              ${esc(u.email || "-")}
+            </td>
+
+            <td class="p-3">
+              ${esc(u.phone || "-")}
+            </td>
+
+            <td class="p-3">
+              ${esc(u.role || "reseller")}
+            </td>
+
+            <td class="p-3">
+              ${esc(u.status || "pending")}
+            </td>
+
+            <td class="p-3 font-bold">
+              ₹${money(u.walletBalance)}
+            </td>
+
+            <td class="p-3">
+
+              <div class="flex gap-2">
+
+                <button
+                  onclick="adminWalletAdjust('${d.id}','credit')"
+                  class="bg-green-100 text-green-700 px-3 py-2 rounded-lg font-bold">
+                  + Credit
+                </button>
+
+                <button
+                  onclick="adminWalletAdjust('${d.id}','debit')"
+                  class="bg-red-100 text-red-700 px-3 py-2 rounded-lg font-bold">
+                  − Debit
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+        `;
+
+      }).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
 }
-async function loadAdminOrders(){
-  const snap=await getDocsCompat(collection(db,ORDERS));allAdminOrders=[];snap.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));
-  allAdminOrders.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
-}
+
+
+/* =========================================================
+   ADMIN WALLET ADJUSTMENT
+========================================================= */
+
+window.adminWalletAdjust = async function(
+  userId,
+  type
+){
+
+  const amount =
+    Number(
+      prompt(
+        "Enter amount:"
+      )
+    );
+
+
+  if(!amount || amount<=0)
+    return;
+
+
+  const description =
+    prompt(
+      "Description:",
+      type==="credit"
+      ? "Admin wallet credit"
+      : "Admin wallet debit"
+    ) ||
+    "Admin adjustment";
+
+
+  try{
+
+    await runTransaction(
+      db,
+      async(transaction)=>{
+
+        const userRef =
+          doc(
+            db,
+            "shraynex_users",
+            userId
+          );
+
+
+        const userSnap =
+          await transaction.get(
+            userRef
+          );
+
+
+        if(!userSnap.exists())
+          throw new Error("User not found");
+
+
+        const user =
+          userSnap.data();
+
+
+        const oldBalance =
+          Number(
+            user.walletBalance || 0
+          );
+
+
+        if(
+          type==="debit" &&
+          amount>oldBalance
+        ){
+
+          throw new Error(
+            "Insufficient wallet balance"
+          );
+
+        }
+
+
+        const newBalance =
+          type==="credit"
+          ? oldBalance+amount
+          : oldBalance-amount;
+
+
+        const newEarnings =
+          type==="credit"
+          ? Number(
+              user.totalEarnings || 0
+            )+amount
+          : Number(
+              user.totalEarnings || 0
+            );
+
+
+        transaction.update(
+          userRef,
+          {
+            walletBalance:newBalance,
+            totalEarnings:newEarnings,
+            updatedAt:serverTimestamp()
+          }
+        );
+
+
+        const txRef =
+          doc(
+            collection(
+              db,
+              "shraynex_wallet_transactions"
+            )
+          );
+
+
+        transaction.set(
+          txRef,
+          {
+            userId,
+            type,
+            amount,
+            description,
+            createdAt:serverTimestamp()
+          }
+        );
+
+      }
+    );
+
+
+    showToast(
+      "Wallet updated"
+    );
+
+
+    await loadAdminUsers();
+
+
+    if(
+      currentUser &&
+      currentUser.uid===userId
+    ){
+
+      await loadCurrentUser();
+
+      updateProfileUI();
+
+    }
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Wallet update failed"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   ADMIN PRODUCTS
+========================================================= */
+
 async function loadAdminProducts(){
-  const snap=await getDocsCompat(collection(db,PRODUCTS));allProducts=[];snap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
-  allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+
+  const container =
+    document.getElementById(
+      "adminProductsList"
+    );
+
+
+  try{
+
+    const snap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_products"
+        )
+      );
+
+
+    const rows =
+      snap.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+
+    container.innerHTML =
+      rows.map(p=>{
+
+        const image =
+          p.images?.[0] ||
+          "https://via.placeholder.com/400";
+
+
+        return `
+
+          <div class="bg-white rounded-2xl border overflow-hidden">
+
+            <img
+              src="${esc(image)}"
+              class="w-full h-48 object-cover">
+
+            <div class="p-4">
+
+              <div class="font-black">
+                ${esc(p.title)}
+              </div>
+
+              <div class="text-sm text-gray-500 mt-1">
+                ₹${money(p.basePrice)}
+              </div>
+
+              <div class="text-xs text-gray-500 mt-2">
+                Sizes:
+                ${
+                  p.sizes?.length
+                  ? p.sizes.join(", ")
+                  : "Free Size"
+                }
+              </div>
+
+              <div class="flex gap-2 mt-4">
+
+                <button
+                  onclick="openProductEditor('${p.id}')"
+                  class="flex-1 border py-2 rounded-xl font-bold">
+                  Edit
+                </button>
+
+                <button
+                  onclick="deleteProduct('${p.id}')"
+                  class="flex-1 bg-red-600 text-white py-2 rounded-xl font-bold">
+                  Delete
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
 }
-async function loadAdminSettings(){
-  const snap=await getDoc(doc(db,SETTINGS,"platform"));if(!snap.exists())return;
-  const s=snap.data();document.getElementById("settingBusinessName").value=s.businessName||"";document.getElementById("settingSupportEmail").value=s.supportEmail||"";
-  document.getElementById("settingSupportPhone").value=s.supportPhone||"";document.getElementById("settingDeliveryText").value=s.deliveryText||"";
-}
 
-/* getDocs is loaded lazily through dynamic import so the main import list stays small */
-async function getDocsCompat(ref){const mod=await import("https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js");return await mod.getDocs(ref)}
 
-function updateAdminStats(){
-  const pending=allAdminUsers.filter(u=>u.status==="pending").length,approved=allAdminUsers.filter(u=>u.status==="approved").length;
-  const po=allAdminOrders.filter(o=>o.status==="pending").length;
-  const revenue=allAdminOrders.filter(o=>o.status!=="cancelled").reduce((s,o)=>s+Number(o.sellingPrice||0)*Number(o.quantity||1),0);
-  document.getElementById("statPendingUsers").innerText=pending;document.getElementById("statApprovedUsers").innerText=approved;
-  document.getElementById("statOrders").innerText=allAdminOrders.length;document.getElementById("statPendingOrders").innerText=po;document.getElementById("statRevenue").innerText="₹"+money(revenue);
-}
+/* =========================================================
+   PRODUCT EDITOR
+========================================================= */
 
-window.switchAdminTab=function(tab){
-  ["dashboard","users","products","orders","wallet","settings"].forEach(x=>{
-    document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden",x!==tab);
-    const b=document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));b.classList.toggle("active",x===tab);
-    if(x!==tab){b.classList.add("bg-white","text-gray-600");b.classList.remove("text-white","bg-gray-900")}else{b.classList.remove("bg-white","text-gray-600")}
-  });
-  if(tab==="wallet")renderAdminWalletUsers();
+window.openProductEditor = async function(productId=""){
+
+  document.getElementById(
+    "editProductId"
+  ).value=productId;
+
+
+  if(productId){
+
+    const snap =
+      await getDoc(
+        doc(
+          db,
+          "shraynex_products",
+          productId
+        )
+      );
+
+
+    if(!snap.exists())
+      return;
+
+
+    const p=snap.data();
+
+
+    document.getElementById(
+      "productTitle"
+    ).value =
+      p.title || "";
+
+
+    document.getElementById(
+      "productDescription"
+    ).value =
+      p.description || "";
+
+
+    document.getElementById(
+      "productBasePrice"
+    ).value =
+      p.basePrice || "";
+
+
+    document.getElementById(
+      "productMRP"
+    ).value =
+      p.mrp || "";
+
+
+    document.getElementById(
+      "productCategory"
+    ).value =
+      p.category || "";
+
+
+    document.getElementById(
+      "productStock"
+    ).value =
+      p.stock || 0;
+
+
+    document.getElementById(
+      "productDelivery"
+    ).value =
+      p.deliveryTime || "5-7 Days";
+
+
+    document.getElementById(
+      "productSizes"
+    ).value =
+      Array.isArray(p.sizes)
+      ? p.sizes.join(",")
+      : "";
+
+
+    document.getElementById(
+      "productImages"
+    ).value =
+      Array.isArray(p.images)
+      ? p.images.join(",")
+      : "";
+
+
+    document.getElementById(
+      "productActive"
+    ).checked =
+      p.active!==false;
+
+
+  }else{
+
+    document.getElementById(
+      "productTitle"
+    ).value="";
+
+    document.getElementById(
+      "productDescription"
+    ).value="";
+
+    document.getElementById(
+      "productBasePrice"
+    ).value="";
+
+    document.getElementById(
+      "productMRP"
+    ).value="";
+
+    document.getElementById(
+      "productCategory"
+    ).value="Fashion";
+
+    document.getElementById(
+      "productStock"
+    ).value="0";
+
+    document.getElementById(
+      "productDelivery"
+    ).value="5-7 Days";
+
+    document.getElementById(
+      "productSizes"
+    ).value="S,M,L,XL,XXL";
+
+    document.getElementById(
+      "productImages"
+    ).value="";
+
+    document.getElementById(
+      "productActive"
+    ).checked=true;
+
+  }
+
+
+  openModal(
+    "productEditorModal"
+  );
+
 };
 
-function renderAdminRecentOrders(){
-  const c=document.getElementById("adminRecentOrders");const list=allAdminOrders.slice(0,8);
-  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No orders yet.</div>';return}
-  c.innerHTML=list.map(o=>`<div class="border rounded-xl p-3 flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(o.productName||"Product")}</div><div class="text-xs text-gray-500 mt-1">${esc(o.customerName||"Customer")} • ${esc(o.resellerName||"Reseller")}</div></div><div class="text-right"><div class="font-bold">₹${money(Number(o.sellingPrice||0)*Number(o.quantity||1))}</div><div class="text-[10px] uppercase text-gray-500">${esc(o.status||"pending")}</div></div></div>`).join("");
-}
 
-window.renderAdminUsers=function(){
-  const v=(document.getElementById("adminUserSearch").value||"").toLowerCase().trim();
-  const list=allAdminUsers.filter(u=>`${u.name||""} ${u.email||""} ${u.phone||""}`.toLowerCase().includes(v));
-  const c=document.getElementById("adminUsersList");
-  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No users found.</div>';return}
-  c.innerHTML=list.map(u=>{
-    const st=u.role==="admin"?"admin":(u.status||"pending");
-    return `<div class="border rounded-2xl p-4"><div class="flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(u.name||"Reseller")} ${u.role==="admin"?'<span class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded-full">ADMIN</span>':""}</div><div class="text-xs text-gray-500 mt-1">${esc(u.email||"—")} • ${esc(u.phone||"—")}</div><div class="text-xs mt-2 font-bold ${st==="approved"?"text-green-600":st==="suspended"?"text-red-600":"text-amber-600"}">${esc(st.toUpperCase())}</div></div><button onclick="showUserDetails('${u.id}')" class="border px-3 py-2 rounded-lg text-xs font-bold">View</button></div>
-    ${u.role!=="admin"?`<div class="grid grid-cols-2 gap-2 mt-3">${u.status!=="approved"?`<button onclick="changeUserStatus('${u.id}','approved')" class="bg-green-600 text-white py-2.5 rounded-lg text-xs font-bold">✓ Approve</button>`:`<button onclick="changeUserStatus('${u.id}','suspended')" class="bg-red-50 text-red-600 py-2.5 rounded-lg text-xs font-bold">Suspend</button>`}<button onclick="changeUserStatus('${u.id}', '${u.status==="suspended"?"approved":"suspended"}')" class="border py-2.5 rounded-lg text-xs font-bold">${u.status==="suspended"?"Restore":"Suspend"}</button></div>`:""}</div>`;
-  }).join("");
-};
+window.saveProduct = async function(event){
 
-window.changeUserStatus=async function(uid,status){
-  if(!currentUserData||currentUserData.role!=="admin")return showToast("Admin permission required.");
-  try{await updateDoc(doc(db,USERS,uid),{status,updatedAt:serverTimestamp()});showToast(status==="approved"?"User approved successfully":"User status updated");await refreshAdmin()}catch(e){console.error(e);showToast(getFirebaseError(e))}
-};
+  event.preventDefault();
 
-window.showUserDetails=function(uid){
-  const u=allAdminUsers.find(x=>x.id===uid);if(!u)return;
-  document.getElementById("userDetailsId").innerText="UID: "+u.id;
-  document.getElementById("userDetailsContent").innerHTML=`<div class="space-y-3 text-sm"><div class="flex justify-between"><span class="text-gray-500">Name</span><b>${esc(u.name||"—")}</b></div><div class="flex justify-between"><span class="text-gray-500">Email</span><b class="text-right break-all ml-4">${esc(u.email||"—")}</b></div><div class="flex justify-between"><span class="text-gray-500">Phone</span><b>${esc(u.phone||"—")}</b></div><div class="flex justify-between"><span class="text-gray-500">Role</span><b>${esc(u.role||"reseller")}</b></div><div class="flex justify-between"><span class="text-gray-500">Status</span><b>${esc(u.status||"pending")}</b></div><div class="flex justify-between"><span class="text-gray-500">Wallet</span><b>₹${money(u.walletBalance)}</b></div><div class="flex justify-between"><span class="text-gray-500">Earnings</span><b>₹${money(u.totalEarnings)}</b></div></div>`;
-  document.getElementById("userDetailsModal").classList.add("active");
-};
-window.closeUserDetails=()=>document.getElementById("userDetailsModal").classList.remove("active");
 
-function renderAdminProducts(){
-  const c=document.getElementById("adminProductsList");
-  if(!allProducts.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No products. Tap Add Product.</div>';return}
-  c.innerHTML=allProducts.map(p=>`<div class="border rounded-2xl p-3 flex gap-3"><div class="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden shrink-0">${p.images?.[0]?`<img src="${esc(p.images[0])}" class="w-full h-full object-cover">`:'<div class="h-full flex items-center justify-center text-xs text-gray-400">No image</div>'}</div><div class="flex-1 min-w-0"><div class="font-bold truncate">${esc(p.title||"Product")}</div><div class="text-sm font-extrabold text-rose-600 mt-1">₹${money(p.basePrice)} <span class="text-[10px] text-gray-400 font-semibold">reseller</span></div>${Number(p.mrp)>Number(p.basePrice)?`<div class="text-xs text-gray-400 mt-0.5"><span class="line-through">₹${money(p.mrp)}</span> • ${Number(p.discountPercent||((1-Number(p.basePrice)/Number(p.mrp))*100))>0?money(Number(p.discountPercent||((1-Number(p.basePrice)/Number(p.mrp))*100)))+"% OFF":""}</div>`:""}<div class="text-[10px] mt-1 ${p.active?"text-green-600":"text-red-600"}>${p.active?"ACTIVE":"HIDDEN"}</div><div class="flex gap-2 mt-2"><button onclick="openProductEditor('${p.id}')" class="border px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="toggleProduct('${p.id}',${!p.active})" class="border px-3 py-1.5 rounded-lg text-xs font-bold">${p.active?"Hide":"Activate"}</button><button onclick="deleteProduct('${p.id}')" class="text-red-600 border border-red-100 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></div></div></div>`).join("");
-}
+  const id =
+    document.getElementById(
+      "editProductId"
+    ).value;
 
-window.openProductEditor=function(id=""){
-  const p=id?allProducts.find(x=>x.id===id):null;
-  document.getElementById("editProductId").value=id;
-  document.getElementById("productEditorTitle").innerText=p?"Edit Product":"Add Product";
-  document.getElementById("productTitleInput").value=p?.title||"";
-  document.getElementById("productDescriptionInput").value=p?.description||"";
-  document.getElementById("productBasePriceInput").value=p?.basePrice??"";
-  document.getElementById("productMrpInput").value=p?.mrp??"";
-  document.getElementById("productCategoryInput").value=p?.category||"";
-  document.getElementById("productImagesInput").value=Array.isArray(p?.images)?p.images.join(", "):"";
-  document.getElementById("productDeliveryInput").value=p?.deliveryTime||"3-7 Days";
-  document.getElementById("productStockInput").value=p?.stock??"";
-  const autoDiscount=p?.discountPercent??((Number(p?.mrp||0)>0&&Number(p?.basePrice||0)>0)?Math.max(0,Math.round((1-Number(p.basePrice)/Number(p.mrp))*10000)/100):"");
-  document.getElementById("productDiscountInput").value=autoDiscount;
-  updateDiscountPreview();
-  document.getElementById("productActiveInput").checked=p?.active!==false;
-  document.getElementById("productEditorModal").classList.add("active");
-};
-window.updateDiscountPreview=function(){
-  const mrp=Number(document.getElementById("productMrpInput").value||0);
-  let d=Number(document.getElementById("productDiscountInput").value||0);
-  if(d<0)d=0;if(d>99)d=99;
-  document.getElementById("productDiscountInput").value=d||"";
-  document.getElementById("productDiscountPreview").innerText=mrp>0&&d>0?`Discounted value: ₹${money(mrp*(1-d/100))}`:"Discount will show here";
-};
-document.getElementById("productMrpInput").addEventListener("input",updateDiscountPreview);
-document.getElementById("productDiscountInput").addEventListener("input",updateDiscountPreview);
-window.closeProductEditor=()=>document.getElementById("productEditorModal").classList.remove("active");
 
-window.saveProduct=async function(e){
-  e.preventDefault();
-  const id=document.getElementById("editProductId").value;
+  const title =
+    document.getElementById(
+      "productTitle"
+    ).value.trim();
+
+
+  const description =
+    document.getElementById(
+      "productDescription"
+    ).value.trim();
+
+
+  const basePrice =
+    Number(
+      document.getElementById(
+        "productBasePrice"
+      ).value
+    );
+
+
+  const mrp =
+    Number(
+      document.getElementById(
+        "productMRP"
+      ).value || 0
+    );
+
+
+  const category =
+    document.getElementById(
+      "productCategory"
+    ).value.trim() ||
+    "All Products";
+
+
+  const stock =
+    Number(
+      document.getElementById(
+        "productStock"
+      ).value || 0
+    );
+
+
+  const deliveryTime =
+    document.getElementById(
+      "productDelivery"
+    ).value.trim();
+
+
+  const sizes =
+    document.getElementById(
+      "productSizes"
+    ).value
+    .split(",")
+    .map(x=>x.trim())
+    .filter(Boolean);
+
+
+  const images =
+    document.getElementById(
+      "productImages"
+    ).value
+    .split(",")
+    .map(x=>x.trim())
+    .filter(Boolean);
+
+
+  const active =
+    document.getElementById(
+      "productActive"
+    ).checked;
+
+
+  if(!title || !basePrice || !images.length){
+
+    alert(
+      "Title, Base Price and at least one image are required."
+    );
+
+    return;
+
+  }
+
+
+  const discountPercent =
+    mrp>basePrice
+    ? Math.round(
+        ((mrp-basePrice)/mrp)*100
+      )
+    : 0;
+
+
   const data={
-    title:document.getElementById("productTitleInput").value.trim(),
-    description:document.getElementById("productDescriptionInput").value.trim(),
-    basePrice:Number(document.getElementById("productBasePriceInput").value||0),
-    mrp:Number(document.getElementById("productMrpInput").value||0),
-    discountPercent:Number(document.getElementById("productDiscountInput").value||0),
-    category:document.getElementById("productCategoryInput").value.trim(),
-    images:document.getElementById("productImagesInput").value.split(",").map(x=>x.trim()).filter(Boolean),
-    deliveryTime:document.getElementById("productDeliveryInput").value.trim()||"3-7 Days",
-    stock:Number(document.getElementById("productStockInput").value||0),
-    active:document.getElementById("productActiveInput").checked,
+
+    title,
+    description,
+
+    basePrice,
+    mrp,
+
+    discountPercent,
+
+    category,
+
+    images,
+
+    sizes,
+
+    deliveryTime,
+
+    stock,
+
+    active,
+
     updatedAt:serverTimestamp()
+
   };
-  if(!data.title||data.basePrice<=0)return showToast("Enter product title and valid base price.");
-  const btn=document.getElementById("saveProductBtn");btn.disabled=true;btn.innerText="Saving...";
+
+
   try{
-    if(id)await updateDoc(doc(db,PRODUCTS,id),data);
-    else await addDoc(collection(db,PRODUCTS),{...data,createdAt:serverTimestamp()});
-    closeProductEditor();showToast(id?"Product updated":"Product added");await refreshAdmin();
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText="Save Product";}
-};
-window.toggleProduct=async function(id,active){try{await updateDoc(doc(db,PRODUCTS,id),{active,updatedAt:serverTimestamp()});showToast(active?"Product activated":"Product hidden");await refreshAdmin()}catch(e){showToast(getFirebaseError(e))}};
-window.deleteProduct=async function(id){
-  if(!confirm("Delete this product? Existing orders will remain."))return;
-  try{await deleteDoc(doc(db,PRODUCTS,id));showToast("Product deleted");await refreshAdmin()}catch(e){showToast(getFirebaseError(e))}
+
+    if(id){
+
+      await updateDoc(
+        doc(
+          db,
+          "shraynex_products",
+          id
+        ),
+        data
+      );
+
+    }else{
+
+      await addDoc(
+        collection(
+          db,
+          "shraynex_products"
+        ),
+        {
+          ...data,
+          createdAt:serverTimestamp()
+        }
+      );
+
+    }
+
+
+    closeModal(
+      "productEditorModal"
+    );
+
+
+    showToast(
+      "Product saved"
+    );
+
+
+    await loadAdminProducts();
+
+    await loadProducts();
+
+  }catch(error){
+
+    alert(
+      "Product save failed: "+
+      getFirebaseError(error)
+    );
+
+  }
+
 };
 
-window.renderAdminOrders=function(){
-  const v=(document.getElementById("adminOrderSearch").value||"").toLowerCase().trim();
-  const list=allAdminOrders.filter(o=>`${o.id} ${o.customerName||""} ${o.customerPhone||""} ${o.resellerName||""} ${o.productName||""}`.toLowerCase().includes(v));
-  const c=document.getElementById("adminOrdersList");
-  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No orders found.</div>';return}
-  c.innerHTML=list.map(o=>`<div class="border rounded-2xl p-4"><div class="flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(o.productName||"Product")}</div><div class="text-xs text-gray-500 mt-1">#${esc(o.id.slice(0,10).toUpperCase())} • ${esc(o.resellerName||"Reseller")}</div></div><div class="font-extrabold">₹${money(Number(o.sellingPrice||0)*Number(o.quantity||1))}</div></div><div class="grid grid-cols-2 gap-3 mt-4 text-xs"><div><span class="text-gray-400">Customer</span><div class="font-semibold">${esc(o.customerName||"—")}</div><div>${esc(o.customerPhone||"—")}</div></div><div><span class="text-gray-400">Profit</span><div class="font-bold text-green-600">₹${money(o.profit)}</div></div></div><select onchange="changeOrderStatus('${o.id}',this.value)" class="input mt-4 text-sm"><option value="pending" ${o.status==="pending"?"selected":""}>Pending</option><option value="confirmed" ${o.status==="confirmed"?"selected":""}>Confirmed</option><option value="processing" ${o.status==="processing"?"selected":""}>Processing</option><option value="shipped" ${o.status==="shipped"?"selected":""}>Shipped</option><option value="delivered" ${o.status==="delivered"?"selected":""}>Delivered</option><option value="cancelled" ${o.status==="cancelled"?"selected":""}>Cancelled</option></select></div>`).join("");
-};
-window.changeOrderStatus=async function(id,status){
+
+window.deleteProduct = async function(id){
+
+  if(!confirm(
+    "Delete this product?"
+  ))
+    return;
+
+
   try{
-    await updateDoc(doc(db,ORDERS,id),{status,updatedAt:serverTimestamp()});
-    showToast("Order status updated");await refreshAdmin();
-  }catch(e){showToast(getFirebaseError(e))}
+
+    await deleteDoc(
+      doc(
+        db,
+        "shraynex_products",
+        id
+      )
+    );
+
+
+    showToast(
+      "Product deleted"
+    );
+
+
+    await loadAdminProducts();
+
+    await loadProducts();
+
+  }catch(error){
+
+    alert(
+      "Delete failed: "+
+      getFirebaseError(error)
+    );
+
+  }
+
 };
 
-function renderAdminWalletUsers(){
-  const c=document.getElementById("adminWalletUsers"),list=allAdminUsers.filter(u=>u.role!=="admin");
-  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No reseller users.</div>';return}
-  c.innerHTML=list.map(u=>`<div class="border rounded-2xl p-4"><div class="flex justify-between gap-3"><div><div class="font-bold">${esc(u.name||"Reseller")}</div><div class="text-xs text-gray-500">${esc(u.email||"—")} • ${esc(u.status||"pending")}</div></div><div class="text-right"><div class="font-extrabold text-rose-600">₹${money(u.walletBalance)}</div><div class="text-[10px] text-gray-400">wallet</div></div></div><div class="grid grid-cols-2 gap-2 mt-3"><button onclick="adjustWallet('${u.id}','credit')" class="bg-green-600 text-white py-2.5 rounded-lg text-xs font-bold">＋ Credit</button><button onclick="adjustWallet('${u.id}','debit')" class="bg-red-50 text-red-600 py-2.5 rounded-lg text-xs font-bold">− Debit</button></div></div>`).join("");
+
+/* =========================================================
+   ADMIN ORDERS
+========================================================= */
+
+async function loadAdminOrders(){
+
+  const tbody =
+    document.getElementById(
+      "adminOrdersBody"
+    );
+
+
+  try{
+
+    const snap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_orders"
+        )
+      );
+
+
+    const rows =
+      snap.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+
+    rows.sort(
+      (a,b)=>
+        timestampValue(b.createdAt)-
+        timestampValue(a.createdAt)
+    );
+
+
+    tbody.innerHTML =
+      rows.map(o=>`
+
+        <tr class="border-t">
+
+          <td class="p-3">
+
+            <div class="font-bold">
+              ${esc(o.id)}
+            </div>
+
+            <div class="text-xs text-gray-500">
+              ${formatDate(o.createdAt)}
+            </div>
+
+          </td>
+
+          <td class="p-3">
+
+            <div class="font-bold">
+              ${esc(o.productName)}
+            </div>
+
+            <div class="text-xs text-gray-500">
+              ${
+                o.size
+                ? "Size: "+esc(o.size)
+                : ""
+              }
+            </div>
+
+          </td>
+
+          <td class="p-3">
+
+            <div>
+              ${esc(o.customerName)}
+            </div>
+
+            <div class="text-xs">
+              ${esc(o.customerPhone)}
+            </div>
+
+          </td>
+
+          <td class="p-3">
+            ${o.quantity || 1}
+          </td>
+
+          <td class="p-3 font-bold text-green-600">
+            ₹${money(o.profit)}
+          </td>
+
+          <td class="p-3">
+            ${statusBadge(o.status)}
+          </td>
+
+          <td class="p-3">
+
+            <select
+              onchange="updateOrderStatus('${o.id}',this.value)"
+              class="border rounded-lg p-2">
+
+              ${
+                [
+                  "pending",
+                  "confirmed",
+                  "processing",
+                  "shipped",
+                  "delivered",
+                  "cancelled"
+                ].map(s=>`
+
+                  <option
+                    value="${s}"
+                    ${o.status===s?"selected":""}>
+                    ${s}
+                  </option>
+
+                `).join("")
+              }
+
+            </select>
+
+          </td>
+
+        </tr>
+
+      `).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
 }
 
-window.adjustWallet=async function(uid,type){
-  const u=allAdminUsers.find(x=>x.id===uid);if(!u)return;
-  const amount=Number(prompt(`${type==="credit"?"Credit":"Debit"} amount for ${u.name||"user"}:`,"0"));
-  if(!amount||amount<=0)return;
-  const note=prompt("Reason / note:","Order earnings")||"Admin adjustment";
+
+window.updateOrderStatus = async function(
+  orderId,
+  status
+){
+
   try{
-    await runTransaction(db,async tx=>{
-      const ref=doc(db,USERS,uid),snap=await tx.get(ref);if(!snap.exists())throw new Error("User not found");
-      const old=snap.data(),wallet=Number(old.walletBalance||0),earn=Number(old.totalEarnings||0);
-      if(type==="debit"&&wallet<amount)throw new Error("Insufficient wallet balance");
-      const newWallet=type==="credit"?wallet+amount:wallet-amount;
-      const newEarn=type==="credit"?earn+amount:earn;
-      tx.update(ref,{walletBalance:newWallet,totalEarnings:newEarn,updatedAt:serverTimestamp()});
-      const wref=doc(collection(db,WALLET));tx.set(wref,{userId:uid,type,amount,note,adminId:currentUser.uid,createdAt:serverTimestamp()});
-    });
-    showToast("Wallet updated successfully");await refreshAdmin();
-  }catch(e){console.error(e);showToast(e.message||getFirebaseError(e))}
+
+    await updateDoc(
+      doc(
+        db,
+        "shraynex_orders",
+        orderId
+      ),
+      {
+        status,
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    showToast(
+      "Order status updated"
+    );
+
+
+    await loadAdminOrders();
+
+  }catch(error){
+
+    alert(
+      "Status update failed"
+    );
+
+  }
+
 };
 
-window.saveAdminSettings=async function(e){
-  e.preventDefault();
-  try{
-    await setDoc(doc(db,SETTINGS,"platform"),{
-      businessName:document.getElementById("settingBusinessName").value.trim(),
-      supportEmail:document.getElementById("settingSupportEmail").value.trim(),
-      supportPhone:document.getElementById("settingSupportPhone").value.trim(),
-      deliveryText:document.getElementById("settingDeliveryText").value.trim(),
-      updatedAt:serverTimestamp(),updatedBy:currentUser.uid
-    },{merge:true});
-    showToast("Settings saved");
-  }catch(e){showToast(getFirebaseError(e))}
-};
 
-function money(v){return Number(v||0).toLocaleString("en-IN")}
-function getTime(t){if(!t)return 0;if(typeof t.toMillis==="function")return t.toMillis();if(t.seconds)return t.seconds*1000;return new Date(t).getTime()||0}
-function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function getFirebaseError(e){
-  const code=e?.code||"";
-  const m={
-    "custom/missing-name":"Please enter your full name.","custom/invalid-phone":"Enter a valid 10-digit mobile number.",
-    "custom/not-admin":"This account is not an SHRAYNEX admin.","custom/admin-suspended":"Admin account is suspended.",
-    "auth/popup-closed-by-user":"Google login cancelled.","auth/popup-blocked":"Google popup was blocked.",
-    "auth/email-already-in-use":"This email is already registered. Please login.","auth/wrong-password":"Incorrect password.",
-    "auth/invalid-credential":"Email or password is incorrect.","auth/invalid-login-credentials":"Email or password is incorrect.",
-    "auth/user-not-found":"No account found with this email.","auth/weak-password":"Password must be at least 6 characters.",
-    "auth/invalid-email":"Please enter a valid email.","auth/too-many-requests":"Too many attempts. Try later.",
-    "auth/network-request-failed":"Network error. Check your internet connection.","auth/unauthorized-domain":"This website domain is not authorized in Firebase.",
-    "permission-denied":"Firebase permission denied.","failed-precondition":"Firebase database setup is incomplete.",
-    "auth/operation-not-allowed":"This login method is not enabled in Firebase.","auth/account-exists-with-different-credential":"This email already uses another sign-in method."
-  };
-  return m[code]||e?.message||"Something went wrong.";
+/* =========================================================
+   ADMIN WITHDRAWALS
+========================================================= */
+
+async function loadAdminWithdrawals(){
+
+  const container =
+    document.getElementById(
+      "adminWithdrawalsList"
+    );
+
+
+  try{
+
+    const snap =
+      await getDocs(
+        collection(
+          db,
+          "shraynex_withdrawals"
+        )
+      );
+
+
+    const rows =
+      snap.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
+
+
+    rows.sort(
+      (a,b)=>
+        timestampValue(b.createdAt)-
+        timestampValue(a.createdAt)
+    );
+
+
+    if(!rows.length){
+
+      container.innerHTML =
+        `<div class="bg-white rounded-2xl p-8 text-center text-gray-500">
+          No withdrawal requests.
+        </div>`;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      rows.map(w=>`
+
+        <div class="bg-white rounded-2xl border p-5">
+
+          <div class="flex flex-wrap justify-between gap-3">
+
+            <div>
+
+              <div class="font-black text-xl">
+                ₹${money(w.amount)}
+              </div>
+
+              <div class="text-sm mt-1">
+                ${esc(w.userName || "-")}
+              </div>
+
+              <div class="text-xs text-gray-500">
+                ${esc(w.userEmail || "-")}
+              </div>
+
+              <div class="text-xs text-gray-500">
+                ${esc(w.userPhone || "-")}
+              </div>
+
+            </div>
+
+            <div>
+              ${withdrawStatus(w.status)}
+            </div>
+
+          </div>
+
+
+          <div class="grid md:grid-cols-2 gap-3 mt-4 bg-gray-50 rounded-xl p-4">
+
+            <div>
+              <div class="text-xs text-gray-500">
+                UPI ID
+              </div>
+              <div class="font-bold">
+                ${esc(w.upiId || "-")}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs text-gray-500">
+                Account Holder
+              </div>
+              <div class="font-bold">
+                ${esc(w.accountHolder || "-")}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs text-gray-500">
+                Account Number
+              </div>
+              <div class="font-bold">
+                ${esc(w.accountNumber || "-")}
+              </div>
+            </div>
+
+            <div>
+              <div class="text-xs text-gray-500">
+                IFSC
+              </div>
+              <div class="font-bold">
+                ${esc(w.ifsc || "-")}
+              </div>
+            </div>
+
+          </div>
+
+
+          <div class="flex flex-wrap gap-2 mt-4">
+
+            ${
+              w.status==="pending"
+              ? `
+
+                <button
+                  onclick="approveWithdrawal('${w.id}')"
+                  class="bg-green-600 text-white px-4 py-2 rounded-xl font-bold">
+                  Approve & Deduct
+                </button>
+
+                <button
+                  onclick="rejectWithdrawal('${w.id}')"
+                  class="bg-red-600 text-white px-4 py-2 rounded-xl font-bold">
+                  Reject
+                </button>
+
+              `
+              :""
+            }
+
+
+            ${
+              w.status==="approved"
+              ? `
+
+                <button
+                  onclick="markWithdrawalPaid('${w.id}')"
+                  class="bg-black text-white px-4 py-2 rounded-xl font-bold">
+                  Mark Paid
+                </button>
+
+              `
+              :""
+            }
+
+          </div>
+
+
+          <div class="text-xs text-gray-500 mt-3">
+            Request:
+            ${formatDate(w.createdAt)}
+          </div>
+
+        </div>
+
+      `).join("");
+
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
 }
 
-document.getElementById("googleBtn").innerHTML=googleButtonHTML();
-setAuthMode("login");
-console.log("🔥 SHRAYNEX RESELLING + ADMIN CONNECTED",firebaseConfig.projectId);
+
+/* =========================================================
+   APPROVE WITHDRAWAL
+========================================================= */
+
+window.approveWithdrawal = async function(
+  withdrawalId
+){
+
+  if(!confirm(
+    "Approve this withdrawal and deduct amount from wallet?"
+  ))
+    return;
+
+
+  try{
+
+    await runTransaction(
+      db,
+      async(transaction)=>{
+
+        const withdrawalRef =
+          doc(
+            db,
+            "shraynex_withdrawals",
+            withdrawalId
+          );
+
+
+        const withdrawalSnap =
+          await transaction.get(
+            withdrawalRef
+          );
+
+
+        if(!withdrawalSnap.exists())
+          throw new Error(
+            "Withdrawal not found"
+          );
+
+
+        const withdrawal =
+          withdrawalSnap.data();
+
+
+        if(withdrawal.status!=="pending")
+          throw new Error(
+            "This request is already processed."
+          );
+
+
+        const userRef =
+          doc(
+            db,
+            "shraynex_users",
+            withdrawal.userId
+          );
+
+
+        const userSnap =
+          await transaction.get(
+            userRef
+          );
+
+
+        if(!userSnap.exists())
+          throw new Error(
+            "User not found"
+          );
+
+
+        const user =
+          userSnap.data();
+
+
+        const balance =
+          Number(
+            user.walletBalance || 0
+          );
+
+
+        const amount =
+          Number(
+            withdrawal.amount || 0
+          );
+
+
+        if(amount>balance){
+
+          throw new Error(
+            "User wallet balance is insufficient."
+          );
+
+        }
+
+
+        transaction.update(
+          userRef,
+          {
+            walletBalance:
+              balance-amount,
+
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+
+        transaction.update(
+          withdrawalRef,
+          {
+            status:"approved",
+            approvedAt:serverTimestamp(),
+            updatedAt:serverTimestamp()
+          }
+        );
+
+
+        const txRef =
+          doc(
+            collection(
+              db,
+              "shraynex_wallet_transactions"
+            )
+          );
+
+
+        transaction.set(
+          txRef,
+          {
+            userId:
+              withdrawal.userId,
+
+            type:"withdrawal",
+
+            amount,
+
+            description:
+              "Withdrawal approved",
+
+            withdrawalId,
+
+            createdAt:
+              serverTimestamp()
+          }
+        );
+
+      }
+    );
+
+
+    showToast(
+      "Withdrawal approved and wallet deducted."
+    );
+
+
+    await loadAdminWithdrawals();
+
+    await loadAdminUsers();
+
+
+    if(
+      currentUser &&
+      currentUser.uid
+    ){
+
+      await loadCurrentUser();
+
+      updateProfileUI();
+
+    }
+
+  }catch(error){
+
+    alert(
+      error.message ||
+      "Approval failed"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   REJECT WITHDRAWAL
+========================================================= */
+
+window.rejectWithdrawal = async function(
+  withdrawalId
+){
+
+  const reason =
+    prompt(
+      "Rejection reason:",
+      "Withdrawal rejected by admin"
+    );
+
+
+  if(reason===null)
+    return;
+
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "shraynex_withdrawals",
+        withdrawalId
+      ),
+      {
+        status:"rejected",
+        rejectionReason:
+          reason || "Rejected",
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+
+    showToast(
+      "Withdrawal rejected"
+    );
+
+
+    await loadAdminWithdrawals();
+
+  }catch(error){
+
+    alert(
+      "Reject failed"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   MARK PAID
+========================================================= */
+
+window.markWithdrawalPaid = async function(
+  withdrawalId
+){
+
+  if(!confirm(
+    "Confirm that payment has been sent?"
+  ))
+    return;
+
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "shraynex_withdrawals",
+        withdrawalId
+      ),
+      {
+        status:"paid",
+        paidAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      }
+    );
+
+
+    showToast(
+      "Withdrawal marked as paid"
+    );
+
+
+    await loadAdminWithdrawals();
+
+  }catch(error){
+
+    alert(
+      "Update failed"
+    );
+
+  }
+
+};
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function formatDate(timestamp){
+
+  if(!timestamp)
+    return "-";
+
+
+  try{
+
+    const date =
+      timestamp.toDate
+      ? timestamp.toDate()
+      : new Date(timestamp);
+
+
+    return date.toLocaleString(
+      "en-IN",
+      {
+        day:"2-digit",
+        month:"short",
+        year:"numeric",
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+
+  }catch{
+
+    return "-";
+
+  }
+
+}
+
+
+/* =========================================================
+   SECRET ADMIN BUTTON
+   Double click SHRAYNEX logo/header
+========================================================= */
+
+let logoClicks=0;
+
+document.addEventListener(
+  "dblclick",
+  event=>{
+
+    const target =
+      event.target.closest(
+        ".tracking-widest"
+      );
+
+    if(target){
+
+      openAdminLogin();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   AUTO ADMIN ACCESS
+========================================================= */
+
+window.addEventListener(
+  "keydown",
+  event=>{
+
+    if(
+      event.ctrlKey &&
+      event.shiftKey &&
+      event.key.toLowerCase()==="a"
+    ){
+
+      openAdminLogin();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+console.log(
+  "SHRAYNEX Reselling Platform Loaded"
+);
+
 </script>
+
 </body>
 </html>
