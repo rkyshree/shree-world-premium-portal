@@ -1,304 +1,2191 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard</title>
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>SHRAYNEX Admin Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
 
 body{
-display:flex;
-background:#f4f6f9;
+    font-family:Inter,system-ui,sans-serif;
+    background:#050505;
 }
 
-.sidebar{
-width:250px;
-height:100vh;
-background:#0d6efd;
-color:white;
-padding:20px;
-position:fixed;
+::-webkit-scrollbar{
+    width:6px;
 }
 
-.sidebar h2{
-margin-bottom:30px;
-text-align:center;
+::-webkit-scrollbar-track{
+    background:#080808;
 }
 
-.sidebar a{
-display:block;
-color:white;
-text-decoration:none;
-padding:12px;
-margin:8px 0;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:rgba(255,255,255,.2);
-}
-
-.main{
-margin-left:250px;
-padding:25px;
-width:100%;
-}
-
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-margin-top:20px;
+::-webkit-scrollbar-thumb{
+    background:#333;
+    border-radius:20px;
 }
 
 .card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-text-align:center;
+    background:#101010;
+    border:1px solid #202020;
 }
 
-.card h3{
-margin-bottom:10px;
+.modal-bg{
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(10px);
 }
 
-.card p{
-font-size:28px;
-font-weight:bold;
-color:#0d6efd;
+input,select,textarea{
+    color-scheme:dark;
 }
 
-/* Select dropdown style */
-select {
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  outline: none;
-  cursor: pointer;
-  font-weight: bold;
-  color: #0d6efd;
-}
-
-/* Table styling for better look */
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
 </style>
+
 </head>
 
-<body>
 
-<div class="sidebar">
-  <h2>SHREE WORLD</h2>
-  <a href="#">🏠 Dashboard</a>
-  <a href="#">👥 Users</a>
-  <a href="#">📦 Orders</a>
-  <a href="#">💳 Payments</a>
-  <a href="#">⭐ Reviews</a>
-  <a href="#">⚙️ Settings</a>
-  <a href="#" id="logout">🚪 Logout</a>
+<body class="text-white">
+
+
+<!-- =========================================
+     MOBILE HEADER
+========================================= -->
+
+<header class="lg:hidden sticky top-0 z-40
+               bg-black/90 backdrop-blur-xl
+               border-b border-white/10">
+
+<div class="flex items-center justify-between p-4">
+
+    <div>
+
+        <div class="font-black text-lg">
+            SHRAYNEX
+        </div>
+
+        <div class="text-xs text-gray-500">
+            Admin Panel
+        </div>
+
+    </div>
+
+    <button
+        onclick="logout()"
+        class="px-4 py-2 rounded-xl
+               bg-red-500/10 text-red-400 text-sm">
+
+        Logout
+
+    </button>
+
 </div>
 
-<div class="main">
-  
-  <div style="display:flex;justify-content:space-between;align-items:center;">
-    <h1>
-Admin Dashboard
-<span id="notificationCount"
-style="
-background:red;
-color:white;
-padding:4px 10px;
-border-radius:50%;
-font-size:14px;
-margin-left:10px;
-">
-0
-</span>
+</header>
+
+
+<div class="flex min-h-screen">
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside
+class="hidden lg:flex w-64
+       fixed left-0 top-0 bottom-0
+       bg-[#0b0b0b]
+       border-r border-white/10
+       flex-col">
+
+<div class="p-6">
+
+    <div class="w-12 h-12 rounded-2xl
+                bg-white text-black
+                flex items-center justify-center
+                font-black text-2xl">
+
+        S
+
+    </div>
+
+    <div class="mt-4 font-black text-xl">
+        SHRAYNEX
+    </div>
+
+    <div class="text-xs text-gray-500">
+        Reselling Admin
+    </div>
+
+</div>
+
+
+<nav class="px-3 space-y-1">
+
+<button onclick="showSection('dashboard')"
+class="navBtn w-full text-left px-4 py-3 rounded-xl bg-white/10"
+data-section="dashboard">
+
+    📊 Dashboard
+
+</button>
+
+
+<button onclick="showSection('users')"
+class="navBtn w-full text-left px-4 py-3 rounded-xl hover:bg-white/5"
+data-section="users">
+
+    👥 Users
+
+</button>
+
+
+<button onclick="showSection('orders')"
+class="navBtn w-full text-left px-4 py-3 rounded-xl hover:bg-white/5"
+data-section="orders">
+
+    📦 Orders
+
+</button>
+
+
+<button onclick="showSection('products')"
+class="navBtn w-full text-left px-4 py-3 rounded-xl hover:bg-white/5"
+data-section="products">
+
+    🛍 Products
+
+</button>
+
+
+<button onclick="showSection('wallet')"
+class="navBtn w-full text-left px-4 py-3 rounded-xl hover:bg-white/5"
+data-section="wallet">
+
+    💰 Wallet
+
+</button>
+
+</nav>
+
+
+<div class="mt-auto p-4">
+
+<button
+onclick="logout()"
+class="w-full py-3 rounded-xl
+       bg-red-500/10 text-red-400">
+
+    🚪 Logout
+
+</button>
+
+</div>
+
+</aside>
+
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="w-full lg:ml-64 p-4 lg:p-8">
+
+
+<!-- TOP -->
+
+<div class="hidden lg:flex
+            items-center justify-between mb-8">
+
+<div>
+
+<h1 class="text-3xl font-black">
+    SHRAYNEX Admin Dashboard
 </h1>
-    <div onclick="readNotifications()" style="position:relative;font-size:30px;cursor:pointer;">
-      🔔
-      <span id="notifyCount"
-      style="
-      position:absolute;
-      top:-8px;
-      right:-8px;
-      background:red;
-      color:white;
-      border-radius:50%;
-      padding:3px 7px;
-      font-size:12px;
-      display:none;
-      ">
-      0
-      </span>
-    </div>
-  </div>
 
-  <p>Welcome Admin</p>
+<p class="text-gray-500 mt-1">
+    Manage your reseller business
+</p>
 
-  <div class="cards">
-    <div class="card">
-      <h3>Total Users</h3>
-      <p id="totalUsers">0</p>
-    </div>
+</div>
 
-    <div class="card">
-      <h3>Total Orders</h3>
-      <p id="totalOrders">0</p>
-    </div>
 
-    <div class="card">
-      <h3>Total Revenue</h3>
-      <p id="totalRevenue">₹0</p>
-    </div>
+<div class="flex items-center gap-4">
 
-    <div class="card">
-      <h3>Total Reviews</h3>
-      <p id="totalReviews">0</p>
-    </div>
-  </div>
+<div
+id="adminEmail"
+class="text-sm text-gray-400">
+    Loading...
+</div>
 
-  <h2 style="margin-top:30px;">Recent Orders</h2>
+<button
+onclick="logout()"
+class="px-5 py-3 rounded-xl
+       bg-red-500/10 text-red-400">
 
-  <table style="width:100%;margin-top:15px;background:#fff;border-collapse:collapse;box-shadow:0 3px 10px rgba(0,0,0,.1);border-radius:10px;overflow:hidden;">
-    <thead style="background:#0d6efd;color:white;">
-      <tr>
-        <th>Name</th>
-        <th>Service</th>
-        <th>Amount</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody id="ordersBody">
-      <!-- Live Orders will be injected here -->
-    </tbody>
-  </table>
+Logout
 
-</div> <!-- Main div closed here -->
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================================
+     DASHBOARD SECTION
+========================================= -->
+
+<section id="dashboardSection">
+
+<div class="mb-6 lg:hidden">
+
+<h1 class="text-2xl font-black">
+    Dashboard
+</h1>
+
+</div>
+
+
+<!-- STAT CARDS -->
+
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+
+<div class="card rounded-2xl p-5">
+
+<div class="text-gray-500 text-sm">
+    Total Users
+</div>
+
+<div id="totalUsers"
+class="text-3xl font-black mt-2">
+    0
+</div>
+
+</div>
+
+
+<div class="card rounded-2xl p-5">
+
+<div class="text-gray-500 text-sm">
+    Pending Users
+</div>
+
+<div id="pendingUsers"
+class="text-3xl font-black mt-2">
+    0
+</div>
+
+</div>
+
+
+<div class="card rounded-2xl p-5">
+
+<div class="text-gray-500 text-sm">
+    Orders
+</div>
+
+<div id="totalOrders"
+class="text-3xl font-black mt-2">
+    0
+</div>
+
+</div>
+
+
+<div class="card rounded-2xl p-5">
+
+<div class="text-gray-500 text-sm">
+    Revenue
+</div>
+
+<div id="totalRevenue"
+class="text-2xl font-black mt-2">
+    ₹0
+</div>
+
+</div>
+
+</div>
+
+
+<!-- QUICK ACTION -->
+
+<div class="grid lg:grid-cols-3 gap-4 mt-6">
+
+
+<button
+onclick="showSection('users')"
+class="card rounded-2xl p-6 text-left hover:bg-white/5">
+
+<div class="text-3xl">
+    👥
+</div>
+
+<div class="font-bold text-lg mt-3">
+    Manage Users
+</div>
+
+<div class="text-sm text-gray-500 mt-1">
+    Approve new resellers
+</div>
+
+</button>
+
+
+<button
+onclick="showSection('orders')"
+class="card rounded-2xl p-6 text-left hover:bg-white/5">
+
+<div class="text-3xl">
+    📦
+</div>
+
+<div class="font-bold text-lg mt-3">
+    Manage Orders
+</div>
+
+<div class="text-sm text-gray-500 mt-1">
+    Update order status
+</div>
+
+</button>
+
+
+<button
+onclick="showSection('products')"
+class="card rounded-2xl p-6 text-left hover:bg-white/5">
+
+<div class="text-3xl">
+    🛍
+</div>
+
+<div class="font-bold text-lg mt-3">
+    Products
+</div>
+
+<div class="text-sm text-gray-500 mt-1">
+    Add and manage products
+</div>
+
+</button>
+
+</div>
+
+
+<!-- RECENT ORDERS -->
+
+<div class="card rounded-2xl mt-6 overflow-hidden">
+
+<div class="p-5 border-b border-white/10">
+
+<h2 class="font-bold">
+    Recent Orders
+</h2>
+
+</div>
+
+<div
+id="recentOrders"
+class="divide-y divide-white/5">
+
+<div class="p-5 text-gray-500">
+    Loading...
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================
+     USERS SECTION
+========================================= -->
+
+<section
+id="usersSection"
+class="hidden">
+
+
+<div class="flex flex-col lg:flex-row
+            lg:items-center
+            justify-between gap-4 mb-6">
+
+<div>
+
+<h2 class="text-2xl font-black">
+    User Management
+</h2>
+
+<p class="text-gray-500">
+    Approve and manage resellers
+</p>
+
+</div>
+
+
+<input
+id="userSearch"
+oninput="renderUsers()"
+placeholder="Search name, email, phone..."
+class="px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10
+       outline-none w-full lg:w-80">
+
+</div>
+
+
+<div id="usersList"
+class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================
+     ORDERS SECTION
+========================================= -->
+
+<section
+id="ordersSection"
+class="hidden">
+
+<div class="flex flex-col lg:flex-row
+            lg:items-center
+            justify-between gap-4 mb-6">
+
+<div>
+
+<h2 class="text-2xl font-black">
+    Orders
+</h2>
+
+<p class="text-gray-500">
+    Manage reseller orders
+</p>
+
+</div>
+
+
+<input
+id="orderSearch"
+oninput="renderOrders()"
+placeholder="Search order / phone / product..."
+class="px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10
+       outline-none w-full lg:w-80">
+
+</div>
+
+
+<div id="ordersList"
+class="space-y-3">
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================
+     PRODUCTS SECTION
+========================================= -->
+
+<section
+id="productsSection"
+class="hidden">
+
+<div class="flex items-center justify-between mb-6">
+
+<div>
+
+<h2 class="text-2xl font-black">
+    Products
+</h2>
+
+<p class="text-gray-500">
+    Manage reseller products
+</p>
+
+</div>
+
+
+<button
+onclick="openProductModal()"
+class="px-5 py-3 rounded-xl
+       bg-white text-black font-bold">
+
++ Add Product
+
+</button>
+
+</div>
+
+
+<div id="productsList"
+class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+</div>
+
+</section>
+
+
+
+<!-- =========================================
+     WALLET SECTION
+========================================= -->
+
+<section
+id="walletSection"
+class="hidden">
+
+<h2 class="text-2xl font-black mb-2">
+    Wallet Transactions
+</h2>
+
+<p class="text-gray-500 mb-6">
+    View reseller earnings and wallet transactions
+</p>
+
+
+<div
+id="walletList"
+class="space-y-3">
+
+</div>
+
+</section>
+
+
+</main>
+
+</div>
+
+
+
+<!-- =========================================
+     PRODUCT MODAL
+========================================= -->
+
+<div
+id="productModal"
+class="hidden fixed inset-0 z-50
+       modal-bg flex items-center justify-center
+       p-4">
+
+<div class="card rounded-3xl
+            w-full max-w-lg
+            max-h-[90vh] overflow-y-auto p-6">
+
+<div class="flex justify-between items-center mb-6">
+
+<h2
+id="productModalTitle"
+class="text-xl font-black">
+Add Product
+</h2>
+
+<button
+onclick="closeProductModal()"
+class="text-gray-400 text-2xl">
+
+×
+
+</button>
+
+</div>
+
+
+<form id="productForm"
+class="space-y-4">
+
+<input
+type="hidden"
+id="productId">
+
+
+<input
+id="productTitle"
+required
+placeholder="Product Name"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<textarea
+id="productDescription"
+placeholder="Product Description"
+rows="3"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10"></textarea>
+
+
+<div class="grid grid-cols-2 gap-3">
+
+<input
+id="basePrice"
+type="number"
+required
+placeholder="Base Price"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<input
+id="mrp"
+type="number"
+placeholder="MRP"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+</div>
+
+
+<input
+id="category"
+placeholder="Category"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<input
+id="productImage"
+placeholder="Product Image URL"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<input
+id="stock"
+type="number"
+placeholder="Stock"
+value="100"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<input
+id="deliveryTime"
+placeholder="Delivery Time e.g. 3-7 Days"
+value="3-7 Days"
+class="w-full px-4 py-3 rounded-xl
+       bg-white/5 border border-white/10">
+
+
+<label class="flex items-center gap-3">
+
+<input
+id="active"
+type="checkbox"
+checked
+class="w-5 h-5">
+
+<span>
+Active Product
+</span>
+
+</label>
+
+
+<button
+type="submit"
+class="w-full py-4 rounded-xl
+       bg-white text-black font-bold">
+
+Save Product
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+
 import {
-  getFirestore,
-  collection,
-  getDocs,
-  onSnapshot,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* =========================================
+   FIREBASE
+========================================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
-  authDomain: "rkyshree-2f74b.firebaseapp.com",
-  projectId: "rkyshree-2f74b",
-  storageBucket: "rkyshree-2f74b.firebasestorage.app",
-  messagingSenderId: "354823113610",
-  appId: "1:354823113610:web:d043805305c945339c9673",
-  measurementId: "G-WSXGTGFWYK"
+    apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+    authDomain: "rkyshree-2f74b.firebaseapp.com",
+    projectId: "rkyshree-2f74b",
+    storageBucket: "rkyshree-2f74b.firebasestorage.app",
+    messagingSenderId: "354823113610",
+    appId: "1:354823113610:web:1249f2952249ac1a9c9673",
+    measurementId: "G-2PKR5PK39Y"
 };
 
 const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
 const db = getFirestore(app);
 
-async function loadDashboard() {
-  try {
-    const users = await getDocs(collection(db, "users"));
-    document.getElementById("totalUsers").innerText = users.size;
 
-    const orders = await getDocs(collection(db, "orders"));
-    document.getElementById("totalOrders").innerText = orders.size;
+/* =========================================
+   COLLECTIONS
+========================================= */
 
-    let revenue = 0;
-    orders.forEach((docSnap) => {
-      const data = docSnap.data();
-      revenue += Number(data.amount || 0);
-    });
-    document.getElementById("totalRevenue").innerText = "₹" + revenue.toLocaleString("en-IN");
+const USERS = "shraynex_users";
 
-    try {
-      const reviews = await getDocs(collection(db, "reviews"));
-      document.getElementById("totalReviews").innerText = reviews.size;
-    } catch {
-      document.getElementById("totalReviews").innerText = 0;
+const PRODUCTS = "shraynex_products";
+
+const ORDERS = "shraynex_orders";
+
+const WALLET = "shraynex_wallet_transactions";
+
+
+/* =========================================
+   GLOBAL DATA
+========================================= */
+
+let users = [];
+
+let orders = [];
+
+let products = [];
+
+let walletTransactions = [];
+
+let unsubscribers = [];
+
+
+/* =========================================
+   AUTH CHECK
+========================================= */
+
+onAuthStateChanged(auth,async(user)=>{
+
+    if(!user){
+
+        location.href = "login.html";
+
+        return;
     }
-  } catch (err) {
-    console.error(err);
-  }
-}
 
-function liveOrders(){
-  const ordersRef = collection(db,"orders");
-  
-  onSnapshot(ordersRef,(snapshot)=>{
-    let html="";
-    let newOrders = 0;
-    
-    snapshot.forEach((docSnap)=>{
-      const data=docSnap.data();
-      
-      if(data.seen==false){
-        newOrders++;
-      }
-      
-      html+=`
-      <tr>
-        <td>${data.name||""}</td>
-        <td>${data.service||""}</td>
-        <td>₹${data.amount||0}</td>
-        <td>
-          <select onchange="updateStatus('${docSnap.id}',this.value)">
-            <option value="Pending" ${data.status=="Pending"?"selected":""}>Pending</option>
-            <option value="Processing" ${data.status=="Processing"?"selected":""}>Processing</option>
-            <option value="Completed" ${data.status=="Completed"?"selected":""}>Completed</option>
-            <option value="Cancelled" ${data.status=="Cancelled"?"selected":""}>Cancelled</option>
-          </select>
-        </td>
-      </tr>
-      `;
-    });
-    
-    document.getElementById("notifyCount").innerText = newOrders;
 
-    if(newOrders > 0){
-      document.getElementById("notifyCount").style.display = "block";
-    } else {
-      document.getElementById("notifyCount").style.display = "none";
+    try{
+
+        const userRef =
+            doc(db,USERS,user.uid);
+
+        const snap =
+            await getDoc(userRef);
+
+
+        if(!snap.exists()){
+
+            await signOut(auth);
+
+            location.href = "login.html";
+
+            return;
+        }
+
+
+        const data = snap.data();
+
+
+        if(
+            data.role !== "admin" ||
+            data.status !== "approved"
+        ){
+
+            await signOut(auth);
+
+            alert("Access Denied: Admin only.");
+
+            location.href = "login.html";
+
+            return;
+        }
+
+
+        document.getElementById("adminEmail")
+            .textContent =
+            user.email || "Admin";
+
+
+        startRealtimeData();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Admin verification failed: "
+            + error.message
+        );
+
+        await signOut(auth);
+
+        location.href = "login.html";
+
     }
-    
-    document.getElementById("ordersBody").innerHTML=html;
-  });
+
+});
+
+
+/* =========================================
+   REALTIME DATA
+========================================= */
+
+function startRealtimeData(){
+
+    unsubscribers.forEach(fn=>fn());
+
+    unsubscribers = [];
+
+
+    /* USERS */
+
+    const userQuery =
+        query(
+            collection(db,USERS),
+            orderBy("createdAt","desc")
+        );
+
+
+    const unsubUsers =
+        onSnapshot(
+            userQuery,
+            snap=>{
+
+                users = [];
+
+                snap.forEach(item=>{
+
+                    users.push({
+                        id:item.id,
+                        ...item.data()
+                    });
+
+                });
+
+                renderUsers();
+
+                updateStats();
+
+            },
+            error=>{
+                console.error("Users:",error);
+            }
+        );
+
+
+    unsubscribers.push(unsubUsers);
+
+
+    /* ORDERS */
+
+    const orderQuery =
+        query(
+            collection(db,ORDERS),
+            orderBy("createdAt","desc")
+        );
+
+
+    const unsubOrders =
+        onSnapshot(
+            orderQuery,
+            snap=>{
+
+                orders = [];
+
+                snap.forEach(item=>{
+
+                    orders.push({
+                        id:item.id,
+                        ...item.data()
+                    });
+
+                });
+
+                renderOrders();
+
+                renderRecentOrders();
+
+                updateStats();
+
+            },
+            error=>{
+                console.error("Orders:",error);
+            }
+        );
+
+
+    unsubscribers.push(unsubOrders);
+
+
+    /* PRODUCTS */
+
+    const productQuery =
+        query(
+            collection(db,PRODUCTS),
+            orderBy("createdAt","desc")
+        );
+
+
+    const unsubProducts =
+        onSnapshot(
+            productQuery,
+            snap=>{
+
+                products = [];
+
+                snap.forEach(item=>{
+
+                    products.push({
+                        id:item.id,
+                        ...item.data()
+                    });
+
+                });
+
+                renderProducts();
+
+            },
+            error=>{
+                console.error("Products:",error);
+            }
+        );
+
+
+    unsubscribers.push(unsubProducts);
+
+
+    /* WALLET */
+
+    const walletQuery =
+        query(
+            collection(db,WALLET),
+            orderBy("createdAt","desc")
+        );
+
+
+    const unsubWallet =
+        onSnapshot(
+            walletQuery,
+            snap=>{
+
+                walletTransactions = [];
+
+                snap.forEach(item=>{
+
+                    walletTransactions.push({
+                        id:item.id,
+                        ...item.data()
+                    });
+
+                });
+
+                renderWallet();
+
+            },
+            error=>{
+                console.error("Wallet:",error);
+            }
+        );
+
+
+    unsubscribers.push(unsubWallet);
+
 }
 
-loadDashboard();
-liveOrders();
 
-window.updateStatus = async function(id,status){
-  await updateDoc(doc(db,"orders",id),{
-    status:status
-  });
-  alert("Status Updated");
+/* =========================================
+   STATS
+========================================= */
+
+function updateStats(){
+
+    document.getElementById("totalUsers")
+        .textContent =
+        users.length;
+
+
+    document.getElementById("pendingUsers")
+        .textContent =
+        users.filter(
+            u=>u.status==="pending"
+        ).length;
+
+
+    document.getElementById("totalOrders")
+        .textContent =
+        orders.length;
+
+
+    const revenue =
+        orders.reduce(
+            (sum,o)=>
+                sum + Number(
+                    o.sellingPrice ||
+                    o.totalAmount ||
+                    0
+                ),
+            0
+        );
+
+
+    document.getElementById("totalRevenue")
+        .textContent =
+        "₹" + revenue.toLocaleString("en-IN");
 }
 
-window.readNotifications = async function(){
-  const snapshot = await getDocs(collection(db,"orders"));
-  
-  snapshot.forEach(async(item)=>{
-    await updateDoc(doc(db,"orders",item.id),{
-      seen:true
+
+/* =========================================
+   SECTION SWITCH
+========================================= */
+
+window.showSection = function(section){
+
+    const sections = [
+        "dashboard",
+        "users",
+        "orders",
+        "products",
+        "wallet"
+    ];
+
+
+    sections.forEach(name=>{
+
+        const element =
+            document.getElementById(
+                name+"Section"
+            );
+
+        if(element){
+
+            element.classList.toggle(
+                "hidden",
+                name !== section
+            );
+
+        }
+
     });
-  });
+
+
+    document.querySelectorAll(".navBtn")
+        .forEach(btn=>{
+
+            btn.classList.remove(
+                "bg-white/10"
+            );
+
+            if(
+                btn.dataset.section === section
+            ){
+
+                btn.classList.add(
+                    "bg-white/10"
+                );
+
+            }
+
+        });
+
+};
+
+
+/* =========================================
+   USERS
+========================================= */
+
+window.renderUsers = function(){
+
+    const container =
+        document.getElementById("usersList");
+
+    const search =
+        (
+            document.getElementById("userSearch")
+            ?.value || ""
+        ).toLowerCase();
+
+
+    const filtered =
+        users.filter(u=>{
+
+            const text =
+                `${u.name||""}
+                 ${u.email||""}
+                 ${u.phone||""}
+                 ${u.status||""}`
+                .toLowerCase();
+
+            return text.includes(search);
+
+        });
+
+
+    if(!filtered.length){
+
+        container.innerHTML = `
+        <div class="col-span-full card rounded-2xl p-8 text-center text-gray-500">
+            No users found.
+        </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        filtered.map(u=>{
+
+            const status =
+                u.status || "pending";
+
+
+            let statusClass =
+                "bg-yellow-500/10 text-yellow-400";
+
+            if(status==="approved")
+                statusClass =
+                "bg-green-500/10 text-green-400";
+
+            if(status==="suspended")
+                statusClass =
+                "bg-red-500/10 text-red-400";
+
+
+            return `
+
+            <div class="card rounded-2xl p-5">
+
+                <div class="flex justify-between gap-3">
+
+                    <div>
+
+                        <div class="font-bold text-lg">
+                            ${escapeHTML(u.name || "Unnamed")}
+                        </div>
+
+                        <div class="text-sm text-gray-500 mt-1">
+                            ${escapeHTML(u.email || "")}
+                        </div>
+
+                    </div>
+
+                    <span class="h-fit px-3 py-1 rounded-full
+                                 text-xs ${statusClass}">
+
+                        ${escapeHTML(status.toUpperCase())}
+
+                    </span>
+
+                </div>
+
+
+                <div class="mt-4 space-y-2 text-sm">
+
+                    <div>
+                        📱 ${escapeHTML(u.phone || "No phone")}
+                    </div>
+
+                    <div class="text-gray-500 break-all">
+                        UID: ${escapeHTML(u.id)}
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-2 mt-5">
+
+                    ${
+                    status !== "approved"
+                    ? `
+                    <button
+                        onclick="changeUserStatus('${u.id}','approved')"
+                        class="py-3 rounded-xl
+                               bg-green-500/10
+                               text-green-400 font-semibold">
+
+                        ✓ Approve
+
+                    </button>
+                    `
+                    : `
+                    <button
+                        onclick="changeUserStatus('${u.id}','suspended')"
+                        class="py-3 rounded-xl
+                               bg-red-500/10
+                               text-red-400 font-semibold">
+
+                        Suspend
+
+                    </button>
+                    `
+                    }
+
+
+                    ${
+                    status === "suspended"
+                    ? `
+                    <button
+                        onclick="changeUserStatus('${u.id}','approved')"
+                        class="py-3 rounded-xl
+                               bg-white/10
+                               font-semibold">
+
+                        Activate
+
+                    </button>
+                    `
+                    :
+                    `
+                    <button
+                        onclick="viewUser('${u.id}')"
+                        class="py-3 rounded-xl
+                               bg-white/5">
+
+                        View
+
+                    </button>
+                    `
+                    }
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+};
+
+
+/* =========================================
+   CHANGE USER STATUS
+========================================= */
+
+window.changeUserStatus =
+async function(uid,status){
+
+    const user =
+        users.find(u=>u.id===uid);
+
+    if(!user) return;
+
+
+    const action =
+        status==="approved"
+        ? "approve"
+        : "suspend";
+
+
+    if(
+        !confirm(
+            `क्या आप ${user.name || "इस user"} को ${action} करना चाहते हैं?`
+        )
+    ) return;
+
+
+    try{
+
+        await updateDoc(
+            doc(db,USERS,uid),
+            {
+                status:status,
+                updatedAt:serverTimestamp()
+            }
+        );
+
+
+        alert(
+            status==="approved"
+            ? "User Approved Successfully!"
+            : "User Suspended Successfully!"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Update failed: "
+            + error.message
+        );
+
+    }
+
+};
+
+
+/* =========================================
+   VIEW USER
+========================================= */
+
+window.viewUser = function(uid){
+
+    const u =
+        users.find(x=>x.id===uid);
+
+    if(!u) return;
+
+
+    alert(
+`USER DETAILS
+
+Name: ${u.name || "-"}
+Email: ${u.email || "-"}
+Phone: ${u.phone || "-"}
+Role: ${u.role || "-"}
+Status: ${u.status || "-"}
+Wallet: ₹${u.walletBalance || 0}
+Earnings: ₹${u.totalEarnings || 0}
+UID: ${u.id}`
+    );
+
+};
+
+
+/* =========================================
+   ORDERS
+========================================= */
+
+window.renderOrders = function(){
+
+    const container =
+        document.getElementById("ordersList");
+
+    const search =
+        (
+            document.getElementById("orderSearch")
+            ?.value || ""
+        ).toLowerCase();
+
+
+    const filtered =
+        orders.filter(o=>{
+
+            const text =
+                `${o.id||""}
+                 ${o.productName||""}
+                 ${o.customerName||""}
+                 ${o.customerPhone||""}
+                 ${o.resellerPhone||""}
+                 ${o.status||""}`
+                .toLowerCase();
+
+            return text.includes(search);
+
+        });
+
+
+    if(!filtered.length){
+
+        container.innerHTML = `
+        <div class="card rounded-2xl p-8 text-center text-gray-500">
+            No orders found.
+        </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        filtered.map(o=>{
+
+            return `
+
+            <div class="card rounded-2xl p-5">
+
+                <div class="flex flex-col md:flex-row
+                            md:items-center
+                            justify-between gap-4">
+
+                    <div>
+
+                        <div class="font-bold">
+                            ${escapeHTML(o.productName || "Product")}
+                        </div>
+
+                        <div class="text-sm text-gray-500 mt-1">
+                            Order ID: ${escapeHTML(o.id)}
+                        </div>
+
+                        <div class="text-sm mt-2">
+                            Customer:
+                            ${escapeHTML(o.customerName || "-")}
+                        </div>
+
+                        <div class="text-sm text-gray-500">
+                            📱 ${escapeHTML(o.customerPhone || "-")}
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="font-bold text-lg">
+                            ₹${Number(
+                                o.totalAmount ||
+                                o.sellingPrice ||
+                                0
+                            ).toLocaleString("en-IN")}
+                        </div>
+
+                        <div class="text-sm text-gray-500">
+                            Profit: ₹${Number(
+                                o.profit || 0
+                            ).toLocaleString("en-IN")}
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-2">
+
+                        <select
+                            onchange="changeOrderStatus('${o.id}',this.value)"
+                            class="px-3 py-3 rounded-xl
+                                   bg-white/5
+                                   border border-white/10">
+
+                            ${orderStatusOptions(o.status)}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+};
+
+
+function orderStatusOptions(current){
+
+    const statuses = [
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled"
+    ];
+
+
+    return statuses.map(status=>`
+
+        <option
+            value="${status}"
+            ${current===status ? "selected":""}>
+
+            ${status.toUpperCase()}
+
+        </option>
+
+    `).join("");
+
 }
+
+
+/* =========================================
+   CHANGE ORDER STATUS
+========================================= */
+
+window.changeOrderStatus =
+async function(orderId,status){
+
+    try{
+
+        await updateDoc(
+            doc(db,ORDERS,orderId),
+            {
+                status:status,
+                updatedAt:serverTimestamp()
+            }
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Order update failed: "
+            + error.message
+        );
+
+    }
+
+};
+
+
+/* =========================================
+   RECENT ORDERS
+========================================= */
+
+function renderRecentOrders(){
+
+    const container =
+        document.getElementById(
+            "recentOrders"
+        );
+
+
+    const recent =
+        orders.slice(0,5);
+
+
+    if(!recent.length){
+
+        container.innerHTML = `
+        <div class="p-5 text-gray-500">
+            No orders yet.
+        </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        recent.map(o=>`
+
+        <div class="p-5 flex justify-between gap-3">
+
+            <div>
+
+                <div class="font-semibold">
+                    ${escapeHTML(o.productName || "Product")}
+                </div>
+
+                <div class="text-xs text-gray-500 mt-1">
+                    ${escapeHTML(o.customerName || "-")}
+                </div>
+
+            </div>
+
+            <div class="text-right">
+
+                <div class="font-bold">
+                    ₹${Number(
+                        o.totalAmount ||
+                        o.sellingPrice ||
+                        0
+                    ).toLocaleString("en-IN")}
+                </div>
+
+                <div class="text-xs text-gray-500">
+                    ${escapeHTML(o.status || "pending")}
+                </div>
+
+            </div>
+
+        </div>
+
+        `).join("");
+
+}
+
+
+/* =========================================
+   PRODUCTS
+========================================= */
+
+window.renderProducts = function(){
+
+    const container =
+        document.getElementById(
+            "productsList"
+        );
+
+
+    if(!products.length){
+
+        container.innerHTML = `
+        <div class="col-span-full card rounded-2xl p-8 text-center text-gray-500">
+            No products yet.
+        </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        products.map(p=>{
+
+            const image =
+                p.images?.[0] ||
+                p.image ||
+                "";
+
+
+            return `
+
+            <div class="card rounded-2xl overflow-hidden">
+
+                <div class="aspect-square bg-white/5">
+
+                    ${
+                    image
+                    ?
+                    `<img
+                        src="${escapeAttribute(image)}"
+                        class="w-full h-full object-cover"
+                        onerror="this.style.display='none'">`
+                    :
+                    `<div class="w-full h-full flex items-center justify-center text-5xl">
+                        🛍
+                    </div>`
+                    }
+
+                </div>
+
+
+                <div class="p-4">
+
+                    <div class="font-bold">
+                        ${escapeHTML(p.title || "Untitled")}
+                    </div>
+
+                    <div class="text-sm text-gray-500 mt-1">
+                        ${escapeHTML(p.category || "General")}
+                    </div>
+
+
+                    <div class="flex items-center gap-2 mt-3">
+
+                        <span class="font-bold">
+                            ₹${Number(
+                                p.basePrice || 0
+                            ).toLocaleString("en-IN")}
+                        </span>
+
+                        ${
+                        p.mrp
+                        ?
+                        `<span class="text-xs text-gray-500 line-through">
+                            ₹${Number(p.mrp).toLocaleString("en-IN")}
+                        </span>`
+                        :""
+                        }
+
+                    </div>
+
+
+                    <div class="flex gap-2 mt-4">
+
+                        <button
+                            onclick="editProduct('${p.id}')"
+                            class="flex-1 py-2 rounded-xl
+                                   bg-white/10">
+
+                            Edit
+
+                        </button>
+
+                        <button
+                            onclick="deleteProduct('${p.id}')"
+                            class="flex-1 py-2 rounded-xl
+                                   bg-red-500/10
+                                   text-red-400">
+
+                            Delete
+
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        onclick="toggleProduct('${p.id}',${p.active === true})"
+                        class="w-full mt-2 py-2 rounded-xl
+                               bg-white/5 text-sm">
+
+                        ${
+                            p.active === true
+                            ? "✓ Active — Disable"
+                            : "○ Inactive — Activate"
+                        }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+};
+
+
+/* =========================================
+   PRODUCT MODAL
+========================================= */
+
+window.openProductModal =
+function(product=null){
+
+    document
+        .getElementById("productModal")
+        .classList.remove("hidden");
+
+
+    document.getElementById("productForm")
+        .reset();
+
+
+    document.getElementById("productId")
+        .value = "";
+
+
+    document.getElementById("active")
+        .checked = true;
+
+
+    document.getElementById("productModalTitle")
+        .textContent =
+        product
+        ? "Edit Product"
+        : "Add Product";
+
+
+    if(product){
+
+        document.getElementById("productId")
+            .value = product.id;
+
+        document.getElementById("productTitle")
+            .value = product.title || "";
+
+        document.getElementById("productDescription")
+            .value = product.description || "";
+
+        document.getElementById("basePrice")
+            .value = product.basePrice || "";
+
+        document.getElementById("mrp")
+            .value = product.mrp || "";
+
+        document.getElementById("category")
+            .value = product.category || "";
+
+        document.getElementById("productImage")
+            .value =
+            product.images?.[0] ||
+            product.image ||
+            "";
+
+        document.getElementById("stock")
+            .value = product.stock ?? 100;
+
+        document.getElementById("deliveryTime")
+            .value =
+            product.deliveryTime ||
+            "3-7 Days";
+
+        document.getElementById("active")
+            .checked =
+            product.active === true;
+
+    }
+
+};
+
+
+window.closeProductModal =
+function(){
+
+    document
+        .getElementById("productModal")
+        .classList.add("hidden");
+
+};
+
+
+/* =========================================
+   SAVE PRODUCT
+========================================= */
+
+document
+.getElementById("productForm")
+.addEventListener("submit",async(e)=>{
+
+    e.preventDefault();
+
+
+    const productId =
+        document.getElementById("productId")
+            .value;
+
+
+    const productData = {
+
+        title:
+            document.getElementById("productTitle")
+                .value.trim(),
+
+        description:
+            document.getElementById("productDescription")
+                .value.trim(),
+
+        basePrice:
+            Number(
+                document.getElementById("basePrice")
+                    .value
+            ),
+
+        mrp:
+            Number(
+                document.getElementById("mrp")
+                    .value || 0
+            ),
+
+        category:
+            document.getElementById("category")
+                .value.trim(),
+
+        images:[
+            document.getElementById("productImage")
+                .value.trim()
+        ],
+
+        stock:
+            Number(
+                document.getElementById("stock")
+                    .value || 0
+            ),
+
+        deliveryTime:
+            document.getElementById("deliveryTime")
+                .value.trim(),
+
+        active:
+            document.getElementById("active")
+                .checked,
+
+        updatedAt:
+            serverTimestamp()
+
+    };
+
+
+    try{
+
+        if(productId){
+
+            await updateDoc(
+                doc(
+                    db,
+                    PRODUCTS,
+                    productId
+                ),
+                productData
+            );
+
+        }else{
+
+            productData.createdAt =
+                serverTimestamp();
+
+            await addDoc(
+                collection(db,PRODUCTS),
+                productData
+            );
+
+        }
+
+
+        closeProductModal();
+
+        alert("Product saved successfully!");
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Product save failed: "
+            + error.message
+        );
+
+    }
+
+});
+
+
+/* =========================================
+   EDIT PRODUCT
+========================================= */
+
+window.editProduct =
+function(id){
+
+    const product =
+        products.find(p=>p.id===id);
+
+    if(product){
+
+        openProductModal(product);
+
+    }
+
+};
+
+
+/* =========================================
+   DELETE PRODUCT
+========================================= */
+
+window.deleteProduct =
+async function(id){
+
+    const product =
+        products.find(p=>p.id===id);
+
+    if(!product) return;
+
+
+    if(
+        !confirm(
+            `Delete "${product.title}"?`
+        )
+    ) return;
+
+
+    try{
+
+        await deleteDoc(
+            doc(db,PRODUCTS,id)
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Delete failed: "
+            + error.message
+        );
+
+    }
+
+};
+
+
+/* =========================================
+   TOGGLE PRODUCT
+========================================= */
+
+window.toggleProduct =
+async function(id,current){
+
+    try{
+
+        await updateDoc(
+            doc(db,PRODUCTS,id),
+            {
+                active:!current,
+                updatedAt:serverTimestamp()
+            }
+        );
+
+    }catch(error){
+
+        alert(
+            "Update failed: "
+            + error.message
+        );
+
+    }
+
+};
+
+
+/* =========================================
+   WALLET
+========================================= */
+
+function renderWallet(){
+
+    const container =
+        document.getElementById(
+            "walletList"
+        );
+
+
+    if(!walletTransactions.length){
+
+        container.innerHTML = `
+        <div class="card rounded-2xl p-8 text-center text-gray-500">
+            No wallet transactions yet.
+        </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        walletTransactions.map(t=>{
+
+            const amount =
+                Number(t.amount || 0);
+
+
+            return `
+
+            <div class="card rounded-2xl p-5">
+
+                <div class="flex justify-between gap-4">
+
+                    <div>
+
+                        <div class="font-bold">
+                            ${escapeHTML(
+                                t.type ||
+                                "Transaction"
+                            )}
+                        </div>
+
+                        <div class="text-sm text-gray-500 mt-1">
+                            User: ${escapeHTML(
+                                t.userId ||
+                                t.resellerId ||
+                                "-"
+                            )}
+                        </div>
+
+                        <div class="text-sm text-gray-500">
+                            ${escapeHTML(
+                                t.description ||
+                                ""
+                            )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="font-black
+                                ${amount >= 0
+                                  ? "text-green-400"
+                                  : "text-red-400"}">
+
+                        ${amount >= 0 ? "+" : ""}
+                        ₹${Math.abs(amount)
+                            .toLocaleString("en-IN")}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+window.logout =
+async function(){
+
+    try{
+
+        unsubscribers.forEach(fn=>fn());
+
+        await signOut(auth);
+
+        location.href = "login.html";
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+};
+
+
+/* =========================================
+   HTML SECURITY HELPERS
+========================================= */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+    return escapeHTML(value);
+
+}
+
 </script>
 
 </body>
