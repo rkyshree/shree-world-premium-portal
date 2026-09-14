@@ -1,0 +1,125 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============== HELPER FUNCTIONS ==============
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin(uid) {
+      return isSignedIn() && 
+        get(/databases/$(database)/documents/shraynex_users/$(uid)).data.role == 'admin';
+    }
+
+    function isApprovedReseller(uid) {
+      return isSignedIn() && 
+        get(/databases/$(database)/documents/shraynex_users/$(uid)).data.status == 'approved' &&
+        get(/databases/$(database)/documents/shraynex_users/$(uid)).data.role == 'reseller';
+    }
+
+    // ============== USERS COLLECTION ==============
+    match /shraynex_users/{userId} {
+      // Users can read/write only their own document
+      allow read: if isSignedIn() && 
+        (request.auth.uid == userId || isAdmin(request.auth.uid));
+      
+      allow create: if isSignedIn() && 
+        request.auth.uid == userId &&
+        request.resource.data.role == 'reseller' &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.uid == userId;
+      
+      allow update: if isSignedIn() && (
+        // User can update own non-critical fields
+        (request.auth.uid == userId && 
+         !request.resource.data.keys().hasAny(['role', 'status']) &&
+         request.resource.data.updatedAt != null) ||
+        // Only admin can change status/role
+        isAdmin(request.auth.uid)
+      );
+      
+      allow delete: if isAdmin(request.auth.uid);
+    }
+
+    // ============== PRODUCTS COLLECTION ==============
+    match /shraynex_products/{productId} {
+      // Anyone can read active products
+      allow read: if isSignedIn() && 
+        (resource.data.active != false || isAdmin(request.auth.uid));
+      
+      // Only admin can create/update/delete products
+      allow create, update, delete: if isAdmin(request.auth.uid) &&
+        request.resource.data.title != null &&
+        request.resource.data.basePrice != null;
+    }
+
+    // ============== ORDERS COLLECTION ==============
+    match /shraynex_orders/{orderId} {
+      // Resellers can read their own orders, admin can read all
+      allow read: if isSignedIn() && 
+        (resource.data.resellerId == request.auth.uid || 
+         isAdmin(request.auth.uid));
+      
+      // Approved resellers can create orders
+      allow create: if isApprovedReseller(request.auth.uid) &&
+        request.resource.data.resellerId == request.auth.uid &&
+        request.resource.data.orderId != null &&
+        request.resource.data.sellingPrice > 0 &&
+        request.resource.data.basePrice > 0;
+      
+      // Only admin can update order status
+      allow update: if isAdmin(request.auth.uid) &&
+        request.resource.data.status in ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+      
+      allow delete: if isAdmin(request.auth.uid);
+    }
+
+    // ============== TRACKING COLLECTION ==============
+    match /shraynex_tracking/{orderId} {
+      // Anyone can track with order ID (public read)
+      allow read: if request.query.limit <= 1;
+      
+      allow create: if isAdmin(request.auth.uid);
+      
+      allow update: if isAdmin(request.auth.uid);
+      
+      allow delete: if isAdmin(request.auth.uid);
+    }
+
+    // ============== WALLET TRANSACTIONS ==============
+    match /shraynex_wallet_transactions/{transactionId} {
+      // Users can read their own transactions
+      allow read: if isSignedIn() && 
+        (resource.data.userId == request.auth.uid || 
+         isAdmin(request.auth.uid));
+      
+      // Only admin can create wallet transactions
+      allow create: if isAdmin(request.auth.uid) &&
+        request.resource.data.amount > 0 &&
+        request.resource.data.type in ['credit', 'debit'];
+      
+      allow delete: if isAdmin(request.auth.uid);
+    }
+
+    // ============== SETTINGS ==============
+    match /shraynex_settings/{document=**} {
+      // Anyone can read settings
+      allow read: if isSignedIn();
+      
+      // Only admin can write
+      allow write: if isAdmin(request.auth.uid);
+    }
+
+    // ============== COUNTERS ==============
+    match /shraynex_counters/{document=**} {
+      // Only admin and during transactions
+      allow read, write: if isAdmin(request.auth.uid);
+    }
+
+    // ============== DEFAULT DENY ==============
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
