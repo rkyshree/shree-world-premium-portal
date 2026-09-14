@@ -1,1 +1,299 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHRAYNEX Admin Login</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#050505;
+}
+.card{
+    background:#111;
+    border:1px solid #292929;
+}
+.input{
+    background:#0b0b0b;
+    border:1px solid #333;
+}
+.input:focus{
+    outline:none;
+    border-color:#fff;
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-5 text-white">
+
+<div class="card w-full max-w-md rounded-3xl p-7 shadow-2xl">
+
+    <div class="text-center mb-8">
+        <div class="text-4xl font-black tracking-widest">
+            SHRAYNEX
+        </div>
+
+        <div class="text-gray-400 text-sm mt-2">
+            Admin Control Panel
+        </div>
+    </div>
+
+    <div id="errorBox"
+         class="hidden mb-4 bg-red-500/10 border border-red-500/30
+                text-red-400 rounded-xl p-3 text-sm">
+    </div>
+
+    <form id="loginForm">
+
+        <label class="text-sm text-gray-400">
+            Admin Email
+        </label>
+
+        <input
+            id="email"
+            type="email"
+            required
+            autocomplete="username"
+            class="input w-full rounded-xl p-4 mt-2 mb-5"
+            placeholder="admin@example.com"
+        >
+
+        <label class="text-sm text-gray-400">
+            Password
+        </label>
+
+        <input
+            id="password"
+            type="password"
+            required
+            autocomplete="current-password"
+            class="input w-full rounded-xl p-4 mt-2 mb-6"
+            placeholder="Enter password"
+        >
+
+        <button
+            id="loginBtn"
+            type="submit"
+            class="w-full bg-white text-black font-bold
+                   rounded-xl p-4 hover:bg-gray-200 transition">
+            LOGIN TO ADMIN
+        </button>
+
+    </form>
+
+    <div class="text-center mt-6 text-xs text-gray-500">
+        SHRAYNEX • Secure Admin Panel
+    </div>
+
+</div>
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* ==============================
+   FIREBASE CONFIG
+============================== */
+
+const firebaseConfig = {
+    apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+    authDomain:"rkyshree-2f74b.firebaseapp.com",
+    projectId:"rkyshree-2f74b",
+    storageBucket:"rkyshree-2f74b.firebasestorage.app"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+/* ==============================
+   ELEMENTS
+============================== */
+
+const form = document.getElementById("loginForm");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const errorBox = document.getElementById("errorBox");
+
+
+function showError(message){
+
+    errorBox.textContent = message;
+    errorBox.classList.remove("hidden");
+
+}
+
+
+function hideError(){
+
+    errorBox.classList.add("hidden");
+
+}
+
+
+/* ==============================
+   CHECK CURRENT LOGIN
+============================== */
+
+onAuthStateChanged(auth, async user => {
+
+    if(!user) return;
+
+    try{
+
+        const ref = doc(db,"shraynex_users",user.uid);
+        const snap = await getDoc(ref);
+
+        if(!snap.exists()){
+
+            await auth.signOut();
+            showError("Admin profile नहीं मिला।");
+            return;
+
+        }
+
+        const data = snap.data();
+
+        if(data.role !== "admin"){
+
+            await auth.signOut();
+            showError("इस account को Admin access नहीं है।");
+            return;
+
+        }
+
+        window.location.href = "./dashboard.html";
+
+    }catch(error){
+
+        console.error(error);
+        showError("Admin verification failed.");
+
+    }
+
+});
+
+
+/* ==============================
+   LOGIN
+============================== */
+
+form.addEventListener("submit", async e => {
+
+    e.preventDefault();
+
+    hideError();
+
+    const mail = email.value.trim();
+    const pass = password.value;
+
+    if(!mail || !pass){
+
+        showError("Email और Password डालें।");
+        return;
+
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "LOGINING...";
+
+    try{
+
+        const result = await signInWithEmailAndPassword(
+            auth,
+            mail,
+            pass
+        );
+
+        const ref = doc(
+            db,
+            "shraynex_users",
+            result.user.uid
+        );
+
+        const snap = await getDoc(ref);
+
+        if(!snap.exists()){
+
+            await auth.signOut();
+
+            showError("आपका Admin profile Firestore में नहीं मिला।");
+
+            loginBtn.disabled = false;
+            loginBtn.textContent = "LOGIN TO ADMIN";
+
+            return;
+
+        }
+
+        const data = snap.data();
+
+        if(data.role !== "admin"){
+
+            await auth.signOut();
+
+            showError(
+                "Access Denied: यह account reseller है, admin नहीं।"
+            );
+
+            loginBtn.disabled = false;
+            loginBtn.textContent = "LOGIN TO ADMIN";
+
+            return;
+
+        }
+
+        window.location.href = "./dashboard.html";
+
+    }catch(error){
+
+        console.error(error);
+
+        let message = "Login failed.";
+
+        if(error.code === "auth/invalid-credential"){
+            message = "Email या Password गलत है।";
+        }
+
+        if(error.code === "auth/user-not-found"){
+            message = "यह Admin account मौजूद नहीं है।";
+        }
+
+        if(error.code === "auth/too-many-requests"){
+            message = "बहुत ज्यादा attempts हुए हैं। थोड़ी देर बाद कोशिश करें।";
+        }
+
+        showError(message);
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = "LOGIN TO ADMIN";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
