@@ -357,7 +357,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import {
   getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,
-  query,where,onSnapshot,serverTimestamp,runTransaction
+  query,where,onSnapshot,serverTimestamp,runTransaction,writeBatch
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig={
@@ -623,6 +623,7 @@ window.placeOrder=async function(e){
   if(currentUserData?.status!=="approved")return showToast("Your account is waiting for approval.");
   const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),address=document.getElementById("customerAddress").value.trim(),pincode=document.getElementById("customerPincode").value.trim();
   const quantity=Number(document.getElementById("orderQuantity").value||1),selling=Number(document.getElementById("orderSellingPriceInput").value||0),base=Number(selectedProduct.basePrice||0);
+  if(!name||!address)return showToast("Customer name and address are required.");
   if(selling<=base)return showToast("Selling price must be higher than base price.");
   if(quantity<1)return showToast("Quantity must be at least 1.");
   if(!/^[0-9]{10}$/.test(phone))return showToast("Enter a valid 10-digit customer mobile number.");
@@ -630,19 +631,23 @@ window.placeOrder=async function(e){
   const btn=document.getElementById("placeOrderBtn");btn.disabled=true;btn.innerText="Placing Order...";
   try{
     let createdOrderId="";
-    for(let attempt=0;attempt<25;attempt++){
+    for(let attempt=0;attempt<30;attempt++){
       const orderId="RS"+Math.floor(1000+Math.random()*9000);
       try{
-        await runTransaction(db,async tx=>{
-          const orderRef=doc(db,ORDERS,orderId);
-          const existing=await tx.get(orderRef);
-          if(existing.exists())throw new Error("ORDER_ID_COLLISION");
-          tx.set(orderRef,{orderId,resellerId:currentUser.uid,resellerName:currentUserData?.name||"",productId:selectedProduct.id,productName:selectedProduct.title||"",productImage:selectedProduct.images?.[0]||"",customerName:name,customerPhone:phone,customerAddress:address,pincode,quantity,basePrice:base,sellingPrice:selling,profit:(selling-base)*quantity,status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-        });
+        const batch=writeBatch(db);
+        const orderRef=doc(db,ORDERS,orderId);
+        const trackingRef=doc(db,TRACKING,orderId);
+        batch.set(orderRef,{orderId,resellerId:currentUser.uid,resellerName:currentUserData?.name||"",productId:selectedProduct.id,productName:selectedProduct.title||"",productImage:selectedProduct.images?.[0]||"",customerName:name,customerPhone:phone,customerAddress:address,pincode,quantity,basePrice:base,sellingPrice:selling,profit:(selling-base)*quantity,status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+        batch.set(trackingRef,{orderId,productId:selectedProduct.id,productName:selectedProduct.title||"",productImage:selectedProduct.images?.[0]||"",quantity,status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp(),tracking:{order_placed:serverTimestamp()}});
+        await batch.commit();
         createdOrderId=orderId;break;
-      }catch(err){if(err.message==="ORDER_ID_COLLISION")continue;throw err;}
+      }catch(err){
+        const msg=String(err?.message||"").toLowerCase();
+        if(msg.includes("permission")||msg.includes("already exists")||msg.includes("already-exists"))continue;
+        throw err;
+      }
     }
-    if(!createdOrderId)throw new Error("Could not generate a unique Order ID.");
+    if(!createdOrderId)throw new Error("Could not generate a unique Order ID. Please try again.");
     showToast("Order placed successfully! Order ID: "+createdOrderId);closeOrderModal();
     ["customerName","customerPhone","customerAddress","customerPincode","orderSellingPriceInput"].forEach(id=>document.getElementById(id).value="");
     document.getElementById("orderQuantity").value="1";switchUserTab("orders");
