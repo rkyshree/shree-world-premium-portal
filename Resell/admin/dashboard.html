@@ -1,1 +1,2083 @@
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
+
+<title>SHRAYNEX Admin Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+
+body{
+    background:#050505;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+.card{
+    background:#111;
+    border:1px solid #292929;
+}
+
+.input{
+    background:#090909;
+    border:1px solid #333;
+    color:white;
+}
+
+.input:focus{
+    outline:none;
+    border-color:#777;
+}
+
+.modal-bg{
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(8px);
+}
+
+.status{
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.pending{
+    background:#78350f;
+    color:#fbbf24;
+}
+
+.approved{
+    background:#064e3b;
+    color:#34d399;
+}
+
+.processing{
+    background:#312e81;
+    color:#a5b4fc;
+}
+
+.shipped{
+    background:#581c87;
+    color:#d8b4fe;
+}
+
+.delivered{
+    background:#14532d;
+    color:#86efac;
+}
+
+.cancelled{
+    background:#374151;
+    color:#d1d5db;
+}
+
+.rejected{
+    background:#7f1d1d;
+    color:#fca5a5;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="sticky top-0 z-50 bg-black/95 border-b border-gray-800">
+
+<div class="max-w-7xl mx-auto px-4 py-4
+            flex items-center justify-between">
+
+    <div>
+        <div class="font-black tracking-widest text-xl">
+            SHRAYNEX
+        </div>
+
+        <div class="text-xs text-gray-500">
+            ADMIN PANEL
+        </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+
+        <span id="adminName"
+              class="hidden sm:block text-sm text-gray-400">
+            Admin
+        </span>
+
+        <button
+            id="logoutBtn"
+            class="bg-red-600 hover:bg-red-700
+                   px-4 py-2 rounded-xl text-sm font-bold">
+            Logout
+        </button>
+
+    </div>
+
+</div>
+
+</header>
+
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+
+<!-- =========================
+     LOADING
+========================= -->
+
+<div id="loading"
+     class="text-center py-10 text-gray-400">
+
+    Checking Admin Access...
+
+</div>
+
+
+<div id="adminContent" class="hidden">
+
+
+<!-- =========================
+     DASHBOARD
+========================= -->
+
+<section class="mb-8">
+
+<div class="flex justify-between items-center mb-5">
+
+    <div>
+        <h1 class="text-2xl font-black">
+            Dashboard
+        </h1>
+
+        <p class="text-gray-500 text-sm">
+            SHRAYNEX Reselling Management
+        </p>
+    </div>
+
+</div>
+
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+    <div class="card rounded-2xl p-5">
+        <div class="text-gray-500 text-xs">
+            RESELLERS
+        </div>
+
+        <div id="statUsers"
+             class="text-3xl font-black mt-2">
+            0
+        </div>
+    </div>
+
+
+    <div class="card rounded-2xl p-5">
+        <div class="text-gray-500 text-xs">
+            PRODUCTS
+        </div>
+
+        <div id="statProducts"
+             class="text-3xl font-black mt-2">
+            0
+        </div>
+    </div>
+
+
+    <div class="card rounded-2xl p-5">
+        <div class="text-gray-500 text-xs">
+            ORDERS
+        </div>
+
+        <div id="statOrders"
+             class="text-3xl font-black mt-2">
+            0
+        </div>
+    </div>
+
+
+    <div class="card rounded-2xl p-5">
+        <div class="text-gray-500 text-xs">
+            WITHDRAWALS
+        </div>
+
+        <div id="statWithdrawals"
+             class="text-3xl font-black mt-2">
+            0
+        </div>
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<div class="flex gap-2 overflow-x-auto mb-6 pb-2">
+
+<button class="tabBtn bg-white text-black px-5 py-3
+               rounded-xl font-bold whitespace-nowrap"
+        data-tab="users">
+    👤 Resellers
+</button>
+
+<button class="tabBtn bg-gray-900 px-5 py-3
+               rounded-xl font-bold whitespace-nowrap"
+        data-tab="products">
+    📦 Products
+</button>
+
+<button class="tabBtn bg-gray-900 px-5 py-3
+               rounded-xl font-bold whitespace-nowrap"
+        data-tab="orders">
+    🛒 Orders
+</button>
+
+<button class="tabBtn bg-gray-900 px-5 py-3
+               rounded-xl font-bold whitespace-nowrap"
+        data-tab="withdrawals">
+    💰 Withdrawals
+</button>
+
+</div>
+
+
+<!-- =========================
+     USERS
+========================= -->
+
+<section id="tab-users" class="tabSection">
+
+<div class="card rounded-2xl p-5">
+
+<div class="flex flex-col md:flex-row
+            md:items-center md:justify-between gap-3 mb-5">
+
+    <div>
+        <h2 class="text-xl font-bold">
+            Reseller Management
+        </h2>
+
+        <p class="text-gray-500 text-sm">
+            Approve or manage reseller accounts
+        </p>
+    </div>
+
+    <input
+        id="userSearch"
+        class="input rounded-xl p-3 w-full md:w-72"
+        placeholder="Search name/email/phone"
+    >
+
+</div>
+
+<div class="overflow-x-auto">
+
+<table class="w-full text-sm">
+
+<thead class="text-gray-500 border-b border-gray-800">
+
+<tr>
+<th class="text-left p-3">Name</th>
+<th class="text-left p-3">Email</th>
+<th class="text-left p-3">Phone</th>
+<th class="text-left p-3">Status</th>
+<th class="text-left p-3">Wallet</th>
+<th class="text-left p-3">Action</th>
+</tr>
+
+</thead>
+
+<tbody id="usersTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     PRODUCTS
+========================= -->
+
+<section id="tab-products"
+         class="tabSection hidden">
+
+<div class="card rounded-2xl p-5">
+
+<div class="flex justify-between items-center mb-5">
+
+<div>
+
+<h2 class="text-xl font-bold">
+Product Management
+</h2>
+
+<p class="text-gray-500 text-sm">
+Add products for resellers
+</p>
+
+</div>
+
+<button
+    id="addProductBtn"
+    class="bg-white text-black
+           px-4 py-3 rounded-xl font-bold">
+    + Add Product
+</button>
+
+</div>
+
+
+<div id="productsGrid"
+     class="grid grid-cols-1 sm:grid-cols-2
+            lg:grid-cols-3 gap-4">
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     ORDERS
+========================= -->
+
+<section id="tab-orders"
+         class="tabSection hidden">
+
+<div class="card rounded-2xl p-5">
+
+<div class="mb-5">
+
+<h2 class="text-xl font-bold">
+Order Management
+</h2>
+
+<p class="text-gray-500 text-sm">
+Customer and reseller orders
+</p>
+
+</div>
+
+
+<div class="overflow-x-auto">
+
+<table class="w-full text-sm">
+
+<thead class="text-gray-500 border-b border-gray-800">
+
+<tr>
+
+<th class="text-left p-3">Order</th>
+<th class="text-left p-3">Product</th>
+<th class="text-left p-3">Customer</th>
+<th class="text-left p-3">Reseller</th>
+<th class="text-left p-3">Amount</th>
+<th class="text-left p-3">Status</th>
+<th class="text-left p-3">Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="ordersTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     WITHDRAWALS
+========================= -->
+
+<section id="tab-withdrawals"
+         class="tabSection hidden">
+
+<div class="card rounded-2xl p-5">
+
+<h2 class="text-xl font-bold mb-1">
+Withdrawal Management
+</h2>
+
+<p class="text-gray-500 text-sm mb-5">
+Approve or reject reseller withdrawals
+</p>
+
+
+<div class="overflow-x-auto">
+
+<table class="w-full text-sm">
+
+<thead class="text-gray-500 border-b border-gray-800">
+
+<tr>
+
+<th class="text-left p-3">Reseller</th>
+<th class="text-left p-3">Amount</th>
+<th class="text-left p-3">Payment Details</th>
+<th class="text-left p-3">Status</th>
+<th class="text-left p-3">Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="withdrawalsTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+</div>
+
+</main>
+
+
+<!-- =========================
+     PRODUCT MODAL
+========================= -->
+
+<div id="productModal"
+     class="hidden fixed inset-0 z-[100]
+            modal-bg flex items-center justify-center
+            p-4">
+
+<div class="bg-[#111] border border-gray-800
+            rounded-3xl w-full max-w-lg
+            max-h-[90vh] overflow-y-auto p-6">
+
+<div class="flex justify-between mb-5">
+
+<h2 id="productModalTitle"
+    class="text-xl font-black">
+Add Product
+</h2>
+
+<button id="closeProductModal"
+        class="text-gray-400 text-2xl">
+×
+</button>
+
+</div>
+
+
+<form id="productForm">
+
+<input type="hidden" id="productId">
+
+
+<label class="text-sm text-gray-400">
+Product Name
+</label>
+
+<input id="productTitle"
+       required
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="Example: Premium T-Shirt">
+
+
+<label class="text-sm text-gray-400">
+Base Price
+</label>
+
+<input id="productBasePrice"
+       type="number"
+       min="0"
+       required
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="299">
+
+
+<label class="text-sm text-gray-400">
+MRP
+</label>
+
+<input id="productMrp"
+       type="number"
+       min="0"
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="999">
+
+
+<label class="text-sm text-gray-400">
+Discount %
+</label>
+
+<input id="productDiscount"
+       type="number"
+       min="0"
+       max="100"
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="70">
+
+
+<label class="text-sm text-gray-400">
+Category
+</label>
+
+<input id="productCategory"
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="Fashion">
+
+
+<label class="text-sm text-gray-400">
+Sizes
+</label>
+
+<input id="productSizes"
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="Free Size,S,M,L,XL,XXL">
+
+
+<label class="text-sm text-gray-400">
+Image 1 URL
+</label>
+
+<input id="image1"
+       class="input w-full rounded-xl p-3 mt-2 mb-3"
+       placeholder="https://...">
+
+
+<label class="text-sm text-gray-400">
+Image 2 URL
+</label>
+
+<input id="image2"
+       class="input w-full rounded-xl p-3 mt-2 mb-3"
+       placeholder="https://...">
+
+
+<label class="text-sm text-gray-400">
+Image 3 URL
+</label>
+
+<input id="image3"
+       class="input w-full rounded-xl p-3 mt-2 mb-3"
+       placeholder="https://...">
+
+
+<label class="text-sm text-gray-400">
+Image 4 URL
+</label>
+
+<input id="image4"
+       class="input w-full rounded-xl p-3 mt-2 mb-3"
+       placeholder="https://...">
+
+
+<label class="text-sm text-gray-400">
+Image 5 URL
+</label>
+
+<input id="image5"
+       class="input w-full rounded-xl p-3 mt-2 mb-4"
+       placeholder="https://...">
+
+
+<label class="text-sm text-gray-400">
+Description
+</label>
+
+<textarea id="productDescription"
+          rows="4"
+          class="input w-full rounded-xl p-3 mt-2 mb-5"
+          placeholder="Product description"></textarea>
+
+
+<button
+    id="saveProductBtn"
+    class="w-full bg-white text-black
+           rounded-xl p-4 font-black">
+    SAVE PRODUCT
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    onSnapshot,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* ==============================
+   FIREBASE
+============================== */
+
+const firebaseConfig = {
+    apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+    authDomain:"rkyshree-2f74b.firebaseapp.com",
+    projectId:"rkyshree-2f74b",
+    storageBucket:"rkyshree-2f74b.firebasestorage.app"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+/* ==============================
+   COLLECTIONS
+============================== */
+
+const USERS = "shraynex_users";
+const PRODUCTS = "shraynex_products";
+const ORDERS = "shraynex_orders";
+const WITHDRAW = "shraynex_withdrawals";
+
+
+/* ==============================
+   STATE
+============================== */
+
+let users = [];
+let products = [];
+let orders = [];
+let withdrawals = [];
+
+let currentAdmin = null;
+
+
+/* ==============================
+   ADMIN AUTH
+============================== */
+
+onAuthStateChanged(auth, async user => {
+
+    if(!user){
+
+        window.location.href = "./index.html";
+        return;
+
+    }
+
+    try{
+
+        const ref = doc(
+            db,
+            USERS,
+            user.uid
+        );
+
+        const snap = await getDoc(ref);
+
+        if(!snap.exists()){
+
+            await signOut(auth);
+            window.location.href = "./index.html";
+            return;
+
+        }
+
+        const data = snap.data();
+
+        if(data.role !== "admin"){
+
+            await signOut(auth);
+            alert("Admin access denied.");
+            window.location.href = "./index.html";
+            return;
+
+        }
+
+        currentAdmin = {
+            uid:user.uid,
+            ...data
+        };
+
+        document.getElementById("adminName").textContent =
+            data.name || user.email || "Admin";
+
+        document.getElementById("loading").classList.add("hidden");
+
+        document
+            .getElementById("adminContent")
+            .classList.remove("hidden");
+
+        startListeners();
+
+    }catch(error){
+
+        console.error(error);
+
+        await signOut(auth);
+
+        window.location.href = "./index.html";
+
+    }
+
+});
+
+
+/* ==============================
+   FIRESTORE LISTENERS
+============================== */
+
+function startListeners(){
+
+    onSnapshot(
+        collection(db,USERS),
+        snap => {
+
+            users = [];
+
+            snap.forEach(d => {
+
+                const data = d.data();
+
+                if(data.role !== "admin"){
+
+                    users.push({
+                        id:d.id,
+                        ...data
+                    });
+
+                }
+
+            });
+
+            renderUsers();
+            updateStats();
+
+        }
+    );
+
+
+    onSnapshot(
+        collection(db,PRODUCTS),
+        snap => {
+
+            products = [];
+
+            snap.forEach(d => {
+
+                products.push({
+                    id:d.id,
+                    ...d.data()
+                });
+
+            });
+
+            renderProducts();
+            updateStats();
+
+        }
+    );
+
+
+    onSnapshot(
+        collection(db,ORDERS),
+        snap => {
+
+            orders = [];
+
+            snap.forEach(d => {
+
+                orders.push({
+                    id:d.id,
+                    ...d.data()
+                });
+
+            });
+
+            orders.sort((a,b) => {
+
+                const ta =
+                    a.createdAt?.seconds || 0;
+
+                const tb =
+                    b.createdAt?.seconds || 0;
+
+                return tb-ta;
+
+            });
+
+            renderOrders();
+            updateStats();
+
+        }
+    );
+
+
+    onSnapshot(
+        collection(db,WITHDRAW),
+        snap => {
+
+            withdrawals = [];
+
+            snap.forEach(d => {
+
+                withdrawals.push({
+                    id:d.id,
+                    ...d.data()
+                });
+
+            });
+
+            withdrawals.sort((a,b) => {
+
+                const ta =
+                    a.createdAt?.seconds || 0;
+
+                const tb =
+                    b.createdAt?.seconds || 0;
+
+                return tb-ta;
+
+            });
+
+            renderWithdrawals();
+            updateStats();
+
+        }
+    );
+
+}
+
+
+/* ==============================
+   STATS
+============================== */
+
+function updateStats(){
+
+    document.getElementById("statUsers")
+        .textContent = users.length;
+
+    document.getElementById("statProducts")
+        .textContent = products.length;
+
+    document.getElementById("statOrders")
+        .textContent = orders.length;
+
+    document.getElementById("statWithdrawals")
+        .textContent = withdrawals.filter(
+            x => x.status === "pending"
+        ).length;
+
+}
+
+
+/* ==============================
+   TABS
+============================== */
+
+document.querySelectorAll(".tabBtn")
+.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".tabBtn")
+        .forEach(b => {
+
+            b.classList.remove(
+                "bg-white",
+                "text-black"
+            );
+
+            b.classList.add(
+                "bg-gray-900"
+            );
+
+        });
+
+        btn.classList.add(
+            "bg-white",
+            "text-black"
+        );
+
+        btn.classList.remove(
+            "bg-gray-900"
+        );
+
+
+        document.querySelectorAll(".tabSection")
+        .forEach(section => {
+
+            section.classList.add("hidden");
+
+        });
+
+        document
+            .getElementById(
+                "tab-" + btn.dataset.tab
+            )
+            .classList.remove("hidden");
+
+    });
+
+});
+
+
+/* ==============================
+   USERS
+============================== */
+
+function renderUsers(){
+
+    const tbody =
+        document.getElementById("usersTable");
+
+    const search =
+        document
+        .getElementById("userSearch")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const filtered = users.filter(u => {
+
+        const text = `
+            ${u.name || ""}
+            ${u.email || ""}
+            ${u.phone || ""}
+        `.toLowerCase();
+
+        return text.includes(search);
+
+    });
+
+
+    tbody.innerHTML = filtered.map(u => {
+
+        const status =
+            u.status || "pending";
+
+        const wallet =
+            Number(u.walletBalance || 0);
+
+
+        return `
+
+        <tr class="border-b border-gray-900">
+
+            <td class="p-3">
+
+                <div class="font-bold">
+                    ${escapeHtml(u.name || "Reseller")}
+                </div>
+
+                <div class="text-xs text-gray-600">
+                    ${u.id}
+                </div>
+
+            </td>
+
+            <td class="p-3 text-gray-400">
+                ${escapeHtml(u.email || "-")}
+            </td>
+
+            <td class="p-3 text-gray-400">
+                ${escapeHtml(u.phone || "-")}
+            </td>
+
+            <td class="p-3">
+
+                <span class="status ${status}">
+                    ${status}
+                </span>
+
+            </td>
+
+            <td class="p-3 font-bold">
+                ₹${wallet.toFixed(2)}
+            </td>
+
+            <td class="p-3">
+
+                <div class="flex gap-2 flex-wrap">
+
+                    ${
+                        status !== "approved"
+                        ?
+                        `<button
+                            onclick="approveUser('${u.id}')"
+                            class="bg-green-600 px-3 py-2
+                                   rounded-lg text-xs font-bold">
+                            Approve
+                         </button>`
+                        : ""
+                    }
+
+                    ${
+                        status !== "rejected"
+                        ?
+                        `<button
+                            onclick="rejectUser('${u.id}')"
+                            class="bg-red-600 px-3 py-2
+                                   rounded-lg text-xs font-bold">
+                            Reject
+                         </button>`
+                        : ""
+                    }
+
+                    ${
+                        status === "approved"
+                        ?
+                        `<button
+                            onclick="suspendUser('${u.id}')"
+                            class="bg-yellow-600 px-3 py-2
+                                   rounded-lg text-xs font-bold">
+                            Suspend
+                         </button>`
+                        : ""
+                    }
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    }).join("");
+
+}
+
+
+document
+.getElementById("userSearch")
+.addEventListener("input",renderUsers);
+
+
+window.approveUser = async function(id){
+
+    if(!confirm("इस reseller को approve करना है?"))
+        return;
+
+    await updateDoc(
+        doc(db,USERS,id),
+        {
+            status:"approved",
+            approvedAt:serverTimestamp()
+        }
+    );
+
+};
+
+
+window.rejectUser = async function(id){
+
+    if(!confirm("इस reseller को reject करना है?"))
+        return;
+
+    await updateDoc(
+        doc(db,USERS,id),
+        {
+            status:"rejected"
+        }
+    );
+
+};
+
+
+window.suspendUser = async function(id){
+
+    if(!confirm("इस reseller को suspend करना है?"))
+        return;
+
+    await updateDoc(
+        doc(db,USERS,id),
+        {
+            status:"suspended"
+        }
+    );
+
+};
+
+
+/* ==============================
+   PRODUCTS
+============================== */
+
+function productImages(p){
+
+    if(Array.isArray(p.images))
+        return p.images.filter(Boolean);
+
+    return [
+        p.image,
+        p.imageUrl,
+        p.img,
+        p.photo,
+        p.image1,
+        p.image2,
+        p.image3,
+        p.image4,
+        p.image5
+    ].filter(Boolean);
+
+}
+
+
+function renderProducts(){
+
+    const grid =
+        document.getElementById("productsGrid");
+
+    if(!products.length){
+
+        grid.innerHTML = `
+            <div class="col-span-full text-center
+                        py-10 text-gray-500">
+                No products found.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    grid.innerHTML = products.map(p => {
+
+        const images = productImages(p);
+
+        const image =
+            images[0] || "https://via.placeholder.com/500";
+
+        return `
+
+        <div class="card rounded-2xl overflow-hidden">
+
+            <img
+                src="${escapeAttr(image)}"
+                class="w-full h-48 object-cover"
+                onerror="this.src='https://via.placeholder.com/500'"
+            >
+
+            <div class="p-4">
+
+                <div class="font-bold">
+                    ${escapeHtml(p.title || "Product")}
+                </div>
+
+                <div class="text-sm text-gray-500 mt-1">
+                    ${escapeHtml(p.category || "")}
+                </div>
+
+                <div class="flex gap-3 mt-3">
+
+                    <span class="font-black">
+                        ₹${Number(p.basePrice || 0)}
+                    </span>
+
+                    ${
+                        p.mrp
+                        ?
+                        `<span class="text-gray-500 line-through">
+                            ₹${Number(p.mrp)}
+                         </span>`
+                        : ""
+                    }
+
+                </div>
+
+
+                <div class="flex gap-2 mt-4">
+
+                    <button
+                        onclick="editProduct('${p.id}')"
+                        class="flex-1 bg-white text-black
+                               rounded-xl p-2 text-sm font-bold">
+                        Edit
+                    </button>
+
+                    <button
+                        onclick="deleteProduct('${p.id}')"
+                        class="flex-1 bg-red-600
+                               rounded-xl p-2 text-sm font-bold">
+                        Delete
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* ==============================
+   PRODUCT MODAL
+============================== */
+
+const productModal =
+    document.getElementById("productModal");
+
+
+document
+.getElementById("addProductBtn")
+.addEventListener("click", () => {
+
+    resetProductForm();
+
+    document
+        .getElementById("productModalTitle")
+        .textContent = "Add Product";
+
+    productModal.classList.remove("hidden");
+
+});
+
+
+document
+.getElementById("closeProductModal")
+.addEventListener("click", () => {
+
+    productModal.classList.add("hidden");
+
+});
+
+
+function resetProductForm(){
+
+    document
+        .getElementById("productForm")
+        .reset();
+
+    document
+        .getElementById("productId")
+        .value = "";
+
+}
+
+
+window.editProduct = function(id){
+
+    const p =
+        products.find(x => x.id === id);
+
+    if(!p) return;
+
+
+    const images =
+        productImages(p);
+
+
+    document.getElementById("productId").value =
+        p.id;
+
+    document.getElementById("productTitle").value =
+        p.title || "";
+
+    document.getElementById("productBasePrice").value =
+        p.basePrice || "";
+
+    document.getElementById("productMrp").value =
+        p.mrp || "";
+
+    document.getElementById("productDiscount").value =
+        p.discount || "";
+
+    document.getElementById("productCategory").value =
+        p.category || "";
+
+    document.getElementById("productSizes").value =
+        Array.isArray(p.sizes)
+        ? p.sizes.join(",")
+        : (p.sizes || "");
+
+    document.getElementById("productDescription").value =
+        p.description || "";
+
+
+    for(let i=1;i<=5;i++){
+
+        document.getElementById("image"+i).value =
+            images[i-1] || "";
+
+    }
+
+
+    document
+        .getElementById("productModalTitle")
+        .textContent = "Edit Product";
+
+    productModal.classList.remove("hidden");
+
+};
+
+
+window.deleteProduct = async function(id){
+
+    if(!confirm(
+        "क्या आप इस product को delete करना चाहते हैं?"
+    ))
+        return;
+
+
+    try{
+
+        await deleteDoc(
+            doc(db,PRODUCTS,id)
+        );
+
+        alert("Product deleted.");
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("Product delete नहीं हुआ।");
+
+    }
+
+};
+
+
+/* ==============================
+   SAVE PRODUCT
+============================== */
+
+document
+.getElementById("productForm")
+.addEventListener("submit",async e => {
+
+    e.preventDefault();
+
+
+    const id =
+        document.getElementById("productId").value;
+
+
+    const title =
+        document
+        .getElementById("productTitle")
+        .value
+        .trim();
+
+
+    const basePrice =
+        Number(
+            document
+            .getElementById("productBasePrice")
+            .value
+        );
+
+
+    const mrp =
+        Number(
+            document
+            .getElementById("productMrp")
+            .value
+        );
+
+
+    const discount =
+        Number(
+            document
+            .getElementById("productDiscount")
+            .value || 0
+        );
+
+
+    const category =
+        document
+        .getElementById("productCategory")
+        .value
+        .trim();
+
+
+    const sizes =
+        document
+        .getElementById("productSizes")
+        .value
+        .split(",")
+        .map(x => x.trim())
+        .filter(Boolean);
+
+
+    const images = [
+
+        document.getElementById("image1").value.trim(),
+        document.getElementById("image2").value.trim(),
+        document.getElementById("image3").value.trim(),
+        document.getElementById("image4").value.trim(),
+        document.getElementById("image5").value.trim()
+
+    ].filter(Boolean);
+
+
+    const description =
+        document
+        .getElementById("productDescription")
+        .value
+        .trim();
+
+
+    if(!title){
+
+        alert("Product name डालें।");
+        return;
+
+    }
+
+
+    if(basePrice <= 0){
+
+        alert("Base Price सही डालें।");
+        return;
+
+    }
+
+
+    const productData = {
+
+        title,
+
+        basePrice,
+
+        mrp,
+
+        discount,
+
+        category,
+
+        sizes,
+
+        images,
+
+        image:images[0] || "",
+
+        image1:images[0] || "",
+        image2:images[1] || "",
+        image3:images[2] || "",
+        image4:images[3] || "",
+        image5:images[4] || "",
+
+        description,
+
+        updatedAt:serverTimestamp()
+
+    };
+
+
+    try{
+
+        if(id){
+
+            await updateDoc(
+                doc(db,PRODUCTS,id),
+                productData
+            );
+
+            alert("Product updated.");
+
+        }else{
+
+            productData.createdAt =
+                serverTimestamp();
+
+            await addDoc(
+                collection(db,PRODUCTS),
+                productData
+            );
+
+            alert("Product added.");
+
+        }
+
+
+        productModal.classList.add("hidden");
+
+        resetProductForm();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Product save नहीं हुआ। Firebase Rules check करें।"
+        );
+
+    }
+
+});
+
+
+/* ==============================
+   ORDERS
+============================== */
+
+function renderOrders(){
+
+    const tbody =
+        document.getElementById("ordersTable");
+
+
+    if(!orders.length){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7"
+                    class="p-8 text-center text-gray-500">
+                    No orders found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = orders.map(o => {
+
+        const status =
+            o.status || "processing";
+
+
+        return `
+
+        <tr class="border-b border-gray-900">
+
+            <td class="p-3">
+
+                <div class="font-bold">
+                    ${o.id.slice(0,10)}
+                </div>
+
+                <div class="text-xs text-gray-600">
+                    ${formatDate(o.createdAt)}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                ${escapeHtml(o.productName || "-")}
+
+                <div class="text-xs text-gray-500">
+                    Qty: ${Number(o.quantity || 1)}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                <div>
+                    ${escapeHtml(o.customerName || "-")}
+                </div>
+
+                <div class="text-xs text-gray-500">
+                    ${escapeHtml(o.customerPhone || "")}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                ${escapeHtml(o.resellerName || "-")}
+
+                <div class="text-xs text-gray-500">
+                    ${escapeHtml(o.resellerPhone || "")}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                <div class="font-bold">
+                    ₹${Number(
+                        o.sellingPrice || 0
+                    ) * Number(o.quantity || 1)}
+                </div>
+
+                <div class="text-xs text-green-500">
+                    Profit ₹${Number(
+                        o.profit || 0
+                    )}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                <span class="status ${status}">
+                    ${status}
+                </span>
+
+            </td>
+
+
+            <td class="p-3">
+
+                <select
+                    onchange="changeOrderStatus(
+                        '${o.id}',
+                        this.value
+                    )"
+                    class="bg-black border border-gray-700
+                           rounded-lg p-2 text-xs">
+
+                    ${orderStatusOptions(status)}
+
+                </select>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    }).join("");
+
+}
+
+
+function orderStatusOptions(current){
+
+    const list = [
+
+        "pending",
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "out_of_stock",
+        "size_not_available",
+        "cancelled"
+
+    ];
+
+
+    return list.map(x => `
+
+        <option
+            value="${x}"
+            ${x === current ? "selected" : ""}>
+            ${x}
+        </option>
+
+    `).join("");
+
+}
+
+
+window.changeOrderStatus = async function(
+    id,
+    status
+){
+
+    try{
+
+        await updateDoc(
+            doc(db,ORDERS,id),
+            {
+                status,
+                updatedAt:serverTimestamp()
+            }
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("Order status update नहीं हुआ।");
+
+    }
+
+};
+
+
+/* ==============================
+   WITHDRAWALS
+============================== */
+
+function renderWithdrawals(){
+
+    const tbody =
+        document.getElementById(
+            "withdrawalsTable"
+        );
+
+
+    if(!withdrawals.length){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5"
+                    class="p-8 text-center text-gray-500">
+                    No withdrawals found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    tbody.innerHTML = withdrawals.map(w => {
+
+        const status =
+            w.status || "pending";
+
+
+        return `
+
+        <tr class="border-b border-gray-900">
+
+            <td class="p-3">
+
+                <div class="font-bold">
+                    ${escapeHtml(
+                        w.userName || "Reseller"
+                    )}
+                </div>
+
+                <div class="text-xs text-gray-500">
+                    ${escapeHtml(
+                        w.userEmail || ""
+                    )}
+                </div>
+
+            </td>
+
+
+            <td class="p-3 font-black">
+                ₹${Number(w.amount || 0)}
+            </td>
+
+
+            <td class="p-3 max-w-xs">
+
+                <div class="text-gray-400
+                            break-words">
+                    ${escapeHtml(
+                        w.details || "-"
+                    )}
+                </div>
+
+            </td>
+
+
+            <td class="p-3">
+
+                <span class="status ${status}">
+                    ${status}
+                </span>
+
+            </td>
+
+
+            <td class="p-3">
+
+                ${
+                    status === "pending"
+                    ?
+                    `
+                    <div class="flex gap-2">
+
+                        <button
+                            onclick="approveWithdrawal(
+                                '${w.id}'
+                            )"
+                            class="bg-green-600
+                                   px-3 py-2 rounded-lg
+                                   text-xs font-bold">
+                            Approve
+                        </button>
+
+                        <button
+                            onclick="rejectWithdrawal(
+                                '${w.id}'
+                            )"
+                            class="bg-red-600
+                                   px-3 py-2 rounded-lg
+                                   text-xs font-bold">
+                            Reject
+                        </button>
+
+                    </div>
+                    `
+                    :
+                    "-"
+                }
+
+            </td>
+
+        </tr>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* ==============================
+   APPROVE WITHDRAWAL
+============================== */
+
+window.approveWithdrawal = async function(id){
+
+    const w =
+        withdrawals.find(x => x.id === id);
+
+    if(!w) return;
+
+
+    if(w.status !== "pending"){
+
+        alert("यह withdrawal पहले process हो चुका है।");
+        return;
+
+    }
+
+
+    if(!confirm(
+        `₹${Number(w.amount || 0)} withdrawal approve करें?`
+    ))
+        return;
+
+
+    try{
+
+        await updateDoc(
+            doc(db,WITHDRAW,id),
+            {
+                status:"approved",
+                processedAt:serverTimestamp(),
+                processedBy:currentAdmin.uid
+            }
+        );
+
+        alert("Withdrawal approved.");
+
+    }catch(error){
+
+        console.error(error);
+
+        alert("Withdrawal approve नहीं हुआ।");
+
+    }
+
+};
+
+
+/* ==============================
+   REJECT WITHDRAWAL
+============================== */
+
+window.rejectWithdrawal = async function(id){
+
+    const w =
+        withdrawals.find(x => x.id === id);
+
+    if(!w) return;
+
+
+    if(w.status !== "pending"){
+
+        alert("यह withdrawal पहले process हो चुका है।");
+        return;
+
+    }
+
+
+    if(!confirm(
+        "Withdrawal reject करें?"
+    ))
+        return;
+
+
+    try{
+
+        /*
+         IMPORTANT:
+         आपके current reseller code में
+         withdrawal submit करते समय wallet से
+         amount पहले ही deduct हो जाता है।
+
+         इसलिए rejection पर amount वापस wallet में
+         add किया जा रहा है।
+        */
+
+        const userRef =
+            doc(db,USERS,w.userId);
+
+        const userSnap =
+            await getDoc(userRef);
+
+
+        if(userSnap.exists()){
+
+            const userData =
+                userSnap.data();
+
+            const oldBalance =
+                Number(
+                    userData.walletBalance || 0
+                );
+
+            const refund =
+                Number(w.amount || 0);
+
+
+            await updateDoc(
+                userRef,
+                {
+                    walletBalance:
+                        oldBalance + refund
+                }
+            );
+
+        }
+
+
+        await updateDoc(
+            doc(db,WITHDRAW,id),
+            {
+                status:"rejected",
+                processedAt:serverTimestamp(),
+                processedBy:currentAdmin.uid
+            }
+        );
+
+
+        alert(
+            "Withdrawal rejected और wallet amount वापस कर दिया गया।"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Withdrawal reject करते समय error आया।"
+        );
+
+    }
+
+};
+
+
+/* ==============================
+   LOGOUT
+============================== */
+
+document
+.getElementById("logoutBtn")
+.addEventListener("click",async () => {
+
+    await signOut(auth);
+
+    window.location.href = "./index.html";
+
+});
+
+
+/* ==============================
+   HELPERS
+============================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+function escapeAttr(value){
+
+    return escapeHtml(value);
+
+}
+
+
+function formatDate(timestamp){
+
+    if(!timestamp) return "-";
+
+    try{
+
+        const date =
+            timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
+        return date.toLocaleString("en-IN");
+
+    }catch{
+
+        return "-";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
