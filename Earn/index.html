@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SHRAYNEX - Empowering Resellers</title>
-    <!-- Tailwind CSS for styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,804 +15,1148 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        primary: '#4F46E5', // Indigo-600
-                        secondary: '#10B981', // Emerald-500
-                        dark: '#1F2937',
+                        primary: '#FF0055', // The pinkish/red color from screenshots
+                        secondary: '#0F172A', // Dark blue/gray for text
+                        bgLight: '#F3F4F6', // Light gray background
                     }
                 }
             }
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Hide scrollbar for clean app-like feel */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        
+        /* App Container styling for desktop */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 480px; /* Mobile width constraint on desktop */
+                margin: 0 auto;
+                min-height: 100vh;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                background-color: white;
+                position: relative;
+            }
+            body { background-color: #f0f2f5; }
+        }
+        
+        /* Mobile styling */
+        @media (max-width: 767px) {
+            .app-container {
+                width: 100%;
+                min-height: 100vh;
+                background-color: white;
+                position: relative;
+            }
+        }
+
+        .bottom-nav-safe-area { padding-bottom: 70px; } /* Space for bottom nav */
+        
+        /* Modals and Overlays */
+        .slide-up-modal {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .slide-up-modal.active { transform: translateY(0); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="text-gray-800 antialiased">
 
-    <nav class="fixed w-full z-50 glass-effect border-b border-gray-200">
+<!-- LANDING PAGE (Visible to non-logged in users) -->
+<div id="landing-page" class="block bg-white min-h-screen">
+    <!-- Landing Nav -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="#" class="flex-shrink-0 flex items-center">
-                        <span class="text-2xl font-bold text-primary tracking-tight">SHRAYNEX</span>
-                    </a>
-                </div>
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#how-it-works" class="text-gray-600 hover:text-primary transition font-medium">How to Resell</a>
-                    <!-- Hidden by default, shown after login -->
-                    <a href="#discover" id="nav-discover" class="hidden text-gray-600 hover:text-primary transition font-medium">Discover Brands</a>
-                    <a href="#dashboard" id="nav-dashboard" class="hidden text-gray-600 hover:text-primary transition font-medium">My Dashboard</a>
-                    
-                    <button id="auth-btn-desktop" onclick="toggleAuthModal()" class="bg-primary text-white px-5 py-2.5 rounded-full font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+            <div class="flex justify-between h-16 items-center">
+                <div class="text-2xl font-bold text-primary tracking-tight">SHRAYNEX</div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="showAdminLogin()" class="text-sm font-medium text-gray-500 hover:text-gray-900 hidden md:block">Admin Login</button>
+                    <button onclick="toggleAuthModal()" class="bg-primary text-white px-5 py-2 rounded-full font-medium hover:bg-opacity-90 transition shadow-sm">
                         Login / Signup
                     </button>
                 </div>
-                <!-- Mobile Menu Button -->
-                <div class="flex items-center md:hidden">
-                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="text-gray-600 hover:text-gray-900 focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 absolute w-full shadow-xl">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#how-it-works" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">How to Resell</a>
-                <a href="#discover" id="mobile-nav-discover" class="hidden block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Discover Brands</a>
-                <a href="#dashboard" id="mobile-nav-dashboard" class="hidden block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">My Dashboard</a>
-                <button id="auth-btn-mobile" onclick="toggleAuthModal()" class="w-full text-left block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 rounded-md">Login / Signup</button>
             </div>
         </div>
     </nav>
 
-    <div class="pt-24 pb-16 lg:pt-32 lg:pb-24 bg-gradient-to-br from-indigo-50 to-white overflow-hidden relative">
-        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center max-w-3xl mx-auto">
-                <span class="inline-block py-1 px-3 rounded-full bg-indigo-100 text-primary text-sm font-semibold mb-4 border border-indigo-200">Start Earning Today</span>
-                <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
-                    Resell Top Brands with <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">SHRAYNEX</span>
-                </h1>
-                <p class="mt-4 max-w-2xl text-xl text-gray-600 mx-auto mb-10">
-                    Join thousands of resellers across India. Discover authentic products, share with your network, and earn margins on every sale. Zero investment required.
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <button onclick="handleMainActionBtn()" id="hero-action-btn" class="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-700 transition shadow-xl shadow-indigo-200 flex items-center justify-center">
-                        Login to Start Reselling <i class="fas fa-arrow-right ml-2"></i>
+    <!-- Hero Section -->
+    <div class="pt-24 pb-16 lg:pt-32 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Start Your Reselling Business <br><span class="text-primary">Zero Investment</span></h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Discover high-quality catalogs from top micro-brands, share with your network, and earn margins easily.</p>
+            <button onclick="toggleAuthModal()" class="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-xl transition">
+                Start Earning Today <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+            <div class="mt-8 text-sm text-gray-500 md:hidden">
+                <button onclick="showAdminLogin()" class="underline">Admin Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div class="py-16 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-center mb-10">How it Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-pink-100 text-primary rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-search"></i></div>
+                    <h3 class="font-bold text-lg mb-2">1. Discover</h3>
+                    <p class="text-gray-600 text-sm">Browse thousands of products at wholesale prices.</p>
+                </div>
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-pink-100 text-primary rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fab fa-whatsapp"></i></div>
+                    <h3 class="font-bold text-lg mb-2">2. Share & Add Margin</h3>
+                    <p class="text-gray-600 text-sm">Share on WhatsApp/Social Media with your own profit margin.</p>
+                </div>
+                <div class="p-6">
+                    <div class="w-16 h-16 bg-pink-100 text-primary rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-wallet"></i></div>
+                    <h3 class="font-bold text-lg mb-2">3. Earn</h3>
+                    <p class="text-gray-600 text-sm">We deliver, you get the margin in your bank account.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RESELLER APP INTERFACE (Visible after login) -->
+<div id="app-view" class="hidden bg-gray-100 min-h-screen">
+    <div class="app-container bg-white shadow-xl h-screen overflow-hidden flex flex-col relative">
+        
+        <!-- Header -->
+        <header id="app-header" class="bg-white border-b border-gray-100 px-4 py-3 flex justify-between items-center shrink-0 z-20">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 font-bold" id="app-user-initial">U</div>
+                <div>
+                    <h2 class="text-sm font-bold text-gray-900 leading-tight">SHRAYNEX</h2>
+                    <p class="text-[10px] text-gray-500">Reseller Mode</p>
+                </div>
+            </div>
+            <div class="flex gap-4 text-gray-600">
+                <button><i class="fas fa-search"></i></button>
+                <button class="relative" onclick="switchTab('cart')">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-badge" class="absolute -top-2 -right-2 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area (Scrollable) -->
+        <main id="app-content" class="flex-grow overflow-y-auto hide-scrollbar bg-gray-50 bottom-nav-safe-area relative z-10">
+            
+            <!-- HOME TAB -->
+            <div id="tab-home" class="block">
+                <!-- Banners -->
+                <div class="p-4">
+                    <div class="bg-gradient-to-r from-pink-500 to-primary rounded-xl p-4 text-white shadow-md">
+                        <h3 class="font-bold text-lg">Festive Collection</h3>
+                        <p class="text-xs opacity-90 mb-3">Up to 50% Margins</p>
+                        <button class="bg-white text-primary text-xs font-bold px-4 py-1.5 rounded-full">View Catalog</button>
+                    </div>
+                </div>
+                <!-- Categories -->
+                <div class="px-4 mb-4">
+                    <h4 class="font-bold text-gray-800 text-sm mb-3">Categories</h4>
+                    <div class="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+                        <div class="flex flex-col items-center gap-1 min-w-[60px]">
+                            <div class="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center text-primary"><i class="fas fa-female"></i></div>
+                            <span class="text-[10px] text-gray-600 font-medium">Kurtis</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 min-w-[60px]">
+                            <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-500"><i class="fas fa-tshirt"></i></div>
+                            <span class="text-[10px] text-gray-600 font-medium">Mens</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 min-w-[60px]">
+                            <div class="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-500"><i class="fas fa-ring"></i></div>
+                            <span class="text-[10px] text-gray-600 font-medium">Jewellery</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1 min-w-[60px]">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-green-500"><i class="fas fa-home"></i></div>
+                            <span class="text-[10px] text-gray-600 font-medium">Home</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feed / Products -->
+                <div class="px-4 pb-4">
+                    <h4 class="font-bold text-gray-800 text-sm mb-3">Trending Catalogs</h4>
+                    <div id="product-feed" class="space-y-4">
+                        <!-- Products injected here via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- BRANDS TAB -->
+            <div id="tab-brands" class="hidden p-4">
+                <h2 class="text-xl font-bold mb-4">Discover Brands</h2>
+                <div class="space-y-3">
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 font-bold">TD</div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm">The DuoNext <i class="fas fa-check-circle text-primary text-[10px]"></i></h4>
+                            <p class="text-[10px] text-gray-500">Women Wear Wholesaler</p>
+                        </div>
+                        <button class="border border-primary text-primary px-3 py-1 rounded text-xs font-medium">Follow</button>
+                    </div>
+                     <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">JMD</div>
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm">JMD Collections <i class="fas fa-check-circle text-primary text-[10px]"></i></h4>
+                            <p class="text-[10px] text-gray-500">Trendy Western Wear</p>
+                        </div>
+                        <button class="border border-primary text-primary px-3 py-1 rounded text-xs font-medium">Follow</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS TAB -->
+            <div id="tab-orders" class="hidden">
+                 <div class="bg-white p-4 border-b border-gray-100">
+                    <h2 class="text-xl font-bold">My Orders</h2>
+                 </div>
+                 <div id="orders-list" class="p-4 space-y-3">
+                     <!-- Orders injected here -->
+                     <div class="text-center text-gray-500 text-sm mt-10 py-10" id="empty-orders-msg">
+                         <i class="fas fa-box-open text-4xl mb-3 opacity-20"></i>
+                         <p>No orders yet.</p>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- ACCOUNT TAB (Modeled after screenshot) -->
+            <div id="tab-account" class="hidden">
+                <!-- Profile Header -->
+                <div class="bg-white p-6 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gray-500 text-white rounded-full flex items-center justify-center text-2xl font-bold" id="acc-initial">S</div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-1">Hi, <span id="acc-name">User</span>! <i class="fas fa-certificate text-primary text-xs"></i></h2>
+                            <p class="text-sm text-gray-500" id="acc-phone">9451239239</p>
+                        </div>
+                    </div>
+                    <button class="text-primary font-bold text-sm">EDIT PROFILE</button>
+                </div>
+
+                <!-- Menu Sections -->
+                <div class="bg-white mt-2 border-y border-gray-100">
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-life-ring text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Help Center</span>
                     </button>
                 </div>
+
+                <div class="bg-white mt-2 border-y border-gray-100">
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-share text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Shared Catalogs</span>
+                    </button>
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="far fa-heart text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Liked Catalogs</span>
+                    </button>
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="far fa-eye text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Recently Viewed Catalogs</span>
+                    </button>
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
+                        <i class="fas fa-user-plus text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Followed Brands</span>
+                    </button>
+                </div>
+
+                <div class="bg-white mt-2 border-y border-gray-100">
+                    <button onclick="openModal('bank-modal')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-university text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Bank Details</span>
+                    </button>
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50 justify-between">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-wallet text-gray-600 w-5 text-center"></i>
+                            <span class="text-gray-800 text-sm font-medium">Wallet</span>
+                        </div>
+                        <span class="bg-blue-50 text-blue-600 text-xs font-bold px-2 py-1 rounded-full">₹<span id="wallet-balance">0</span></span>
+                    </button>
+                    <button onclick="openModal('transfer-history-modal')" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
+                        <i class="far fa-clock text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Bank Transfer History</span>
+                    </button>
+                </div>
+                
+                 <div class="bg-white mt-2 border-y border-gray-100 mb-6">
+                    <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="fas fa-info-circle text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Legal</span>
+                    </button>
+                     <button class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left border-b border-gray-50">
+                        <i class="far fa-thumbs-up text-gray-600 w-5 text-center"></i>
+                        <span class="text-gray-800 text-sm font-medium">Rate Us</span>
+                    </button>
+                    <button onclick="logoutUser()" class="w-full flex items-center gap-4 p-4 hover:bg-gray-50 text-left">
+                        <i class="fas fa-sign-out-alt text-red-500 w-5 text-center"></i>
+                        <span class="text-red-500 text-sm font-bold">Logout</span>
+                    </button>
+                </div>
+                
+                <div class="text-center pb-8 text-gray-400">
+                    <h3 class="font-bold text-gray-800 text-lg">SHRAYNEX</h3>
+                    <p class="text-xs">App Version 1.0.0</p>
+                </div>
+            </div>
+
+            <!-- CART / CHECKOUT VIEWS (Overlays main content) -->
+            <div id="cart-view" class="hidden absolute inset-0 bg-gray-50 z-20 flex-col">
+                <header class="bg-white px-4 py-3 border-b flex items-center gap-3 shrink-0">
+                    <button onclick="switchTab('home')" class="text-gray-600"><i class="fas fa-arrow-left"></i></button>
+                    <h2 class="font-bold text-lg">Cart</h2>
+                </header>
+                <!-- Checkout Progress -->
+                <div class="bg-white px-8 py-4 border-b flex justify-between items-center text-xs text-gray-400 font-medium relative shrink-0">
+                    <div class="absolute top-1/2 left-10 right-10 h-[1px] border-t border-dashed border-gray-300 -z-10 -translate-y-1/2"></div>
+                    <div class="flex flex-col items-center bg-white z-10 px-2 text-primary">
+                        <div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center mb-1 bg-white">1</div>
+                        <span>Cart</span>
+                    </div>
+                    <div class="flex flex-col items-center bg-white z-10 px-2" id="step-2-indicator">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">2</div>
+                        <span>Address</span>
+                    </div>
+                    <div class="flex flex-col items-center bg-white z-10 px-2" id="step-3-indicator">
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">3</div>
+                        <span>Payment</span>
+                    </div>
+                </div>
+
+                <div id="cart-content-area" class="flex-grow overflow-y-auto">
+                    <!-- Dynamic Cart Content injected here -->
+                </div>
+                
+                <div id="cart-footer" class="bg-white border-t p-4 flex justify-between items-center shrink-0 hidden pb-safe">
+                    <div>
+                        <p class="text-xs text-gray-500 font-medium">ORDER TOTAL</p>
+                        <p class="text-lg font-bold text-primary">₹<span id="cart-total-price">0</span></p>
+                    </div>
+                    <button onclick="proceedToAddress()" id="cart-action-btn" class="bg-primary text-white px-8 py-3 rounded-lg font-bold">CONTINUE</button>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav id="bottom-nav" class="bg-white border-t border-gray-200 flex justify-around items-center h-[60px] absolute bottom-0 w-full z-30 pb-safe">
+            <button onclick="switchTab('home')" id="nav-btn-home" class="flex flex-col items-center w-1/4 text-primary">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Home</span>
+            </button>
+            <button onclick="switchTab('brands')" id="nav-btn-brands" class="flex flex-col items-center w-1/4 text-gray-400">
+                <i class="fas fa-search text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Brands</span>
+            </button>
+            <button onclick="switchTab('orders')" id="nav-btn-orders" class="flex flex-col items-center w-1/4 text-gray-400 relative">
+                <i class="fas fa-shopping-bag text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Orders</span>
+            </button>
+            <button onclick="switchTab('account')" id="nav-btn-account" class="flex flex-col items-center w-1/4 text-gray-400">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span class="text-[10px] font-medium">Account</span>
+            </button>
+        </nav>
+
+        <!-- OVERLAYS / MODALS -->
+        
+        <!-- Bank Details Modal -->
+        <div id="bank-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl w-full max-w-sm overflow-hidden animate-fade-in relative">
+                 <button onclick="closeModal('bank-modal')" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+                 <div class="p-6 pt-8">
+                     <h3 class="text-xl text-blue-500 font-medium mb-6">Bank Details</h3>
+                     <div class="space-y-4">
+                         <input type="text" placeholder="Account Holder's Name" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
+                         <input type="number" placeholder="Account Number" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
+                         <input type="number" placeholder="Re-enter Account Number" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500">
+                         <input type="text" placeholder="IFSC Code" class="w-full border border-gray-300 rounded p-3 text-sm outline-none focus:border-blue-500 uppercase">
+                     </div>
+                     <button onclick="closeModal('bank-modal'); showAppToast('Bank details saved');" class="w-full text-primary font-bold py-4 mt-6 border-t border-gray-100">SUBMIT</button>
+                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="bg-white border-y border-gray-100 py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <div class="text-3xl font-bold text-primary mb-1">50K+</div>
-                    <div class="text-sm text-gray-500 font-medium">Active Resellers</div>
+        <!-- Transfer History Modal -->
+        <div id="transfer-history-modal" class="fixed inset-0 bg-gray-50 z-40 hidden flex-col">
+            <header class="bg-white px-4 py-3 border-b flex items-center gap-3 shrink-0">
+                <button onclick="closeModal('transfer-history-modal')" class="text-gray-600"><i class="fas fa-arrow-left"></i></button>
+                <h2 class="font-bold text-lg">Bank Transfer History</h2>
+            </header>
+            <div class="p-4 space-y-3 overflow-y-auto">
+                <!-- Mock Data -->
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="text-blue-500 font-medium text-lg">Request #180031</h4>
+                        <span class="text-blue-500 font-bold text-lg">₹50</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mb-2">12-6-2024</p>
+                    <p class="text-sm text-gray-600">Status - Transfer processed successfully!</p>
+                    <p class="text-xs text-gray-400 mt-1">Txn Id - N167243098057192, Amount transferred to bank account</p>
                 </div>
-                <div>
-                    <div class="text-3xl font-bold text-primary mb-1">100+</div>
-                    <div class="text-sm text-gray-500 font-medium">Trusted Brands</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-primary mb-1">10K+</div>
-                    <div class="text-sm text-gray-500 font-medium">Products Listed</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-primary mb-1">₹1M+</div>
-                    <div class="text-sm text-gray-500 font-medium">Margins Paid</div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-start mb-1">
+                        <h4 class="text-blue-500 font-medium text-lg">Request #178307</h4>
+                        <span class="text-blue-500 font-bold text-lg">₹35</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400 mb-2">2-6-2024</p>
+                    <p class="text-sm text-gray-600">Status - Transfer processed successfully!</p>
+                    <p class="text-xs text-gray-400 mt-1">Txn Id - N156243073866333, Amount transferred to bank account</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <section id="how-it-works" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How to Resell on SHRAYNEX</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Start your own online business in 3 simple steps without any upfront investment.</p>
+        <!-- Product Details View (Full Screen) -->
+        <div id="product-details-view" class="fixed inset-0 bg-gray-50 z-40 hidden flex-col pb-[70px]">
+            <header class="bg-white px-4 py-3 border-b flex items-center justify-between shrink-0 absolute top-0 w-full z-10 bg-white/80 backdrop-blur-sm">
+                <div class="flex items-center gap-3">
+                    <button onclick="closeProductDetails()" class="text-gray-800 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"><i class="fas fa-arrow-left"></i></button>
+                    <h2 class="font-medium text-sm truncate w-40" id="pd-title-header">Product Title</h2>
+                </div>
+                <div class="flex gap-3">
+                    <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm text-gray-600"><i class="far fa-heart"></i></button>
+                    <button class="bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm text-gray-600 relative" onclick="switchTab('cart'); closeProductDetails();">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="overflow-y-auto flex-grow bg-white">
+                <div class="w-full aspect-[3/4] bg-gray-100 relative mt-12">
+                    <img id="pd-image" src="" class="w-full h-full object-cover" alt="Product">
+                    <!-- Action Buttons overlaid on image -->
+                    <div class="absolute right-4 top-4 flex flex-col gap-3">
+                         <button onclick="openShareModal()" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md text-gray-700"><i class="fas fa-share"></i></button>
+                         <button class="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center shadow-md text-white"><i class="fab fa-whatsapp text-lg"></i></button>
+                    </div>
+                </div>
+                
+                <div class="p-4 border-b border-gray-100">
+                    <h1 id="pd-title" class="text-gray-800 text-lg mb-2">Product Name</h1>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded"><i class="fas fa-shopping-bag mr-1"></i>56 orders in last 7 days</span>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-sm text-gray-400 line-through">₹<span id="pd-mrp">999</span></span>
+                        <span class="text-xl font-bold text-green-600">₹<span id="pd-price">0</span></span>
+                        <span class="text-sm text-gray-600">+ Free Delivery</span>
+                    </div>
+                </div>
+
+                <div class="p-4 border-b border-gray-100 bg-gray-50">
+                     <div class="bg-white rounded-xl border border-pink-100 p-4 relative">
+                         <div class="absolute -top-3 right-4 bg-white border border-primary text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">BRAND INFO</div>
+                         <div class="flex items-center gap-3 mb-4">
+                             <div class="w-12 h-12 bg-pink-100 rounded-lg flex flex-col items-center justify-center">
+                                 <span class="font-bold text-primary text-xs" id="pd-brand-icon">BN</span>
+                             </div>
+                             <div>
+                                 <h4 class="font-bold text-sm" id="pd-brand-name">Brand Name <i class="fas fa-check-circle text-primary text-[10px]"></i></h4>
+                                 <p class="text-[10px] text-gray-500">Since 2020</p>
+                             </div>
+                         </div>
+                         <div class="flex bg-pink-50 rounded-lg p-2 justify-around text-xs">
+                             <div class="text-center">
+                                 <p class="text-blue-500 font-bold"><i class="fas fa-chart-bar mr-1"></i>1.0K</p>
+                                 <p class="text-[9px] text-gray-500">Followers</p>
+                             </div>
+                             <div class="text-center border-l border-pink-200 pl-4">
+                                 <p class="text-blue-500 font-bold"><i class="fas fa-map-marker-alt mr-1"></i>India</p>
+                                 <p class="text-[9px] text-gray-500">Location</p>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+
+                <div class="p-4 border-b border-gray-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-xs font-bold text-gray-500 tracking-wider">SIZES AVAILABLE</h4>
+                        <button class="text-primary text-xs font-bold">Size Chart ></button>
+                    </div>
+                    <div class="flex gap-3" id="pd-sizes">
+                        <!-- Sizes JS injected -->
+                    </div>
+                </div>
+                
+                <div class="p-4 mb-20">
+                    <h4 class="text-xs font-bold text-gray-500 tracking-wider mb-2">CATALOG DETAILS</h4>
+                    <p class="text-sm text-gray-600 leading-relaxed mb-2" id="pd-desc">Description here...</p>
+                    <button class="text-primary font-bold text-sm">show more</button>
+                </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">1</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Discover Products</h3>
-                    <p class="text-gray-600">Login to browse thousands of high-quality products from trusted micro-brands across India at wholesale prices.</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">2</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Share & Add Margin</h3>
-                    <p class="text-gray-600">Share product images and details on WhatsApp, Facebook, or Instagram with your friends and family. Add your own profit margin.</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">3</div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Earn Profit</h3>
-                    <p class="text-gray-600">When you get an order, place it on SHRAYNEX. We handle shipping and delivery. Your profit margin is transferred directly to your bank account.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="discover" class="py-20 bg-white hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Trending Catalogs</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">Browse high-quality products from top manufacturers. Add your margin and share directly to WhatsApp or social media.</p>
-            </div>
-
-            <!-- Categories -->
-            <div class="flex overflow-x-auto hide-scrollbar space-x-4 mb-8 pb-4">
-                <button class="bg-primary text-white px-6 py-2 rounded-full font-medium whitespace-nowrap">All Items</button>
-                <button class="bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full font-medium whitespace-nowrap hover:bg-gray-50">Kurtis & Suits</button>
-                <button class="bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full font-medium whitespace-nowrap hover:bg-gray-50">Electronics</button>
-                <button class="bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full font-medium whitespace-nowrap hover:bg-gray-50">Home Decor</button>
-                <button class="bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full font-medium whitespace-nowrap hover:bg-gray-50">Accessories</button>
-            </div>
-
-            <!-- Product Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="product-grid">
-                <!-- Products will be injected here by JS -->
-            </div>
-            
-            <div class="text-center mt-12">
-                <button class="text-primary font-semibold hover:text-indigo-800 transition flex items-center justify-center mx-auto">
-                    View All Products <i class="fas fa-chevron-down ml-2"></i>
+            <div class="absolute bottom-0 w-full bg-white p-3 border-t border-gray-200 z-20">
+                <button onclick="addToCartFromDetails()" class="w-full bg-primary text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2 shadow-md">
+                    <i class="fas fa-shopping-bag"></i> ORDER NOW
                 </button>
             </div>
         </div>
-    </section>
 
-    <section id="dashboard" class="py-20 bg-gray-50 border-t border-gray-200 hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="mb-12">
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">My Reseller Dashboard</h2>
-                <p class="text-gray-600">Track your earnings, manage shared catalogs, and view orders.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Dashboard Area -->
-                <div class="lg:col-span-2 space-y-8">
-                    <!-- Earnings Widget -->
-                    <div class="bg-gradient-to-r from-primary to-indigo-800 rounded-2xl p-6 text-white shadow-lg">
-                        <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <p class="text-indigo-200 font-medium mb-1">Total Earnings</p>
-                                <h3 class="text-4xl font-bold">₹12,450</h3>
-                            </div>
-                            <div class="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                                <i class="fas fa-wallet text-2xl"></i>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4 mt-4">
-                            <div>
-                                <p class="text-indigo-200 text-sm">Pending Margin</p>
-                                <p class="text-xl font-semibold">₹2,100</p>
-                            </div>
-                            <div>
-                                <p class="text-indigo-200 text-sm">Last Payout</p>
-                                <p class="text-xl font-semibold">₹4,500 <span class="text-xs font-normal opacity-75">(12 Oct)</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Orders -->
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                            <h3 class="font-bold text-gray-800">Recent Orders</h3>
-                            <button class="text-sm text-primary font-medium">View All</button>
-                        </div>
-                        <div class="divide-y divide-gray-100">
-                            <!-- Order Item -->
-                            <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                                        <img src="https://placehold.co/100x100/e2e8f0/475569?text=Item" class="w-full h-full object-cover rounded-lg" alt="Product">
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">Cotton Printed Kurti Set</p>
-                                        <p class="text-sm text-gray-500">Order #ORD-8923 • Customer: Priya S.</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-secondary text-sm mb-1"><i class="fas fa-circle text-[8px] mr-1 align-middle"></i> Delivered</p>
-                                    <p class="text-sm text-gray-600">Margin: <span class="font-bold text-gray-900">₹150</span></p>
-                                </div>
-                            </div>
-                            <!-- Order Item -->
-                            <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                                        <img src="https://placehold.co/100x100/e2e8f0/475569?text=Watch" class="w-full h-full object-cover rounded-lg" alt="Product">
-                                    </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-800">Smart Fitness Watch</p>
-                                        <p class="text-sm text-gray-500">Order #ORD-8924 • Customer: Rahul M.</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-yellow-500 text-sm mb-1"><i class="fas fa-circle text-[8px] mr-1 align-middle"></i> Shipped</p>
-                                    <p class="text-sm text-gray-600">Margin: <span class="font-bold text-gray-900">₹300</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Share Margin Modal (Bottom Sheet) -->
+        <div id="share-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex-col justify-end">
+            <div class="bg-white rounded-t-2xl w-full slide-up-modal pb-safe" id="share-sheet">
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Add Margin & Share</h3>
+                    <button onclick="closeShareModal()" class="text-gray-400 text-xl"><i class="fas fa-times"></i></button>
                 </div>
-
-                <!-- Sidebar Widgets -->
-                <div class="space-y-8">
-                    <!-- Profile Card -->
-                    <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-sm">
-                        <div id="profile-initials" class="w-20 h-20 bg-indigo-100 rounded-full mx-auto flex items-center justify-center mb-4 text-primary text-2xl font-bold">
-                            U
-                        </div>
-                        <h3 id="profile-name" class="font-bold text-gray-900 text-lg">Reseller Name</h3>
-                        <p class="text-gray-500 text-sm mb-4">Silver Tier Partner</p>
-                        <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
-                            <div class="bg-primary h-2 rounded-full" style="width: 70%"></div>
-                        </div>
-                        <p class="text-xs text-gray-500 text-left mb-6">3 sales away from Gold Tier</p>
-                        <button class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
-                            Edit Profile
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4 text-sm">
+                        <span class="text-gray-600">Wholesale Price:</span>
+                        <span class="font-bold">₹<span id="share-base-price">0</span></span>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-xs font-bold text-gray-500 mb-2">YOUR PROFIT MARGIN (₹)</label>
+                        <input type="number" id="margin-input" class="w-full border-b-2 border-gray-300 focus:border-primary outline-none py-2 text-xl font-bold text-center" value="100" onchange="updateSharePrice()">
+                    </div>
+                    <div class="flex justify-between items-center mb-6 p-3 bg-pink-50 rounded-lg">
+                        <span class="font-bold text-primary">Price for Customer:</span>
+                        <span class="font-bold text-xl text-primary">₹<span id="share-final-price">0</span></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="bg-[#25D366] text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2">
+                            <i class="fab fa-whatsapp text-xl"></i> Share
+                        </button>
+                        <button onclick="copyLink()" class="bg-gray-100 text-gray-800 py-3 rounded-lg font-bold flex items-center justify-center gap-2">
+                            <i class="fas fa-link"></i> Copy Link
                         </button>
                     </div>
-
-                    <!-- Quick Actions -->
-                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
-                        <h3 class="font-bold text-gray-800 mb-4">Quick Links</h3>
-                        <div class="space-y-3">
-                            <button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 text-gray-700 transition border border-transparent hover:border-gray-200">
-                                <span class="flex items-center"><i class="fas fa-university w-6 text-gray-400"></i> Bank Details</span>
-                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
-                            </button>
-                            <button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 text-gray-700 transition border border-transparent hover:border-gray-200">
-                                <span class="flex items-center"><i class="fas fa-share-alt w-6 text-gray-400"></i> My Shared Catalogs</span>
-                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
-                            </button>
-                            <button class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 text-gray-700 transition border border-transparent hover:border-gray-200">
-                                <span class="flex items-center"><i class="fas fa-headset w-6 text-gray-400"></i> Help & Support</span>
-                                <i class="fas fa-chevron-right text-xs text-gray-400"></i>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <footer class="bg-dark text-white pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 md:col-span-1">
-                    <span class="text-2xl font-bold tracking-tight mb-4 inline-block text-white">SHRAYNEX</span>
-                    <p class="text-gray-400 text-sm mb-6">Empowering individuals across India to start their own online business with zero investment.</p>
-                    <!-- Social icons removed as requested -->
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4 text-lg">Company</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><button onclick="openInfoModal('about')" class="hover:text-white transition">About Us</button></li>
-                        <li><button onclick="openInfoModal('contact')" class="hover:text-white transition">Contact Us</button></li>
-                        <li><button onclick="openInfoModal('careers')" class="hover:text-white transition">Careers</button></li>
-                        <li><button onclick="openInfoModal('blog')" class="hover:text-white transition">Blog</button></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4 text-lg">Policies</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><button onclick="openInfoModal('privacy')" class="hover:text-white transition">Privacy Policy</button></li>
-                        <li><button onclick="openInfoModal('terms')" class="hover:text-white transition">Terms & Conditions</button></li>
-                        <li><button onclick="openInfoModal('return')" class="hover:text-white transition">Return Policy</button></li>
-                        <li><button onclick="openInfoModal('shipping')" class="hover:text-white transition">Shipping Policy</button></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold mb-4 text-lg">Contact Info</h4>
-                    <ul class="space-y-3 text-gray-400 text-sm">
-                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i> Gorakhpur, Uttar Pradesh 273013</li>
-                        <li class="flex items-center"><i class="fas fa-phone mr-3 text-primary"></i> +91 9451239239</li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-primary"></i> shraynexofficial@gmail.com</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-                &copy; 2023-2026 SHRAYNEX. All rights reserved.
-            </div>
+        
+        <!-- App Toast Notification -->
+        <div id="app-toast" class="absolute bottom-20 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm px-4 py-2 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50 whitespace-nowrap">
+            Message
         </div>
-    </footer>
 
-    <!-- Content/Info Modal -->
-    <div id="info-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-10">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-full overflow-hidden flex flex-col relative">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
-                <h3 id="info-modal-title" class="text-xl font-bold text-gray-900">Title</h3>
-                <button onclick="closeInfoModal()" class="text-gray-400 hover:text-gray-800">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div id="info-modal-content" class="p-6 overflow-y-auto text-gray-600 prose prose-indigo max-w-none">
-                <!-- Content injected here -->
-            </div>
-        </div>
     </div>
+</div>
 
-    <!-- Login/Signup Modal (Mockup) -->
-    <div id="auth-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative transform transition-all">
-            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 z-10">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Welcome to SHRAYNEX</h3>
-                    <p class="text-gray-500">Login or create an account to start reselling</p>
-                </div>
-                
-                <div class="space-y-4">
+<!-- ADMIN PANEL (Hidden by default, shown via Admin Login) -->
+<div id="admin-panel" class="hidden min-h-screen bg-gray-100">
+    <nav class="bg-gray-900 text-white p-4 flex justify-between items-center">
+        <h1 class="font-bold text-xl">SHRAYNEX <span class="text-primary text-sm">Admin</span></h1>
+        <button onclick="logoutAdmin()" class="bg-gray-800 px-4 py-1 rounded text-sm hover:bg-gray-700">Logout</button>
+    </nav>
+    <div class="max-w-4xl mx-auto mt-8 p-4">
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2">Add New Catalog</h2>
+            <form id="admin-add-product-form" onsubmit="handleAdminSubmit(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number or Email</label>
-                        <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="Enter your detail">
+                        <label class="block text-sm font-medium mb-1">Product Title</label>
+                        <input type="text" id="admin-title" required class="w-full border rounded p-2 text-sm">
                     </div>
-                    
-                    <button onclick="simulateLogin(this)" class="w-full bg-primary text-white py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 transition shadow-md">
-                        Continue
-                    </button>
-                    
-                    <div class="relative flex items-center py-4">
-                        <div class="flex-grow border-t border-gray-200"></div>
-                        <span class="flex-shrink-0 mx-4 text-gray-400 text-sm">Or continue with</span>
-                        <div class="flex-grow border-t border-gray-200"></div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Brand Name</label>
+                        <input type="text" id="admin-brand" required class="w-full border rounded p-2 text-sm">
                     </div>
-                    
-                    <button id="google-login-btn" class="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition flex items-center justify-center shadow-sm">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-2" alt="Google"> Google
-                    </button>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Wholesale Price (₹)</label>
+                        <input type="number" id="admin-price" required class="w-full border rounded p-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Image URL (Square preferred)</label>
+                        <input type="url" id="admin-img" required class="w-full border rounded p-2 text-sm" placeholder="https://...">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Available Sizes (comma separated)</label>
+                        <input type="text" id="admin-sizes" value="M, L, XL" required class="w-full border rounded p-2 text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Description</label>
+                        <textarea id="admin-desc" required class="w-full border rounded p-2 text-sm h-24"></textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="bg-gray-50 px-8 py-4 text-center border-t border-gray-100">
-                <p class="text-xs text-gray-500">By continuing, you agree to SHRAYNEX's <button onclick="openInfoModal('terms'); toggleAuthModal()" class="text-primary hover:underline">Terms of Use</button> and <button onclick="openInfoModal('privacy'); toggleAuthModal()" class="text-primary hover:underline">Privacy Policy</button>.</p>
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded font-medium hover:bg-green-700">Add to App</button>
+            </form>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-bold mb-4 border-b pb-2">Current Active Catalogs</h2>
+            <div id="admin-product-list" class="space-y-2">
+                <!-- Admin view of products -->
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Product Share Modal -->
-    <div id="share-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-gray-900">Share Product</h3>
-                    <button onclick="closeShareModal()" class="text-gray-400 hover:text-gray-800">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="bg-gray-50 p-4 rounded-xl mb-6">
-                    <p class="text-sm text-gray-600 mb-2">Base Price: ₹<span id="modal-base-price">0</span></p>
-                    <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Add Your Margin (₹)</label>
-                        <input type="number" id="margin-input" class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-primary focus:border-primary outline-none" value="100" onchange="updateFinalPrice()">
-                    </div>
-                    <div class="flex justify-between items-center font-bold text-lg pt-3 border-t border-gray-200">
-                        <span>Customer Price:</span>
-                        <span class="text-primary">₹<span id="modal-final-price">0</span></span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <button class="bg-[#25D366] text-white py-3 rounded-xl font-medium hover:bg-[#128C7E] transition flex flex-col items-center justify-center gap-2">
-                        <i class="fab fa-whatsapp text-2xl"></i>
-                        <span class="text-sm">WhatsApp</span>
-                    </button>
-                    <button onclick="copyProductLink()" class="bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition flex flex-col items-center justify-center gap-2">
-                        <i class="fas fa-link text-2xl"></i>
-                        <span class="text-sm">Copy Link</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+<!-- Simple Auth Modal (Shared for user/admin simulation) -->
+<div id="auth-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl w-full max-w-sm p-6 relative">
+        <button onclick="toggleAuthModal()" class="absolute top-4 right-4 text-gray-400"><i class="fas fa-times"></i></button>
+        <h3 class="text-xl font-bold mb-2" id="auth-title">Login to Resell</h3>
+        <p class="text-sm text-gray-500 mb-6" id="auth-desc">Enter your details to access the platform.</p>
+        
+        <input type="text" id="auth-input-id" placeholder="Phone Number / Email" class="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none focus:border-primary">
+        <input type="password" id="auth-input-pass" placeholder="Password (Admin only)" class="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none focus:border-primary hidden">
+        
+        <button onclick="processLogin()" class="w-full bg-primary text-white font-bold py-3 rounded-lg shadow-md" id="auth-submit-btn">Continue</button>
     </div>
+</div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl z-[150] flex items-center transition-opacity duration-300 opacity-0 pointer-events-none">
-        <i class="fas fa-check-circle text-secondary mr-2"></i>
-        <span id="toast-message">Message</span>
-    </div>
-
-    <script>
-        // Global Auth State
-        let isLoggedIn = false;
-
-        // Content Data for Modals
-        const pageContent = {
-            'about': {
-                title: 'About Us',
-                content: `
-                    <h4 class="text-lg font-bold mb-2">Welcome to SHRAYNEX</h4>
-                    <p class="mb-4">SHRAYNEX is India's leading platform empowering individuals to start their own online reselling business with absolute zero investment. Our mission is to democratize e-commerce by bridging the gap between high-quality micro-brands and ambitious entrepreneurs across the country.</p>
-                    <p class="mb-4">We believe that anyone with a smartphone and a desire to succeed should have the tools to build their own income stream. By connecting you directly with trusted manufacturers, we eliminate the middlemen, allowing you to offer great products to your customers while keeping the profit margins for yourself.</p>
-                    <p>Whether you are a homemaker, a student, or a boutique owner, SHRAYNEX provides the catalog, the technology, and the logistics support you need to thrive.</p>
-                `
-            },
-            'contact': {
-                title: 'Contact Us',
-                content: `
-                    <p class="mb-4">We are always here to help our reseller community. Feel free to reach out to us regarding any queries, bulk orders, or support needs.</p>
-                    <ul class="space-y-4 mt-6">
-                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-primary text-xl"></i> <div><strong>Address:</strong><br> Gorakhpur, Uttar Pradesh 273013, India</div></li>
-                        <li class="flex items-center"><i class="fas fa-phone mr-3 text-primary text-xl"></i> <div><strong>Phone:</strong><br> +91 9451239239</div></li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-primary text-xl"></i> <div><strong>Email:</strong><br> shraynexofficial@gmail.com</div></li>
-                    </ul>
-                    <p class="mt-6 text-sm text-gray-500">Our support hours are Monday to Saturday, 9:00 AM to 6:00 PM IST.</p>
-                `
-            },
-            'careers': {
-                title: 'Careers at SHRAYNEX',
-                content: `
-                    <h4 class="text-lg font-bold mb-2">Join Our Mission</h4>
-                    <p class="mb-4">At SHRAYNEX, we are building the future of social commerce in India. We are a fast-growing team of innovators, problem-solvers, and dreamers who are passionate about empowering micro-entrepreneurs.</p>
-                    <p class="mb-4">We are currently looking for talent in the following areas:</p>
-                    <ul class="list-disc pl-5 mb-4 space-y-1">
-                        <li>Supply Chain Operations</li>
-                        <li>Vendor Management</li>
-                        <li>Customer Success</li>
-                        <li>Frontend Engineering</li>
-                    </ul>
-                    <p>If you want to make a real impact, send your resume to <strong>shraynexofficial@gmail.com</strong> with the subject line "Careers - [Your Expertise]".</p>
-                `
-            },
-            'blog': {
-                title: 'SHRAYNEX Blog',
-                content: `
-                    <div class="space-y-6">
-                        <div class="border-b border-gray-100 pb-4">
-                            <h4 class="text-lg font-bold text-primary mb-1">Top 5 Trending Kurtis for the Festive Season</h4>
-                            <p class="text-sm text-gray-500 mb-2">Published on October 15, 2023</p>
-                            <p class="text-sm">Discover which ethnic wear catalogs are generating the highest margins for our resellers right now...</p>
-                        </div>
-                        <div class="border-b border-gray-100 pb-4">
-                            <h4 class="text-lg font-bold text-primary mb-1">How to Sell on WhatsApp Effectively</h4>
-                            <p class="text-sm text-gray-500 mb-2">Published on September 28, 2023</p>
-                            <p class="text-sm">Master the art of creating broadcast lists and engaging your contacts without being spammy...</p>
-                        </div>
-                        <div>
-                            <p class="text-center text-gray-500 italic mt-4">More articles coming soon!</p>
-                        </div>
-                    </div>
-                `
-            },
-            'privacy': {
-                title: 'Privacy Policy',
-                content: `
-                    <p class="mb-4">At SHRAYNEX, we value and respect your privacy. This policy outlines how we collect, use, and protect your personal data when you use our platform.</p>
-                    <h4 class="font-bold mt-4 mb-2">1. Information We Collect</h4>
-                    <p class="mb-4">We collect information you provide directly to us, such as your name, email address, phone number, bank details (for payouts), and shipping addresses of your customers.</p>
-                    <h4 class="font-bold mt-4 mb-2">2. How We Use Your Information</h4>
-                    <p class="mb-4">Your information is used to facilitate orders, process margin payouts, improve our app's user experience, and communicate important updates regarding your account.</p>
-                    <h4 class="font-bold mt-4 mb-2">3. Data Security</h4>
-                    <p>We implement robust security measures to safeguard your personal data. We do not sell your personal information to third parties.</p>
-                `
-            },
-            'terms': {
-                title: 'Terms & Conditions',
-                content: `
-                    <p class="mb-4">By accessing or using the SHRAYNEX platform, you agree to be bound by these Terms & Conditions.</p>
-                    <h4 class="font-bold mt-4 mb-2">1. Reseller Account</h4>
-                    <p class="mb-4">You must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your login credentials.</p>
-                    <h4 class="font-bold mt-4 mb-2">2. Margin and Payouts</h4>
-                    <p class="mb-4">Your profit margin is calculated based on the difference between the base price and the final price you set for your customer. Payouts are processed to your registered bank account after the return period of the product has successfully ended.</p>
-                    <h4 class="font-bold mt-4 mb-2">3. Prohibited Activities</h4>
-                    <p>You agree not to engage in fraudulent activities, misrepresent products, or use the platform for any illegal purposes.</p>
-                `
-            },
-            'return': {
-                title: 'Return & Refund Policy',
-                content: `
-                    <p class="mb-4">We want your customers to be completely satisfied with their purchases.</p>
-                    <h4 class="font-bold mt-4 mb-2">7-Day Easy Returns</h4>
-                    <p class="mb-4">Products can be returned within 7 days of delivery if they are defective, damaged, or significantly different from the description. The item must be unused and in its original packaging.</p>
-                    <h4 class="font-bold mt-4 mb-2">Refund Process</h4>
-                    <p class="mb-4">Once the returned item is received and inspected by the supplier, the base amount will be refunded to the original payment method. If it was a COD order, the refund will be processed to the provided bank account.</p>
-                    <p class="text-sm text-red-500">* Note: Margin payouts are canceled for returned orders.</p>
-                `
-            },
-            'shipping': {
-                title: 'Shipping Policy',
-                content: `
-                    <p class="mb-4">SHRAYNEX handles end-to-end logistics so you can focus entirely on selling.</p>
-                    <h4 class="font-bold mt-4 mb-2">Dispatch and Delivery</h4>
-                    <p class="mb-4">Orders are typically dispatched by our suppliers within 24-48 hours. Delivery takes an average of 4-7 business days depending on the customer's location in India.</p>
-                    <h4 class="font-bold mt-4 mb-2">Shipping Charges</h4>
-                    <p class="mb-4">We offer FREE shipping on maximum catalogs to help you maximize your sales. For catalogs with shipping charges, the amount will be clearly displayed before you place the order.</p>
-                    <h4 class="font-bold mt-4 mb-2">Cash on Delivery (COD)</h4>
-                    <p>COD is available for over 20,000+ pin codes across India, providing convenience and trust for your customers.</p>
-                `
-            }
-        };
-
-        function openInfoModal(pageKey) {
-            const data = pageContent[pageKey];
-            if(data) {
-                document.getElementById('info-modal-title').innerText = data.title;
-                document.getElementById('info-modal-content').innerHTML = data.content;
-                document.getElementById('info-modal').classList.remove('hidden');
-            }
+<script>
+    // --- STATE MANAGEMENT ---
+    let currentUser = null; // null, 'reseller', 'admin'
+    
+    // In-memory product database (simulating backend)
+    let products = [
+        {
+            id: 1,
+            title: "Linen Cotton Floral Embroidered Straight Kurti - Grey & Wine",
+            brand: "The DuoNext",
+            price: 699,
+            mrp: 865,
+            image: "https://placehold.co/600x800/5e5c64/ffffff?text=Kurti+Design",
+            sizes: ["L", "M", "XL", "2XL"],
+            desc: "Elegant and comfortable Linen Cotton Kurti featuring delicate white floral embroidery, a stylish V-neck with pin-tuck detailing, and a straight-cut silhouette. Perfect for daily wear, office wear, and casual occasions.\n\nKey Features:\nLinen Cotton Blend with Lining."
+        },
+        {
+            id: 2,
+            title: "Look Denim Dress with Belt",
+            brand: "JMD Collections",
+            price: 625,
+            mrp: 799,
+            image: "https://placehold.co/600x800/1e293b/ffffff?text=Denim+Dress",
+            sizes: ["S", "M", "L"],
+            desc: "Trendy denim dress with a stylish brown belt. Perfect for casual outings and parties."
         }
+    ];
 
-        function closeInfoModal() {
-            document.getElementById('info-modal').classList.add('hidden');
+    let cart = [];
+    let orders = [];
+    let currentSelectedProduct = null;
+    let currentSelectedSize = null;
+
+    // --- NAVIGATION & VIEWS ---
+    
+    function init() {
+        renderProducts();
+        updateAdminList();
+    }
+
+    function toggleAuthModal(isAdmin = false) {
+        const modal = document.getElementById('auth-modal');
+        const passField = document.getElementById('auth-input-pass');
+        const title = document.getElementById('auth-title');
+        
+        if (modal.classList.contains('hidden')) {
+            modal.classList.remove('hidden');
+            if (isAdmin) {
+                title.innerText = "Admin Login";
+                passField.classList.remove('hidden');
+                document.getElementById('auth-submit-btn').onclick = () => processLogin('admin');
+            } else {
+                title.innerText = "Login to Resell";
+                passField.classList.add('hidden');
+                document.getElementById('auth-submit-btn').onclick = () => processLogin('reseller');
+            }
+        } else {
+            modal.classList.add('hidden');
         }
+    }
 
-        // Mock Product Data
-        const products = [
-            { id: 1, name: "Women's Embroidered Rayon Kurti", supplier: "Shree Fab", basePrice: 450, image: "https://placehold.co/400x500/e2e8f0/475569?text=Kurti+Design+1", rating: 4.5, reviews: 120 },
-            { id: 2, name: "Men's Casual Slim Fit Shirt", supplier: "Trends India", basePrice: 380, image: "https://placehold.co/400x500/e2e8f0/475569?text=Men+Shirt", rating: 4.2, reviews: 85 },
-            { id: 3, name: "Gold Plated Temple Jewellery Set", supplier: "Gems Art", basePrice: 850, image: "https://placehold.co/400x500/e2e8f0/475569?text=Jewellery", rating: 4.8, reviews: 210 },
-            { id: 4, name: "Wireless Bluetooth Earbuds", supplier: "TechPro", basePrice: 650, image: "https://placehold.co/400x500/e2e8f0/475569?text=Earbuds", rating: 4.0, reviews: 340 },
-            { id: 5, name: "Designer Georgette Saree", supplier: "Kala Mandir", basePrice: 1200, image: "https://placehold.co/400x500/e2e8f0/475569?text=Saree", rating: 4.6, reviews: 150 },
-            { id: 6, name: "Home Decor Wall Clock", supplier: "Decor Hub", basePrice: 299, image: "https://placehold.co/400x500/e2e8f0/475569?text=Wall+Clock", rating: 4.1, reviews: 60 },
-            { id: 7, name: "Leather Formal Wallet", supplier: "LeatherKraft", basePrice: 199, image: "https://placehold.co/400x500/e2e8f0/475569?text=Wallet", rating: 4.3, reviews: 95 },
-            { id: 8, name: "Kids Party Wear Frock", supplier: "TinyTots", basePrice: 550, image: "https://placehold.co/400x500/e2e8f0/475569?text=Kids+Wear", rating: 4.7, reviews: 180 },
-        ];
+    function showAdminLogin() {
+        toggleAuthModal(true);
+    }
 
-        // Render Products
-        function renderProducts() {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = '';
+    function processLogin(type) {
+        const inputId = document.getElementById('auth-input-id').value;
+        if(!inputId) return alert("Please enter details");
+
+        toggleAuthModal();
+        
+        if (type === 'admin') {
+            currentUser = 'admin';
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+        } else {
+            currentUser = 'reseller';
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
             
-            products.forEach(product => {
-                const card = `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 group">
-                        <div class="relative overflow-hidden aspect-[4/5] bg-gray-100">
-                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-gray-800 flex items-center">
-                                ${product.rating} <i class="fas fa-star text-yellow-400 ml-1 text-[10px]"></i>
-                            </div>
-                        </div>
-                        <div class="p-5">
-                            <p class="text-xs text-gray-500 font-medium mb-1 uppercase tracking-wide">${product.supplier}</p>
-                            <h3 class="font-bold text-gray-900 mb-2 truncate">${product.name}</h3>
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <p class="text-xs text-gray-500">Starting Price</p>
-                                    <p class="text-lg font-bold text-primary">₹${product.basePrice}</p>
-                                </div>
-                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">Free Delivery</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="openShareModal(${product.basePrice})" class="w-full bg-primary/10 text-primary py-2 rounded-lg font-semibold hover:bg-primary hover:text-white transition flex items-center justify-center gap-2">
-                                    <i class="fas fa-share-alt"></i> Share
-                                </button>
-                                <button class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-200 transition">
-                                    Details
-                                </button>
+            // Setup User Data in App
+            document.getElementById('acc-name').innerText = "Reseller";
+            document.getElementById('acc-phone').innerText = inputId;
+            document.getElementById('app-user-initial').innerText = "R";
+            document.getElementById('acc-initial').innerText = "R";
+            
+            switchTab('home');
+        }
+    }
+
+    function logoutUser() {
+        currentUser = null;
+        document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('landing-page').classList.remove('hidden');
+    }
+
+    function logoutAdmin() {
+        currentUser = null;
+        document.getElementById('admin-panel').classList.add('hidden');
+        document.getElementById('landing-page').classList.remove('hidden');
+    }
+
+    // --- APP SPECIFIC LOGIC ---
+
+    function switchTab(tabId) {
+        // Hide all tabs
+        ['home', 'brands', 'orders', 'account'].forEach(t => {
+            document.getElementById(`tab-${t}`).classList.add('hidden');
+            document.getElementById(`nav-btn-${t}`).classList.replace('text-primary', 'text-gray-400');
+        });
+        
+        // Handle Cart view (which is an overlay, not a main tab)
+        if(tabId === 'cart') {
+            document.getElementById('cart-view').classList.remove('hidden');
+            document.getElementById('cart-view').classList.add('flex');
+            renderCart();
+            return; // Don't change bottom nav state
+        } else {
+            document.getElementById('cart-view').classList.add('hidden');
+            document.getElementById('cart-view').classList.remove('flex');
+        }
+
+        // Show selected tab
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+        document.getElementById(`nav-btn-${tabId}`).classList.replace('text-gray-400', 'text-primary');
+        
+        if(tabId === 'orders') renderOrders();
+    }
+
+    function showAppToast(msg) {
+        const toast = document.getElementById('app-toast');
+        toast.innerText = msg;
+        toast.classList.remove('opacity-0', 'pointer-events-none');
+        setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2000);
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // --- PRODUCT & CART LOGIC ---
+
+    function renderProducts() {
+        const feed = document.getElementById('product-feed');
+        feed.innerHTML = '';
+        
+        products.forEach(p => {
+            const el = document.createElement('div');
+            el.className = "bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden";
+            el.innerHTML = `
+                <div class="flex items-center gap-2 p-3 border-b border-gray-50">
+                    <div class="w-8 h-8 bg-blue-100 rounded flex flex-col items-center justify-center text-[8px] font-bold text-blue-800 uppercase leading-none p-1 text-center line-clamp-2">
+                        ${p.brand.substring(0,3)}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm">${p.brand}</h4>
+                        <p class="text-[10px] text-gray-500">Just updated</p>
+                    </div>
+                    <button class="ml-auto text-gray-400"><i class="fas fa-ellipsis-h"></i></button>
+                </div>
+                <div class="w-full aspect-[4/5] bg-gray-100 relative cursor-pointer" onclick="openProductDetails(${p.id})">
+                    <img src="${p.image}" class="w-full h-full object-cover">
+                </div>
+                <div class="p-4">
+                    <p class="text-sm text-gray-800 line-clamp-1 mb-1 cursor-pointer" onclick="openProductDetails(${p.id})">${p.title}</p>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="font-bold text-green-600">₹${p.price}</span>
+                        <span class="text-xs text-gray-500">+ Free Delivery</span>
+                        <span class="ml-auto bg-pink-50 text-primary text-[10px] font-bold px-2 py-1 rounded-full"><i class="fas fa-heart text-[8px]"></i> Love It</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="openShareModal(${p.id})" class="flex-1 bg-white border border-gray-300 py-2 rounded font-medium text-sm text-gray-700 flex items-center justify-center gap-2">
+                            <i class="fas fa-share text-gray-400"></i> Share
+                        </button>
+                        <button class="flex-1 bg-green-500 text-white py-2 rounded font-medium text-sm flex items-center justify-center gap-2">
+                             <i class="fab fa-whatsapp text-lg"></i> Share
+                        </button>
+                    </div>
+                </div>
+            `;
+            feed.appendChild(el);
+        });
+    }
+
+    function openProductDetails(id) {
+        const p = products.find(x => x.id === id);
+        if(!p) return;
+        currentSelectedProduct = p;
+        currentSelectedSize = p.sizes[0]; // default
+
+        document.getElementById('pd-title-header').innerText = p.title;
+        document.getElementById('pd-title').innerText = p.title;
+        document.getElementById('pd-image').src = p.image;
+        document.getElementById('pd-price').innerText = p.price;
+        document.getElementById('pd-mrp').innerText = p.mrp || (p.price + 200);
+        document.getElementById('pd-brand-name').innerHTML = `${p.brand} <i class="fas fa-check-circle text-primary text-[10px]"></i>`;
+        document.getElementById('pd-brand-icon').innerText = p.brand.substring(0,2).toUpperCase();
+        document.getElementById('pd-desc').innerText = p.desc;
+
+        const sizesContainer = document.getElementById('pd-sizes');
+        sizesContainer.innerHTML = '';
+        p.sizes.forEach(size => {
+            const btn = document.createElement('button');
+            const isSelected = size === currentSelectedSize;
+            btn.className = `w-10 h-10 rounded-full border flex items-center justify-center text-sm font-medium ${isSelected ? 'border-primary text-primary' : 'border-gray-300 text-gray-600'}`;
+            btn.innerText = size;
+            btn.onclick = () => selectSize(size, btn);
+            sizesContainer.appendChild(btn);
+        });
+
+        document.getElementById('product-details-view').classList.remove('hidden');
+        document.getElementById('product-details-view').classList.add('flex');
+    }
+
+    function closeProductDetails() {
+        document.getElementById('product-details-view').classList.add('hidden');
+        document.getElementById('product-details-view').classList.remove('flex');
+    }
+
+    function selectSize(size, btnEl) {
+        currentSelectedSize = size;
+        const container = document.getElementById('pd-sizes');
+        Array.from(container.children).forEach(c => {
+            c.classList.remove('border-primary', 'text-primary');
+            c.classList.add('border-gray-300', 'text-gray-600');
+        });
+        btnEl.classList.remove('border-gray-300', 'text-gray-600');
+        btnEl.classList.add('border-primary', 'text-primary');
+    }
+
+    let shareBase = 0;
+    function openShareModal(id = null) {
+        const p = id ? products.find(x => x.id === id) : currentSelectedProduct;
+        if(!p) return;
+        
+        shareBase = p.price;
+        document.getElementById('share-base-price').innerText = shareBase;
+        document.getElementById('margin-input').value = 100;
+        updateSharePrice();
+        
+        document.getElementById('share-modal').classList.remove('hidden');
+        document.getElementById('share-modal').classList.add('flex');
+        setTimeout(() => {
+            document.getElementById('share-sheet').classList.add('active');
+        }, 10);
+    }
+
+    function closeShareModal() {
+        document.getElementById('share-sheet').classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('share-modal').classList.add('hidden');
+            document.getElementById('share-modal').classList.remove('flex');
+        }, 300);
+    }
+
+    function updateSharePrice() {
+        const margin = parseInt(document.getElementById('margin-input').value) || 0;
+        document.getElementById('share-final-price').innerText = shareBase + margin;
+    }
+
+    function copyLink() {
+        showAppToast("Link copied to clipboard!");
+        closeShareModal();
+    }
+
+    function addToCartFromDetails() {
+        if(!currentSelectedProduct) return;
+        
+        const existing = cart.find(i => i.id === currentSelectedProduct.id && i.size === currentSelectedSize);
+        if(existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({
+                ...currentSelectedProduct,
+                size: currentSelectedSize,
+                qty: 1
+            });
+        }
+        
+        updateCartBadge();
+        showAppToast("Added to Cart");
+        closeProductDetails();
+        switchTab('cart');
+    }
+
+    function updateCartBadge() {
+        const badge = document.getElementById('cart-badge');
+        if(cart.length > 0) {
+            badge.innerText = cart.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    function renderCart() {
+        const area = document.getElementById('cart-content-area');
+        const footer = document.getElementById('cart-footer');
+        let html = '';
+        let total = 0;
+
+        if (cart.length === 0) {
+            html = `<div class="p-10 text-center text-gray-500 mt-10">
+                <i class="fas fa-shopping-cart text-5xl mb-4 opacity-20"></i>
+                <p>Your cart is empty.</p>
+                <button onclick="switchTab('home')" class="mt-4 border border-primary text-primary px-6 py-2 rounded font-medium">Browse Catalogs</button>
+            </div>`;
+            footer.classList.add('hidden');
+        } else {
+            html = `<div class="p-4"><h3 class="font-bold text-gray-800 mb-4">Order Items</h3>`;
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                html += `
+                    <div class="flex gap-4 bg-white p-3 rounded border border-gray-100 mb-3">
+                        <img src="${item.image}" class="w-20 h-24 object-cover rounded" alt="img">
+                        <div class="flex-grow">
+                            <p class="text-sm text-gray-800 line-clamp-1 mb-1">${item.title}</p>
+                            <p class="text-xs font-bold text-gray-900 mb-1">${item.brand}</p>
+                            <p class="text-primary font-bold mb-2">₹${item.price}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Size: ${item.size} | Qty: ${item.qty}</span>
+                                <button onclick="removeFromCart(${index})" class="text-red-500 border border-red-200 rounded p-1 w-8 h-8 flex items-center justify-center"><i class="far fa-trash-alt"></i></button>
                             </div>
                         </div>
                     </div>
                 `;
-                grid.innerHTML += card;
             });
+            html += `</div>`;
+            document.getElementById('cart-total-price').innerText = total;
+            footer.classList.remove('hidden');
         }
+        
+        area.innerHTML = html;
+        
+        // Reset checkout UI steps
+        document.getElementById('step-2-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">2</div><span>Address</span>`;
+        document.getElementById('step-2-indicator').classList.remove('text-primary');
+        document.getElementById('step-3-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">3</div><span>Payment</span>`;
+        document.getElementById('step-3-indicator').classList.remove('text-primary');
+        document.getElementById('cart-action-btn').innerText = "CONTINUE";
+        document.getElementById('cart-action-btn').onclick = proceedToAddress;
+    }
 
-        // Auth & UI Logic
-        function toggleAuthModal() {
-            const modal = document.getElementById('auth-modal');
-            modal.classList.toggle('hidden');
-        }
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartBadge();
+        renderCart();
+    }
 
-        function handleMainActionBtn() {
-            if (isLoggedIn) {
-                // If logged in, scroll to discover
-                document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                // If logged out, open auth modal
-                toggleAuthModal();
-            }
-        }
+    // --- CHECKOUT SIMULATION ---
 
-        function updateUIForLoginState(loggedIn, userName = "Reseller") {
-            isLoggedIn = loggedIn;
-            
-            const navDiscover = document.getElementById('nav-discover');
-            const navDashboard = document.getElementById('nav-dashboard');
-            const mobileNavDiscover = document.getElementById('mobile-nav-discover');
-            const mobileNavDashboard = document.getElementById('mobile-nav-dashboard');
-            
-            const discoverSection = document.getElementById('discover');
-            const dashboardSection = document.getElementById('dashboard');
-            
-            const desktopBtn = document.getElementById('auth-btn-desktop');
-            const mobileBtn = document.getElementById('auth-btn-mobile');
-            const heroBtn = document.getElementById('hero-action-btn');
-            
-            if (loggedIn) {
-                // Show protected sections
-                navDiscover.classList.remove('hidden');
-                navDashboard.classList.remove('hidden');
-                mobileNavDiscover.classList.remove('hidden');
-                mobileNavDashboard.classList.remove('hidden');
-                discoverSection.classList.remove('hidden');
-                dashboardSection.classList.remove('hidden');
+    function proceedToAddress() {
+        const area = document.getElementById('cart-content-area');
+        
+        // Update Indicator
+        document.getElementById('step-2-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center mb-1 bg-white"><i class="fas fa-check text-[10px]"></i></div><span>Address</span>`;
+        document.getElementById('step-2-indicator').classList.add('text-primary');
+
+        area.innerHTML = `
+            <div class="p-4 animate-fade-in">
+                <h3 class="font-bold mb-4">Select Address</h3>
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg cursor-pointer flex items-start gap-3">
+                    <input type="radio" checked class="mt-1">
+                    <div>
+                        <p class="font-bold text-sm">Customer Name</p>
+                        <p class="text-xs text-gray-600 mt-1">9451239239<br>V-MART, GORAKHPUR,<br>Uttar Pradesh, 273015</p>
+                    </div>
+                </div>
+                <button class="w-full border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-lg mt-4 font-medium flex items-center justify-center gap-2">
+                    <i class="fas fa-plus"></i> Add New Address
+                </button>
+            </div>
+        `;
+
+        const btn = document.getElementById('cart-action-btn');
+        btn.innerText = "PROCEED TO PAYMENT";
+        btn.onclick = proceedToPayment;
+    }
+
+    function proceedToPayment() {
+        const area = document.getElementById('cart-content-area');
+        
+        // Update Indicator
+        document.getElementById('step-3-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center mb-1 bg-white"><i class="fas fa-check text-[10px]"></i></div><span>Payment</span>`;
+        document.getElementById('step-3-indicator').classList.add('text-primary');
+
+        const total = document.getElementById('cart-total-price').innerText;
+
+        area.innerHTML = `
+            <div class="p-4 animate-fade-in">
+                <div class="bg-green-50 text-green-700 text-xs font-bold p-2 text-center rounded mb-4"><i class="fas fa-shield-alt"></i> 100% PAYMENT SAFETY</div>
+                <h3 class="font-bold mb-3 text-sm text-gray-500">SELECT PAYMENT MODE</h3>
                 
-                // Update buttons
-                desktopBtn.innerText = 'Logout';
-                desktopBtn.onclick = window.logoutUser || function(){ updateUIForLoginState(false); showToast("Logged out"); };
-                
-                mobileBtn.innerText = 'Logout';
-                mobileBtn.onclick = window.logoutUser || function(){ updateUIForLoginState(false); showToast("Logged out"); };
-                
-                heroBtn.innerHTML = 'Browse Catalog <i class="fas fa-arrow-down ml-2"></i>';
-                
-                // Update Profile Name
-                const profileInitials = document.getElementById('profile-initials');
-                const profileNameEl = document.getElementById('profile-name');
-                if(profileInitials) profileInitials.innerText = userName.charAt(0).toUpperCase();
-                if(profileNameEl) profileNameEl.innerText = userName;
+                <div class="space-y-3">
+                    <div class="border rounded-lg p-3 flex items-center justify-between bg-white opacity-50 cursor-not-allowed">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-mobile-alt text-2xl text-orange-500 w-8 text-center"></i>
+                            <div>
+                                <p class="font-bold text-sm">UPI</p>
+                                <p class="text-xs text-gray-500">Currently unavailable</p>
+                            </div>
+                        </div>
+                        <input type="radio" disabled>
+                    </div>
+                    
+                    <div class="border-2 border-primary rounded-lg p-3 flex items-center justify-between bg-pink-50 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-money-bill-wave text-2xl text-green-600 w-8 text-center"></i>
+                            <div>
+                                <p class="font-bold text-sm">Cash on Delivery</p>
+                                <p class="text-xs text-gray-500">Extra ₹40 charge for COD</p>
+                            </div>
+                        </div>
+                        <input type="radio" checked>
+                    </div>
+                </div>
+            </div>
+        `;
 
-            } else {
-                // Hide protected sections
-                navDiscover.classList.add('hidden');
-                navDashboard.classList.add('hidden');
-                mobileNavDiscover.classList.add('hidden');
-                mobileNavDashboard.classList.add('hidden');
-                discoverSection.classList.add('hidden');
-                dashboardSection.classList.add('hidden');
-                
-                // Update buttons
-                desktopBtn.innerText = 'Login / Signup';
-                desktopBtn.onclick = toggleAuthModal;
-                
-                mobileBtn.innerText = 'Login / Signup';
-                mobileBtn.onclick = toggleAuthModal;
-                
-                heroBtn.innerHTML = 'Login to Start Reselling <i class="fas fa-arrow-right ml-2"></i>';
-            }
-        }
+        const btn = document.getElementById('cart-action-btn');
+        document.getElementById('cart-total-price').innerText = parseInt(total) + 40; // add cod fee
+        btn.innerText = "PLACE ORDER";
+        btn.onclick = placeOrder;
+    }
 
-        function simulateLogin(btn) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            setTimeout(() => {
-                toggleAuthModal();
-                btn.innerHTML = originalText;
-                updateUIForLoginState(true, "Mock User");
-                showToast("Login successful! Start exploring products.");
-                document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
-            }, 1000);
-        }
-
-        let currentBasePrice = 0;
-        function openShareModal(basePrice) {
-            currentBasePrice = basePrice;
-            document.getElementById('modal-base-price').innerText = basePrice;
-            updateFinalPrice();
-            document.getElementById('share-modal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('share-modal').classList.add('hidden');
-        }
-
-        function updateFinalPrice() {
-            const margin = parseInt(document.getElementById('margin-input').value) || 0;
-            const finalPrice = currentBasePrice + margin;
-            document.getElementById('modal-final-price').innerText = finalPrice;
-        }
-
-        function copyProductLink() {
-            try {
-                document.execCommand('copy'); 
-                showToast("Product link copied! Share it anywhere.");
-                closeShareModal();
-            } catch (err) {
-                console.error('Failed to copy', err);
-            }
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = message;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            // Ensure UI starts in logged-out state
-            updateUIForLoginState(false);
+    function placeOrder() {
+        const orderId = "ORD" + Math.floor(Math.random() * 100000);
+        const orderTotal = document.getElementById('cart-total-price').innerText;
+        
+        // Save to mock orders
+        orders.push({
+            id: orderId,
+            date: new Date().toLocaleDateString(),
+            items: [...cart],
+            total: orderTotal,
+            status: "Placed"
         });
 
-    </script>
+        // Clear Cart
+        cart = [];
+        updateCartBadge();
+        
+        // Show Success View
+        const area = document.getElementById('cart-content-area');
+        document.getElementById('cart-footer').classList.add('hidden');
+        
+        area.innerHTML = `
+            <div class="h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in mt-10">
+                <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl mb-4">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Order Successful!</h2>
+                <p class="text-gray-500 mb-6">Your order ID is <span class="font-bold">${orderId}</span>. You can track it in the Orders tab.</p>
+                <button onclick="switchTab('orders')" class="bg-primary text-white px-8 py-3 rounded-lg font-bold w-full">VIEW ORDERS</button>
+            </div>
+        `;
+    }
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    function renderOrders() {
+        const list = document.getElementById('orders-list');
+        const emptyMsg = document.getElementById('empty-orders-msg');
+        
+        if(orders.length === 0) {
+            emptyMsg.style.display = 'block';
+            list.innerHTML = '';
+            list.appendChild(emptyMsg);
+            return;
+        }
 
-        // IMPORTANT: Apna rkyshree.in wala Firebase config yahan paste karein 
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+        emptyMsg.style.display = 'none';
+        list.innerHTML = '';
+        
+        // Reverse array to show newest first
+        [...orders].reverse().forEach(o => {
+            const html = `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2">
+                        <span class="text-xs font-bold text-gray-500">Order ${o.id}</span>
+                        <span class="text-xs text-gray-400">${o.date}</span>
+                    </div>
+                    <div class="flex gap-3 mb-3">
+                        <img src="${o.items[0].image}" class="w-16 h-20 object-cover rounded bg-gray-100">
+                        <div>
+                            <p class="text-sm font-medium text-gray-800 line-clamp-1">${o.items[0].title}</p>
+                            <p class="text-xs text-gray-500 mt-1">${o.items.length > 1 ? `+ ${o.items.length - 1} more items` : `Size: ${o.items[0].size}`}</p>
+                            <span class="inline-block mt-2 bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full">${o.status}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-gray-50">
+                        <p class="text-xs text-gray-500">Total Amount</p>
+                        <p class="font-bold text-gray-900">₹${o.total}</p>
+                    </div>
+                </div>
+            `;
+            list.innerHTML += html;
+        });
+    }
+
+    // --- ADMIN LOGIC ---
+
+    function handleAdminSubmit(e) {
+        e.preventDefault();
+        
+        const newProduct = {
+            id: Date.now(),
+            title: document.getElementById('admin-title').value,
+            brand: document.getElementById('admin-brand').value,
+            price: parseInt(document.getElementById('admin-price').value),
+            mrp: parseInt(document.getElementById('admin-price').value) + 300,
+            image: document.getElementById('admin-img').value,
+            sizes: document.getElementById('admin-sizes').value.split(',').map(s => s.trim()),
+            desc: document.getElementById('admin-desc').value
         };
 
-        try {
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
-            const provider = new GoogleAuthProvider();
+        // Add to front of array
+        products.unshift(newProduct);
+        
+        // Reset form
+        e.target.reset();
+        
+        // Update Views
+        updateAdminList();
+        renderProducts(); // Update reseller view behind the scenes
+        
+        alert("Product added successfully! Resellers can see it now.");
+    }
 
-            // Google Login Handle Karna
-            const googleLoginBtn = document.getElementById('google-login-btn');
-            if(googleLoginBtn) {
-                googleLoginBtn.addEventListener('click', async () => {
-                    try {
-                        googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Connecting...';
-                        const result = await signInWithPopup(auth, provider);
-                        const user = result.user;
-                        
-                        document.getElementById('auth-modal').classList.add('hidden');
-                        showToast("Welcome " + (user.displayName || 'Reseller') + "!");
-                        
-                        // Sync UI with Firebase state
-                        updateUIForLoginState(true, user.displayName);
-                        setTimeout(() => {
-                            document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
-                        }, 500);
-                        
-                    } catch (error) {
-                        console.error("Google Login Error:", error);
-                        showToast("Firebase Config is missing. Using Mock Login.");
-                        googleLoginBtn.innerHTML = '<img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-2" alt="Google"> Google';
-                        // Fallback to mock login if firebase fails
-                        simulateLogin(googleLoginBtn); 
-                    }
-                });
-            }
+    function updateAdminList() {
+        const list = document.getElementById('admin-product-list');
+        list.innerHTML = '';
+        products.forEach((p, idx) => {
+            list.innerHTML += `
+                <div class="flex items-center gap-4 border p-3 rounded bg-gray-50">
+                    <img src="${p.image}" class="w-12 h-12 object-cover rounded">
+                    <div class="flex-grow">
+                        <p class="font-bold text-sm truncate">${p.title}</p>
+                        <p class="text-xs text-gray-500">${p.brand} | ₹${p.price}</p>
+                    </div>
+                    <button onclick="deleteAdminProduct(${idx})" class="text-red-500 text-sm"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        });
+    }
 
-            // Global Logout Function
-            window.logoutUser = async () => {
-                try {
-                    await signOut(auth);
-                    updateUIForLoginState(false);
-                    showToast("Logged out successfully");
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } catch(error) {
-                    console.error("Logout error", error);
-                    // Mock logout if firebase fails
-                    updateUIForLoginState(false);
-                    showToast("Logged out");
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }
-
-            // Auth State Change (Check if user is already logged in upon page load)
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    updateUIForLoginState(true, user.displayName);
-                } else {
-                    updateUIForLoginState(false);
-                }
-            });
-
-        } catch (error) {
-            console.error("Firebase Initialization Error. Running in UI-Only Mode.", error);
+    function deleteAdminProduct(idx) {
+        if(confirm("Are you sure you want to delete this catalog?")) {
+            products.splice(idx, 1);
+            updateAdminList();
+            renderProducts();
         }
-    </script>
+    }
+
+    // Initialize the app on load
+    window.onload = init;
+
+</script>
 </body>
 </html>
