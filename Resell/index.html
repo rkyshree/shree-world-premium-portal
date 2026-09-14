@@ -335,7 +335,8 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 <input type="hidden" id="editProductId">
 <input id="productTitleInput" class="input" placeholder="Product Title" required>
 <textarea id="productDescriptionInput" class="input min-h-[90px]" placeholder="Description"></textarea>
-<div class="grid grid-cols-2 gap-3"><input id="productBasePriceInput" type="number" min="0" class="input" placeholder="Base Price" required><input id="productMrpInput" type="number" min="0" class="input" placeholder="MRP"></div>
+<div class="grid grid-cols-2 gap-3"><input id="productBasePriceInput" type="number" min="0" class="input" placeholder="Reseller Price / Base Price" required><input id="productMrpInput" type="number" min="0" class="input" placeholder="MRP"></div>
+<div class="grid grid-cols-2 gap-3"><input id="productDiscountInput" type="number" min="0" max="99" step="0.01" class="input" placeholder="Discount %"><div class="input bg-gray-50 text-gray-500 flex items-center" id="productDiscountPreview">Discount will show here</div></div>
 <input id="productCategoryInput" class="input" placeholder="Category">
 <input id="productImagesInput" class="input" placeholder="Image URLs (comma separated)">
 <input id="productDeliveryInput" class="input" placeholder="Delivery e.g. 3-7 Days">
@@ -564,7 +565,7 @@ function renderProducts(list=allProducts){
     const card=document.createElement("div");card.className="card overflow-hidden";
     card.innerHTML=`<div class="relative"><div class="product-slider hide-scrollbar">${imageHTML}</div>${images.length>1?'<div class="absolute bottom-3 right-3 bg-black/60 text-white px-2.5 py-1 rounded-full text-[10px]">Swipe →</div>':""}</div>
     <div class="p-4"><h3 class="font-extrabold text-lg">${esc(p.title||"Product")}</h3>${p.description?`<p class="text-sm text-gray-500 mt-2">${esc(p.description)}</p>`:""}
-    <div class="flex items-center gap-2 mt-4"><span class="text-2xl font-extrabold text-rose-600">₹${money(p.basePrice)}</span>${p.mrp?`<span class="text-sm text-gray-400 line-through">₹${money(p.mrp)}</span>`:""}</div>
+    <div class="flex items-center gap-2 mt-4 flex-wrap"><span class="text-2xl font-extrabold text-rose-600">₹${money(p.basePrice)}</span>${p.mrp?`<span class="text-sm text-gray-400 line-through">₹${money(p.mrp)}</span>`:""}${Number(p.discountPercent||0)>0?`<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full font-bold">${money(p.discountPercent)}% OFF</span>`:(Number(p.mrp)>Number(p.basePrice)?`<span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full font-bold">${money((1-Number(p.basePrice)/Number(p.mrp))*100)}% OFF</span>`:"")}</div>
     <div class="flex items-center justify-between mt-3"><span class="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full font-bold">🚚 ${esc(p.deliveryTime||"3-7 Days")}</span>${p.category?`<span class="text-xs text-gray-400">${esc(p.category)}</span>`:""}</div>
     <div class="grid grid-cols-2 gap-2 mt-5"><button onclick="openShare('${p.id}')" class="bg-green-500 text-white py-3 rounded-xl font-bold text-sm">WhatsApp</button><button onclick="openOrder('${p.id}')" class="bg-rose-600 text-white py-3 rounded-xl font-bold text-sm">Order</button></div></div>`;
     c.appendChild(card);
@@ -592,7 +593,8 @@ window.calculateProfit=function(){
 window.shareOnWhatsApp=function(){
   if(!selectedProduct)return;const sell=Number(document.getElementById("sellingPrice").value||0),base=Number(selectedProduct.basePrice||0);
   if(sell<=base)return showToast("Selling price must be higher than base price.");
-  const msg=`🛍️ *SHRAYNEX PRODUCT*\n\n*${selectedProduct.title}*\n\n💰 Price: ₹${sell}\n🚚 Delivery: ${selectedProduct.deliveryTime||"3-7 Days"}\n\nInterested? Message me to place your order.\n\n${selectedProduct.images?.[0]||""}`;
+  const discount=Number(selectedProduct.discountPercent||0);const mrp=Number(selectedProduct.mrp||0);
+  const msg=`🛍️ *SHRAYNEX PRODUCT*\n\n*${selectedProduct.title}*\n\n💰 Price: ₹${sell}${mrp>sell?`\n🏷️ MRP: ₹${mrp}${discount?`\n🔥 Discount: ${discount}% OFF`:""}`:""}\n🚚 Delivery: ${selectedProduct.deliveryTime||"3-7 Days"}\n\nInterested? Message me to place your order.\n\n${selectedProduct.images?.[0]||""}`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank","noopener,noreferrer");closeShareModal();
 };
 
@@ -704,7 +706,11 @@ window.openAdminPanel=function(){
 window.closeAdminPanel=()=>document.getElementById("adminPanelModal").classList.remove("active");
 window.refreshAdmin=async function(){
   if(!currentUser||currentUserData?.role!=="admin")return;
-  try{await Promise.all([loadAdminUsers(),loadAdminOrders(),loadAdminProducts(),loadAdminSettings()]);updateAdminStats();renderAdminRecentOrders();renderAdminUsers();renderAdminOrders();renderAdminProducts();renderAdminWalletUsers()}catch(e){console.error(e);showToast("Admin data load failed: "+getFirebaseError(e))}
+  const jobs=[["Users",loadAdminUsers],["Orders",loadAdminOrders],["Products",loadAdminProducts],["Settings",loadAdminSettings]];
+  const results=await Promise.allSettled(jobs.map(x=>x[1]()));
+  results.forEach((r,i)=>{if(r.status==="rejected")console.error("Admin "+jobs[i][0]+" load failed",r.reason)});
+  updateAdminStats();renderAdminRecentOrders();renderAdminUsers();renderAdminOrders();renderAdminProducts();renderAdminWalletUsers();
+  if(results.some(x=>x.status==="rejected"))showToast("Admin data load failed: Firestore Rules permission denied. Check SHRAYNEX Rules.");
 };
 
 async function loadAdminUsers(){
@@ -778,7 +784,7 @@ window.closeUserDetails=()=>document.getElementById("userDetailsModal").classLis
 function renderAdminProducts(){
   const c=document.getElementById("adminProductsList");
   if(!allProducts.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No products. Tap Add Product.</div>';return}
-  c.innerHTML=allProducts.map(p=>`<div class="border rounded-2xl p-3 flex gap-3"><div class="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden shrink-0">${p.images?.[0]?`<img src="${esc(p.images[0])}" class="w-full h-full object-cover">`:'<div class="h-full flex items-center justify-center text-xs text-gray-400">No image</div>'}</div><div class="flex-1 min-w-0"><div class="font-bold truncate">${esc(p.title||"Product")}</div><div class="text-sm font-extrabold text-rose-600 mt-1">₹${money(p.basePrice)}</div><div class="text-[10px] mt-1 ${p.active?"text-green-600":"text-red-600"}">${p.active?"ACTIVE":"HIDDEN"}</div><div class="flex gap-2 mt-2"><button onclick="openProductEditor('${p.id}')" class="border px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="toggleProduct('${p.id}',${!p.active})" class="border px-3 py-1.5 rounded-lg text-xs font-bold">${p.active?"Hide":"Activate"}</button><button onclick="deleteProduct('${p.id}')" class="text-red-600 border border-red-100 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></div></div></div>`).join("");
+  c.innerHTML=allProducts.map(p=>`<div class="border rounded-2xl p-3 flex gap-3"><div class="w-20 h-20 rounded-xl bg-gray-100 overflow-hidden shrink-0">${p.images?.[0]?`<img src="${esc(p.images[0])}" class="w-full h-full object-cover">`:'<div class="h-full flex items-center justify-center text-xs text-gray-400">No image</div>'}</div><div class="flex-1 min-w-0"><div class="font-bold truncate">${esc(p.title||"Product")}</div><div class="text-sm font-extrabold text-rose-600 mt-1">₹${money(p.basePrice)} <span class="text-[10px] text-gray-400 font-semibold">reseller</span></div>${Number(p.mrp)>Number(p.basePrice)?`<div class="text-xs text-gray-400 mt-0.5"><span class="line-through">₹${money(p.mrp)}</span> • ${Number(p.discountPercent||((1-Number(p.basePrice)/Number(p.mrp))*100))>0?money(Number(p.discountPercent||((1-Number(p.basePrice)/Number(p.mrp))*100)))+"% OFF":""}</div>`:""}<div class="text-[10px] mt-1 ${p.active?"text-green-600":"text-red-600"}>${p.active?"ACTIVE":"HIDDEN"}</div><div class="flex gap-2 mt-2"><button onclick="openProductEditor('${p.id}')" class="border px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="toggleProduct('${p.id}',${!p.active})" class="border px-3 py-1.5 rounded-lg text-xs font-bold">${p.active?"Hide":"Activate"}</button><button onclick="deleteProduct('${p.id}')" class="text-red-600 border border-red-100 px-3 py-1.5 rounded-lg text-xs font-bold">Delete</button></div></div></div>`).join("");
 }
 
 window.openProductEditor=function(id=""){
@@ -793,9 +799,21 @@ window.openProductEditor=function(id=""){
   document.getElementById("productImagesInput").value=Array.isArray(p?.images)?p.images.join(", "):"";
   document.getElementById("productDeliveryInput").value=p?.deliveryTime||"3-7 Days";
   document.getElementById("productStockInput").value=p?.stock??"";
+  const autoDiscount=p?.discountPercent??((Number(p?.mrp||0)>0&&Number(p?.basePrice||0)>0)?Math.max(0,Math.round((1-Number(p.basePrice)/Number(p.mrp))*10000)/100):"");
+  document.getElementById("productDiscountInput").value=autoDiscount;
+  updateDiscountPreview();
   document.getElementById("productActiveInput").checked=p?.active!==false;
   document.getElementById("productEditorModal").classList.add("active");
 };
+window.updateDiscountPreview=function(){
+  const mrp=Number(document.getElementById("productMrpInput").value||0);
+  let d=Number(document.getElementById("productDiscountInput").value||0);
+  if(d<0)d=0;if(d>99)d=99;
+  document.getElementById("productDiscountInput").value=d||"";
+  document.getElementById("productDiscountPreview").innerText=mrp>0&&d>0?`Discounted value: ₹${money(mrp*(1-d/100))}`:"Discount will show here";
+};
+document.getElementById("productMrpInput").addEventListener("input",updateDiscountPreview);
+document.getElementById("productDiscountInput").addEventListener("input",updateDiscountPreview);
 window.closeProductEditor=()=>document.getElementById("productEditorModal").classList.remove("active");
 
 window.saveProduct=async function(e){
@@ -806,6 +824,7 @@ window.saveProduct=async function(e){
     description:document.getElementById("productDescriptionInput").value.trim(),
     basePrice:Number(document.getElementById("productBasePriceInput").value||0),
     mrp:Number(document.getElementById("productMrpInput").value||0),
+    discountPercent:Number(document.getElementById("productDiscountInput").value||0),
     category:document.getElementById("productCategoryInput").value.trim(),
     images:document.getElementById("productImagesInput").value.split(",").map(x=>x.trim()).filter(Boolean),
     deliveryTime:document.getElementById("productDeliveryInput").value.trim()||"3-7 Days",
