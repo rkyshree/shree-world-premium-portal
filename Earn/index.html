@@ -729,59 +729,102 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Your provided Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+      authDomain: "rkyshree-2f74b.firebaseapp.com",
+      projectId: "rkyshree-2f74b",
+      storageBucket: "rkyshree-2f74b.firebasestorage.app",
+      messagingSenderId: "354823113610",
+      appId: "1:354823113610:web:cca2d8d5ffa68a8d9c9673",
+      measurementId: "G-ZB0CVF7R6L"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    // Strict Path Environment Variables
+    const envAppId = typeof __app_id !== 'undefined' ? __app_id : 'shraynex-platform';
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    let authUserId = null;
+
     // --- STATE MANAGEMENT ---
     let currentUser = null; // null, 'reseller', 'admin'
-    let resellerProfile = { name: "Reseller", phone: "9451239239" };
+    let resellerProfile = { name: "Reseller", phone: "" };
     let stats = { views: 0, shares: 0 };
     
-    // In-memory product database (simulating backend, with multiple images)
-    let products = [
-        {
-            id: 1,
-            title: "Linen Cotton Floral Embroidered Straight Kurti - Grey & Wine",
-            brand: "The DuoNext",
-            price: 699,
-            mrp: 865,
-            images: [
-                "https://placehold.co/600x800/5e5c64/ffffff?text=Main+Photo",
-                "https://placehold.co/600x800/7a7880/ffffff?text=Side+Angle",
-                "https://placehold.co/600x800/8d8a93/ffffff?text=Back+Angle",
-                "https://placehold.co/600x800/a5a2ab/ffffff?text=Fabric+Detail"
-            ],
-            sizes: ["L", "M", "XL", "2XL"],
-            desc: "Elegant and comfortable Linen Cotton Kurti featuring delicate white floral embroidery, a stylish V-neck with pin-tuck detailing, and a straight-cut silhouette.\n\nPerfect for daily wear, office wear, and casual occasions.\n\nKey Features:\n- Premium Linen Cotton Blend\n- Inner Lining attached\n- Soft and breathable\n- Machine Washable"
-        },
-        {
-            id: 2,
-            title: "Look Denim Dress with Belt",
-            brand: "JMD Collections",
-            price: 625,
-            mrp: 799,
-            images: [
-                "https://placehold.co/600x800/1e293b/ffffff?text=Denim+Dress",
-                "https://placehold.co/600x800/334155/ffffff?text=Belt+Detail"
-            ],
-            sizes: ["S", "M", "L"],
-            desc: "Trendy denim dress with a stylish brown belt. Perfect for casual outings and parties.\n\nMaterial: Washed Denim\nFit: Regular Fit\nIncludes: 1 Dress, 1 PU Leather Belt"
-        }
-    ];
-
+    let products = [];
     let cart = [];
-    let orders = []; // Shared array for reseller and admin simulation
+    let orders = []; 
     let currentSelectedProduct = null;
     let currentSelectedSize = null;
     let currentImageIndex = 0;
 
-    // --- NAVIGATION & VIEWS ---
-    
-    function init() {
-        renderProducts();
-        updateAdminProductList();
-        updateAdminOrdersList();
+    // Realtime Listeners Unsubscribers
+    let unsubscribeProducts = null;
+    let unsubscribeOrders = null;
+
+    // Initialize Auth and Listeners on load
+    async function initFirebase() {
+        try {
+            if (initialAuthToken) {
+                await signInWithCustomToken(auth, initialAuthToken);
+            } else {
+                await signInAnonymously(auth);
+            }
+            authUserId = auth.currentUser.uid;
+            setupRealtimeListeners();
+        } catch (error) {
+            console.error("Firebase Auth Error:", error);
+            showAppToast("Connection error. Features may be limited.");
+        }
     }
 
-    function toggleAuthModal(isAdmin = false) {
+    function setupRealtimeListeners() {
+        if (!authUserId) return;
+
+        const productsRef = collection(db, 'artifacts', envAppId, 'public', 'data', 'products');
+        unsubscribeProducts = onSnapshot(productsRef, (snapshot) => {
+            products = [];
+            snapshot.forEach((doc) => {
+                products.push({ id: doc.id, ...doc.data() });
+            });
+            // Sort by newest first (descending timestamp if available, or just reverse)
+            products.reverse();
+            
+            renderProducts();
+            if (currentUser === 'admin') updateAdminProductList();
+        }, (error) => {
+            console.error("Error fetching products: ", error);
+        });
+
+        const ordersRef = collection(db, 'artifacts', envAppId, 'public', 'data', 'orders');
+        unsubscribeOrders = onSnapshot(ordersRef, (snapshot) => {
+            const allOrders = [];
+            snapshot.forEach((doc) => {
+                allOrders.push({ id: doc.id, ...doc.data() });
+            });
+            
+            // Filter in memory based on role (No complex where queries per rules)
+            if (currentUser === 'admin') {
+                orders = allOrders;
+                updateAdminOrdersList();
+            } else if (currentUser === 'reseller') {
+                orders = allOrders.filter(o => o.resellerId === authUserId);
+                renderOrders();
+            }
+        }, (error) => {
+            console.error("Error fetching orders: ", error);
+        });
+    }
+
+    window.toggleAuthModal = function(isAdmin = false) {
         const modal = document.getElementById('auth-modal');
         const passField = document.getElementById('auth-input-pass');
         const title = document.getElementById('auth-title');
@@ -794,34 +837,40 @@
                 desc.innerText = "Enter credentials to manage platform.";
                 idField.placeholder = "Admin ID";
                 passField.classList.remove('hidden');
-                document.getElementById('auth-submit-btn').onclick = () => processLogin('admin');
+                document.getElementById('auth-submit-btn').onclick = () => window.processLogin('admin');
             } else {
                 title.innerText = "Login / Signup";
                 desc.innerText = "Enter phone number to access SHRAYNEX reselling tools.";
                 idField.placeholder = "10 Digit Mobile Number";
                 passField.classList.add('hidden');
-                document.getElementById('auth-submit-btn').onclick = () => processLogin('reseller');
+                document.getElementById('auth-submit-btn').onclick = () => window.processLogin('reseller');
             }
         } else {
             modal.classList.add('hidden');
         }
     }
 
-    function showAdminLogin() { toggleAuthModal(true); }
+    window.showAdminLogin = function() { window.toggleAuthModal(true); }
 
-    function processLogin(type) {
+    window.processLogin = function(type) {
         const inputId = document.getElementById('auth-input-id').value;
-        if(!inputId) return showAppToast("Please enter details");
+        if(!inputId) return window.showAppToast("Please enter details");
 
-        toggleAuthModal();
+        window.toggleAuthModal();
         
         if (type === 'admin') {
+            const pass = document.getElementById('auth-input-pass').value;
+            if (pass !== 'admin123') { // Simple mock admin check
+                window.showAppToast("Incorrect Admin Password");
+                return;
+            }
             currentUser = 'admin';
             document.getElementById('landing-page').classList.add('hidden');
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('admin-panel').classList.remove('hidden');
             document.getElementById('admin-panel').classList.add('flex');
             updateAdminOrdersList();
+            updateAdminProductList();
         } else {
             currentUser = 'reseller';
             resellerProfile.phone = inputId;
@@ -831,7 +880,15 @@
             document.getElementById('app-view').classList.remove('hidden');
             
             updateProfileUI();
-            switchTab('home');
+            window.switchTab('home');
+            
+            // Re-trigger order filter for newly logged in reseller
+            if(unsubscribeOrders) {
+                // Force a re-render of orders for this user by simulating a refresh
+                const currentOrders = [...orders]; 
+                orders = currentOrders; // In real life, the next snapshot handles it, but this forces immediate UI update
+                renderOrders();
+            }
         }
     }
 
@@ -843,7 +900,7 @@
         document.getElementById('acc-initial').innerText = initial;
     }
 
-    function openPageModal(title) {
+    window.openPageModal = function(title) {
         document.getElementById('page-modal-title').innerText = title;
         const content = document.getElementById('page-modal-content');
         
@@ -854,6 +911,8 @@
                     <p class="mb-4">Our mission is to make entrepreneurship accessible to everyone by handling sourcing, quality checks, and delivery, so you can focus purely on sharing and earning.</p>`;
         } else if(title.includes('Terms')) {
             html = `<h3 class="font-bold mb-2">1. Introduction</h3><p class="mb-4">By using the SHRAYNEX App, you agree to these terms...</p><h3 class="font-bold mb-2">2. Reseller Margins</h3><p>Margins are credited to your bank account 7 days after successful product delivery...</p>`;
+        } else if(title.includes('Privacy Policy')) {
+             html = `<h3 class="font-bold mb-2">Your Data Privacy</h3><p class="mb-4">We respect your privacy. Your personal information, including bank details, are securely stored and encrypted.</p>`;
         } else if(title.includes('Return')) {
              html = `<h3 class="font-bold mb-2">Easy 7-Day Returns</h3><p class="mb-4">We offer a no-questions-asked return policy within 7 days of delivery. The item must be unused and in original packaging.</p><h3 class="font-bold mb-2">Shipping</h3><p>Standard delivery takes 3-5 business days across India.</p>`;
         } else {
@@ -865,106 +924,104 @@
         document.getElementById('page-modal').classList.add('flex');
     }
 
-    function saveProfile() {
+    window.saveProfile = function() {
         const newName = document.getElementById('edit-name-input').value;
         if(newName.trim() !== '') {
             resellerProfile.name = newName;
             updateProfileUI();
-            closeModal('edit-profile-modal');
-            showAppToast("Profile updated successfully");
+            window.closeModal('edit-profile-modal');
+            window.showAppToast("Profile updated successfully");
         }
     }
 
-    function logoutUser() {
+    window.logoutUser = function() {
         currentUser = null;
         document.getElementById('app-view').classList.add('hidden');
         document.getElementById('landing-page').classList.remove('hidden');
+        window.scrollTo(0,0);
     }
 
-    function logoutAdmin() {
+    window.logoutAdmin = function() {
         currentUser = null;
         document.getElementById('admin-panel').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('flex');
         document.getElementById('landing-page').classList.remove('hidden');
+        window.scrollTo(0,0);
     }
 
-    function logoutAdmin() {
-        currentUser = null;
-        document.getElementById('admin-panel').classList.add('hidden');
-        document.getElementById('landing-page').classList.remove('hidden');
-    }
-
-    // --- APP SPECIFIC LOGIC ---
-
-    function switchTab(tabId) {
-        // Hide all tabs
+    window.switchTab = function(tabId) {
         ['home', 'brands', 'orders', 'account'].forEach(t => {
             document.getElementById(`tab-${t}`).classList.add('hidden');
             document.getElementById(`nav-btn-${t}`).classList.replace('text-primary', 'text-gray-400');
         });
         
-        // Handle Cart view (which is an overlay, not a main tab)
         if(tabId === 'cart') {
             document.getElementById('cart-view').classList.remove('hidden');
             document.getElementById('cart-view').classList.add('flex');
             renderCart();
-            return; // Don't change bottom nav state
+            return; 
         } else {
             document.getElementById('cart-view').classList.add('hidden');
             document.getElementById('cart-view').classList.remove('flex');
         }
 
-        // Show selected tab
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
         document.getElementById(`nav-btn-${tabId}`).classList.replace('text-gray-400', 'text-primary');
         
         if(tabId === 'orders') renderOrders();
     }
 
-    function showAppToast(msg) {
+    window.showAppToast = function(msg) {
         const toast = document.getElementById('app-toast');
         toast.innerText = msg;
         toast.classList.remove('opacity-0', 'pointer-events-none');
         setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2000);
     }
 
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-    // --- PRODUCT & CART LOGIC ---
+    window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); }
+    window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); }
 
     function renderProducts() {
         const feed = document.getElementById('product-feed');
         feed.innerHTML = '';
         
+        if(products.length === 0) {
+            feed.innerHTML = '<p class="text-center text-gray-500 py-10">No products available. Admin will upload soon.</p>';
+            return;
+        }
+
         products.forEach(p => {
             const el = document.createElement('div');
             el.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden";
+            
+            // Ensure backwards compatibility if old data has only 1 image
+            const imagesArray = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : ["https://placehold.co/600x800"]);
+            
             el.innerHTML = `
                 <div class="flex items-center gap-3 p-4 border-b border-gray-50 bg-white">
                     <div class="w-10 h-10 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg flex items-center justify-center font-bold text-primary border border-pink-200">
-                        ${p.brand.substring(0,2).toUpperCase()}
+                        ${(p.brand || 'BN').substring(0,2).toUpperCase()}
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm text-gray-900">${p.brand}</h4>
+                        <h4 class="font-bold text-sm text-gray-900">${p.brand || 'SHRAYNEX'}</h4>
                         <p class="text-[10px] text-gray-500 tracking-wide uppercase mt-0.5">Verified Supplier <i class="fas fa-check-circle text-blue-500"></i></p>
                     </div>
                 </div>
-                <div class="w-full aspect-square bg-gray-100 relative cursor-pointer group" onclick="openProductDetails(${p.id})">
-                    <img src="${p.images[0]}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
-                    ${p.images.length > 1 ? `<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full"><i class="far fa-images"></i> 1/${p.images.length}</div>` : ''}
+                <div class="w-full aspect-square bg-gray-100 relative cursor-pointer group" onclick="window.openProductDetails('${p.id}')">
+                    <img src="${imagesArray[0]}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                    ${imagesArray.length > 1 ? `<div class="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full"><i class="far fa-images"></i> 1/${imagesArray.length}</div>` : ''}
                 </div>
                 <div class="p-4">
-                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2 cursor-pointer leading-tight" onclick="openProductDetails(${p.id})">${p.title}</p>
+                    <p class="text-sm font-medium text-gray-800 line-clamp-2 mb-2 cursor-pointer leading-tight" onclick="window.openProductDetails('${p.id}')">${p.title}</p>
                     <div class="flex items-center gap-2 mb-4">
                         <span class="text-lg font-extrabold text-gray-900">₹${p.price}</span>
                         <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">Free Delivery</span>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="openProductDetails(${p.id})" class="bg-gray-100 py-2.5 rounded-xl font-bold text-sm text-gray-700">
+                        <button onclick="window.openProductDetails('${p.id}')" class="bg-gray-100 py-2.5 rounded-xl font-bold text-sm text-gray-700">
                             View Details
                         </button>
-                        <button onclick="openShareModal(${p.id})" class="bg-[#25D366] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1 shadow-sm hover:shadow-md transition">
+                        <button onclick="window.openShareModal('${p.id}')" class="bg-[#25D366] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-1 shadow-sm hover:shadow-md transition">
                              <i class="fab fa-whatsapp text-lg"></i> Share
                         </button>
                     </div>
@@ -974,7 +1031,7 @@
         });
     }
 
-    function updateImageSlider() {
+    window.updateImageSlider = function() {
         const slider = document.getElementById('pd-image-slider');
         const dots = document.getElementById('pd-slider-dots');
         slider.style.transform = `translateX(-${currentImageIndex * 100}%)`;
@@ -990,24 +1047,25 @@
         });
     }
 
-    function openProductDetails(id) {
+    window.openProductDetails = function(id) {
         const p = products.find(x => x.id === id);
         if(!p) return;
         currentSelectedProduct = p;
-        currentSelectedSize = p.sizes[0]; // default
+        
+        const safeSizes = p.sizes || ["Free Size"];
+        currentSelectedSize = safeSizes[0]; 
         currentImageIndex = 0;
         
-        // Track View
         stats.views++;
         document.getElementById('stats-views').innerText = stats.views;
 
         document.getElementById('pd-title-header').innerText = p.title;
         document.getElementById('pd-title').innerText = p.title;
         document.getElementById('pd-price').innerText = p.price;
-        document.getElementById('pd-mrp').innerText = p.mrp;
-        document.getElementById('pd-brand-name').innerHTML = `${p.brand} <i class="fas fa-check-circle text-blue-500 text-xs"></i>`;
-        document.getElementById('pd-brand-icon').innerText = p.brand.substring(0,2).toUpperCase();
-        document.getElementById('pd-desc').innerText = p.desc;
+        document.getElementById('pd-mrp').innerText = p.mrp || (parseInt(p.price) + 200);
+        document.getElementById('pd-brand-name').innerHTML = `${p.brand || 'SHRAYNEX'} <i class="fas fa-check-circle text-blue-500 text-xs"></i>`;
+        document.getElementById('pd-brand-icon').innerText = (p.brand || 'SH').substring(0,2).toUpperCase();
+        document.getElementById('pd-desc').innerText = p.desc || 'Best quality product.';
 
         // Setup Images
         const slider = document.getElementById('pd-image-slider');
@@ -1015,17 +1073,17 @@
         slider.innerHTML = '';
         dots.innerHTML = '';
         
-        p.images.forEach((imgUrl, idx) => {
-            // Slider Image
+        const imagesArray = Array.isArray(p.images) ? p.images : (p.image ? [p.image] : ["https://placehold.co/600x800"]);
+
+        imagesArray.forEach((imgUrl, idx) => {
             const imgDiv = document.createElement('div');
-            imgDiv.className = 'min-w-full h-full';
+            imgDiv.className = 'min-w-full h-full shrink-0'; // Ensure flex child doesn't shrink
             imgDiv.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
             slider.appendChild(imgDiv);
             
-            // Dot
             const dot = document.createElement('button');
             dot.className = `h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'w-4 bg-white' : 'w-2 bg-white/50'}`;
-            dot.onclick = (e) => { e.stopPropagation(); currentImageIndex = idx; updateImageSlider(); };
+            dot.onclick = (e) => { e.stopPropagation(); currentImageIndex = idx; window.updateImageSlider(); };
             dots.appendChild(dot);
         });
         
@@ -1034,19 +1092,19 @@
         slider.ontouchstart = e => startX = e.touches[0].clientX;
         slider.ontouchend = e => {
             let endX = e.changedTouches[0].clientX;
-            if(startX - endX > 50 && currentImageIndex < p.images.length -1) currentImageIndex++;
+            if(startX - endX > 50 && currentImageIndex < imagesArray.length -1) currentImageIndex++;
             else if(endX - startX > 50 && currentImageIndex > 0) currentImageIndex--;
-            updateImageSlider();
+            window.updateImageSlider();
         };
 
         const sizesContainer = document.getElementById('pd-sizes');
         sizesContainer.innerHTML = '';
-        p.sizes.forEach(size => {
+        safeSizes.forEach(size => {
             const btn = document.createElement('button');
             const isSelected = size === currentSelectedSize;
             btn.className = `w-12 h-12 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-colors ${isSelected ? 'border-primary bg-primary/5 text-primary' : 'border-gray-200 text-gray-600 bg-white'}`;
             btn.innerText = size;
-            btn.onclick = () => selectSize(size, btn);
+            btn.onclick = () => window.selectSize(size, btn);
             sizesContainer.appendChild(btn);
         });
 
@@ -1054,7 +1112,12 @@
         document.getElementById('product-details-view').classList.add('flex');
     }
 
-    function selectSize(size, btnEl) {
+    window.closeProductDetails = function() {
+        document.getElementById('product-details-view').classList.add('hidden');
+        document.getElementById('product-details-view').classList.remove('flex');
+    }
+
+    window.selectSize = function(size, btnEl) {
         currentSelectedSize = size;
         const container = document.getElementById('pd-sizes');
         Array.from(container.children).forEach(c => {
@@ -1065,68 +1128,20 @@
         btnEl.classList.add('border-primary', 'bg-primary/5', 'text-primary');
     }
 
-    function openProductDetails(id) {
-        const p = products.find(x => x.id === id);
-        if(!p) return;
-        currentSelectedProduct = p;
-        currentSelectedSize = p.sizes[0]; // default
-
-        document.getElementById('pd-title-header').innerText = p.title;
-        document.getElementById('pd-title').innerText = p.title;
-        document.getElementById('pd-image').src = p.image;
-        document.getElementById('pd-price').innerText = p.price;
-        document.getElementById('pd-mrp').innerText = p.mrp || (p.price + 200);
-        document.getElementById('pd-brand-name').innerHTML = `${p.brand} <i class="fas fa-check-circle text-primary text-[10px]"></i>`;
-        document.getElementById('pd-brand-icon').innerText = p.brand.substring(0,2).toUpperCase();
-        document.getElementById('pd-desc').innerText = p.desc;
-
-        const sizesContainer = document.getElementById('pd-sizes');
-        sizesContainer.innerHTML = '';
-        p.sizes.forEach(size => {
-            const btn = document.createElement('button');
-            const isSelected = size === currentSelectedSize;
-            btn.className = `w-10 h-10 rounded-full border flex items-center justify-center text-sm font-medium ${isSelected ? 'border-primary text-primary' : 'border-gray-300 text-gray-600'}`;
-            btn.innerText = size;
-            btn.onclick = () => selectSize(size, btn);
-            sizesContainer.appendChild(btn);
-        });
-
-        document.getElementById('product-details-view').classList.remove('hidden');
-        document.getElementById('product-details-view').classList.add('flex');
-    }
-
-    function closeProductDetails() {
-        document.getElementById('product-details-view').classList.add('hidden');
-        document.getElementById('product-details-view').classList.remove('flex');
-    }
-
-    function selectSize(size, btnEl) {
-        currentSelectedSize = size;
-        const container = document.getElementById('pd-sizes');
-        Array.from(container.children).forEach(c => {
-            c.classList.remove('border-primary', 'text-primary');
-            c.classList.add('border-gray-300', 'text-gray-600');
-        });
-        btnEl.classList.remove('border-gray-300', 'text-gray-600');
-        btnEl.classList.add('border-primary', 'text-primary');
-    }
-
     let shareBase = 0;
-    function openShareModal(id = null) {
+    window.openShareModal = function(id = null) {
         const p = id ? products.find(x => x.id === id) : currentSelectedProduct;
         if(!p) return;
         
-        currentSelectedProduct = p; // Ensure this is set if called from list
-        shareBase = p.price;
+        currentSelectedProduct = p; 
+        shareBase = parseInt(p.price);
         document.getElementById('share-base-price').innerText = shareBase;
         
-        // Auto calculate a suggested margin (e.g. 15%)
         let suggestedMargin = Math.round(shareBase * 0.15);
-        // Round to nearest 10
         suggestedMargin = Math.ceil(suggestedMargin / 10) * 10;
         
         document.getElementById('margin-input').value = suggestedMargin;
-        updateSharePrice();
+        window.updateSharePrice();
         
         document.getElementById('share-modal').classList.remove('hidden');
         document.getElementById('share-modal').classList.add('flex');
@@ -1134,43 +1149,47 @@
             document.getElementById('share-sheet').classList.add('active');
         }, 10);
     }
+    
+    window.closeShareModal = function() {
+        document.getElementById('share-sheet').classList.remove('active');
+        setTimeout(() => {
+            document.getElementById('share-modal').classList.add('hidden');
+            document.getElementById('share-modal').classList.remove('flex');
+        }, 300);
+    }
 
-    function updateSharePrice() {
+    window.updateSharePrice = function() {
         const margin = parseInt(document.getElementById('margin-input').value) || 0;
         document.getElementById('share-final-price').innerText = shareBase + margin;
     }
 
-    function executeWhatsAppShare() {
+    window.executeWhatsAppShare = function() {
         if(!currentSelectedProduct) return;
         
-        // Track share stat
         stats.shares++;
         document.getElementById('stats-shared').innerText = stats.shares;
         
         const finalPrice = document.getElementById('share-final-price').innerText;
-        shareToWhatsApp(currentSelectedProduct, finalPrice);
-        closeShareModal();
+        window.shareToWhatsApp(currentSelectedProduct, finalPrice);
+        window.closeShareModal();
     }
     
-    function shareDirectlyToWhatsApp() {
+    window.shareDirectlyToWhatsApp = function() {
         if(!currentSelectedProduct) return;
-        // Share with base price + default 100 margin if direct share
-        const price = currentSelectedProduct.price + 100;
-        shareToWhatsApp(currentSelectedProduct, price);
+        const price = parseInt(currentSelectedProduct.price) + 100; // Default flat 100 margin on direct share
+        window.shareToWhatsApp(currentSelectedProduct, price);
     }
 
-    function shareToWhatsApp(product, customerPrice) {
-        // Construct the message text
+    window.shareToWhatsApp = function(product, customerPrice) {
         let text = `*${product.title}*\n\n`;
         text += `✨ *Best Quality Assured*\n`;
         text += `💰 Price: *₹${customerPrice}* (Free Delivery!)\n\n`;
-        text += `Available Sizes: ${product.sizes.join(', ')}\n\n`;
-        text += `*Description:*\n${product.desc.substring(0, 150)}...\n\n`;
+        const safeSizes = product.sizes || ["Free Size"];
+        text += `Available Sizes: ${safeSizes.join(', ')}\n\n`;
+        text += `*Description:*\n${(product.desc||'').substring(0, 150)}...\n\n`;
         text += `Click to view images and place order with me!`;
 
         const encodedText = encodeURIComponent(text);
-        
-        // Check if device is mobile or desktop
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         let whatsappUrl = '';
@@ -1180,12 +1199,11 @@
             whatsappUrl = `https://web.whatsapp.com/send?text=${encodedText}`;
         }
 
-        // Open WhatsApp intent
         window.open(whatsappUrl, '_blank');
-        showAppToast("Opening WhatsApp...");
+        window.showAppToast("Opening WhatsApp...");
     }
 
-    function addToCartFromDetails() {
+    window.addToCartFromDetails = function() {
         if(!currentSelectedProduct) return;
         
         const existing = cart.find(i => i.id === currentSelectedProduct.id && i.size === currentSelectedSize);
@@ -1200,9 +1218,9 @@
         }
         
         updateCartBadge();
-        showAppToast("Added to Cart");
-        closeProductDetails();
-        switchTab('cart');
+        window.showAppToast("Added to Cart");
+        window.closeProductDetails();
+        window.switchTab('cart');
     }
 
     function updateCartBadge() {
@@ -1225,12 +1243,16 @@
             html = `<div class="p-10 text-center text-gray-500 mt-10">
                 <i class="fas fa-shopping-cart text-5xl mb-4 opacity-20"></i>
                 <p>Your cart is empty.</p>
+            </div>`;
+            footer.classList.add('hidden');
+        } else {
             html = `<div class="p-4"><h3 class="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wide border-b pb-2">Order Items</h3>`;
             cart.forEach((item, index) => {
                 total += item.price * item.qty;
+                const img = Array.isArray(item.images) ? item.images[0] : (item.image || "https://placehold.co/600x800");
                 html += `
                     <div class="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 mb-3 shadow-sm">
-                        <img src="${item.images[0]}" class="w-20 h-24 object-cover rounded-lg bg-gray-50 border border-gray-100" alt="img">
+                        <img src="${img}" class="w-20 h-24 object-cover rounded-lg bg-gray-50 border border-gray-100" alt="img">
                         <div class="flex-grow flex flex-col justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-800 line-clamp-2 leading-snug mb-1">${item.title}</p>
@@ -1241,7 +1263,7 @@
                                     <p class="text-primary font-bold text-lg leading-none mb-1">₹${item.price}</p>
                                     <span class="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Size: ${item.size} | Qty: ${item.qty}</span>
                                 </div>
-                                <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2"><i class="far fa-trash-alt text-lg"></i></button>
+                                <button onclick="window.removeFromCart(${index})" class="text-gray-400 hover:text-red-500 p-2"><i class="far fa-trash-alt text-lg"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1254,27 +1276,22 @@
         
         area.innerHTML = html;
         
-        // Reset checkout UI steps
         document.getElementById('step-2-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">2</div><span>Address</span>`;
         document.getElementById('step-2-indicator').classList.remove('text-primary');
         document.getElementById('step-3-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1 bg-white">3</div><span>Payment</span>`;
         document.getElementById('step-3-indicator').classList.remove('text-primary');
         document.getElementById('cart-action-btn').innerText = "CONTINUE";
-        document.getElementById('cart-action-btn').onclick = proceedToAddress;
+        document.getElementById('cart-action-btn').onclick = window.proceedToAddress;
     }
 
-    function removeFromCart(index) {
+    window.removeFromCart = function(index) {
         cart.splice(index, 1);
         updateCartBadge();
         renderCart();
     }
 
-    // --- CHECKOUT SIMULATION ---
-
-    function proceedToAddress() {
+    window.proceedToAddress = function() {
         const area = document.getElementById('cart-content-area');
-        
-        // Update Indicator
         document.getElementById('step-2-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center mb-1 bg-white"><i class="fas fa-check text-[10px]"></i></div><span>Address</span>`;
         document.getElementById('step-2-indicator').classList.add('text-primary');
 
@@ -1284,8 +1301,8 @@
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg cursor-pointer flex items-start gap-3">
                     <input type="radio" checked class="mt-1">
                     <div>
-                        <p class="font-bold text-sm">Customer Name</p>
-                        <p class="text-xs text-gray-600 mt-1">9451239239<br>V-MART, GORAKHPUR,<br>Uttar Pradesh, 273015</p>
+                        <p class="font-bold text-sm">${resellerProfile.name}</p>
+                        <p class="text-xs text-gray-600 mt-1">${resellerProfile.phone}<br>V-MART, GORAKHPUR,<br>Uttar Pradesh, 273013</p>
                     </div>
                 </div>
                 <button class="w-full border-2 border-dashed border-gray-300 text-gray-500 py-3 rounded-lg mt-4 font-medium flex items-center justify-center gap-2">
@@ -1296,17 +1313,15 @@
 
         const btn = document.getElementById('cart-action-btn');
         btn.innerText = "PROCEED TO PAYMENT";
-        btn.onclick = proceedToPayment;
+        btn.onclick = window.proceedToPayment;
     }
 
-    function proceedToPayment() {
+    window.proceedToPayment = function() {
         const area = document.getElementById('cart-content-area');
-        
-        // Update Indicator
         document.getElementById('step-3-indicator').innerHTML = `<div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center mb-1 bg-white"><i class="fas fa-check text-[10px]"></i></div><span>Payment</span>`;
         document.getElementById('step-3-indicator').classList.add('text-primary');
 
-        const total = document.getElementById('cart-total-price').innerText;
+        const total = parseInt(document.getElementById('cart-total-price').innerText);
 
         area.innerHTML = `
             <div class="p-4 animate-fade-in">
@@ -1340,52 +1355,74 @@
         `;
 
         const btn = document.getElementById('cart-action-btn');
-        document.getElementById('cart-total-price').innerText = parseInt(total) + 40; // add cod fee
+        document.getElementById('cart-total-price').innerText = total + 40; 
         btn.innerText = "PLACE ORDER";
-        btn.onclick = placeOrder;
+        btn.onclick = window.placeOrder;
     }
 
-    function placeOrder() {
-        const orderId = "ORD" + Math.floor(Math.random() * 100000);
+    window.placeOrder = async function() {
+        if (!authUserId) {
+            window.showAppToast("Error: Not fully logged in.");
+            return;
+        }
+
+        const btn = document.getElementById('cart-action-btn');
+        btn.innerText = "PROCESSING...";
+        btn.disabled = true;
+
         const orderTotal = document.getElementById('cart-total-price').innerText;
         
-        // Save to mock orders
-        orders.push({
-            id: orderId,
-            date: new Date().toLocaleDateString(),
-            items: [...cart],
-            total: orderTotal,
-            status: "Placed"
-        });
+        try {
+            // Write to Firestore Order Collection
+            const ordersRef = collection(db, 'artifacts', envAppId, 'public', 'data', 'orders');
+            const docRef = await addDoc(ordersRef, {
+                resellerId: authUserId,
+                resellerName: resellerProfile.name,
+                resellerPhone: resellerProfile.phone,
+                date: new Date().toLocaleDateString(),
+                timestamp: Date.now(),
+                items: cart,
+                total: parseInt(orderTotal),
+                status: "Placed"
+            });
 
-        // Clear Cart
-        cart = [];
-        updateCartBadge();
-        
-        // Show Success View
-        const area = document.getElementById('cart-content-area');
-        document.getElementById('cart-footer').classList.add('hidden');
-        
-        area.innerHTML = `
-            <div class="h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in mt-10">
-                <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner">
-                    <i class="fas fa-check"></i>
+            // Clear Cart
+            cart = [];
+            updateCartBadge();
+            
+            // Show Success View
+            const area = document.getElementById('cart-content-area');
+            document.getElementById('cart-footer').classList.add('hidden');
+            
+            area.innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center p-6 text-center animate-fade-in mt-10">
+                    <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h2>
+                    <p class="text-gray-500 mb-8 text-sm">Your order ID is <span class="font-bold text-gray-800">#${docRef.id.substring(0,6).toUpperCase()}</span>.<br>Admin will verify and process it shortly.</p>
+                    <button onclick="window.switchTab('orders')" class="bg-primary text-white px-8 py-3.5 rounded-xl font-bold w-full shadow-lg">VIEW MY ORDERS</button>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h2>
-                <p class="text-gray-500 mb-8 text-sm">Your order ID is <span class="font-bold text-gray-800">${orderId}</span>.<br>Admin will verify and process it shortly.</p>
-                <button onclick="switchTab('orders')" class="bg-primary text-white px-8 py-3.5 rounded-xl font-bold w-full shadow-lg">VIEW MY ORDERS</button>
-            </div>
-        `;
-        
-        // Update admin view immediately if running in same session
-        updateAdminOrdersList();
+            `;
+        } catch (e) {
+            console.error("Error placing order:", e);
+            window.showAppToast("Failed to place order.");
+            btn.innerText = "PLACE ORDER";
+            btn.disabled = false;
+        }
     }
 
     function renderOrders() {
         const list = document.getElementById('orders-list');
         const emptyMsg = document.getElementById('empty-orders-msg');
         
-        if(orders.length === 0) {
+        // Filter orders for the current user
+        let myOrders = orders;
+        if(currentUser === 'reseller') {
+             myOrders = orders.filter(o => o.resellerId === authUserId);
+        }
+
+        if(myOrders.length === 0) {
             emptyMsg.style.display = 'block';
             list.innerHTML = '';
             list.appendChild(emptyMsg);
@@ -1395,23 +1432,24 @@
         emptyMsg.style.display = 'none';
         list.innerHTML = '';
         
-        // Reverse array to show newest first
-        [...orders].reverse().forEach(o => {
-            // Determine status color
+        // Sort descending
+        myOrders.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).forEach(o => {
             let statusColor = 'bg-yellow-100 text-yellow-700';
             let icon = 'fa-clock';
             if(o.status === 'Accepted') { statusColor = 'bg-blue-100 text-blue-700'; icon = 'fa-check-circle'; }
             if(o.status === 'Shipped') { statusColor = 'bg-green-100 text-green-700'; icon = 'fa-truck'; }
             if(o.status === 'Cancelled') { statusColor = 'bg-red-100 text-red-700'; icon = 'fa-times-circle'; }
 
+            const img = Array.isArray(o.items[0].images) ? o.items[0].images[0] : (o.items[0].image || "https://placehold.co/600x800");
+
             const html = `
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative overflow-hidden">
                     <div class="flex justify-between items-center mb-3 border-b border-gray-50 pb-2">
-                        <span class="text-xs font-bold text-gray-600">ID: ${o.id}</span>
+                        <span class="text-xs font-bold text-gray-600">ID: #${o.id.substring(0,6).toUpperCase()}</span>
                         <span class="text-[10px] text-gray-400 font-medium">${o.date}</span>
                     </div>
                     <div class="flex gap-4 mb-4">
-                        <img src="${o.items[0].images[0]}" class="w-16 h-20 object-cover rounded-lg border border-gray-100">
+                        <img src="${img}" class="w-16 h-20 object-cover rounded-lg border border-gray-100">
                         <div class="flex-grow">
                             <p class="text-sm font-medium text-gray-800 line-clamp-2 leading-snug">${o.items[0].title}</p>
                             <p class="text-xs text-gray-500 mt-1">${o.items.length > 1 ? `+ ${o.items.length - 1} more items` : `Size: ${o.items[0].size}`}</p>
@@ -1430,9 +1468,7 @@
         });
     }
 
-    // --- ADMIN LOGIC ---
-
-    function switchAdminTab(tabId) {
+    window.switchAdminTab = function(tabId) {
         ['admin-products', 'admin-orders'].forEach(t => {
             document.getElementById(`${t}-view`).classList.add('hidden');
             document.getElementById(`${t}-view`).classList.remove('block');
@@ -1448,57 +1484,60 @@
         document.getElementById(btnId).classList.add('border-b-2', 'border-white', 'text-white');
     }
 
-    function handleAdminSubmit(e) {
+    window.handleAdminSubmit = async function(e) {
         e.preventDefault();
+        if (!authUserId) return alert("Must be authenticated");
         
-        // Collect Images
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.innerText = "Publishing...";
+        btn.disabled = true;
+
         let imgUrls = [];
-        const img1 = document.getElementById('admin-img1').value;
-        const img2 = document.getElementById('admin-img2').value;
-        const img3 = document.getElementById('admin-img3').value;
-        const img4 = document.getElementById('admin-img4').value;
-        if(img1) imgUrls.push(img1);
-        if(img2) imgUrls.push(img2);
-        if(img3) imgUrls.push(img3);
-        if(img4) imgUrls.push(img4);
+        for(let i=1; i<=4; i++) {
+            const val = document.getElementById(`admin-img${i}`).value;
+            if(val) imgUrls.push(val);
+        }
 
         const newProduct = {
-            id: Date.now(),
             title: document.getElementById('admin-title').value,
             brand: document.getElementById('admin-brand').value,
             price: parseInt(document.getElementById('admin-price').value),
             mrp: parseInt(document.getElementById('admin-mrp').value),
             images: imgUrls,
             sizes: document.getElementById('admin-sizes').value.split(',').map(s => s.trim()),
-            desc: document.getElementById('admin-desc').value
+            desc: document.getElementById('admin-desc').value,
+            timestamp: Date.now()
         };
 
-        // Add to front of array
-        products.unshift(newProduct);
-        
-        // Reset form
-        e.target.reset();
-        
-        // Update Views
-        updateAdminProductList();
-        renderProducts(); // Update reseller view behind the scenes
-        
-        alert("Product added successfully! It is now live in the Reseller App.");
+        try {
+            const productsRef = collection(db, 'artifacts', envAppId, 'public', 'data', 'products');
+            await addDoc(productsRef, newProduct);
+            
+            e.target.reset();
+            alert("Product published live successfully!");
+        } catch(error) {
+            console.error("Error adding product:", error);
+            alert("Failed to add product.");
+        } finally {
+            btn.innerText = "Publish to Resellers";
+            btn.disabled = false;
+        }
     }
 
     function updateAdminProductList() {
         const list = document.getElementById('admin-product-list');
         list.innerHTML = '';
-        products.forEach((p, idx) => {
+        products.forEach((p) => {
+            const img = Array.isArray(p.images) ? p.images[0] : (p.image || "https://placehold.co/600x800");
             list.innerHTML += `
                 <div class="flex items-center gap-4 border border-gray-100 p-3 rounded-lg bg-white shadow-sm">
-                    <img src="${p.images[0]}" class="w-16 h-16 object-cover rounded bg-gray-50 border">
+                    <img src="${img}" class="w-16 h-16 object-cover rounded bg-gray-50 border">
                     <div class="flex-grow overflow-hidden">
                         <p class="font-bold text-sm text-gray-800 truncate">${p.title}</p>
                         <p class="text-xs font-bold text-primary mt-1">₹${p.price} <span class="text-gray-400 font-normal line-through ml-1">₹${p.mrp}</span></p>
-                        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wide">${p.brand} • ${p.images.length} Photos</p>
+                        <p class="text-[10px] text-gray-500 mt-1 uppercase tracking-wide">${p.brand} • ${p.images ? p.images.length : 1} Photos</p>
                     </div>
-                    <button onclick="deleteAdminProduct(${idx})" class="text-red-500 hover:bg-red-50 p-2 rounded transition"><i class="fas fa-trash"></i></button>
+                    <button onclick="window.deleteAdminProduct('${p.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded transition"><i class="fas fa-trash"></i></button>
                 </div>
             `;
         });
@@ -1517,7 +1556,9 @@
         noOrders.classList.add('hidden');
         tbody.innerHTML = '';
         
-        [...orders].reverse().forEach(o => {
+        const sortedOrders = [...orders].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+        
+        sortedOrders.forEach(o => {
             let statusBadge = '';
             if(o.status === 'Placed') statusBadge = `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-[10px] font-bold">Placed</span>`;
             else if(o.status === 'Accepted') statusBadge = `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-bold">Accepted</span>`;
@@ -1526,16 +1567,16 @@
 
             tbody.innerHTML += `
                 <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="px-4 py-3 font-medium text-gray-900">${o.id}</td>
+                    <td class="px-4 py-3 font-medium text-gray-900">#${o.id.substring(0,6).toUpperCase()}</td>
                     <td class="px-4 py-3">
-                        <p class="font-medium">${resellerProfile.name}</p>
-                        <p class="text-[10px] text-gray-500">${resellerProfile.phone}</p>
+                        <p class="font-medium">${o.resellerName || 'Reseller'}</p>
+                        <p class="text-[10px] text-gray-500">${o.resellerPhone || 'N/A'}</p>
                     </td>
                     <td class="px-4 py-3 text-xs">${o.items.length} items<br><span class="text-gray-400">Total ₹${o.total}</span></td>
                     <td class="px-4 py-3 font-bold">₹${o.total}</td>
                     <td class="px-4 py-3" id="admin-status-badge-${o.id}">${statusBadge}</td>
                     <td class="px-4 py-3">
-                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs border border-gray-300 rounded p-1 outline-none">
+                        <select onchange="window.updateOrderStatus('${o.id}', this.value)" class="text-xs border border-gray-300 rounded p-1 outline-none">
                             <option value="Placed" ${o.status==='Placed'?'selected':''}>Placed</option>
                             <option value="Accepted" ${o.status==='Accepted'?'selected':''}>Accept</option>
                             <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Ship</option>
@@ -1547,29 +1588,33 @@
         });
     }
 
-    function updateOrderStatus(orderId, newStatus) {
-        const order = orders.find(o => o.id === orderId);
-        if(order) {
-            order.status = newStatus;
-            updateAdminOrdersList(); // Refresh admin view
-            renderOrders(); // Refresh reseller view behind scenes
-            
-            // Show toast in admin panel
-            alert(`Order ${orderId} marked as ${newStatus}`);
+    window.updateOrderStatus = async function(orderId, newStatus) {
+        if (!authUserId) return;
+        try {
+            const orderDocRef = doc(db, 'artifacts', envAppId, 'public', 'data', 'orders', orderId);
+            await updateDoc(orderDocRef, { status: newStatus });
+            // Local arrays are updated via onSnapshot
+        } catch (error) {
+            console.error("Error updating order:", error);
+            alert("Failed to update status.");
         }
     }
 
-    function deleteAdminProduct(idx) {
+    window.deleteAdminProduct = async function(docId) {
         if(confirm("Are you sure you want to remove this catalog from the app?")) {
-            products.splice(idx, 1);
-            updateAdminProductList();
-            renderProducts();
+            try {
+                const productDocRef = doc(db, 'artifacts', envAppId, 'public', 'data', 'products', docId);
+                await deleteDoc(productDocRef);
+                // Local arrays are updated via onSnapshot
+            } catch (error) {
+                 console.error("Error deleting product:", error);
+                 alert("Failed to delete product.");
+            }
         }
     }
 
-    // Initialize the app on load
-    window.onload = init;
-
+    // Call init to start Firebase connection
+    initFirebase();
 </script>
 </body>
 </html>
