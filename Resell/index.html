@@ -29,6 +29,11 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 .size-btn { border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; background: #fff; }
 .size-btn.active { border-color: #e11d48; background: #fff1f2; color: #e11d48; }
 .admin-tab.active{background:#e11d48;color:#fff;border-color:#e11d48;}
+
+/* Category Styles */
+.category-circle { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 20px; transition: 0.2s; border: 2px solid transparent; }
+.category-item.active .category-circle { border-color: #e11d48; background: #fff1f2; color: #e11d48; }
+.category-item.active span { color: #e11d48; font-weight: 800; }
 </style>
 </head>
 <body>
@@ -128,9 +133,18 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 <p class="text-xs text-amber-700 mt-1">Order placement will be available after admin approval.</p>
 </div>
 
-<!-- FEED TAB -->
-<div id="feedTab" class="px-3 py-4">
-<div id="productFeed" class="grid-products"></div>
+<!-- FEED TAB WITH CATEGORIES -->
+<div id="feedTab">
+  <!-- Categories -->
+  <div class="px-3 py-4 bg-white border-b">
+    <div class="flex gap-4 overflow-x-auto hide-scrollbar" id="categoryContainer">
+      <!-- Categories rendered by JS -->
+    </div>
+  </div>
+
+  <div class="px-3 py-4">
+    <div id="productFeed" class="grid-products"></div>
+  </div>
 </div>
 
 <!-- ORDERS TAB -->
@@ -248,7 +262,7 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
   </div>
 </div>
 <div class="fixed bottom-0 w-full max-w-[520px] bg-white border-t p-3 grid grid-cols-2 gap-3 z-20">
-  <button onclick="openShare()" class="border border-green-500 text-green-600 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 bg-green-50"><i class="fa-brands fa-whatsapp text-lg"></i> Share & Earn</button>
+  <button onclick="openShare()" class="border border-green-500 text-green-600 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 bg-green-50"><i class="fa-brands fa-whatsapp text-lg"></i> Share</button>
   <button onclick="openOrder()" class="bg-rose-600 text-white py-2.5 rounded-lg font-bold text-sm shadow-md">Place Order</button>
 </div>
 </div>
@@ -388,6 +402,14 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 <div class="flex justify-between items-center mb-5"><h2 id="productEditorTitle" class="font-bold text-lg text-gray-800">Add Product</h2><button onclick="closeProductEditor()" class="text-2xl text-gray-400">&times;</button></div>
 <form onsubmit="saveProduct(event)" class="space-y-4">
 <input type="hidden" id="editProductId">
+
+<div>
+  <label class="text-xs font-bold text-gray-600">Product Category</label>
+  <select id="productCategoryInput" class="input text-sm bg-gray-50 mt-1" required>
+    <!-- Filled by JS -->
+  </select>
+</div>
+
 <input id="productTitleInput" class="input text-sm bg-gray-50" placeholder="Brand / Short Headline (e.g. Kurti Set)" required>
 <textarea id="productDescriptionInput" class="input text-sm min-h-[70px] bg-gray-50" placeholder="Detailed Product Description"></textarea>
 
@@ -420,6 +442,51 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 
 <!-- UI SCRIPTS -->
 <script>
+// =========== YOU CAN CHANGE CATEGORIES HERE ===========
+const APP_CATEGORIES = [
+    {name: "All", icon: "fa-border-all", color: "text-gray-600"},
+    {name: "Kurti", icon: "fa-person-dress", color: "text-rose-500"},
+    {name: "Saree", icon: "fa-vest", color: "text-orange-500"},
+    {name: "Shoes", icon: "fa-shoe-prints", color: "text-blue-500"},
+    {name: "Watches", icon: "fa-stopwatch", color: "text-slate-700"},
+    {name: "Gadgets", icon: "fa-mobile-screen", color: "text-indigo-500"}
+];
+let currentCategory = "All";
+
+// Render user-side categories
+function renderCategoriesUI() {
+    const c = document.getElementById("categoryContainer");
+    if(!c) return;
+    c.innerHTML = APP_CATEGORIES.map(cat => `
+        <div class="flex flex-col items-center gap-1 shrink-0 cursor-pointer category-item ${currentCategory === cat.name ? 'active' : ''}" onclick="selectCategory('${cat.name}')">
+            <div class="category-circle ${currentCategory === cat.name ? 'text-rose-600' : cat.color}">
+                <i class="fa-solid ${cat.icon}"></i>
+            </div>
+            <span class="text-[10px] text-gray-600">${cat.name}</span>
+        </div>
+    `).join("");
+}
+
+// Render Admin Select categories
+function renderAdminCategoriesSelect() {
+    const s = document.getElementById("productCategoryInput");
+    if(!s) return;
+    s.innerHTML = `<option value="Uncategorized">Select Category...</option>` + 
+                  APP_CATEGORIES.filter(c => c.name !== 'All').map(c => `<option value="${c.name}">${c.name}</option>`).join("");
+}
+
+window.selectCategory = function(name) {
+    currentCategory = name;
+    renderCategoriesUI();
+    if(window.filterProducts) window.filterProducts();
+};
+
+window.onload = () => {
+    renderCategoriesUI();
+    renderAdminCategoriesSelect();
+};
+// =======================================================
+
 window.openAuthModal = () => document.getElementById("authModal").classList.add("active");
 window.closeAuthModal = () => document.getElementById("authModal").classList.remove("active");
 window.openAdminLogin = () => document.getElementById("adminLoginModal").classList.add("active");
@@ -444,6 +511,7 @@ window.openProductEditor = (id="") => {
     document.getElementById("productTitleInput").value = ""; document.getElementById("productDescriptionInput").value = "";
     document.getElementById("productMrpInput").value = ""; document.getElementById("productDiscountInput").value = ""; document.getElementById("productBasePriceInput").value = "";
     document.getElementById("productImg1").value = ""; document.getElementById("productImg2").value = ""; document.getElementById("productImg3").value = ""; document.getElementById("productImg4").value = "";
+    document.getElementById("productCategoryInput").value = "Uncategorized";
   }
   document.getElementById("productEditorModal").classList.add("active");
 };
@@ -546,12 +614,10 @@ onAuthStateChanged(auth, async user => {
     const snap = await getDoc(doc(db, USERS, user.uid));
     if(snap.exists()){
       currentUserData = snap.data();
-      // ISOLATE ADMIN: If admin logs in from user modal, redirect to admin panel immediately.
       if(currentUserData.role === 'admin') {
          document.getElementById("landingPage").classList.add("active");
          document.getElementById("userPage").classList.remove("active");
-         openAdminPanel();
-         return;
+         openAdminPanel(); return;
       }
       document.getElementById("landingPage").classList.remove("active"); document.getElementById("userPage").classList.add("active");
       updateProfileUI(); loadProducts(); loadOrders(); loadUserWithdrawals();
@@ -591,8 +657,14 @@ window.loadUserWithdrawals = () => {
   onSnapshot(query(collection(db, WITHDRAW), where("userId", "==", currentUser.uid)), snap => {
     const c = document.getElementById("userWithdrawalHistoryList"); c.innerHTML="";
     if(snap.empty) { c.innerHTML='<div class="text-center py-5 text-gray-400 text-xs">No withdrawals yet.</div>'; return; }
-    snap.forEach(d => {
-      const w = d.data();
+    
+    // Convert to array and sort locally to avoid missing index errors
+    let wData = []; snap.forEach(d => wData.push(d.data()));
+    wData.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
+    wData.forEach(w => {
+      // Support old data compatibility by checking both details and bankDetails
+      const d = w.details || w.bankDetails || "N/A";
       c.innerHTML += `<div class="bg-gray-50 border rounded-xl p-3 mb-2 shadow-sm text-sm">
         <div class="flex justify-between font-bold text-gray-800"><span>₹${money(w.amount)}</span> <span class="text-[10px] px-2 py-0.5 rounded uppercase ${w.status==='approved'?'bg-green-100 text-green-700':(w.status==='rejected'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${w.status}</span></div>
         ${w.status==='approved' && w.transactionId ? `<div class="mt-2 text-xs font-bold text-blue-600 bg-blue-50 p-2 rounded border border-blue-100"><i class="fa-solid fa-check-circle"></i> TXN ID: ${w.transactionId}</div>` : ''}
@@ -602,21 +674,50 @@ window.loadUserWithdrawals = () => {
 };
 
 // --- PRODUCTS & FEED ---
-function loadProducts() { onSnapshot(query(collection(db, PRODUCTS)), snap => { allProducts = []; snap.forEach(d => allProducts.push({id:d.id, ...d.data()})); renderProducts(); }); }
-function renderProducts(list = allProducts) {
-  document.getElementById("productFeed").innerHTML = list.map(p => {
+function loadProducts() { 
+  onSnapshot(query(collection(db, PRODUCTS)), snap => { 
+    allProducts = []; 
+    snap.forEach(d => allProducts.push({id:d.id, ...d.data()})); 
+    // Safely sort to ensure old data shows up
+    allProducts.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    window.filterProducts(); // Apply category logic immediately
+  }); 
+}
+function renderProducts(list) {
+  const feed = document.getElementById("productFeed");
+  if(!list || list.length === 0) {
+      feed.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-400">No products found.</div>';
+      return;
+  }
+  feed.innerHTML = list.map(p => {
+    // Safety check for old products that might have missing fields
+    const baseP = Number(p.basePrice || 0);
     const img = p.images && p.images[0] ? p.images[0] : 'https://placehold.co/400x500/f1f5f9/64748b?text=Product';
     return `<div class="product-card-compact" onclick="openProductDetail('${p.id}')">
       <div class="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden"><img src="${esc(img)}" class="w-full h-full object-cover"></div>
-      <div class="p-2"><div class="text-xs font-bold text-gray-800 truncate">${esc(p.title)}</div><div class="flex items-center gap-1 mt-1"><span class="font-extrabold text-sm">₹${money(p.basePrice)}</span></div></div>
+      <div class="p-2"><div class="text-xs font-bold text-gray-800 truncate">${esc(p.title || "Product")}</div><div class="flex items-center gap-1 mt-1"><span class="font-extrabold text-sm">₹${money(baseP)}</span></div></div>
     </div>`;
   }).join("");
 }
-window.filterProducts = () => { const v = document.getElementById("productSearch").value.toLowerCase(); renderProducts(allProducts.filter(p => `${p.title} ${p.description}`.toLowerCase().includes(v))); };
+
+window.filterProducts = () => { 
+  const v = document.getElementById("productSearch").value.toLowerCase(); 
+  let list = allProducts;
+  if(currentCategory !== "All") {
+      list = list.filter(p => (p.category || "").toLowerCase() === currentCategory.toLowerCase());
+  }
+  if(v) {
+      list = list.filter(p => `${p.title} ${p.description}`.toLowerCase().includes(v));
+  }
+  renderProducts(list); 
+};
+
 window.openProductDetail = (id) => {
   selectedProduct = allProducts.find(x => x.id === id); if(!selectedProduct) return;
-  document.getElementById("pdTitle").innerText = selectedProduct.title; document.getElementById("pdDesc").innerText = selectedProduct.description || "";
-  document.getElementById("pdBasePrice").innerText = money(selectedProduct.basePrice); document.getElementById("pdMrp").innerText = selectedProduct.mrp ? "₹"+money(selectedProduct.mrp) : "";
+  document.getElementById("pdTitle").innerText = selectedProduct.title || "Product"; 
+  document.getElementById("pdDesc").innerText = selectedProduct.description || "No description provided.";
+  document.getElementById("pdBasePrice").innerText = money(selectedProduct.basePrice || 0); 
+  document.getElementById("pdMrp").innerText = selectedProduct.mrp ? "₹"+money(selectedProduct.mrp) : "";
   const slider = document.getElementById("pdSlider");
   slider.innerHTML = (selectedProduct.images||['https://placehold.co/400x500']).map(img => `<img src="${esc(img)}" alt="img">`).join("");
   document.getElementById("productDetailModal").classList.add("active");
@@ -634,21 +735,21 @@ window.downloadProductPhotos = async () => {
 window.openShare = () => { document.getElementById("shareBasePrice").innerText = money(selectedProduct.basePrice); document.getElementById("sellingPrice").value = ""; document.getElementById("profitAmount").innerText = "₹0"; document.getElementById("shareModal").classList.add("active"); };
 window.calculateProfit = () => { const sell = Number(document.getElementById("sellingPrice").value||0), base = Number(selectedProduct.basePrice||0); document.getElementById("profitAmount").innerText = "₹" + money(Math.max(0, sell - base)); };
 window.shareOnWhatsApp = () => {
-  const sell = Number(document.getElementById("sellingPrice").value||0); if(sell <= selectedProduct.basePrice) return showToast("Selling price must be higher than base price.");
-  const msg = `🛍️ *${selectedProduct.title}*\n\n${selectedProduct.description||""}\n\n🔥 *Best Price: ₹${sell}*\n\nMessage me back to place your order!`;
+  const sell = Number(document.getElementById("sellingPrice").value||0); if(sell <= (selectedProduct.basePrice||0)) return showToast("Selling price must be higher than base price.");
+  const msg = `🛍️ *${selectedProduct.title||""}*\n\n${selectedProduct.description||""}\n\n🔥 *Best Price: ₹${sell}*\n\nMessage me back to place your order!`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg), "_blank"); closeShareModal();
 };
 
 window.openOrder = () => { if(currentUserData?.status !== "approved") return showToast("Account not approved for orders yet."); document.getElementById("orderSellingPriceInput").value = ""; document.getElementById("orderModal").classList.add("active"); };
-window.calculateOrderTotal = () => { const sell = Number(document.getElementById("orderSellingPriceInput").value||0), qty = Number(document.getElementById("orderQuantity").value||1); document.getElementById("orderSellingPrice").innerText = money(sell * qty); document.getElementById("orderProfit").innerText = money(Math.max(0, sell - selectedProduct.basePrice) * qty); };
+window.calculateOrderTotal = () => { const sell = Number(document.getElementById("orderSellingPriceInput").value||0), qty = Number(document.getElementById("orderQuantity").value||1); document.getElementById("orderSellingPrice").innerText = money(sell * qty); document.getElementById("orderProfit").innerText = money(Math.max(0, sell - (selectedProduct.basePrice||0)) * qty); };
 window.placeOrder = async (e) => {
   e.preventDefault(); const sell = Number(document.getElementById("orderSellingPriceInput").value||0), qty = Number(document.getElementById("orderQuantity").value||1);
-  if(sell <= selectedProduct.basePrice) return showToast("Selling price too low.");
+  if(sell <= (selectedProduct.basePrice||0)) return showToast("Selling price too low.");
   try {
     await addDoc(collection(db, ORDERS), {
       resellerId: currentUser.uid, resellerName: currentUserData.name, productId: selectedProduct.id, productName: selectedProduct.title, productImage: selectedProduct.images?.[0]||"",
       customerName: document.getElementById("customerName").value, customerPhone: document.getElementById("customerPhone").value, customerAddress: document.getElementById("customerAddress").value, pincode: document.getElementById("customerPincode").value,
-      quantity: qty, basePrice: selectedProduct.basePrice, sellingPrice: sell, profit: (sell - selectedProduct.basePrice)*qty, status: "processing", createdAt: serverTimestamp() // processing as default
+      quantity: qty, basePrice: selectedProduct.basePrice, sellingPrice: sell, profit: (sell - selectedProduct.basePrice)*qty, status: "processing", createdAt: serverTimestamp()
     });
     showToast("Order Placed Successfully!"); closeOrderModal(); window.switchUserTab('orders');
   } catch(err) { showToast(err.message); }
@@ -658,8 +759,12 @@ function loadOrders() {
   onSnapshot(query(collection(db, ORDERS), where("resellerId", "==", currentUser.uid)), snap => {
     const c = document.getElementById("ordersList"); c.innerHTML="";
     if(snap.empty) { c.innerHTML='<div class="text-center py-10 text-gray-400">No orders placed yet.</div>'; return; }
-    snap.forEach(d => {
-      const o = d.data(); const st = o.status || "processing";
+    
+    let ord = []; snap.forEach(d => ord.push(d.data()));
+    ord.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    
+    ord.forEach(o => {
+      const st = o.status || "processing";
       c.innerHTML += `<div class="bg-white border rounded-xl p-3 flex gap-3 mb-3 shadow-sm">
         <img src="${o.productImage}" class="w-16 h-20 object-cover rounded">
         <div class="flex-1 min-w-0"><div class="font-bold text-sm truncate">${o.productName}</div><div class="text-xs text-gray-500 mt-1">Customer: ${o.customerName}</div>
@@ -681,14 +786,15 @@ window.handleAdminLogin = async (e) => {
 
 window.refreshAdmin = async () => {
   if(!currentUserData || currentUserData.role !== 'admin') return;
-  // Fetch everything completely to make sure it shows
   const [uSnap, oSnap, wSnap, pSnap] = await Promise.all([
     getDocs(collection(db, USERS)), getDocs(collection(db, ORDERS)), getDocs(collection(db, WITHDRAW)), getDocs(collection(db, PRODUCTS))
   ]);
-  allAdminUsers = uSnap.docs.map(d => ({id:d.id, ...d.data()}));
-  allAdminOrders = oSnap.docs.map(d => ({id:d.id, ...d.data()}));
-  allWithdraws = wSnap.docs.map(d => ({id:d.id, ...d.data()}));
-  allProducts = pSnap.docs.map(d => ({id:d.id, ...d.data()})); 
+  
+  // Protect against indexing issues by parsing and manually sorting safely
+  allAdminUsers = uSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+  allAdminOrders = oSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+  allWithdraws = wSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+  allProducts = pSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
 
   // Update Dashboard Stats
   document.getElementById("statTotalUsers").innerText = allAdminUsers.filter(u=>u.role!=='admin').length;
@@ -705,11 +811,11 @@ window.renderAdminUsers = () => {
   document.getElementById("adminUsersList").innerHTML = list.map(u => `
     <div class="border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
       <div class="flex justify-between items-start">
-        <div><div class="font-bold text-gray-800 text-base">${u.name}</div><div class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-phone mr-1"></i>${u.phone||"No Phone"}</div></div>
+        <div><div class="font-bold text-gray-800 text-base">${u.name || "Unknown"}</div><div class="text-xs text-gray-500 mt-1"><i class="fa-solid fa-phone mr-1"></i>${u.phone||"No Phone"}</div></div>
         <div class="text-right"><div class="text-xl font-extrabold text-blue-600">₹${money(u.walletBalance)}</div><div class="text-[10px] text-gray-400 font-bold uppercase">Wallet</div></div>
       </div>
       <div class="mt-4 flex gap-2">
-         <span class="px-2 py-1 text-[10px] rounded font-bold uppercase ${u.status==='approved'?'bg-green-100 text-green-700':(u.status==='suspended'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${u.status}</span>
+         <span class="px-2 py-1 text-[10px] rounded font-bold uppercase ${u.status==='approved'?'bg-green-100 text-green-700':(u.status==='suspended'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${u.status || "pending"}</span>
       </div>
       <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-gray-100">
         <button onclick="adminAction('approve','${u.id}')" title="Approve" class="bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-check"></i></button>
@@ -745,6 +851,7 @@ window.saveProduct = async (e) => {
     mrp: Number(document.getElementById("productMrpInput").value||0),
     discount: Number(document.getElementById("productDiscountInput").value||0),
     basePrice: Number(document.getElementById("productBasePriceInput").value||0), 
+    category: document.getElementById("productCategoryInput").value || "Uncategorized",
     images: finalImgs 
   };
   try { if(id) await updateDoc(doc(db, PRODUCTS, id), data); else await addDoc(collection(db, PRODUCTS), {...data, createdAt: serverTimestamp()}); closeProductEditor(); showToast("Product Saved!"); refreshAdmin(); } catch(err) { showToast(err.message); }
@@ -758,10 +865,10 @@ window.deleteProduct = async (id) => {
 function renderAdminProductsPanel() {
   document.getElementById("adminProductsList").innerHTML = allProducts.map(p => `
     <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
-      <div class="h-40 bg-gray-100 relative"><img src="${p.images?.[0]}" class="w-full h-full object-cover"><div class="absolute top-2 right-2 bg-white/95 px-2 py-1 rounded text-[10px] font-extrabold text-rose-600 shadow">₹${p.basePrice}</div></div>
+      <div class="h-40 bg-gray-100 relative"><img src="${p.images?.[0]}" class="w-full h-full object-cover"><div class="absolute top-2 right-2 bg-white/95 px-2 py-1 rounded text-[10px] font-extrabold text-rose-600 shadow">₹${p.basePrice||0}</div></div>
       <div class="p-4 flex-1 flex flex-col justify-between">
-        <div class="font-bold text-sm text-gray-800 truncate mb-1" title="${p.title}">${p.title}</div>
-        <div class="text-[10px] text-gray-400 mb-4">${p.images?.length||0} Images</div>
+        <div class="font-bold text-sm text-gray-800 truncate mb-1" title="${p.title||""}">${p.title||"Product"}</div>
+        <div class="text-[10px] text-gray-400 mb-4 bg-gray-50 px-2 py-1 inline-block rounded w-max border">${p.category||"Uncategorized"}</div>
         <div class="grid grid-cols-2 gap-2 mt-auto">
           <button onclick="openProductEditor('${p.id}')" class="border border-blue-500 text-blue-600 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-50 transition"><i class="fa-solid fa-pen"></i> Edit</button>
           <button onclick="deleteProduct('${p.id}')" class="bg-red-50 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition"><i class="fa-solid fa-trash"></i> Delete</button>
@@ -774,8 +881,8 @@ function renderAdminOrdersPanel() {
   document.getElementById("adminOrdersList").innerHTML = allAdminOrders.map(o => `
     <div class="border border-gray-200 rounded-xl p-4 bg-white shadow-sm flex flex-col justify-between">
       <div>
-        <div class="flex justify-between items-start mb-3"><div class="font-bold text-sm text-gray-800">${o.productName}</div><div class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">Profit: ₹${o.profit}</div></div>
-        <div class="text-xs text-gray-500 space-y-1 bg-gray-50 p-2 rounded mb-3"><div><span class="font-semibold text-gray-700">Reseller:</span> ${o.resellerName}</div><div><span class="font-semibold text-gray-700">Customer:</span> ${o.customerName} (${o.customerPhone})</div><div><span class="font-semibold text-gray-700">Add:</span> ${o.customerAddress}</div></div>
+        <div class="flex justify-between items-start mb-3"><div class="font-bold text-sm text-gray-800">${o.productName||""}</div><div class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">Profit: ₹${o.profit||0}</div></div>
+        <div class="text-xs text-gray-500 space-y-1 bg-gray-50 p-2 rounded mb-3"><div><span class="font-semibold text-gray-700">Reseller:</span> ${o.resellerName||""}</div><div><span class="font-semibold text-gray-700">Customer:</span> ${o.customerName||""} (${o.customerPhone||""})</div><div><span class="font-semibold text-gray-700">Add:</span> ${o.customerAddress||""}</div></div>
       </div>
       <select onchange="updateDoc(doc(db, '${ORDERS}', '${o.id}'), {status: this.value}); showToast('Status updated'); refreshAdmin();" class="mt-auto border border-gray-300 rounded-lg p-2 text-xs font-bold w-full bg-white outline-none cursor-pointer hover:border-gray-400">
         <option value="pending" ${o.status==='pending'?'selected':''}>⏳ Pending</option>
@@ -793,8 +900,8 @@ function renderAdminOrdersPanel() {
 function renderAdminWithdrawals() {
   document.getElementById("adminWithdrawalsList").innerHTML = allWithdraws.map(w => `
     <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
-      <div class="flex justify-between items-center mb-3"><div class="font-bold text-sm text-gray-800"><i class="fa-solid fa-user text-gray-400 mr-1"></i> ${w.userName}</div><div class="text-xl font-extrabold text-green-600">₹${w.amount}</div></div>
-      <div class="text-xs text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 break-all"><span class="font-bold text-gray-900 block mb-1">Bank / UPI Details:</span> ${w.details}</div>
+      <div class="flex justify-between items-center mb-3"><div class="font-bold text-sm text-gray-800"><i class="fa-solid fa-user text-gray-400 mr-1"></i> ${w.userName || "Reseller"}</div><div class="text-xl font-extrabold text-green-600">₹${w.amount||0}</div></div>
+      <div class="text-xs text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4 break-all"><span class="font-bold text-gray-900 block mb-1">Bank / UPI Details:</span> ${w.details || w.bankDetails || "N/A"}</div>
       ${w.status === 'pending' ? `
       <div class="grid grid-cols-2 gap-3">
         <button onclick="approveWithdrawal('${w.id}')" class="bg-green-500 text-white py-2 rounded-lg font-bold text-sm hover:bg-green-600 shadow-sm transition"><i class="fa-solid fa-check"></i> Approve</button>
