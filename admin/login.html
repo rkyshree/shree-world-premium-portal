@@ -1,1 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>SHRAYNEX Admin Login</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+    font-family:Inter,system-ui,sans-serif;
+    background:
+      radial-gradient(circle at top,#202020 0%,#090909 45%,#000 100%);
+}
+.glass{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    backdrop-filter:blur(18px);
+}
+</style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center text-white px-5">
+
+<div class="w-full max-w-md">
+
+    <div class="text-center mb-8">
+        <div class="w-20 h-20 mx-auto rounded-3xl
+                    bg-white text-black flex items-center justify-center
+                    text-4xl font-black shadow-2xl">
+            S
+        </div>
+
+        <h1 class="text-3xl font-black mt-5">
+            SHRAYNEX
+        </h1>
+
+        <p class="text-gray-400 mt-1">
+            Reselling Admin Panel
+        </p>
+    </div>
+
+    <div class="glass rounded-3xl p-6 shadow-2xl">
+
+        <h2 class="text-xl font-bold mb-6">
+            Admin Login
+        </h2>
+
+        <form id="loginForm">
+
+            <label class="text-sm text-gray-400">
+                Email Address
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                required
+                placeholder="admin@example.com"
+                class="w-full mt-2 mb-5 px-4 py-4 rounded-2xl
+                       bg-black/50 border border-white/10
+                       outline-none focus:border-white">
+
+            <label class="text-sm text-gray-400">
+                Password
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                class="w-full mt-2 mb-4 px-4 py-4 rounded-2xl
+                       bg-black/50 border border-white/10
+                       outline-none focus:border-white">
+
+            <button
+                id="loginBtn"
+                type="submit"
+                class="w-full py-4 rounded-2xl
+                       bg-white text-black font-bold
+                       hover:bg-gray-200 transition">
+
+                LOGIN TO ADMIN
+            </button>
+
+        </form>
+
+        <button
+            id="googleBtn"
+            class="w-full mt-3 py-4 rounded-2xl
+                   border border-white/10 bg-white/5
+                   font-semibold">
+
+            Continue with Google
+        </button>
+
+        <button
+            id="forgotBtn"
+            class="w-full mt-4 text-sm text-gray-400 hover:text-white">
+
+            Forgot Password?
+        </button>
+
+        <div
+            id="message"
+            class="hidden mt-5 p-4 rounded-2xl text-sm">
+        </div>
+
+    </div>
+
+    <p class="text-center text-gray-600 text-xs mt-6">
+        © 2026 SHRAYNEX • Secure Admin Area
+    </p>
+
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    sendPasswordResetEmail,
+    setPersistence,
+    browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+/* ================================
+   FIREBASE CONFIG
+================================ */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+    authDomain: "rkyshree-2f74b.firebaseapp.com",
+    projectId: "rkyshree-2f74b",
+    storageBucket: "rkyshree-2f74b.firebasestorage.app",
+    messagingSenderId: "354823113610",
+    appId: "1:354823113610:web:1249f2952249ac1a9c9673",
+    measurementId: "G-2PKR5PK39Y"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+const USERS = "shraynex_users";
+
+
+/* ================================
+   HELPERS
+================================ */
+
+const $ = id => document.getElementById(id);
+
+function showMessage(text,type="error"){
+
+    const box = $("message");
+
+    box.classList.remove(
+        "hidden",
+        "bg-red-500/10",
+        "text-red-400",
+        "bg-green-500/10",
+        "text-green-400"
+    );
+
+    box.textContent = text;
+
+    if(type === "success"){
+        box.classList.add(
+            "bg-green-500/10",
+            "text-green-400"
+        );
+    }else{
+        box.classList.add(
+            "bg-red-500/10",
+            "text-red-400"
+        );
+    }
+}
+
+
+function friendlyError(error){
+
+    const code = error?.code || "";
+
+    const errors = {
+
+        "auth/invalid-credential":
+        "Email या Password गलत है।",
+
+        "auth/invalid-email":
+        "Email address सही नहीं है।",
+
+        "auth/user-not-found":
+        "यह account नहीं मिला।",
+
+        "auth/wrong-password":
+        "Password गलत है।",
+
+        "auth/too-many-requests":
+        "बहुत ज्यादा attempts हुए हैं। थोड़ी देर बाद कोशिश करें।",
+
+        "auth/popup-closed-by-user":
+        "Google login बंद कर दिया गया।",
+
+        "auth/network-request-failed":
+        "Internet connection check करें।"
+    };
+
+    return errors[code] || error.message || "Login failed";
+}
+
+
+/* ================================
+   CHECK ADMIN
+================================ */
+
+async function verifyAdmin(user){
+
+    const ref = doc(db,USERS,user.uid);
+
+    const snap = await getDoc(ref);
+
+    if(!snap.exists()){
+        await signOut(auth);
+
+        throw new Error(
+            "Admin profile नहीं मिला। पहले reseller account बनाकर Firestore में role = admin करें।"
+        );
+    }
+
+    const data = snap.data();
+
+    if(data.role !== "admin"){
+        await signOut(auth);
+
+        throw new Error(
+            "Access Denied: यह account Admin नहीं है।"
+        );
+    }
+
+    if(data.status !== "approved"){
+        await signOut(auth);
+
+        throw new Error(
+            "Admin account approved नहीं है।"
+        );
+    }
+
+    return true;
+}
+
+
+/* ================================
+   EMAIL LOGIN
+================================ */
+
+$("loginForm").addEventListener("submit",async(e)=>{
+
+    e.preventDefault();
+
+    const email = $("email").value.trim();
+
+    const password = $("password").value;
+
+    const btn = $("loginBtn");
+
+    btn.disabled = true;
+
+    btn.textContent = "LOGGING IN...";
+
+    try{
+
+        await setPersistence(
+            auth,
+            browserLocalPersistence
+        );
+
+        const result =
+            await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+
+        await verifyAdmin(result.user);
+
+        showMessage(
+            "Admin verified. Opening dashboard...",
+            "success"
+        );
+
+        setTimeout(()=>{
+            location.href = "dashboard.html";
+        },500);
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            friendlyError(error)
+        );
+
+        try{
+            await signOut(auth);
+        }catch(e){}
+
+    }finally{
+
+        btn.disabled = false;
+
+        btn.textContent = "LOGIN TO ADMIN";
+    }
+
+});
+
+
+/* ================================
+   GOOGLE ADMIN LOGIN
+================================ */
+
+$("googleBtn").addEventListener("click",async()=>{
+
+    const btn = $("googleBtn");
+
+    btn.disabled = true;
+
+    btn.textContent = "GOOGLE LOGIN...";
+
+    try{
+
+        await setPersistence(
+            auth,
+            browserLocalPersistence
+        );
+
+        const provider =
+            new GoogleAuthProvider();
+
+        const result =
+            await signInWithPopup(
+                auth,
+                provider
+            );
+
+        await verifyAdmin(result.user);
+
+        location.href = "dashboard.html";
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            friendlyError(error)
+        );
+
+        try{
+            await signOut(auth);
+        }catch(e){}
+
+    }finally{
+
+        btn.disabled = false;
+
+        btn.textContent = "Continue with Google";
+    }
+
+});
+
+
+/* ================================
+   FORGOT PASSWORD
+================================ */
+
+$("forgotBtn").addEventListener("click",async()=>{
+
+    const email = $("email").value.trim();
+
+    if(!email){
+
+        showMessage(
+            "पहले Email Address डालें।"
+        );
+
+        $("email").focus();
+
+        return;
+    }
+
+    try{
+
+        await sendPasswordResetEmail(
+            auth,
+            email
+        );
+
+        showMessage(
+            "Password reset email भेज दिया गया है।",
+            "success"
+        );
+
+    }catch(error){
+
+        showMessage(
+            friendlyError(error)
+        );
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
