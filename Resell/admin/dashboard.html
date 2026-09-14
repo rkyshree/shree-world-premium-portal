@@ -1,627 +1,945 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>SHRAYNEX Admin Dashboard</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-
 <style>
 
-body{
-    background:#050505;
-    color:white;
-    font-family:Arial,sans-serif;
+*{
+  box-sizing:border-box;
 }
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#070707;
+  color:#fff;
+}
+
+button,input,select,textarea{
+  font-family:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:250px;
+  background:#101010;
+  border-right:1px solid #292929;
+  padding:20px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  z-index:100;
+}
+
+.logo{
+  font-size:26px;
+  font-weight:900;
+  margin-bottom:30px;
+}
+
+.logo span{
+  color:#00e676;
+}
+
+.admin-label{
+  font-size:12px;
+  color:#777;
+  margin-bottom:20px;
+}
+
+.nav-btn{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#bbb;
+  padding:14px;
+  margin-bottom:7px;
+  border-radius:12px;
+  text-align:left;
+  font-weight:700;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+  background:#00e676;
+  color:#000;
+}
+
+.logout{
+  position:absolute;
+  left:20px;
+  right:20px;
+  bottom:20px;
+  background:#241010;
+  color:#ff8585;
+}
+
+/* MAIN */
+
+.main{
+  margin-left:250px;
+  width:calc(100% - 250px);
+  padding:25px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.topbar h1{
+  margin:0;
+  font-size:28px;
+}
+
+.admin-email{
+  color:#888;
+  font-size:13px;
+}
+
+/* SECTIONS */
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat{
+  background:#111;
+  border:1px solid #292929;
+  border-radius:18px;
+  padding:20px;
+}
+
+.stat-title{
+  color:#888;
+  font-size:13px;
+}
+
+.stat-number{
+  font-size:30px;
+  font-weight:900;
+  margin-top:10px;
+}
+
+/* CARDS */
 
 .card{
-    background:#111;
-    border:1px solid #292929;
+  background:#111;
+  border:1px solid #292929;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:20px;
 }
 
-.input{
-    background:#090909;
-    border:1px solid #333;
-    color:white;
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px;
 }
 
-.input:focus{
-    outline:none;
-    border-color:#777;
+.card-header h2{
+  margin:0;
+  font-size:20px;
 }
 
-.modal-bg{
-    background:rgba(0,0,0,.8);
-    backdrop-filter:blur(8px);
+/* INPUTS */
+
+.search{
+  width:280px;
+  max-width:100%;
+  padding:11px 14px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#080808;
+  color:#fff;
+  outline:none;
 }
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.form-group{
+  margin-bottom:5px;
+}
+
+.form-group.full{
+  grid-column:1/-1;
+}
+
+.form-group label{
+  display:block;
+  color:#999;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #333;
+  background:#080808;
+  color:#fff;
+  outline:none;
+}
+
+.form-group textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.primary{
+  background:#00e676;
+  color:#000;
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  font-weight:800;
+}
+
+.secondary{
+  background:#222;
+  color:#fff;
+  border:1px solid #444;
+  border-radius:10px;
+  padding:10px 15px;
+  font-weight:700;
+}
+
+.danger{
+  background:#421515;
+  color:#ff8585;
+  border:1px solid #682020;
+  border-radius:9px;
+  padding:9px 12px;
+}
+
+.success-btn{
+  background:#123b26;
+  color:#5dff9c;
+  border:1px solid #1b6840;
+  border-radius:9px;
+  padding:9px 12px;
+}
+
+.warning{
+  background:#3b3012;
+  color:#ffd95d;
+  border:1px solid #67551c;
+  border-radius:9px;
+  padding:9px 12px;
+}
+
+/* TABLE */
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+th{
+  text-align:left;
+  padding:13px;
+  color:#777;
+  font-size:12px;
+  border-bottom:1px solid #292929;
+}
+
+td{
+  padding:13px;
+  border-bottom:1px solid #1d1d1d;
+  font-size:13px;
+  vertical-align:middle;
+}
+
+.product-img{
+  width:55px;
+  height:55px;
+  object-fit:cover;
+  border-radius:9px;
+  background:#222;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+/* STATUS */
 
 .status{
-    padding:5px 9px;
-    border-radius:999px;
-    font-size:11px;
-    font-weight:bold;
+  display:inline-block;
+  padding:6px 9px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+  background:#222;
 }
 
-.pending{
-    background:#78350f;
-    color:#fbbf24;
+.status.pending{
+  color:#ffd45e;
+  background:#392f12;
 }
 
-.approved{
-    background:#064e3b;
-    color:#34d399;
+.status.approved,
+.status.delivered{
+  color:#5cff99;
+  background:#123a25;
 }
 
-.processing{
-    background:#312e81;
-    color:#a5b4fc;
+.status.rejected,
+.status.cancelled{
+  color:#ff7777;
+  background:#3b1515;
 }
 
-.shipped{
-    background:#581c87;
-    color:#d8b4fe;
+.status.processing,
+.status.confirmed,
+.status.shipped{
+  color:#6dc8ff;
+  background:#102f42;
 }
 
-.delivered{
-    background:#14532d;
-    color:#86efac;
+/* MODAL */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:500;
+  padding:20px;
+  overflow:auto;
 }
 
-.cancelled{
-    background:#374151;
-    color:#d1d5db;
+.modal.show{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.rejected{
-    background:#7f1d1d;
-    color:#fca5a5;
+.modal-box{
+  width:100%;
+  max-width:700px;
+  background:#111;
+  border:1px solid #333;
+  border-radius:20px;
+  padding:22px;
+}
+
+.modal-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  background:#222;
+  color:#fff;
+  border:0;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  font-size:20px;
+}
+
+/* MOBILE */
+
+.mobile-menu{
+  display:none;
+}
+
+@media(max-width:1100px){
+
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media(max-width:800px){
+
+  .sidebar{
+    transform:translateX(-100%);
+    transition:.25s;
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+    padding:15px;
+  }
+
+  .mobile-menu{
+    display:block;
+    background:#00e676;
+    color:#000;
+    border:0;
+    border-radius:9px;
+    padding:9px 12px;
+    font-weight:900;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .form-group.full{
+    grid-column:auto;
+  }
+
+  .topbar{
+    gap:10px;
+  }
+
+  .topbar h1{
+    font-size:21px;
+  }
+
+  .admin-email{
+    display:none;
+  }
+
+}
+
+@media(max-width:450px){
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .stat{
+    padding:14px;
+  }
+
+  .stat-number{
+    font-size:24px;
+  }
+
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:30px;
+}
+
+.loading{
+  text-align:center;
+  color:#888;
+  padding:30px;
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-<!-- =========================
-     HEADER
-========================= -->
+<div class="app">
 
-<header class="sticky top-0 z-50 bg-black/95 border-b border-gray-800">
+<!-- SIDEBAR -->
 
-<div class="max-w-7xl mx-auto px-4 py-4
-            flex items-center justify-between">
+<aside class="sidebar" id="sidebar">
 
-    <div>
-        <div class="font-black tracking-widest text-xl">
-            SHRAYNEX
-        </div>
+  <div class="logo">SHRAY<span>NEX</span></div>
 
-        <div class="text-xs text-gray-500">
-            ADMIN PANEL
-        </div>
-    </div>
+  <div class="admin-label">ADMIN CONTROL PANEL</div>
 
-    <div class="flex items-center gap-3">
+  <button class="nav-btn active" onclick="showSection('dashboard',this)">
+    📊 Dashboard
+  </button>
 
-        <span id="adminName"
-              class="hidden sm:block text-sm text-gray-400">
-            Admin
-        </span>
+  <button class="nav-btn" onclick="showSection('resellers',this)">
+    👥 Resellers
+  </button>
 
-        <button
-            id="logoutBtn"
-            class="bg-red-600 hover:bg-red-700
-                   px-4 py-2 rounded-xl text-sm font-bold">
-            Logout
-        </button>
+  <button class="nav-btn" onclick="showSection('products',this)">
+    📦 Products
+  </button>
 
-    </div>
+  <button class="nav-btn" onclick="showSection('orders',this)">
+    🛒 Orders
+  </button>
 
-</div>
+  <button class="nav-btn" onclick="showSection('withdrawals',this)">
+    💰 Withdrawals
+  </button>
+
+  <button class="nav-btn logout" onclick="logout()">
+    🚪 Logout
+  </button>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+<header class="topbar">
+
+  <div style="display:flex;align-items:center;gap:10px">
+
+    <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+
+    <h1 id="pageTitle">Dashboard</h1>
+
+  </div>
+
+  <div class="admin-email" id="adminEmail">Checking...</div>
 
 </header>
 
 
-<main class="max-w-7xl mx-auto px-4 py-6">
+<!-- ================= DASHBOARD ================= -->
 
+<section id="dashboard" class="section active">
 
-<!-- =========================
-     LOADING
-========================= -->
+  <div class="stats">
 
-<div id="loading"
-     class="text-center py-10 text-gray-400">
-
-    Checking Admin Access...
-
-</div>
-
-
-<div id="adminContent" class="hidden">
-
-
-<!-- =========================
-     DASHBOARD
-========================= -->
-
-<section class="mb-8">
-
-<div class="flex justify-between items-center mb-5">
-
-    <div>
-        <h1 class="text-2xl font-black">
-            Dashboard
-        </h1>
-
-        <p class="text-gray-500 text-sm">
-            SHRAYNEX Reselling Management
-        </p>
+    <div class="stat">
+      <div class="stat-title">Total Resellers</div>
+      <div class="stat-number" id="totalResellers">0</div>
     </div>
 
-</div>
-
-
-<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-
-    <div class="card rounded-2xl p-5">
-        <div class="text-gray-500 text-xs">
-            RESELLERS
-        </div>
-
-        <div id="statUsers"
-             class="text-3xl font-black mt-2">
-            0
-        </div>
+    <div class="stat">
+      <div class="stat-title">Pending Approval</div>
+      <div class="stat-number" id="pendingResellers">0</div>
     </div>
 
-
-    <div class="card rounded-2xl p-5">
-        <div class="text-gray-500 text-xs">
-            PRODUCTS
-        </div>
-
-        <div id="statProducts"
-             class="text-3xl font-black mt-2">
-            0
-        </div>
+    <div class="stat">
+      <div class="stat-title">Total Products</div>
+      <div class="stat-number" id="totalProducts">0</div>
     </div>
 
-
-    <div class="card rounded-2xl p-5">
-        <div class="text-gray-500 text-xs">
-            ORDERS
-        </div>
-
-        <div id="statOrders"
-             class="text-3xl font-black mt-2">
-            0
-        </div>
+    <div class="stat">
+      <div class="stat-title">Total Orders</div>
+      <div class="stat-number" id="totalOrders">0</div>
     </div>
 
-
-    <div class="card rounded-2xl p-5">
-        <div class="text-gray-500 text-xs">
-            WITHDRAWALS
-        </div>
-
-        <div id="statWithdrawals"
-             class="text-3xl font-black mt-2">
-            0
-        </div>
+    <div class="stat">
+      <div class="stat-title">Pending Withdrawals</div>
+      <div class="stat-number" id="pendingWithdrawals">0</div>
     </div>
 
-</div>
+  </div>
+
+  <div class="card">
+
+    <div class="card-header">
+      <h2>💰 Revenue Overview</h2>
+    </div>
+
+    <div style="font-size:35px;font-weight:900">
+      ₹<span id="totalRevenue">0</span>
+    </div>
+
+    <div style="color:#777;margin-top:7px">
+      Total order value
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- =========================
-     NAVIGATION
-========================= -->
+<!-- ================= RESELLERS ================= -->
 
-<div class="flex gap-2 overflow-x-auto mb-6 pb-2">
+<section id="resellers" class="section">
 
-<button class="tabBtn bg-white text-black px-5 py-3
-               rounded-xl font-bold whitespace-nowrap"
-        data-tab="users">
-    👤 Resellers
-</button>
+  <div class="card">
 
-<button class="tabBtn bg-gray-900 px-5 py-3
-               rounded-xl font-bold whitespace-nowrap"
-        data-tab="products">
-    📦 Products
-</button>
+    <div class="card-header">
 
-<button class="tabBtn bg-gray-900 px-5 py-3
-               rounded-xl font-bold whitespace-nowrap"
-        data-tab="orders">
-    🛒 Orders
-</button>
+      <h2>👥 Reseller Approval</h2>
 
-<button class="tabBtn bg-gray-900 px-5 py-3
-               rounded-xl font-bold whitespace-nowrap"
-        data-tab="withdrawals">
-    💰 Withdrawals
-</button>
+      <input
+        id="resellerSearch"
+        class="search"
+        placeholder="Search name / email / phone"
+        oninput="renderResellers()"
+      >
 
-</div>
-
-
-<!-- =========================
-     USERS
-========================= -->
-
-<section id="tab-users" class="tabSection">
-
-<div class="card rounded-2xl p-5">
-
-<div class="flex flex-col md:flex-row
-            md:items-center md:justify-between gap-3 mb-5">
-
-    <div>
-        <h2 class="text-xl font-bold">
-            Reseller Management
-        </h2>
-
-        <p class="text-gray-500 text-sm">
-            Approve or manage reseller accounts
-        </p>
     </div>
 
-    <input
-        id="userSearch"
-        class="input rounded-xl p-3 w-full md:w-72"
-        placeholder="Search name/email/phone"
-    >
+    <div class="table-wrap">
 
-</div>
+      <table>
 
-<div class="overflow-x-auto">
+        <thead>
 
-<table class="w-full text-sm">
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Wallet</th>
+            <th>Action</th>
+          </tr>
 
-<thead class="text-gray-500 border-b border-gray-800">
+        </thead>
 
-<tr>
-<th class="text-left p-3">Name</th>
-<th class="text-left p-3">Email</th>
-<th class="text-left p-3">Phone</th>
-<th class="text-left p-3">Status</th>
-<th class="text-left p-3">Wallet</th>
-<th class="text-left p-3">Action</th>
-</tr>
+        <tbody id="resellerTable">
 
-</thead>
+        <tr>
+          <td colspan="6" class="loading">Loading...</td>
+        </tr>
 
-<tbody id="usersTable"></tbody>
+        </tbody>
 
-</table>
+      </table>
 
-</div>
+    </div>
 
-</div>
+  </div>
 
 </section>
 
 
-<!-- =========================
-     PRODUCTS
-========================= -->
+<!-- ================= PRODUCTS ================= -->
 
-<section id="tab-products"
-         class="tabSection hidden">
+<section id="products" class="section">
 
-<div class="card rounded-2xl p-5">
+  <div class="card">
 
-<div class="flex justify-between items-center mb-5">
+    <div class="card-header">
 
-<div>
+      <h2 id="productFormTitle">➕ Add Product</h2>
 
-<h2 class="text-xl font-bold">
-Product Management
-</h2>
+      <button class="secondary" onclick="resetProductForm()">
+        Clear
+      </button>
 
-<p class="text-gray-500 text-sm">
-Add products for resellers
-</p>
+    </div>
 
-</div>
+    <input type="hidden" id="productId">
 
-<button
-    id="addProductBtn"
-    class="bg-white text-black
-           px-4 py-3 rounded-xl font-bold">
-    + Add Product
-</button>
+    <div class="form-grid">
 
-</div>
+      <div class="form-group full">
+        <label>Product Name</label>
+        <input id="productTitle" placeholder="Product name">
+      </div>
+
+      <div class="form-group">
+        <label>Base Price</label>
+        <input id="basePrice" type="number" placeholder="499">
+      </div>
+
+      <div class="form-group">
+        <label>MRP</label>
+        <input id="mrp" type="number" placeholder="999">
+      </div>
+
+      <div class="form-group">
+        <label>Discount %</label>
+        <input id="discount" type="number" placeholder="50">
+      </div>
+
+      <div class="form-group">
+        <label>Category</label>
+        <input id="category" placeholder="Fashion">
+      </div>
+
+      <div class="form-group full">
+        <label>Sizes</label>
+        <input id="sizes" placeholder="S, M, L, XL, XXL">
+      </div>
+
+      <div class="form-group">
+        <label>Image 1 URL</label>
+        <input id="image1" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>Image 2 URL</label>
+        <input id="image2" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>Image 3 URL</label>
+        <input id="image3" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>Image 4 URL</label>
+        <input id="image4" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>Image 5 URL</label>
+        <input id="image5" placeholder="https://...">
+      </div>
+
+      <div class="form-group full">
+
+        <label>Description</label>
+
+        <textarea
+          id="description"
+          placeholder="Product description"
+        ></textarea>
+
+      </div>
+
+    </div>
+
+    <button class="primary" onclick="saveProduct()" id="saveProductBtn">
+      ADD PRODUCT
+    </button>
+
+  </div>
 
 
-<div id="productsGrid"
-     class="grid grid-cols-1 sm:grid-cols-2
-            lg:grid-cols-3 gap-4">
-</div>
+  <div class="card">
 
-</div>
+    <div class="card-header">
+
+      <h2>📦 All Products</h2>
+
+      <input
+        id="productSearch"
+        class="search"
+        placeholder="Search product"
+        oninput="renderProducts()"
+      >
+
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Base</th>
+            <th>MRP</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="productTable">
+
+        <tr>
+          <td colspan="6" class="loading">Loading...</td>
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- =========================
-     ORDERS
-========================= -->
+<!-- ================= ORDERS ================= -->
 
-<section id="tab-orders"
-         class="tabSection hidden">
+<section id="orders" class="section">
 
-<div class="card rounded-2xl p-5">
+  <div class="card">
 
-<div class="mb-5">
+    <div class="card-header">
 
-<h2 class="text-xl font-bold">
-Order Management
-</h2>
+      <h2>🛒 Orders</h2>
 
-<p class="text-gray-500 text-sm">
-Customer and reseller orders
-</p>
+      <input
+        id="orderSearch"
+        class="search"
+        placeholder="Search order / customer / phone"
+        oninput="renderOrders()"
+      >
 
-</div>
+    </div>
 
+    <div class="table-wrap">
 
-<div class="overflow-x-auto">
+      <table>
 
-<table class="w-full text-sm">
+        <thead>
 
-<thead class="text-gray-500 border-b border-gray-800">
+          <tr>
+            <th>Order</th>
+            <th>Product</th>
+            <th>Customer</th>
+            <th>Reseller</th>
+            <th>Amount</th>
+            <th>Profit</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
 
-<tr>
+        </thead>
 
-<th class="text-left p-3">Order</th>
-<th class="text-left p-3">Product</th>
-<th class="text-left p-3">Customer</th>
-<th class="text-left p-3">Reseller</th>
-<th class="text-left p-3">Amount</th>
-<th class="text-left p-3">Status</th>
-<th class="text-left p-3">Action</th>
+        <tbody id="orderTable">
 
-</tr>
+        <tr>
+          <td colspan="8" class="loading">Loading...</td>
+        </tr>
 
-</thead>
+        </tbody>
 
-<tbody id="ordersTable"></tbody>
+      </table>
 
-</table>
+    </div>
 
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================
-     WITHDRAWALS
-========================= -->
-
-<section id="tab-withdrawals"
-         class="tabSection hidden">
-
-<div class="card rounded-2xl p-5">
-
-<h2 class="text-xl font-bold mb-1">
-Withdrawal Management
-</h2>
-
-<p class="text-gray-500 text-sm mb-5">
-Approve or reject reseller withdrawals
-</p>
-
-
-<div class="overflow-x-auto">
-
-<table class="w-full text-sm">
-
-<thead class="text-gray-500 border-b border-gray-800">
-
-<tr>
-
-<th class="text-left p-3">Reseller</th>
-<th class="text-left p-3">Amount</th>
-<th class="text-left p-3">Payment Details</th>
-<th class="text-left p-3">Status</th>
-<th class="text-left p-3">Action</th>
-
-</tr>
-
-</thead>
-
-<tbody id="withdrawalsTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
+  </div>
 
 </section>
 
 
-</div>
+<!-- ================= WITHDRAWALS ================= -->
+
+<section id="withdrawals" class="section">
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>💰 Withdrawal Requests</h2>
+
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Reseller</th>
+            <th>Email</th>
+            <th>Amount</th>
+            <th>Payment Details</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="withdrawTable">
+
+        <tr>
+          <td colspan="6" class="loading">Loading...</td>
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
 
 </main>
 
+</div>
 
-<!-- =========================
-     PRODUCT MODAL
-========================= -->
 
-<div id="productModal"
-     class="hidden fixed inset-0 z-[100]
-            modal-bg flex items-center justify-center
-            p-4">
+<!-- ================= ORDER MODAL ================= -->
 
-<div class="bg-[#111] border border-gray-800
-            rounded-3xl w-full max-w-lg
-            max-h-[90vh] overflow-y-auto p-6">
+<div class="modal" id="orderModal">
 
-<div class="flex justify-between mb-5">
+  <div class="modal-box">
 
-<h2 id="productModalTitle"
-    class="text-xl font-black">
-Add Product
-</h2>
+    <div class="modal-title">
 
-<button id="closeProductModal"
-        class="text-gray-400 text-2xl">
-×
-</button>
+      <h2>Order Details</h2>
+
+      <button class="close" onclick="closeModal('orderModal')">
+        ×
+      </button>
+
+    </div>
+
+    <div id="orderDetails"></div>
+
+  </div>
 
 </div>
 
 
-<form id="productForm">
+<!-- ================= PRODUCT MODAL ================= -->
 
-<input type="hidden" id="productId">
+<div class="modal" id="productModal">
 
+  <div class="modal-box">
 
-<label class="text-sm text-gray-400">
-Product Name
-</label>
+    <div class="modal-title">
 
-<input id="productTitle"
-       required
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="Example: Premium T-Shirt">
+      <h2>Product Details</h2>
 
+      <button class="close" onclick="closeModal('productModal')">
+        ×
+      </button>
 
-<label class="text-sm text-gray-400">
-Base Price
-</label>
+    </div>
 
-<input id="productBasePrice"
-       type="number"
-       min="0"
-       required
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="299">
+    <div id="productDetails"></div>
 
-
-<label class="text-sm text-gray-400">
-MRP
-</label>
-
-<input id="productMrp"
-       type="number"
-       min="0"
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="999">
-
-
-<label class="text-sm text-gray-400">
-Discount %
-</label>
-
-<input id="productDiscount"
-       type="number"
-       min="0"
-       max="100"
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="70">
-
-
-<label class="text-sm text-gray-400">
-Category
-</label>
-
-<input id="productCategory"
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="Fashion">
-
-
-<label class="text-sm text-gray-400">
-Sizes
-</label>
-
-<input id="productSizes"
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="Free Size,S,M,L,XL,XXL">
-
-
-<label class="text-sm text-gray-400">
-Image 1 URL
-</label>
-
-<input id="image1"
-       class="input w-full rounded-xl p-3 mt-2 mb-3"
-       placeholder="https://...">
-
-
-<label class="text-sm text-gray-400">
-Image 2 URL
-</label>
-
-<input id="image2"
-       class="input w-full rounded-xl p-3 mt-2 mb-3"
-       placeholder="https://...">
-
-
-<label class="text-sm text-gray-400">
-Image 3 URL
-</label>
-
-<input id="image3"
-       class="input w-full rounded-xl p-3 mt-2 mb-3"
-       placeholder="https://...">
-
-
-<label class="text-sm text-gray-400">
-Image 4 URL
-</label>
-
-<input id="image4"
-       class="input w-full rounded-xl p-3 mt-2 mb-3"
-       placeholder="https://...">
-
-
-<label class="text-sm text-gray-400">
-Image 5 URL
-</label>
-
-<input id="image5"
-       class="input w-full rounded-xl p-3 mt-2 mb-4"
-       placeholder="https://...">
-
-
-<label class="text-sm text-gray-400">
-Description
-</label>
-
-<textarea id="productDescription"
-          rows="4"
-          class="input w-full rounded-xl p-3 mt-2 mb-5"
-          placeholder="Product description"></textarea>
-
-
-<button
-    id="saveProductBtn"
-    class="w-full bg-white text-black
-           rounded-xl p-4 font-black">
-    SAVE PRODUCT
-</button>
-
-</form>
-
-</div>
+  </div>
 
 </div>
 
@@ -629,1453 +947,1380 @@ Description
 <script type="module">
 
 import {
-    initializeApp
+  initializeApp
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 
 import {
-    getAuth,
-    onAuthStateChanged,
-    signOut
+  getAuth,
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 
 import {
-    getFirestore,
-    collection,
-    doc,
-    getDoc,
-    onSnapshot,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    serverTimestamp
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp,
+  increment
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 
-/* ==============================
-   FIREBASE
-============================== */
+/* ================= FIREBASE ================= */
 
-const firebaseConfig = {
-    apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
-    authDomain:"rkyshree-2f74b.firebaseapp.com",
-    projectId:"rkyshree-2f74b",
-    storageBucket:"rkyshree-2f74b.firebasestorage.app"
+const firebaseConfig={
+  apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+  authDomain:"rkyshree-2f74b.firebaseapp.com",
+  projectId:"rkyshree-2f74b",
+  storageBucket:"rkyshree-2f74b.firebasestorage.app"
 };
 
-const app = initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const auth=getAuth(app);
 
-const db = getFirestore(app);
-
-
-/* ==============================
-   COLLECTIONS
-============================== */
-
-const USERS = "shraynex_users";
-const PRODUCTS = "shraynex_products";
-const ORDERS = "shraynex_orders";
-const WITHDRAW = "shraynex_withdrawals";
+const db=getFirestore(app);
 
 
-/* ==============================
-   STATE
-============================== */
+/* ================= COLLECTIONS ================= */
 
-let users = [];
-let products = [];
-let orders = [];
-let withdrawals = [];
-
-let currentAdmin = null;
+const USERS="shraynex_users";
+const PRODUCTS="shraynex_products";
+const ORDERS="shraynex_orders";
+const WITHDRAW="shraynex_withdrawals";
 
 
-/* ==============================
-   ADMIN AUTH
-============================== */
+let currentAdmin=null;
 
-onAuthStateChanged(auth, async user => {
+let resellerData=[];
+let productData=[];
+let orderData=[];
+let withdrawalData=[];
 
-    if(!user){
 
-        window.location.href = "./index.html";
-        return;
+/* ================= AUTH ================= */
 
+onAuthStateChanged(auth,async(user)=>{
+
+  if(!user){
+
+    window.location.href="./index.html";
+    return;
+
+  }
+
+  try{
+
+    const snap=await getDoc(
+      doc(db,USERS,user.uid)
+    );
+
+    if(!snap.exists()){
+
+      await signOut(auth);
+
+      alert("Admin profile not found.");
+
+      window.location.href="./index.html";
+
+      return;
     }
 
-    try{
+    const data=snap.data();
 
-        const ref = doc(
-            db,
-            USERS,
-            user.uid
-        );
+    if(data.role!=="admin"){
 
-        const snap = await getDoc(ref);
+      await signOut(auth);
 
-        if(!snap.exists()){
+      alert("Access denied. Admin account required.");
 
-            await signOut(auth);
-            window.location.href = "./index.html";
-            return;
+      window.location.href="./index.html";
 
-        }
-
-        const data = snap.data();
-
-        if(data.role !== "admin"){
-
-            await signOut(auth);
-            alert("Admin access denied.");
-            window.location.href = "./index.html";
-            return;
-
-        }
-
-        currentAdmin = {
-            uid:user.uid,
-            ...data
-        };
-
-        document.getElementById("adminName").textContent =
-            data.name || user.email || "Admin";
-
-        document.getElementById("loading").classList.add("hidden");
-
-        document
-            .getElementById("adminContent")
-            .classList.remove("hidden");
-
-        startListeners();
-
-    }catch(error){
-
-        console.error(error);
-
-        await signOut(auth);
-
-        window.location.href = "./index.html";
-
+      return;
     }
+
+    currentAdmin=data;
+
+    document.getElementById("adminEmail").textContent=
+      data.email || user.email || "Admin";
+
+    await loadAll();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Admin verification error:\n"+
+      error.message
+    );
+
+    await signOut(auth);
+
+    window.location.href="./index.html";
+  }
 
 });
 
 
-/* ==============================
-   FIRESTORE LISTENERS
-============================== */
+/* ================= LOAD DATA ================= */
 
-function startListeners(){
+async function loadAll(){
 
-    onSnapshot(
-        collection(db,USERS),
-        snap => {
+  await Promise.all([
+    loadResellers(),
+    loadProducts(),
+    loadOrders(),
+    loadWithdrawals()
+  ]);
 
-            users = [];
-
-            snap.forEach(d => {
-
-                const data = d.data();
-
-                if(data.role !== "admin"){
-
-                    users.push({
-                        id:d.id,
-                        ...data
-                    });
-
-                }
-
-            });
-
-            renderUsers();
-            updateStats();
-
-        }
-    );
-
-
-    onSnapshot(
-        collection(db,PRODUCTS),
-        snap => {
-
-            products = [];
-
-            snap.forEach(d => {
-
-                products.push({
-                    id:d.id,
-                    ...d.data()
-                });
-
-            });
-
-            renderProducts();
-            updateStats();
-
-        }
-    );
-
-
-    onSnapshot(
-        collection(db,ORDERS),
-        snap => {
-
-            orders = [];
-
-            snap.forEach(d => {
-
-                orders.push({
-                    id:d.id,
-                    ...d.data()
-                });
-
-            });
-
-            orders.sort((a,b) => {
-
-                const ta =
-                    a.createdAt?.seconds || 0;
-
-                const tb =
-                    b.createdAt?.seconds || 0;
-
-                return tb-ta;
-
-            });
-
-            renderOrders();
-            updateStats();
-
-        }
-    );
-
-
-    onSnapshot(
-        collection(db,WITHDRAW),
-        snap => {
-
-            withdrawals = [];
-
-            snap.forEach(d => {
-
-                withdrawals.push({
-                    id:d.id,
-                    ...d.data()
-                });
-
-            });
-
-            withdrawals.sort((a,b) => {
-
-                const ta =
-                    a.createdAt?.seconds || 0;
-
-                const tb =
-                    b.createdAt?.seconds || 0;
-
-                return tb-ta;
-
-            });
-
-            renderWithdrawals();
-            updateStats();
-
-        }
-    );
+  updateStats();
 
 }
 
 
-/* ==============================
-   STATS
-============================== */
+/* ================= RESELLERS ================= */
 
-function updateStats(){
+async function loadResellers(){
 
-    document.getElementById("statUsers")
-        .textContent = users.length;
+  resellerData=[];
 
-    document.getElementById("statProducts")
-        .textContent = products.length;
+  const snap=await getDocs(
+    collection(db,USERS)
+  );
 
-    document.getElementById("statOrders")
-        .textContent = orders.length;
+  snap.forEach(d=>{
 
-    document.getElementById("statWithdrawals")
-        .textContent = withdrawals.filter(
-            x => x.status === "pending"
-        ).length;
+    const data=d.data();
+
+    if(data.role!=="admin"){
+
+      resellerData.push({
+        id:d.id,
+        ...data
+      });
+
+    }
+
+  });
+
+  renderResellers();
 
 }
 
 
-/* ==============================
-   TABS
-============================== */
+function renderResellers(){
 
-document.querySelectorAll(".tabBtn")
-.forEach(btn => {
+  const tbody=document.getElementById("resellerTable");
 
-    btn.addEventListener("click", () => {
+  const search=
+    (document.getElementById("resellerSearch").value || "")
+    .toLowerCase()
+    .trim();
 
-        document.querySelectorAll(".tabBtn")
-        .forEach(b => {
+  const list=resellerData.filter(r=>{
 
-            b.classList.remove(
-                "bg-white",
-                "text-black"
-            );
+    const text=[
+      r.name,
+      r.email,
+      r.phone,
+      r.status
+    ].join(" ").toLowerCase();
 
-            b.classList.add(
-                "bg-gray-900"
-            );
+    return text.includes(search);
 
-        });
+  });
 
-        btn.classList.add(
-            "bg-white",
-            "text-black"
-        );
+  if(!list.length){
 
-        btn.classList.remove(
-            "bg-gray-900"
-        );
+    tbody.innerHTML=
+      `<tr><td colspan="6" class="empty">
+        No reseller found
+      </td></tr>`;
+
+    return;
+  }
+
+  tbody.innerHTML=list.map(r=>{
+
+    const status=r.status || "pending";
+
+    return `
+
+    <tr>
+
+      <td>
+        <b>${escapeHtml(r.name || "Reseller")}</b>
+      </td>
+
+      <td>${escapeHtml(r.email || "-")}</td>
+
+      <td>${escapeHtml(r.phone || "-")}</td>
+
+      <td>
+        <span class="status ${status}">
+          ${escapeHtml(status)}
+        </span>
+      </td>
+
+      <td>
+        ₹${Number(r.walletBalance || 0).toFixed(2)}
+      </td>
+
+      <td>
+
+        <div class="actions">
+
+          <button
+            class="success-btn"
+            onclick="changeResellerStatus('${r.id}','approved')">
+            Approve
+          </button>
+
+          <button
+            class="danger"
+            onclick="changeResellerStatus('${r.id}','rejected')">
+            Reject
+          </button>
+
+          <button
+            class="warning"
+            onclick="changeResellerStatus('${r.id}','suspended')">
+            Suspend
+          </button>
+
+        </div>
+
+      </td>
+
+    </tr>
+
+    `;
+
+  }).join("");
+
+}
 
 
-        document.querySelectorAll(".tabSection")
-        .forEach(section => {
+window.changeResellerStatus=async(id,status)=>{
 
-            section.classList.add("hidden");
+  const r=resellerData.find(x=>x.id===id);
 
-        });
+  if(!r)return;
 
-        document
-            .getElementById(
-                "tab-" + btn.dataset.tab
-            )
-            .classList.remove("hidden");
+  if(!confirm(
+    `${r.name || "Reseller"} ko ${status} karna hai?`
+  ))return;
 
+  try{
+
+    await updateDoc(
+      doc(db,USERS,id),
+      {
+        status:status,
+        updatedAt:serverTimestamp()
+      }
+    );
+
+    alert("Reseller status updated.");
+
+    await loadResellers();
+
+    updateStats();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert("Status update failed:\n"+error.message);
+
+  }
+
+};
+
+
+/* ================= PRODUCTS ================= */
+
+async function loadProducts(){
+
+  productData=[];
+
+  const snap=await getDocs(
+    collection(db,PRODUCTS)
+  );
+
+  snap.forEach(d=>{
+
+    productData.push({
+      id:d.id,
+      ...d.data()
     });
 
-});
+  });
 
-
-/* ==============================
-   USERS
-============================== */
-
-function renderUsers(){
-
-    const tbody =
-        document.getElementById("usersTable");
-
-    const search =
-        document
-        .getElementById("userSearch")
-        .value
-        .toLowerCase()
-        .trim();
-
-    const filtered = users.filter(u => {
-
-        const text = `
-            ${u.name || ""}
-            ${u.email || ""}
-            ${u.phone || ""}
-        `.toLowerCase();
-
-        return text.includes(search);
-
-    });
-
-
-    tbody.innerHTML = filtered.map(u => {
-
-        const status =
-            u.status || "pending";
-
-        const wallet =
-            Number(u.walletBalance || 0);
-
-
-        return `
-
-        <tr class="border-b border-gray-900">
-
-            <td class="p-3">
-
-                <div class="font-bold">
-                    ${escapeHtml(u.name || "Reseller")}
-                </div>
-
-                <div class="text-xs text-gray-600">
-                    ${u.id}
-                </div>
-
-            </td>
-
-            <td class="p-3 text-gray-400">
-                ${escapeHtml(u.email || "-")}
-            </td>
-
-            <td class="p-3 text-gray-400">
-                ${escapeHtml(u.phone || "-")}
-            </td>
-
-            <td class="p-3">
-
-                <span class="status ${status}">
-                    ${status}
-                </span>
-
-            </td>
-
-            <td class="p-3 font-bold">
-                ₹${wallet.toFixed(2)}
-            </td>
-
-            <td class="p-3">
-
-                <div class="flex gap-2 flex-wrap">
-
-                    ${
-                        status !== "approved"
-                        ?
-                        `<button
-                            onclick="approveUser('${u.id}')"
-                            class="bg-green-600 px-3 py-2
-                                   rounded-lg text-xs font-bold">
-                            Approve
-                         </button>`
-                        : ""
-                    }
-
-                    ${
-                        status !== "rejected"
-                        ?
-                        `<button
-                            onclick="rejectUser('${u.id}')"
-                            class="bg-red-600 px-3 py-2
-                                   rounded-lg text-xs font-bold">
-                            Reject
-                         </button>`
-                        : ""
-                    }
-
-                    ${
-                        status === "approved"
-                        ?
-                        `<button
-                            onclick="suspendUser('${u.id}')"
-                            class="bg-yellow-600 px-3 py-2
-                                   rounded-lg text-xs font-bold">
-                            Suspend
-                         </button>`
-                        : ""
-                    }
-
-                </div>
-
-            </td>
-
-        </tr>
-
-        `;
-
-    }).join("");
-
-}
-
-
-document
-.getElementById("userSearch")
-.addEventListener("input",renderUsers);
-
-
-window.approveUser = async function(id){
-
-    if(!confirm("इस reseller को approve करना है?"))
-        return;
-
-    await updateDoc(
-        doc(db,USERS,id),
-        {
-            status:"approved",
-            approvedAt:serverTimestamp()
-        }
-    );
-
-};
-
-
-window.rejectUser = async function(id){
-
-    if(!confirm("इस reseller को reject करना है?"))
-        return;
-
-    await updateDoc(
-        doc(db,USERS,id),
-        {
-            status:"rejected"
-        }
-    );
-
-};
-
-
-window.suspendUser = async function(id){
-
-    if(!confirm("इस reseller को suspend करना है?"))
-        return;
-
-    await updateDoc(
-        doc(db,USERS,id),
-        {
-            status:"suspended"
-        }
-    );
-
-};
-
-
-/* ==============================
-   PRODUCTS
-============================== */
-
-function productImages(p){
-
-    if(Array.isArray(p.images))
-        return p.images.filter(Boolean);
-
-    return [
-        p.image,
-        p.imageUrl,
-        p.img,
-        p.photo,
-        p.image1,
-        p.image2,
-        p.image3,
-        p.image4,
-        p.image5
-    ].filter(Boolean);
+  renderProducts();
 
 }
 
 
 function renderProducts(){
 
-    const grid =
-        document.getElementById("productsGrid");
+  const tbody=document.getElementById("productTable");
 
-    if(!products.length){
+  const search=
+    (document.getElementById("productSearch").value || "")
+    .toLowerCase()
+    .trim();
 
-        grid.innerHTML = `
-            <div class="col-span-full text-center
-                        py-10 text-gray-500">
-                No products found.
-            </div>
-        `;
+  const list=productData.filter(p=>{
 
-        return;
+    const text=[
+      p.title,
+      p.category,
+      p.description
+    ].join(" ").toLowerCase();
 
-    }
+    return text.includes(search);
 
+  });
 
-    grid.innerHTML = products.map(p => {
+  if(!list.length){
 
-        const images = productImages(p);
+    tbody.innerHTML=
+      `<tr><td colspan="6" class="empty">
+        No products found
+      </td></tr>`;
 
-        const image =
-            images[0] || "https://via.placeholder.com/500";
+    return;
+  }
 
-        return `
+  tbody.innerHTML=list.map(p=>{
 
-        <div class="card rounded-2xl overflow-hidden">
+    const image=
+      p.images?.[0] ||
+      p.image ||
+      p.imageUrl ||
+      p.img ||
+      p.photo ||
+      "";
 
-            <img
+    return `
+
+    <tr>
+
+      <td>
+        ${
+          image
+          ?
+          `<img class="product-img"
                 src="${escapeAttr(image)}"
-                class="w-full h-48 object-cover"
-                onerror="this.src='https://via.placeholder.com/500'"
-            >
+                onerror="this.style.display='none'">`
+          :
+          `No Image`
+        }
+      </td>
 
-            <div class="p-4">
+      <td>
+        <b>${escapeHtml(p.title || "Product")}</b>
+      </td>
 
-                <div class="font-bold">
-                    ${escapeHtml(p.title || "Product")}
-                </div>
+      <td>${escapeHtml(p.category || "-")}</td>
 
-                <div class="text-sm text-gray-500 mt-1">
-                    ${escapeHtml(p.category || "")}
-                </div>
+      <td>₹${Number(p.basePrice || 0)}</td>
 
-                <div class="flex gap-3 mt-3">
+      <td>₹${Number(p.mrp || 0)}</td>
 
-                    <span class="font-black">
-                        ₹${Number(p.basePrice || 0)}
-                    </span>
+      <td>
 
-                    ${
-                        p.mrp
-                        ?
-                        `<span class="text-gray-500 line-through">
-                            ₹${Number(p.mrp)}
-                         </span>`
-                        : ""
-                    }
+        <div class="actions">
 
-                </div>
+          <button
+            class="secondary"
+            onclick="editProduct('${p.id}')">
+            Edit
+          </button>
 
-
-                <div class="flex gap-2 mt-4">
-
-                    <button
-                        onclick="editProduct('${p.id}')"
-                        class="flex-1 bg-white text-black
-                               rounded-xl p-2 text-sm font-bold">
-                        Edit
-                    </button>
-
-                    <button
-                        onclick="deleteProduct('${p.id}')"
-                        class="flex-1 bg-red-600
-                               rounded-xl p-2 text-sm font-bold">
-                        Delete
-                    </button>
-
-                </div>
-
-            </div>
+          <button
+            class="danger"
+            onclick="deleteProduct('${p.id}')">
+            Delete
+          </button>
 
         </div>
 
-        `;
+      </td>
 
-    }).join("");
+    </tr>
+
+    `;
+
+  }).join("");
 
 }
 
 
-/* ==============================
-   PRODUCT MODAL
-============================== */
+window.saveProduct=async()=>{
 
-const productModal =
-    document.getElementById("productModal");
+  const id=document.getElementById("productId").value;
+
+  const title=document.getElementById("productTitle").value.trim();
+
+  const basePrice=Number(
+    document.getElementById("basePrice").value || 0
+  );
+
+  const mrp=Number(
+    document.getElementById("mrp").value || 0
+  );
+
+  const discount=Number(
+    document.getElementById("discount").value || 0
+  );
+
+  const category=document.getElementById("category").value.trim();
+
+  const sizesRaw=document.getElementById("sizes").value.trim();
+
+  const description=document.getElementById("description").value.trim();
+
+  const images=[
+    document.getElementById("image1").value.trim(),
+    document.getElementById("image2").value.trim(),
+    document.getElementById("image3").value.trim(),
+    document.getElementById("image4").value.trim(),
+    document.getElementById("image5").value.trim()
+  ].filter(Boolean);
+
+  const sizes=sizesRaw
+    ?
+    sizesRaw.split(",")
+      .map(x=>x.trim())
+      .filter(Boolean)
+    :
+    [];
+
+  if(!title){
+
+    alert("Product name enter karein.");
+    return;
+
+  }
+
+  if(basePrice<=0){
+
+    alert("Base price enter karein.");
+    return;
+
+  }
+
+  const product={
+
+    title:title,
+
+    basePrice:basePrice,
+
+    mrp:mrp,
+
+    discount:discount,
+
+    category:category,
+
+    sizes:sizes,
+
+    images:images,
+
+    description:description,
+
+    /* old website compatibility */
+
+    image:images[0] || "",
+
+    imageUrl:images[0] || "",
+
+    image1:images[0] || "",
+
+    image2:images[1] || "",
+
+    image3:images[2] || "",
+
+    image4:images[3] || "",
+
+    image5:images[4] || "",
+
+    updatedAt:serverTimestamp()
+
+  };
 
 
-document
-.getElementById("addProductBtn")
-.addEventListener("click", () => {
+  try{
+
+    const btn=document.getElementById("saveProductBtn");
+
+    btn.disabled=true;
+
+    btn.textContent=id
+      ? "UPDATING..."
+      : "ADDING...";
+
+
+    if(id){
+
+      await updateDoc(
+        doc(db,PRODUCTS,id),
+        product
+      );
+
+      alert("Product updated successfully.");
+
+    }else{
+
+      product.createdAt=serverTimestamp();
+
+      await addDoc(
+        collection(db,PRODUCTS),
+        product
+      );
+
+      alert("Product added successfully.");
+
+    }
+
 
     resetProductForm();
 
-    document
-        .getElementById("productModalTitle")
-        .textContent = "Add Product";
+    await loadProducts();
 
-    productModal.classList.remove("hidden");
+    updateStats();
 
-});
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Product save failed:\n"+
+      error.message
+    );
+
+  }finally{
+
+    const btn=document.getElementById("saveProductBtn");
+
+    btn.disabled=false;
+
+    btn.textContent="ADD PRODUCT";
+
+  }
+
+};
 
 
-document
-.getElementById("closeProductModal")
-.addEventListener("click", () => {
+window.editProduct=(id)=>{
 
-    productModal.classList.add("hidden");
+  const p=productData.find(x=>x.id===id);
 
-});
+  if(!p)return;
+
+  const images=p.images || [
+    p.image1,
+    p.image2,
+    p.image3,
+    p.image4,
+    p.image5
+  ].filter(Boolean);
+
+  const sizes=p.sizes || [];
+
+  document.getElementById("productId").value=p.id;
+
+  document.getElementById("productTitle").value=p.title || "";
+
+  document.getElementById("basePrice").value=p.basePrice || "";
+
+  document.getElementById("mrp").value=p.mrp || "";
+
+  document.getElementById("discount").value=p.discount || "";
+
+  document.getElementById("category").value=p.category || "";
+
+  document.getElementById("sizes").value=
+    Array.isArray(sizes)
+    ? sizes.join(", ")
+    : sizes || "";
+
+  document.getElementById("image1").value=images[0] || "";
+
+  document.getElementById("image2").value=images[1] || "";
+
+  document.getElementById("image3").value=images[2] || "";
+
+  document.getElementById("image4").value=images[3] || "";
+
+  document.getElementById("image5").value=images[4] || "";
+
+  document.getElementById("description").value=
+    p.description || "";
+
+  document.getElementById("productFormTitle").textContent=
+    "✏️ Edit Product";
+
+  document.getElementById("saveProductBtn").textContent=
+    "UPDATE PRODUCT";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+};
 
 
-function resetProductForm(){
+window.resetProductForm=()=>{
 
-    document
-        .getElementById("productForm")
-        .reset();
+  document.getElementById("productId").value="";
 
-    document
-        .getElementById("productId")
-        .value = "";
+  document.getElementById("productTitle").value="";
+
+  document.getElementById("basePrice").value="";
+
+  document.getElementById("mrp").value="";
+
+  document.getElementById("discount").value="";
+
+  document.getElementById("category").value="";
+
+  document.getElementById("sizes").value="";
+
+  document.getElementById("image1").value="";
+
+  document.getElementById("image2").value="";
+
+  document.getElementById("image3").value="";
+
+  document.getElementById("image4").value="";
+
+  document.getElementById("image5").value="";
+
+  document.getElementById("description").value="";
+
+  document.getElementById("productFormTitle").textContent=
+    "➕ Add Product";
+
+  document.getElementById("saveProductBtn").textContent=
+    "ADD PRODUCT";
+
+};
+
+
+window.deleteProduct=async(id)=>{
+
+  const p=productData.find(x=>x.id===id);
+
+  if(!p)return;
+
+  if(!confirm(
+    `"${p.title || "Product"}" delete karna hai?`
+  ))return;
+
+  try{
+
+    await deleteDoc(
+      doc(db,PRODUCTS,id)
+    );
+
+    alert("Product deleted.");
+
+    await loadProducts();
+
+    updateStats();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Delete failed:\n"+
+      error.message
+    );
+
+  }
+
+};
+
+
+/* ================= ORDERS ================= */
+
+async function loadOrders(){
+
+  orderData=[];
+
+  const snap=await getDocs(
+    collection(db,ORDERS)
+  );
+
+  snap.forEach(d=>{
+
+    orderData.push({
+      id:d.id,
+      ...d.data()
+    });
+
+  });
+
+  orderData.sort((a,b)=>{
+
+    const aTime=a.createdAt?.seconds || 0;
+    const bTime=b.createdAt?.seconds || 0;
+
+    return bTime-aTime;
+
+  });
+
+  renderOrders();
 
 }
 
 
-window.editProduct = function(id){
-
-    const p =
-        products.find(x => x.id === id);
-
-    if(!p) return;
-
-
-    const images =
-        productImages(p);
-
-
-    document.getElementById("productId").value =
-        p.id;
-
-    document.getElementById("productTitle").value =
-        p.title || "";
-
-    document.getElementById("productBasePrice").value =
-        p.basePrice || "";
-
-    document.getElementById("productMrp").value =
-        p.mrp || "";
-
-    document.getElementById("productDiscount").value =
-        p.discount || "";
-
-    document.getElementById("productCategory").value =
-        p.category || "";
-
-    document.getElementById("productSizes").value =
-        Array.isArray(p.sizes)
-        ? p.sizes.join(",")
-        : (p.sizes || "");
-
-    document.getElementById("productDescription").value =
-        p.description || "";
-
-
-    for(let i=1;i<=5;i++){
-
-        document.getElementById("image"+i).value =
-            images[i-1] || "";
-
-    }
-
-
-    document
-        .getElementById("productModalTitle")
-        .textContent = "Edit Product";
-
-    productModal.classList.remove("hidden");
-
-};
-
-
-window.deleteProduct = async function(id){
-
-    if(!confirm(
-        "क्या आप इस product को delete करना चाहते हैं?"
-    ))
-        return;
-
-
-    try{
-
-        await deleteDoc(
-            doc(db,PRODUCTS,id)
-        );
-
-        alert("Product deleted.");
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Product delete नहीं हुआ।");
-
-    }
-
-};
-
-
-/* ==============================
-   SAVE PRODUCT
-============================== */
-
-document
-.getElementById("productForm")
-.addEventListener("submit",async e => {
-
-    e.preventDefault();
-
-
-    const id =
-        document.getElementById("productId").value;
-
-
-    const title =
-        document
-        .getElementById("productTitle")
-        .value
-        .trim();
-
-
-    const basePrice =
-        Number(
-            document
-            .getElementById("productBasePrice")
-            .value
-        );
-
-
-    const mrp =
-        Number(
-            document
-            .getElementById("productMrp")
-            .value
-        );
-
-
-    const discount =
-        Number(
-            document
-            .getElementById("productDiscount")
-            .value || 0
-        );
-
-
-    const category =
-        document
-        .getElementById("productCategory")
-        .value
-        .trim();
-
-
-    const sizes =
-        document
-        .getElementById("productSizes")
-        .value
-        .split(",")
-        .map(x => x.trim())
-        .filter(Boolean);
-
-
-    const images = [
-
-        document.getElementById("image1").value.trim(),
-        document.getElementById("image2").value.trim(),
-        document.getElementById("image3").value.trim(),
-        document.getElementById("image4").value.trim(),
-        document.getElementById("image5").value.trim()
-
-    ].filter(Boolean);
-
-
-    const description =
-        document
-        .getElementById("productDescription")
-        .value
-        .trim();
-
-
-    if(!title){
-
-        alert("Product name डालें।");
-        return;
-
-    }
-
-
-    if(basePrice <= 0){
-
-        alert("Base Price सही डालें।");
-        return;
-
-    }
-
-
-    const productData = {
-
-        title,
-
-        basePrice,
-
-        mrp,
-
-        discount,
-
-        category,
-
-        sizes,
-
-        images,
-
-        image:images[0] || "",
-
-        image1:images[0] || "",
-        image2:images[1] || "",
-        image3:images[2] || "",
-        image4:images[3] || "",
-        image5:images[4] || "",
-
-        description,
-
-        updatedAt:serverTimestamp()
-
-    };
-
-
-    try{
-
-        if(id){
-
-            await updateDoc(
-                doc(db,PRODUCTS,id),
-                productData
-            );
-
-            alert("Product updated.");
-
-        }else{
-
-            productData.createdAt =
-                serverTimestamp();
-
-            await addDoc(
-                collection(db,PRODUCTS),
-                productData
-            );
-
-            alert("Product added.");
-
-        }
-
-
-        productModal.classList.add("hidden");
-
-        resetProductForm();
-
-    }catch(error){
-
-        console.error(error);
-
-        alert(
-            "Product save नहीं हुआ। Firebase Rules check करें।"
-        );
-
-    }
-
-});
-
-
-/* ==============================
-   ORDERS
-============================== */
-
 function renderOrders(){
 
-    const tbody =
-        document.getElementById("ordersTable");
+  const tbody=document.getElementById("orderTable");
+
+  const search=
+    (document.getElementById("orderSearch").value || "")
+    .toLowerCase()
+    .trim();
+
+  const list=orderData.filter(o=>{
+
+    const text=[
+      o.id,
+      o.customerName,
+      o.customerPhone,
+      o.resellerName,
+      o.resellerPhone,
+      o.productName
+    ].join(" ").toLowerCase();
+
+    return text.includes(search);
+
+  });
 
 
-    if(!orders.length){
+  if(!list.length){
 
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7"
-                    class="p-8 text-center text-gray-500">
-                    No orders found.
-                </td>
-            </tr>
-        `;
+    tbody.innerHTML=
+      `<tr><td colspan="8" class="empty">
+        No orders found
+      </td></tr>`;
 
-        return;
+    return;
 
-    }
+  }
 
 
-    tbody.innerHTML = orders.map(o => {
+  tbody.innerHTML=list.map(o=>{
 
-        const status =
-            o.status || "processing";
+    const status=o.status || "pending";
 
+    const amount=
+      Number(o.sellingPrice || 0) *
+      Number(o.quantity || 1);
 
-        return `
+    return `
 
-        <tr class="border-b border-gray-900">
+    <tr>
 
-            <td class="p-3">
+      <td>
+        <b>${escapeHtml(o.id.slice(0,12))}</b>
+        <br>
+        <button
+          class="secondary"
+          style="margin-top:5px"
+          onclick="viewOrder('${o.id}')">
+          View
+        </button>
+      </td>
 
-                <div class="font-bold">
-                    ${o.id.slice(0,10)}
-                </div>
+      <td>
+        ${escapeHtml(o.productName || "-")}
+        ${
+          o.size
+          ?
+          `<br><small style="color:#777">
+             Size: ${escapeHtml(o.size)}
+           </small>`
+          :
+          ""
+        }
+      </td>
 
-                <div class="text-xs text-gray-600">
-                    ${formatDate(o.createdAt)}
-                </div>
+      <td>
+        ${escapeHtml(o.customerName || "-")}
+        <br>
+        <small style="color:#777">
+          ${escapeHtml(o.customerPhone || "")}
+        </small>
+      </td>
 
-            </td>
+      <td>
+        ${escapeHtml(o.resellerName || "-")}
+      </td>
 
+      <td>
+        ₹${amount.toFixed(2)}
+      </td>
 
-            <td class="p-3">
+      <td>
+        ₹${Number(o.profit || 0).toFixed(2)}
+      </td>
 
-                ${escapeHtml(o.productName || "-")}
+      <td>
 
-                <div class="text-xs text-gray-500">
-                    Qty: ${Number(o.quantity || 1)}
-                </div>
+        <span class="status ${status}">
+          ${escapeHtml(status)}
+        </span>
 
-            </td>
+      </td>
 
+      <td>
 
-            <td class="p-3">
+        <select
+          onchange="changeOrderStatus('${o.id}',this.value)"
+          style="
+          background:#080808;
+          color:#fff;
+          border:1px solid #333;
+          border-radius:8px;
+          padding:8px;
+          ">
 
-                <div>
-                    ${escapeHtml(o.customerName || "-")}
-                </div>
+          ${orderStatusOptions(status)}
 
-                <div class="text-xs text-gray-500">
-                    ${escapeHtml(o.customerPhone || "")}
-                </div>
+        </select>
 
-            </td>
+      </td>
 
+    </tr>
 
-            <td class="p-3">
+    `;
 
-                ${escapeHtml(o.resellerName || "-")}
-
-                <div class="text-xs text-gray-500">
-                    ${escapeHtml(o.resellerPhone || "")}
-                </div>
-
-            </td>
-
-
-            <td class="p-3">
-
-                <div class="font-bold">
-                    ₹${Number(
-                        o.sellingPrice || 0
-                    ) * Number(o.quantity || 1)}
-                </div>
-
-                <div class="text-xs text-green-500">
-                    Profit ₹${Number(
-                        o.profit || 0
-                    )}
-                </div>
-
-            </td>
-
-
-            <td class="p-3">
-
-                <span class="status ${status}">
-                    ${status}
-                </span>
-
-            </td>
-
-
-            <td class="p-3">
-
-                <select
-                    onchange="changeOrderStatus(
-                        '${o.id}',
-                        this.value
-                    )"
-                    class="bg-black border border-gray-700
-                           rounded-lg p-2 text-xs">
-
-                    ${orderStatusOptions(status)}
-
-                </select>
-
-            </td>
-
-        </tr>
-
-        `;
-
-    }).join("");
+  }).join("");
 
 }
 
 
 function orderStatusOptions(current){
 
-    const list = [
+  const statuses=[
+    "pending",
+    "confirmed",
+    "processing",
+    "shipped",
+    "delivered",
+    "out_of_stock",
+    "size_not_available",
+    "cancelled"
+  ];
 
-        "pending",
-        "confirmed",
-        "processing",
-        "shipped",
-        "delivered",
-        "out_of_stock",
-        "size_not_available",
-        "cancelled"
+  return statuses.map(s=>`
 
-    ];
+    <option value="${s}" ${s===current?"selected":""}>
+      ${s.replaceAll("_"," ").toUpperCase()}
+    </option>
 
-
-    return list.map(x => `
-
-        <option
-            value="${x}"
-            ${x === current ? "selected" : ""}>
-            ${x}
-        </option>
-
-    `).join("");
+  `).join("");
 
 }
 
 
-window.changeOrderStatus = async function(
-    id,
-    status
-){
+window.changeOrderStatus=async(id,status)=>{
 
-    try{
+  try{
 
-        await updateDoc(
-            doc(db,ORDERS,id),
-            {
-                status,
-                updatedAt:serverTimestamp()
-            }
-        );
+    await updateDoc(
+      doc(db,ORDERS,id),
+      {
+        status:status,
+        updatedAt:serverTimestamp()
+      }
+    );
 
-    }catch(error){
+    const o=orderData.find(x=>x.id===id);
 
-        console.error(error);
+    if(o)o.status=status;
 
-        alert("Order status update नहीं हुआ।");
+    renderOrders();
 
-    }
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Order status update failed:\n"+
+      error.message
+    );
+
+  }
 
 };
 
 
-/* ==============================
-   WITHDRAWALS
-============================== */
+window.viewOrder=(id)=>{
+
+  const o=orderData.find(x=>x.id===id);
+
+  if(!o)return;
+
+  const amount=
+    Number(o.sellingPrice || 0) *
+    Number(o.quantity || 1);
+
+  document.getElementById("orderDetails").innerHTML=`
+
+    <div style="line-height:2">
+
+      <b>Order ID:</b>
+      ${escapeHtml(o.id)}
+      <br>
+
+      <b>Product:</b>
+      ${escapeHtml(o.productName || "-")}
+      <br>
+
+      <b>Size:</b>
+      ${escapeHtml(o.size || "Not selected")}
+      <br>
+
+      <b>Quantity:</b>
+      ${Number(o.quantity || 1)}
+      <br>
+
+      <b>Customer:</b>
+      ${escapeHtml(o.customerName || "-")}
+      <br>
+
+      <b>Phone:</b>
+      ${escapeHtml(o.customerPhone || "-")}
+      <br>
+
+      <b>Address:</b>
+      ${escapeHtml(o.customerAddress || "-")}
+      <br>
+
+      <b>Pincode:</b>
+      ${escapeHtml(o.pincode || "-")}
+      <br>
+
+      <b>Reseller:</b>
+      ${escapeHtml(o.resellerName || "-")}
+      <br>
+
+      <b>Reseller Phone:</b>
+      ${escapeHtml(o.resellerPhone || "-")}
+      <br>
+
+      <b>Base Price:</b>
+      ₹${Number(o.basePrice || 0).toFixed(2)}
+      <br>
+
+      <b>Selling Price:</b>
+      ₹${Number(o.sellingPrice || 0).toFixed(2)}
+      <br>
+
+      <b>Total:</b>
+      ₹${amount.toFixed(2)}
+      <br>
+
+      <b>Profit:</b>
+      ₹${Number(o.profit || 0).toFixed(2)}
+      <br>
+
+      <b>Status:</b>
+      <span class="status ${o.status || "pending"}">
+        ${escapeHtml(o.status || "pending")}
+      </span>
+
+    </div>
+
+  `;
+
+  document.getElementById("orderModal")
+    .classList.add("show");
+
+};
+
+
+/* ================= WITHDRAWALS ================= */
+
+async function loadWithdrawals(){
+
+  withdrawalData=[];
+
+  const snap=await getDocs(
+    collection(db,WITHDRAW)
+  );
+
+  snap.forEach(d=>{
+
+    withdrawalData.push({
+      id:d.id,
+      ...d.data()
+    });
+
+  });
+
+  withdrawalData.sort((a,b)=>{
+
+    return (
+      (b.createdAt?.seconds || 0) -
+      (a.createdAt?.seconds || 0)
+    );
+
+  });
+
+  renderWithdrawals();
+
+}
+
 
 function renderWithdrawals(){
 
-    const tbody =
-        document.getElementById(
-            "withdrawalsTable"
-        );
+  const tbody=document.getElementById("withdrawTable");
+
+  if(!withdrawalData.length){
+
+    tbody.innerHTML=
+      `<tr><td colspan="6" class="empty">
+        No withdrawal requests
+      </td></tr>`;
+
+    return;
+
+  }
 
 
-    if(!withdrawals.length){
+  tbody.innerHTML=withdrawalData.map(w=>{
 
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5"
-                    class="p-8 text-center text-gray-500">
-                    No withdrawals found.
-                </td>
-            </tr>
-        `;
+    const status=w.status || "pending";
 
-        return;
+    return `
 
-    }
+    <tr>
 
+      <td>
+        <b>${escapeHtml(w.userName || "Reseller")}</b>
+        <br>
+        <small style="color:#777">
+          ${escapeHtml(w.userId || "")}
+        </small>
+      </td>
 
-    tbody.innerHTML = withdrawals.map(w => {
+      <td>
+        ${escapeHtml(w.userEmail || "-")}
+      </td>
 
-        const status =
-            w.status || "pending";
+      <td>
+        <b style="font-size:17px">
+          ₹${Number(w.amount || 0).toFixed(2)}
+        </b>
+      </td>
 
+      <td style="max-width:250px">
+        ${escapeHtml(w.details || "-")}
+      </td>
 
-        return `
+      <td>
 
-        <tr class="border-b border-gray-900">
+        <span class="status ${status}">
+          ${escapeHtml(status)}
+        </span>
 
-            <td class="p-3">
+      </td>
 
-                <div class="font-bold">
-                    ${escapeHtml(
-                        w.userName || "Reseller"
-                    )}
-                </div>
+      <td>
 
-                <div class="text-xs text-gray-500">
-                    ${escapeHtml(
-                        w.userEmail || ""
-                    )}
-                </div>
+        ${
+          status==="pending"
+          ?
+          `
+          <div class="actions">
 
-            </td>
+            <button
+              class="success-btn"
+              onclick="approveWithdrawal('${w.id}')">
+              Approve
+            </button>
 
+            <button
+              class="danger"
+              onclick="rejectWithdrawal('${w.id}')">
+              Reject
+            </button>
 
-            <td class="p-3 font-black">
-                ₹${Number(w.amount || 0)}
-            </td>
+          </div>
+          `
+          :
+          "-"
+        }
 
+      </td>
 
-            <td class="p-3 max-w-xs">
+    </tr>
 
-                <div class="text-gray-400
-                            break-words">
-                    ${escapeHtml(
-                        w.details || "-"
-                    )}
-                </div>
+    `;
 
-            </td>
-
-
-            <td class="p-3">
-
-                <span class="status ${status}">
-                    ${status}
-                </span>
-
-            </td>
-
-
-            <td class="p-3">
-
-                ${
-                    status === "pending"
-                    ?
-                    `
-                    <div class="flex gap-2">
-
-                        <button
-                            onclick="approveWithdrawal(
-                                '${w.id}'
-                            )"
-                            class="bg-green-600
-                                   px-3 py-2 rounded-lg
-                                   text-xs font-bold">
-                            Approve
-                        </button>
-
-                        <button
-                            onclick="rejectWithdrawal(
-                                '${w.id}'
-                            )"
-                            class="bg-red-600
-                                   px-3 py-2 rounded-lg
-                                   text-xs font-bold">
-                            Reject
-                        </button>
-
-                    </div>
-                    `
-                    :
-                    "-"
-                }
-
-            </td>
-
-        </tr>
-
-        `;
-
-    }).join("");
+  }).join("");
 
 }
 
 
-/* ==============================
-   APPROVE WITHDRAWAL
-============================== */
+window.approveWithdrawal=async(id)=>{
 
-window.approveWithdrawal = async function(id){
+  const w=withdrawalData.find(x=>x.id===id);
 
-    const w =
-        withdrawals.find(x => x.id === id);
+  if(!w)return;
 
-    if(!w) return;
+  if(!confirm(
+    `₹${w.amount} withdrawal approve karna hai?`
+  ))return;
 
+  try{
 
-    if(w.status !== "pending"){
+    await updateDoc(
+      doc(db,WITHDRAW,id),
+      {
+        status:"approved",
+        approvedAt:serverTimestamp(),
+        approvedBy:auth.currentUser.uid
+      }
+    );
 
-        alert("यह withdrawal पहले process हो चुका है।");
-        return;
+    alert("Withdrawal approved.");
 
-    }
+    await loadWithdrawals();
 
+    updateStats();
 
-    if(!confirm(
-        `₹${Number(w.amount || 0)} withdrawal approve करें?`
-    ))
-        return;
+  }catch(error){
 
+    console.error(error);
 
-    try{
+    alert(
+      "Approval failed:\n"+
+      error.message
+    );
 
-        await updateDoc(
-            doc(db,WITHDRAW,id),
-            {
-                status:"approved",
-                processedAt:serverTimestamp(),
-                processedBy:currentAdmin.uid
-            }
-        );
-
-        alert("Withdrawal approved.");
-
-    }catch(error){
-
-        console.error(error);
-
-        alert("Withdrawal approve नहीं हुआ।");
-
-    }
+  }
 
 };
 
 
-/* ==============================
-   REJECT WITHDRAWAL
-============================== */
+window.rejectWithdrawal=async(id)=>{
 
-window.rejectWithdrawal = async function(id){
+  const w=withdrawalData.find(x=>x.id===id);
 
-    const w =
-        withdrawals.find(x => x.id === id);
+  if(!w)return;
 
-    if(!w) return;
+  if(!confirm(
+    `₹${w.amount} withdrawal reject karna hai?\n\n`+
+    "Rejected amount wallet mein refund kiya jayega."
+  ))return;
 
+  try{
 
-    if(w.status !== "pending"){
+    /*
+      Wallet refund
+    */
 
-        alert("यह withdrawal पहले process हो चुका है।");
-        return;
+    const userRef=doc(
+      db,
+      USERS,
+      w.userId
+    );
 
-    }
-
-
-    if(!confirm(
-        "Withdrawal reject करें?"
-    ))
-        return;
-
-
-    try{
-
-        /*
-         IMPORTANT:
-         आपके current reseller code में
-         withdrawal submit करते समय wallet से
-         amount पहले ही deduct हो जाता है।
-
-         इसलिए rejection पर amount वापस wallet में
-         add किया जा रहा है।
-        */
-
-        const userRef =
-            doc(db,USERS,w.userId);
-
-        const userSnap =
-            await getDoc(userRef);
+    await updateDoc(
+      userRef,
+      {
+        walletBalance:increment(
+          Number(w.amount || 0)
+        )
+      }
+    );
 
 
-        if(userSnap.exists()){
-
-            const userData =
-                userSnap.data();
-
-            const oldBalance =
-                Number(
-                    userData.walletBalance || 0
-                );
-
-            const refund =
-                Number(w.amount || 0);
+    await updateDoc(
+      doc(db,WITHDRAW,id),
+      {
+        status:"rejected",
+        rejectedAt:serverTimestamp(),
+        rejectedBy:auth.currentUser.uid
+      }
+    );
 
 
-            await updateDoc(
-                userRef,
-                {
-                    walletBalance:
-                        oldBalance + refund
-                }
-            );
+    alert(
+      "Withdrawal rejected aur wallet refund kar diya gaya."
+    );
 
-        }
+    await loadWithdrawals();
 
+    await loadResellers();
 
-        await updateDoc(
-            doc(db,WITHDRAW,id),
-            {
-                status:"rejected",
-                processedAt:serverTimestamp(),
-                processedBy:currentAdmin.uid
-            }
-        );
+    updateStats();
 
+  }catch(error){
 
-        alert(
-            "Withdrawal rejected और wallet amount वापस कर दिया गया।"
-        );
+    console.error(error);
 
-    }catch(error){
+    alert(
+      "Reject/refund failed:\n"+
+      error.message
+    );
 
-        console.error(error);
-
-        alert(
-            "Withdrawal reject करते समय error आया।"
-        );
-
-    }
+  }
 
 };
 
 
-/* ==============================
-   LOGOUT
-============================== */
+/* ================= STATS ================= */
 
-document
-.getElementById("logoutBtn")
-.addEventListener("click",async () => {
+function updateStats(){
 
-    await signOut(auth);
+  document.getElementById("totalResellers").textContent=
+    resellerData.length;
 
-    window.location.href = "./index.html";
+  document.getElementById("pendingResellers").textContent=
+    resellerData.filter(
+      x=>(x.status || "pending")==="pending"
+    ).length;
 
-});
+  document.getElementById("totalProducts").textContent=
+    productData.length;
+
+  document.getElementById("totalOrders").textContent=
+    orderData.length;
+
+  document.getElementById("pendingWithdrawals").textContent=
+    withdrawalData.filter(
+      x=>(x.status || "pending")==="pending"
+    ).length;
 
 
-/* ==============================
-   HELPERS
-============================== */
+  let revenue=0;
+
+  orderData.forEach(o=>{
+
+    const amount=
+      Number(o.sellingPrice || 0) *
+      Number(o.quantity || 1);
+
+    revenue+=amount;
+
+  });
+
+  document.getElementById("totalRevenue").textContent=
+    revenue.toFixed(2);
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+window.showSection=(id,button)=>{
+
+  document
+    .querySelectorAll(".section")
+    .forEach(s=>s.classList.remove("active"));
+
+  document
+    .getElementById(id)
+    .classList.add("active");
+
+
+  document
+    .querySelectorAll(".nav-btn")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+
+  const titles={
+    dashboard:"Dashboard",
+    resellers:"Reseller Approval",
+    products:"Product Management",
+    orders:"Orders",
+    withdrawals:"Withdrawals"
+  };
+
+  document.getElementById("pageTitle").textContent=
+    titles[id] || "Admin";
+
+
+  document
+    .getElementById("sidebar")
+    .classList.remove("open");
+
+};
+
+
+window.toggleMenu=()=>{
+
+  document
+    .getElementById("sidebar")
+    .classList.toggle("open");
+
+};
+
+
+window.closeModal=(id)=>{
+
+  document
+    .getElementById(id)
+    .classList.remove("show");
+
+};
+
+
+window.logout=async()=>{
+
+  if(!confirm("Logout karna hai?"))return;
+
+  await signOut(auth);
+
+  window.location.href="./index.html";
+
+};
+
+
+/* ================= SECURITY HELPERS ================= */
 
 function escapeHtml(value){
 
-    return String(value ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
 
 function escapeAttr(value){
 
-    return escapeHtml(value);
+  return escapeHtml(value);
 
 }
 
 
-function formatDate(timestamp){
+/* ================= GLOBAL ================= */
 
-    if(!timestamp) return "-";
-
-    try{
-
-        const date =
-            timestamp.toDate
-            ? timestamp.toDate()
-            : new Date(timestamp);
-
-        return date.toLocaleString("en-IN");
-
-    }catch{
-
-        return "-";
-
-    }
-
-}
+window.renderResellers=renderResellers;
+window.renderProducts=renderProducts;
+window.renderOrders=renderOrders;
 
 </script>
 
