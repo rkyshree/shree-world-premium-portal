@@ -1207,7 +1207,6 @@ window.downloadProductImages = async function() {
                 const a = document.createElement('a');
                 a.style.display = 'none';
                 a.href = blobUrl;
-                // Generate a clean filename using product title and index
                 const cleanTitle = (selectedProduct.title || "shraynex_product").substring(0, 15).replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 a.download = `${cleanTitle}_${i+1}.jpg`;
                 document.body.appendChild(a);
@@ -1215,17 +1214,17 @@ window.downloadProductImages = async function() {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(blobUrl);
                 successCount++;
-                // Small delay to prevent browser from blocking multiple rapid downloads
                 await new Promise(r => setTimeout(r, 400));
             } catch (err) {
                 console.warn("Cross-origin fetch blocked for", url, "- opening in new tab instead.");
-                // Fallback: If image server blocks JS download (CORS), open in a new tab so they can long-press and save
+                // Fallback: If image server blocks JS download (CORS), open in a new tab so they can long-press and save to gallery
                 window.open(url, '_blank');
+                successCount++;
             }
         }
-        if (successCount > 0) showToast(`${successCount} images downloaded successfully!`);
+        if (successCount > 0) showToast(`Images processed! Check your gallery or opened tabs.`);
     } catch (error) {
-        showToast("Error downloading images.");
+        showToast("Error processing images.");
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -1318,35 +1317,36 @@ window.handleAdminLogin=async function(e){
     if(!s.exists()||s.data().role!=="admin"){throw{code:"custom/not-admin"}}
     currentUser=u;currentUserData=s.data();adminMode=true;
     closeAdminLogin();openAdminPanel();
-  }catch(e){showToast(getFirebaseError(e))}finally{btn.disabled=false;btn.innerText="Admin Login";}
-};
-window.openAdminPanel=function(){
-  if(!currentUserData||currentUserData.role!=="admin")return openAdminLogin();
-  document.getElementById("adminPanelModal").classList.add("active");refreshAdmin();
-};
-window.closeAdminPanel=()=>document.getElementById("adminPanelModal").classList.remove("active");
-async function getDocsCompat(ref){const mod=await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");return await mod.getDocs(ref)}
-
-window.refreshAdmin=async function(){
-  if(currentUserData?.role!=="admin")return;
-  await Promise.allSettled([
-      getDocsCompat(collection(db,USERS)).then(s=>{allAdminUsers=[];s.forEach(d=>allAdminUsers.push({id:d.id,...d.data()}))}),
-      getDocsCompat(collection(db,ORDERS)).then(s=>{allAdminOrders=[];s.forEach(d=>allAdminOrders.push({id:d.id,...d.data()}));allAdminOrders.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt))}),
-      getDocsCompat(collection(db,PRODUCTS)).then(s=>{allProducts=[];s.forEach(d=>allProducts.push({id:d.id,...d.data()}));allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt))}),
-      getDocsCompat(collection(db,WITHDRAWALS)).then(s=>{allAdminWithdrawals=[];s.forEach(d=>allAdminWithdrawals.push({id:d.id,...d.data()}));allAdminWithdrawals.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt))})
-  ]);
-  
-  const p=allAdminUsers.filter(u=>u.status==="pending").length,a=allAdminUsers.filter(u=>u.status==="approved").length,po=allAdminOrders.filter(o=>o.status==="pending").length,rev=allAdminOrders.filter(o=>o.status!=="cancelled").reduce((s,o)=>s+Number(o.sellingPrice||0)*Number(o.quantity||1),0);
-  const pw = allAdminWithdrawals.filter(w=>w.status==="pending").length;
-  
-  document.getElementById("statPendingUsers").innerText=p;document.getElementById("statApprovedUsers").innerText=a;document.getElementById("statOrders").innerText=allAdminOrders.length;document.getElementById("statPendingOrders").innerText=po;document.getElementById("statRevenue").innerText="₹"+money(rev);
-  document.getElementById("statPendingWithdraw").innerText=pw;
-  
-  renderAdminUsers();renderAdminProducts();renderAdminOrders();renderAdminWalletUsers();renderAdminWithdrawals();
+window.renderAdminUsers=function(){
+/* Existing rendering code omitted for brevity */
+  const v=(document.getElementById("adminUserSearch").value||"").toLowerCase().trim();
+  const list=allAdminUsers.filter(u=>`${u.name||""} ${u.email||""} ${u.phone||""}`.toLowerCase().includes(v));
+  const c=document.getElementById("adminUsersList");
+  if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No users found.</div>';return}
+  c.innerHTML=list.map(u=>{
+    const st=u.role==="admin"?"admin":(u.status||"pending");
+    return `<div class="border rounded-xl p-4 bg-white mb-2"><div class="flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(u.name||"Reseller")} ${u.role==="admin"?'<span class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded-full">ADMIN</span>':""}</div><div class="text-xs text-gray-500 mt-1">${esc(u.phone||u.email||"—")}</div><div class="text-[10px] mt-2 font-bold uppercase ${st==="approved"?"text-green-600":st==="suspended"?"text-amber-600":"text-gray-500"}">STATUS: ${esc(st)}</div></div></div>
+    ${u.role!=="admin"?`<div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t">
+        ${u.status!=="approved"?`<button onclick="changeUserStatus('${u.id}','approved')" class="bg-green-100 text-green-700 py-2 rounded-lg text-xs font-bold">Approve</button>`:`<button onclick="changeUserStatus('${u.id}','suspended')" class="bg-amber-100 text-amber-700 py-2 rounded-lg text-xs font-bold">Suspend</button>`}
+        <button onclick="changeUserStatus('${u.id}', '${u.status==="suspended"?"approved":"suspended"}')" class="bg-gray-100 text-gray-700 py-2 rounded-lg text-xs font-bold">${u.status==="suspended"?"Restore":"Suspend"}</button>
+        <button onclick="adminDeleteUser('${u.id}')" class="bg-red-100 text-red-600 py-2 rounded-lg text-xs font-bold">Delete</button>
+    </div>`:""}</div>`;
+  }).join("");
 };
 
-window.switchAdminTab=function(t){["dashboard","users","products","orders","wallet"].forEach(x=>{document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden",x!==t);});};
-window.renderAdminUsers=function(){/* Existing rendering code omitted for brevity */};
+window.changeUserStatus=async function(uid,status){
+  if(!currentUserData||currentUserData.role!=="admin")return showToast("Admin permission required.");
+  try{await updateDoc(doc(db,USERS,uid),{status,updatedAt:serverTimestamp()});showToast("Status updated to: " + status);await refreshAdmin()}catch(e){showToast(getFirebaseError(e))}
+};
+
+window.adminDeleteUser = async function(uid) {
+    if(!confirm("Are you sure you want to completely DELETE this user profile?")) return;
+    try {
+        await deleteDoc(doc(db, USERS, uid));
+        showToast("User profile deleted.");
+        await refreshAdmin();
+    } catch(e) { showToast(getFirebaseError(e)); }
+};
 
 window.openProductEditor=function(id=""){
   const p=id?allProducts.find(x=>x.id===id):null;
@@ -1427,28 +1427,44 @@ window.completeWithdrawal = async function(wId, userId, amount) {
 
 window.renderAdminWalletUsers = function() {
     const list = allAdminUsers.filter(u=>u.role !== 'admin');
-    document.getElementById("adminWalletUsers").innerHTML = list.map(u => `<div class="border p-2 rounded flex justify-between items-center text-sm bg-white mb-2">
-        <div><div class="font-bold">${u.name}</div><div class="text-xs text-gray-500">Wallet: ₹${u.walletBalance || 0}</div></div>
-        <button onclick="adminAddFunds('${u.id}')" class="text-xs bg-gray-900 text-white px-2 py-1 rounded">Add Funds</button>
+    document.getElementById("adminWalletUsers").innerHTML = list.map(u => `<div class="border p-3 rounded-lg flex justify-between items-center text-sm bg-white mb-2">
+        <div><div class="font-bold">${u.name}</div><div class="text-xs text-gray-500 mt-1">Wallet: <span class="font-bold text-gray-900">₹${u.walletBalance || 0}</span></div></div>
+        <div class="flex gap-2">
+            <button onclick="adminAdjustFunds('${u.id}', 'add')" class="text-[10px] bg-green-600 font-bold text-white px-3 py-2 rounded-lg">+ ADD</button>
+            <button onclick="adminAdjustFunds('${u.id}', 'deduct')" class="text-[10px] bg-red-500 font-bold text-white px-3 py-2 rounded-lg">- DEDUCT</button>
+        </div>
     </div>`).join("");
 }
 
-window.adminAddFunds = async function(uid) {
-    const amount = Number(prompt("Enter amount to ADD to wallet (e.g. for completed orders):", "0"));
+window.adminAdjustFunds = async function(uid, type) {
+    const actionName = type === 'add' ? 'ADD TO' : 'DEDUCT FROM';
+    const amount = Number(prompt(`Enter amount to ${actionName} this user's wallet:`, "0"));
     if(!amount || amount <= 0) return;
+    
+    const multiplier = type === 'add' ? 1 : -1;
+    
     try {
         await runTransaction(db, async tx => {
             const ref = doc(db, USERS, uid);
             const snap = await tx.get(ref);
+            if(!snap.exists()) throw new Error("User not found");
+            
+            const currentBal = snap.data().walletBalance || 0;
+            const currentEarnings = snap.data().totalEarnings || 0;
+            
+            if(type === 'deduct' && currentBal < amount) {
+                throw new Error("Cannot deduct more than available balance!");
+            }
+            
             tx.update(ref, {
-                walletBalance: (snap.data().walletBalance || 0) + amount,
-                totalEarnings: (snap.data().totalEarnings || 0) + amount,
+                walletBalance: currentBal + (amount * multiplier),
+                totalEarnings: type === 'add' ? currentEarnings + amount : currentEarnings,
                 updatedAt: serverTimestamp()
             });
         });
-        showToast("Funds added");
+        showToast(`Funds ${type === 'add' ? 'added' : 'deducted'} successfully`);
         refreshAdmin();
-    } catch(e) { showToast(getFirebaseError(e)); }
+    } catch(e) { showToast(e.message || getFirebaseError(e)); }
 }
 
 function money(v){return Number(v||0).toLocaleString("en-IN")}
