@@ -90,15 +90,6 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 <div><h3 class="font-bold mb-3">Company</h3><button onclick="openPolicy('about')" class="block text-gray-400 mb-2">About Us</button><button onclick="openPolicy('contact')" class="block text-gray-400 mb-2">Contact</button><button onclick="openPolicy('careers')" class="block text-gray-400">Careers</button></div>
 <div><h3 class="font-bold mb-3">Legal</h3><button onclick="openPolicy('privacy')" class="block text-gray-400 mb-2">Privacy Policy</button><button onclick="openPolicy('terms')" class="block text-gray-400 mb-2">Terms</button><button onclick="openPolicy('return')" class="block text-gray-400">Shipping & Returns</button></div>
 </div>
-
-<!-- ADMIN OPTION AT THE VERY BOTTOM -->
-<div class="border-t border-gray-800 mt-8 pt-6">
-<button onclick="openAdminLogin()" class="w-full border border-gray-700 text-gray-300 py-3 rounded-xl font-bold text-sm hover:bg-gray-900">
-  ⚙️ Admin Panel
-</button>
-<p class="text-center text-[10px] text-gray-600 mt-3">Authorized administrators only</p>
-</div>
-
 <div class="border-t border-gray-800 mt-6 pt-6 text-xs text-gray-500">© 2026 SHRAYNEX. All rights reserved.</div>
 </footer>
 </div>
@@ -150,7 +141,7 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 </div>
 
 <div id="ordersTab" class="hidden px-4 py-5">
-<h1 class="text-2xl font-extrabold">My Orders</h1><p class="text-sm text-gray-500 mt-1 mb-5">Track your reseller orders.</p>
+<div class="flex items-center justify-between gap-3"><h1 class="text-2xl font-extrabold">My Orders</h1><button onclick="openTrackModal()" class="bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-bold">📦 Track</button></div><p class="text-sm text-gray-500 mt-1 mb-5">Your orders and delivery tracking.</p>
 <div id="ordersList" class="space-y-4"><div class="text-center py-12 text-gray-400">Loading orders...</div></div>
 </div>
 
@@ -167,7 +158,7 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 <div class="card p-5"><p class="text-xs text-gray-500">Wallet Balance</p><p id="profileWallet" class="text-2xl font-extrabold text-rose-600 mt-1">₹0</p></div>
 <div class="card p-5"><p class="text-xs text-gray-500">Total Earnings</p><p id="profileEarnings" class="text-2xl font-extrabold text-green-600 mt-1">₹0</p></div>
 </div>
-<button onclick="logoutUser()" class="w-full mt-5 border border-red-200 text-red-600 py-3 rounded-xl font-bold">Logout</button>
+<div class="grid grid-cols-2 gap-3 mt-4"><button onclick="openProfileEdit()" class="border border-gray-300 py-3 rounded-xl font-bold text-sm">✏️ Edit Profile</button><button onclick="openWithdrawModal()" class="bg-rose-600 text-white py-3 rounded-xl font-bold text-sm">💸 Withdraw</button></div><div class="card p-5 mt-4"><h3 class="font-extrabold">Withdrawal Requests</h3><p class="text-xs text-gray-500 mt-1">Minimum withdrawal ₹500.</p><div id="myWithdrawals" class="mt-4 space-y-3"></div></div><button onclick="logoutUser()" class="w-full mt-5 border border-red-200 text-red-600 py-3 rounded-xl font-bold">Logout</button>
 </div>
 
 <nav class="bottom-nav fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] bg-white border-t z-40">
@@ -215,7 +206,7 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 </div>
 </div>
 
-<!-- POLICY -->
+<div id="profileEditModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center"><div class="modal-box bg-white w-full max-w-md rounded-t-3xl p-6"><div class="flex justify-between"><h2 class="text-xl font-extrabold">Edit Profile</h2><button onclick="closeProfileEdit()" class="text-2xl">×</button></div><form onsubmit="saveProfile(event)" class="space-y-3 mt-5"><input id="editProfileName" class="input" placeholder="Full Name" required><input id="editProfilePhone" class="input" maxlength="10" pattern="[0-9]{10}" placeholder="Mobile Number" required><button id="saveProfileBtn" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold">Save Changes</button></form></div></div><div id="withdrawModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center"><div class="modal-box bg-white w-full max-w-md rounded-t-3xl p-6"><div class="flex justify-between"><h2 class="text-xl font-extrabold">💸 Withdrawal Request</h2><button onclick="closeWithdrawModal()" class="text-2xl">×</button></div><p class="text-sm text-gray-500 mt-2">Minimum ₹500</p><form onsubmit="submitWithdrawal(event)" class="space-y-3 mt-5"><input id="withdrawAmount" type="number" min="500" class="input" placeholder="Amount" required><select id="withdrawMethod" class="input" required><option value="">Payment Method</option><option>UPI</option><option>Bank</option></select><input id="withdrawAccount" class="input" placeholder="UPI ID / Bank Details" required><input id="withdrawHolder" class="input" placeholder="Account Holder Name" required><button id="withdrawBtn" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold">Send Request</button></form></div></div><div id="trackModal" class="modal fixed inset-0 z-[100] bg-black/60 flex items-end sm:items-center justify-center"><div class="modal-box bg-white w-full max-w-md rounded-t-3xl p-6"><div class="flex justify-between"><h2 class="text-xl font-extrabold">📦 Track Order</h2><button onclick="closeTrackModal()" class="text-2xl">×</button></div><form onsubmit="trackOrderFromApp(event)" class="flex gap-2 mt-5"><input id="trackOrderInput" class="input uppercase" maxlength="6" placeholder="RS4827" required><button class="bg-gray-900 text-white px-4 rounded-xl font-bold">Track</button></form><div id="trackResult" class="mt-5"></div></div></div><!-- POLICY -->
 <div id="policyModal" class="modal fixed inset-0 z-[95] bg-black/60 flex items-center justify-center p-4">
 <div class="modal-box bg-white w-full max-w-md max-h-[85vh] rounded-2xl overflow-hidden">
 <div class="p-4 border-b flex justify-between"><h2 id="policyTitle" class="font-extrabold">Policy</h2><button onclick="closePolicy()" class="text-2xl text-gray-400">×</button></div>
@@ -389,6 +380,7 @@ const USERS="shraynex_users";
 const PRODUCTS="shraynex_products";
 const ORDERS="shraynex_orders";
 const TRACKING="shraynex_tracking";
+const COUNTERS="shraynex_counters";
 const WALLET="shraynex_wallet_transactions";
 const SETTINGS="shraynex_settings";
 
@@ -517,7 +509,7 @@ onAuthStateChanged(auth,async user=>{
         }
       });
 
-      showUserApp();loadProducts();loadOrders();updateProfileUI();
+      showUserApp();loadProducts();loadOrders();updateProfileUI();loadMyWithdrawals();
     }catch(e){console.error(e);showToast("Unable to load your account. Check Firestore Rules.")}
   }else{
     if(userUnsubscribe){userUnsubscribe();userUnsubscribe=null}
@@ -612,94 +604,7 @@ window.calculateOrderTotal=function(){
   document.getElementById("orderSellingPrice").innerText=money(sell);document.getElementById("orderQtyDisplay").innerText=qty;document.getElementById("orderProfit").innerText=money(Math.max(0,sell-base)*qty);
 };
 
-window.placeOrder=async function(e){
-  e.preventDefault();
-  if(!currentUser||!selectedProduct)return showToast("Please login first.");
-  if(currentUserData?.status!=="approved")return showToast("Your account is waiting for approval.");
-
-  const name=document.getElementById("customerName").value.trim();
-  const phone=document.getElementById("customerPhone").value.trim();
-  const address=document.getElementById("customerAddress").value.trim();
-  const pincode=document.getElementById("customerPincode").value.trim();
-  const quantity=Number(document.getElementById("orderQuantity").value||1);
-  const selling=Number(document.getElementById("orderSellingPriceInput").value||0);
-  const base=Number(selectedProduct.basePrice||0);
-
-  if(selling<=base)return showToast("Selling price must be higher than base price.");
-  if(quantity<1)return showToast("Quantity must be at least 1.");
-  if(!/^[0-9]{10}$/.test(phone))return showToast("Enter a valid 10-digit customer mobile number.");
-  if(!/^[0-9]{6}$/.test(pincode))return showToast("Enter a valid pincode.");
-
-  const btn=document.getElementById("placeOrderBtn");
-  btn.disabled=true;btn.innerText="Creating Order ID...";
-
-  try{
-    let finalOrderId="";
-    for(let attempt=0;attempt<25;attempt++){
-      const orderId="RS"+Math.floor(1000+Math.random()*9000);
-      try{
-        await runTransaction(db,async tx=>{
-          const orderRef=doc(db,ORDERS,orderId);
-          const trackingRef=doc(db,TRACKING,orderId);
-          const existing=await tx.get(orderRef);
-          if(existing.exists())throw new Error("ORDER_ID_COLLISION");
-
-          const orderData={
-            orderId,
-            resellerId:currentUser.uid,
-            resellerName:currentUserData?.name||"",
-            productId:selectedProduct.id,
-            productName:selectedProduct.title||"",
-            productImage:selectedProduct.images?.[0]||"",
-            customerName:name,
-            customerPhone:phone,
-            customerAddress:address,
-            pincode,
-            quantity,
-            basePrice:base,
-            sellingPrice:selling,
-            profit:(selling-base)*quantity,
-            status:"pending",
-            createdAt:serverTimestamp(),
-            updatedAt:serverTimestamp()
-          };
-
-          // Public tracking document contains no customer phone/address/name.
-          const trackingData={
-            orderId,
-            productId:selectedProduct.id,
-            productName:selectedProduct.title||"",
-            productImage:selectedProduct.images?.[0]||"",
-            quantity,
-            status:"pending",
-            createdAt:serverTimestamp(),
-            updatedAt:serverTimestamp(),
-            tracking:{order_placed:serverTimestamp()}
-          };
-
-          tx.set(orderRef,orderData);
-          tx.set(trackingRef,trackingData);
-        });
-        finalOrderId=orderId;
-        break;
-      }catch(err){
-        if(err?.message==="ORDER_ID_COLLISION")continue;
-        throw err;
-      }
-    }
-
-    if(!finalOrderId)throw new Error("Could not generate a unique Order ID. Please try again.");
-
-    showToast("Order placed! ID: "+finalOrderId);
-    closeOrderModal();
-    document.getElementById("emailForm")?.reset();
-    ["customerName","customerPhone","customerAddress","customerPincode","orderSellingPriceInput"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("orderQuantity").value="1";
-    switchUserTab("orders");
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
-  finally{btn.disabled=false;btn.innerText="Place Order";}
-};
-
+window.placeOrder=async function(e){e.preventDefault();if(!currentUser||!selectedProduct)return showToast("Please login first.");if(currentUserData?.status!=="approved")return showToast("Your account is waiting for approval.");const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),address=document.getElementById("customerAddress").value.trim(),pincode=document.getElementById("customerPincode").value.trim(),quantity=Number(document.getElementById("orderQuantity").value||1),selling=Number(document.getElementById("orderSellingPriceInput").value||0),base=Number(selectedProduct.basePrice||0);if(selling<=base)return showToast("Selling price must be higher than base price.");if(quantity<1)return showToast("Quantity must be at least 1.");if(!/^[0-9]{10}$/.test(phone))return showToast("Enter a valid 10-digit customer mobile number.");if(!/^[0-9]{6}$/.test(pincode))return showToast("Enter a valid pincode.");const btn=document.getElementById("placeOrderBtn");btn.disabled=true;try{let id="";for(let n=0;n<25;n++){const orderId="RS"+Math.floor(1000+Math.random()*9000);try{await runTransaction(db,async tx=>{const o=doc(db,ORDERS,orderId),t=doc(db,TRACKING,orderId);if((await tx.get(o)).exists())throw Error("COLLISION");tx.set(o,{orderId,resellerId:currentUser.uid,resellerName:currentUserData?.name||"",productId:selectedProduct.id,productName:selectedProduct.title||"",productImage:selectedProduct.images?.[0]||"",customerName:name,customerPhone:phone,customerAddress:address,pincode,quantity,basePrice:base,sellingPrice:selling,profit:(selling-base)*quantity,status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});tx.set(t,{orderId,productName:selectedProduct.title||"",productImage:selectedProduct.images?.[0]||"",quantity,status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp(),tracking:{order_placed:serverTimestamp()}})});id=orderId;break}catch(x){if(x.message==="COLLISION")continue;throw x}}if(!id)throw Error("Could not create Order ID");showToast("Order placed! ID: "+id);closeOrderModal();switchUserTab("orders")}catch(x){showToast(getFirebaseError(x))}finally{btn.disabled=false;btn.innerText="Place Order"}};
 function loadOrders(){
   if(!currentUser)return;if(ordersUnsubscribe)ordersUnsubscribe();
   const q=query(collection(db,ORDERS),where("resellerId","==",currentUser.uid));
@@ -725,7 +630,7 @@ window.switchUserTab=function(tab){
   ["navFeed","navOrders","navProfile"].forEach(id=>{document.getElementById(id).classList.remove("text-rose-600");document.getElementById(id).classList.add("text-gray-400")});
   const n=document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1));n.classList.remove("text-gray-400");n.classList.add("text-rose-600");
 };
-window.logoutUser=async function(){try{await signOut(auth);showLanding();showToast("Logged out successfully")}catch(e){showToast(getFirebaseError(e))}};
+window.openProfileEdit=function(){document.getElementById("editProfileName").value=currentUserData?.name||"";document.getElementById("editProfilePhone").value=currentUserData?.phone||"";document.getElementById("profileEditModal").classList.add("active")};window.closeProfileEdit=()=>document.getElementById("profileEditModal").classList.remove("active");window.saveProfile=async function(e){e.preventDefault();const name=document.getElementById("editProfileName").value.trim(),phone=document.getElementById("editProfilePhone").value.trim();if(!/^[0-9]{10}$/.test(phone))return showToast("Enter valid mobile number.");try{await updateDoc(doc(db,USERS,currentUser.uid),{name,phone,updatedAt:serverTimestamp()});closeProfileEdit();showToast("Profile updated successfully.")}catch(x){showToast(getFirebaseError(x))}};window.openWithdrawModal=function(){document.getElementById("withdrawModal").classList.add("active")};window.closeWithdrawModal=()=>document.getElementById("withdrawModal").classList.remove("active");window.submitWithdrawal=async function(e){e.preventDefault();const amount=Number(document.getElementById("withdrawAmount").value||0);if(amount<500)return showToast("Minimum withdrawal is ₹500.");if(amount>Number(currentUserData?.walletBalance||0))return showToast("Insufficient wallet balance.");try{await addDoc(collection(db,WITHDRAWALS),{userId:currentUser.uid,userName:currentUserData.name||"",amount,method:document.getElementById("withdrawMethod").value,account:document.getElementById("withdrawAccount").value.trim(),holder:document.getElementById("withdrawHolder").value.trim(),status:"pending",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});closeWithdrawModal();showToast("Withdrawal request sent.");loadMyWithdrawals()}catch(x){showToast(getFirebaseError(x))}};async function loadMyWithdrawals(){try{const snap=await getDocsCompat(query(collection(db,WITHDRAWALS),where("userId","==",currentUser.uid))),c=document.getElementById("myWithdrawals"),a=[];snap.forEach(d=>a.push(d.data()));a.sort((x,y)=>getTime(y.createdAt)-getTime(x.createdAt));c.innerHTML=a.length?a.map(w=>`<div class="border rounded-xl p-3 flex justify-between"><b>₹${money(w.amount)}</b><span class="text-xs font-bold">${esc(w.status||"pending").toUpperCase()}</span></div>`).join(""): '<div class="text-xs text-gray-400">No withdrawal requests yet.</div>'}catch(x){}}window.openTrackModal=function(id=""){document.getElementById("trackOrderInput").value=id;document.getElementById("trackResult").innerHTML="";document.getElementById("trackModal").classList.add("active");if(id)trackOrderInApp(id)};window.closeTrackModal=()=>document.getElementById("trackModal").classList.remove("active");window.trackOrderFromApp=function(e){e.preventDefault();trackOrderInApp(document.getElementById("trackOrderInput").value)};async function trackOrderInApp(v){const id=String(v).trim().toUpperCase(),c=document.getElementById("trackResult");if(!/^RS\d{4}$/.test(id)){c.innerHTML='<div class="p-3 bg-amber-50 text-amber-700 rounded-xl">Enter Order ID like RS4827.</div>';return}const s=await getDoc(doc(db,TRACKING,id));if(!s.exists()){c.innerHTML='<div class="p-3 bg-red-50 text-red-700 rounded-xl">Order not found.</div>';return}const d=s.data(),steps=["pending","confirmed","processing","shipped","delivered"],cur=steps.indexOf(d.status);c.innerHTML=`<div class="border rounded-2xl p-4"><b>${esc(d.productName||"Order")}</b><div class="text-xs text-gray-400 mt-1">${esc(d.orderId||id)}</div><div class="mt-5 space-y-3">${steps.map((x,i)=>`<div class="font-bold ${cur>=i?"text-green-600":"text-gray-300"}">${cur>=i?"✓":"○"} ${x.toUpperCase()}</div>`).join("")}</div></div>`}window.logoutUser=async function(){try{await signOut(auth);showLanding();showToast("Logged out successfully")}catch(e){showToast(getFirebaseError(e))}};
 
 const policies={
 about:{title:"About SHRAYNEX",content:`<p>SHRAYNEX is a digital reselling platform designed to help individuals discover products and build their own online selling business.</p><p class="mt-4">Resellers can select products, add their own selling margin and share products with customers.</p>`},
@@ -896,7 +801,7 @@ window.deleteProduct=async function(id){
 
 window.renderAdminOrders=function(){
   const v=(document.getElementById("adminOrderSearch").value||"").toLowerCase().trim();
-  const list=allAdminOrders.filter(o=>`${o.orderId||""} ${o.id} ${o.customerName||""} ${o.customerPhone||""} ${o.resellerName||""} ${o.productName||""}`.toLowerCase().includes(v));
+  const list=allAdminOrders.filter(o=>`${o.id} ${o.customerName||""} ${o.customerPhone||""} ${o.resellerName||""} ${o.productName||""}`.toLowerCase().includes(v));
   const c=document.getElementById("adminOrdersList");
   if(!list.length){c.innerHTML='<div class="text-center py-10 text-gray-400">No orders found.</div>';return}
   c.innerHTML=list.map(o=>`<div class="border rounded-2xl p-4"><div class="flex justify-between gap-3"><div class="min-w-0"><div class="font-bold truncate">${esc(o.productName||"Product")}</div><div class="text-xs text-gray-500 mt-1">Order ID: <b>${esc(o.orderId||o.id.toUpperCase())}</b> • ${esc(o.resellerName||"Reseller")}</div></div><div class="font-extrabold">₹${money(Number(o.sellingPrice||0)*Number(o.quantity||1))}</div></div><div class="grid grid-cols-2 gap-3 mt-4 text-xs"><div><span class="text-gray-400">Customer</span><div class="font-semibold">${esc(o.customerName||"—")}</div><div>${esc(o.customerPhone||"—")}</div></div><div><span class="text-gray-400">Profit</span><div class="font-bold text-green-600">₹${money(o.profit)}</div></div></div><select onchange="changeOrderStatus('${o.id}',this.value)" class="input mt-4 text-sm"><option value="pending" ${o.status==="pending"?"selected":""}>Pending</option><option value="confirmed" ${o.status==="confirmed"?"selected":""}>Confirmed</option><option value="processing" ${o.status==="processing"?"selected":""}>Processing</option><option value="shipped" ${o.status==="shipped"?"selected":""}>Shipped</option><option value="delivered" ${o.status==="delivered"?"selected":""}>Delivered</option><option value="cancelled" ${o.status==="cancelled"?"selected":""}>Cancelled</option></select></div>`).join("");
@@ -904,46 +809,25 @@ window.renderAdminOrders=function(){
 window.changeOrderStatus=async function(id,status){
   try{
     await runTransaction(db,async tx=>{
-      const orderRef=doc(db,ORDERS,id);
-      const trackingRef=doc(db,TRACKING,id);
+      const orderRef=doc(db,ORDERS,id),trackingRef=doc(db,TRACKING,id);
       const orderSnap=await tx.get(orderRef);
+      const trackingSnap=await tx.get(trackingRef);
       if(!orderSnap.exists())throw new Error("Order not found");
-
-      const key={
-        pending:"order_placed",
-        confirmed:"confirmed",
-        processing:"processing",
-        shipped:"shipped",
-        delivered:"delivered"
-      }[status]||null;
-
+      const key={pending:"order_placed",confirmed:"confirmed",processing:"processing",shipped:"shipped",delivered:"delivered"}[status]||null;
       const orderUpdate={status,updatedAt:serverTimestamp()};
       if(key)orderUpdate["tracking."+key]=serverTimestamp();
       tx.update(orderRef,orderUpdate);
-
-      const trackingSnap=await tx.get(trackingRef);
       if(trackingSnap.exists()){
         const trackingUpdate={status,updatedAt:serverTimestamp()};
         if(key)trackingUpdate["tracking."+key]=serverTimestamp();
         tx.update(trackingRef,trackingUpdate);
       }else{
         const o=orderSnap.data();
-        tx.set(trackingRef,{
-          orderId:id,
-          productId:o.productId||"",
-          productName:o.productName||"",
-          productImage:o.productImage||"",
-          quantity:Number(o.quantity||1),
-          status,
-          createdAt:o.createdAt||serverTimestamp(),
-          updatedAt:serverTimestamp(),
-          tracking:key?{[key]:serverTimestamp()}:{}
-        });
+        tx.set(trackingRef,{orderId:id,productId:o.productId||"",productName:o.productName||"",productImage:o.productImage||"",quantity:Number(o.quantity||1),size:o.size||"",status,createdAt:o.createdAt||serverTimestamp(),updatedAt:serverTimestamp(),tracking:key?{[key]:serverTimestamp()}:{}},{merge:true});
       }
     });
-    showToast("Order status updated");
-    await refreshAdmin();
-  }catch(e){console.error(e);showToast(getFirebaseError(e))}
+    showToast("Order status updated");await refreshAdmin();
+  }catch(e){console.error(e);showToast(e.message||getFirebaseError(e))}
 };
 
 function renderAdminWalletUsers(){
