@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHRAYNEX | Track Order</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{margin:0;background:#f3f4f6;font-family:Inter,Arial,sans-serif}
+.app{max-width:520px;min-height:100vh;margin:auto;background:#fff}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="sticky top-0 bg-white border-b z-10">
+<div class="px-5 py-4 flex items-center justify-between">
+<div><div class="text-2xl font-extrabold text-rose-600">SHRAYNEX</div><div class="text-[10px] text-gray-400 font-bold">ORDER TRACKING</div></div>
+<a href="index.html" class="text-sm font-bold text-gray-700">Home</a>
+</div>
+</header>
+
+<main class="p-5">
+<h1 class="text-2xl font-extrabold">📦 Track Your Order</h1>
+<p class="text-sm text-gray-500 mt-1">Enter your Order ID like RS4827.</p>
+
+<form id="trackForm" class="mt-5 flex gap-2">
+<input id="orderIdInput" class="flex-1 border rounded-xl px-4 py-3 uppercase outline-none" placeholder="RS4827" maxlength="6" required>
+<button class="bg-rose-600 text-white px-5 rounded-xl font-bold">Track</button>
+</form>
+
+<div id="result" class="mt-6"></div>
+</main>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {getFirestore,doc,getDoc} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+authDomain:"rkyshree-2f74b.firebaseapp.com",
+projectId:"rkyshree-2f74b",
+storageBucket:"rkyshree-2f74b.firebasestorage.app",
+messagingSenderId:"354823113610",
+appId:"1:354823113610:web:1249f2952249ac1a9c9673",
+measurementId:"G-2PKR5PK39Y"
+};
+const db=getFirestore(initializeApp(firebaseConfig));
+const TRACKING="shraynex_tracking";
+
+const steps=[
+["pending","Order Placed","Your order has been received."],
+["confirmed","Confirmed","Your order has been confirmed."],
+["processing","Processing","Your order is being prepared."],
+["shipped","Shipped","Your order has been shipped."],
+["delivered","Delivered","Your order has been delivered."]
+];
+
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+function fmt(v){
+if(!v)return "";
+try{
+const d=typeof v.toDate==="function"?v.toDate():new Date(v);
+return d.toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+}catch(e){return ""}
+}
+
+function render(data){
+const status=String(data.status||"pending").toLowerCase();
+let html=`<div class="border rounded-2xl p-5 shadow-sm">
+<div class="flex gap-3 items-center">${data.productImage?`<img src="${esc(data.productImage)}" class="w-16 h-16 rounded-xl object-cover">`:""}<div><div class="text-xs text-gray-400">Order ID</div><div class="font-extrabold text-lg">${esc(data.orderId)}</div><div class="text-sm text-gray-500">${esc(data.productName||"Product")} • Qty ${esc(data.quantity||1)}</div></div></div>`;
+
+if(status==="cancelled"){
+html+=`<div class="mt-5 p-4 rounded-xl bg-red-50 text-red-700 font-bold">❌ Order Cancelled</div>`;
+}else{
+const current=steps.findIndex(x=>x[0]===status);
+html+=`<div class="mt-6 space-y-5">`;
+steps.forEach((s,i)=>{
+const done=current>=i;
+html+=`<div class="flex gap-3"><div class="w-9 h-9 rounded-full shrink-0 flex items-center justify-center ${done?"bg-green-600 text-white":"bg-gray-100 text-gray-400"}">${done?"✓":i+1}</div><div><div class="font-bold ${done?"text-gray-900":"text-gray-400"}">${s[1]}</div><div class="text-xs ${done?"text-gray-500":"text-gray-300"} mt-1">${s[2]}</div>${done&&data.tracking?.({pending:"order_placed",confirmed:"confirmed",processing:"processing",shipped:"shipped",delivered:"delivered"}[s[0]])?`<div class="text-[10px] text-gray-400 mt-1">${fmt(data.tracking[({pending:"order_placed",confirmed:"confirmed",processing:"processing",shipped:"shipped",delivered:"delivered"})[s[0]]])}</div>`:""}</div></div>`;
+});
+html+=`</div>`;
+}
+html+=`</div>`;
+document.getElementById("result").innerHTML=html;
+}
+
+async function track(id){
+id=id.trim().toUpperCase();
+if(!/^RS\d{4}$/.test(id)){
+document.getElementById("result").innerHTML='<div class="p-4 rounded-xl bg-amber-50 text-amber-700 font-semibold">Enter a valid Order ID, for example RS4827.</div>';return;
+}
+document.getElementById("result").innerHTML='<div class="text-center py-10 text-gray-400">Searching order...</div>';
+try{
+const snap=await getDoc(doc(db,TRACKING,id));
+if(!snap.exists()){
+document.getElementById("result").innerHTML='<div class="p-4 rounded-xl bg-red-50 text-red-700 font-semibold">Order not found. Please check the Order ID.</div>';return;
+}
+render(snap.data());
+}catch(e){
+console.error(e);
+document.getElementById("result").innerHTML='<div class="p-4 rounded-xl bg-red-50 text-red-700 font-semibold">Unable to track order. Please try again.</div>';
+}
+}
+
+document.getElementById("trackForm").addEventListener("submit",e=>{e.preventDefault();track(document.getElementById("orderIdInput").value)});
+const p=new URLSearchParams(location.search);if(p.get("orderId")){document.getElementById("orderIdInput").value=p.get("orderId");track(p.get("orderId"))}
+</script>
+</body>
+</html>
