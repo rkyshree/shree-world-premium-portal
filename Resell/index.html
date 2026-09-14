@@ -161,6 +161,7 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
     <div class="flex-1 min-w-0">
       <h2 class="font-extrabold text-lg flex items-center gap-1 truncate">Hi, <span id="profileName">Reseller</span>! <i class="fa-solid fa-circle-check text-rose-500 text-sm"></i></h2>
       <p id="profilePhone" class="text-xs text-gray-500 mt-0.5 truncate">—</p>
+      <p id="profileStoreNameDisplay" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded mt-1 inline-block hidden"></p>
     </div>
     <button onclick="openEditProfile()" class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1.5 rounded-full shadow-sm border border-rose-100">EDIT PROFILE</button>
   </div>
@@ -196,14 +197,15 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 </div>
 </section>
 
-<!-- EDIT PROFILE MODAL -->
+<!-- EDIT PROFILE MODAL (Added Store Name) -->
 <div id="editProfileModal" class="modal fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[110]">
 <div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-5">
 <div class="flex justify-between items-center mb-4"><h2 class="text-lg font-extrabold">Edit Profile</h2><button onclick="closeEditProfile()" class="text-2xl text-gray-400">&times;</button></div>
 <form onsubmit="saveProfileDetails(event)" class="space-y-3">
 <input id="editName" type="text" class="input text-sm" placeholder="Full Name" required>
 <input id="editPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input text-sm" placeholder="Mobile Number" required>
-<button type="submit" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold mt-2">Update Profile</button>
+<input id="editStoreName" type="text" class="input text-sm" placeholder="Your Store Name (Optional)">
+<button type="submit" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold mt-2 shadow-md">Update Profile</button>
 </form>
 </div>
 </div>
@@ -415,14 +417,14 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 
 <!-- Auto Calculate Pricing Box -->
 <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-lg">
-  <p class="text-xs font-bold text-indigo-800 mb-2">Price Details</p>
+  <p class="text-xs font-bold text-indigo-800 mb-2">Smart Price Calculator</p>
   <div class="grid grid-cols-2 gap-3 mb-2">
     <input id="productMrpInput" type="number" oninput="calcBasePrice()" class="input text-sm bg-white" placeholder="MRP (e.g. 1000)" required>
     <input id="productDiscountInput" type="number" oninput="calcBasePrice()" class="input text-sm bg-white" placeholder="Discount % (e.g. 20)">
   </div>
   <div>
-    <label class="text-[10px] font-bold text-gray-500">Calculated Base Price (Auto)</label>
-    <input id="productBasePriceInput" type="number" class="input text-sm bg-gray-200 font-bold text-green-700" placeholder="Result Base Price" required readonly>
+    <label class="text-[10px] font-bold text-gray-500">Calculated Base Price (You can edit this)</label>
+    <input id="productBasePriceInput" type="number" class="input text-sm bg-white font-bold text-green-700" placeholder="Result Base Price" required>
   </div>
 </div>
 
@@ -440,9 +442,32 @@ body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;over
 </div>
 </div>
 
-<!-- UI SCRIPTS -->
+<!-- ADMIN EDIT USER MODAL -->
+<div id="adminEditUserModal" class="modal fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[220] p-4">
+<div class="modal-box bg-white w-full max-w-sm rounded-2xl p-5">
+<div class="flex justify-between items-center mb-4"><h2 class="text-lg font-extrabold text-gray-800">Edit User Data</h2><button onclick="closeAdminEditUser()" class="text-2xl text-gray-400">&times;</button></div>
+<form onsubmit="adminSaveUser(event)" class="space-y-3">
+<input type="hidden" id="adminEditUid">
+<label class="text-xs font-bold text-gray-500">Name</label>
+<input id="adminEditUName" type="text" class="input text-sm" required>
+<label class="text-xs font-bold text-gray-500">Phone</label>
+<input id="adminEditUPhone" type="text" class="input text-sm" required>
+<button type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold mt-2 shadow-sm">Save User</button>
+</form>
+</div>
+</div>
+
+<!-- UI SCRIPTS & HELPERS -->
 <script>
-// =========== YOU CAN CHANGE CATEGORIES HERE ===========
+// Safely parse timestamps for OLD AND NEW data so nothing crashes
+window.getTime = (t) => {
+    if (!t) return 0;
+    if (typeof t.toMillis === "function") return t.toMillis();
+    if (t.seconds) return t.seconds * 1000;
+    return new Date(t).getTime() || 0;
+};
+
+// CATEGORIES SETUP
 const APP_CATEGORIES = [
     {name: "All", icon: "fa-border-all", color: "text-gray-600"},
     {name: "Kurti", icon: "fa-person-dress", color: "text-rose-500"},
@@ -453,7 +478,6 @@ const APP_CATEGORIES = [
 ];
 let currentCategory = "All";
 
-// Render user-side categories
 function renderCategoriesUI() {
     const c = document.getElementById("categoryContainer");
     if(!c) return;
@@ -467,7 +491,6 @@ function renderCategoriesUI() {
     `).join("");
 }
 
-// Render Admin Select categories
 function renderAdminCategoriesSelect() {
     const s = document.getElementById("productCategoryInput");
     if(!s) return;
@@ -485,8 +508,8 @@ window.onload = () => {
     renderCategoriesUI();
     renderAdminCategoriesSelect();
 };
-// =======================================================
 
+// Modal Toggles
 window.openAuthModal = () => document.getElementById("authModal").classList.add("active");
 window.closeAuthModal = () => document.getElementById("authModal").classList.remove("active");
 window.openAdminLogin = () => document.getElementById("adminLoginModal").classList.add("active");
@@ -498,10 +521,12 @@ window.closeAdminPanelAndLogout = async () => { window.logoutUser(); closeAdminP
 window.calcBasePrice = () => {
   let mrp = Number(document.getElementById('productMrpInput').value || 0);
   let disc = Number(document.getElementById('productDiscountInput').value || 0);
-  if(mrp > 0) {
+  if(mrp > 0 && disc > 0) {
     let final = mrp - (mrp * disc / 100);
     document.getElementById('productBasePriceInput').value = final > 0 ? Math.round(final) : mrp;
-  } else { document.getElementById('productBasePriceInput').value = ''; }
+  } else if (mrp > 0 && disc === 0) {
+    // If no discount is entered, keep base price empty to allow manual entry, or copy MRP
+  }
 };
 
 window.openProductEditor = (id="") => {
@@ -522,6 +547,7 @@ window.closeOrderModal = () => document.getElementById("orderModal").classList.r
 window.closeProductDetail = () => document.getElementById("productDetailModal").classList.remove("active");
 window.closeEditProfile = () => document.getElementById("editProfileModal").classList.remove("active");
 window.closeWithdrawal = () => document.getElementById("withdrawalModal").classList.remove("active");
+window.closeAdminEditUser = () => document.getElementById("adminEditUserModal").classList.remove("active");
 
 window.showToast = function(message) {
   const t = document.getElementById("toast"), x = document.getElementById("toastText");
@@ -551,7 +577,7 @@ window.money = v => Number(v||0).toLocaleString("en-IN");
 window.esc = v => String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 </script>
 
-<!-- FIREBASE & LOGIC -->
+<!-- FIREBASE & CORE LOGIC -->
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
@@ -615,8 +641,7 @@ onAuthStateChanged(auth, async user => {
     if(snap.exists()){
       currentUserData = snap.data();
       if(currentUserData.role === 'admin') {
-         document.getElementById("landingPage").classList.add("active");
-         document.getElementById("userPage").classList.remove("active");
+         document.getElementById("landingPage").classList.add("active"); document.getElementById("userPage").classList.remove("active");
          openAdminPanel(); return;
       }
       document.getElementById("landingPage").classList.remove("active"); document.getElementById("userPage").classList.add("active");
@@ -631,15 +656,28 @@ function updateProfileUI() {
   document.getElementById("userName").innerText = name; document.getElementById("profileName").innerText = name;
   document.getElementById("avatar").innerText = name.charAt(0).toUpperCase(); document.getElementById("profileAvatar").innerText = name.charAt(0).toUpperCase();
   document.getElementById("profilePhone").innerText = currentUserData.phone || currentUserData.email || "";
+  
+  if(currentUserData.storeName) {
+      document.getElementById("profileStoreNameDisplay").innerText = "🏪 " + currentUserData.storeName;
+      document.getElementById("profileStoreNameDisplay").classList.remove("hidden");
+  } else {
+      document.getElementById("profileStoreNameDisplay").classList.add("hidden");
+  }
+
   document.getElementById("profileWallet").innerText = "₹" + money(currentUserData.walletBalance);
   if(currentUserData.status === "pending") document.getElementById("approvalNotice").classList.remove("hidden");
 }
 
 // --- PROFILE EDIT & WITHDRAWAL ---
-window.openEditProfile = () => { document.getElementById("editName").value = currentUserData.name || ""; document.getElementById("editPhone").value = currentUserData.phone || ""; document.getElementById("editProfileModal").classList.add("active"); };
+window.openEditProfile = () => { 
+  document.getElementById("editName").value = currentUserData.name || ""; 
+  document.getElementById("editPhone").value = currentUserData.phone || ""; 
+  document.getElementById("editStoreName").value = currentUserData.storeName || ""; 
+  document.getElementById("editProfileModal").classList.add("active"); 
+};
 window.saveProfileDetails = async (e) => {
-  e.preventDefault(); const name = document.getElementById("editName").value, phone = document.getElementById("editPhone").value;
-  try { await updateDoc(doc(db, USERS, currentUser.uid), {name, phone}); currentUserData.name = name; currentUserData.phone = phone; updateProfileUI(); closeEditProfile(); showToast("Profile Updated!"); } catch(err) { showToast(err.message); }
+  e.preventDefault(); const name = document.getElementById("editName").value, phone = document.getElementById("editPhone").value, store = document.getElementById("editStoreName").value;
+  try { await updateDoc(doc(db, USERS, currentUser.uid), {name, phone, storeName: store}); currentUserData.name = name; currentUserData.phone = phone; currentUserData.storeName = store; updateProfileUI(); closeEditProfile(); showToast("Profile Updated!"); } catch(err) { showToast(err.message); }
 };
 window.openWithdrawal = () => { document.getElementById("withdrawAvailable").innerText = "₹" + money(currentUserData.walletBalance); document.getElementById("withdrawAmount").value = ""; document.getElementById("withdrawDetails").value = ""; document.getElementById("withdrawalModal").classList.add("active"); loadUserWithdrawals(); };
 window.submitWithdrawal = async (e) => {
@@ -658,12 +696,10 @@ window.loadUserWithdrawals = () => {
     const c = document.getElementById("userWithdrawalHistoryList"); c.innerHTML="";
     if(snap.empty) { c.innerHTML='<div class="text-center py-5 text-gray-400 text-xs">No withdrawals yet.</div>'; return; }
     
-    // Convert to array and sort locally to avoid missing index errors
     let wData = []; snap.forEach(d => wData.push(d.data()));
-    wData.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    wData.sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
 
     wData.forEach(w => {
-      // Support old data compatibility by checking both details and bankDetails
       const d = w.details || w.bankDetails || "N/A";
       c.innerHTML += `<div class="bg-gray-50 border rounded-xl p-3 mb-2 shadow-sm text-sm">
         <div class="flex justify-between font-bold text-gray-800"><span>₹${money(w.amount)}</span> <span class="text-[10px] px-2 py-0.5 rounded uppercase ${w.status==='approved'?'bg-green-100 text-green-700':(w.status==='rejected'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${w.status}</span></div>
@@ -676,21 +712,15 @@ window.loadUserWithdrawals = () => {
 // --- PRODUCTS & FEED ---
 function loadProducts() { 
   onSnapshot(query(collection(db, PRODUCTS)), snap => { 
-    allProducts = []; 
-    snap.forEach(d => allProducts.push({id:d.id, ...d.data()})); 
-    // Safely sort to ensure old data shows up
-    allProducts.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-    window.filterProducts(); // Apply category logic immediately
+    allProducts = []; snap.forEach(d => allProducts.push({id:d.id, ...d.data()})); 
+    allProducts.sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
+    window.filterProducts(); 
   }); 
 }
 function renderProducts(list) {
   const feed = document.getElementById("productFeed");
-  if(!list || list.length === 0) {
-      feed.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-400">No products found.</div>';
-      return;
-  }
+  if(!list || list.length === 0) { feed.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-400">No products found.</div>'; return; }
   feed.innerHTML = list.map(p => {
-    // Safety check for old products that might have missing fields
     const baseP = Number(p.basePrice || 0);
     const img = p.images && p.images[0] ? p.images[0] : 'https://placehold.co/400x500/f1f5f9/64748b?text=Product';
     return `<div class="product-card-compact" onclick="openProductDetail('${p.id}')">
@@ -703,12 +733,8 @@ function renderProducts(list) {
 window.filterProducts = () => { 
   const v = document.getElementById("productSearch").value.toLowerCase(); 
   let list = allProducts;
-  if(currentCategory !== "All") {
-      list = list.filter(p => (p.category || "").toLowerCase() === currentCategory.toLowerCase());
-  }
-  if(v) {
-      list = list.filter(p => `${p.title} ${p.description}`.toLowerCase().includes(v));
-  }
+  if(currentCategory !== "All") list = list.filter(p => (p.category || "").toLowerCase() === currentCategory.toLowerCase());
+  if(v) list = list.filter(p => `${p.title} ${p.description}`.toLowerCase().includes(v));
   renderProducts(list); 
 };
 
@@ -722,21 +748,15 @@ window.openProductDetail = (id) => {
   slider.innerHTML = (selectedProduct.images||['https://placehold.co/400x500']).map(img => `<img src="${esc(img)}" alt="img">`).join("");
   document.getElementById("productDetailModal").classList.add("active");
 };
-window.downloadProductPhotos = async () => {
-  if(!selectedProduct?.images?.length) return showToast("No images found."); showToast("Downloading images...");
-  selectedProduct.images.forEach((img, i) => {
-    fetch(img, {mode:'cors'}).then(res=>res.blob()).then(blob=>{
-      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `Shraynex_${i}.jpg`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }).catch(()=>window.open(img, '_blank'));
-  });
-};
 
 // --- WHATSAPP SHARE & ORDER ---
 window.openShare = () => { document.getElementById("shareBasePrice").innerText = money(selectedProduct.basePrice); document.getElementById("sellingPrice").value = ""; document.getElementById("profitAmount").innerText = "₹0"; document.getElementById("shareModal").classList.add("active"); };
 window.calculateProfit = () => { const sell = Number(document.getElementById("sellingPrice").value||0), base = Number(selectedProduct.basePrice||0); document.getElementById("profitAmount").innerText = "₹" + money(Math.max(0, sell - base)); };
 window.shareOnWhatsApp = () => {
   const sell = Number(document.getElementById("sellingPrice").value||0); if(sell <= (selectedProduct.basePrice||0)) return showToast("Selling price must be higher than base price.");
-  const msg = `🛍️ *${selectedProduct.title||""}*\n\n${selectedProduct.description||""}\n\n🔥 *Best Price: ₹${sell}*\n\nMessage me back to place your order!`;
+  
+  let storeInfo = currentUserData?.storeName ? `\n🏪 *Store:* ${currentUserData.storeName}\n` : "";
+  const msg = `🛍️ *${selectedProduct.title||""}*${storeInfo}\n${selectedProduct.description||""}\n\n🔥 *Best Price: ₹${sell}*\n\nMessage me back to place your order!`;
   window.open("https://wa.me/?text="+encodeURIComponent(msg), "_blank"); closeShareModal();
 };
 
@@ -759,9 +779,8 @@ function loadOrders() {
   onSnapshot(query(collection(db, ORDERS), where("resellerId", "==", currentUser.uid)), snap => {
     const c = document.getElementById("ordersList"); c.innerHTML="";
     if(snap.empty) { c.innerHTML='<div class="text-center py-10 text-gray-400">No orders placed yet.</div>'; return; }
-    
     let ord = []; snap.forEach(d => ord.push(d.data()));
-    ord.sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+    ord.sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
     
     ord.forEach(o => {
       const st = o.status || "processing";
@@ -790,13 +809,12 @@ window.refreshAdmin = async () => {
     getDocs(collection(db, USERS)), getDocs(collection(db, ORDERS)), getDocs(collection(db, WITHDRAW)), getDocs(collection(db, PRODUCTS))
   ]);
   
-  // Protect against indexing issues by parsing and manually sorting safely
-  allAdminUsers = uSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-  allAdminOrders = oSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-  allWithdraws = wSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-  allProducts = pSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+  // SECURE SORT FOR OLD DATA
+  allAdminUsers = uSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
+  allAdminOrders = oSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
+  allWithdraws = wSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
+  allProducts = pSnap.docs.map(d => ({id:d.id, ...d.data()})).sort((a,b) => window.getTime(b.createdAt) - window.getTime(a.createdAt));
 
-  // Update Dashboard Stats
   document.getElementById("statTotalUsers").innerText = allAdminUsers.filter(u=>u.role!=='admin').length;
   document.getElementById("statTotalProducts").innerText = allProducts.length;
   document.getElementById("statPendingLogins").innerText = allAdminUsers.filter(u=>u.role!=='admin' && u.status==='pending').length;
@@ -817,13 +835,33 @@ window.renderAdminUsers = () => {
       <div class="mt-4 flex gap-2">
          <span class="px-2 py-1 text-[10px] rounded font-bold uppercase ${u.status==='approved'?'bg-green-100 text-green-700':(u.status==='suspended'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${u.status || "pending"}</span>
       </div>
-      <div class="grid grid-cols-4 gap-2 mt-4 pt-4 border-t border-gray-100">
+      <div class="grid grid-cols-5 gap-2 mt-4 pt-4 border-t border-gray-100">
         <button onclick="adminAction('approve','${u.id}')" title="Approve" class="bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-check"></i></button>
         <button onclick="adminAction('suspend','${u.id}')" title="Suspend" class="bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-pause"></i></button>
         <button onclick="adminAction('addFund','${u.id}')" title="Add Funds" class="bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-plus"></i></button>
+        <button onclick="openAdminEditUser('${u.id}')" title="Edit Info" class="bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-pen"></i></button>
         <button onclick="adminAction('deleteUser','${u.id}')" title="Delete User" class="bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-bold text-sm shadow-sm transition"><i class="fa-solid fa-trash"></i></button>
       </div>
     </div>`).join("");
+};
+
+window.openAdminEditUser = (uid) => {
+    const u = allAdminUsers.find(x=>x.id===uid); if(!u) return;
+    document.getElementById("adminEditUid").value = uid;
+    document.getElementById("adminEditUName").value = u.name || "";
+    document.getElementById("adminEditUPhone").value = u.phone || "";
+    document.getElementById("adminEditUserModal").classList.add("active");
+};
+
+window.adminSaveUser = async (e) => {
+    e.preventDefault();
+    const uid = document.getElementById("adminEditUid").value;
+    const name = document.getElementById("adminEditUName").value;
+    const phone = document.getElementById("adminEditUPhone").value;
+    try {
+        await updateDoc(doc(db, USERS, uid), {name, phone});
+        closeAdminEditUser(); showToast("User Info Saved!"); refreshAdmin();
+    } catch(err) { showToast(err.message); }
 };
 
 window.adminAction = async (action, uid) => {
