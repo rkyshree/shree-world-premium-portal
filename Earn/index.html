@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +36,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <!-- Navigation Bar -->
     <nav class="fixed w-full z-50 glass-effect border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -48,10 +46,12 @@
                 </div>
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#discover" class="text-gray-600 hover:text-primary transition font-medium">Discover Brands</a>
                     <a href="#how-it-works" class="text-gray-600 hover:text-primary transition font-medium">How to Resell</a>
-                    <a href="#dashboard" class="text-gray-600 hover:text-primary transition font-medium">My Dashboard</a>
-                    <button onclick="toggleAuthModal()" class="bg-primary text-white px-5 py-2.5 rounded-full font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                    <!-- Hidden by default, shown after login -->
+                    <a href="#discover" id="nav-discover" class="hidden text-gray-600 hover:text-primary transition font-medium">Discover Brands</a>
+                    <a href="#dashboard" id="nav-dashboard" class="hidden text-gray-600 hover:text-primary transition font-medium">My Dashboard</a>
+                    
+                    <button id="auth-btn-desktop" onclick="toggleAuthModal()" class="bg-primary text-white px-5 py-2.5 rounded-full font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
                         Login / Signup
                     </button>
                 </div>
@@ -66,17 +66,15 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 absolute w-full shadow-xl">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#discover" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Discover Brands</a>
                 <a href="#how-it-works" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">How to Resell</a>
-                <a href="#dashboard" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">My Dashboard</a>
-                <button onclick="toggleAuthModal()" class="w-full text-left block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 rounded-md">Login / Signup</button>
+                <a href="#discover" id="mobile-nav-discover" class="hidden block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">Discover Brands</a>
+                <a href="#dashboard" id="mobile-nav-dashboard" class="hidden block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md">My Dashboard</a>
+                <button id="auth-btn-mobile" onclick="toggleAuthModal()" class="w-full text-left block px-3 py-2 text-base font-medium text-primary hover:bg-gray-50 rounded-md">Login / Signup</button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <div class="pt-24 pb-16 lg:pt-32 lg:pb-24 bg-gradient-to-br from-indigo-50 to-white overflow-hidden relative">
-        <!-- Decorative blob -->
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center max-w-3xl mx-auto">
@@ -88,18 +86,14 @@
                     Join thousands of resellers across India. Discover authentic products, share with your network, and earn margins on every sale. Zero investment required.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
-                    <button onclick="toggleAuthModal()" class="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-700 transition shadow-xl shadow-indigo-200 flex items-center justify-center">
-                        Start Reselling <i class="fas fa-arrow-right ml-2"></i>
+                    <button onclick="handleMainActionBtn()" id="hero-action-btn" class="bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-700 transition shadow-xl shadow-indigo-200 flex items-center justify-center">
+                        Login to Start Reselling <i class="fas fa-arrow-right ml-2"></i>
                     </button>
-                    <a href="#discover" class="bg-white text-gray-800 border-2 border-gray-200 px-8 py-4 rounded-full font-bold text-lg hover:border-gray-300 hover:bg-gray-50 transition flex items-center justify-center">
-                        Explore Catalog
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Stats Section -->
     <div class="bg-white border-y border-gray-100 py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
@@ -123,8 +117,34 @@
         </div>
     </div>
 
-    <!-- Product Catalog Section (Discover) -->
-    <section id="discover" class="py-20 bg-gray-50">
+    <section id="how-it-works" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How to Resell on SHRAYNEX</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Start your own online business in 3 simple steps without any upfront investment.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
+                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">1</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Discover Products</h3>
+                    <p class="text-gray-600">Login to browse thousands of high-quality products from trusted micro-brands across India at wholesale prices.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
+                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">2</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Share & Add Margin</h3>
+                    <p class="text-gray-600">Share product images and details on WhatsApp, Facebook, or Instagram with your friends and family. Add your own profit margin.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
+                    <div class="w-16 h-16 bg-indigo-100 text-primary rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold shadow-inner">3</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Earn Profit</h3>
+                    <p class="text-gray-600">When you get an order, place it on SHRAYNEX. We handle shipping and delivery. Your profit margin is transferred directly to your bank account.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="discover" class="py-20 bg-white hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Trending Catalogs</h2>
@@ -153,8 +173,7 @@
         </div>
     </section>
 
-    <!-- Mock Reseller Dashboard Section -->
-    <section id="dashboard" class="py-20 bg-white border-t border-gray-100">
+    <section id="dashboard" class="py-20 bg-gray-50 border-t border-gray-200 hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-12">
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">My Reseller Dashboard</h2>
@@ -234,10 +253,10 @@
                 <div class="space-y-8">
                     <!-- Profile Card -->
                     <div class="bg-white border border-gray-200 rounded-2xl p-6 text-center shadow-sm">
-                        <div class="w-20 h-20 bg-indigo-100 rounded-full mx-auto flex items-center justify-center mb-4 text-primary text-2xl font-bold">
-                            RK
+                        <div id="profile-initials" class="w-20 h-20 bg-indigo-100 rounded-full mx-auto flex items-center justify-center mb-4 text-primary text-2xl font-bold">
+                            U
                         </div>
-                        <h3 class="font-bold text-gray-900 text-lg">Reseller Name</h3>
+                        <h3 id="profile-name" class="font-bold text-gray-900 text-lg">Reseller Name</h3>
                         <p class="text-gray-500 text-sm mb-4">Silver Tier Partner</p>
                         <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
                             <div class="bg-primary h-2 rounded-full" style="width: 70%"></div>
@@ -271,43 +290,38 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-dark text-white pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
                     <span class="text-2xl font-bold tracking-tight mb-4 inline-block text-white">SHRAYNEX</span>
                     <p class="text-gray-400 text-sm mb-6">Empowering individuals across India to start their own online business with zero investment.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition"><i class="fab fa-twitter"></i></a>
-                    </div>
+                    <!-- Social icons removed as requested -->
                 </div>
                 <div>
                     <h4 class="font-bold mb-4 text-lg">Company</h4>
                     <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><button onclick="openInfoModal('about')" class="hover:text-white transition">About Us</button></li>
+                        <li><button onclick="openInfoModal('contact')" class="hover:text-white transition">Contact Us</button></li>
+                        <li><button onclick="openInfoModal('careers')" class="hover:text-white transition">Careers</button></li>
+                        <li><button onclick="openInfoModal('blog')" class="hover:text-white transition">Blog</button></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4 text-lg">Policies</h4>
                     <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition">Terms & Conditions</a></li>
-                        <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition">Shipping Policy</a></li>
+                        <li><button onclick="openInfoModal('privacy')" class="hover:text-white transition">Privacy Policy</button></li>
+                        <li><button onclick="openInfoModal('terms')" class="hover:text-white transition">Terms & Conditions</button></li>
+                        <li><button onclick="openInfoModal('return')" class="hover:text-white transition">Return Policy</button></li>
+                        <li><button onclick="openInfoModal('shipping')" class="hover:text-white transition">Shipping Policy</button></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4 text-lg">Contact Info</h4>
                     <ul class="space-y-3 text-gray-400 text-sm">
-                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i> 123 Business Hub, New Delhi, India 110001</li>
-                        <li class="flex items-center"><i class="fas fa-phone mr-3 text-primary"></i> +91 98765 43210</li>
-                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-primary"></i> support@shraynex.in</li>
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-primary"></i> Gorakhpur, Uttar Pradesh 273013</li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-3 text-primary"></i> +91 9451239239</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-primary"></i> shraynexofficial@gmail.com</li>
                     </ul>
                 </div>
             </div>
@@ -316,6 +330,21 @@
             </div>
         </div>
     </footer>
+
+    <!-- Content/Info Modal -->
+    <div id="info-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-10">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-full overflow-hidden flex flex-col relative">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 shrink-0">
+                <h3 id="info-modal-title" class="text-xl font-bold text-gray-900">Title</h3>
+                <button onclick="closeInfoModal()" class="text-gray-400 hover:text-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="info-modal-content" class="p-6 overflow-y-auto text-gray-600 prose prose-indigo max-w-none">
+                <!-- Content injected here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Login/Signup Modal (Mockup) -->
     <div id="auth-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
@@ -329,15 +358,10 @@
                     <p class="text-gray-500">Login or create an account to start reselling</p>
                 </div>
                 
-                <!-- Mock Form (No actual backend submission here, prepared for Firebase) -->
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number or Email</label>
                         <input type="text" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="Enter your detail">
-                    </div>
-                    <div id="password-field" class="hidden">
-                         <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition" placeholder="Enter password">
                     </div>
                     
                     <button onclick="simulateLogin(this)" class="w-full bg-primary text-white py-3 rounded-lg font-bold text-lg hover:bg-indigo-700 transition shadow-md">
@@ -350,13 +374,13 @@
                         <div class="flex-grow border-t border-gray-200"></div>
                     </div>
                     
-                    <button class="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition flex items-center justify-center shadow-sm">
+                    <button id="google-login-btn" class="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition flex items-center justify-center shadow-sm">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-2" alt="Google"> Google
                     </button>
                 </div>
             </div>
             <div class="bg-gray-50 px-8 py-4 text-center border-t border-gray-100">
-                <p class="text-xs text-gray-500">By continuing, you agree to SHRAYNEX's <a href="#" class="text-primary hover:underline">Terms of Use</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.</p>
+                <p class="text-xs text-gray-500">By continuing, you agree to SHRAYNEX's <button onclick="openInfoModal('terms'); toggleAuthModal()" class="text-primary hover:underline">Terms of Use</button> and <button onclick="openInfoModal('privacy'); toggleAuthModal()" class="text-primary hover:underline">Privacy Policy</button>.</p>
             </div>
         </div>
     </div>
@@ -405,6 +429,129 @@
     </div>
 
     <script>
+        // Global Auth State
+        let isLoggedIn = false;
+
+        // Content Data for Modals
+        const pageContent = {
+            'about': {
+                title: 'About Us',
+                content: `
+                    <h4 class="text-lg font-bold mb-2">Welcome to SHRAYNEX</h4>
+                    <p class="mb-4">SHRAYNEX is India's leading platform empowering individuals to start their own online reselling business with absolute zero investment. Our mission is to democratize e-commerce by bridging the gap between high-quality micro-brands and ambitious entrepreneurs across the country.</p>
+                    <p class="mb-4">We believe that anyone with a smartphone and a desire to succeed should have the tools to build their own income stream. By connecting you directly with trusted manufacturers, we eliminate the middlemen, allowing you to offer great products to your customers while keeping the profit margins for yourself.</p>
+                    <p>Whether you are a homemaker, a student, or a boutique owner, SHRAYNEX provides the catalog, the technology, and the logistics support you need to thrive.</p>
+                `
+            },
+            'contact': {
+                title: 'Contact Us',
+                content: `
+                    <p class="mb-4">We are always here to help our reseller community. Feel free to reach out to us regarding any queries, bulk orders, or support needs.</p>
+                    <ul class="space-y-4 mt-6">
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-3 text-primary text-xl"></i> <div><strong>Address:</strong><br> Gorakhpur, Uttar Pradesh 273013, India</div></li>
+                        <li class="flex items-center"><i class="fas fa-phone mr-3 text-primary text-xl"></i> <div><strong>Phone:</strong><br> +91 9451239239</div></li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-3 text-primary text-xl"></i> <div><strong>Email:</strong><br> shraynexofficial@gmail.com</div></li>
+                    </ul>
+                    <p class="mt-6 text-sm text-gray-500">Our support hours are Monday to Saturday, 9:00 AM to 6:00 PM IST.</p>
+                `
+            },
+            'careers': {
+                title: 'Careers at SHRAYNEX',
+                content: `
+                    <h4 class="text-lg font-bold mb-2">Join Our Mission</h4>
+                    <p class="mb-4">At SHRAYNEX, we are building the future of social commerce in India. We are a fast-growing team of innovators, problem-solvers, and dreamers who are passionate about empowering micro-entrepreneurs.</p>
+                    <p class="mb-4">We are currently looking for talent in the following areas:</p>
+                    <ul class="list-disc pl-5 mb-4 space-y-1">
+                        <li>Supply Chain Operations</li>
+                        <li>Vendor Management</li>
+                        <li>Customer Success</li>
+                        <li>Frontend Engineering</li>
+                    </ul>
+                    <p>If you want to make a real impact, send your resume to <strong>shraynexofficial@gmail.com</strong> with the subject line "Careers - [Your Expertise]".</p>
+                `
+            },
+            'blog': {
+                title: 'SHRAYNEX Blog',
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b border-gray-100 pb-4">
+                            <h4 class="text-lg font-bold text-primary mb-1">Top 5 Trending Kurtis for the Festive Season</h4>
+                            <p class="text-sm text-gray-500 mb-2">Published on October 15, 2023</p>
+                            <p class="text-sm">Discover which ethnic wear catalogs are generating the highest margins for our resellers right now...</p>
+                        </div>
+                        <div class="border-b border-gray-100 pb-4">
+                            <h4 class="text-lg font-bold text-primary mb-1">How to Sell on WhatsApp Effectively</h4>
+                            <p class="text-sm text-gray-500 mb-2">Published on September 28, 2023</p>
+                            <p class="text-sm">Master the art of creating broadcast lists and engaging your contacts without being spammy...</p>
+                        </div>
+                        <div>
+                            <p class="text-center text-gray-500 italic mt-4">More articles coming soon!</p>
+                        </div>
+                    </div>
+                `
+            },
+            'privacy': {
+                title: 'Privacy Policy',
+                content: `
+                    <p class="mb-4">At SHRAYNEX, we value and respect your privacy. This policy outlines how we collect, use, and protect your personal data when you use our platform.</p>
+                    <h4 class="font-bold mt-4 mb-2">1. Information We Collect</h4>
+                    <p class="mb-4">We collect information you provide directly to us, such as your name, email address, phone number, bank details (for payouts), and shipping addresses of your customers.</p>
+                    <h4 class="font-bold mt-4 mb-2">2. How We Use Your Information</h4>
+                    <p class="mb-4">Your information is used to facilitate orders, process margin payouts, improve our app's user experience, and communicate important updates regarding your account.</p>
+                    <h4 class="font-bold mt-4 mb-2">3. Data Security</h4>
+                    <p>We implement robust security measures to safeguard your personal data. We do not sell your personal information to third parties.</p>
+                `
+            },
+            'terms': {
+                title: 'Terms & Conditions',
+                content: `
+                    <p class="mb-4">By accessing or using the SHRAYNEX platform, you agree to be bound by these Terms & Conditions.</p>
+                    <h4 class="font-bold mt-4 mb-2">1. Reseller Account</h4>
+                    <p class="mb-4">You must provide accurate and complete information when creating an account. You are responsible for maintaining the confidentiality of your login credentials.</p>
+                    <h4 class="font-bold mt-4 mb-2">2. Margin and Payouts</h4>
+                    <p class="mb-4">Your profit margin is calculated based on the difference between the base price and the final price you set for your customer. Payouts are processed to your registered bank account after the return period of the product has successfully ended.</p>
+                    <h4 class="font-bold mt-4 mb-2">3. Prohibited Activities</h4>
+                    <p>You agree not to engage in fraudulent activities, misrepresent products, or use the platform for any illegal purposes.</p>
+                `
+            },
+            'return': {
+                title: 'Return & Refund Policy',
+                content: `
+                    <p class="mb-4">We want your customers to be completely satisfied with their purchases.</p>
+                    <h4 class="font-bold mt-4 mb-2">7-Day Easy Returns</h4>
+                    <p class="mb-4">Products can be returned within 7 days of delivery if they are defective, damaged, or significantly different from the description. The item must be unused and in its original packaging.</p>
+                    <h4 class="font-bold mt-4 mb-2">Refund Process</h4>
+                    <p class="mb-4">Once the returned item is received and inspected by the supplier, the base amount will be refunded to the original payment method. If it was a COD order, the refund will be processed to the provided bank account.</p>
+                    <p class="text-sm text-red-500">* Note: Margin payouts are canceled for returned orders.</p>
+                `
+            },
+            'shipping': {
+                title: 'Shipping Policy',
+                content: `
+                    <p class="mb-4">SHRAYNEX handles end-to-end logistics so you can focus entirely on selling.</p>
+                    <h4 class="font-bold mt-4 mb-2">Dispatch and Delivery</h4>
+                    <p class="mb-4">Orders are typically dispatched by our suppliers within 24-48 hours. Delivery takes an average of 4-7 business days depending on the customer's location in India.</p>
+                    <h4 class="font-bold mt-4 mb-2">Shipping Charges</h4>
+                    <p class="mb-4">We offer FREE shipping on maximum catalogs to help you maximize your sales. For catalogs with shipping charges, the amount will be clearly displayed before you place the order.</p>
+                    <h4 class="font-bold mt-4 mb-2">Cash on Delivery (COD)</h4>
+                    <p>COD is available for over 20,000+ pin codes across India, providing convenience and trust for your customers.</p>
+                `
+            }
+        };
+
+        function openInfoModal(pageKey) {
+            const data = pageContent[pageKey];
+            if(data) {
+                document.getElementById('info-modal-title').innerText = data.title;
+                document.getElementById('info-modal-content').innerHTML = data.content;
+                document.getElementById('info-modal').classList.remove('hidden');
+            }
+        }
+
+        function closeInfoModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+
         // Mock Product Data
         const products = [
             { id: 1, name: "Women's Embroidered Rayon Kurti", supplier: "Shree Fab", basePrice: 450, image: "https://placehold.co/400x500/e2e8f0/475569?text=Kurti+Design+1", rating: 4.5, reviews: 120 },
@@ -446,7 +593,7 @@
                                     <i class="fas fa-share-alt"></i> Share
                                 </button>
                                 <button class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-200 transition">
-                                    View Details
+                                    Details
                                 </button>
                             </div>
                         </div>
@@ -456,10 +603,79 @@
             });
         }
 
-        // Modal Logic
+        // Auth & UI Logic
         function toggleAuthModal() {
             const modal = document.getElementById('auth-modal');
             modal.classList.toggle('hidden');
+        }
+
+        function handleMainActionBtn() {
+            if (isLoggedIn) {
+                // If logged in, scroll to discover
+                document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // If logged out, open auth modal
+                toggleAuthModal();
+            }
+        }
+
+        function updateUIForLoginState(loggedIn, userName = "Reseller") {
+            isLoggedIn = loggedIn;
+            
+            const navDiscover = document.getElementById('nav-discover');
+            const navDashboard = document.getElementById('nav-dashboard');
+            const mobileNavDiscover = document.getElementById('mobile-nav-discover');
+            const mobileNavDashboard = document.getElementById('mobile-nav-dashboard');
+            
+            const discoverSection = document.getElementById('discover');
+            const dashboardSection = document.getElementById('dashboard');
+            
+            const desktopBtn = document.getElementById('auth-btn-desktop');
+            const mobileBtn = document.getElementById('auth-btn-mobile');
+            const heroBtn = document.getElementById('hero-action-btn');
+            
+            if (loggedIn) {
+                // Show protected sections
+                navDiscover.classList.remove('hidden');
+                navDashboard.classList.remove('hidden');
+                mobileNavDiscover.classList.remove('hidden');
+                mobileNavDashboard.classList.remove('hidden');
+                discoverSection.classList.remove('hidden');
+                dashboardSection.classList.remove('hidden');
+                
+                // Update buttons
+                desktopBtn.innerText = 'Logout';
+                desktopBtn.onclick = window.logoutUser || function(){ updateUIForLoginState(false); showToast("Logged out"); };
+                
+                mobileBtn.innerText = 'Logout';
+                mobileBtn.onclick = window.logoutUser || function(){ updateUIForLoginState(false); showToast("Logged out"); };
+                
+                heroBtn.innerHTML = 'Browse Catalog <i class="fas fa-arrow-down ml-2"></i>';
+                
+                // Update Profile Name
+                const profileInitials = document.getElementById('profile-initials');
+                const profileNameEl = document.getElementById('profile-name');
+                if(profileInitials) profileInitials.innerText = userName.charAt(0).toUpperCase();
+                if(profileNameEl) profileNameEl.innerText = userName;
+
+            } else {
+                // Hide protected sections
+                navDiscover.classList.add('hidden');
+                navDashboard.classList.add('hidden');
+                mobileNavDiscover.classList.add('hidden');
+                mobileNavDashboard.classList.add('hidden');
+                discoverSection.classList.add('hidden');
+                dashboardSection.classList.add('hidden');
+                
+                // Update buttons
+                desktopBtn.innerText = 'Login / Signup';
+                desktopBtn.onclick = toggleAuthModal;
+                
+                mobileBtn.innerText = 'Login / Signup';
+                mobileBtn.onclick = toggleAuthModal;
+                
+                heroBtn.innerHTML = 'Login to Start Reselling <i class="fas fa-arrow-right ml-2"></i>';
+            }
         }
 
         function simulateLogin(btn) {
@@ -468,7 +684,9 @@
             setTimeout(() => {
                 toggleAuthModal();
                 btn.innerHTML = originalText;
-                showToast("Login successful! Welcome to Dashboard.");
+                updateUIForLoginState(true, "Mock User");
+                showToast("Login successful! Start exploring products.");
+                document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
             }, 1000);
         }
 
@@ -491,11 +709,9 @@
         }
 
         function copyProductLink() {
-            // Mock copy link
             try {
-                // In a real environment, generate the specific product link with reseller ID here
                 document.execCommand('copy'); 
-                showToast("Product link copied to clipboard!");
+                showToast("Product link copied! Share it anywhere.");
                 closeShareModal();
             } catch (err) {
                 console.error('Failed to copy', err);
@@ -514,56 +730,89 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             renderProducts();
+            // Ensure UI starts in logged-out state
+            updateUIForLoginState(false);
         });
 
     </script>
 
-    <!-- 
-    ======================================================================
-    FIREBASE INTEGRATION GUIDE FOR rkyshree.in/Job 
-    ======================================================================
-    To connect this frontend to your existing Firebase project, uncomment 
-    and configure the module script below.
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Replace with YOUR actual config from Firebase Console
+        // IMPORTANT: Apna rkyshree.in wala Firebase config yahan paste karein 
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
-            authDomain: "rkyshree-job.firebaseapp.com", // Example based on your URL
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
             projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
             messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
             appId: "YOUR_APP_ID"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const provider = new GoogleAuthProvider();
 
-        // Example: Fetching products from Firestore instead of mock array
-        async function fetchProductsFromFirebase() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "reselling_products"));
-                const firestoreProducts = [];
-                querySnapshot.forEach((doc) => {
-                    firestoreProducts.push({ id: doc.id, ...doc.data() });
+            // Google Login Handle Karna
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            if(googleLoginBtn) {
+                googleLoginBtn.addEventListener('click', async () => {
+                    try {
+                        googleLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Connecting...';
+                        const result = await signInWithPopup(auth, provider);
+                        const user = result.user;
+                        
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        showToast("Welcome " + (user.displayName || 'Reseller') + "!");
+                        
+                        // Sync UI with Firebase state
+                        updateUIForLoginState(true, user.displayName);
+                        setTimeout(() => {
+                            document.getElementById('discover').scrollIntoView({ behavior: 'smooth' });
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error("Google Login Error:", error);
+                        showToast("Firebase Config is missing. Using Mock Login.");
+                        googleLoginBtn.innerHTML = '<img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-2" alt="Google"> Google';
+                        // Fallback to mock login if firebase fails
+                        simulateLogin(googleLoginBtn); 
+                    }
                 });
-                
-                // Override global 'products' array and re-render
-                window.products = firestoreProducts;
-                window.renderProducts();
-            } catch (error) {
-                console.error("Error fetching products: ", error);
             }
-        }
 
-        // Call this when ready
-        // fetchProductsFromFirebase();
+            // Global Logout Function
+            window.logoutUser = async () => {
+                try {
+                    await signOut(auth);
+                    updateUIForLoginState(false);
+                    showToast("Logged out successfully");
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch(error) {
+                    console.error("Logout error", error);
+                    // Mock logout if firebase fails
+                    updateUIForLoginState(false);
+                    showToast("Logged out");
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            // Auth State Change (Check if user is already logged in upon page load)
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    updateUIForLoginState(true, user.displayName);
+                } else {
+                    updateUIForLoginState(false);
+                }
+            });
+
+        } catch (error) {
+            console.error("Firebase Initialization Error. Running in UI-Only Mode.", error);
+        }
     </script>
-    -->
 </body>
 </html>
