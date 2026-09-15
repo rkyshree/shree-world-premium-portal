@@ -83,9 +83,10 @@
             border-radius: 24px 24px 0 0;
             transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 90vh;
+            max-height: 95vh;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .bottom-sheet.active .bottom-sheet-content {
             transform: translateY(0);
@@ -114,7 +115,7 @@
 <body class="text-gray-800 antialiased">
 
 <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] hidden transition-all duration-300">
-    <div id="toastMsg" class="bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl text-sm font-medium flex items-center gap-2">
+    <div id="toastMsg" class="bg-gray-900 text-white px-6 py-3 rounded-full shadow-xl text-sm font-medium flex items-center gap-2">
         <i class="fa-solid fa-circle-info text-primary-light"></i>
         <span>Message</span>
     </div>
@@ -186,11 +187,7 @@
                     <p class="text-[11px] text-gray-500 font-medium">Welcome back</p>
                 </div>
             </div>
-            <div class="flex gap-2">
-                <button onclick="window.open('track-order.html','_blank')" class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gray-100">
-                    <i class="fa-solid fa-truck-fast"></i>
-                </button>
-            </div>
+            <!-- Truck icon removed as requested -->
         </header>
 
         <!-- Approval Banner -->
@@ -231,7 +228,8 @@
             <div id="tabProfile" class="tab-content p-4 hidden">
                 <h2 class="text-2xl font-bold mb-4">My Account</h2>
                 
-                <div class="bg-white rounded-2xl p-5 shadow-premium border border-gray-100 mb-4 text-center">
+                <div class="bg-white rounded-2xl p-5 shadow-premium border border-gray-100 mb-4 text-center relative">
+                    <button onclick="openEditProfile()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary-light transition"><i class="fa-solid fa-pen text-sm"></i></button>
                     <div id="profileAvatarBig" class="w-20 h-20 mx-auto rounded-full bg-primary text-white flex items-center justify-center font-bold text-3xl mb-3 shadow-md">U</div>
                     <h3 id="profileName" class="font-bold text-xl">User Name</h3>
                     <p id="profilePhone" class="text-gray-500 text-sm mt-1">+91 0000000000</p>
@@ -239,9 +237,10 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center relative">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Wallet Balance</p>
-                        <p id="walletBalance" class="text-2xl font-black text-primary mt-1">₹0</p>
+                        <p id="walletBalance" class="text-2xl font-black text-primary mt-1 mb-2">₹0</p>
+                        <button onclick="openWithdrawModal()" class="w-full text-[11px] bg-primary/10 text-primary py-1.5 rounded-lg font-bold hover:bg-primary/20 transition">Withdraw Funds</button>
                     </div>
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Earnings</p>
@@ -250,9 +249,9 @@
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                    <button class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
-                        <span class="font-medium"><i class="fa-solid fa-building-columns text-gray-400 w-6"></i> Bank Details</span>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
+                    <button class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50 cursor-default">
+                        <span class="font-medium"><i class="fa-solid fa-location-dot text-gray-400 w-6"></i> Saved Address</span>
+                        <span id="profileHasAddress" class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded">Saved</span>
                     </button>
                     <button class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
                         <span class="font-medium"><i class="fa-solid fa-headset text-gray-400 w-6"></i> Help & Support</span>
@@ -329,9 +328,112 @@
     </div>
 </div>
 
-<!-- Product Details / Share Modal -->
-<div id="shareModal" class="bottom-sheet">
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="bottom-sheet">
+    <div class="bottom-sheet-content h-[85vh]">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-24px shadow-sm">
+            <h3 class="font-bold text-lg">Edit Profile & Address</h3>
+            <button onclick="closeModal('editProfileModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 overflow-y-auto pb-8">
+            <form id="editProfileForm" onsubmit="submitEditProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Full Name</label>
+                    <input type="text" id="epName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Mobile Number</label>
+                    <input type="tel" id="epPhone" required pattern="[0-9]{10}" maxlength="10" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
+                </div>
+                <div class="pt-4 border-t border-gray-100">
+                    <h4 class="font-bold text-gray-800 mb-3">Saved Address</h4>
+                    <p class="text-xs text-gray-500 mb-4">Save an address permanently to auto-fill it quickly while placing orders.</p>
+                    
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Complete Address</label>
+                    <textarea id="epAddress" rows="3" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary resize-none mb-4"></textarea>
+                    
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Pincode</label>
+                    <input type="tel" id="epPincode" pattern="[0-9]{6}" maxlength="6" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
+                </div>
+                <button type="submit" id="submitEditProfileBtn" class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition mt-6">
+                    Save Changes
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="bottom-sheet">
     <div class="bottom-sheet-content">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="font-bold text-lg">Withdraw Funds</h3>
+            <button onclick="closeModal('withdrawModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-5 overflow-y-auto">
+            <div class="bg-primary-light/30 border border-primary-light p-4 rounded-xl mb-5 flex justify-between items-center">
+                <span class="text-sm font-semibold text-gray-700">Available Balance</span>
+                <span class="text-lg font-black text-primary" id="withdrawAvailable">₹0</span>
+            </div>
+            <form onsubmit="submitWithdrawal(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Withdrawal Amount (₹)</label>
+                    <input type="number" id="withdrawAmount" min="1" required class="w-full border border-gray-300 rounded-xl px-4 py-3 font-bold text-lg outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">Bank Account or UPI Details</label>
+                    <textarea id="withdrawDetails" rows="3" placeholder="Enter Account No. + IFSC or UPI ID" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary resize-none"></textarea>
+                </div>
+                <button type="submit" id="submitWithdrawBtn" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold shadow-md hover:bg-green-600 transition mt-2">
+                    Submit Request
+                </button>
+                <p class="text-[10px] text-gray-400 text-center mt-2">Amount will be deducted from wallet and processed by admin.</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div id="productDetailModal" class="bottom-sheet">
+    <div class="bottom-sheet-content h-[95vh] bg-gray-50">
+        <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-10 rounded-t-24px">
+            <button onclick="closeModal('productDetailModal')" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
+            <h3 class="font-bold text-sm">Product Details</h3>
+            <div class="w-8"></div> <!-- Spacer for centering -->
+        </div>
+        <div class="overflow-y-auto pb-[90px] flex-1">
+            <img id="pdImg" src="" class="w-full aspect-square object-cover bg-white border-b border-gray-100">
+            <div class="p-4 bg-white mb-2 shadow-sm">
+                <h2 id="pdTitle" class="text-xl font-bold text-gray-800 mb-2 leading-tight">Product Title</h2>
+                <div class="flex items-baseline gap-2 mb-3">
+                    <span id="pdPrice" class="font-black text-2xl text-primary">₹0</span>
+                    <span id="pdMrp" class="text-sm text-gray-400 line-through">₹0</span>
+                    <span id="pdDiscount" class="text-[10px] font-bold bg-red-50 text-red-600 px-2 py-1 rounded ml-2 hidden">0% OFF</span>
+                </div>
+                <div class="flex gap-2">
+                    <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-md" id="pdDelivery">Fast Delivery</span>
+                    <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-md" id="pdCategory">Category</span>
+                </div>
+            </div>
+            <div class="p-4 bg-white shadow-sm">
+                <h4 class="font-bold text-sm mb-2 text-gray-800">Description</h4>
+                <p id="pdDesc" class="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">No description provided.</p>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 w-full p-4 bg-white border-t border-gray-100 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] grid grid-cols-2 gap-3 z-20 pb-[env(safe-area-inset-bottom,16px)]">
+             <button id="pdShareBtn" onclick="openShareFromDetail()" class="bg-[#25D366] text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-[#128C7E] transition flex items-center justify-center gap-2">
+                 <i class="fa-brands fa-whatsapp text-lg"></i> Share
+             </button>
+             <button id="pdOrderBtn" onclick="openOrderFromDetail()" class="bg-primary text-white py-3.5 rounded-xl font-bold shadow-md shadow-primary/30 hover:bg-primary-dark transition flex items-center justify-center">
+                 Order Now
+             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Product Share Modal -->
+<div id="shareModal" class="bottom-sheet">
+    <div class="bottom-sheet-content z-[110]">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-24px">
             <h3 class="font-bold">Share & Set Margin</h3>
             <button onclick="closeModal('shareModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -366,9 +468,9 @@
 
 <!-- Place Order Modal -->
 <div id="orderModal" class="bottom-sheet">
-    <div class="bottom-sheet-content h-[90vh]">
+    <div class="bottom-sheet-content h-[95vh] z-[110]">
         <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-24px shadow-sm">
-            <h3 class="font-bold text-lg">Customer Details</h3>
+            <h3 class="font-bold text-lg">Place Order</h3>
             <button onclick="closeModal('orderModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="p-5 overflow-y-auto pb-[100px]">
@@ -381,6 +483,11 @@
             </div>
 
             <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">
+                <div class="flex justify-between items-end mb-2">
+                    <h4 class="font-bold text-sm text-gray-800">Customer Details</h4>
+                    <button type="button" onclick="fillMyAddress()" class="text-[10px] font-bold text-primary bg-primary-light/50 px-2.5 py-1 rounded-md border border-primary-light hover:bg-primary-light transition">Use My Saved Address</button>
+                </div>
+                
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-1">Customer Name</label>
                     <input type="text" id="orderCustName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
@@ -400,7 +507,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1">Quantity</label>
-                        <input type="number" id="orderQty" required min="1" value="1" oninput="updateOrderSummary()" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary text-center font-bold">
+                        <input type="number" id="orderQty" required min="1" value="1" oninput="updateOrderSummary()" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary text-center font-bold bg-gray-50">
                     </div>
                 </div>
 
@@ -426,7 +533,7 @@
                 </div>
 
                 <button type="submit" id="submitOrderBtn" class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition flex justify-center items-center mt-6">
-                    Place Order Now
+                    Confirm Order
                 </button>
             </form>
         </div>
@@ -436,10 +543,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, setDoc, onSnapshot, query, where, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, updateDoc, setDoc, onSnapshot, query, where, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // Global variables required by environment
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-shraynex';
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
         apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
         authDomain: "rkyshree-2f74b.firebaseapp.com",
@@ -454,12 +559,12 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // Adhering strictly to provided path structures (mapping original names to isolated environment if needed, but requested to keep original functionality. I will map them to the root as in original code, as the prompt says "fix them" but also mentions strict paths. Given this is a specific user request for their exact DB, I will use their exact collection names to ensure it works with their existing data).
     const USERS_COL = "shraynex_users";
     const PRODUCTS_COL = "shraynex_products";
     const ORDERS_COL = "shraynex_orders";
     const COUNTERS_COL = "shraynex_counters";
     const TRACKING_COL = "shraynex_tracking";
+    const WITHDRAW_COL = "shraynex_withdrawals";
 
     let currentUser = null;
     let userData = null;
@@ -517,7 +622,7 @@
                 phone: additionalData.phone || "",
                 photoURL: user.photoURL || "",
                 role: "reseller",
-                status: "pending", // Requires admin approval
+                status: "pending", 
                 walletBalance: 0,
                 totalEarnings: 0,
                 createdAt: serverTimestamp(),
@@ -533,25 +638,27 @@
         if (user) {
             currentUser = user;
             try {
-                userData = await initUserDoc(user);
+                // Realtime user updates
+                onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {
+                    if (doc.exists()) {
+                        userData = doc.data();
+                        if(userData.status === 'suspended') {
+                            signOut(auth);
+                            showToast("Account suspended. Contact support.");
+                            return;
+                        }
+                        updateProfileUI();
+                    }
+                });
                 
-                // Suspend check
-                if(userData.status === 'suspended') {
-                    await signOut(auth);
-                    showToast("Account suspended. Contact support.");
-                    return;
-                }
-
                 document.getElementById('landingPage').classList.remove('active');
                 document.getElementById('appPage').classList.add('active');
                 
-                updateProfileUI();
                 loadProducts();
                 loadOrders();
                 closeModal('authModal');
             } catch (error) {
                 console.error("Auth init error:", error);
-                showToast("Error loading profile");
             }
         } else {
             currentUser = null;
@@ -566,11 +673,10 @@
     window.loginWithGoogle = async () => {
         try {
             document.getElementById('googleAuthBtn').innerHTML = '<div class="spinner"></div>';
-            const res = await signInWithPopup(auth, googleProvider);
-            // Handling is done in onAuthStateChanged
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
             showToast(error.message);
-            document.getElementById('googleAuthBtn').innerHTML = '<img src="https://www.google.com/favicon.ico" class="w-5 h-5"> Continue with Google';
+            document.getElementById('googleAuthBtn').innerHTML = '<img src="https://www.google.com/favicon.ico" class="w-5 h-5" alt="Google"> Continue with Google';
         }
     };
 
@@ -605,6 +711,7 @@
         }
     };
 
+    // --- Profile & Address Logic ---
     function updateProfileUI() {
         if(!userData) return;
         const name = userData.name || "Reseller";
@@ -617,6 +724,10 @@
         document.getElementById('walletBalance').innerText = `₹${userData.walletBalance || 0}`;
         document.getElementById('totalEarnings').innerText = `₹${userData.totalEarnings || 0}`;
 
+        const hasAddress = userData.address && userData.address.trim() !== "";
+        document.getElementById('profileHasAddress').innerText = hasAddress ? "Saved" : "Add Now";
+        document.getElementById('profileHasAddress').className = hasAddress ? "text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded" : "text-[10px] font-bold text-primary bg-primary-light px-2 py-1 rounded";
+
         const statusBadge = document.getElementById('profileStatusBadge');
         statusBadge.innerText = userData.status;
         if(userData.status === 'approved') {
@@ -628,7 +739,93 @@
         }
     }
 
-    // --- Products Logic ---
+    window.openEditProfile = () => {
+        document.getElementById('epName').value = userData.name || "";
+        document.getElementById('epPhone').value = userData.phone || "";
+        document.getElementById('epAddress').value = userData.address || "";
+        document.getElementById('epPincode').value = userData.pincode || "";
+        openModal('editProfileModal');
+    };
+
+    window.submitEditProfile = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitEditProfileBtn');
+        const orig = btn.innerText;
+        btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
+        try {
+            await updateDoc(doc(db, USERS_COL, currentUser.uid), {
+                name: document.getElementById('epName').value.trim(),
+                phone: document.getElementById('epPhone').value.trim(),
+                address: document.getElementById('epAddress').value.trim(),
+                pincode: document.getElementById('epPincode').value.trim(),
+                updatedAt: serverTimestamp()
+            });
+            showToast("Profile & Address saved successfully.");
+            closeModal('editProfileModal');
+        } catch (err) {
+            showToast("Failed to save changes.");
+        } finally {
+            btn.innerText = orig; btn.disabled = false;
+        }
+    };
+
+    // --- Withdrawal Logic ---
+    window.openWithdrawModal = () => {
+        document.getElementById('withdrawAvailable').innerText = `₹${userData.walletBalance || 0}`;
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('withdrawDetails').value = '';
+        openModal('withdrawModal');
+    };
+
+    window.submitWithdrawal = async (e) => {
+        e.preventDefault();
+        const amt = Number(document.getElementById('withdrawAmount').value);
+        const details = document.getElementById('withdrawDetails').value.trim();
+        
+        if (amt <= 0 || amt > (userData.walletBalance || 0)) {
+            return showToast("Invalid withdrawal amount. Check balance.");
+        }
+
+        const btn = document.getElementById('submitWithdrawBtn');
+        const orig = btn.innerText;
+        btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
+
+        try {
+            await runTransaction(db, async (tx) => {
+                const userRef = doc(db, USERS_COL, currentUser.uid);
+                const userSnap = await tx.get(userRef);
+                
+                if(!userSnap.exists() || userSnap.data().walletBalance < amt) {
+                    throw new Error("Insufficient balance.");
+                }
+                
+                // Deduct from wallet immediately to prevent double spend
+                const newBalance = userSnap.data().walletBalance - amt;
+                tx.update(userRef, { walletBalance: newBalance, updatedAt: serverTimestamp() });
+                
+                // Create withdrawal record
+                const wRef = doc(collection(db, WITHDRAW_COL));
+                tx.set(wRef, {
+                    userId: currentUser.uid,
+                    userName: userData.name,
+                    userEmail: userData.email || "",
+                    amount: amt,
+                    details: details,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                });
+            });
+            
+            showToast("Withdrawal requested successfully!");
+            closeModal('withdrawModal');
+        } catch (err) {
+            showToast(err.message);
+        } finally {
+            btn.innerText = orig; btn.disabled = false;
+        }
+    };
+
+    // --- Products & Details Logic ---
     function loadProducts() {
         if(unsubProducts) unsubProducts();
         unsubProducts = onSnapshot(collection(db, PRODUCTS_COL), (snap) => {
@@ -637,11 +834,9 @@
                 const data = doc.data();
                 if(data.active !== false) allProducts.push({id: doc.id, ...data});
             });
-            // Simple sort by newest client-side to avoid complex queries
             allProducts.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
             renderProducts(allProducts);
         }, (error) => {
-            console.error("Products error:", error);
             document.getElementById('productsGrid').innerHTML = '<div class="col-span-2 text-center text-red-500">Failed to load products</div>';
         });
     }
@@ -664,16 +859,17 @@
 
         grid.innerHTML = list.map(p => {
             const img = (p.images && p.images[0]) || p.image || p.imageUrl || 'https://placehold.co/400x500/fce7f3/db2777?text=No+Image';
+            const disc = p.mrp ? Math.round(((p.mrp-p.basePrice)/p.mrp)*100) : 0;
             return `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full">
-                    <div class="relative pt-[125%] bg-gray-100">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-md transition">
+                    <div onclick="openProductDetail('${p.id}')" class="relative pt-[125%] bg-gray-100 cursor-pointer">
                         <img src="${img}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
-                        ${p.mrp ? `<div class="absolute top-2 left-2 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md text-red-600 border border-red-100">${Math.round(((p.mrp-p.basePrice)/p.mrp)*100)}% OFF</div>` : ''}
+                        ${disc > 0 ? `<div class="absolute top-2 left-2 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md text-red-600 border border-red-100">${disc}% OFF</div>` : ''}
                     </div>
                     <div class="p-3 flex flex-col flex-1">
-                        <h4 class="font-bold text-sm text-gray-800 line-clamp-2 mb-1 leading-tight">${p.title || 'Product'}</h4>
+                        <h4 onclick="openProductDetail('${p.id}')" class="font-bold text-sm text-gray-800 line-clamp-2 mb-1 leading-tight cursor-pointer">${p.title || 'Product'}</h4>
                         <div class="mt-auto">
-                            <div class="flex items-baseline gap-2 mb-2">
+                            <div class="flex items-baseline gap-2 mb-2 cursor-pointer" onclick="openProductDetail('${p.id}')">
                                 <span class="font-black text-lg text-primary">₹${p.basePrice}</span>
                                 ${p.mrp ? `<span class="text-xs text-gray-400 line-through">₹${p.mrp}</span>` : ''}
                             </div>
@@ -691,6 +887,42 @@
             `;
         }).join('');
     }
+
+    // --- Product Detail View ---
+    window.openProductDetail = (id) => {
+        selectedProduct = allProducts.find(p => p.id === id);
+        if(!selectedProduct) return;
+        
+        document.getElementById('pdImg').src = (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || 'https://placehold.co/400';
+        document.getElementById('pdTitle').innerText = selectedProduct.title || 'Product Name';
+        document.getElementById('pdPrice').innerText = `₹${selectedProduct.basePrice}`;
+        
+        const discEl = document.getElementById('pdDiscount');
+        const mrpEl = document.getElementById('pdMrp');
+        if(selectedProduct.mrp && selectedProduct.mrp > selectedProduct.basePrice) {
+            mrpEl.innerText = `₹${selectedProduct.mrp}`;
+            mrpEl.style.display = 'inline';
+            discEl.innerText = `${Math.round(((selectedProduct.mrp-selectedProduct.basePrice)/selectedProduct.mrp)*100)}% OFF`;
+            discEl.style.display = 'inline-block';
+        } else {
+            mrpEl.style.display = 'none';
+            discEl.style.display = 'none';
+        }
+
+        document.getElementById('pdDelivery').innerText = selectedProduct.deliveryTime || "Fast Delivery";
+        document.getElementById('pdCategory').innerText = selectedProduct.category || "General";
+        document.getElementById('pdDesc').innerText = selectedProduct.description || "No specific description available for this product.";
+
+        openModal('productDetailModal');
+    };
+
+    window.openShareFromDetail = () => {
+        if(selectedProduct) openShareUI(selectedProduct.id);
+    };
+    
+    window.openOrderFromDetail = () => {
+        if(selectedProduct) openOrderUI(selectedProduct.id);
+    };
 
     // --- Share Logic ---
     window.openShareUI = (id) => {
@@ -751,6 +983,19 @@
         openModal('orderModal');
     };
 
+    window.fillMyAddress = () => {
+        if(!userData) return;
+        if(!userData.address) {
+            showToast("No saved address found. Update it in Account > Edit Profile.");
+            return;
+        }
+        document.getElementById('orderCustName').value = userData.name || "";
+        document.getElementById('orderCustPhone').value = userData.phone || "";
+        document.getElementById('orderCustAddress').value = userData.address || "";
+        document.getElementById('orderCustPin').value = userData.pincode || "";
+        showToast("Address populated.");
+    };
+
     window.updateOrderSummary = () => {
         if(!selectedProduct) return;
         const qty = Math.max(1, Number(document.getElementById('orderQty').value || 1));
@@ -780,12 +1025,11 @@
         btn.disabled = true;
 
         try {
-            // Complex transaction to generate custom sequential ID as per original code logic
             const orderId = await runTransaction(db, async (tx) => {
                 const counterRef = doc(db, COUNTERS_COL, "orders");
                 const counterSnap = await tx.get(counterRef);
                 
-                let nextNum = 1000; // Default
+                let nextNum = 1000;
                 if(counterSnap.exists()) {
                     nextNum = Number(counterSnap.data().lastNumber || 1000) + 1;
                 }
@@ -815,7 +1059,6 @@
                     tracking: { order_placed: serverTimestamp() }
                 };
 
-                // Create tracking doc too as per original
                 const trackData = {
                     orderId: id,
                     productId: selectedProduct.id,
@@ -851,7 +1094,6 @@
         if(!currentUser) return;
         if(unsubOrders) unsubOrders();
 
-        // simple query, order client side
         const q = query(collection(db, ORDERS_COL), where("resellerId", "==", currentUser.uid));
         
         unsubOrders = onSnapshot(q, (snap) => {
@@ -885,11 +1127,11 @@
             if(['delivered'].includes(s)) return 'bg-green-100 text-green-700';
             if(['cancelled', 'rejected'].includes(s)) return 'bg-red-100 text-red-700';
             if(['shipped', 'processing', 'confirmed'].includes(s)) return 'bg-blue-100 text-blue-700';
-            return 'bg-amber-100 text-amber-700'; // pending
+            return 'bg-amber-100 text-amber-700';
         };
 
         list.innerHTML = orders.map(o => `
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative">
                 <div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3">
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Order ID</span>
@@ -919,7 +1161,6 @@
             </div>
         `).join('');
     }
-
 </script>
 </body>
 </html>
