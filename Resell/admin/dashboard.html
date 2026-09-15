@@ -1,2328 +1,737 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>SHRAYNEX Admin Dashboard</title>
-
-<style>
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#070707;
-  color:#fff;
-}
-
-button,input,select,textarea{
-  font-family:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-.app{
-  display:flex;
-  min-height:100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-  width:250px;
-  background:#101010;
-  border-right:1px solid #292929;
-  padding:20px;
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  z-index:100;
-}
-
-.logo{
-  font-size:26px;
-  font-weight:900;
-  margin-bottom:30px;
-}
-
-.logo span{
-  color:#00e676;
-}
-
-.admin-label{
-  font-size:12px;
-  color:#777;
-  margin-bottom:20px;
-}
-
-.nav-btn{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:#bbb;
-  padding:14px;
-  margin-bottom:7px;
-  border-radius:12px;
-  text-align:left;
-  font-weight:700;
-}
-
-.nav-btn:hover,
-.nav-btn.active{
-  background:#00e676;
-  color:#000;
-}
-
-.logout{
-  position:absolute;
-  left:20px;
-  right:20px;
-  bottom:20px;
-  background:#241010;
-  color:#ff8585;
-}
-
-/* MAIN */
-
-.main{
-  margin-left:250px;
-  width:calc(100% - 250px);
-  padding:25px;
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:25px;
-}
-
-.topbar h1{
-  margin:0;
-  font-size:28px;
-}
-
-.admin-email{
-  color:#888;
-  font-size:13px;
-}
-
-/* SECTIONS */
-
-.section{
-  display:none;
-}
-
-.section.active{
-  display:block;
-}
-
-/* STATS */
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:15px;
-  margin-bottom:25px;
-}
-
-.stat{
-  background:#111;
-  border:1px solid #292929;
-  border-radius:18px;
-  padding:20px;
-}
-
-.stat-title{
-  color:#888;
-  font-size:13px;
-}
-
-.stat-number{
-  font-size:30px;
-  font-weight:900;
-  margin-top:10px;
-}
-
-/* CARDS */
-
-.card{
-  background:#111;
-  border:1px solid #292929;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
-}
-
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:18px;
-}
-
-.card-header h2{
-  margin:0;
-  font-size:20px;
-}
-
-/* INPUTS */
-
-.search{
-  width:280px;
-  max-width:100%;
-  padding:11px 14px;
-  border-radius:10px;
-  border:1px solid #333;
-  background:#080808;
-  color:#fff;
-  outline:none;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-}
-
-.form-group{
-  margin-bottom:5px;
-}
-
-.form-group.full{
-  grid-column:1/-1;
-}
-
-.form-group label{
-  display:block;
-  color:#999;
-  font-size:13px;
-  margin-bottom:7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #333;
-  background:#080808;
-  color:#fff;
-  outline:none;
-}
-
-.form-group textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.primary{
-  background:#00e676;
-  color:#000;
-  border:0;
-  border-radius:10px;
-  padding:12px 18px;
-  font-weight:800;
-}
-
-.secondary{
-  background:#222;
-  color:#fff;
-  border:1px solid #444;
-  border-radius:10px;
-  padding:10px 15px;
-  font-weight:700;
-}
-
-.danger{
-  background:#421515;
-  color:#ff8585;
-  border:1px solid #682020;
-  border-radius:9px;
-  padding:9px 12px;
-}
-
-.success-btn{
-  background:#123b26;
-  color:#5dff9c;
-  border:1px solid #1b6840;
-  border-radius:9px;
-  padding:9px 12px;
-}
-
-.warning{
-  background:#3b3012;
-  color:#ffd95d;
-  border:1px solid #67551c;
-  border-radius:9px;
-  padding:9px 12px;
-}
-
-/* TABLE */
-
-.table-wrap{
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:850px;
-}
-
-th{
-  text-align:left;
-  padding:13px;
-  color:#777;
-  font-size:12px;
-  border-bottom:1px solid #292929;
-}
-
-td{
-  padding:13px;
-  border-bottom:1px solid #1d1d1d;
-  font-size:13px;
-  vertical-align:middle;
-}
-
-.product-img{
-  width:55px;
-  height:55px;
-  object-fit:cover;
-  border-radius:9px;
-  background:#222;
-}
-
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-/* STATUS */
-
-.status{
-  display:inline-block;
-  padding:6px 9px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:800;
-  background:#222;
-}
-
-.status.pending{
-  color:#ffd45e;
-  background:#392f12;
-}
-
-.status.approved,
-.status.delivered{
-  color:#5cff99;
-  background:#123a25;
-}
-
-.status.rejected,
-.status.cancelled{
-  color:#ff7777;
-  background:#3b1515;
-}
-
-.status.processing,
-.status.confirmed,
-.status.shipped{
-  color:#6dc8ff;
-  background:#102f42;
-}
-
-/* MODAL */
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#000b;
-  z-index:500;
-  padding:20px;
-  overflow:auto;
-}
-
-.modal.show{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.modal-box{
-  width:100%;
-  max-width:700px;
-  background:#111;
-  border:1px solid #333;
-  border-radius:20px;
-  padding:22px;
-}
-
-.modal-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
-
-.close{
-  background:#222;
-  color:#fff;
-  border:0;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  font-size:20px;
-}
-
-/* MOBILE */
-
-.mobile-menu{
-  display:none;
-}
-
-@media(max-width:1100px){
-
-  .stats{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-}
-
-@media(max-width:800px){
-
-  .sidebar{
-    transform:translateX(-100%);
-    transition:.25s;
-  }
-
-  .sidebar.open{
-    transform:translateX(0);
-  }
-
-  .main{
-    margin-left:0;
-    width:100%;
-    padding:15px;
-  }
-
-  .mobile-menu{
-    display:block;
-    background:#00e676;
-    color:#000;
-    border:0;
-    border-radius:9px;
-    padding:9px 12px;
-    font-weight:900;
-  }
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-group.full{
-    grid-column:auto;
-  }
-
-  .topbar{
-    gap:10px;
-  }
-
-  .topbar h1{
-    font-size:21px;
-  }
-
-  .admin-email{
-    display:none;
-  }
-
-}
-
-@media(max-width:450px){
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-  }
-
-  .stat{
-    padding:14px;
-  }
-
-  .stat-number{
-    font-size:24px;
-  }
-
-}
-
-.empty{
-  text-align:center;
-  color:#777;
-  padding:30px;
-}
-
-.loading{
-  text-align:center;
-  color:#888;
-  padding:30px;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHRAYNEX | Admin Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#db2777', // Same pink as app for branding continuity
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; } /* slate-50 */
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom Scrollbar for tables */
+        .table-container::-webkit-scrollbar { height: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
+<body class="text-slate-800 antialiased h-screen overflow-hidden flex">
 
-<body>
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex z-20 shadow-sm relative">
+    <div class="h-16 flex items-center px-6 border-b border-slate-100">
+        <h1 class="text-xl font-black text-primary tracking-tight">SHRAYNEX <span class="text-xs text-slate-400 ml-1 uppercase">Admin</span></h1>
+    </div>
+    
+    <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        <button onclick="switchSection('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-primary/10 text-primary transition">
+            <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+        </button>
+        <button onclick="switchSection('resellers')" id="nav-resellers" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            <i class="fa-solid fa-users w-5"></i> Resellers
+        </button>
+        <button onclick="switchSection('products')" id="nav-products" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            <i class="fa-solid fa-box w-5"></i> Products
+        </button>
+        <button onclick="switchSection('orders')" id="nav-orders" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            <i class="fa-solid fa-cart-shopping w-5"></i> Orders
+        </button>
+        <button onclick="switchSection('withdrawals')" id="nav-withdrawals" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+            <i class="fa-solid fa-money-bill-transfer w-5"></i> Withdrawals
+        </button>
+    </nav>
 
-<div class="app">
-
-<!-- SIDEBAR -->
-
-<aside class="sidebar" id="sidebar">
-
-  <div class="logo">SHRAY<span>NEX</span></div>
-
-  <div class="admin-label">ADMIN CONTROL PANEL</div>
-
-  <button class="nav-btn active" onclick="showSection('dashboard',this)">
-    📊 Dashboard
-  </button>
-
-  <button class="nav-btn" onclick="showSection('resellers',this)">
-    👥 Resellers
-  </button>
-
-  <button class="nav-btn" onclick="showSection('products',this)">
-    📦 Products
-  </button>
-
-  <button class="nav-btn" onclick="showSection('orders',this)">
-    🛒 Orders
-  </button>
-
-  <button class="nav-btn" onclick="showSection('withdrawals',this)">
-    💰 Withdrawals
-  </button>
-
-  <button class="nav-btn logout" onclick="logout()">
-    🚪 Logout
-  </button>
-
+    <div class="p-4 border-t border-slate-100">
+        <div class="flex items-center gap-3 mb-4 px-2">
+            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold"><i class="fa-solid fa-user-shield"></i></div>
+            <div class="min-w-0">
+                <p id="adminEmailDisplay" class="text-xs font-bold text-slate-700 truncate">admin@shraynex.com</p>
+                <p class="text-[10px] text-green-500 font-medium">Online</p>
+            </div>
+        </div>
+        <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </button>
+    </div>
 </aside>
 
-
-<!-- MAIN -->
-
-<main class="main">
-
-<header class="topbar">
-
-  <div style="display:flex;align-items:center;gap:10px">
-
-    <button class="mobile-menu" onclick="toggleMenu()">☰</button>
-
-    <h1 id="pageTitle">Dashboard</h1>
-
-  </div>
-
-  <div class="admin-email" id="adminEmail">Checking...</div>
-
-</header>
-
-
-<!-- ================= DASHBOARD ================= -->
-
-<section id="dashboard" class="section active">
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="stat-title">Total Resellers</div>
-      <div class="stat-number" id="totalResellers">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Pending Approval</div>
-      <div class="stat-number" id="pendingResellers">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Total Products</div>
-      <div class="stat-number" id="totalProducts">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Total Orders</div>
-      <div class="stat-number" id="totalOrders">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-title">Pending Withdrawals</div>
-      <div class="stat-number" id="pendingWithdrawals">0</div>
-    </div>
-
-  </div>
-
-  <div class="card">
-
-    <div class="card-header">
-      <h2>💰 Revenue Overview</h2>
-    </div>
-
-    <div style="font-size:35px;font-weight:900">
-      ₹<span id="totalRevenue">0</span>
-    </div>
-
-    <div style="color:#777;margin-top:7px">
-      Total order value
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= RESELLERS ================= -->
-
-<section id="resellers" class="section">
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h2>👥 Reseller Approval</h2>
-
-      <input
-        id="resellerSearch"
-        class="search"
-        placeholder="Search name / email / phone"
-        oninput="renderResellers()"
-      >
-
-    </div>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Wallet</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="resellerTable">
-
-        <tr>
-          <td colspan="6" class="loading">Loading...</td>
-        </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= PRODUCTS ================= -->
-
-<section id="products" class="section">
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h2 id="productFormTitle">➕ Add Product</h2>
-
-      <button class="secondary" onclick="resetProductForm()">
-        Clear
-      </button>
-
-    </div>
-
-    <input type="hidden" id="productId">
-
-    <div class="form-grid">
-
-      <div class="form-group full">
-        <label>Product Name</label>
-        <input id="productTitle" placeholder="Product name">
-      </div>
-
-      <div class="form-group">
-        <label>Base Price</label>
-        <input id="basePrice" type="number" placeholder="499">
-      </div>
-
-      <div class="form-group">
-        <label>MRP</label>
-        <input id="mrp" type="number" placeholder="999">
-      </div>
-
-      <div class="form-group">
-        <label>Discount %</label>
-        <input id="discount" type="number" placeholder="50">
-      </div>
-
-      <div class="form-group">
-        <label>Category</label>
-        <input id="category" placeholder="Fashion">
-      </div>
-
-      <div class="form-group full">
-        <label>Sizes</label>
-        <input id="sizes" placeholder="S, M, L, XL, XXL">
-      </div>
-
-      <div class="form-group">
-        <label>Image 1 URL</label>
-        <input id="image1" placeholder="https://...">
-      </div>
-
-      <div class="form-group">
-        <label>Image 2 URL</label>
-        <input id="image2" placeholder="https://...">
-      </div>
-
-      <div class="form-group">
-        <label>Image 3 URL</label>
-        <input id="image3" placeholder="https://...">
-      </div>
-
-      <div class="form-group">
-        <label>Image 4 URL</label>
-        <input id="image4" placeholder="https://...">
-      </div>
-
-      <div class="form-group">
-        <label>Image 5 URL</label>
-        <input id="image5" placeholder="https://...">
-      </div>
-
-      <div class="form-group full">
-
-        <label>Description</label>
-
-        <textarea
-          id="description"
-          placeholder="Product description"
-        ></textarea>
-
-      </div>
-
-    </div>
-
-    <button class="primary" onclick="saveProduct()" id="saveProductBtn">
-      ADD PRODUCT
-    </button>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h2>📦 All Products</h2>
-
-      <input
-        id="productSearch"
-        class="search"
-        placeholder="Search product"
-        oninput="renderProducts()"
-      >
-
-    </div>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Image</th>
-            <th>Product</th>
-            <th>Category</th>
-            <th>Base</th>
-            <th>MRP</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="productTable">
-
-        <tr>
-          <td colspan="6" class="loading">Loading...</td>
-        </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= ORDERS ================= -->
-
-<section id="orders" class="section">
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h2>🛒 Orders</h2>
-
-      <input
-        id="orderSearch"
-        class="search"
-        placeholder="Search order / customer / phone"
-        oninput="renderOrders()"
-      >
-
-    </div>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Order</th>
-            <th>Product</th>
-            <th>Customer</th>
-            <th>Reseller</th>
-            <th>Amount</th>
-            <th>Profit</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="orderTable">
-
-        <tr>
-          <td colspan="8" class="loading">Loading...</td>
-        </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= WITHDRAWALS ================= -->
-
-<section id="withdrawals" class="section">
-
-  <div class="card">
-
-    <div class="card-header">
-
-      <h2>💰 Withdrawal Requests</h2>
-
-    </div>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Reseller</th>
-            <th>Email</th>
-            <th>Amount</th>
-            <th>Payment Details</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="withdrawTable">
-
-        <tr>
-          <td colspan="6" class="loading">Loading...</td>
-        </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-</main>
-
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col h-full overflow-hidden relative">
+    
+    <!-- Topbar -->
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-10 shadow-sm">
+        <h2 id="pageTitle" class="text-xl font-bold text-slate-800">Overview</h2>
+        <!-- Mobile Menu Toggle -->
+        <button class="md:hidden w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-600">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Main Scrollable Content -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Auth Overlay (Blocks app until verified) -->
+        <div id="authOverlay" class="absolute inset-0 bg-white z-50 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
+            <p class="text-slate-500 font-medium" id="authStatusText">Verifying Admin Access...</p>
+            <div id="loginForm" class="hidden w-full max-w-sm mt-6 text-left px-4">
+                <h3 class="text-2xl font-black mb-6 text-center">Admin Login</h3>
+                <input type="email" id="adminEmail" placeholder="Admin Email" class="w-full border border-slate-300 rounded-xl px-4 py-3 mb-4 outline-none focus:border-primary">
+                <input type="password" id="adminPass" placeholder="Password" class="w-full border border-slate-300 rounded-xl px-4 py-3 mb-6 outline-none focus:border-primary">
+                <button onclick="handleLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-primary-dark transition">Login</button>
+            </div>
+        </div>
+
+        
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Total Resellers</p>
+                    <p class="text-3xl font-black text-slate-800" id="statResellers">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Pending Approval</p>
+                    <p class="text-3xl font-black text-amber-500" id="statPendingResellers">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Total Products</p>
+                    <p class="text-3xl font-black text-blue-500" id="statProducts">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-sm font-medium text-slate-500 mb-1">Total Orders</p>
+                    <p class="text-3xl font-black text-purple-500" id="statOrders">0</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">Total Platform Revenue</h3>
+                    <p class="text-sm text-slate-500">Gross order value processed</p>
+                </div>
+                <div class="text-4xl font-black text-green-500" id="statRevenue">₹0</div>
+            </div>
+        </section>
+
+        <!-- Resellers Section -->
+        <section id="resellers" class="section">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[calc(100vh-140px)]">
+                <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h3 class="font-bold">Manage Resellers</h3>
+                    <input type="text" id="searchReseller" oninput="renderResellers()" placeholder="Search..." class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-primary w-64">
+                </div>
+                <div class="flex-1 overflow-y-auto table-container">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead class="bg-white sticky top-0 border-b border-slate-200 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Name</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Contact</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Status</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Wallet</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resellerTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-140px)]">
+                <!-- Add Product Form -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-bold" id="productFormTitle">Add Product</h3>
+                        <button onclick="resetProductForm()" class="text-xs text-slate-500 hover:text-slate-800 font-bold px-2 py-1 bg-slate-200 rounded">Reset</button>
+                    </div>
+                    <div class="p-4 overflow-y-auto flex-1 space-y-4">
+                        <input type="hidden" id="editProdId">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 mb-1 block">Title</label>
+                            <input type="text" id="prodTitle" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 mb-1 block">Base Price (₹)</label>
+                                <input type="number" id="prodBasePrice" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 mb-1 block">MRP (₹)</label>
+                                <input type="number" id="prodMrp" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 mb-1 block">Category</label>
+                            <input type="text" id="prodCategory" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 mb-1 block">Image URL (Primary)</label>
+                            <input type="text" id="prodImage" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
+                        </div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <input type="checkbox" id="prodActive" checked class="w-4 h-4 text-primary rounded border-slate-300">
+                            <label class="text-sm font-semibold text-slate-700">Active / Visible</label>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 bg-white">
+                        <button onclick="saveProduct()" id="btnSaveProduct" class="w-full bg-primary text-white py-2.5 rounded-xl font-bold shadow-sm hover:bg-primary-dark transition">Save Product</button>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                        <h3 class="font-bold">Catalog</h3>
+                        <input type="text" id="searchProduct" oninput="renderProducts()" placeholder="Search..." class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-primary w-48">
+                    </div>
+                    <div class="flex-1 overflow-y-auto table-container p-2">
+                        <div id="productGridAdmin" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="col-span-full p-8 text-center text-slate-400">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="section">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[calc(100vh-140px)]">
+                <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h3 class="font-bold">All Orders</h3>
+                    <input type="text" id="searchOrder" oninput="renderOrders()" placeholder="Search ID/Phone..." class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-primary w-64">
+                </div>
+                <div class="flex-1 overflow-y-auto table-container">
+                    <table class="w-full text-left border-collapse min-w-[1000px]">
+                        <thead class="bg-white sticky top-0 border-b border-slate-200 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase w-32">Order ID</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Product & Reseller</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Customer</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Financials</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Status & Update</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Withdrawals Section -->
+        <section id="withdrawals" class="section">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[calc(100vh-140px)]">
+                <div class="p-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="font-bold">Withdrawal Requests</h3>
+                </div>
+                <div class="flex-1 overflow-y-auto table-container">
+                    <table class="w-full text-left border-collapse min-w-[800px]">
+                        <thead class="bg-white sticky top-0 border-b border-slate-200 z-10 shadow-sm">
+                            <tr>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Reseller</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Amount</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Details</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Status</th>
+                                <th class="p-4 text-xs font-bold text-slate-500 uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawTableBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
 </div>
-
-
-<!-- ================= ORDER MODAL ================= -->
-
-<div class="modal" id="orderModal">
-
-  <div class="modal-box">
-
-    <div class="modal-title">
-
-      <h2>Order Details</h2>
-
-      <button class="close" onclick="closeModal('orderModal')">
-        ×
-      </button>
-
-    </div>
-
-    <div id="orderDetails"></div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= PRODUCT MODAL ================= -->
-
-<div class="modal" id="productModal">
-
-  <div class="modal-box">
-
-    <div class="modal-title">
-
-      <h2>Product Details</h2>
-
-      <button class="close" onclick="closeModal('productModal')">
-        ×
-      </button>
-
-    </div>
-
-    <div id="productDetails"></div>
-
-  </div>
-
-</div>
-
 
 <script type="module">
-
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  getDoc,
-  doc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  serverTimestamp,
-  increment
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-
-/* ================= FIREBASE ================= */
-
-const firebaseConfig={
-  apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
-  authDomain:"rkyshree-2f74b.firebaseapp.com",
-  projectId:"rkyshree-2f74b",
-  storageBucket:"rkyshree-2f74b.firebasestorage.app"
-};
-
-const app=initializeApp(firebaseConfig);
-
-const auth=getAuth(app);
-
-const db=getFirestore(app);
-
-
-/* ================= COLLECTIONS ================= */
-
-const USERS="shraynex_users";
-const PRODUCTS="shraynex_products";
-const ORDERS="shraynex_orders";
-const WITHDRAW="shraynex_withdrawals";
-
-
-let currentAdmin=null;
-
-let resellerData=[];
-let productData=[];
-let orderData=[];
-let withdrawalData=[];
-
-
-/* ================= AUTH ================= */
-
-onAuthStateChanged(auth,async(user)=>{
-
-  if(!user){
-
-    window.location.href="./index.html";
-    return;
-
-  }
-
-  try{
-
-    const snap=await getDoc(
-      doc(db,USERS,user.uid)
-    );
-
-    if(!snap.exists()){
-
-      await signOut(auth);
-
-      alert("Admin profile not found.");
-
-      window.location.href="./index.html";
-
-      return;
-    }
-
-    const data=snap.data();
-
-    if(data.role!=="admin"){
-
-      await signOut(auth);
-
-      alert("Access denied. Admin account required.");
-
-      window.location.href="./index.html";
-
-      return;
-    }
-
-    currentAdmin=data;
-
-    document.getElementById("adminEmail").textContent=
-      data.email || user.email || "Admin";
-
-    await loadAll();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Admin verification error:\n"+
-      error.message
-    );
-
-    await signOut(auth);
-
-    window.location.href="./index.html";
-  }
-
-});
-
-
-/* ================= LOAD DATA ================= */
-
-async function loadAll(){
-
-  await Promise.all([
-    loadResellers(),
-    loadProducts(),
-    loadOrders(),
-    loadWithdrawals()
-  ]);
-
-  updateStats();
-
-}
-
-
-/* ================= RESELLERS ================= */
-
-async function loadResellers(){
-
-  resellerData=[];
-
-  const snap=await getDocs(
-    collection(db,USERS)
-  );
-
-  snap.forEach(d=>{
-
-    const data=d.data();
-
-    if(data.role!=="admin"){
-
-      resellerData.push({
-        id:d.id,
-        ...data
-      });
-
-    }
-
-  });
-
-  renderResellers();
-
-}
-
-
-function renderResellers(){
-
-  const tbody=document.getElementById("resellerTable");
-
-  const search=
-    (document.getElementById("resellerSearch").value || "")
-    .toLowerCase()
-    .trim();
-
-  const list=resellerData.filter(r=>{
-
-    const text=[
-      r.name,
-      r.email,
-      r.phone,
-      r.status
-    ].join(" ").toLowerCase();
-
-    return text.includes(search);
-
-  });
-
-  if(!list.length){
-
-    tbody.innerHTML=
-      `<tr><td colspan="6" class="empty">
-        No reseller found
-      </td></tr>`;
-
-    return;
-  }
-
-  tbody.innerHTML=list.map(r=>{
-
-    const status=r.status || "pending";
-
-    return `
-
-    <tr>
-
-      <td>
-        <b>${escapeHtml(r.name || "Reseller")}</b>
-      </td>
-
-      <td>${escapeHtml(r.email || "-")}</td>
-
-      <td>${escapeHtml(r.phone || "-")}</td>
-
-      <td>
-        <span class="status ${status}">
-          ${escapeHtml(status)}
-        </span>
-      </td>
-
-      <td>
-        ₹${Number(r.walletBalance || 0).toFixed(2)}
-      </td>
-
-      <td>
-
-        <div class="actions">
-
-          <button
-            class="success-btn"
-            onclick="changeResellerStatus('${r.id}','approved')">
-            Approve
-          </button>
-
-          <button
-            class="danger"
-            onclick="changeResellerStatus('${r.id}','rejected')">
-            Reject
-          </button>
-
-          <button
-            class="warning"
-            onclick="changeResellerStatus('${r.id}','suspended')">
-            Suspend
-          </button>
-
-        </div>
-
-      </td>
-
-    </tr>
-
-    `;
-
-  }).join("");
-
-}
-
-
-window.changeResellerStatus=async(id,status)=>{
-
-  const r=resellerData.find(x=>x.id===id);
-
-  if(!r)return;
-
-  if(!confirm(
-    `${r.name || "Reseller"} ko ${status} karna hai?`
-  ))return;
-
-  try{
-
-    await updateDoc(
-      doc(db,USERS,id),
-      {
-        status:status,
-        updatedAt:serverTimestamp()
-      }
-    );
-
-    alert("Reseller status updated.");
-
-    await loadResellers();
-
-    updateStats();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert("Status update failed:\n"+error.message);
-
-  }
-
-};
-
-
-/* ================= PRODUCTS ================= */
-
-async function loadProducts(){
-
-  productData=[];
-
-  const snap=await getDocs(
-    collection(db,PRODUCTS)
-  );
-
-  snap.forEach(d=>{
-
-    productData.push({
-      id:d.id,
-      ...d.data()
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, setDoc, deleteDoc, serverTimestamp, increment, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Variables from environment or defaults
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-shraynex';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+        apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+        authDomain: "rkyshree-2f74b.firebaseapp.com",
+        projectId: "rkyshree-2f74b",
+        storageBucket: "rkyshree-2f74b.firebasestorage.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Collections based on user's schema
+    const USERS_COL = "shraynex_users";
+    const PRODUCTS_COL = "shraynex_products";
+    const ORDERS_COL = "shraynex_orders";
+    const WITHDRAW_COL = "shraynex_withdrawals";
+
+    // Local State
+    let state = {
+        resellers: [],
+        products: [],
+        orders: [],
+        withdrawals: []
+    };
+
+    // --- Auth & Init ---
+    onAuthStateChanged(auth, async (user) => {
+        const overlay = document.getElementById('authOverlay');
+        const loginForm = document.getElementById('loginForm');
+        const statusText = document.getElementById('authStatusText');
+        
+        if (user) {
+            try {
+                // Verify Admin Role
+                const docRef = doc(db, USERS_COL, user.uid);
+                const snap = await getDoc(docRef);
+                
+                if (snap.exists() && snap.data().role === 'admin') {
+                    // Success
+                    overlay.classList.add('hidden');
+                    document.getElementById('adminEmailDisplay').innerText = user.email;
+                    loadAllData(); // Initialize dashboard
+                } else {
+                    // Not an admin
+                    await signOut(auth);
+                    overlay.classList.remove('hidden');
+                    loginForm.classList.remove('hidden');
+                    statusText.innerText = "Access Denied. Admin only.";
+                    statusText.classList.add('text-red-500');
+                }
+            } catch (error) {
+                console.error("Auth check error:", error);
+                statusText.innerText = "Verification failed.";
+                loginForm.classList.remove('hidden');
+            }
+        } else {
+            // Not logged in
+            overlay.classList.remove('hidden');
+            loginForm.classList.remove('hidden');
+            statusText.innerText = "Please login to continue.";
+        }
     });
 
-  });
-
-  renderProducts();
-
-}
-
-
-function renderProducts(){
-
-  const tbody=document.getElementById("productTable");
-
-  const search=
-    (document.getElementById("productSearch").value || "")
-    .toLowerCase()
-    .trim();
-
-  const list=productData.filter(p=>{
-
-    const text=[
-      p.title,
-      p.category,
-      p.description
-    ].join(" ").toLowerCase();
-
-    return text.includes(search);
-
-  });
-
-  if(!list.length){
-
-    tbody.innerHTML=
-      `<tr><td colspan="6" class="empty">
-        No products found
-      </td></tr>`;
-
-    return;
-  }
-
-  tbody.innerHTML=list.map(p=>{
-
-    const image=
-      p.images?.[0] ||
-      p.image ||
-      p.imageUrl ||
-      p.img ||
-      p.photo ||
-      "";
-
-    return `
-
-    <tr>
-
-      <td>
-        ${
-          image
-          ?
-          `<img class="product-img"
-                src="${escapeAttr(image)}"
-                onerror="this.style.display='none'">`
-          :
-          `No Image`
+    window.handleLogin = async () => {
+        const email = document.getElementById('adminEmail').value;
+        const pass = document.getElementById('adminPass').value;
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            // onAuthStateChanged handles the rest
+        } catch (error) {
+            alert(error.message.replace('Firebase: ', ''));
         }
-      </td>
-
-      <td>
-        <b>${escapeHtml(p.title || "Product")}</b>
-      </td>
-
-      <td>${escapeHtml(p.category || "-")}</td>
-
-      <td>₹${Number(p.basePrice || 0)}</td>
-
-      <td>₹${Number(p.mrp || 0)}</td>
-
-      <td>
-
-        <div class="actions">
-
-          <button
-            class="secondary"
-            onclick="editProduct('${p.id}')">
-            Edit
-          </button>
-
-          <button
-            class="danger"
-            onclick="deleteProduct('${p.id}')">
-            Delete
-          </button>
-
-        </div>
-
-      </td>
-
-    </tr>
-
-    `;
-
-  }).join("");
-
-}
-
-
-window.saveProduct=async()=>{
-
-  const id=document.getElementById("productId").value;
-
-  const title=document.getElementById("productTitle").value.trim();
-
-  const basePrice=Number(
-    document.getElementById("basePrice").value || 0
-  );
-
-  const mrp=Number(
-    document.getElementById("mrp").value || 0
-  );
-
-  const discount=Number(
-    document.getElementById("discount").value || 0
-  );
-
-  const category=document.getElementById("category").value.trim();
-
-  const sizesRaw=document.getElementById("sizes").value.trim();
-
-  const description=document.getElementById("description").value.trim();
-
-  const images=[
-    document.getElementById("image1").value.trim(),
-    document.getElementById("image2").value.trim(),
-    document.getElementById("image3").value.trim(),
-    document.getElementById("image4").value.trim(),
-    document.getElementById("image5").value.trim()
-  ].filter(Boolean);
-
-  const sizes=sizesRaw
-    ?
-    sizesRaw.split(",")
-      .map(x=>x.trim())
-      .filter(Boolean)
-    :
-    [];
-
-  if(!title){
-
-    alert("Product name enter karein.");
-    return;
-
-  }
-
-  if(basePrice<=0){
-
-    alert("Base price enter karein.");
-    return;
-
-  }
-
-  const product={
-
-    title:title,
-
-    basePrice:basePrice,
-
-    mrp:mrp,
-
-    discount:discount,
-
-    category:category,
-
-    sizes:sizes,
-
-    images:images,
-
-    description:description,
-
-    /* old website compatibility */
-
-    image:images[0] || "",
-
-    imageUrl:images[0] || "",
-
-    image1:images[0] || "",
-
-    image2:images[1] || "",
-
-    image3:images[2] || "",
-
-    image4:images[3] || "",
-
-    image5:images[4] || "",
-
-    updatedAt:serverTimestamp()
-
-  };
-
-
-  try{
-
-    const btn=document.getElementById("saveProductBtn");
-
-    btn.disabled=true;
-
-    btn.textContent=id
-      ? "UPDATING..."
-      : "ADDING...";
-
-
-    if(id){
-
-      await updateDoc(
-        doc(db,PRODUCTS,id),
-        product
-      );
-
-      alert("Product updated successfully.");
-
-    }else{
-
-      product.createdAt=serverTimestamp();
-
-      await addDoc(
-        collection(db,PRODUCTS),
-        product
-      );
-
-      alert("Product added successfully.");
-
+    };
+
+    window.handleLogout = async () => {
+        if(confirm("Logout from admin?")) {
+            await signOut(auth);
+        }
+    };
+
+    // --- UI Navigation ---
+    window.switchSection = (id) => {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        
+        document.querySelectorAll('.nav-btn').forEach(b => {
+            b.classList.remove('bg-primary/10', 'text-primary');
+            b.classList.add('text-slate-600', 'hover:bg-slate-50');
+        });
+        
+        const activeBtn = document.getElementById(`nav-${id}`);
+        activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-50');
+        activeBtn.classList.add('bg-primary/10', 'text-primary');
+
+        const titles = { dashboard: 'Overview', resellers: 'Manage Resellers', products: 'Product Catalog', orders: 'Order Management', withdrawals: 'Payout Requests' };
+        document.getElementById('pageTitle').innerText = titles[id];
+    };
+
+    // --- Data Loading ---
+    async function loadAllData() {
+        await Promise.all([
+            fetchData(USERS_COL, 'resellers', (d) => d.role !== 'admin'),
+            fetchData(PRODUCTS_COL, 'products'),
+            fetchData(ORDERS_COL, 'orders'),
+            fetchData(WITHDRAW_COL, 'withdrawals')
+        ]);
+        
+        // Sorts
+        state.orders.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+        state.withdrawals.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+        state.products.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+
+        updateDashboardStats();
+        renderResellers();
+        renderProducts();
+        renderOrders();
+        renderWithdrawals();
     }
 
-
-    resetProductForm();
-
-    await loadProducts();
-
-    updateStats();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Product save failed:\n"+
-      error.message
-    );
-
-  }finally{
-
-    const btn=document.getElementById("saveProductBtn");
-
-    btn.disabled=false;
-
-    btn.textContent="ADD PRODUCT";
-
-  }
-
-};
-
-
-window.editProduct=(id)=>{
-
-  const p=productData.find(x=>x.id===id);
-
-  if(!p)return;
-
-  const images=p.images || [
-    p.image1,
-    p.image2,
-    p.image3,
-    p.image4,
-    p.image5
-  ].filter(Boolean);
-
-  const sizes=p.sizes || [];
-
-  document.getElementById("productId").value=p.id;
-
-  document.getElementById("productTitle").value=p.title || "";
-
-  document.getElementById("basePrice").value=p.basePrice || "";
-
-  document.getElementById("mrp").value=p.mrp || "";
-
-  document.getElementById("discount").value=p.discount || "";
-
-  document.getElementById("category").value=p.category || "";
-
-  document.getElementById("sizes").value=
-    Array.isArray(sizes)
-    ? sizes.join(", ")
-    : sizes || "";
-
-  document.getElementById("image1").value=images[0] || "";
-
-  document.getElementById("image2").value=images[1] || "";
-
-  document.getElementById("image3").value=images[2] || "";
-
-  document.getElementById("image4").value=images[3] || "";
-
-  document.getElementById("image5").value=images[4] || "";
-
-  document.getElementById("description").value=
-    p.description || "";
-
-  document.getElementById("productFormTitle").textContent=
-    "✏️ Edit Product";
-
-  document.getElementById("saveProductBtn").textContent=
-    "UPDATE PRODUCT";
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-};
-
-
-window.resetProductForm=()=>{
-
-  document.getElementById("productId").value="";
-
-  document.getElementById("productTitle").value="";
-
-  document.getElementById("basePrice").value="";
-
-  document.getElementById("mrp").value="";
-
-  document.getElementById("discount").value="";
-
-  document.getElementById("category").value="";
-
-  document.getElementById("sizes").value="";
-
-  document.getElementById("image1").value="";
-
-  document.getElementById("image2").value="";
-
-  document.getElementById("image3").value="";
-
-  document.getElementById("image4").value="";
-
-  document.getElementById("image5").value="";
-
-  document.getElementById("description").value="";
-
-  document.getElementById("productFormTitle").textContent=
-    "➕ Add Product";
-
-  document.getElementById("saveProductBtn").textContent=
-    "ADD PRODUCT";
-
-};
-
-
-window.deleteProduct=async(id)=>{
-
-  const p=productData.find(x=>x.id===id);
-
-  if(!p)return;
-
-  if(!confirm(
-    `"${p.title || "Product"}" delete karna hai?`
-  ))return;
-
-  try{
-
-    await deleteDoc(
-      doc(db,PRODUCTS,id)
-    );
-
-    alert("Product deleted.");
-
-    await loadProducts();
-
-    updateStats();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Delete failed:\n"+
-      error.message
-    );
-
-  }
-
-};
-
-
-/* ================= ORDERS ================= */
-
-async function loadOrders(){
-
-  orderData=[];
-
-  const snap=await getDocs(
-    collection(db,ORDERS)
-  );
-
-  snap.forEach(d=>{
-
-    orderData.push({
-      id:d.id,
-      ...d.data()
-    });
-
-  });
-
-  orderData.sort((a,b)=>{
-
-    const aTime=a.createdAt?.seconds || 0;
-    const bTime=b.createdAt?.seconds || 0;
-
-    return bTime-aTime;
-
-  });
-
-  renderOrders();
-
-}
-
-
-function renderOrders(){
-
-  const tbody=document.getElementById("orderTable");
-
-  const search=
-    (document.getElementById("orderSearch").value || "")
-    .toLowerCase()
-    .trim();
-
-  const list=orderData.filter(o=>{
-
-    const text=[
-      o.id,
-      o.customerName,
-      o.customerPhone,
-      o.resellerName,
-      o.resellerPhone,
-      o.productName
-    ].join(" ").toLowerCase();
-
-    return text.includes(search);
-
-  });
-
-
-  if(!list.length){
-
-    tbody.innerHTML=
-      `<tr><td colspan="8" class="empty">
-        No orders found
-      </td></tr>`;
-
-    return;
-
-  }
-
-
-  tbody.innerHTML=list.map(o=>{
-
-    const status=o.status || "pending";
-
-    const amount=
-      Number(o.sellingPrice || 0) *
-      Number(o.quantity || 1);
-
-    return `
-
-    <tr>
-
-      <td>
-        <b>${escapeHtml(o.id.slice(0,12))}</b>
-        <br>
-        <button
-          class="secondary"
-          style="margin-top:5px"
-          onclick="viewOrder('${o.id}')">
-          View
-        </button>
-      </td>
-
-      <td>
-        ${escapeHtml(o.productName || "-")}
-        ${
-          o.size
-          ?
-          `<br><small style="color:#777">
-             Size: ${escapeHtml(o.size)}
-           </small>`
-          :
-          ""
+    async function fetchData(collectionName, stateKey, filterFn = null) {
+        try {
+            const snap = await getDocs(collection(db, collectionName));
+            let data = [];
+            snap.forEach(d => data.push({id: d.id, ...d.data()}));
+            if(filterFn) data = data.filter(filterFn);
+            state[stateKey] = data;
+        } catch (e) {
+            console.error(`Failed to load ${collectionName}:`, e);
         }
-      </td>
-
-      <td>
-        ${escapeHtml(o.customerName || "-")}
-        <br>
-        <small style="color:#777">
-          ${escapeHtml(o.customerPhone || "")}
-        </small>
-      </td>
-
-      <td>
-        ${escapeHtml(o.resellerName || "-")}
-      </td>
-
-      <td>
-        ₹${amount.toFixed(2)}
-      </td>
-
-      <td>
-        ₹${Number(o.profit || 0).toFixed(2)}
-      </td>
-
-      <td>
-
-        <span class="status ${status}">
-          ${escapeHtml(status)}
-        </span>
-
-      </td>
-
-      <td>
-
-        <select
-          onchange="changeOrderStatus('${o.id}',this.value)"
-          style="
-          background:#080808;
-          color:#fff;
-          border:1px solid #333;
-          border-radius:8px;
-          padding:8px;
-          ">
-
-          ${orderStatusOptions(status)}
-
-        </select>
-
-      </td>
-
-    </tr>
-
-    `;
-
-  }).join("");
-
-}
-
-
-function orderStatusOptions(current){
-
-  const statuses=[
-    "pending",
-    "confirmed",
-    "processing",
-    "shipped",
-    "delivered",
-    "out_of_stock",
-    "size_not_available",
-    "cancelled"
-  ];
-
-  return statuses.map(s=>`
-
-    <option value="${s}" ${s===current?"selected":""}>
-      ${s.replaceAll("_"," ").toUpperCase()}
-    </option>
-
-  `).join("");
-
-}
-
-
-window.changeOrderStatus=async(id,status)=>{
-
-  try{
-
-    await updateDoc(
-      doc(db,ORDERS,id),
-      {
-        status:status,
-        updatedAt:serverTimestamp()
-      }
-    );
-
-    const o=orderData.find(x=>x.id===id);
-
-    if(o)o.status=status;
-
-    renderOrders();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Order status update failed:\n"+
-      error.message
-    );
-
-  }
-
-};
-
-
-window.viewOrder=(id)=>{
-
-  const o=orderData.find(x=>x.id===id);
-
-  if(!o)return;
-
-  const amount=
-    Number(o.sellingPrice || 0) *
-    Number(o.quantity || 1);
-
-  document.getElementById("orderDetails").innerHTML=`
-
-    <div style="line-height:2">
-
-      <b>Order ID:</b>
-      ${escapeHtml(o.id)}
-      <br>
-
-      <b>Product:</b>
-      ${escapeHtml(o.productName || "-")}
-      <br>
-
-      <b>Size:</b>
-      ${escapeHtml(o.size || "Not selected")}
-      <br>
-
-      <b>Quantity:</b>
-      ${Number(o.quantity || 1)}
-      <br>
-
-      <b>Customer:</b>
-      ${escapeHtml(o.customerName || "-")}
-      <br>
-
-      <b>Phone:</b>
-      ${escapeHtml(o.customerPhone || "-")}
-      <br>
-
-      <b>Address:</b>
-      ${escapeHtml(o.customerAddress || "-")}
-      <br>
-
-      <b>Pincode:</b>
-      ${escapeHtml(o.pincode || "-")}
-      <br>
-
-      <b>Reseller:</b>
-      ${escapeHtml(o.resellerName || "-")}
-      <br>
-
-      <b>Reseller Phone:</b>
-      ${escapeHtml(o.resellerPhone || "-")}
-      <br>
-
-      <b>Base Price:</b>
-      ₹${Number(o.basePrice || 0).toFixed(2)}
-      <br>
-
-      <b>Selling Price:</b>
-      ₹${Number(o.sellingPrice || 0).toFixed(2)}
-      <br>
-
-      <b>Total:</b>
-      ₹${amount.toFixed(2)}
-      <br>
-
-      <b>Profit:</b>
-      ₹${Number(o.profit || 0).toFixed(2)}
-      <br>
-
-      <b>Status:</b>
-      <span class="status ${o.status || "pending"}">
-        ${escapeHtml(o.status || "pending")}
-      </span>
-
-    </div>
-
-  `;
-
-  document.getElementById("orderModal")
-    .classList.add("show");
-
-};
-
-
-/* ================= WITHDRAWALS ================= */
-
-async function loadWithdrawals(){
-
-  withdrawalData=[];
-
-  const snap=await getDocs(
-    collection(db,WITHDRAW)
-  );
-
-  snap.forEach(d=>{
-
-    withdrawalData.push({
-      id:d.id,
-      ...d.data()
-    });
-
-  });
-
-  withdrawalData.sort((a,b)=>{
-
-    return (
-      (b.createdAt?.seconds || 0) -
-      (a.createdAt?.seconds || 0)
-    );
-
-  });
-
-  renderWithdrawals();
-
-}
-
-
-function renderWithdrawals(){
-
-  const tbody=document.getElementById("withdrawTable");
-
-  if(!withdrawalData.length){
-
-    tbody.innerHTML=
-      `<tr><td colspan="6" class="empty">
-        No withdrawal requests
-      </td></tr>`;
-
-    return;
-
-  }
-
-
-  tbody.innerHTML=withdrawalData.map(w=>{
-
-    const status=w.status || "pending";
-
-    return `
-
-    <tr>
-
-      <td>
-        <b>${escapeHtml(w.userName || "Reseller")}</b>
-        <br>
-        <small style="color:#777">
-          ${escapeHtml(w.userId || "")}
-        </small>
-      </td>
-
-      <td>
-        ${escapeHtml(w.userEmail || "-")}
-      </td>
-
-      <td>
-        <b style="font-size:17px">
-          ₹${Number(w.amount || 0).toFixed(2)}
-        </b>
-      </td>
-
-      <td style="max-width:250px">
-        ${escapeHtml(w.details || "-")}
-      </td>
-
-      <td>
-
-        <span class="status ${status}">
-          ${escapeHtml(status)}
-        </span>
-
-      </td>
-
-      <td>
-
-        ${
-          status==="pending"
-          ?
-          `
-          <div class="actions">
-
-            <button
-              class="success-btn"
-              onclick="approveWithdrawal('${w.id}')">
-              Approve
-            </button>
-
-            <button
-              class="danger"
-              onclick="rejectWithdrawal('${w.id}')">
-              Reject
-            </button>
-
-          </div>
-          `
-          :
-          "-"
+    }
+
+    function updateDashboardStats() {
+        document.getElementById('statResellers').innerText = state.resellers.length;
+        document.getElementById('statPendingResellers').innerText = state.resellers.filter(r => (r.status||'pending') === 'pending').length;
+        document.getElementById('statProducts').innerText = state.products.length;
+        document.getElementById('statOrders').innerText = state.orders.length;
+        
+        const revenue = state.orders.reduce((sum, o) => {
+            if(o.status !== 'cancelled' && o.status !== 'rejected') {
+                return sum + ((Number(o.sellingPrice)||0) * (Number(o.quantity)||1));
+            }
+            return sum;
+        }, 0);
+        document.getElementById('statRevenue').innerText = `₹${revenue.toLocaleString('en-IN')}`;
+    }
+
+    // --- Resellers Management ---
+    window.renderResellers = () => {
+        const query = document.getElementById('searchReseller').value.toLowerCase();
+        const tbody = document.getElementById('resellerTableBody');
+        
+        const filtered = state.resellers.filter(r => 
+            (r.name||'').toLowerCase().includes(query) || 
+            (r.email||'').toLowerCase().includes(query) || 
+            (r.phone||'').includes(query)
+        );
+
+        if(!filtered.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-slate-400">No resellers found</td></tr>';
+            return;
         }
 
-      </td>
-
-    </tr>
-
-    `;
-
-  }).join("");
-
-}
-
-
-window.approveWithdrawal=async(id)=>{
-
-  const w=withdrawalData.find(x=>x.id===id);
-
-  if(!w)return;
-
-  if(!confirm(
-    `₹${w.amount} withdrawal approve karna hai?`
-  ))return;
-
-  try{
-
-    await updateDoc(
-      doc(db,WITHDRAW,id),
-      {
-        status:"approved",
-        approvedAt:serverTimestamp(),
-        approvedBy:auth.currentUser.uid
-      }
-    );
-
-    alert("Withdrawal approved.");
-
-    await loadWithdrawals();
-
-    updateStats();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Approval failed:\n"+
-      error.message
-    );
-
-  }
-
-};
-
-
-window.rejectWithdrawal=async(id)=>{
-
-  const w=withdrawalData.find(x=>x.id===id);
-
-  if(!w)return;
-
-  if(!confirm(
-    `₹${w.amount} withdrawal reject karna hai?\n\n`+
-    "Rejected amount wallet mein refund kiya jayega."
-  ))return;
-
-  try{
-
-    /*
-      Wallet refund
-    */
-
-    const userRef=doc(
-      db,
-      USERS,
-      w.userId
-    );
-
-    await updateDoc(
-      userRef,
-      {
-        walletBalance:increment(
-          Number(w.amount || 0)
-        )
-      }
-    );
-
-
-    await updateDoc(
-      doc(db,WITHDRAW,id),
-      {
-        status:"rejected",
-        rejectedAt:serverTimestamp(),
-        rejectedBy:auth.currentUser.uid
-      }
-    );
-
-
-    alert(
-      "Withdrawal rejected aur wallet refund kar diya gaya."
-    );
-
-    await loadWithdrawals();
-
-    await loadResellers();
-
-    updateStats();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Reject/refund failed:\n"+
-      error.message
-    );
-
-  }
-
-};
-
-
-/* ================= STATS ================= */
-
-function updateStats(){
-
-  document.getElementById("totalResellers").textContent=
-    resellerData.length;
-
-  document.getElementById("pendingResellers").textContent=
-    resellerData.filter(
-      x=>(x.status || "pending")==="pending"
-    ).length;
-
-  document.getElementById("totalProducts").textContent=
-    productData.length;
-
-  document.getElementById("totalOrders").textContent=
-    orderData.length;
-
-  document.getElementById("pendingWithdrawals").textContent=
-    withdrawalData.filter(
-      x=>(x.status || "pending")==="pending"
-    ).length;
-
-
-  let revenue=0;
-
-  orderData.forEach(o=>{
-
-    const amount=
-      Number(o.sellingPrice || 0) *
-      Number(o.quantity || 1);
-
-    revenue+=amount;
-
-  });
-
-  document.getElementById("totalRevenue").textContent=
-    revenue.toFixed(2);
-
-}
-
-
-/* ================= NAVIGATION ================= */
-
-window.showSection=(id,button)=>{
-
-  document
-    .querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
-
-  document
-    .getElementById(id)
-    .classList.add("active");
-
-
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach(b=>b.classList.remove("active"));
-
-  button.classList.add("active");
-
-
-  const titles={
-    dashboard:"Dashboard",
-    resellers:"Reseller Approval",
-    products:"Product Management",
-    orders:"Orders",
-    withdrawals:"Withdrawals"
-  };
-
-  document.getElementById("pageTitle").textContent=
-    titles[id] || "Admin";
-
-
-  document
-    .getElementById("sidebar")
-    .classList.remove("open");
-
-};
-
-
-window.toggleMenu=()=>{
-
-  document
-    .getElementById("sidebar")
-    .classList.toggle("open");
-
-};
-
-
-window.closeModal=(id)=>{
-
-  document
-    .getElementById(id)
-    .classList.remove("show");
-
-};
-
-
-window.logout=async()=>{
-
-  if(!confirm("Logout karna hai?"))return;
-
-  await signOut(auth);
-
-  window.location.href="./index.html";
-
-};
-
-
-/* ================= SECURITY HELPERS ================= */
-
-function escapeHtml(value){
-
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-function escapeAttr(value){
-
-  return escapeHtml(value);
-
-}
-
-
-/* ================= GLOBAL ================= */
-
-window.renderResellers=renderResellers;
-window.renderProducts=renderProducts;
-window.renderOrders=renderOrders;
+        tbody.innerHTML = filtered.map(r => {
+            const statusColor = r.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                              (r.status === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700');
+            return `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4">
+                        <p class="font-bold text-slate-800">${r.name || 'Unknown'}</p>
+                        <p class="text-[10px] text-slate-400 font-mono">${r.id}</p>
+                    </td>
+                    <td class="p-4">
+                        <p class="text-sm">${r.email || '-'}</p>
+                        <p class="text-sm text-slate-500">${r.phone || '-'}</p>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${r.status || 'pending'}</span>
+                    </td>
+                    <td class="p-4">
+                        <p class="font-bold text-slate-800">₹${r.walletBalance || 0}</p>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex gap-2">
+                            ${r.status !== 'approved' ? 
+                                `<button onclick="updateUserStatus('${r.id}', 'approved')" class="bg-green-50 text-green-600 border border-green-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100">Approve</button>` 
+                                : ''}
+                            <button onclick="updateUserStatus('${r.id}', '${r.status==='suspended'?'approved':'suspended'}')" class="bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-slate-200">
+                                ${r.status==='suspended' ? 'Restore' : 'Suspend'}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.updateUserStatus = async (id, status) => {
+        try {
+            await updateDoc(doc(db, USERS_COL, id), { status, updatedAt: serverTimestamp() });
+            const r = state.resellers.find(x => x.id === id);
+            if(r) r.status = status;
+            renderResellers();
+            updateDashboardStats();
+        } catch (e) {
+            alert("Update failed: " + e.message);
+        }
+    };
+
+    // --- Products Management ---
+    window.renderProducts = () => {
+        const query = document.getElementById('searchProduct').value.toLowerCase();
+        const grid = document.getElementById('productGridAdmin');
+        
+        const filtered = state.products.filter(p => 
+            (p.title||'').toLowerCase().includes(query) || 
+            (p.category||'').toLowerCase().includes(query)
+        );
+
+        if(!filtered.length) {
+            grid.innerHTML = '<div class="col-span-full p-8 text-center text-slate-400">No products found</div>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(p => {
+            const img = (p.images && p.images[0]) || p.image || p.imageUrl || 'https://placehold.co/100';
+            return `
+                <div class="border border-slate-200 rounded-xl p-3 flex gap-3 hover:border-slate-300 transition">
+                    <img src="${img}" class="w-20 h-20 rounded-lg object-cover bg-slate-100 shrink-0">
+                    <div class="flex-1 min-w-0 flex flex-col justify-between">
+                        <div>
+                            <p class="font-bold text-sm text-slate-800 line-clamp-1">${p.title || 'Product'}</p>
+                            <p class="text-xs text-slate-500 mt-1">₹${p.basePrice} <span class="line-through text-slate-300 ml-1">₹${p.mrp||0}</span></p>
+                        </div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-[10px] font-bold ${p.active!==false ? 'text-green-500':'text-slate-400'} uppercase">${p.active!==false ? 'Active':'Hidden'}</span>
+                            <div class="flex gap-2">
+                                <button onclick="editProduct('${p.id}')" class="text-blue-500 hover:text-blue-700 text-sm"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteProduct('${p.id}')" class="text-red-500 hover:text-red-700 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    };
+
+    window.resetProductForm = () => {
+        document.getElementById('editProdId').value = '';
+        document.getElementById('prodTitle').value = '';
+        document.getElementById('prodBasePrice').value = '';
+        document.getElementById('prodMrp').value = '';
+        document.getElementById('prodCategory').value = '';
+        document.getElementById('prodImage').value = '';
+        document.getElementById('prodActive').checked = true;
+        document.getElementById('productFormTitle').innerText = 'Add Product';
+        document.getElementById('btnSaveProduct').innerText = 'Save Product';
+    };
+
+    window.editProduct = (id) => {
+        const p = state.products.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('editProdId').value = p.id;
+        document.getElementById('prodTitle').value = p.title || '';
+        document.getElementById('prodBasePrice').value = p.basePrice || '';
+        document.getElementById('prodMrp').value = p.mrp || '';
+        document.getElementById('prodCategory').value = p.category || '';
+        document.getElementById('prodImage').value = (p.images && p.images[0]) || p.image || p.imageUrl || '';
+        document.getElementById('prodActive').checked = p.active !== false;
+        
+        document.getElementById('productFormTitle').innerText = 'Edit Product';
+        document.getElementById('btnSaveProduct').innerText = 'Update Product';
+    };
+
+    window.saveProduct = async () => {
+        const id = document.getElementById('editProdId').value;
+        const btn = document.getElementById('btnSaveProduct');
+        
+        const data = {
+            title: document.getElementById('prodTitle').value.trim(),
+            basePrice: Number(document.getElementById('prodBasePrice').value || 0),
+            mrp: Number(document.getElementById('prodMrp').value || 0),
+            category: document.getElementById('prodCategory').value.trim(),
+            images: [document.getElementById('prodImage').value.trim()].filter(Boolean),
+            active: document.getElementById('prodActive').checked,
+            updatedAt: serverTimestamp()
+        };
+        
+        // Backwards compatibility for image field
+        if(data.images.length) data.image = data.images[0];
+
+        if(!data.title || data.basePrice <= 0) return alert("Title and valid base price required.");
+
+        btn.disabled = true;
+        btn.innerText = 'Saving...';
+
+        try {
+            if(id) {
+                await updateDoc(doc(db, PRODUCTS_COL, id), data);
+                const idx = state.products.findIndex(x => x.id === id);
+                if(idx > -1) state.products[idx] = {...state.products[idx], ...data, active: data.active};
+            } else {
+                data.createdAt = serverTimestamp();
+                const docRef = await addDoc(collection(db, PRODUCTS_COL), data);
+                state.products.unshift({id: docRef.id, ...data});
+            }
+            resetProductForm();
+            renderProducts();
+            updateDashboardStats();
+        } catch(e) {
+            alert("Error saving: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = id ? 'Update Product' : 'Save Product';
+        }
+    };
+
+    window.deleteProduct = async (id) => {
+        if(!confirm("Delete this product?")) return;
+        try {
+            await deleteDoc(doc(db, PRODUCTS_COL, id));
+            state.products = state.products.filter(x => x.id !== id);
+            renderProducts();
+            updateDashboardStats();
+        } catch(e) { alert("Error deleting: " + e.message); }
+    };
+
+    // --- Orders Management ---
+    window.renderOrders = () => {
+        const query = document.getElementById('searchOrder').value.toLowerCase();
+        const tbody = document.getElementById('orderTableBody');
+        
+        const filtered = state.orders.filter(o => 
+            (o.id||'').toLowerCase().includes(query) || 
+            (o.customerPhone||'').includes(query) ||
+            (o.resellerName||'').toLowerCase().includes(query)
+        );
+
+        if(!filtered.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-slate-400">No orders found</td></tr>';
+            return;
+        }
+
+        const statuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+        tbody.innerHTML = filtered.map(o => {
+            const currentStatus = (o.status || 'pending').toLowerCase();
+            const totalVal = (Number(o.sellingPrice)||0) * (Number(o.quantity)||1);
+            
+            return `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4 align-top">
+                        <p class="font-bold text-sm font-mono text-slate-800">${o.orderId || o.id.slice(0,8)}</p>
+                    </td>
+                    <td class="p-4 align-top">
+                        <p class="font-bold text-sm line-clamp-1">${o.productName || '-'}</p>
+                        <p class="text-xs text-slate-500 mt-1">By: ${o.resellerName || 'Unknown'}</p>
+                    </td>
+                    <td class="p-4 align-top">
+                        <p class="text-sm font-medium">${o.customerName || '-'}</p>
+                        <p class="text-xs text-slate-500">${o.customerPhone || '-'}</p>
+                        <p class="text-xs text-slate-400 truncate max-w-[200px]" title="${o.customerAddress}">${o.customerAddress || '-'}</p>
+                    </td>
+                    <td class="p-4 align-top">
+                        <div class="bg-slate-50 p-2 rounded border border-slate-100 text-xs">
+                            <div class="flex justify-between mb-1"><span>Total:</span> <span class="font-bold">₹${totalVal}</span></div>
+                            <div class="flex justify-between text-green-600"><span>Profit:</span> <span class="font-bold">₹${o.profit || 0}</span></div>
+                        </div>
+                    </td>
+                    <td class="p-4 align-top">
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="w-full bg-white border border-slate-300 rounded-lg px-2 py-1.5 text-sm font-semibold outline-none focus:border-primary mb-2">
+                            ${statuses.map(s => `<option value="${s}" ${currentStatus===s?'selected':''}>${s.toUpperCase()}</option>`).join('')}
+                        </select>
+                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${currentStatus==='delivered'?'bg-green-100 text-green-700' : (currentStatus==='cancelled'?'bg-red-100 text-red-700':'bg-blue-100 text-blue-700')}">${currentStatus}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.updateOrderStatus = async (id, status) => {
+        try {
+            await updateDoc(doc(db, ORDERS_COL, id), { status, updatedAt: serverTimestamp() });
+            const o = state.orders.find(x => x.id === id);
+            if(o) o.status = status;
+            renderOrders();
+            // In a real app, you might want to credit wallet on 'delivered' here
+        } catch(e) {
+            alert("Failed to update status: " + e.message);
+        }
+    };
+
+    // --- Withdrawals Management ---
+    window.renderWithdrawals = () => {
+        const tbody = document.getElementById('withdrawTableBody');
+        
+        if(!state.withdrawals.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-slate-400">No pending requests</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = state.withdrawals.map(w => {
+            const st = w.status || 'pending';
+            return `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-4">
+                        <p class="font-bold text-sm">${w.userName || 'Reseller'}</p>
+                        <p class="text-xs text-slate-500">${w.userEmail || '-'}</p>
+                    </td>
+                    <td class="p-4 font-black text-lg text-primary">₹${w.amount || 0}</td>
+                    <td class="p-4 text-sm text-slate-600 max-w-[200px] truncate" title="${w.details}">${w.details || '-'}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${st==='approved'?'bg-green-100 text-green-700':(st==='rejected'?'bg-red-100 text-red-700':'bg-amber-100 text-amber-700')}">${st}</span>
+                    </td>
+                    <td class="p-4">
+                        ${st === 'pending' ? `
+                            <div class="flex gap-2">
+                                <button onclick="handleWithdrawal('${w.id}', 'approved')" class="bg-green-50 text-green-600 border border-green-200 px-2 py-1 rounded text-xs font-bold">Approve</button>
+                                <button onclick="handleWithdrawal('${w.id}', 'rejected')" class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold">Reject</button>
+                            </div>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.handleWithdrawal = async (id, action) => {
+        const w = state.withdrawals.find(x => x.id === id);
+        if(!w) return;
+        
+        const msg = action === 'approved' ? `Mark ₹${w.amount} as paid?` : `Reject ₹${w.amount} request? (Will refund to wallet)`;
+        if(!confirm(msg)) return;
+
+        try {
+            if(action === 'rejected') {
+                // Refund wallet
+                await updateDoc(doc(db, USERS_COL, w.userId), { walletBalance: increment(Number(w.amount||0)) });
+            }
+            await updateDoc(doc(db, WITHDRAW_COL, id), { 
+                status: action, 
+                processedAt: serverTimestamp(),
+                processedBy: auth.currentUser.uid
+            });
+            
+            w.status = action;
+            renderWithdrawals();
+            
+            if(action === 'rejected') fetchData(USERS_COL, 'resellers', (d) => d.role !== 'admin').then(renderResellers);
+            
+        } catch(e) {
+            alert("Error processing withdrawal: " + e.message);
+        }
+    };
 
 </script>
-
 </body>
 </html>
