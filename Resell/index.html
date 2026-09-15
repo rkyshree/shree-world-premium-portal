@@ -249,6 +249,13 @@
             </div>  
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">  
+                
+                <!-- NEW: Payment History Option -->
+                <button onclick="openPaymentHistory()" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">  
+                    <span class="font-semibold text-gray-800"><i class="fa-solid fa-clock-rotate-left text-primary w-6"></i> Payment History</span>  
+                    <i class="fa-solid fa-chevron-right text-gray-400 text-sm"></i>  
+                </button> 
+
                 <button onclick="openModal('editProfileModal')" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">  
                     <span class="font-semibold text-gray-800"><i class="fa-solid fa-address-card text-gray-400 w-6"></i> Profile & Address</span>  
                     <span id="profileHasAddress" class="text-[10px] font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded">Missing</span>  
@@ -305,7 +312,7 @@
     </div>  
 </div>  
 
-<!-- Product Detail Modal (With Gallery & Download Button intact) -->  
+<!-- Product Detail Modal -->  
 <div id="productDetailModal" class="bottom-sheet">  
     <div class="bottom-sheet-content h-[95vh] bg-gray-50">  
         <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-10 rounded-t-[24px]">  
@@ -440,6 +447,33 @@
     </div>  
 </div>  
 
+<!-- Payment History Modal (NEW) -->  
+<div id="paymentHistoryModal" class="bottom-sheet">  
+    <div class="bottom-sheet-content h-[85vh] bg-gray-50">  
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-[24px] shadow-sm">  
+            <h3 class="font-black text-lg">Payment History</h3>  
+            <button onclick="closeModal('paymentHistoryModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>  
+        </div>  
+        
+        <div class="flex border-b border-gray-200 bg-white sticky top-[61px] z-10">
+            <button id="btnPhEarnings" onclick="switchPHTab('earnings')" class="flex-1 py-3 text-sm font-black border-b-2 border-primary text-primary transition">Earnings</button>
+            <button id="btnPhPayouts" onclick="switchPHTab('payouts')" class="flex-1 py-3 text-sm font-black border-b-2 border-transparent text-gray-400 transition">Withdrawals</button>
+        </div>
+
+        <div class="p-4 overflow-y-auto pb-8">  
+            <!-- Earnings Tab -->
+            <div id="phEarningsTab" class="space-y-3">
+                <div id="phEarningsList"></div>
+            </div>
+            
+            <!-- Payouts Tab -->
+            <div id="phPayoutsTab" class="hidden space-y-3">
+                <div id="phPayoutsList"></div>
+            </div>
+        </div>  
+    </div>  
+</div>
+
 <!-- Edit Profile Modal -->  
 <div id="editProfileModal" class="bottom-sheet">  
     <div class="bottom-sheet-content h-[85vh]">  
@@ -488,7 +522,6 @@
                 </div>  
                 <button type="submit" id="submitWithdrawBtn" class="w-full bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-green-500/30 mt-4 flex justify-center items-center">Submit Request</button>  
                 
-                <!-- NEW Terms and Conditions Box for Withdrawal -->
                 <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mt-4 shadow-sm">
                     <h4 class="font-bold text-amber-900 text-xs mb-2 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved"></i> निकासी शर्तें (Withdrawal T&C)</h4>
                     <ul class="text-[11px] font-medium text-amber-800 leading-relaxed space-y-1.5 list-disc pl-4">
@@ -646,6 +679,11 @@
     let currentUser = null, userData = null;  
     let allProducts = [], allCategories = ["Kurti", "Saree", "Lehenga", "Suit", "Western"];  
     let adminUsers = [], adminOrders = [], adminWithdraws = [];  
+    
+    // NEW: User Local Lists
+    let userOrdersList = [];
+    let userWithdrawalsList = [];
+    
     let selectedProduct = null, unsubUser = null, unsubProducts = null, unsubOrders = null;  
     let isSignupMode = false, isAdminMode = false, currentFilter = 'All';  
     
@@ -765,7 +803,7 @@
                     }  
                 });  
                 document.getElementById('landingPage').classList.remove('active'); document.getElementById('appPage').classList.add('active');  
-                loadCategories(); loadProducts(); loadOrders();  
+                loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
             } catch(e) { console.error(e); }  
         } else {  
             if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
@@ -807,6 +845,84 @@
             document.getElementById('approvalBanner').classList.remove('hidden');  
         }  
     }  
+
+    // -- PAYMENT HISTORY LOGIC (NEW) --
+    function loadUserWithdrawals() {
+        if(!currentUser) return;
+        onSnapshot(query(collection(db, WITHDRAW_COL), where("userId", "==", currentUser.uid)), (snap) => {
+            userWithdrawalsList = [];
+            snap.forEach(d => userWithdrawalsList.push({id: d.id, ...d.data()}));
+            userWithdrawalsList.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
+            if(document.getElementById('paymentHistoryModal').classList.contains('active')) {
+                renderPaymentHistory();
+            }
+        });
+    }
+
+    window.openPaymentHistory = () => {
+        renderPaymentHistory();
+        openModal('paymentHistoryModal');
+    };
+
+    window.switchPHTab = (tab) => {
+        document.getElementById('phEarningsTab').classList.toggle('hidden', tab !== 'earnings');
+        document.getElementById('phPayoutsTab').classList.toggle('hidden', tab !== 'payouts');
+        
+        document.getElementById('btnPhEarnings').className = tab === 'earnings' ? 'flex-1 py-3 text-sm font-black border-b-2 border-primary text-primary transition' : 'flex-1 py-3 text-sm font-black border-b-2 border-transparent text-gray-400 transition';
+        document.getElementById('btnPhPayouts').className = tab === 'payouts' ? 'flex-1 py-3 text-sm font-black border-b-2 border-primary text-primary transition' : 'flex-1 py-3 text-sm font-black border-b-2 border-transparent text-gray-400 transition';
+    };
+
+    window.renderPaymentHistory = () => {
+        // EARNINGS TAB RENDER
+        const eList = document.getElementById('phEarningsList');
+        eList.innerHTML = userOrdersList.map(o => {
+            let stColor = 'text-amber-500', stIcon = '⏳', stText = 'Pending';
+            
+            if(o.status === 'delivered') { 
+                stColor = 'text-green-500'; stIcon = '✅'; stText = 'Confirmed (Wallet)'; 
+            } else if(o.status === 'cancelled' || o.status === 'returned') { 
+                stColor = 'text-red-500'; stIcon = '❌'; stText = 'Failed/Returned'; 
+            }
+
+            return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-start mb-1">
+                    <div>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Order: ${escapeHtml(o.orderId)}</p>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-1 mt-0.5">${escapeHtml(o.productName)}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-lg ${stColor}">₹${money(o.profit)}</p>
+                    </div>
+                </div>
+                <div class="pt-2 mt-2 border-t border-gray-50 flex justify-between items-center">
+                    <p class="text-[11px] font-medium text-gray-500">Var: ${escapeHtml(o.selectedVariant||'Photo 1')}</p>
+                    <p class="text-[10px] font-bold ${stColor}">${stIcon} ${stText}</p>
+                </div>
+            </div>`;
+        }).join('') || '<div class="text-center py-8 text-gray-400 font-medium text-sm">No earnings found.</div>';
+
+        // PAYOUTS TAB RENDER
+        const pList = document.getElementById('phPayoutsList');
+        pList.innerHTML = userWithdrawalsList.map(w => {
+            let stColor = 'text-amber-500', stText = 'Processing';
+            if(w.status === 'approved') { stColor = 'text-green-500'; stText = 'Paid'; }
+            else if(w.status === 'rejected') { stColor = 'text-red-500'; stText = 'Rejected'; }
+
+            return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="font-bold text-sm text-gray-800 line-clamp-1">Withdrawal Request</p>
+                        <p class="text-[10px] font-medium text-gray-500 mt-1 max-w-[180px] truncate">${escapeHtml(w.details)}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-lg ${stColor}">₹${money(w.amount)}</p>
+                        <p class="text-[10px] font-bold ${stColor} mt-0.5">${stText}</p>
+                    </div>
+                </div>
+                ${w.status === 'approved' && w.txnId ? `<div class="mt-2 pt-2 border-t border-gray-50 flex items-center justify-between bg-green-50/50 p-2 rounded-lg border border-green-100"><span class="text-[10px] font-bold text-green-700 uppercase">Txn ID:</span><span class="text-[11px] font-black text-green-900">${escapeHtml(w.txnId)}</span></div>` : ''}
+            </div>`;
+        }).join('') || '<div class="text-center py-8 text-gray-400 font-medium text-sm">No payouts found.</div>';
+    };
   
     // -- PROFILE EDIT & WITHDRAW --  
     window.submitEditProfile = async (e) => {  
@@ -1103,6 +1219,9 @@
             const ords = []; snap.forEach(d => ords.push({id: d.id, ...d.data()}));  
             ords.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));  
             
+            // Populate Local Variable for History Modal
+            userOrdersList = ords;
+
             // PENDING EARNINGS LOGIC
             let pendingAmt = 0;
             ords.forEach(o => {
@@ -1125,6 +1244,10 @@
                     <div class="bg-gray-50 rounded-xl p-3 grid grid-cols-2 gap-2 text-center divide-x divide-gray-200"><div><p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Customer Paid</p><p class="font-bold text-gray-900 mt-1">₹${money(o.sellingPrice*(o.quantity||1))}</p></div><div><p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Your Profit</p><p class="font-black text-green-600 mt-1">₹${money(o.profit)}</p></div></div>  
                 </div>  
             `).join('');  
+            
+            if(document.getElementById('paymentHistoryModal').classList.contains('active')) {
+                renderPaymentHistory();
+            }
         });  
     }  
   
@@ -1270,13 +1393,26 @@
   
     // Admin Withdrawals  
     window.renderAdminWithdrawals = () => {  
-        document.getElementById('adminWithdrawalsTable').innerHTML = adminWithdraws.length ? adminWithdraws.map(w => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[200px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span></td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';  
+        document.getElementById('adminWithdrawalsTable').innerHTML = adminWithdraws.length ? adminWithdraws.map(w => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[200px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span><br>${w.txnId?`<span class="text-[9px] text-green-500 mt-1 block">Txn: ${escapeHtml(w.txnId)}</span>`:''}</td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';  
     };  
+    
+    // NEW: Handle Transaction ID on Withdrawal Approve
     window.handleAdminWithdrawal = async (id, act) => {  
         const w = adminWithdraws.find(x => x.id === id); if(!w) return;  
+        
+        let txnId = null;
+        if(act === 'approved') {
+            txnId = prompt("Enter Transaction ID / UTR (Leave blank if not available):");
+            if(txnId === null) return; // User clicked Cancel
+        }
+
         try {  
             if(act === 'rejected') await updateDoc(doc(db, USERS_COL, w.userId), { walletBalance: increment(w.amount) }); // Refund Wallet  
-            await updateDoc(doc(db, WITHDRAW_COL, id), { status: act, processedAt: serverTimestamp() });  
+            
+            const updatePayload = { status: act, processedAt: serverTimestamp() };
+            if(txnId) updatePayload.txnId = txnId;
+
+            await updateDoc(doc(db, WITHDRAW_COL, id), updatePayload);  
             showToast(`Withdrawal ${act}`); refreshAdmin();  
         } catch(e) { showToast("Error processing."); }  
     };  
