@@ -2,1149 +2,888 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SHRAYNEX | Resell & Earn</title>
-    <meta name="description" content="Start your online reselling business with zero investment.">
-    <meta name="theme-color" content="#db2777"> <!-- Pink-600 -->
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SHRAYNEX | Resell & Earn</title>
+<meta name="description" content="SHRAYNEX - Start your online reselling business with zero investment. Discover products, add your margin and earn.">
+<meta name="theme-color" content="#e11d48">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        primary: '#db2777', // Tailwind pink-600
-                        'primary-dark': '#be185d',
-                        'primary-light': '#fce7f3',
-                    },
-                    boxShadow: {
-                        'premium': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'modal': '0 -10px 40px -10px rgba(0,0,0,0.1)',
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body {
-            background-color: #f3f4f6; /* gray-100 */
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Mobile App Container Simulation */
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            min-height: 100vh;
-            margin: 0 auto;
-            background-color: #ffffff;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0,0,0,0.08);
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-
-        /* Smooth page transitions */
-        .page { display: none; animation: fadeIn 0.3s ease; flex: 1; }
-        .page.active { display: flex; flex-direction: column; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Bottom Sheet Modals */
-        .bottom-sheet {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        .bottom-sheet.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .bottom-sheet-content {
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            border-radius: 24px 24px 0 0;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 95vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .bottom-sheet.active .bottom-sheet-content {
-            transform: translateY(0);
-        }
-
-        /* Loaders */
-        .spinner {
-            border: 3px solid rgba(219, 39, 119, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #db2777;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        .spinner.white { border-color: rgba(255,255,255,0.3); border-top-color: white; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-    </style>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,sans-serif;background:#f3f4f6;color:#111827;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+.app{width:100%;max-width:520px;min-height:100vh;margin:auto;background:#fff;position:relative;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.hide-scrollbar::-webkit-scrollbar{display:none}.hide-scrollbar{scrollbar-width:none;-ms-overflow-style:none}
+.loader{width:22px;height:22px;border:3px solid #e5e7eb;border-top-color:#e11d48;border-radius:50%;animation:spin .8s linear infinite}
+.loader-white{border-color:rgba(255,255,255,.3);border-top-color:#fff}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal{opacity:0;pointer-events:none;transition:all .3s cubic-bezier(0.4,0,0.2,1);backdrop-filter:blur(4px);}.modal.active{opacity:1;pointer-events:auto}
+.modal-box{transform:translateY(100%);transition:transform .3s cubic-bezier(0.4,0,0.2,1);}.modal.active .modal-box{transform:translateY(0)}
+.page{display:none;animation:fadeIn 0.3s ease;}.page.active{display:block}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.bottom-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+.product-slider{display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.product-slider img{min-width:100%;scroll-snap-align:center}
+.input{width:100%;border:1px solid #e5e7eb;border-radius:14px;padding:14px 16px;outline:none;transition:.2s;background:#f9fafb;font-weight:500;}
+.input:focus{border-color:#e11d48;background:#fff;box-shadow:0 0 0 4px rgba(225,29,72,.1)}
+.card{border:1px solid #f1f5f9;border-radius:20px;background:#fff;box-shadow:0 8px 30px rgba(15,23,42,.04)}
+.skeleton{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 37%,#f1f5f9 63%);background-size:400% 100%;animation:skeleton 1.4s ease infinite}
+@keyframes skeleton{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.status-badge{padding:6px 12px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;}
+.status-pending{background:#fef3c7;color:#b45309}.status-confirmed{background:#e0f2fe;color:#0369a1}
+.status-processing{background:#f3e8ff;color:#7e22ce}.status-shipped{background:#e0e7ff;color:#4338ca}
+.status-delivered{background:#dcfce7;color:#15803d}.status-cancelled,.status-rejected{background:#fee2e2;color:#b91c1c}
+.admin-tab.active{background:#111827;color:#fff}
+.size-btn{border:2px solid #e5e7eb;background:#fff;color:#4b5563;border-radius:10px;padding:8px 16px;font-weight:700;font-size:14px;transition:0.2s;}
+.size-btn.active{border-color:#e11d48;background:#fff1f2;color:#e11d48;}
+.cat-chip{white-space:nowrap;padding:8px 16px;background:#f1f5f9;color:#475569;border-radius:20px;font-size:13px;font-weight:600;transition:0.2s;border:1px solid transparent;}
+.cat-chip.active{background:#e11d48;color:#fff;box-shadow:0 4px 10px rgba(225,29,72,0.2);}
+</style>
 </head>
-<body class="text-gray-800 antialiased">
 
-<div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] hidden transition-all duration-300 w-[90%] max-w-sm">
-    <div id="toastMsg" class="bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center gap-3 w-full break-words">
-        <i class="fa-solid fa-circle-info text-primary-light shrink-0"></i>
-        <span class="flex-1">Message</span>
-    </div>
+<body>
+
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[400] hidden transition-all duration-300">
+  <div id="toastText" class="bg-gray-900 text-white px-6 py-3.5 rounded-full shadow-2xl text-sm font-semibold flex items-center gap-2 border border-gray-700">
+    Notification
+  </div>
 </div>
 
-<div class="app-container pb-[70px]">
+<!-- =========================================================
+     LANDING PAGE
+========================================================= -->
+<section id="landingPage" class="page active">
+<div class="app">
+<header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-100">
+<div class="px-5 py-4 flex items-center justify-between">
+<div><div class="text-2xl font-black tracking-tighter text-rose-600">SHRAYNEX</div><div class="text-[9px] font-bold text-gray-400 tracking-widest mt-0.5">RESELL • SHARE • EARN</div></div>
+<button onclick="openAuthModal()" class="bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg hover:bg-black transition">Login</button>
+</div>
+</header>
 
-    <section id="landingPage" class="page active">
-        <header class="p-4 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur-md z-10 border-b border-gray-100">
-            <div>
-                <h1 class="text-2xl font-black text-primary tracking-tight">SHRAYNEX</h1>
-                <p class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Resell & Earn</p>
-            </div>
-            <button onclick="openModal('authModal')" class="bg-primary text-white px-5 py-2 rounded-full text-sm font-bold shadow-md shadow-primary/30 hover:bg-primary-dark transition">
-                Login
-            </button>
-        </header>
+<section class="px-6 py-12 bg-gradient-to-b from-rose-50 to-white">
+<div class="inline-flex items-center gap-2 bg-white border border-rose-100 px-3 py-1.5 rounded-full text-xs font-bold text-rose-600 mb-6 shadow-sm"><span>🚀</span> Zero Investment Business</div>
+<h1 class="text-4xl font-black leading-[1.15] text-gray-900 tracking-tight">Start Your <br><span class="text-rose-600">Online Empire</span> Today</h1>
+<p class="text-gray-500 mt-5 text-sm font-medium leading-relaxed pr-4">Discover premium products, set your own profit margin, share on WhatsApp, and earn money from home.</p>
+<button onclick="openAuthModal()" class="w-full mt-8 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-rose-600/20 transition-transform active:scale-95">Start Reselling Now →</button>
 
-        <main class="flex-1 overflow-y-auto">
-            <!-- Hero Section -->
-            <div class="px-5 py-10 bg-primary-light/30">
-                <div class="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full text-xs font-bold text-primary mb-4 shadow-sm">
-                    <i class="fa-solid fa-rocket"></i> Zero Investment
-                </div>
-                <h2 class="text-4xl font-extrabold leading-tight mb-4">Start your online <span class="text-primary">business</span> today</h2>
-                <p class="text-gray-600 mb-8 font-medium">Browse thousands of products, add your margin, share on WhatsApp, and earn money from home.</p>
-                <button onclick="openModal('authModal')" class="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg shadow-lg shadow-primary/40 hover:-translate-y-1 transition transform flex justify-center items-center gap-2">
-                    Start Reselling <i class="fa-solid fa-arrow-right"></i>
-                </button>
-            </div>
+<div class="grid grid-cols-3 gap-3 mt-10 divide-x divide-gray-100 border-t border-gray-100 pt-8">
+<div class="text-center"><div class="font-black text-2xl text-gray-800">₹0</div><div class="text-[11px] font-bold uppercase text-gray-400 mt-1">Investment</div></div>
+<div class="text-center"><div class="font-black text-2xl text-gray-800">10k+</div><div class="text-[11px] font-bold uppercase text-gray-400 mt-1">Products</div></div>
+<div class="text-center"><div class="font-black text-2xl text-gray-800">24/7</div><div class="text-[11px] font-bold uppercase text-gray-400 mt-1">Earnings</div></div>
+</div>
+</section>
 
-            <!-- Features -->
-            <div class="p-6">
-                <h3 class="text-xl font-bold mb-6 text-center">How it works</h3>
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-12 h-12 rounded-2xl bg-primary-light text-primary flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-magnifying-glass"></i></div>
-                        <div>
-                            <h4 class="font-bold text-lg">1. Discover Products</h4>
-                            <p class="text-sm text-gray-500 mt-1">Browse our catalog of high-quality products at wholesale prices.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-12 h-12 rounded-2xl bg-primary-light text-primary flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-share-nodes"></i></div>
-                        <div>
-                            <h4 class="font-bold text-lg">2. Share & Sell</h4>
-                            <p class="text-sm text-gray-500 mt-1">Share products on WhatsApp with your friends and family with your added margin.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-12 h-12 rounded-2xl bg-primary-light text-primary flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-wallet"></i></div>
-                        <div>
-                            <h4 class="font-bold text-lg">3. Earn Profit</h4>
-                            <p class="text-sm text-gray-500 mt-1">When an order is placed, you keep the profit margin you set.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </section>
+<footer class="bg-gray-950 text-white px-6 py-12 pb-20">
+<h2 class="font-black text-2xl tracking-tighter">SHRAYNEX</h2>
+<p class="text-gray-400 text-sm mt-3 leading-relaxed max-w-sm">Empowering individuals to start their own reselling business with zero capital.</p>
 
-    <section id="appPage" class="page">
-        <!-- Header -->
-        <header class="p-4 flex items-center justify-between sticky top-0 bg-white z-20 border-b border-gray-100 shadow-sm">
-            <div class="flex items-center gap-3">
-                <div id="userAvatarInitials" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-inner">U</div>
-                <div>
-                    <h2 id="headerUserName" class="font-bold text-gray-800 leading-tight truncate max-w-[150px]">Reseller</h2>
-                    <p class="text-[11px] text-gray-500 font-medium">Welcome back</p>
-                </div>
-            </div>
-        </header>
+<div class="border-t border-gray-800 mt-10 pt-8">
+<button onclick="openAdminLogin()" class="w-full bg-gray-900 border border-gray-800 text-gray-300 py-4 rounded-xl font-bold text-sm hover:bg-gray-800 transition shadow-inner">
+  ⚙️ Admin Login Panel
+</button>
+<p class="text-center text-[10px] text-gray-500 font-medium mt-3 uppercase tracking-wider">Authorized Personnel Only</p>
+</div>
+<div class="mt-10 text-center text-xs text-gray-600 font-medium">© 2026 SHRAYNEX. All rights reserved.</div>
+</footer>
+</div>
+</section>
 
-        <!-- Approval Banner -->
-        <div id="approvalBanner" class="hidden bg-amber-50 border-b border-amber-100 p-3 px-4 flex gap-3 items-center">
-            <i class="fa-solid fa-clock-rotate-left text-amber-500 text-xl"></i>
-            <div>
-                <p class="text-sm font-bold text-amber-800">Account Pending Approval</p>
-                <p class="text-xs text-amber-700">You can browse, but ordering is disabled.</p>
-            </div>
-        </div>
+<!-- =========================================================
+     AUTH MODAL
+========================================================= -->
+<div id="authModal" class="modal fixed inset-0 z-[100] bg-gray-900/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative">
+<button onclick="closeAuthModal()" class="absolute top-5 right-5 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 font-bold hover:bg-gray-200">✕</button>
+<h2 class="text-2xl font-black tracking-tight mt-2">Welcome</h2>
+<p id="authSubtitle" class="text-sm text-gray-500 font-medium mt-1 mb-6">Login to access your dashboard</p>
 
-        <main class="flex-1 overflow-y-auto bg-gray-50">
-            <!-- Feed Tab -->
-            <div id="tabFeed" class="tab-content p-4 block">
-                <div class="relative mb-6">
-                    <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search products, categories..." class="w-full bg-white border border-gray-200 rounded-2xl py-3 pl-12 pr-4 outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all shadow-sm">
-                </div>
-                
-                <h3 class="font-bold text-lg mb-4">Trending Products</h3>
-                <div id="productsGrid" class="grid grid-cols-2 gap-3 pb-6">
-                    <!-- Products will be injected here -->
-                    <div class="col-span-2 text-center py-10 text-gray-400">
-                        <div class="spinner border-gray-300 mx-auto mb-3"></div> Loading catalog...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Orders Tab -->
-            <div id="tabOrders" class="tab-content p-4 hidden">
-                <h2 class="text-2xl font-bold mb-4">My Orders</h2>
-                <div id="ordersList" class="space-y-4 pb-6">
-                    <div class="text-center py-10 text-gray-400">Loading orders...</div>
-                </div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div id="tabProfile" class="tab-content p-4 hidden">
-                <h2 class="text-2xl font-bold mb-4">My Account</h2>
-                
-                <div class="bg-white rounded-2xl p-5 shadow-premium border border-gray-100 mb-4 text-center relative">
-                    <button onclick="openEditProfile()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:text-primary hover:bg-primary-light transition shadow-sm"><i class="fa-solid fa-pen text-sm"></i></button>
-                    <div id="profileAvatarBig" class="w-20 h-20 mx-auto rounded-full bg-primary text-white flex items-center justify-center font-bold text-3xl mb-3 shadow-md">U</div>
-                    <h3 id="profileName" class="font-bold text-xl">User Name</h3>
-                    <p id="profilePhone" class="text-gray-500 text-sm mt-1">+91 0000000000</p>
-                    <span id="profileStatusBadge" class="inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center relative">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Wallet Balance</p>
-                        <p id="walletBalance" class="text-2xl font-black text-primary mt-1 mb-2">₹0</p>
-                        <button onclick="openWithdrawModal()" class="w-full text-[11px] bg-primary/10 text-primary py-1.5 rounded-lg font-bold hover:bg-primary/20 transition">Withdraw Funds</button>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Earnings</p>
-                        <p id="totalEarnings" class="text-2xl font-black text-green-600 mt-1">₹0</p>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                    <button onclick="openEditProfile()" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50 transition">
-                        <span class="font-medium"><i class="fa-solid fa-location-dot text-gray-400 w-6"></i> Saved Address</span>
-                        <span id="profileHasAddress" class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded">Saved</span>
-                    </button>
-                    <button class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
-                        <span class="font-medium"><i class="fa-solid fa-headset text-gray-400 w-6"></i> Help & Support</span>
-                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm"></i>
-                    </button>
-                    <button onclick="handleLogout()" class="w-full text-left p-4 text-red-500 font-bold flex items-center hover:bg-red-50 transition">
-                        <i class="fa-solid fa-arrow-right-from-bracket w-6"></i> Logout
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)] z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.02)]">
-            <div class="flex justify-around items-center h-[65px]">
-                <button onclick="switchTab('Feed')" id="navBtnFeed" class="flex flex-col items-center justify-center w-full h-full text-primary">
-                    <i class="fa-solid fa-house text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Home</span>
-                </button>
-                <button onclick="switchTab('Orders')" id="navBtnOrders" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-gray-600 transition">
-                    <i class="fa-solid fa-box-open text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Orders</span>
-                </button>
-                <button onclick="switchTab('Profile')" id="navBtnProfile" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-gray-600 transition">
-                    <i class="fa-regular fa-user text-xl mb-1"></i>
-                    <span class="text-[10px] font-bold">Account</span>
-                </button>
-            </div>
-        </nav>
-    </section>
-
-</div> <!-- End App Container -->
-
-
-<!-- Auth Modal -->
-<div id="authModal" class="bottom-sheet">
-    <div class="bottom-sheet-content">
-        <div class="p-5 border-b border-gray-100 flex justify-between items-center">
-            <div>
-                <h3 class="text-xl font-bold">Join SHRAYNEX</h3>
-                <p id="authSubtitle" class="text-sm text-gray-500">Login to start earning</p>
-            </div>
-            <button onclick="closeModal('authModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-5 overflow-y-auto">
-            <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
-                <button id="toggleLoginBtn" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-800">Login</button>
-                <button id="toggleSignupBtn" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm">Sign Up</button>
-            </div>
-
-            <button onclick="loginWithGoogle()" id="googleAuthBtn" class="w-full bg-white border border-gray-200 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 mb-6 shadow-sm hover:bg-gray-50 transition">
-                <img src="https://www.google.com/favicon.ico" class="w-5 h-5" alt="Google"> Continue with Google
-            </button>
-
-            <div class="relative flex items-center py-2 mb-4">
-                <div class="flex-grow border-t border-gray-200"></div>
-                <span class="flex-shrink-0 mx-4 text-gray-400 text-xs font-semibold">OR</span>
-                <div class="flex-grow border-t border-gray-200"></div>
-            </div>
-
-            <form id="authForm" onsubmit="handleEmailAuth(event)" class="space-y-4">
-                <div id="signupFieldsGroup" class="hidden space-y-4">
-                    <input type="text" id="authName" placeholder="Full Name" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-primary focus:bg-white transition">
-                    <input type="tel" id="authPhone" placeholder="Mobile Number" maxlength="10" pattern="[0-9]{10}" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-primary focus:bg-white transition">
-                </div>
-                <input type="email" id="authEmail" placeholder="Email Address" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-primary focus:bg-white transition">
-                <input type="password" id="authPassword" placeholder="Password (min 6 chars)" minlength="6" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-primary focus:bg-white transition">
-                
-                <button type="submit" id="submitAuthBtn" class="w-full bg-primary text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-primary-dark transition flex justify-center items-center h-[52px]">
-                    Login
-                </button>
-            </form>
-            <p class="text-center text-xs text-gray-400 mt-6 pb-4">By continuing, you agree to our Terms & Conditions.</p>
-        </div>
-    </div>
+<div class="flex bg-gray-100 p-1.5 rounded-2xl mb-6">
+<button id="loginModeBtn" onclick="setAuthMode('login')" class="flex-1 py-3 rounded-xl bg-white shadow-sm font-bold text-sm text-gray-900 transition">Login</button>
+<button id="signupModeBtn" onclick="setAuthMode('signup')" class="flex-1 py-3 rounded-xl text-gray-500 font-bold text-sm transition">Sign Up</button>
 </div>
 
-<!-- Edit Profile Modal -->
-<div id="editProfileModal" class="bottom-sheet">
-    <div class="bottom-sheet-content h-[85vh]">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-24px shadow-sm">
-            <h3 class="font-bold text-lg">Edit Profile & Address</h3>
-            <button onclick="closeModal('editProfileModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-5 overflow-y-auto pb-8">
-            <form id="editProfileForm" onsubmit="submitEditProfile(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Full Name</label>
-                    <input type="text" id="epName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Mobile Number</label>
-                    <input type="tel" id="epPhone" required pattern="[0-9]{10}" maxlength="10" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                </div>
-                <div class="pt-4 border-t border-gray-100 mt-2">
-                    <h4 class="font-bold text-gray-800 mb-1">Saved Address</h4>
-                    <p class="text-[11px] text-gray-500 mb-4">Save your address permanently to auto-fill it quickly while placing orders.</p>
-                    
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Complete Address</label>
-                    <textarea id="epAddress" rows="3" placeholder="House No, Street, Landmark, City..." class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary resize-none mb-4"></textarea>
-                    
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Pincode</label>
-                    <input type="tel" id="epPincode" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit Pincode" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                </div>
-                <button type="submit" id="submitEditProfileBtn" class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition mt-6 flex justify-center items-center h-[56px]">
-                    Save Changes
-                </button>
-            </form>
-        </div>
-    </div>
+<button id="googleBtn" onclick="loginWithGoogle()" class="w-full border-2 border-gray-100 bg-white rounded-2xl py-3.5 flex items-center justify-center gap-3 font-bold text-gray-700 hover:bg-gray-50 transition shadow-sm"></button>
+
+<div class="flex items-center gap-4 my-6"><div class="h-px bg-gray-200 flex-1"></div><span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">OR EMAIL</span><div class="h-px bg-gray-200 flex-1"></div></div>
+
+<form id="emailForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
+<div id="signupFields" class="space-y-3 hidden">
+<input id="authName" type="text" class="input" placeholder="Full Name">
+<input id="authPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input" placeholder="10-digit Mobile Number">
+</div>
+<input id="authEmail" type="email" class="input" placeholder="Email Address" required>
+<input id="authPassword" type="password" minlength="6" class="input" placeholder="Password" required>
+<button id="emailBtn" type="submit" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-rose-600/20 mt-2">Login</button>
+<button id="forgotBtn" type="button" onclick="forgotPassword()" class="w-full py-2 text-sm text-rose-600 font-bold mt-2">Forgot Password?</button>
+</form>
+<p class="text-[10px] text-gray-400 text-center mt-6 font-medium">By continuing, you agree to SHRAYNEX Terms & Privacy Policy.</p>
+</div>
 </div>
 
-<!-- Withdraw Modal -->
-<div id="withdrawModal" class="bottom-sheet">
-    <div class="bottom-sheet-content">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="font-bold text-lg">Withdraw Funds</h3>
-            <button onclick="closeModal('withdrawModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-5 overflow-y-auto">
-            <div class="bg-primary-light/30 border border-primary-light p-4 rounded-xl mb-5 flex justify-between items-center">
-                <span class="text-sm font-semibold text-gray-700">Available Balance</span>
-                <span class="text-lg font-black text-primary" id="withdrawAvailable">₹0</span>
-            </div>
-            <form onsubmit="submitWithdrawal(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Withdrawal Amount (₹)</label>
-                    <input type="number" id="withdrawAmount" min="1" required class="w-full border border-gray-300 rounded-xl px-4 py-3 font-bold text-lg outline-none focus:border-primary">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Bank Account or UPI Details</label>
-                    <textarea id="withdrawDetails" rows="3" placeholder="Enter Account No. + IFSC or UPI ID" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary resize-none"></textarea>
-                </div>
-                <button type="submit" id="submitWithdrawBtn" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold shadow-md hover:bg-green-600 transition mt-2 flex justify-center items-center h-[56px]">
-                    Submit Request
-                </button>
-                <p class="text-[10px] text-gray-400 text-center mt-2 leading-tight">Amount will be safely deducted from your wallet and sent for processing.</p>
-            </form>
-        </div>
-    </div>
+<!-- =========================================================
+     USER APP (RESELLER)
+========================================================= -->
+<section id="userPage" class="page">
+<div class="app min-h-screen pb-20 flex flex-col bg-gray-50">
+<header class="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-sm">
+<div class="px-5 py-3.5 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div id="avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-rose-700 text-white flex items-center justify-center font-bold text-lg shadow-sm">S</div>
+<div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Welcome</p><p id="userName" class="font-bold text-sm leading-tight text-gray-800 truncate max-w-[150px]">Reseller</p></div>
+</div>
+<button onclick="window.open('https://wa.me/919451239239?text=Hello%20SHRAYNEX%20Support', '_blank')" class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-lg shadow-sm"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-5"></button>
+</div>
+</header>
+
+<div id="approvalNotice" class="hidden bg-amber-50 border-b border-amber-100 p-3 px-5 flex items-center gap-3">
+<span class="text-xl">⏳</span><div><div class="font-bold text-sm text-amber-900">Account Approval Pending</div><div class="text-[11px] text-amber-700 font-medium">Orders are disabled until admin approves your profile.</div></div>
 </div>
 
-<!-- Product Detail Modal -->
-<div id="productDetailModal" class="bottom-sheet">
-    <div class="bottom-sheet-content h-[95vh] bg-gray-50">
-        <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-10 rounded-t-24px">
-            <button onclick="closeModal('productDetailModal')" class="w-8 h-8 flex items-center justify-center bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
-            <h3 class="font-bold text-sm">Product Details</h3>
-            <div class="w-8"></div> <!-- Spacer for centering -->
-        </div>
-        <div class="overflow-y-auto pb-[90px] flex-1">
-            <img id="pdImg" src="" class="w-full aspect-[4/5] object-cover bg-white border-b border-gray-100">
-            <div class="p-4 bg-white mb-2 shadow-sm">
-                <h2 id="pdTitle" class="text-xl font-bold text-gray-800 mb-2 leading-tight">Product Title</h2>
-                <div class="flex items-baseline gap-2 mb-3">
-                    <span id="pdPrice" class="font-black text-2xl text-primary">₹0</span>
-                    <span id="pdMrp" class="text-sm text-gray-400 line-through">₹0</span>
-                    <span id="pdDiscount" class="text-[10px] font-bold bg-red-50 text-red-600 px-2 py-1 rounded ml-2 hidden">0% OFF</span>
-                </div>
-                <div class="flex gap-2">
-                    <span class="bg-green-50 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-md" id="pdDelivery">Fast Delivery</span>
-                    <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-md" id="pdCategory">Category</span>
-                </div>
-            </div>
-            <div class="p-4 bg-white shadow-sm min-h-[150px]">
-                <h4 class="font-bold text-sm mb-2 text-gray-800">Description</h4>
-                <p id="pdDesc" class="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed">No description provided.</p>
-            </div>
-        </div>
-        <div class="absolute bottom-0 left-0 w-full p-4 bg-white border-t border-gray-100 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] grid grid-cols-2 gap-3 z-20 pb-[env(safe-area-inset-bottom,16px)]">
-             <button id="pdShareBtn" onclick="openShareFromDetail()" class="bg-[#25D366] text-white py-3.5 rounded-xl font-bold shadow-sm hover:bg-[#128C7E] transition flex items-center justify-center gap-2">
-                 <i class="fa-brands fa-whatsapp text-lg"></i> Share
-             </button>
-             <button id="pdOrderBtn" onclick="openOrderFromDetail()" class="bg-primary text-white py-3.5 rounded-xl font-bold shadow-md shadow-primary/30 hover:bg-primary-dark transition flex items-center justify-center">
-                 Order Now
-             </button>
-        </div>
-    </div>
+<!-- FEED TAB -->
+<div id="feedTab" class="flex-1 overflow-y-auto px-4 py-5">
+<div class="relative mb-4">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">🔍</span>
+<input id="productSearch" oninput="filterProducts()" class="w-full bg-white border border-gray-200 rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:border-rose-500 font-medium shadow-sm transition" placeholder="Search kurtis, sarees, lehengas...">
 </div>
 
-<!-- Product Share Modal -->
-<div id="shareModal" class="bottom-sheet">
-    <div class="bottom-sheet-content z-[110]">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-24px">
-            <h3 class="font-bold">Share & Set Margin</h3>
-            <button onclick="closeModal('shareModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-5 overflow-y-auto">
-            <div class="flex gap-4 mb-6">
-                <img id="shareProductImg" src="" class="w-20 h-20 rounded-xl object-cover bg-gray-100">
-                <div>
-                    <h4 id="shareProductTitle" class="font-bold line-clamp-2 leading-tight">Product Name</h4>
-                    <p class="text-sm text-gray-500 mt-1">Base Price: <span id="shareBasePrice" class="font-bold text-gray-800">₹0</span></p>
-                </div>
-            </div>
-
-            <div class="bg-primary-light/50 border border-primary-light rounded-xl p-4 mb-6">
-                <label class="text-sm font-bold text-gray-700 block mb-2">Customer Price (Your Selling Price)</label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>
-                    <input type="number" id="calcSellingPrice" oninput="updateProfitCalc()" placeholder="e.g. 999" class="w-full bg-white border border-gray-300 rounded-xl py-3 pl-8 pr-4 font-bold text-lg outline-none focus:border-primary">
-                </div>
-                <div class="flex justify-between items-center mt-3 pt-3 border-t border-primary-light">
-                    <span class="text-sm font-semibold text-gray-600">Your Profit Margin:</span>
-                    <span id="calcProfitResult" class="text-xl font-black text-green-600">₹0</span>
-                </div>
-            </div>
-
-            <button onclick="shareToWhatsApp()" class="w-full bg-[#25D366] text-white py-3.5 rounded-xl font-bold shadow-md hover:bg-[#128C7E] transition flex justify-center items-center gap-2">
-                <i class="fa-brands fa-whatsapp text-xl"></i> Share on WhatsApp
-            </button>
-        </div>
-    </div>
+<!-- Category Chips -->
+<div id="categoryChips" class="flex gap-2 overflow-x-auto hide-scrollbar mb-6 pb-2 px-1">
+  <button onclick="setCategoryFilter('All')" id="chip-All" class="cat-chip active">🔥 All</button>
+  <!-- Dynamically Populated -->
 </div>
 
-<!-- Place Order Modal -->
-<div id="orderModal" class="bottom-sheet">
-    <div class="bottom-sheet-content h-[95vh] z-[110]">
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-24px shadow-sm">
-            <h3 class="font-bold text-lg">Place Order</h3>
-            <button onclick="closeModal('orderModal')" class="text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-5 overflow-y-auto pb-[100px]">
-            <div class="bg-gray-50 p-3 rounded-xl flex gap-3 mb-5 border border-gray-100">
-                <img id="orderProductImg" src="" class="w-12 h-12 rounded-lg object-cover bg-white">
-                <div>
-                    <h4 id="orderProductTitle" class="font-bold text-sm line-clamp-1">Title</h4>
-                    <p class="text-xs text-gray-500">Base: <span id="orderBasePrice" class="font-semibold text-gray-800">₹0</span></p>
-                </div>
-            </div>
+<div id="productFeed" class="grid grid-cols-2 gap-3 pb-6">
+<!-- Products inject here -->
+</div>
+</div>
 
-            <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">
-                <div class="flex justify-between items-end mb-2">
-                    <h4 class="font-bold text-sm text-gray-800">Customer Details</h4>
-                    <button type="button" onclick="fillMyAddress()" class="text-[10px] font-bold text-primary bg-primary-light/50 px-2.5 py-1 rounded-md border border-primary-light hover:bg-primary-light transition flex items-center gap-1"><i class="fa-solid fa-bolt"></i> Use My Saved Address</button>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Customer Name</label>
-                    <input type="text" id="orderCustName" required class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Mobile Number</label>
-                    <input type="tel" id="orderCustPhone" required pattern="[0-9]{10}" maxlength="10" placeholder="10 digits" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 mb-1">Complete Delivery Address</label>
-                    <textarea id="orderCustAddress" required rows="3" placeholder="House/Flat No, Street, Landmark, City..." class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary resize-none"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Pincode</label>
-                        <input type="tel" id="orderCustPin" required pattern="[0-9]{6}" maxlength="6" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">Quantity</label>
-                        <input type="number" id="orderQty" required min="1" value="1" oninput="updateOrderSummary()" class="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-primary text-center font-bold bg-gray-50">
-                    </div>
-                </div>
+<!-- ORDERS TAB -->
+<div id="ordersTab" class="hidden flex-1 overflow-y-auto px-4 py-5">
+<h1 class="text-2xl font-black tracking-tight mb-1">My Orders</h1>
+<p class="text-xs text-gray-500 font-medium mb-6">Track and manage your customer orders.</p>
+<div id="ordersList" class="space-y-4 pb-6"></div>
+</div>
 
-                <div class="bg-primary-light/30 border border-primary-light rounded-xl p-4 mt-6">
-                    <label class="block text-sm font-bold text-primary-dark mb-2">Final Selling Price (Per Qty)</label>
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>
-                        <input type="number" id="orderSellingPrice" required oninput="updateOrderSummary()" placeholder="Enter final price given to customer" class="w-full bg-white border border-gray-300 rounded-xl py-3 pl-8 pr-4 font-bold outline-none focus:border-primary">
-                    </div>
-                </div>
+<!-- PROFILE TAB -->
+<div id="profileTab" class="hidden flex-1 overflow-y-auto px-4 py-5">
+<h1 class="text-2xl font-black tracking-tight mb-5">My Account</h1>
 
-                <!-- Order Summary -->
-                <div class="mt-6 border border-gray-200 rounded-xl p-4 bg-white shadow-sm">
-                    <h4 class="font-bold text-sm mb-3">Order Summary</h4>
-                    <div class="flex justify-between text-sm mb-2 text-gray-600">
-                        <span>Total Order Value</span>
-                        <span class="font-bold text-gray-800" id="summaryTotal">₹0</span>
-                    </div>
-                    <div class="flex justify-between text-sm pt-2 border-t border-gray-100">
-                        <span class="font-bold">Your Total Margin</span>
-                        <span class="font-black text-green-600" id="summaryMargin">₹0</span>
-                    </div>
-                </div>
+<div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-4 text-center">
+<div id="profileAvatar" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-gray-800 to-gray-900 text-white text-3xl font-black flex items-center justify-center shadow-lg mb-3">S</div>
+<h2 id="profileName" class="font-black text-xl tracking-tight">Reseller Name</h2>
+<p id="profilePhone" class="text-sm text-gray-500 font-medium mt-0.5">9999999999</p>
+<span id="profileStatus" class="status-badge inline-block mt-4">PENDING</span>
+</div>
 
-                <button type="submit" id="submitOrderBtn" class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark transition flex justify-center items-center mt-6 h-[56px]">
-                    Confirm Order
-                </button>
-            </form>
-        </div>
-    </div>
+<div class="grid grid-cols-2 gap-3 mb-5">
+<div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center text-center">
+<p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Wallet</p>
+<p id="profileWallet" class="text-2xl font-black text-rose-600 mb-3">₹0</p>
+<button onclick="openWithdrawModal()" class="w-full bg-rose-50 text-rose-600 font-bold text-xs py-2 rounded-lg">Withdraw</button>
+</div>
+<div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center text-center">
+<p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Earnings</p>
+<p id="profileEarnings" class="text-2xl font-black text-green-600">₹0</p>
+<p class="text-[9px] font-bold text-gray-400 mt-2">LIFETIME</p>
+</div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+<button onclick="openEditProfile()" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
+  <span class="font-semibold text-gray-800">📝 Edit Profile & Address</span><span class="text-gray-300 font-bold">›</span>
+</button>
+<button onclick="window.open('https://wa.me/919451239239?text=Hello%20SHRAYNEX%20Support', '_blank')" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">
+  <span class="font-semibold text-gray-800">💬 Help & Support</span><span class="text-xs text-green-600 font-bold bg-green-50 px-2 py-1 rounded">WhatsApp</span>
+</button>
+<button onclick="logoutUser()" class="w-full text-left p-4 flex items-center justify-between hover:bg-red-50 text-red-600 transition">
+  <span class="font-bold">🚪 Logout</span>
+</button>
+</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] bg-white border-t border-gray-100 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+<div class="flex justify-around items-center h-[65px]">
+<button onclick="switchUserTab('feed')" id="navFeed" class="w-full h-full text-rose-600 flex flex-col items-center justify-center transition"><span class="text-xl mb-1">🏠</span><span class="text-[10px] font-bold">Home</span></button>
+<button onclick="switchUserTab('orders')" id="navOrders" class="w-full h-full text-gray-400 flex flex-col items-center justify-center transition hover:text-gray-600"><span class="text-xl mb-1">📦</span><span class="text-[10px] font-bold">Orders</span></button>
+<button onclick="switchUserTab('profile')" id="navProfile" class="w-full h-full text-gray-400 flex flex-col items-center justify-center transition hover:text-gray-600"><span class="text-xl mb-1">👤</span><span class="text-[10px] font-bold">Account</span></button>
+</div>
+</nav>
+</div>
+</section>
+
+<!-- =========================================================
+     EDIT PROFILE MODAL
+========================================================= -->
+<div id="editProfileModal" class="modal fixed inset-0 z-[100] bg-gray-900/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+<div class="flex justify-between items-center mb-5"><h2 class="text-xl font-black">Edit Profile</h2><button onclick="closeModal('editProfileModal')" class="w-8 h-8 bg-gray-100 rounded-full font-bold text-gray-500">✕</button></div>
+<form onsubmit="saveProfile(event)" class="space-y-4">
+<div><label class="text-xs font-bold text-gray-500 mb-1 block">Full Name</label><input id="epName" class="input" required></div>
+<div><label class="text-xs font-bold text-gray-500 mb-1 block">Mobile Number</label><input id="epPhone" type="tel" maxlength="10" pattern="[0-9]{10}" class="input" required></div>
+<div class="pt-4 border-t border-gray-100 mt-2">
+<h3 class="font-bold text-gray-800">Saved Address</h3><p class="text-[10px] text-gray-500 mb-3 font-medium">Auto-fill this address during checkout.</p>
+<textarea id="epAddress" class="input min-h-[80px]" placeholder="Complete Address (House, Street, City)"></textarea>
+</div>
+<div><label class="text-xs font-bold text-gray-500 mb-1 block mt-2">Pincode</label><input id="epPincode" type="tel" maxlength="6" pattern="[0-9]{6}" class="input"></div>
+<button type="submit" id="epSaveBtn" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold mt-4 shadow-lg">Save Changes</button>
+</form>
+</div>
+</div>
+
+<!-- =========================================================
+     WITHDRAWAL MODAL
+========================================================= -->
+<div id="withdrawModal" class="modal fixed inset-0 z-[100] bg-gray-900/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative">
+<div class="flex justify-between items-center mb-5"><h2 class="text-xl font-black">Withdraw Funds</h2><button onclick="closeModal('withdrawModal')" class="w-8 h-8 bg-gray-100 rounded-full font-bold text-gray-500">✕</button></div>
+<div class="bg-rose-50 border border-rose-100 p-4 rounded-2xl mb-5 flex justify-between items-center"><span class="text-sm font-bold text-rose-900">Available Balance</span><span class="text-xl font-black text-rose-600" id="withdrawAvail">₹0</span></div>
+<form onsubmit="submitWithdrawal(event)" class="space-y-4">
+<div><label class="text-xs font-bold text-gray-500 mb-1 block">Amount to Withdraw (₹)</label><input type="number" id="wAmount" min="1" class="input font-bold text-lg" required></div>
+<div><label class="text-xs font-bold text-gray-500 mb-1 block">Bank A/c or UPI ID</label><textarea id="wDetails" class="input" placeholder="e.g. 9876543210@ybl or A/c No + IFSC" required></textarea></div>
+<button type="submit" id="wSubmitBtn" class="w-full bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-green-500/30">Submit Request</button>
+</form>
+</div>
+</div>
+
+<!-- =========================================================
+     SHARE MODAL
+========================================================= -->
+<div id="shareModal" class="modal fixed inset-0 z-[100] bg-gray-900/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative">
+<div class="flex justify-between items-center mb-5"><h2 class="text-xl font-black">Share & Set Margin</h2><button onclick="closeShareModal()" class="w-8 h-8 bg-gray-100 rounded-full font-bold text-gray-500">✕</button></div>
+<div class="flex gap-4 mb-5"><img id="shareImg" src="" class="w-16 h-16 rounded-xl object-cover border border-gray-100"><div><p id="shareProductName" class="font-bold text-sm line-clamp-2 leading-tight">Product</p><p class="text-xs text-gray-500 mt-1 font-medium">Base Price: <span id="shareBasePrice" class="font-bold text-gray-800">₹0</span></p></div></div>
+<div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+<label class="text-xs font-bold text-gray-500 uppercase tracking-widest block mb-2">Customer Selling Price</label>
+<div class="flex relative items-center"><span class="absolute left-4 font-black text-gray-400">₹</span><input id="sellingPrice" type="number" min="1" oninput="calculateProfit()" class="w-full bg-white border border-gray-200 rounded-xl py-3 pl-9 pr-4 font-bold outline-none focus:border-rose-500 transition" placeholder="e.g. 999"></div>
+<div class="mt-4 flex justify-between items-center pt-3 border-t border-gray-200"><span class="text-xs font-bold text-gray-500">Your Profit Margin</span><span id="profitAmount" class="font-black text-lg text-green-600">₹0</span></div>
+</div>
+<button onclick="shareOnWhatsApp()" class="w-full mt-6 bg-[#25D366] text-white py-4 rounded-2xl font-bold shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-5 filter invert"> Share on WhatsApp</button>
+</div>
+</div>
+
+<!-- =========================================================
+     ORDER MODAL
+========================================================= -->
+<div id="orderModal" class="modal fixed inset-0 z-[100] bg-gray-900/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[92vh] overflow-y-auto shadow-2xl relative">
+<div class="flex justify-between items-center sticky top-0 bg-white pb-3 z-10 border-b border-gray-100 mb-4"><h2 class="text-xl font-black">Place Order</h2><button onclick="closeOrderModal()" class="w-8 h-8 bg-gray-100 rounded-full font-bold text-gray-500">✕</button></div>
+<div class="flex gap-3 mb-5 bg-gray-50 p-3 rounded-xl border border-gray-100"><img id="orderImg" src="" class="w-12 h-12 rounded-lg object-cover bg-white"><div class="min-w-0"><p id="orderProductName" class="font-bold text-sm truncate">Product</p><p class="text-[11px] font-bold text-gray-500 mt-0.5">Base: <span id="orderBaseP">₹0</span></p></div></div>
+
+<form onsubmit="placeOrder(event)" class="space-y-4">
+<!-- SIZE SELECTION (DYNAMIC) -->
+<div id="orderSizeWrapper" class="hidden bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+  <label class="text-[11px] font-black text-gray-400 uppercase tracking-widest block mb-3">Select Size <span class="text-rose-500">*</span></label>
+  <div id="orderSizeOptions" class="flex gap-2 flex-wrap"></div>
+  <input type="hidden" id="selectedSize">
+</div>
+
+<div class="flex justify-between items-end"><h3 class="font-bold text-sm text-gray-800">Customer Details</h3><button type="button" onclick="fillSavedAddress()" class="text-[10px] font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-md border border-rose-100">Auto-fill My Address</button></div>
+<input id="customerName" class="input" placeholder="Customer Name" required>
+<input id="customerPhone" class="input" type="tel" maxlength="10" pattern="[0-9]{10}" placeholder="Customer Mobile Number" required>
+<textarea id="customerAddress" class="input min-h-[70px]" placeholder="Complete Delivery Address" required></textarea>
+<div class="grid grid-cols-2 gap-3"><input id="customerPincode" class="input" type="tel" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit Pincode" required><input id="orderQuantity" class="input bg-gray-100 text-center font-bold" type="number" min="1" value="1" oninput="calculateOrderTotal()" required placeholder="Qty"></div>
+
+<div class="bg-rose-50/50 rounded-2xl p-4 border border-rose-100 mt-2">
+<label class="text-[11px] font-black text-gray-500 uppercase tracking-widest block mb-2">Final Customer Price (Per Qty)</label>
+<div class="flex relative items-center"><span class="absolute left-4 font-black text-gray-400">₹</span><input id="orderSellingPriceInput" type="number" min="1" class="w-full bg-white border border-gray-200 rounded-xl py-3 pl-9 pr-4 font-bold outline-none focus:border-rose-500" placeholder="Price given to customer" oninput="calculateOrderTotal()" required></div>
+<div class="flex justify-between items-center mt-3 pt-3 border-t border-rose-100"><span class="text-xs font-bold text-gray-600">Total Margin (Profit)</span><span class="font-black text-green-600">₹<span id="orderProfit">0</span></span></div>
+</div>
+
+<button id="placeOrderBtn" type="submit" class="w-full bg-gray-900 text-white py-4 rounded-2xl font-bold shadow-xl shadow-gray-900/20 mt-2">Confirm & Place Order</button>
+</form>
+</div>
+</div>
+
+
+<!-- =========================================================
+     ADMIN LOGIN
+========================================================= -->
+<div id="adminLoginModal" class="modal fixed inset-0 z-[200] bg-gray-900/80 flex items-end sm:items-center justify-center p-0 sm:p-4">
+<div class="modal-box bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl relative">
+<div class="flex justify-between items-center mb-6"><div><h2 class="text-xl font-black">Admin Gateway</h2><p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Authorized Access Only</p></div><button onclick="closeAdminLogin()" class="w-8 h-8 bg-gray-100 rounded-full font-bold text-gray-500">✕</button></div>
+<form onsubmit="handleAdminLogin(event)" class="space-y-3">
+<input id="adminEmail" type="email" class="input bg-gray-50" placeholder="Admin Email" required>
+<input id="adminPassword" type="password" minlength="6" class="input bg-gray-50" placeholder="Admin Password" required>
+<button id="adminLoginBtn" type="submit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-600/30 mt-2">Access Control Panel</button>
+</form>
+</div>
+</div>
+
+<!-- =========================================================
+     ADMIN PANEL (FULL SCREEN)
+========================================================= -->
+<div id="adminPanelModal" class="modal fixed inset-0 z-[190] bg-[#070707] overflow-y-auto text-white">
+<div class="min-h-screen w-full flex flex-col md:flex-row">
+<!-- Sidebar -->
+<aside id="adminSidebar" class="w-full md:w-[260px] bg-[#111] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex">
+<div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight text-white">SHRAY<span class="text-rose-500">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div>
+<p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Management</p>
+<button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="admin-tab active w-full text-left py-3 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] transition">📊 Dashboard</button>
+<button onclick="switchAdminTab('users')" id="adminTabUsers" class="admin-tab w-full text-left py-3 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] transition">👥 Resellers</button>
+<button onclick="switchAdminTab('products')" id="adminTabProducts" class="admin-tab w-full text-left py-3 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] transition">📦 Products & Categories</button>
+<button onclick="switchAdminTab('orders')" id="adminTabOrders" class="admin-tab w-full text-left py-3 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] transition">🛒 Orders</button>
+<button onclick="switchAdminTab('withdrawals')" id="adminTabWithdrawals" class="admin-tab w-full text-left py-3 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] transition">💰 Withdrawals</button>
+<div class="mt-auto pt-8"><button onclick="closeAdminPanel()" class="w-full bg-red-950/50 border border-red-900/50 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-900 transition">🚪 Exit Admin</button></div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-4 md:p-8 min-w-0">
+<header class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl">☰</button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Dashboard</h1></div>
+<button onclick="refreshAdmin()" class="bg-[#222] border border-[#333] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#333] transition">↻ Refresh Data</button>
+</header>
+
+<!-- Dashboard Sec -->
+<div id="adminDashboardSection" class="admin-section block space-y-6">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl"><p class="text-[10px] font-bold text-gray-500 uppercase">Total Resellers</p><p id="statResellers" class="text-3xl font-black mt-2">0</p></div>
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl"><p class="text-[10px] font-bold text-gray-500 uppercase">Total Products</p><p id="statProducts" class="text-3xl font-black mt-2">0</p></div>
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl"><p class="text-[10px] font-bold text-gray-500 uppercase">Total Orders</p><p id="statOrders" class="text-3xl font-black mt-2 text-blue-400">0</p></div>
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl"><p class="text-[10px] font-bold text-gray-500 uppercase">Pending Withdrawals</p><p id="statWithdrawals" class="text-3xl font-black mt-2 text-amber-500">0</p></div>
+</div>
+<div class="bg-[#111] border border-[#222] p-6 rounded-2xl flex justify-between items-center"><div class="min-w-0"><h2 class="text-lg font-bold">Gross Platform Revenue</h2><p class="text-xs text-gray-500">Total value of all valid orders.</p></div><div class="text-3xl md:text-4xl font-black text-rose-500">₹<span id="statRevenue">0</span></div></div>
+</div>
+
+<!-- Users Sec -->
+<div id="adminUsersSection" class="admin-section hidden">
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div><h2 class="font-bold text-lg">Reseller Approvals & Management</h2></div>
+<input id="adminUserSearch" oninput="renderAdminUsers()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-2.5 rounded-xl outline-none focus:border-rose-500 text-sm md:w-80" placeholder="Search name or email...">
+</div>
+<div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[800px]">
+<thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Contact</th><th class="pb-3 px-4">Wallet</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
+<tbody id="adminUsersTable" class="text-sm"><tr><td colspan="5" class="p-8 text-center text-gray-500">Loading...</td></tr></tbody>
+</table></div>
+</div>
+
+<!-- Products Sec -->
+<div id="adminProductsSection" class="admin-section hidden">
+<div class="bg-[#111] border border-[#222] p-6 rounded-2xl mb-6 shadow-xl">
+<div class="flex justify-between items-center mb-6"><h2 id="productFormTitle" class="font-black text-xl">➕ Add New Product</h2><button onclick="resetProductForm()" class="text-xs bg-[#222] px-3 py-1.5 rounded-lg font-bold text-gray-400 hover:text-white">Clear Form</button></div>
+<input type="hidden" id="editProductId">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="md:col-span-2"><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Product Title</label><input id="pTitle" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Base Price (₹)</label><input id="pBase" type="number" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">MRP (₹)</label><input id="pMrp" type="number" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+
+<div>
+  <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Category</label>
+  <div class="flex gap-2">
+    <select id="pCategory" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500 text-white appearance-none"></select>
+    <button onclick="addNewCategory()" class="bg-[#222] border border-[#333] px-4 rounded-xl font-bold text-sm whitespace-nowrap hover:bg-[#333]">+ New</button>
+  </div>
+</div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Sizes (Comma Separated)</label><input id="pSizes" placeholder="e.g. S, M, L, XL" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Primary Image URL</label><input id="pImg1" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Image 2 URL</label><input id="pImg2" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Image 3 URL</label><input id="pImg3" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Image 4 URL</label><input id="pImg4" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Image 5 URL</label><input id="pImg5" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500"></div>
+<div class="md:col-span-2"><label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Description</label><textarea id="pDesc" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-rose-500 min-h-[100px]"></textarea></div>
+</div>
+<button id="pSaveBtn" onclick="saveAdminProduct()" class="w-full mt-5 bg-rose-600 text-white py-4 rounded-xl font-bold shadow-lg hover:bg-rose-700 transition">Save Product</button>
+</div>
+
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold">Product Catalog</h2><input id="adminProdSearch" oninput="renderAdminProducts()" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-xl text-sm outline-none" placeholder="Search..."></div>
+<div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[800px]">
+<thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-20">Img</th><th class="pb-3 px-4">Details</th><th class="pb-3 px-4">Pricing</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
+<tbody id="adminProductsTable" class="text-sm"></tbody>
+</table></div>
+</div>
+</div>
+
+<!-- Orders Sec -->
+<div id="adminOrdersSection" class="admin-section hidden">
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl mb-4 flex justify-between items-center">
+<h2 class="font-bold text-lg">Order Processing</h2><input id="adminOrdSearch" oninput="renderAdminOrders()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-2 rounded-xl text-sm outline-none" placeholder="Search ID, phone...">
+</div>
+<div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[1000px]">
+<thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Order Info</th><th class="pb-3 px-4">Customer</th><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Financials</th><th class="pb-3 px-4 text-right">Status Update</th></tr></thead>
+<tbody id="adminOrdersTable" class="text-sm"></tbody>
+</table></div>
+</div>
+
+<!-- Withdrawals Sec -->
+<div id="adminWithdrawalsSection" class="admin-section hidden">
+<div class="bg-[#111] border border-[#222] p-5 rounded-2xl">
+<h2 class="font-bold text-lg mb-4">Payout Requests</h2>
+<div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[800px]">
+<thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Amount</th><th class="pb-3 px-4">Payment Info</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Action</th></tr></thead>
+<tbody id="adminWithdrawalsTable" class="text-sm"></tbody>
+</table></div>
+</div>
+</div>
+
+</main>
+</div>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, updateDoc, setDoc, onSnapshot, query, where, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot, serverTimestamp, runTransaction, increment } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-        apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
-        authDomain: "rkyshree-2f74b.firebaseapp.com",
-        projectId: "rkyshree-2f74b",
-        storageBucket: "rkyshree-2f74b.firebasestorage.app",
-        messagingSenderId: "354823113610",
-        appId: "1:354823113610:web:1249f2952249ac1a9c9673"
-    };
+const firebaseConfig={
+  apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
+  authDomain:"rkyshree-2f74b.firebaseapp.com",
+  projectId:"rkyshree-2f74b",
+  storageBucket:"rkyshree-2f74b.firebasestorage.app"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const googleProvider = new GoogleAuthProvider();
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const googleProvider=new GoogleAuthProvider();
 
-    const USERS_COL = "shraynex_users";
-    const PRODUCTS_COL = "shraynex_products";
-    const ORDERS_COL = "shraynex_orders";
-    const WITHDRAW_COL = "shraynex_withdrawals";
+const USERS="shraynex_users", PRODUCTS="shraynex_products", ORDERS="shraynex_orders", WITHDRAW="shraynex_withdrawals", SETTINGS="shraynex_settings";
 
-    let currentUser = null;
-    let userData = null;
-    let allProducts = [];
-    let selectedProduct = null;
-    let unsubProducts = null;
-    let unsubOrders = null;
+let currentUser=null, currentUserData=null, selectedProduct=null;
+let allProducts=[], adminUsers=[], adminOrders=[], adminWithdrawals=[], appCategories=["Saree", "Kurti", "Lehenga", "Suit", "Western"];
+let productsUnsubscribe=null, ordersUnsubscribe=null, userUnsubscribe=null;
+let authMode="login", isAdminMode=false;
 
-    // --- UI Helpers ---
-    window.showToast = (msg) => {
-        const t = document.getElementById('toast');
-        document.getElementById('toastMsg').innerHTML = `<i class="fa-solid fa-circle-check text-green-400 shrink-0 text-lg"></i> <span class="flex-1">${msg}</span>`;
-        t.classList.remove('hidden');
-        t.style.top = '20px';
-        setTimeout(() => { t.classList.add('hidden'); }, 4000);
-    };
+// UTILS
+window.showToast=(msg)=>{
+  const t=document.getElementById("toast"),x=document.getElementById("toastText");
+  x.innerText=msg;t.classList.remove("hidden");clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>t.classList.add("hidden"),3000);
+};
+window.openModal=(id)=>document.getElementById(id).classList.add("active");
+window.closeModal=(id)=>document.getElementById(id).classList.remove("active");
+const money=v=>Number(v||0).toLocaleString("en-IN");
+const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+const getTime=t=>t?.seconds?t.seconds*1000:Date.now();
 
-    window.openModal = (id) => {
-        document.body.style.overflow = 'hidden';
-        document.getElementById(id).classList.add('active');
-    };
-    window.closeModal = (id) => {
-        document.body.style.overflow = '';
-        document.getElementById(id).classList.remove('active');
-    };
+// CATEGORY MANAGEMENT
+async function loadCategories(){
+  try{
+    const snap=await getDoc(doc(db,SETTINGS,"categories"));
+    if(snap.exists() && snap.data().list) appCategories=snap.data().list;
+    else await setDoc(doc(db,SETTINGS,"categories"),{list:appCategories},{merge:true});
+    renderCategoryChips(); populateAdminCategoryDropdown();
+  }catch(e){console.warn("Category load failed",e)}
+}
 
-    window.switchTab = (tabName) => {
-        ['Feed', 'Orders', 'Profile'].forEach(t => {
-            document.getElementById(`tab${t}`).classList.add('hidden');
-            document.getElementById(`navBtn${t}`).classList.replace('text-primary', 'text-gray-400');
-        });
-        document.getElementById(`tab${tabName}`).classList.remove('hidden');
-        document.getElementById(`navBtn${tabName}`).classList.replace('text-gray-400', 'text-primary');
-    };
+function renderCategoryChips(){
+  const c=document.getElementById("categoryChips");
+  if(!c)return;
+  const curr=document.querySelector('.cat-chip.active')?.innerText.replace('🔥 ','') || 'All';
+  c.innerHTML=`<button onclick="setCategoryFilter('All')" class="cat-chip ${curr==='All'?'active':''}"><span class="${curr==='All'?'':'hidden'}">🔥 </span>All</button>`+
+  appCategories.map(cat=>`<button onclick="setCategoryFilter('${esc(cat)}')" class="cat-chip ${curr===cat?'active':''}"><span class="${curr===cat?'':'hidden'}">🔥 </span>${esc(cat)}</button>`).join('');
+}
 
-    let isSignup = false;
-    window.toggleAuthMode = (mode) => {
-        isSignup = mode === 'signup';
-        document.getElementById('signupFieldsGroup').classList.toggle('hidden', !isSignup);
-        document.getElementById('submitAuthBtn').innerText = isSignup ? 'Create Account' : 'Login';
-        document.getElementById('authSubtitle').innerText = isSignup ? 'Join our reseller network' : 'Login to start earning';
-        
-        if(isSignup) {
-            document.getElementById('toggleSignupBtn').className = "flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-800";
-            document.getElementById('toggleLoginBtn').className = "flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm";
-        } else {
-            document.getElementById('toggleLoginBtn').className = "flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-800";
-            document.getElementById('toggleSignupBtn').className = "flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm";
-        }
-    };
+function populateAdminCategoryDropdown(){
+  const sel=document.getElementById("pCategory");
+  if(sel) sel.innerHTML=appCategories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+}
 
-    // --- Auth Logic ---
-    async function initUserDoc(user, additionalData = {}) {
-        const userRef = doc(db, USERS_COL, user.uid);
-        const snap = await getDoc(userRef);
-        if (!snap.exists()) {
-            const data = {
-                uid: user.uid,
-                name: additionalData.name || user.displayName || "Reseller",
-                email: user.email || "",
-                phone: additionalData.phone || "",
-                photoURL: user.photoURL || "",
-                role: "reseller",
-                status: "pending", 
-                walletBalance: 0,
-                totalEarnings: 0,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            };
-            await setDoc(userRef, data);
-            return data;
-        }
-        return snap.data();
+window.addNewCategory=async()=>{
+  const cat=prompt("Enter new category name:");
+  if(!cat||!cat.trim())return;
+  const clean=cat.trim();
+  if(!appCategories.includes(clean)){
+    appCategories.push(clean);
+    try{
+      await setDoc(doc(db,SETTINGS,"categories"),{list:appCategories},{merge:true});
+      showToast("Category added!");
+      renderCategoryChips(); populateAdminCategoryDropdown();
+      document.getElementById("pCategory").value=clean;
+    }catch(e){showToast("Failed to save category.")}
+  }
+};
+
+let currentFilter = 'All';
+window.setCategoryFilter=(cat)=>{
+  currentFilter=cat;
+  renderCategoryChips();
+  filterProducts();
+};
+
+// AUTHENTICATION
+window.openAuthModal=()=>openModal('authModal');
+window.closeAuthModal=()=>closeModal('authModal');
+window.setAuthMode=(mode)=>{
+  authMode=mode;
+  document.getElementById("signupFields").classList.toggle("hidden",mode==='login');
+  document.getElementById("loginModeBtn").className=mode==='login'?"flex-1 py-3 rounded-xl bg-white shadow-sm font-bold text-sm text-gray-900 transition":"flex-1 py-3 rounded-xl text-gray-500 font-bold text-sm transition";
+  document.getElementById("signupModeBtn").className=mode==='signup'?"flex-1 py-3 rounded-xl bg-white shadow-sm font-bold text-sm text-gray-900 transition":"flex-1 py-3 rounded-xl text-gray-500 font-bold text-sm transition";
+  document.getElementById("authName").required=mode==='signup';
+  document.getElementById("authPhone").required=mode==='signup';
+  document.getElementById("emailBtn").innerText=mode==='signup'?"Create Account":"Login";
+  document.getElementById("forgotBtn").classList.toggle("hidden",mode==='signup');
+  document.getElementById("authSubtitle").innerText=mode==='signup'?"Create your SHRAYNEX reseller account":"Login to access your dashboard";
+};
+document.getElementById("googleBtn").innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.22a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.93-4.2 2.93-7.39z"/><path fill="#34A853" d="M12 21.6c2.64 0 4.85-.87 6.47-2.34l-3.14-2.43c-.87.58-1.98.93-3.33.93-2.56 0-4.73-1.73-5.51-4.06H3.25v2.5A9.77 9.77 0 0 0 12 21.6z"/><path fill="#FBBC05" d="M6.49 13.7A5.88 5.88 0 0 1 6.18 12c0-.59.11-1.17.31-1.7V7.8H3.25A9.78 9.78 0 0 0 2.2 12c0 1.57.38 3.05 1.05 4.2l3.24-2.5z"/><path fill="#EA4335" d="M12 6.24c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.84 3.32 14.64 2.4 12 2.4a9.77 9.77 0 0 0-8.75 5.4l3.24 2.5C7.27 7.97 9.44 6.24 12 6.24z"/></svg> Continue with Google`;
+
+window.loginWithGoogle=async()=>{
+  document.getElementById("googleBtn").innerHTML='<div class="loader"></div>';
+  try{
+    const res=await signInWithPopup(auth,googleProvider);
+    if(res?.user) await createOrUpdateUser(res.user,{loginType:"google"});
+    closeAuthModal();showToast("Login successful");
+  }catch(e){showToast(e.message)}
+  finally{document.getElementById("googleBtn").innerHTML=`<svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h5.22a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.7 2.93-4.2 2.93-7.39z"/><path fill="#34A853" d="M12 21.6c2.64 0 4.85-.87 6.47-2.34l-3.14-2.43c-.87.58-1.98.93-3.33.93-2.56 0-4.73-1.73-5.51-4.06H3.25v2.5A9.77 9.77 0 0 0 12 21.6z"/><path fill="#FBBC05" d="M6.49 13.7A5.88 5.88 0 0 1 6.18 12c0-.59.11-1.17.31-1.7V7.8H3.25A9.78 9.78 0 0 0 2.2 12c0 1.57.38 3.05 1.05 4.2l3.24-2.5z"/><path fill="#EA4335" d="M12 6.24c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.84 3.32 14.64 2.4 12 2.4a9.77 9.77 0 0 0-8.75 5.4l3.24 2.5C7.27 7.97 9.44 6.24 12 6.24z"/></svg> Continue with Google`;}
+};
+
+window.handleEmailAuth=async(e)=>{
+  e.preventDefault();
+  const email=document.getElementById("authEmail").value,pass=document.getElementById("authPassword").value;
+  const btn=document.getElementById("emailBtn");btn.disabled=true;btn.innerHTML='<div class="loader loader-white mx-auto"></div>';
+  try{
+    if(authMode==="signup"){
+      const name=document.getElementById("authName").value,phone=document.getElementById("authPhone").value;
+      const c=await createUserWithEmailAndPassword(auth,email,pass);
+      await createOrUpdateUser(c.user,{name,phone,loginType:"email"});
+      closeAuthModal();showToast("Account created. Waiting for admin approval.");
+    }else{
+      await signInWithEmailAndPassword(auth,email,pass);
+      closeAuthModal();showToast("Login successful");
     }
+  }catch(e){showToast(e.message.replace("Firebase: ",""))}
+  finally{btn.disabled=false;btn.innerText=authMode==="signup"?"Create Account":"Login";}
+};
 
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            try {
-                // Realtime user updates
-                onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {
-                    if (doc.exists()) {
-                        userData = doc.data();
-                        if(userData.status === 'suspended') {
-                            signOut(auth);
-                            showToast("Account suspended. Contact support.");
-                            return;
-                        }
-                        updateProfileUI();
-                    }
-                });
-                
-                document.getElementById('landingPage').classList.remove('active');
-                document.getElementById('appPage').classList.add('active');
-                
-                loadProducts();
-                loadOrders();
-                closeModal('authModal');
-            } catch (error) {
-                console.error("Auth init error:", error);
-            }
-        } else {
-            currentUser = null;
-            userData = null;
-            document.getElementById('appPage').classList.remove('active');
-            document.getElementById('landingPage').classList.add('active');
-            if(unsubProducts) unsubProducts();
-            if(unsubOrders) unsubOrders();
+window.forgotPassword=async()=>{
+  const email=document.getElementById("authEmail").value;
+  if(!email)return showToast("Enter email first.");
+  try{await sendPasswordResetEmail(auth,email);showToast("Password reset email sent!")}catch(e){showToast(e.message)}
+};
+
+async function createOrUpdateUser(user,extra={}){
+  const ref=doc(db,USERS,user.uid),snap=await getDoc(ref);
+  if(!snap.exists()){
+    const data={uid:user.uid,name:extra.name||user.displayName||"Reseller",email:user.email||"",phone:extra.phone||"",role:"reseller",status:"pending",walletBalance:0,totalEarnings:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
+    await setDoc(ref,data);currentUserData=data;
+  }else{
+    const u={updatedAt:serverTimestamp()};
+    if(extra.name)u.name=extra.name;if(extra.phone)u.phone=extra.phone;
+    await setDoc(ref,u,{merge:true});currentUserData={...snap.data(),...u};
+  }
+}
+
+onAuthStateChanged(auth,async(user)=>{
+  currentUser=user;
+  if(user){
+    if(isAdminMode)return; // Handled by admin login
+    try{
+      await createOrUpdateUser(user);
+      if(userUnsubscribe)userUnsubscribe();
+      userUnsubscribe=onSnapshot(doc(db,USERS,user.uid),snap=>{
+        if(snap.exists()){
+          currentUserData=snap.data();updateProfileUI();
+          if(currentUserData.status==="suspended" && currentUserData.role!=="admin"){signOut(auth);showToast("Account Suspended");}
         }
+      });
+      document.getElementById("landingPage").classList.remove("active");
+      document.getElementById("userPage").classList.add("active");
+      loadCategories(); loadProducts(); loadOrders();
+    }catch(e){console.error(e)}
+  }else{
+    if(userUnsubscribe)userUnsubscribe();if(productsUnsubscribe)productsUnsubscribe();if(ordersUnsubscribe)ordersUnsubscribe();
+    currentUserData=null;document.getElementById("userPage").classList.remove("active");document.getElementById("landingPage").classList.add("active");
+  }
+});
+
+window.logoutUser=async()=>{if(confirm("Logout?")){await signOut(auth);showToast("Logged out");}};
+window.switchUserTab=(tab)=>{
+  ["feed","orders","profile"].forEach(x=>document.getElementById(x+"Tab").classList.add("hidden"));
+  document.getElementById(tab+"Tab").classList.remove("hidden");
+  ["navFeed","navOrders","navProfile"].forEach(id=>{document.getElementById(id).classList.remove("text-rose-600");document.getElementById(id).classList.add("text-gray-400")});
+  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("text-rose-600");
+  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove("text-gray-400");
+};
+
+function updateProfileUI(){
+  if(!currentUserData)return;
+  const n=currentUserData.name||"Reseller";
+  document.getElementById("userName").innerText=n;document.getElementById("profileName").innerText=n;
+  document.getElementById("avatar").innerText=n.charAt(0);document.getElementById("profileAvatar").innerText=n.charAt(0);
+  document.getElementById("profilePhone").innerText=currentUserData.phone||currentUserData.email||"-";
+  const st=currentUserData.status||"pending";
+  const stEl=document.getElementById("profileStatus");
+  stEl.innerText=st; stEl.className="status-badge inline-block mt-4 "+(st==="approved"?"status-delivered":st==="suspended"?"status-cancelled":"status-pending");
+  document.getElementById("approvalNotice").classList.toggle("hidden",st==="approved");
+  document.getElementById("profileWallet").innerText="₹"+money(currentUserData.walletBalance);
+  document.getElementById("profileEarnings").innerText="₹"+money(currentUserData.totalEarnings);
+}
+
+// PROFILE EDIT
+window.openEditProfile=()=>{
+  document.getElementById("epName").value=currentUserData?.name||"";
+  document.getElementById("epPhone").value=currentUserData?.phone||"";
+  document.getElementById("epAddress").value=currentUserData?.address||"";
+  document.getElementById("epPincode").value=currentUserData?.pincode||"";
+  openModal('editProfileModal');
+};
+window.saveProfile=async(e)=>{
+  e.preventDefault();const btn=document.getElementById("epSaveBtn");btn.innerText="Saving...";btn.disabled=true;
+  try{
+    await updateDoc(doc(db,USERS,currentUser.uid),{name:document.getElementById("epName").value,phone:document.getElementById("epPhone").value,address:document.getElementById("epAddress").value,pincode:document.getElementById("epPincode").value,updatedAt:serverTimestamp()});
+    showToast("Profile saved!");closeModal('editProfileModal');
+  }catch(e){showToast("Error saving profile.")}
+  finally{btn.innerText="Save Changes";btn.disabled=false;}
+};
+
+// WITHDRAWALS
+window.openWithdrawModal=()=>{document.getElementById("withdrawAvail").innerText="₹"+money(currentUserData?.walletBalance);document.getElementById("wAmount").value="";document.getElementById("wDetails").value="";openModal('withdrawModal');};
+window.submitWithdrawal=async(e)=>{
+  e.preventDefault();const amt=Number(document.getElementById("wAmount").value),det=document.getElementById("wDetails").value;
+  if(amt<=0 || amt>(currentUserData?.walletBalance||0))return showToast("Invalid amount.");
+  const btn=document.getElementById("wSubmitBtn");btn.disabled=true;btn.innerText="Processing...";
+  try{
+    await runTransaction(db,async(tx)=>{
+      const uRef=doc(db,USERS,currentUser.uid);const uSnap=await tx.get(uRef);
+      if(uSnap.data().walletBalance<amt)throw new Error("Insufficient funds.");
+      tx.update(uRef,{walletBalance:increment(-amt),updatedAt:serverTimestamp()});
+      tx.set(doc(collection(db,WITHDRAW)),{userId:currentUser.uid,userName:uSnap.data().name,userEmail:uSnap.data().email,amount:amt,details:det,status:'pending',createdAt:serverTimestamp()});
     });
+    showToast("Withdrawal requested!");closeModal('withdrawModal');
+  }catch(e){showToast(e.message)}finally{btn.disabled=false;btn.innerText="Submit Request";}
+};
 
-    window.loginWithGoogle = async () => {
-        try {
-            document.getElementById('googleAuthBtn').innerHTML = '<div class="spinner"></div>';
-            await signInWithPopup(auth, googleProvider);
-        } catch (error) {
-            showToast(error.message);
-            document.getElementById('googleAuthBtn').innerHTML = '<img src="https://www.google.com/favicon.ico" class="w-5 h-5" alt="Google"> Continue with Google';
-        }
-    };
+// PRODUCTS
+function loadProducts(){
+  if(productsUnsubscribe)productsUnsubscribe();
+  productsUnsubscribe=onSnapshot(collection(db,PRODUCTS),snap=>{
+    allProducts=[];snap.forEach(d=>{if(d.data().active!==false)allProducts.push({id:d.id,...d.data()})});
+    allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+    filterProducts(); // initial render
+  });
+}
+window.filterProducts=()=>{
+  const search=document.getElementById("productSearch").value.toLowerCase().trim();
+  let filtered=allProducts;
+  if(currentFilter!=='All'){filtered=filtered.filter(p=>(p.category||"").toLowerCase()===currentFilter.toLowerCase());}
+  if(search){filtered=filtered.filter(p=>`${p.title||""} ${p.category||""}`.toLowerCase().includes(search));}
+  renderProducts(filtered);
+};
+function renderProducts(list){
+  const c=document.getElementById("productFeed");
+  if(!list.length){c.innerHTML='<div class="col-span-2 text-center py-12"><div class="text-4xl mb-3">🛍️</div><h3 class="font-bold text-gray-800">No products found</h3><p class="text-xs text-gray-400 mt-1">Try a different category.</p></div>';return}
+  c.innerHTML=list.map(p=>{
+    const img=(p.images&&p.images[0])||p.image||'';
+    return `<div class="bg-white rounded-3xl overflow-hidden shadow-[0_4px_15px_rgba(0,0,0,0.03)] border border-gray-100 flex flex-col group">
+    <div class="relative pt-[125%] bg-gray-50"><img src="${esc(img)}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy"></div>
+    <div class="p-3.5 flex flex-col flex-1"><h4 class="font-bold text-sm text-gray-800 line-clamp-2 leading-tight mb-2">${esc(p.title)}</h4>
+    <div class="mt-auto"><div class="flex items-baseline gap-1.5 mb-2"><span class="font-black text-lg text-rose-600">₹${money(p.basePrice)}</span>${p.mrp?`<span class="text-[10px] text-gray-400 line-through">₹${money(p.mrp)}</span>`:''}</div>
+    <div class="grid grid-cols-2 gap-1.5"><button onclick="openShare('${p.id}')" class="bg-green-50 text-green-700 py-2 rounded-xl text-[11px] font-bold border border-green-100 flex items-center justify-center gap-1"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-3"> Share</button><button onclick="openOrder('${p.id}')" class="bg-gray-900 text-white py-2 rounded-xl text-[11px] font-bold shadow-md shadow-gray-900/20">Order</button></div></div></div></div>`;
+  }).join('');
+}
 
-    window.handleEmailAuth = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('authEmail').value;
-        const pass = document.getElementById('authPassword').value;
-        const btn = document.getElementById('submitAuthBtn');
-        btn.innerHTML = '<div class="spinner white"></div>';
+// SHARE
+window.openShare=(id)=>{
+  selectedProduct=allProducts.find(p=>p.id===id);if(!selectedProduct)return;
+  document.getElementById("shareProductName").innerText=selectedProduct.title;
+  document.getElementById("shareBasePrice").innerText=money(selectedProduct.basePrice);
+  document.getElementById("shareImg").src=(selectedProduct.images&&selectedProduct.images[0])||selectedProduct.image||'';
+  document.getElementById("sellingPrice").value="";document.getElementById("profitAmount").innerText="₹0";
+  openModal('shareModal');
+};
+window.closeShareModal=()=>closeModal('shareModal');
+window.calculateProfit=()=>{
+  if(!selectedProduct)return;const b=Number(selectedProduct.basePrice||0),s=Number(document.getElementById("sellingPrice").value||0);
+  document.getElementById("profitAmount").innerText="₹"+money(Math.max(0,s-b));
+};
+window.shareOnWhatsApp=()=>{
+  if(!selectedProduct)return;const s=Number(document.getElementById("sellingPrice").value||0),b=Number(selectedProduct.basePrice||0);
+  if(s<=b)return showToast("Selling price must be greater than base price.");
+  const msg=`🛍️ *${selectedProduct.title}*\n\n💰 Price: ₹${s}\n🚚 Delivery: ${selectedProduct.deliveryTime||"3-7 Days"}\n\nInterested? Message me to order!\n\n${(selectedProduct.images&&selectedProduct.images[0])||selectedProduct.image||""}`;
+  window.open("https://wa.me/?text="+encodeURIComponent(msg),"_blank");closeShareModal();
+};
 
-        try {
-            if (isSignup) {
-                const name = document.getElementById('authName').value;
-                const phone = document.getElementById('authPhone').value;
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await initUserDoc(res.user, { name, phone });
-                showToast("Account created successfully! Waiting for approval.");
-            } else {
-                await signInWithEmailAndPassword(auth, email, pass);
-                showToast("Logged in successfully");
-            }
-        } catch (error) {
-            showToast(error.message.replace('Firebase: ', ''));
-        } finally {
-            btn.innerText = isSignup ? 'Create Account' : 'Login';
-        }
-    };
+// ORDER & SIZES
+window.openOrder=(id)=>{
+  if(currentUserData?.status!=="approved")return showToast("Account approval pending.");
+  selectedProduct=allProducts.find(p=>p.id===id);if(!selectedProduct)return;
+  document.getElementById("orderProductName").innerText=selectedProduct.title;
+  document.getElementById("orderBaseP").innerText="₹"+money(selectedProduct.basePrice);
+  document.getElementById("orderImg").src=(selectedProduct.images&&selectedProduct.images[0])||selectedProduct.image||'';
+  document.getElementById("orderSellingPriceInput").value="";document.getElementById("orderSellingPrice").innerText="0";
+  document.getElementById("orderProfit").innerText="0";
+  document.getElementById("orderQuantity").value="1";document.getElementById("orderQtyDisplay").innerText="1";
+  
+  // Size Logic
+  const sizeWrap=document.getElementById('orderSizeWrapper');
+  const cat=(selectedProduct.category||"").toLowerCase();
+  const sizes=Array.isArray(selectedProduct.sizes)?selectedProduct.sizes.filter(Boolean):[];
+  
+  if(cat.includes('saree') || sizes.length===0){
+    sizeWrap.classList.add('hidden');
+    document.getElementById('selectedSize').value="N/A";
+    document.getElementById('selectedSize').required=false;
+  }else{
+    sizeWrap.classList.remove('hidden');
+    document.getElementById('selectedSize').value=""; // Requires selection
+    document.getElementById('selectedSize').required=true;
+    document.getElementById('orderSizeOptions').innerHTML=sizes.map(s=>`<button type="button" onclick="selectOrderSize('${esc(s)}',this)" class="size-btn">${esc(s)}</button>`).join('');
+  }
+  openModal('orderModal');
+};
+window.closeOrderModal=()=>closeModal('orderModal');
+window.selectOrderSize=(s,btn)=>{
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('selectedSize').value=s;
+};
+window.calculateOrderTotal=()=>{
+  if(!selectedProduct)return;const b=Number(selectedProduct.basePrice||0),s=Number(document.getElementById("orderSellingPriceInput").value||0),q=Math.max(1,Number(document.getElementById("orderQuantity").value||1));
+  document.getElementById("orderSellingPrice").innerText=money(s);document.getElementById("orderQtyDisplay").innerText=q;document.getElementById("orderProfit").innerText=money(Math.max(0,s-b)*q);
+};
+window.fillSavedAddress=()=>{
+  if(!currentUserData?.address)return showToast("No saved address found in Account tab.");
+  document.getElementById("customerName").value=currentUserData.name||"";
+  document.getElementById("customerPhone").value=currentUserData.phone||"";
+  document.getElementById("customerAddress").value=currentUserData.address||"";
+  document.getElementById("customerPincode").value=currentUserData.pincode||"";
+  showToast("Address populated.");
+};
+window.placeOrder=async(e)=>{
+  e.preventDefault();
+  if(currentUserData?.status!=="approved")return showToast("Account pending.");
+  const sSize=document.getElementById('selectedSize').value;
+  if(document.getElementById('selectedSize').required && !sSize)return showToast("Please select a size.");
+  const nm=document.getElementById("customerName").value,ph=document.getElementById("customerPhone").value,ad=document.getElementById("customerAddress").value,pin=document.getElementById("customerPincode").value;
+  const q=Number(document.getElementById("orderQuantity").value),sp=Number(document.getElementById("orderSellingPriceInput").value),bp=Number(selectedProduct.basePrice);
+  if(sp<=bp)return showToast("Selling price must be higher than base.");
+  
+  const btn=document.getElementById("placeOrderBtn");btn.disabled=true;btn.innerText="Creating Order...";
+  try{
+    const orderId="RS"+Math.floor(100000+Math.random()*900000); // Robust 6-digit random ID
+    await setDoc(doc(db,ORDERS,orderId),{
+      orderId:orderId,productId:selectedProduct.id,productName:selectedProduct.title,productImage:(selectedProduct.images&&selectedProduct.images[0])||selectedProduct.image||'',
+      size:sSize!=='N/A'?sSize:null, quantity:q,basePrice:bp,sellingPrice:sp,profit:(sp-bp)*q,status:"pending",
+      resellerId:currentUser.uid,resellerName:currentUserData.name||"",customerName:nm,customerPhone:ph,customerAddress:ad,pincode:pin,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+    });
+    showToast("Order placed! ID: "+orderId);
+    closeOrderModal(); document.getElementById("orderQuantity").value="1";
+    ["customerName","customerPhone","customerAddress","customerPincode","orderSellingPriceInput"].forEach(i=>document.getElementById(i).value="");
+    switchUserTab("orders");
+  }catch(e){showToast("Order Failed. "+e.message)}finally{btn.disabled=false;btn.innerText="Confirm & Place Order";}
+};
 
-    window.handleLogout = async () => {
-        if(confirm('Are you sure you want to logout?')) {
-            await signOut(auth);
-        }
-    };
+// MY ORDERS
+function loadOrders(){
+  if(!currentUser)return;if(ordersUnsubscribe)ordersUnsubscribe();
+  ordersUnsubscribe=onSnapshot(query(collection(db,ORDERS),where("resellerId","==",currentUser.uid)),snap=>{
+    const ords=[];snap.forEach(d=>ords.push({id:d.id,...d.data()}));
+    ords.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+    const c=document.getElementById("ordersList");
+    if(!ords.length){c.innerHTML='<div class="bg-white rounded-3xl p-8 text-center border border-gray-100"><div class="text-4xl mb-3">📦</div><h3 class="font-bold text-gray-800">No Orders Yet</h3><p class="text-xs text-gray-400 mt-1">Share products to get your first order!</p></div>';return;}
+    c.innerHTML=ords.map(o=>`<div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 relative"><div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3"><div><span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Order ID</span><span class="font-black text-gray-800">${esc(o.orderId||o.id)}</span></div><span class="status-badge status-${(o.status||'pending').toLowerCase()}">${esc(o.status||'pending')}</span></div><div class="flex gap-3"><img src="${esc(o.productImage)}" class="w-16 h-16 rounded-xl object-cover bg-gray-50"><div class="flex-1 min-w-0"><h4 class="font-bold text-sm line-clamp-1 mb-1">${esc(o.productName)}</h4><p class="text-[11px] text-gray-500 font-medium">Qty: ${o.quantity||1}${o.size?' • Size: '+o.size:''} • Customer: ${esc(o.customerName)}</p></div></div><div class="bg-gray-50 rounded-xl p-3 grid grid-cols-2 gap-2 mt-4 text-center divide-x divide-gray-200"><div><p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Customer Paid</p><p class="font-bold text-gray-800 mt-1">₹${money(o.sellingPrice*(o.quantity||1))}</p></div><div><p class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Your Profit</p><p class="font-black text-green-600 mt-1">₹${money(o.profit)}</p></div></div></div>`).join('');
+  });
+}
 
-    // --- Profile & Address Logic ---
-    function updateProfileUI() {
-        if(!userData) return;
-        const name = userData.name || "Reseller";
-        document.getElementById('headerUserName').innerText = name;
-        document.getElementById('profileName').innerText = name;
-        document.getElementById('userAvatarInitials').innerText = name.charAt(0).toUpperCase();
-        document.getElementById('profileAvatarBig').innerText = name.charAt(0).toUpperCase();
-        document.getElementById('profilePhone').innerText = userData.phone || userData.email || "-";
-        
-        document.getElementById('walletBalance').innerText = `₹${userData.walletBalance || 0}`;
-        document.getElementById('totalEarnings').innerText = `₹${userData.totalEarnings || 0}`;
 
-        const hasAddress = userData.address && userData.address.trim() !== "";
-        document.getElementById('profileHasAddress').innerText = hasAddress ? "Saved" : "Add Now";
-        document.getElementById('profileHasAddress').className = hasAddress ? "text-[10px] font-bold text-green-500 bg-green-50 px-2 py-1 rounded" : "text-[10px] font-bold text-primary bg-primary-light px-2 py-1 rounded";
+// =========================================================
+// ADMIN LOGIC
+// =========================================================
+window.openAdminLogin=()=>{document.getElementById("adminEmail").value=currentUser?.email||"";document.getElementById("adminPassword").value="";openModal('adminLoginModal');};
+window.closeAdminLogin=()=>closeModal('adminLoginModal');
+window.handleAdminLogin=async(e)=>{
+  e.preventDefault();const email=document.getElementById("adminEmail").value,pass=document.getElementById("adminPassword").value;
+  const btn=document.getElementById("adminLoginBtn");btn.disabled=true;btn.innerText="Verifying...";
+  try{
+    let u=auth.currentUser;
+    if(!u||u.email!==email) u=(await signInWithEmailAndPassword(auth,email,pass)).user;
+    const snap=await getDoc(doc(db,USERS,u.uid));
+    if(!snap.exists()||snap.data().role!=="admin")throw new Error("Unauthorized.");
+    isAdminMode=true;currentUser=u;currentUserData=snap.data();
+    closeModal('adminLoginModal');document.getElementById('adminPanelModal').classList.add('active');
+    loadCategories(); refreshAdmin();
+  }catch(e){showToast("Access Denied.");}finally{btn.disabled=false;btn.innerText="Access Control Panel";}
+};
+window.closeAdminPanel=()=>{document.getElementById('adminPanelModal').classList.remove('active');};
+window.toggleAdminMenu=()=>document.getElementById('adminSidebar').classList.toggle('hidden');
+window.switchAdminTab=(tab)=>{
+  ["dashboard","users","products","orders","withdrawals"].forEach(x=>{document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden",x!==tab);document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle("active",x===tab);document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1)).classList.toggle("text-white",x===tab);});
+  document.getElementById("adminPageTitle").innerText=document.getElementById("adminTab"+tab.charAt(0).toUpperCase()+tab.slice(1)).innerText.split(' ')[1];
+};
 
-        const statusBadge = document.getElementById('profileStatusBadge');
-        statusBadge.innerText = userData.status;
-        if(userData.status === 'approved') {
-            statusBadge.className = "inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 uppercase";
-            document.getElementById('approvalBanner').classList.add('hidden');
-        } else {
-            statusBadge.className = "inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 uppercase";
-            document.getElementById('approvalBanner').classList.remove('hidden');
-        }
-    }
+window.refreshAdmin=async()=>{
+  if(!isAdminMode)return;
+  const uSnap=await getDocs(collection(db,USERS));adminUsers=[];uSnap.forEach(d=>adminUsers.push({id:d.id,...d.data()}));
+  const oSnap=await getDocs(collection(db,ORDERS));adminOrders=[];oSnap.forEach(d=>adminOrders.push({id:d.id,...d.data()}));adminOrders.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+  const pSnap=await getDocs(collection(db,PRODUCTS));allProducts=[];pSnap.forEach(d=>allProducts.push({id:d.id,...d.data()}));allProducts.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+  const wSnap=await getDocs(collection(db,WITHDRAW));adminWithdrawals=[];wSnap.forEach(d=>adminWithdrawals.push({id:d.id,...d.data()}));adminWithdrawals.sort((a,b)=>getTime(b.createdAt)-getTime(a.createdAt));
+  
+  // Dashboard
+  document.getElementById("statResellers").innerText=adminUsers.filter(u=>u.role!=='admin').length;
+  document.getElementById("statProducts").innerText=allProducts.length;
+  document.getElementById("statOrders").innerText=adminOrders.length;
+  document.getElementById("statWithdrawals").innerText=adminWithdrawals.filter(w=>w.status==='pending').length;
+  document.getElementById("statRevenue").innerText=money(adminOrders.filter(o=>!['cancelled','rejected'].includes(o.status)).reduce((s,o)=>s+(Number(o.sellingPrice)*Number(o.quantity||1)),0));
+  
+  renderAdminUsers(); renderAdminProducts(); renderAdminOrders(); renderAdminWithdrawals();
+};
 
-    window.openEditProfile = () => {
-        document.getElementById('epName').value = userData.name || "";
-        document.getElementById('epPhone').value = userData.phone || "";
-        document.getElementById('epAddress').value = userData.address || "";
-        document.getElementById('epPincode').value = userData.pincode || "";
-        openModal('editProfileModal');
-    };
+// Admin Users
+window.renderAdminUsers=()=>{
+  const s=document.getElementById("adminUserSearch").value.toLowerCase();
+  const list=adminUsers.filter(u=>u.role!=='admin'&&`${u.name} ${u.email} ${u.phone}`.toLowerCase().includes(s));
+  document.getElementById("adminUsersTable").innerHTML=list.length?list.map(u=>`<tr class="border-b border-[#222]"><td class="py-4 px-4 font-bold">${esc(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${esc(u.phone)}<br>${esc(u.email)}</div></td><td class="py-4 px-4 font-black text-rose-500">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="status-badge status-${(u.status||'pending')}">${esc(u.status||'pending')}</span></td><td class="py-4 px-4 text-right"><div class="flex gap-2 justify-end">${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-900/50 text-green-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-900">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#333]">${u.status==='suspended'?'Restore':'Suspend'}</button></div></td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';
+};
+window.setAdminUserStatus=async(id,st)=>{await updateDoc(doc(db,USERS,id),{status:st,updatedAt:serverTimestamp()});showToast("Updated.");refreshAdmin();};
 
-    window.submitEditProfile = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submitEditProfileBtn');
-        const orig = btn.innerText;
-        btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
-        try {
-            await updateDoc(doc(db, USERS_COL, currentUser.uid), {
-                name: document.getElementById('epName').value.trim(),
-                phone: document.getElementById('epPhone').value.trim(),
-                address: document.getElementById('epAddress').value.trim(),
-                pincode: document.getElementById('epPincode').value.trim(),
-                updatedAt: serverTimestamp()
-            });
-            showToast("Profile & Address saved permanently.");
-            closeModal('editProfileModal');
-        } catch (err) {
-            showToast("Failed to save changes.");
-        } finally {
-            btn.innerText = orig; btn.disabled = false;
-        }
-    };
+// Admin Products
+window.resetProductForm=()=>{
+  document.getElementById("editProductId").value="";document.getElementById("productFormTitle").innerText="➕ Add New Product";
+  ["pTitle","pBase","pMrp","pSizes","pImg1","pImg2","pImg3","pImg4","pImg5","pDesc"].forEach(i=>document.getElementById(i).value="");
+};
+window.saveAdminProduct=async()=>{
+  const id=document.getElementById("editProductId").value,btn=document.getElementById("pSaveBtn");
+  const data={
+    title:document.getElementById("pTitle").value, basePrice:Number(document.getElementById("pBase").value||0), mrp:Number(document.getElementById("pMrp").value||0),
+    category:document.getElementById("pCategory").value, sizes:document.getElementById("pSizes").value.split(',').map(s=>s.trim()).filter(Boolean),
+    images:[document.getElementById("pImg1").value,document.getElementById("pImg2").value,document.getElementById("pImg3").value,document.getElementById("pImg4").value,document.getElementById("pImg5").value].filter(Boolean),
+    description:document.getElementById("pDesc").value, updatedAt:serverTimestamp()
+  };
+  if(!data.title||!data.basePrice)return showToast("Title and Base Price required.");
+  btn.disabled=true;btn.innerText="Saving...";
+  try{if(id)await updateDoc(doc(db,PRODUCTS,id),data); else{data.createdAt=serverTimestamp();data.active=true;await addDoc(collection(db,PRODUCTS),data);}resetProductForm();showToast("Saved!");refreshAdmin();}catch(e){showToast("Error saving.")}finally{btn.disabled=false;btn.innerText="Save Product";}
+};
+window.renderAdminProducts=()=>{
+  const s=document.getElementById("adminProdSearch").value.toLowerCase();
+  const list=allProducts.filter(p=>`${p.title} ${p.category}`.toLowerCase().includes(s));
+  document.getElementById("adminProductsTable").innerHTML=list.length?list.map(p=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${esc(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-lg object-cover bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold">${esc(p.title)}</div><div class="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">${esc(p.category)} | Sizes: ${p.sizes?.join(', ')||'None'}</div></td><td class="py-3 px-4 font-black text-rose-500">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#333] mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-950/50 text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-900">Del</button></td></tr>`).join(''):'<tr><td colspan="4" class="p-8 text-center text-gray-500">No products.</td></tr>';
+};
+window.editAdminProduct=(id)=>{
+  const p=allProducts.find(x=>x.id===id);if(!p)return;
+  document.getElementById("editProductId").value=p.id;document.getElementById("productFormTitle").innerText="✏️ Edit Product";
+  document.getElementById("pTitle").value=p.title;document.getElementById("pBase").value=p.basePrice;document.getElementById("pMrp").value=p.mrp||"";
+  document.getElementById("pCategory").value=p.category||appCategories[0];document.getElementById("pSizes").value=p.sizes?.join(", ")||"";
+  const imgs=p.images||[p.image];for(let i=1;i<=5;i++)document.getElementById("pImg"+i).value=imgs[i-1]||"";
+  document.getElementById("pDesc").value=p.description||"";window.scrollTo(0,0);
+};
+window.deleteAdminProduct=async(id)=>{if(confirm("Delete product permanently?")){await deleteDoc(doc(db,PRODUCTS,id));showToast("Deleted");refreshAdmin();}};
 
-    // --- Withdrawal Logic ---
-    window.openWithdrawModal = () => {
-        document.getElementById('withdrawAvailable').innerText = `₹${userData.walletBalance || 0}`;
-        document.getElementById('withdrawAmount').value = '';
-        document.getElementById('withdrawDetails').value = '';
-        openModal('withdrawModal');
-    };
+// Admin Orders
+window.renderAdminOrders=()=>{
+  const s=document.getElementById("adminOrdSearch").value.toLowerCase();
+  const list=adminOrders.filter(o=>`${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(s));
+  document.getElementById("adminOrdersTable").innerHTML=list.length?list.map(o=>`<tr class="border-b border-[#222]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-300 font-mono mb-1">${esc(o.orderId||o.id)}</div><div class="font-bold text-sm line-clamp-1">${esc(o.productName)}</div><div class="text-[10px] text-gray-500 mt-1 uppercase">Qty: ${o.quantity||1} ${o.size?'| Size: '+o.size:''}</div></td><td class="py-4 px-4"><div class="font-bold">${esc(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${esc(o.customerPhone)}<br>${esc(o.customerAddress)}<br>${esc(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300">${esc(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase">Paid: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase mt-1">Profit: <span class="font-bold text-green-400">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#222] border border-[#333] text-white px-2 py-1.5 rounded-lg text-xs outline-none"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders.</td></tr>';
+};
+window.updateAdminOrderStatus=async(id,st)=>{await updateDoc(doc(db,ORDERS,id),{status:st,updatedAt:serverTimestamp()});showToast("Status updated");};
 
-    window.submitWithdrawal = async (e) => {
-        e.preventDefault();
-        const amt = Number(document.getElementById('withdrawAmount').value);
-        const details = document.getElementById('withdrawDetails').value.trim();
-        
-        if (amt <= 0 || amt > (userData.walletBalance || 0)) {
-            return showToast("Invalid withdrawal amount. Check available balance.");
-        }
+// Admin Withdrawals
+window.renderAdminWithdrawals=()=>{
+  document.getElementById("adminWithdrawalsTable").innerHTML=adminWithdrawals.length?adminWithdrawals.map(w=>`<tr class="border-b border-[#222]"><td class="py-4 px-4"><div class="font-bold">${esc(w.userName)}</div><div class="text-xs text-gray-500">${esc(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-rose-500 text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-sm max-w-[200px] break-words">${esc(w.details)}</td><td class="py-4 px-4"><span class="status-badge status-${w.status}">${w.status}</span></td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-900/50 text-green-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-900">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-red-950/50 text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-900">Reject/Refund</button></div>`:''}</td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No requests.</td></tr>';
+};
+window.handleAdminWithdrawal=async(id,act)=>{
+  const w=adminWithdrawals.find(x=>x.id===id);if(!w)return;
+  if(confirm(`Are you sure you want to ${act} this withdrawal?${act==='rejected'?' This will refund the wallet.':''}`)){
+    if(act==='rejected') await updateDoc(doc(db,USERS,w.userId),{walletBalance:increment(w.amount)});
+    await updateDoc(doc(db,WITHDRAW,id),{status:act,processedAt:serverTimestamp()});
+    showToast(`Withdrawal ${act}`); refreshAdmin();
+  }
+};
 
-        const btn = document.getElementById('submitWithdrawBtn');
-        const orig = btn.innerText;
-        btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
-
-        try {
-            await runTransaction(db, async (tx) => {
-                const userRef = doc(db, USERS_COL, currentUser.uid);
-                const userSnap = await tx.get(userRef);
-                
-                if(!userSnap.exists() || userSnap.data().walletBalance < amt) {
-                    throw new Error("Insufficient balance in wallet.");
-                }
-                
-                // Safely deduct from wallet immediately
-                const newBalance = userSnap.data().walletBalance - amt;
-                tx.update(userRef, { walletBalance: newBalance, updatedAt: serverTimestamp() });
-                
-                // Create withdrawal record for admin
-                const wRef = doc(collection(db, WITHDRAW_COL));
-                tx.set(wRef, {
-                    userId: currentUser.uid,
-                    userName: userData.name || "Reseller",
-                    userEmail: userData.email || "",
-                    amount: amt,
-                    details: details,
-                    status: 'pending',
-                    createdAt: serverTimestamp()
-                });
-            });
-            
-            showToast(`₹${amt} Withdrawal requested successfully!`);
-            closeModal('withdrawModal');
-        } catch (err) {
-            showToast("Error: " + err.message);
-        } finally {
-            btn.innerText = orig; btn.disabled = false;
-        }
-    };
-
-    // --- Products & Details Logic ---
-    function loadProducts() {
-        if(unsubProducts) unsubProducts();
-        unsubProducts = onSnapshot(collection(db, PRODUCTS_COL), (snap) => {
-            allProducts = [];
-            snap.forEach(doc => {
-                const data = doc.data();
-                if(data.active !== false) allProducts.push({id: doc.id, ...data});
-            });
-            allProducts.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
-            renderProducts(allProducts);
-        }, (error) => {
-            document.getElementById('productsGrid').innerHTML = '<div class="col-span-2 text-center text-red-500">Failed to load products</div>';
-        });
-    }
-
-    window.filterProducts = () => {
-        const query = document.getElementById('searchInput').value.toLowerCase();
-        const filtered = allProducts.filter(p => 
-            (p.title || "").toLowerCase().includes(query) || 
-            (p.category || "").toLowerCase().includes(query)
-        );
-        renderProducts(filtered);
-    }
-
-    function renderProducts(list) {
-        const grid = document.getElementById('productsGrid');
-        if(!list.length) {
-            grid.innerHTML = '<div class="col-span-2 text-center py-10 text-gray-500"><i class="fa-solid fa-box-open text-4xl mb-3 opacity-50"></i><br>No products found.</div>';
-            return;
-        }
-
-        grid.innerHTML = list.map(p => {
-            const img = (p.images && p.images[0]) || p.image || p.imageUrl || 'https://placehold.co/400x500/fce7f3/db2777?text=No+Image';
-            const disc = p.mrp ? Math.round(((p.mrp-p.basePrice)/p.mrp)*100) : 0;
-            return `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col h-full hover:shadow-md transition">
-                    <div onclick="openProductDetail('${p.id}')" class="relative pt-[125%] bg-gray-100 cursor-pointer group">
-                        <img src="${img}" class="absolute inset-0 w-full h-full object-cover transition transform group-hover:scale-105" loading="lazy">
-                        ${disc > 0 ? `<div class="absolute top-2 left-2 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md text-red-600 border border-red-100 shadow-sm">${disc}% OFF</div>` : ''}
-                    </div>
-                    <div class="p-3 flex flex-col flex-1">
-                        <h4 onclick="openProductDetail('${p.id}')" class="font-bold text-sm text-gray-800 line-clamp-2 mb-1 leading-tight cursor-pointer hover:text-primary transition">${p.title || 'Product'}</h4>
-                        <div class="mt-auto">
-                            <div class="flex items-baseline gap-2 mb-2 cursor-pointer" onclick="openProductDetail('${p.id}')">
-                                <span class="font-black text-lg text-primary">₹${p.basePrice}</span>
-                                ${p.mrp ? `<span class="text-xs text-gray-400 line-through">₹${p.mrp}</span>` : ''}
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <button onclick="openShareUI('${p.id}')" class="flex items-center justify-center gap-1 bg-green-50 text-green-600 border border-green-200 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100 transition">
-                                    <i class="fa-brands fa-whatsapp"></i> Share
-                                </button>
-                                <button onclick="openOrderUI('${p.id}')" class="bg-primary text-white py-1.5 rounded-lg text-xs font-bold shadow-sm shadow-primary/30 hover:bg-primary-dark transition">
-                                    Order
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // --- Product Detail View ---
-    window.openProductDetail = (id) => {
-        selectedProduct = allProducts.find(p => p.id === id);
-        if(!selectedProduct) return;
-        
-        document.getElementById('pdImg').src = (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || 'https://placehold.co/400';
-        document.getElementById('pdTitle').innerText = selectedProduct.title || 'Product Name';
-        document.getElementById('pdPrice').innerText = `₹${selectedProduct.basePrice}`;
-        
-        const discEl = document.getElementById('pdDiscount');
-        const mrpEl = document.getElementById('pdMrp');
-        if(selectedProduct.mrp && selectedProduct.mrp > selectedProduct.basePrice) {
-            mrpEl.innerText = `₹${selectedProduct.mrp}`;
-            mrpEl.style.display = 'inline';
-            discEl.innerText = `${Math.round(((selectedProduct.mrp-selectedProduct.basePrice)/selectedProduct.mrp)*100)}% OFF`;
-            discEl.style.display = 'inline-block';
-        } else {
-            mrpEl.style.display = 'none';
-            discEl.style.display = 'none';
-        }
-
-        document.getElementById('pdDelivery').innerText = selectedProduct.deliveryTime || "Fast Delivery";
-        document.getElementById('pdCategory').innerText = selectedProduct.category || "General";
-        document.getElementById('pdDesc').innerText = selectedProduct.description || "No specific description available for this product.";
-
-        openModal('productDetailModal');
-    };
-
-    window.openShareFromDetail = () => {
-        if(selectedProduct) openShareUI(selectedProduct.id);
-    };
-    
-    window.openOrderFromDetail = () => {
-        if(selectedProduct) openOrderUI(selectedProduct.id);
-    };
-
-    // --- Share Logic ---
-    window.openShareUI = (id) => {
-        selectedProduct = allProducts.find(p => p.id === id);
-        if(!selectedProduct) return;
-        
-        document.getElementById('shareProductTitle').innerText = selectedProduct.title;
-        document.getElementById('shareBasePrice').innerText = `₹${selectedProduct.basePrice}`;
-        document.getElementById('shareProductImg').src = (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || 'https://placehold.co/100';
-        document.getElementById('calcSellingPrice').value = '';
-        document.getElementById('calcProfitResult').innerText = '₹0';
-        
-        openModal('shareModal');
-    };
-
-    window.updateProfitCalc = () => {
-        if(!selectedProduct) return;
-        const base = Number(selectedProduct.basePrice || 0);
-        const sell = Number(document.getElementById('calcSellingPrice').value || 0);
-        const profit = Math.max(0, sell - base);
-        document.getElementById('calcProfitResult').innerText = `₹${profit}`;
-    };
-
-    window.shareToWhatsApp = () => {
-        if(!selectedProduct) return;
-        const sell = Number(document.getElementById('calcSellingPrice').value || 0);
-        const base = Number(selectedProduct.basePrice || 0);
-        
-        if(sell <= base) {
-            showToast("Selling price must be higher than base price to earn profit.");
-            return;
-        }
-
-        const msg = `🔥 *Trending on SHRAYNEX*\n\n*${selectedProduct.title}*\n\n💰 Price: ₹${sell}\n🚚 Delivery: ${selectedProduct.deliveryTime || "Fast Delivery"}\n\nMessage me to place your order!\n\n${(selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || ""}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        closeModal('shareModal');
-    };
-
-    // --- Order Logic ---
-    window.openOrderUI = (id) => {
-        if(userData?.status !== 'approved') {
-            showToast("Your account must be approved to place orders.");
-            return;
-        }
-
-        selectedProduct = allProducts.find(p => p.id === id);
-        if(!selectedProduct) return;
-
-        document.getElementById('orderProductTitle').innerText = selectedProduct.title;
-        document.getElementById('orderBasePrice').innerText = `₹${selectedProduct.basePrice}`;
-        document.getElementById('orderProductImg').src = (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || 'https://placehold.co/100';
-        
-        // Reset form
-        document.getElementById('orderForm').reset();
-        document.getElementById('orderQty').value = 1;
-        updateOrderSummary();
-        
-        openModal('orderModal');
-    };
-
-    window.fillMyAddress = () => {
-        if(!userData) return;
-        if(!userData.address || userData.address.trim() === "") {
-            showToast("No address saved yet. Go to Account > Edit Profile to save your address permanently.");
-            return;
-        }
-        document.getElementById('orderCustName').value = userData.name || "";
-        document.getElementById('orderCustPhone').value = userData.phone || "";
-        document.getElementById('orderCustAddress').value = userData.address || "";
-        document.getElementById('orderCustPin').value = userData.pincode || "";
-        showToast("Address populated successfully.");
-    };
-
-    window.updateOrderSummary = () => {
-        if(!selectedProduct) return;
-        const qty = Math.max(1, Number(document.getElementById('orderQty').value || 1));
-        const sellPricePerUnit = Number(document.getElementById('orderSellingPrice').value || 0);
-        const basePricePerUnit = Number(selectedProduct.basePrice || 0);
-
-        const totalValue = sellPricePerUnit * qty;
-        const totalMargin = Math.max(0, (sellPricePerUnit - basePricePerUnit) * qty);
-
-        document.getElementById('summaryTotal').innerText = `₹${totalValue}`;
-        document.getElementById('summaryMargin').innerText = `₹${totalMargin}`;
-    };
-
-    // FIXED ORDER PLACEMENT LOGIC
-    // Removed dependency on shared counters/tracking docs to prevent Firebase Permission errors.
-    window.submitOrder = async (e) => {
-        e.preventDefault();
-        if(!currentUser || !selectedProduct) return;
-
-        const qty = Number(document.getElementById('orderQty').value || 1);
-        const sellingPrice = Number(document.getElementById('orderSellingPrice').value || 0);
-        const basePrice = Number(selectedProduct.basePrice || 0);
-
-        if(sellingPrice <= basePrice) return showToast("Selling price must be higher than base price.");
-        if(qty < 1) return showToast("Quantity must be at least 1.");
-
-        const btn = document.getElementById('submitOrderBtn');
-        const origText = btn.innerText;
-        btn.innerHTML = '<div class="spinner white"></div>';
-        btn.disabled = true;
-
-        try {
-            // Generate a random, robust 6-digit order ID without needing a central counter document.
-            // This prevents "Permission Denied" errors if the counter doc doesn't exist.
-            const randomId = Math.floor(100000 + Math.random() * 900000);
-            const id = "RS" + randomId;
-            
-            const orderRef = doc(db, ORDERS_COL, id);
-
-            const orderData = {
-                orderId: id,
-                productId: selectedProduct.id,
-                productName: selectedProduct.title || "",
-                productImage: (selectedProduct.images && selectedProduct.images[0]) || selectedProduct.image || "",
-                quantity: qty,
-                basePrice: basePrice,
-                sellingPrice: sellingPrice,
-                profit: (sellingPrice - basePrice) * qty,
-                status: "pending",
-                resellerId: currentUser.uid,
-                resellerName: userData?.name || "",
-                customerName: document.getElementById('orderCustName').value.trim(),
-                customerPhone: document.getElementById('orderCustPhone').value.trim(),
-                customerAddress: document.getElementById('orderCustAddress').value.trim(),
-                pincode: document.getElementById('orderCustPin').value.trim(),
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            };
-
-            // Direct setDoc operation. Very fast and highly reliable.
-            await setDoc(orderRef, orderData);
-
-            showToast("Order Placed Successfully! ID: " + id);
-            closeModal('orderModal');
-            switchTab('Orders');
-        } catch (error) {
-            console.error("Order Error:", error);
-            showToast("Failed to place order: " + error.message.replace('Firebase: ', ''));
-        } finally {
-            btn.innerText = origText;
-            btn.disabled = false;
-        }
-    };
-
-    // --- Orders Tab Logic ---
-    function loadOrders() {
-        if(!currentUser) return;
-        if(unsubOrders) unsubOrders();
-
-        const q = query(collection(db, ORDERS_COL), where("resellerId", "==", currentUser.uid));
-        
-        unsubOrders = onSnapshot(q, (snap) => {
-            const orders = [];
-            snap.forEach(d => orders.push({id: d.id, ...d.data()}));
-            orders.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));
-            renderOrdersList(orders);
-        }, (error) => {
-            document.getElementById('ordersList').innerHTML = '<div class="text-center text-red-500">Failed to load orders.</div>';
-        });
-    }
-
-    function renderOrdersList(orders) {
-        const list = document.getElementById('ordersList');
-        if(!orders.length) {
-            list.innerHTML = `
-                <div class="bg-white p-8 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="fa-solid fa-box text-2xl text-gray-300"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-800">No Orders Yet</h3>
-                    <p class="text-sm text-gray-500 mt-1">Share products to get your first order!</p>
-                    <button onclick="switchTab('Feed')" class="mt-4 border border-primary text-primary px-4 py-2 rounded-xl font-bold text-sm hover:bg-primary-light transition">Browse Products</button>
-                </div>
-            `;
-            return;
-        }
-
-        const getStatusColor = (status) => {
-            const s = (status||'').toLowerCase();
-            if(['delivered'].includes(s)) return 'bg-green-100 text-green-700';
-            if(['cancelled', 'rejected', 'out_of_stock'].includes(s)) return 'bg-red-100 text-red-700';
-            if(['shipped', 'processing', 'confirmed'].includes(s)) return 'bg-blue-100 text-blue-700';
-            return 'bg-amber-100 text-amber-700';
-        };
-
-        list.innerHTML = orders.map(o => `
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 relative">
-                <div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3">
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Order ID</span>
-                        <span class="font-bold text-gray-800">${o.orderId || o.id}</span>
-                    </div>
-                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${getStatusColor(o.status)}">${(o.status || 'Pending').replace(/_/g, ' ')}</span>
-                </div>
-                
-                <div class="flex gap-3 mb-4">
-                    <img src="${o.productImage || 'https://placehold.co/60'}" class="w-16 h-16 rounded-xl object-cover bg-gray-50 border border-gray-100">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-sm line-clamp-1 mb-1">${o.productName || 'Product'}</h4>
-                        <p class="text-xs text-gray-500">Qty: ${o.quantity || 1} • Customer: ${o.customerName || 'N/A'}</p>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 rounded-xl p-3 grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">Customer Paid</p>
-                        <p class="font-bold text-gray-800">₹${o.sellingPrice * (o.quantity||1)}</p>
-                    </div>
-                    <div class="text-right border-l border-gray-200 pl-2">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase">Your Profit</p>
-                        <p class="font-black text-green-600">₹${o.profit}</p>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
 </script>
 </body>
 </html>
