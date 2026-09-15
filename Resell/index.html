@@ -235,15 +235,16 @@
                 <span id="profileStatusBadge" class="inline-block mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-100 text-amber-700">Pending</span>  
             </div>  
 
+            <!-- NEW WALLET UI: Available Balance + Pending Earnings -->
             <div class="grid grid-cols-2 gap-3 mb-6">  
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">  
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Wallet Balance</p>  
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Available Balance</p>  
                     <p id="walletBalance" class="text-2xl font-black text-primary mb-3">₹0</p>  
                     <button onclick="openWithdrawModal()" class="w-full text-xs bg-primary-light/50 text-primary py-2 rounded-xl font-bold hover:bg-primary-light transition">Withdraw</button>  
                 </div>  
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">  
-                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Lifetime Earnings</p>  
-                    <p id="totalEarnings" class="text-2xl font-black text-green-600 mt-1">₹0</p>  
+                    <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">Pending Earnings</p>  
+                    <p id="pendingEarnings" class="text-2xl font-black text-amber-500 mt-1">₹0</p>  
                 </div>  
             </div>  
 
@@ -304,7 +305,7 @@
     </div>  
 </div>  
 
-<!-- Product Detail Modal -->  
+<!-- Product Detail Modal (With Gallery & Download Button intact) -->  
 <div id="productDetailModal" class="bottom-sheet">  
     <div class="bottom-sheet-content h-[95vh] bg-gray-50">  
         <div class="p-3 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white/90 backdrop-blur-md z-10 rounded-t-[24px]">  
@@ -313,19 +314,16 @@
             <div class="w-9"></div>  
         </div>  
         <div class="overflow-y-auto pb-[90px] flex-1">  
-            <!-- UPDATED: Image Gallery with Multiple Photos & Download Button -->
             <div class="relative bg-white border-b border-gray-100">  
                 <div id="pdImageGallery" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar scroll-smooth" onscroll="updateGalleryDots()">
                     <!-- Images injected via JS -->
                 </div>
                 <div id="pdDiscountBadge" class="absolute top-4 left-4 bg-white/90 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-lg text-red-600 border border-red-100 shadow-sm hidden z-10">0% OFF</div>  
                 
-                <!-- Download Button -->
                 <button onclick="downloadProductImages()" class="absolute bottom-4 right-4 bg-white/90 text-gray-800 w-10 h-10 rounded-full shadow-lg backdrop-blur z-10 border border-gray-100 flex items-center justify-center hover:bg-gray-100 transition" title="Download all photos">
                     <i class="fa-solid fa-download"></i>
                 </button>
                 
-                <!-- Gallery Dots -->
                 <div id="pdImageDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
             </div>  
             
@@ -403,8 +401,6 @@
             </div>  
 
             <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">  
-                  
-                <!-- Dynamic Size Selector -->  
                 <div id="orderSizeWrapper" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-4">  
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Select Size <span class="text-red-500">*</span></label>  
                     <div id="orderSizeOptions" class="flex gap-2 flex-wrap"></div>  
@@ -484,14 +480,24 @@
             <form onsubmit="submitWithdrawal(event)" class="space-y-4">  
                 <div>  
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Amount to Withdraw (₹)</label>  
-                    <input type="number" id="withdrawAmount" min="1" required class="input-field font-black text-xl text-gray-900 bg-gray-50">  
+                    <!-- Changed minimum amount to 100 -->
+                    <input type="number" id="withdrawAmount" min="100" required class="input-field font-black text-xl text-gray-900 bg-gray-50">  
                 </div>  
                 <div>  
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Bank A/c or UPI ID</label>  
                     <textarea id="withdrawDetails" rows="2" placeholder="e.g. 9876543210@ybl or A/c No + IFSC" required class="input-field bg-gray-50 resize-none font-medium"></textarea>  
                 </div>  
                 <button type="submit" id="submitWithdrawBtn" class="w-full bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-green-500/30 mt-4 flex justify-center items-center">Submit Request</button>  
-                <p class="text-[10px] font-medium text-gray-400 text-center mt-3 leading-relaxed px-4">Amount will be safely deducted from wallet and processed by admin.</p>  
+                
+                <!-- NEW Terms and Conditions Box for Withdrawal -->
+                <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 mt-4">
+                    <p class="text-[10px] font-bold text-amber-800 leading-relaxed">
+                        <i class="fa-solid fa-circle-info mr-1"></i> <b>Terms & Conditions:</b><br>
+                        • Minimum withdrawal is ₹100.<br>
+                        • Earnings move to 'Available Balance' ONLY after the order is 100% delivered and the return period is successfully completed.<br>
+                        • No commission will be given if the product is returned or cancelled by the customer.
+                    </p>
+                </div>
             </form>  
         </div>  
     </div>  
@@ -781,8 +787,7 @@
         document.getElementById('profilePhone').innerText = userData.phone || userData.email || "-";  
           
         document.getElementById('walletBalance').innerText = `₹${money(userData.walletBalance)}`;  
-        document.getElementById('totalEarnings').innerText = `₹${money(userData.totalEarnings)}`;  
-          
+        
         const hasAddr = userData.address && userData.address.trim() !== "";  
         const pAddr = document.getElementById('profileHasAddress');  
         pAddr.innerText = hasAddr ? "Saved" : "Missing";  
@@ -822,6 +827,10 @@
     window.submitWithdrawal = async (e) => {  
         e.preventDefault();  
         const amt = Number(document.getElementById('withdrawAmount').value), det = document.getElementById('withdrawDetails').value.trim();  
+        
+        // CHECK MINIMUM WITHDRAWAL
+        if(amt < 100) return showToast("Minimum withdrawal amount is ₹100.");
+        
         if(amt <= 0 || amt > (userData?.walletBalance || 0)) return showToast("Invalid amount. Check balance.");  
         const btn = document.getElementById('submitWithdrawBtn'); const orig = btn.innerText; btn.innerText = "Processing..."; btn.disabled = true;  
         try {  
@@ -882,7 +891,7 @@
   
     // -- DETAILS, SHARE, ORDER, DOWNLOAD --  
     
-    // Updated Product Detail function to support Multiple Images swipe functionality
+    // Multiple Images swipe functionality
     window.openProductDetail = (id) => {  
         selectedProduct = allProducts.find(p => p.id === id); if(!selectedProduct) return;  
         
@@ -1042,7 +1051,6 @@
           
         const btn = document.getElementById('submitOrderBtn'); const orig = btn.innerText; btn.innerText = "Placing Order..."; btn.disabled = true;  
         try {  
-            // FIX: Generate robust random ID without reading centralized counters to prevent permission fails  
             const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
             await setDoc(doc(db, ORDERS_COL, orderId), {  
                 orderId: orderId, productId: selectedProduct.id, productName: selectedProduct.title||"", productImage: (selectedProduct.images&&selectedProduct.images[0])||selectedProduct.image||"",  
@@ -1050,6 +1058,7 @@
                 resellerId: currentUser.uid, resellerName: userData?.name||"",  
                 customerName: document.getElementById('orderCustName').value.trim(), customerPhone: document.getElementById('orderCustPhone').value.trim(),  
                 customerAddress: document.getElementById('orderCustAddress').value.trim(), pincode: document.getElementById('orderCustPin').value.trim(),  
+                paidToWallet: false, // New Field for Wallet Tracking
                 createdAt: serverTimestamp(), updatedAt: serverTimestamp()  
             });  
             showToast("Order Placed Successfully! ID: " + orderId);  
@@ -1062,6 +1071,17 @@
         unsubOrders = onSnapshot(query(collection(db, ORDERS_COL), where("resellerId", "==", currentUser.uid)), (snap) => {  
             const ords = []; snap.forEach(d => ords.push({id: d.id, ...d.data()}));  
             ords.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));  
+            
+            // NEW PENDING EARNINGS LOGIC
+            let pendingAmt = 0;
+            ords.forEach(o => {
+                if (o.status !== 'delivered' && o.status !== 'cancelled' && o.status !== 'returned') {
+                    pendingAmt += (o.profit || 0);
+                }
+            });
+            const peElem = document.getElementById('pendingEarnings');
+            if(peElem) peElem.innerText = `₹${money(pendingAmt)}`;
+
             const list = document.getElementById('ordersList');  
             if(!ords.length) { list.innerHTML = '<div class="bg-white p-8 rounded-3xl shadow-sm text-center border border-gray-100"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i><h3 class="font-bold text-gray-800">No Orders Yet</h3><p class="text-xs font-medium text-gray-500 mt-1">Start sharing products to get your first order!</p></div>'; return; }  
             list.innerHTML = ords.map(o => `  
@@ -1180,9 +1200,42 @@
     window.renderAdminOrders = () => {  
         const q = document.getElementById('adminOrdSearch').value.toLowerCase();  
         const f = adminOrders.filter(o => `${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(q));  
-        document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''}</div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
+        document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''}</div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
     };  
-    window.updateAdminOrderStatus = async (id, st) => { await updateDoc(doc(db, ORDERS_COL, id), {status: st, updatedAt: serverTimestamp()}); showToast("Status Updated"); };  
+
+    // NEW LOGIC: Wallet payment processed upon Delivery, deducted on Return/Cancel
+    window.updateAdminOrderStatus = async (id, st) => { 
+        const order = adminOrders.find(o => o.id === id);
+        if(!order) return;
+        try {
+            // Add commission on Delivered
+            if (st === 'delivered' && !order.paidToWallet) {
+                await runTransaction(db, async (tx) => {
+                    const uRef = doc(db, USERS_COL, order.resellerId);
+                    const oRef = doc(db, ORDERS_COL, id);
+                    tx.update(uRef, { walletBalance: increment(order.profit), totalEarnings: increment(order.profit) });
+                    tx.update(oRef, { status: st, paidToWallet: true, updatedAt: serverTimestamp() });
+                });
+                showToast("Delivered! Commission Added to Wallet.");
+            } 
+            // Deduct commission if Returned/Cancelled after being delivered
+            else if ((st === 'returned' || st === 'cancelled') && order.paidToWallet) {
+                await runTransaction(db, async (tx) => {
+                    const uRef = doc(db, USERS_COL, order.resellerId);
+                    const oRef = doc(db, ORDERS_COL, id);
+                    tx.update(uRef, { walletBalance: increment(-order.profit), totalEarnings: increment(-order.profit) });
+                    tx.update(oRef, { status: st, paidToWallet: false, updatedAt: serverTimestamp() });
+                });
+                showToast(`${st}! Commission Deducted.`);
+            }
+            // Standard status update
+            else {
+                await updateDoc(doc(db, ORDERS_COL, id), {status: st, updatedAt: serverTimestamp()}); 
+                showToast("Order Status Updated"); 
+            }
+            refreshAdmin(); 
+        } catch(e) { showToast("Error updating status"); }
+    };  
   
     // Admin Withdrawals  
     window.renderAdminWithdrawals = () => {  
