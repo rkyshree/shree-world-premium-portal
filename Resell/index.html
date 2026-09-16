@@ -198,7 +198,13 @@
     <main class="flex-1 overflow-y-auto bg-gray-50 pb-[80px]">  
         <!-- Feed Tab -->  
         <div id="tabFeed" class="tab-content block">  
-            <div class="p-4 bg-white border-b border-gray-100 mb-3 sticky top-0 z-10">  
+            
+            <!-- 🔴 CATALOG HIGHLIGHTS (Meesho Style 4 Circles) 🔴 -->
+            <div id="catalogHighlightsContainer" class="bg-white pt-5 px-5 pb-3">
+                <!-- Rendered automatically via Javascript configuration -->
+            </div>
+
+            <div class="p-4 bg-white border-b border-gray-100 mb-3 sticky top-0 z-10 pt-2">  
                 <div class="relative mb-4">  
                     <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>  
                     <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search kurtis, sarees..." class="input-field pl-12 bg-gray-50">  
@@ -528,7 +534,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी ক্যামिशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -650,7 +656,61 @@
     </main>  
 </div>
 
-</div>  <script type="module">  
+</div>  
+
+<!-- JAVASCRIPT BLOCK -->
+<script type="module">  
+
+    // =========================================================================
+    // 🔴 1. HIGHLIGHTS / CATALOG SETTINGS (यहाँ से 4 गोल सर्कल के फोटो और लिंक बदलें) 🔴
+    // =========================================================================
+    const catalogHighlights = [
+        { 
+            title: "Trending", 
+            image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=150&q=80", 
+            link: "https://google.com" 
+        },
+        { 
+            title: "Sarees", 
+            image: "https://images.unsplash.com/photo-1610030469983-98e550d61dc0?auto=format&fit=crop&w=150&q=80", 
+            link: "https://google.com" 
+        },
+        { 
+            title: "Kurtis", 
+            image: "https://images.unsplash.com/photo-1583391733958-d25e07fac04f?auto=format&fit=crop&w=150&q=80", 
+            link: "https://google.com" 
+        },
+        { 
+            title: "Offers", 
+            image: "https://images.unsplash.com/photo-1605763240000-7e93b172d754?auto=format&fit=crop&w=150&q=80", 
+            link: "https://google.com" 
+        }
+    ];
+
+    // यह फंक्शन सर्कल को वेबसाइट में दिखाएगा
+    function renderCatalogHighlights() {
+        const container = document.getElementById('catalogHighlightsContainer');
+        if(!container) return;
+        
+        container.innerHTML = `<div class="flex justify-between items-start w-full gap-2">
+            ${catalogHighlights.map(item => `
+                <a href="${item.link}" target="_blank" class="flex flex-col items-center gap-1.5 flex-1 min-w-0 cursor-pointer group">
+                    <div class="w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full p-[2px] bg-gradient-to-tr from-primary to-amber-400 group-hover:scale-105 transition transform shadow-sm">
+                        <img src="${item.image}" class="w-full h-full rounded-full border-[2.5px] border-white object-cover bg-gray-100" alt="${item.title}">
+                    </div>
+                    <span class="text-[10px] font-bold text-gray-700 text-center w-full truncate px-1">${item.title}</span>
+                </a>
+            `).join('')}
+        </div>`;
+    }
+    // फंक्शन को रन करें
+    renderCatalogHighlights();
+
+
+    // =========================================================================
+    // 🔴 FIREBASE SETUP & CORE LOGIC (बाकी कोड में कोई बदलाव नहीं) 🔴
+    // =========================================================================
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
