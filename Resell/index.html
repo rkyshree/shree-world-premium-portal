@@ -528,7 +528,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी ক্যামिशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -1126,17 +1126,56 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    window.shareToWhatsApp = () => {  
-        if(!selectedProduct) return; const s = Number(document.getElementById('calcSellingPrice').value||0), b = Number(selectedProduct.basePrice||0);  
+    // UPDATED FUNCTION: Direct photo sharing like Meesho
+    window.shareToWhatsApp = async () => {  
+        if(!selectedProduct) return; 
+        const s = Number(document.getElementById('calcSellingPrice').value||0);
+        const b = Number(selectedProduct.basePrice||0);  
         if(s <= b) return showToast("Customer price must be higher than base price.");  
         
         const photoNum = currentSelectedImageIndex + 1;
         const imgUrl = (selectedProduct.images && selectedProduct.images[currentSelectedImageIndex]) || selectedProduct.image || '';
         
         const descText = selectedProduct.description ? `\n📝 *Details:*\n${selectedProduct.description}\n` : '';
-        const msg = `🛍️ *${selectedProduct.title}*${descText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* ${selectedProduct.deliveryTime||"3-7 Days"}\n\n📌 *Selected Variant:* Photo Number ${photoNum}\n\nMessage me to order!\n\n${imgUrl}`;  
+        const msg = `🛍️ *${selectedProduct.title}*${descText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* ${selectedProduct.deliveryTime||"3-7 Days"}\n\n📌 *Selected Variant:* Photo Number ${photoNum}\n\nMessage me to order!`;  
         
-        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); closeModal('shareModal');  
+        const btn = document.querySelector('#shareModal button[onclick="shareToWhatsApp()"]');
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = 'Sharing...';
+        btn.disabled = true;
+
+        try {
+            // Fetch photo for native sharing
+            const response = await fetch(imgUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "product_image.jpg", { type: blob.type || 'image/jpeg' });
+
+            // Check if device supports native photo sharing
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    text: msg
+                });
+                closeModal('shareModal');
+            } else {
+                // Fallback for devices/browsers that don't support file sharing
+                await navigator.clipboard.writeText(msg);
+                showToast("Text copied! Redirecting to WhatsApp...");
+                setTimeout(() => {
+                    window.open(`https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + imgUrl)}`, '_blank');
+                    closeModal('shareModal');
+                }, 1500);
+            }
+        } catch (error) {
+            console.error("Share Failed", error);
+            if (error.name !== 'AbortError') { // Ignore if user simply cancelled the share dialog
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + imgUrl)}`, '_blank');
+                closeModal('shareModal');
+            }
+        } finally {
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+        }
     };  
   
     window.openOrderUI = (id, imgIndex = 0) => {  
@@ -1418,4 +1457,4 @@
     };  
   
 </script>  </body>  
-</html>  
+</html>
