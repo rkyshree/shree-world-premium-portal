@@ -1,4 +1,5 @@
-<!DOCTYPE html>  <html lang="en">  
+<!DOCTYPE html>  
+<html lang="en">  
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
@@ -624,11 +625,33 @@
                         </div>  
                     </div>  
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Sizes (Comma Separated)</label><input id="pSizes" placeholder="e.g. S, M, L, XL" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Image 1 URL (Primary)</label><input id="pImg1" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Image 2 URL</label><input id="pImg2" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Image 3 URL</label><input id="pImg3" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Image 4 URL</label><input id="pImg4" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Image 5 URL</label><input id="pImg5" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
+                    
+                    <!-- NEW: MULTI URL PASTE SECTION (ADMIN THEME) -->
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (एक साथ 5 लिंक पेस्ट करें)</label>
+                        <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें... &#10;https://i.ibb.co/8L7KRkbz/AS973.jpg&#10;https://i.ibb.co/B5ThVW9S/AS965.jpg" oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
+                        
+                        <div class="mt-2 text-xs text-gray-500 flex justify-between">
+                            <span>आप एक ही बार में 1-5 इमेज URL पेस्ट कर सकते हैं।</span>
+                            <span id="adminImageCount" class="text-[#00e676] font-bold">0 / 5 Images Added</span>
+                        </div>
+            
+                        <div id="adminImagePreviewGrid" class="grid grid-cols-5 gap-2 mt-3">
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 1</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 2</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 3</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 4</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 5</div>
+                        </div>
+                        
+                        <!-- Hidden inputs for Database -->
+                        <input type="hidden" id="pImg1">
+                        <input type="hidden" id="pImg2">
+                        <input type="hidden" id="pImg3">
+                        <input type="hidden" id="pImg4">
+                        <input type="hidden" id="pImg5">
+                    </div>
+
                     <div class="md:col-span-2"><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Description</label><textarea id="pDesc" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] min-h-[100px]"></textarea></div>  
                 </div>  
                 <button id="pSaveBtn" onclick="saveAdminProduct()" class="w-full mt-6 bg-[#00e676] text-black py-4 rounded-xl font-black shadow-lg hover:bg-[#00c853] transition">Save Product</button>  
@@ -697,12 +720,9 @@
         },
     ];
 
-    // यह फंक्शन सर्कल को वेबसाइट में दिखाएगा (हॉरिजॉन्टल स्क्रॉल के साथ)
     function renderCatalogHighlights() {
         const container = document.getElementById('catalogHighlightsContainer');
         if(!container) return;
-        
-        // overflow-x-auto और hide-scrollbar लगाकर इसे स्क्रॉल करने योग्य बनाया गया है
         container.innerHTML = `<div class="flex overflow-x-auto hide-scrollbar items-start w-full gap-4 pb-2 snap-x">
             ${catalogHighlights.map(item => `
                 <a href="${item.link}" target="_blank" class="flex flex-col items-center gap-1.5 shrink-0 w-[72px] sm:w-[80px] cursor-pointer group snap-start">
@@ -714,19 +734,17 @@
             `).join('')}
         </div>`;
     }
-    // फंक्शन को रन करें
     renderCatalogHighlights();
 
 
     // =========================================================================
-    // 🔴 FIREBASE SETUP & CORE LOGIC (बाकी कोड में कोई बदलाव नहीं) 🔴
+    // 🔴 FIREBASE SETUP & CORE LOGIC 🔴
     // =========================================================================
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
   
-    // Dynamic config fallback if embedded  
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {  
         apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",  
         authDomain: "rkyshree-2f74b.firebaseapp.com",  
@@ -751,18 +769,15 @@
     let allProducts = [], allCategories = ["Kurti", "Saree", "Lehenga", "Suit", "Western"];  
     let adminUsers = [], adminOrders = [], adminWithdraws = [];  
     
-    // NEW: User Local Lists
     let userOrdersList = [];
     let userWithdrawalsList = [];
     
     let selectedProduct = null, unsubUser = null, unsubProducts = null, unsubOrders = null;  
     let isSignupMode = false, isAdminMode = false, currentFilter = 'All';  
     
-    // Global tracking for selected photo variant
     let currentSelectedImageIndex = 0;
     let orderSelectedImageIndex = 0;
   
-    // -- UTILS --  
     window.showToast = (msg) => {  
         const t = document.getElementById('toast'), tm = document.getElementById('toastMsg');  
         tm.innerHTML = `<i class="fa-solid fa-bell text-primary-light shrink-0 text-lg"></i><span class="flex-1">${msg}</span>`;  
@@ -775,7 +790,6 @@
     const money = (v) => Number(v||0).toLocaleString('en-IN');  
     const escapeHtml = (unsafe) => String(unsafe||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");  
   
-    // -- CATEGORY MANAGEMENT --  
     async function loadCategories() {  
         try {  
             const snap = await getDoc(doc(db, SETTINGS_COL, "categories"));  
@@ -805,7 +819,6 @@
         }  
     };  
   
-    // -- AUTH LOGIC --  
     window.toggleAuthMode = (mode) => {  
         isSignupMode = mode === 'signup';  
         document.getElementById('signupFieldsGroup').classList.toggle('hidden', !isSignupMode);  
@@ -882,7 +895,6 @@
         }  
     });  
   
-    // -- APP UI LOGIC --  
     window.switchTab = (tab) => {  
         ['Feed', 'Orders', 'Profile'].forEach(t => {  
             document.getElementById(`tab${t}`).classList.add('hidden');  
@@ -917,7 +929,6 @@
         }  
     }  
 
-    // -- PAYMENT HISTORY LOGIC (NEW) --
     function loadUserWithdrawals() {
         if(!currentUser) return;
         onSnapshot(query(collection(db, WITHDRAW_COL), where("userId", "==", currentUser.uid)), (snap) => {
@@ -944,7 +955,6 @@
     };
 
     window.renderPaymentHistory = () => {
-        // EARNINGS TAB RENDER
         const eList = document.getElementById('phEarningsList');
         eList.innerHTML = userOrdersList.map(o => {
             let stColor = 'text-amber-500', stIcon = '⏳', stText = 'Pending';
@@ -972,7 +982,6 @@
             </div>`;
         }).join('') || '<div class="text-center py-8 text-gray-400 font-medium text-sm">No earnings found.</div>';
 
-        // PAYOUTS TAB RENDER
         const pList = document.getElementById('phPayoutsList');
         pList.innerHTML = userWithdrawalsList.map(w => {
             let stColor = 'text-amber-500', stText = 'Processing';
@@ -995,7 +1004,6 @@
         }).join('') || '<div class="text-center py-8 text-gray-400 font-medium text-sm">No payouts found.</div>';
     };
   
-    // -- PROFILE EDIT & WITHDRAW --  
     window.submitEditProfile = async (e) => {  
         e.preventDefault();  
         const btn = document.getElementById('submitEditProfileBtn'); const orig = btn.innerText; btn.innerText = "Saving..."; btn.disabled = true;  
@@ -1019,7 +1027,6 @@
         e.preventDefault();  
         const amt = Number(document.getElementById('withdrawAmount').value), det = document.getElementById('withdrawDetails').value.trim();  
         
-        // CHECK MINIMUM WITHDRAWAL
         if(amt < 100) return showToast("Minimum withdrawal amount is ₹100.");
         
         if(amt <= 0 || amt > (userData?.walletBalance || 0)) return showToast("Invalid amount. Check balance.");  
@@ -1035,7 +1042,6 @@
         } catch(e) { showToast(e.message); } finally { btn.innerText = orig; btn.disabled = false; }  
     };  
   
-    // -- PRODUCTS --  
     function loadProducts() {  
         if(unsubProducts) unsubProducts();  
         unsubProducts = onSnapshot(collection(db, PRODUCTS_COL), (snap) => {  
@@ -1080,14 +1086,10 @@
         }).join('');  
     };  
   
-    // -- DETAILS, SHARE, ORDER, DOWNLOAD --  
-    
-    // Multiple Images swipe functionality
     window.openProductDetail = (id) => {  
-        currentSelectedImageIndex = 0; // Reset index globally
+        currentSelectedImageIndex = 0;
         selectedProduct = allProducts.find(p => p.id === id); if(!selectedProduct) return;  
         
-        // Handle Multiple Images
         const gallery = document.getElementById('pdImageGallery');
         const dots = document.getElementById('pdImageDots');
         const images = selectedProduct.images && selectedProduct.images.length > 0 
@@ -1102,9 +1104,7 @@
             dots.innerHTML = '';
         }
         
-        // Reset scroll position
         gallery.scrollLeft = 0;
-
         document.getElementById('pdTitle').innerText = selectedProduct.title;  
         document.getElementById('pdPrice').innerText = `₹${money(selectedProduct.basePrice)}`;  
           
@@ -1124,12 +1124,11 @@
         openModal('productDetailModal');  
     };  
     
-    // Track dot indicator on swipe
     window.updateGalleryDots = () => {
         const gallery = document.getElementById('pdImageGallery');
         const index = Math.round(gallery.scrollLeft / gallery.offsetWidth);
         
-        currentSelectedImageIndex = index; // Keep global track for Share & Order
+        currentSelectedImageIndex = index;
 
         const imagesCount = selectedProduct?.images?.filter(Boolean).length || 1;
         if(imagesCount > 1) {
@@ -1140,7 +1139,6 @@
         }
     };
     
-    // Download Images Feature
     window.downloadProductImages = async () => {
         if(!selectedProduct) return;
         const images = selectedProduct.images && selectedProduct.images.length > 0 
@@ -1148,7 +1146,6 @@
                        : [selectedProduct.image].filter(Boolean);
         
         if(images.length === 0) return showToast("No images to download");
-        
         showToast("Downloading images...");
         
         for(let i = 0; i < images.length; i++) {
@@ -1164,7 +1161,6 @@
                 a.remove();
                 window.URL.revokeObjectURL(url);
             } catch(err) {
-                // Fallback for CORS limits
                 const a = document.createElement('a');
                 a.href = images[i];
                 a.target = '_blank';
@@ -1197,7 +1193,6 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    // UPDATED FUNCTION: Direct photo sharing like Meesho
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -1216,20 +1211,14 @@
         btn.disabled = true;
 
         try {
-            // Fetch photo for native sharing
             const response = await fetch(imgUrl);
             const blob = await response.blob();
             const file = new File([blob], "product_image.jpg", { type: blob.type || 'image/jpeg' });
 
-            // Check if device supports native photo sharing
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    text: msg
-                });
+                await navigator.share({ files: [file], text: msg });
                 closeModal('shareModal');
             } else {
-                // Fallback for devices/browsers that don't support file sharing
                 await navigator.clipboard.writeText(msg);
                 showToast("Text copied! Redirecting to WhatsApp...");
                 setTimeout(() => {
@@ -1238,8 +1227,7 @@
                 }, 1500);
             }
         } catch (error) {
-            console.error("Share Failed", error);
-            if (error.name !== 'AbortError') { // Ignore if user simply cancelled the share dialog
+            if (error.name !== 'AbortError') { 
                 window.open(`https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + imgUrl)}`, '_blank');
                 closeModal('shareModal');
             }
@@ -1262,7 +1250,6 @@
         
         document.getElementById('orderForm').reset(); document.getElementById('orderQty').value = 1; updateOrderSummary();  
           
-        // Dynamic Size Logic  
         const wrap = document.getElementById('orderSizeWrapper'), cat = (selectedProduct.category||'').toLowerCase();  
         const sizes = Array.isArray(selectedProduct.sizes) ? selectedProduct.sizes.filter(Boolean) : [];  
         const sel = document.getElementById('selectedSize');  
@@ -1303,8 +1290,6 @@
         const btn = document.getElementById('submitOrderBtn'); const orig = btn.innerText; btn.innerText = "Placing Order..."; btn.disabled = true;  
         try {  
             const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
-            
-            // Explicitly track the Photo Number for admin
             const photoNum = orderSelectedImageIndex + 1;
             const imgToSave = (selectedProduct.images && selectedProduct.images[orderSelectedImageIndex]) || selectedProduct.image || '';
 
@@ -1315,7 +1300,7 @@
                 resellerId: currentUser.uid, resellerName: userData?.name||"",  
                 customerName: document.getElementById('orderCustName').value.trim(), customerPhone: document.getElementById('orderCustPhone').value.trim(),  
                 customerAddress: document.getElementById('orderCustAddress').value.trim(), pincode: document.getElementById('orderCustPin').value.trim(),  
-                paidToWallet: false, // Wallet Tracking Field
+                paidToWallet: false,
                 createdAt: serverTimestamp(), updatedAt: serverTimestamp()  
             });  
             showToast("Order Placed Successfully! ID: " + orderId);  
@@ -1329,10 +1314,8 @@
             const ords = []; snap.forEach(d => ords.push({id: d.id, ...d.data()}));  
             ords.sort((a,b) => (b.createdAt?.toMillis()||0) - (a.createdAt?.toMillis()||0));  
             
-            // Populate Local Variable for History Modal
             userOrdersList = ords;
 
-            // PENDING EARNINGS LOGIC
             let pendingAmt = 0;
             ords.forEach(o => {
                 if (o.status !== 'delivered' && o.status !== 'cancelled' && o.status !== 'returned') {
@@ -1361,7 +1344,6 @@
         });  
     }  
   
-    // -- POLICIES --  
     const policies = {  
         about: { title: "About Us", content: "SHRAYNEX is India's leading zero-investment reselling platform. We empower individuals to start their own online business, work from anywhere, and earn a steady income." },  
         contact: { title: "Contact Support", content: "For any assistance, please reach out to us:\n\nEmail: support@shraynex.com\nWhatsApp: +91 9451239239\nLocation: Uttar Pradesh, India" },  
@@ -1374,7 +1356,7 @@
   
   
     // =========================================================  
-    // ADMIN PANEL LOGIC (Unified)  
+    // ADMIN PANEL LOGIC (Modified to support Bulk Image Paste)
     // =========================================================  
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     window.handleAdminLogin = async (e) => {  
@@ -1427,8 +1409,51 @@
     };  
     window.setAdminUserStatus = async (id, st) => { await updateDoc(doc(db, USERS_COL, id), {status: st, updatedAt: serverTimestamp()}); showToast("Status Updated"); refreshAdmin(); };  
   
+    // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN 🔴
+    function extractImageUrls(text) {
+        if(!text) return [];
+        const matches = text.match(/https?:\/\/[^\s,]+/gi);
+        if(!matches) return [];
+        return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 5);
+    }
+
+    window.processAdminImageUrls = () => {
+        const text = document.getElementById("pImgUrls").value;
+        const urls = extractImageUrls(text);
+        
+        for(let i=1; i<=5; i++) {
+            const el = document.getElementById("pImg"+i);
+            if(el) el.value = urls[i-1] || "";
+        }
+        
+        const countText = document.getElementById("adminImageCount");
+        if(countText) countText.innerText = `${urls.length} / 5 Images Added`;
+        
+        const grid = document.getElementById("adminImagePreviewGrid");
+        if(grid) {
+            let html = "";
+            for(let i=0; i<5; i++) {
+                if(urls[i]) {
+                    html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]"><img src="${escapeHtml(urls[i])}" class="w-full h-full object-cover"><div class="absolute top-1 left-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${i+1}</div></div>`;
+                } else {
+                    html += `<div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img ${i+1}</div>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+    };
+
     // Admin Products  
-    window.resetProductForm = () => { document.getElementById('editProductId').value = ''; document.getElementById('productFormTitle').innerText = '➕ Add New Product'; ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pDesc'].forEach(i => document.getElementById(i).value = ''); };  
+    window.resetProductForm = () => { 
+        document.getElementById('editProductId').value = ''; 
+        document.getElementById('productFormTitle').innerText = '➕ Add New Product'; 
+        ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pDesc','pImgUrls'].forEach(i => {
+            const el = document.getElementById(i);
+            if(el) el.value = '';
+        }); 
+        if(window.processAdminImageUrls) window.processAdminImageUrls();
+    };  
+
     window.saveAdminProduct = async () => {  
         const id = document.getElementById('editProductId').value, btn = document.getElementById('pSaveBtn');  
         const data = {  
@@ -1437,27 +1462,43 @@
             images: [document.getElementById('pImg1').value, document.getElementById('pImg2').value, document.getElementById('pImg3').value, document.getElementById('pImg4').value, document.getElementById('pImg5').value].filter(Boolean),  
             description: document.getElementById('pDesc').value, updatedAt: serverTimestamp()  
         };  
+        
+        // Backup mechanism inside save logic: agar images array khali hai, lekin image parameter use hota tha
+        if(data.images.length > 0) data.image = data.images[0];
+
         if(!data.title || !data.basePrice) return showToast("Title & Base Price required.");  
         btn.disabled = true; btn.innerText = "Saving...";  
         try {  
-            if(id) await updateDoc(doc(db, PRODUCTS_COL, id), data); else { data.createdAt = serverTimestamp(); data.active = true; await addDoc(collection(db, PRODUCTS_COL), data); }  
+            if(id) await updateDoc(doc(db, PRODUCTS_COL, id), data); 
+            else { data.createdAt = serverTimestamp(); data.active = true; await addDoc(collection(db, PRODUCTS_COL), data); }  
             resetProductForm(); showToast("Product Saved!"); refreshAdmin();  
         } catch(e) { showToast("Error saving."); } finally { btn.disabled = false; btn.innerText = "Save Product"; }  
     };  
+    
     window.renderAdminProducts = () => {  
         const q = document.getElementById('adminProdSearch').value.toLowerCase();  
         const f = allProducts.filter(p => `${p.title} ${p.category}`.toLowerCase().includes(q));  
         const t = document.getElementById('adminProductsTable');  
         t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-cover bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | Sizes: ${p.sizes?.join(', ')||'N/A'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
     };  
+    
     window.editAdminProduct = (id) => {  
         const p = allProducts.find(x => x.id === id); if(!p) return;  
         document.getElementById('editProductId').value = p.id; document.getElementById('productFormTitle').innerText = '✏️ Edit Product';  
         document.getElementById('pTitle').value = p.title||''; document.getElementById('pBase').value = p.basePrice||''; document.getElementById('pMrp').value = p.mrp||'';  
         document.getElementById('pCategory').value = p.category||allCategories[0]; document.getElementById('pSizes').value = p.sizes?.join(", ")||'';  
-        const imgs = p.images||[p.image]; for(let i=1; i<=5; i++) document.getElementById('pImg'+i).value = imgs[i-1]||'';  
+        
+        // Populate the multi-URL box
+        const imgs = p.images || [p.image, p.image1, p.image2, p.image3, p.image4, p.image5]; 
+        let validImgs = imgs.filter(Boolean);
+        document.getElementById('pImgUrls').value = validImgs.slice(0,5).join('\n');
+        
+        // Manually trigger the processing function so it creates previews and updates hidden fields
+        if(window.processAdminImageUrls) window.processAdminImageUrls();
+
         document.getElementById('pDesc').value = p.description||''; document.getElementById('adminProductsSection').scrollIntoView({behavior:'smooth'});  
     };  
+
     window.deleteAdminProduct = async (id) => { await deleteDoc(doc(db, PRODUCTS_COL, id)); showToast("Deleted"); refreshAdmin(); };  
   
     // Admin Orders  
@@ -1467,12 +1508,10 @@
         document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''} | Var: <span class="text-[#00e676] font-bold">${escapeHtml(o.selectedVariant||'Photo 1')}</span></div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
     };  
 
-    // Wallet payment processed upon Delivery, deducted on Return/Cancel
     window.updateAdminOrderStatus = async (id, st) => { 
         const order = adminOrders.find(o => o.id === id);
         if(!order) return;
         try {
-            // Add commission on Delivered
             if (st === 'delivered' && !order.paidToWallet) {
                 await runTransaction(db, async (tx) => {
                     const uRef = doc(db, USERS_COL, order.resellerId);
@@ -1482,7 +1521,6 @@
                 });
                 showToast("Delivered! Commission Added to Wallet.");
             } 
-            // Deduct commission if Returned/Cancelled after being delivered
             else if ((st === 'returned' || st === 'cancelled') && order.paidToWallet) {
                 await runTransaction(db, async (tx) => {
                     const uRef = doc(db, USERS_COL, order.resellerId);
@@ -1492,7 +1530,6 @@
                 });
                 showToast(`${st}! Commission Deducted.`);
             }
-            // Standard status update
             else {
                 await updateDoc(doc(db, ORDERS_COL, id), {status: st, updatedAt: serverTimestamp()}); 
                 showToast("Order Status Updated"); 
@@ -1506,18 +1543,17 @@
         document.getElementById('adminWithdrawalsTable').innerHTML = adminWithdraws.length ? adminWithdraws.map(w => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[200px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span><br>${w.txnId?`<span class="text-[9px] text-green-500 mt-1 block">Txn: ${escapeHtml(w.txnId)}</span>`:''}</td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';  
     };  
     
-    // NEW: Handle Transaction ID on Withdrawal Approve
     window.handleAdminWithdrawal = async (id, act) => {  
         const w = adminWithdraws.find(x => x.id === id); if(!w) return;  
         
         let txnId = null;
         if(act === 'approved') {
             txnId = prompt("Enter Transaction ID / UTR (Leave blank if not available):");
-            if(txnId === null) return; // User clicked Cancel
+            if(txnId === null) return; 
         }
 
         try {  
-            if(act === 'rejected') await updateDoc(doc(db, USERS_COL, w.userId), { walletBalance: increment(w.amount) }); // Refund Wallet  
+            if(act === 'rejected') await updateDoc(doc(db, USERS_COL, w.userId), { walletBalance: increment(w.amount) }); 
             
             const updatePayload = { status: act, processedAt: serverTimestamp() };
             if(txnId) updatePayload.txnId = txnId;
