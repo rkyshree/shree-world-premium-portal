@@ -1012,6 +1012,24 @@ placeholder="e.g., Men's Wear">
 
 </div>
 
+<!-- NEW FIELDS ADDED: OFFER TIME & ORDER COUNT -->
+<div class="form-group">
+<label class="form-label">⏳ Limited Offer End Time</label>
+<input
+type="datetime-local"
+class="form-input"
+id="prodOfferEndTime">
+</div>
+
+<div class="form-group">
+<label class="form-label">🔥 Order Popularity Text</label>
+<input
+type="text"
+class="form-input"
+id="prodOrderCountText"
+placeholder="e.g., 7 दिन में 23 ऑर्डर">
+</div>
+
 <div class="form-group full-width">
 
 <label class="form-label">
@@ -1028,11 +1046,11 @@ placeholder="e.g., S, M, L, XL, XXL">
 
 <div class="form-group full-width">
 
+<!-- CHANGED TO 10 IMAGES -->
 <label class="form-label">
-🖼️ Product Image URLs (एक साथ 5 लिंक पेस्ट करें)
+🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)
 </label>
 
-<!-- YAHAN MULTIPLE LINKS EK SATH PASTE KIYE JA SAKTE HAIN -->
 <textarea
 class="image-url-box"
 id="prodImageUrls"
@@ -1045,10 +1063,10 @@ oninput="processImageUrls()"
 onpaste="setTimeout(processImageUrls, 100)"></textarea>
 
 <div class="image-help">
-✅ आप एक ही बार में 1 से लेकर 5 इमेज URL कॉपी करके ऊपर बॉक्स में पेस्ट कर सकते हैं। सिस्टम अपने आप उन्हें अलग कर लेगा।
+✅ आप एक ही बार में 1 से लेकर 10 इमेज URL कॉपी करके ऊपर बॉक्स में पेस्ट कर सकते हैं। सिस्टम अपने आप उन्हें अलग कर लेगा।
 <br>
 <span class="image-count" id="imageCount">
-0 / 5 Images Added
+0 / 10 Images Added
 </span>
 </div>
 
@@ -1058,16 +1076,26 @@ onpaste="setTimeout(processImageUrls, 100)"></textarea>
 <div class="image-preview-item"><div class="image-preview-empty">Image 3</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 4</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 5</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 6</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 7</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 8</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 9</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 10</div></div>
 </div>
 
 </div>
 
-<!-- Hidden inputs database me save karne ke liye -->
+<!-- Hidden inputs updated to 10 -->
 <input type="hidden" id="prodImg1">
 <input type="hidden" id="prodImg2">
 <input type="hidden" id="prodImg3">
 <input type="hidden" id="prodImg4">
 <input type="hidden" id="prodImg5">
+<input type="hidden" id="prodImg6">
+<input type="hidden" id="prodImg7">
+<input type="hidden" id="prodImg8">
+<input type="hidden" id="prodImg9">
+<input type="hidden" id="prodImg10">
 
 <div class="form-group full-width">
 
@@ -1543,7 +1571,7 @@ updateDashboardStats();
 };
 
 /* =========================================
-PRODUCTS (WITH MULTI-URL PASTE)
+PRODUCTS (WITH 10-URL PASTE)
 ========================================= */
 async function fetchProducts(){
 const snap=await getDocs(collection(db,PRODUCTS_COL));
@@ -1553,28 +1581,28 @@ state.products.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis
 renderProducts();
 }
 
-// YAHI FUNCTION LINKS KO ALAG KARTA HAI REGEX SE
+// CHANGED TO ACCEPT UP TO 10 URLs
 function extractImageUrls(text){
 if(!text) return [];
-// Matches http/https links even if pasted all together with spaces/newlines/commas
 const matches=text.match(/https?:\/\/[^\s,]+/gi);
 if(!matches) return [];
-return [...new Set(matches.map(url=>url.trim().replace(/[),;]+$/g,"")))].slice(0,5);
+return [...new Set(matches.map(url=>url.trim().replace(/[),;]+$/g,"")))].slice(0,10);
 }
 
 window.processImageUrls=()=>{
 const text=document.getElementById("prodImageUrls").value;
 const urls=extractImageUrls(text);
 
-for(let i=1;i<=5;i++){
-document.getElementById("prodImg"+i).value=urls[i-1]||"";
+for(let i=1;i<=10;i++){
+const hiddenInput = document.getElementById("prodImg"+i);
+if(hiddenInput) hiddenInput.value=urls[i-1]||"";
 }
 
-document.getElementById("imageCount").innerText=`${urls.length} / 5 Images Added`;
+document.getElementById("imageCount").innerText=`${urls.length} / 10 Images Added`;
 
 const grid=document.getElementById("imagePreviewGrid");
 let html="";
-for(let i=0;i<5;i++){
+for(let i=0;i<10;i++){
 if(urls[i]){
 html+=`<div class="image-preview-item"><img src="${escapeHtml(urls[i])}" alt="Product Image ${i+1}" onerror="this.style.display='none';"><div class="image-preview-number">Image ${i+1}</div></div>`;
 }else{
@@ -1635,10 +1663,13 @@ title, basePrice,
 mrp:Number(document.getElementById("prodMrp").value||0),
 discount:Number(document.getElementById("prodDiscount").value||0),
 category:document.getElementById("prodCategory").value.trim(),
+offerEndTime:document.getElementById("prodOfferEndTime").value||"",
+orderCountText:document.getElementById("prodOrderCountText").value.trim()||"",
 description:document.getElementById("prodDesc").value.trim(),
 sizes, images,
 image:images[0]||"",
 image1:images[0]||"", image2:images[1]||"", image3:images[2]||"", image4:images[3]||"", image5:images[4]||"",
+image6:images[5]||"", image7:images[6]||"", image8:images[7]||"", image9:images[8]||"", image10:images[9]||"",
 updatedAt:serverTimestamp()
 };
 
@@ -1673,6 +1704,8 @@ document.getElementById("prodBasePrice").value=p.basePrice||"";
 document.getElementById("prodMrp").value=p.mrp||"";
 document.getElementById("prodDiscount").value=p.discount||"";
 document.getElementById("prodCategory").value=p.category||"";
+document.getElementById("prodOfferEndTime").value=p.offerEndTime||"";
+document.getElementById("prodOrderCountText").value=p.orderCountText||"";
 document.getElementById("prodDesc").value=p.description||"";
 
 const sizes=Array.isArray(p.sizes)?p.sizes.join(", "): (p.sizes||"");
@@ -1682,10 +1715,10 @@ let imgs=[];
 if(Array.isArray(p.images)&&p.images.length){
 imgs=p.images;
 }else{
-imgs=[p.image1, p.image2, p.image3, p.image4, p.image5].filter(Boolean);
+imgs=[p.image1, p.image2, p.image3, p.image4, p.image5, p.image6, p.image7, p.image8, p.image9, p.image10].filter(Boolean);
 if(!imgs.length&&p.image){ imgs=[p.image]; }
 }
-imgs=imgs.slice(0,5);
+imgs=imgs.slice(0,10);
 document.getElementById("prodImageUrls").value=imgs.join("\n");
 processImageUrls();
 
@@ -1695,11 +1728,14 @@ window.scrollTo({ top:0, behavior:"smooth" });
 };
 
 window.resetProductForm=()=>{
-["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodSizes","prodDesc","prodImageUrls","prodImg1","prodImg2","prodImg3","prodImg4","prodImg5"].forEach(id=>{ document.getElementById(id).value=""; });
+["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodOfferEndTime","prodOrderCountText","prodSizes","prodDesc","prodImageUrls","prodImg1","prodImg2","prodImg3","prodImg4","prodImg5","prodImg6","prodImg7","prodImg8","prodImg9","prodImg10"].forEach(id=>{ 
+const el = document.getElementById(id);
+if(el) el.value=""; 
+});
 document.getElementById("productFormTitle").innerText="Add New Product";
 document.getElementById("btnSaveProduct").innerText="Save Product";
-document.getElementById("imageCount").innerText="0 / 5 Images Added";
-document.getElementById("imagePreviewGrid").innerHTML=[1,2,3,4,5].map(i=>`<div class="image-preview-item"><div class="image-preview-empty">Image ${i}</div></div>`).join("");
+document.getElementById("imageCount").innerText="0 / 10 Images Added";
+document.getElementById("imagePreviewGrid").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(i=>`<div class="image-preview-item"><div class="image-preview-empty">Image ${i}</div></div>`).join("");
 };
 
 window.deleteProduct=async(id)=>{
