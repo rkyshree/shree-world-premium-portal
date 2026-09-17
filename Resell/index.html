@@ -430,9 +430,13 @@
                     <input type="tel" id="orderCustPhone" required pattern="[0-9]{10}" maxlength="10" placeholder="10-digit Mobile Number" class="input-field bg-gray-50">  
                     <textarea id="orderCustAddress" required rows="2" placeholder="Complete Delivery Address" class="input-field bg-gray-50 resize-none"></textarea>  
                     <div class="grid grid-cols-2 gap-3">  
-                        <input type="tel" id="orderCustPin" required pattern="[0-9]{6}" maxlength="6" placeholder="Pincode" class="input-field bg-gray-50">  
+                        <input type="tel" id="orderCustPin" required pattern="[0-9]{6}" maxlength="6" placeholder="Pincode" class="input-field bg-gray-50" oninput="fetchCityState(this.value)">  
                         <input type="number" id="orderQty" required min="1" value="1" oninput="updateOrderSummary()" placeholder="Qty" class="input-field bg-gray-100 text-center font-bold">  
                     </div>  
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <input type="text" id="orderCustCity" placeholder="City" readonly required class="input-field bg-gray-100 text-gray-500">
+                        <input type="text" id="orderCustState" placeholder="State" readonly required class="input-field bg-gray-100 text-gray-500">
+                    </div>
                 </div>  
 
                 <div class="bg-primary-light/30 border border-primary-light rounded-2xl p-4 mt-2">  
@@ -866,7 +870,7 @@ For questions, feedback, or assistance regarding our platform and services, plea
 
 Thank you for choosing SHRAYNEX.
 
-© 2026 SHRAYNEX. All Rights Reserved.</WritingBlock>` 
+© 2026 SHRAYNEX. All Rights Reserved.` 
         },
         contact: { 
             title: "Contact Support", 
@@ -1425,6 +1429,30 @@ Thank you for shopping with SHRAYNEX.
     const money = (v) => Number(v||0).toLocaleString('en-IN');  
     const escapeHtml = (unsafe) => String(unsafe||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");  
   
+    // =========================================================================
+    // 🔴 NEW FUNCTION: FETCH CITY AND STATE USING PINCODE 🔴
+    // =========================================================================
+    window.fetchCityState = async (pin) => {
+        if(pin.length === 6) {
+            try {
+                const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+                const data = await res.json();
+                if(data && data[0].Status === "Success") {
+                    const postOffice = data[0].PostOffice[0];
+                    document.getElementById('orderCustCity').value = postOffice.District;
+                    document.getElementById('orderCustState').value = postOffice.State;
+                } else {
+                    document.getElementById('orderCustCity').value = "";
+                    document.getElementById('orderCustState').value = "";
+                    showToast("Invalid Pincode");
+                }
+            } catch(e) { console.error(e); }
+        } else {
+            document.getElementById('orderCustCity').value = "";
+            document.getElementById('orderCustState').value = "";
+        }
+    };
+
     async function loadCategories() {  
         try {  
             const snap = await getDoc(doc(db, SETTINGS_COL, "categories"));  
@@ -1497,7 +1525,7 @@ Thank you for shopping with SHRAYNEX.
     async function initUserDoc(user, extra = {}) {  
         const ref = doc(db, USERS_COL, user.uid), snap = await getDoc(ref);  
         if(!snap.exists()) {  
-            const d = { uid: user.uid, name: extra.name || user.displayName || "Reseller", email: user.email || "", phone: extra.phone || "", role: "reseller", status: "pending", walletBalance: 0, totalEarnings: 0, createdAt: serverTimestamp(), updatedAt: serverTimestamp() };  
+            const d = { uid: user.uid, name: extra.name || user.displayName || "Reseller", email: user.email || "", phone: extra.phone || "", role: "reseller", status: "pending", walletBalance: 0, totalEarnings: 0, joiningBonusPaid: false, createdAt: serverTimestamp(), updatedAt: serverTimestamp() };  
             await setDoc(ref, d); userData = d;  
         } else {  
             const u = { updatedAt: serverTimestamp() };  
@@ -1600,10 +1628,13 @@ Thank you for shopping with SHRAYNEX.
                 stColor = 'text-red-500'; stIcon = '❌'; stText = 'Failed/Returned'; 
             }
 
+            const isBonus = o.isBonus;
+            const variantText = isBonus ? 'Gift' : escapeHtml(o.selectedVariant||'Photo 1');
+
             return `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
                 <div class="flex justify-between items-start mb-1">
                     <div>
-                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Order: ${escapeHtml(o.orderId)}</p>
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">${isBonus ? 'Reward' : 'Order: ' + escapeHtml(o.orderId)}</p>
                         <p class="font-bold text-sm text-gray-800 line-clamp-1 mt-0.5">${escapeHtml(o.productName)}</p>
                     </div>
                     <div class="text-right">
@@ -1611,7 +1642,7 @@ Thank you for shopping with SHRAYNEX.
                     </div>
                 </div>
                 <div class="pt-2 mt-2 border-t border-gray-50 flex justify-between items-center">
-                    <p class="text-[11px] font-medium text-gray-500">Var: ${escapeHtml(o.selectedVariant||'Photo 1')}</p>
+                    <p class="text-[11px] font-medium text-gray-500">${isBonus ? '🎉 ' : 'Var: '}${variantText}</p>
                     <p class="text-[10px] font-bold ${stColor}">${stIcon} ${stText}</p>
                 </div>
             </div>`;
@@ -1828,17 +1859,19 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
+    // 🔴 NEW MULTI-IMAGE SHARE LOGIC 🔴
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
         const b = Number(selectedProduct.basePrice||0);  
         if(s <= b) return showToast("Customer price must be higher than base price.");  
         
-        const photoNum = currentSelectedImageIndex + 1;
-        const imgUrl = (selectedProduct.images && selectedProduct.images[currentSelectedImageIndex]) || selectedProduct.image || '';
+        const images = selectedProduct.images && selectedProduct.images.length > 0 
+                       ? selectedProduct.images.filter(Boolean) 
+                       : [selectedProduct.image].filter(Boolean);
         
         const descText = selectedProduct.description ? `\n📝 *Details:*\n${selectedProduct.description}\n` : '';
-        const msg = `🛍️ *${selectedProduct.title}*${descText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* ${selectedProduct.deliveryTime||"3-7 Days"}\n\n📌 *Selected Variant:* Photo Number ${photoNum}\n\nMessage me to order!`;  
+        const msg = `🛍️ *${selectedProduct.title}*${descText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* ${selectedProduct.deliveryTime||"3-7 Days"}\n\nMessage me to order!`;  
         
         const btn = document.querySelector('#shareModal button[onclick="shareToWhatsApp()"]');
         const origHtml = btn.innerHTML;
@@ -1846,24 +1879,33 @@ Thank you for shopping with SHRAYNEX.
         btn.disabled = true;
 
         try {
-            const response = await fetch(imgUrl);
-            const blob = await response.blob();
-            const file = new File([blob], "product_image.jpg", { type: blob.type || 'image/jpeg' });
+            const files = [];
+            for (let i = 0; i < images.length; i++) {
+                try {
+                    const response = await fetch(images[i]);
+                    const blob = await response.blob();
+                    files.push(new File([blob], `product_image_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }));
+                } catch(e) { console.warn("Could not fetch image for sharing", e); }
+            }
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], text: msg });
+            if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
+                await navigator.share({ files: files, text: msg });
                 closeModal('shareModal');
             } else {
-                await navigator.clipboard.writeText(msg);
+                const allLinks = images.join("\n");
+                const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
+                await navigator.clipboard.writeText(fallbackMsg);
                 showToast("Text copied! Redirecting to WhatsApp...");
                 setTimeout(() => {
-                    window.open(`https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + imgUrl)}`, '_blank');
+                    window.open(`https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`, '_blank');
                     closeModal('shareModal');
                 }, 1500);
             }
         } catch (error) {
             if (error.name !== 'AbortError') { 
-                window.open(`https://wa.me/?text=${encodeURIComponent(msg + "\n\n" + imgUrl)}`, '_blank');
+                const allLinks = images.join("\n");
+                const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
+                window.open(`https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`, '_blank');
                 closeModal('shareModal');
             }
         } finally {
@@ -1906,7 +1948,11 @@ Thank you for shopping with SHRAYNEX.
     window.fillMyAddress = () => {  
         if(!userData?.address) return showToast("No saved address found. Save it in Account tab.");  
         document.getElementById('orderCustName').value = userData.name||''; document.getElementById('orderCustPhone').value = userData.phone||'';  
-        document.getElementById('orderCustAddress').value = userData.address||''; document.getElementById('orderCustPin').value = userData.pincode||'';  
+        document.getElementById('orderCustAddress').value = userData.address||''; 
+        
+        const pin = userData.pincode||'';
+        document.getElementById('orderCustPin').value = pin;  
+        if(pin.length === 6) fetchCityState(pin);
         showToast("Address populated.");  
     };  
   
@@ -1927,6 +1973,7 @@ Thank you for shopping with SHRAYNEX.
             const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
             const photoNum = orderSelectedImageIndex + 1;
             const imgToSave = (selectedProduct.images && selectedProduct.images[orderSelectedImageIndex]) || selectedProduct.image || '';
+            const completeCustAddress = document.getElementById('orderCustAddress').value.trim() + ", " + document.getElementById('orderCustCity').value + ", " + document.getElementById('orderCustState').value;
 
             await setDoc(doc(db, ORDERS_COL, orderId), {  
                 orderId: orderId, productId: selectedProduct.id, productName: selectedProduct.title||"", productImage: imgToSave,  
@@ -1934,7 +1981,7 @@ Thank you for shopping with SHRAYNEX.
                 quantity: q, size: sz!=='N/A'?sz:null, basePrice: b, sellingPrice: s, profit: (s-b)*q, status: "pending",  
                 resellerId: currentUser.uid, resellerName: userData?.name||"",  
                 customerName: document.getElementById('orderCustName').value.trim(), customerPhone: document.getElementById('orderCustPhone').value.trim(),  
-                customerAddress: document.getElementById('orderCustAddress').value.trim(), pincode: document.getElementById('orderCustPin').value.trim(),  
+                customerAddress: completeCustAddress, pincode: document.getElementById('orderCustPin').value.trim(),  
                 paidToWallet: false,
                 createdAt: serverTimestamp(), updatedAt: serverTimestamp()  
             });  
@@ -1953,7 +2000,7 @@ Thank you for shopping with SHRAYNEX.
 
             let pendingAmt = 0;
             ords.forEach(o => {
-                if (o.status !== 'delivered' && o.status !== 'cancelled' && o.status !== 'returned') {
+                if (o.status !== 'delivered' && o.status !== 'cancelled' && o.status !== 'returned' && !o.isBonus) {
                     pendingAmt += (o.profit || 0);
                 }
             });
@@ -1961,8 +2008,9 @@ Thank you for shopping with SHRAYNEX.
             if(peElem) peElem.innerText = `₹${money(pendingAmt)}`;
 
             const list = document.getElementById('ordersList');  
-            if(!ords.length) { list.innerHTML = '<div class="bg-white p-8 rounded-3xl shadow-sm text-center border border-gray-100"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i><h3 class="font-bold text-gray-800">No Orders Yet</h3><p class="text-xs font-medium text-gray-500 mt-1">Start sharing products to get your first order!</p></div>'; return; }  
-            list.innerHTML = ords.map(o => `  
+            const displayOrds = ords.filter(o => !o.isBonus);
+            if(!displayOrds.length) { list.innerHTML = '<div class="bg-white p-8 rounded-3xl shadow-sm text-center border border-gray-100"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i><h3 class="font-bold text-gray-800">No Orders Yet</h3><p class="text-xs font-medium text-gray-500 mt-1">Start sharing products to get your first order!</p></div>'; return; }  
+            list.innerHTML = displayOrds.map(o => `  
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">  
                     <div class="flex justify-between items-start mb-3 border-b border-gray-50 pb-3">  
                         <div><span class="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Order ID</span><span class="font-bold text-gray-900">${escapeHtml(o.orderId||o.id)}</span></div>  
@@ -2017,9 +2065,9 @@ Thank you for shopping with SHRAYNEX.
           
         document.getElementById('statResellers').innerText = adminUsers.filter(u=>u.role!=='admin').length;  
         document.getElementById('statProducts').innerText = allProducts.length;  
-        document.getElementById('statOrders').innerText = adminOrders.length;  
+        document.getElementById('statOrders').innerText = adminOrders.filter(o=>!o.isBonus).length;  
         document.getElementById('statWithdrawals').innerText = adminWithdraws.filter(w=>w.status==='pending').length;  
-        document.getElementById('statRevenue').innerText = money(adminOrders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(Number(o.sellingPrice)*Number(o.quantity||1)),0));  
+        document.getElementById('statRevenue').innerText = money(adminOrders.filter(o=>o.status!=='cancelled' && !o.isBonus).reduce((s,o)=>s+(Number(o.sellingPrice)*Number(o.quantity||1)),0));  
           
         renderAdminUsers(); renderAdminProducts(); renderAdminOrders(); renderAdminWithdrawals();  
     };  
@@ -2031,7 +2079,48 @@ Thank you for shopping with SHRAYNEX.
         const t = document.getElementById('adminUsersTable');  
         t.innerHTML = f.length ? f.map(u => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4 font-black text-[#00e676]">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end">${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';  
     };  
-    window.setAdminUserStatus = async (id, st) => { await updateDoc(doc(db, USERS_COL, id), {status: st, updatedAt: serverTimestamp()}); showToast("Status Updated"); refreshAdmin(); };  
+    
+    // 🔴 NEW JOINING BONUS LOGIC 🔴
+    window.setAdminUserStatus = async (id, st) => { 
+        const user = adminUsers.find(u => u.id === id);
+        if(!user) return;
+        
+        try {
+            if (st === 'approved' && !user.joiningBonusPaid) {
+                await runTransaction(db, async (tx) => {
+                    const uRef = doc(db, USERS_COL, id);
+                    tx.update(uRef, { 
+                        status: st, 
+                        walletBalance: increment(50), 
+                        totalEarnings: increment(50),
+                        joiningBonusPaid: true,
+                        updatedAt: serverTimestamp() 
+                    });
+                    
+                    const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
+                    const oRef = doc(db, ORDERS_COL, bonusId);
+                    tx.set(oRef, {
+                        orderId: bonusId,
+                        productName: "Joining Gift 🎁",
+                        profit: 50,
+                        status: "delivered", 
+                        resellerId: id,
+                        selectedVariant: "Bonus",
+                        createdAt: serverTimestamp(),
+                        isBonus: true
+                    });
+                });
+                showToast("Approved & ₹50 Bonus Added!");
+            } else {
+                await updateDoc(doc(db, USERS_COL, id), {status: st, updatedAt: serverTimestamp()}); 
+                showToast("Status Updated");
+            }
+            refreshAdmin(); 
+        } catch(e) {
+            console.error(e);
+            showToast("Error updating status");
+        }
+    };  
   
     // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN 🔴
     function extractImageUrls(text) {
@@ -2128,7 +2217,7 @@ Thank you for shopping with SHRAYNEX.
     // Admin Orders  
     window.renderAdminOrders = () => {  
         const q = document.getElementById('adminOrdSearch').value.toLowerCase();  
-        const f = adminOrders.filter(o => `${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(q));  
+        const f = adminOrders.filter(o => !o.isBonus && `${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(q));  
         document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''} | Var: <span class="text-[#00e676] font-bold">${escapeHtml(o.selectedVariant||'Photo 1')}</span></div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
     };  
 
