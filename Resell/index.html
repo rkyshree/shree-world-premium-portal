@@ -62,13 +62,7 @@
             <h1 class="text-2xl font-black text-primary tracking-tight">SHRAYNEX</h1>  
             <p class="text-[9px] font-black text-gray-400 tracking-widest uppercase mt-0.5">Resell • Share • Earn</p>  
         </div>  
-        <!-- PWA Install Button added here -->
-        <div class="flex items-center gap-2">
-            <button onclick="installPWA()" class="install-app-btn hidden bg-primary/10 text-primary border border-primary-light px-3 py-2.5 rounded-full text-sm font-bold transition shadow-sm" title="Install App">
-                <i class="fa-solid fa-download"></i> App
-            </button>
-            <button onclick="openModal('authModal')" class="bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg hover:bg-black transition">Login / Join</button>  
-        </div>
+        <button onclick="openModal('authModal')" class="bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg hover:bg-black transition">Login / Join</button>  
     </header>  
 
     <main class="flex-1 overflow-y-auto">  
@@ -263,12 +257,6 @@
 
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">  
                 
-                <!-- PWA Install App Button Added Here -->
-                <button onclick="installPWA()" class="install-app-btn hidden w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">  
-                    <span class="font-semibold text-gray-800"><i class="fa-solid fa-download text-primary w-6"></i> Install SHRAYNEX App</span>  
-                    <span class="text-[10px] font-bold bg-primary text-white px-2 py-1 rounded">Free</span>  
-                </button> 
-
                 <!-- NEW: Payment History Option -->
                 <button onclick="openPaymentHistory()" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50">  
                     <span class="font-semibold text-gray-800"><i class="fa-solid fa-clock-rotate-left text-primary w-6"></i> Payment History</span>  
@@ -551,7 +539,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी উভয় पर ही कमीशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -758,8 +746,9 @@
     renderCatalogHighlights();
 
     // =========================================================================
-    // 🟢 2. COMPANY & LEGAL POLICIES SETTINGS 🟢
+    // 🟢 2. COMPANY & LEGAL POLICIES SETTINGS 🟢 (यहाँ से आप कोई भी टेक्स्ट बदल सकते हैं)
     // =========================================================================
+    // नोट: ` ` (बैकटिक्स) के अंदर आप अपना टेक्स्ट, पैराग्राफ, और नई लाइनें आसानी से लिख सकते हैं। 
     const policies = {
         about: { 
             title: "About Us", 
@@ -1382,6 +1371,7 @@ Thank you for shopping with SHRAYNEX.
         const p = policies[type]; 
         if(!p) return; 
         document.getElementById("policyTitle").innerText = p.title; 
+        // यह लाइन कोड को अपने आप नई लाइन (Enter) को <br> में बदल देती है
         document.getElementById("policyContent").innerHTML = p.content.replace(/\n/g, '<br>'); 
         openModal("policyModal"); 
     };
@@ -1869,6 +1859,7 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
+    // 🔴 NEW MULTI-IMAGE SHARE LOGIC 🔴
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -2037,7 +2028,7 @@ Thank you for shopping with SHRAYNEX.
     }  
   
     // =========================================================  
-    // ADMIN PANEL LOGIC
+    // ADMIN PANEL LOGIC (Modified to support Bulk Image Paste)
     // =========================================================  
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     window.handleAdminLogin = async (e) => {  
@@ -2081,6 +2072,7 @@ Thank you for shopping with SHRAYNEX.
         renderAdminUsers(); renderAdminProducts(); renderAdminOrders(); renderAdminWithdrawals();  
     };  
   
+    // Admin Users  
     window.renderAdminUsers = () => {  
         const q = document.getElementById('adminUserSearch').value.toLowerCase();  
         const f = adminUsers.filter(u => u.role !== 'admin' && `${u.name} ${u.phone} ${u.email}`.toLowerCase().includes(q));  
@@ -2088,6 +2080,7 @@ Thank you for shopping with SHRAYNEX.
         t.innerHTML = f.length ? f.map(u => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4 font-black text-[#00e676]">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end">${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';  
     };  
     
+    // 🔴 NEW JOINING BONUS LOGIC 🔴
     window.setAdminUserStatus = async (id, st) => { 
         const user = adminUsers.find(u => u.id === id);
         if(!user) return;
@@ -2129,6 +2122,7 @@ Thank you for shopping with SHRAYNEX.
         }
     };  
   
+    // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN 🔴
     function extractImageUrls(text) {
         if(!text) return [];
         const matches = text.match(/https?:\/\/[^\s,]+/gi);
@@ -2162,6 +2156,7 @@ Thank you for shopping with SHRAYNEX.
         }
     };
 
+    // Admin Products  
     window.resetProductForm = () => { 
         document.getElementById('editProductId').value = ''; 
         document.getElementById('productFormTitle').innerText = '➕ Add New Product'; 
@@ -2181,6 +2176,7 @@ Thank you for shopping with SHRAYNEX.
             description: document.getElementById('pDesc').value, updatedAt: serverTimestamp()  
         };  
         
+        // Backup mechanism inside save logic: agar images array khali hai, lekin image parameter use hota tha
         if(data.images.length > 0) data.image = data.images[0];
 
         if(!data.title || !data.basePrice) return showToast("Title & Base Price required.");  
@@ -2205,10 +2201,12 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('pTitle').value = p.title||''; document.getElementById('pBase').value = p.basePrice||''; document.getElementById('pMrp').value = p.mrp||'';  
         document.getElementById('pCategory').value = p.category||allCategories[0]; document.getElementById('pSizes').value = p.sizes?.join(", ")||'';  
         
+        // Populate the multi-URL box
         const imgs = p.images || [p.image, p.image1, p.image2, p.image3, p.image4, p.image5]; 
         let validImgs = imgs.filter(Boolean);
         document.getElementById('pImgUrls').value = validImgs.slice(0,5).join('\n');
         
+        // Manually trigger the processing function so it creates previews and updates hidden fields
         if(window.processAdminImageUrls) window.processAdminImageUrls();
 
         document.getElementById('pDesc').value = p.description||''; document.getElementById('adminProductsSection').scrollIntoView({behavior:'smooth'});  
@@ -2216,6 +2214,7 @@ Thank you for shopping with SHRAYNEX.
 
     window.deleteAdminProduct = async (id) => { await deleteDoc(doc(db, PRODUCTS_COL, id)); showToast("Deleted"); refreshAdmin(); };  
   
+    // Admin Orders  
     window.renderAdminOrders = () => {  
         const q = document.getElementById('adminOrdSearch').value.toLowerCase();  
         const f = adminOrders.filter(o => !o.isBonus && `${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(q));  
@@ -2252,6 +2251,7 @@ Thank you for shopping with SHRAYNEX.
         } catch(e) { showToast("Error updating status"); }
     };  
   
+    // Admin Withdrawals  
     window.renderAdminWithdrawals = () => {  
         document.getElementById('adminWithdrawalsTable').innerHTML = adminWithdraws.length ? adminWithdraws.map(w => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[200px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span><br>${w.txnId?`<span class="text-[9px] text-green-500 mt-1 block">Txn: ${escapeHtml(w.txnId)}</span>`:''}</td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';  
     };  
@@ -2276,85 +2276,5 @@ Thank you for shopping with SHRAYNEX.
         } catch(e) { showToast("Error processing."); }  
     };  
   
-</script>  
-
-<!-- PWA INSTALL LOGIC (NEW) -->
-<script>
-    let deferredPrompt;
-
-    // 1. Dynamically Create and Inject manifest.json
-    const manifest = {
-        "name": "SHRAYNEX Reselling",
-        "short_name": "SHRAYNEX",
-        "description": "Start your online reselling business with zero investment.",
-        "start_url": location.pathname,
-        "display": "standalone",
-        "background_color": "#ffffff",
-        "theme_color": "#db2777",
-        "icons": [
-            {
-                "src": "https://i.ibb.co/6RwVCW5P/Picsart-26-09-03-18-16-49-601.png",
-                "sizes": "192x192",
-                "type": "image/png"
-            },
-            {
-                "src": "https://i.ibb.co/6RwVCW5P/Picsart-26-09-03-18-16-49-601.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            }
-        ]
-    };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-    const manifestURL = URL.createObjectURL(manifestBlob);
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = manifestURL;
-    document.head.appendChild(link);
-
-    // 2. Dynamically Create and Register Service Worker
-    const swCode = `
-        self.addEventListener('install', (e) => { self.skipWaiting(); });
-        self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
-        self.addEventListener('fetch', (e) => { });
-    `;
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    const swURL = URL.createObjectURL(swBlob);
-    
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register(swURL).catch(err => console.log('SW registration failed:', err));
-        });
-    }
-
-    // 3. Handle Install Prompt
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent the mini-infobar from appearing on mobile
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        deferredPrompt = e;
-        // Update UI notify the user they can install the PWA
-        document.querySelectorAll('.install-app-btn').forEach(btn => btn.classList.remove('hidden'));
-    });
-
-    // 4. Install Function
-    window.installPWA = async () => {
-        if (deferredPrompt) {
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('User accepted the install prompt');
-            } else {
-                console.log('User dismissed the install prompt');
-            }
-            // We've used the prompt, and can't use it again, throw it away
-            deferredPrompt = null;
-            // Hide the buttons
-            document.querySelectorAll('.install-app-btn').forEach(btn => btn.classList.add('hidden'));
-        }
-    };
-</script>
-
-</body>  
+</script>  </body>  
 </html>
