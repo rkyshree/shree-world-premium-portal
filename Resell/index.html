@@ -342,7 +342,21 @@
             </div>  
             
             <div class="p-5 bg-white mb-2 shadow-sm">  
+                <!-- NEW: Countdown Display in Modal -->
+                <div id="pdOfferTimerContainer" class="hidden mb-3">
+                    <div class="bg-red-50 border border-red-100 text-red-600 text-xs font-bold px-3 py-2 rounded-xl flex items-center justify-between">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> Limited Time Offer</span>
+                        <span id="pdOfferTimer" class="countdown-timer" data-endtime="">Loading...</span>
+                    </div>
+                </div>
+
                 <h2 id="pdTitle" class="text-xl font-black text-gray-900 mb-2 leading-tight">Product Title</h2>  
+                
+                <!-- NEW: Popularity Text in Modal -->
+                <div id="pdPopularityContainer" class="hidden mb-3">
+                    <span id="pdPopularity" class="bg-rose-50 text-rose-600 text-[10px] font-bold px-2.5 py-1 rounded-md border border-rose-100 flex items-center w-fit gap-1"></span>
+                </div>
+
                 <div class="flex items-baseline gap-2 mb-4">  
                     <span id="pdPrice" class="font-black text-3xl text-primary">₹0</span>  
                     <span id="pdMrp" class="text-sm font-bold text-gray-400 line-through hidden">₹0</span>  
@@ -458,7 +472,7 @@
     </div>  
 </div>  
 
-<!-- Payment History Modal (NEW) -->  
+<!-- Payment History Modal -->  
 <div id="paymentHistoryModal" class="bottom-sheet">  
     <div class="bottom-sheet-content h-[85vh] bg-gray-50">  
         <div class="p-4 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-[24px] shadow-sm">  
@@ -472,12 +486,9 @@
         </div>
 
         <div class="p-4 overflow-y-auto pb-8">  
-            <!-- Earnings Tab -->
             <div id="phEarningsTab" class="space-y-3">
                 <div id="phEarningsList"></div>
             </div>
-            
-            <!-- Payouts Tab -->
             <div id="phPayoutsTab" class="hidden space-y-3">
                 <div id="phPayoutsList"></div>
             </div>
@@ -576,7 +587,6 @@
 
 <!-- Admin Panel (Full Screen) -->  
 <div id="adminPanelModal" class="fixed inset-0 z-[350] bg-[#0a0a0a] text-white hidden flex-col md:flex-row overflow-hidden">  
-    <!-- Sidebar -->  
     <aside id="adminSidebar" class="w-full md:w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex z-20">  
         <div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div>  
         <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p>  
@@ -588,14 +598,12 @@
         <div class="mt-auto pt-8"><button onclick="closeAdminPanel()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition">🚪 Exit Admin</button></div>  
     </aside>  
 
-    <!-- Main Content -->  
     <main class="flex-1 p-4 md:p-8 min-w-0 overflow-y-auto relative">  
         <header class="flex justify-between items-center mb-8 pb-4 border-b border-[#222]">  
             <div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl">☰</button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Overview</h1></div>  
             <div class="flex gap-3"><button onclick="refreshAdmin()" class="bg-[#222] border border-[#333] px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#333] transition hidden sm:block">↻ Refresh</button><div id="adminEmailDisplay" class="text-xs text-gray-500 font-medium py-2.5">Admin</div></div>  
         </header>  
 
-        <!-- Sections -->  
         <div id="adminDashboardSection" class="admin-section block space-y-6">  
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">  
                 <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Resellers</p><p id="statResellers" class="text-3xl font-black mt-2">0</p></div>  
@@ -630,14 +638,17 @@
                     </div>  
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Sizes (Comma Separated)</label><input id="pSizes" placeholder="e.g. S, M, L, XL" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
                     
-                    <!-- NEW: MULTI URL PASTE SECTION (ADMIN THEME) -->
+                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">⏳ Limited Offer End Time</label><input type="datetime-local" id="pOfferEndTime" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white"></div>
+                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🔥 Order Popularity Text</label><input type="text" id="pOrderCountText" placeholder="e.g. 7 दिन में 23 ऑर्डर" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white"></div>
+
+                    <!-- NEW: MULTI URL PASTE SECTION (ADMIN THEME) (10 IMAGES) -->
                     <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (एक साथ 5 लिंक पेस्ट करें)</label>
+                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)</label>
                         <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें... &#10;https://i.ibb.co/8L7KRkbz/AS973.jpg&#10;https://i.ibb.co/B5ThVW9S/AS965.jpg" oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
                         
                         <div class="mt-2 text-xs text-gray-500 flex justify-between">
-                            <span>आप एक ही बार में 1-5 इमेज URL पेस्ट कर सकते हैं।</span>
-                            <span id="adminImageCount" class="text-[#00e676] font-bold">0 / 5 Images Added</span>
+                            <span>आप एक ही बार में 1-10 इमेज URL पेस्ट कर सकते हैं।</span>
+                            <span id="adminImageCount" class="text-[#00e676] font-bold">0 / 10 Images Added</span>
                         </div>
             
                         <div id="adminImagePreviewGrid" class="grid grid-cols-5 gap-2 mt-3">
@@ -646,14 +657,17 @@
                             <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 3</div>
                             <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 4</div>
                             <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 5</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 6</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 7</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 8</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 9</div>
+                            <div class="aspect-square bg-[#222] rounded-lg flex items-center justify-center text-[10px] text-gray-500 border border-[#333] text-center">Img 10</div>
                         </div>
                         
                         <!-- Hidden inputs for Database -->
-                        <input type="hidden" id="pImg1">
-                        <input type="hidden" id="pImg2">
-                        <input type="hidden" id="pImg3">
-                        <input type="hidden" id="pImg4">
-                        <input type="hidden" id="pImg5">
+                        <input type="hidden" id="pImg1"> <input type="hidden" id="pImg2"> <input type="hidden" id="pImg3">
+                        <input type="hidden" id="pImg4"> <input type="hidden" id="pImg5"> <input type="hidden" id="pImg6">
+                        <input type="hidden" id="pImg7"> <input type="hidden" id="pImg8"> <input type="hidden" id="pImg9"> <input type="hidden" id="pImg10">
                     </div>
 
                     <div class="md:col-span-2"><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Description</label><textarea id="pDesc" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] min-h-[100px]"></textarea></div>  
@@ -746,9 +760,8 @@
     renderCatalogHighlights();
 
     // =========================================================================
-    // 🟢 2. COMPANY & LEGAL POLICIES SETTINGS 🟢 (यहाँ से आप कोई भी टेक्स्ट बदल सकते हैं)
+    // 🟢 2. COMPANY & LEGAL POLICIES SETTINGS 🟢
     // =========================================================================
-    // नोट: ` ` (बैकटिक्स) के अंदर आप अपना टेक्स्ट, पैराग्राफ, और नई लाइनें आसानी से लिख सकते हैं। 
     const policies = {
         about: { 
             title: "About Us", 
@@ -1371,7 +1384,6 @@ Thank you for shopping with SHRAYNEX.
         const p = policies[type]; 
         if(!p) return; 
         document.getElementById("policyTitle").innerText = p.title; 
-        // यह लाइन कोड को अपने आप नई लाइन (Enter) को <br> में बदल देती है
         document.getElementById("policyContent").innerHTML = p.content.replace(/\n/g, '<br>'); 
         openModal("policyModal"); 
     };
@@ -1734,9 +1746,11 @@ Thank you for shopping with SHRAYNEX.
                 <div onclick="openProductDetail('${p.id}')" class="relative pt-[125%] bg-gray-50 cursor-pointer overflow-hidden">  
                     <img src="${escapeHtml(img)}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">  
                     ${disc>0 ? `<div class="absolute top-2 left-2 bg-white/90 backdrop-blur text-[10px] font-black px-2 py-1 rounded-md text-red-600 shadow-sm border border-red-100">${disc}% OFF</div>`:''}  
+                    ${p.offerEndTime ? `<div class="absolute bottom-2 left-2 right-2 bg-red-600/90 backdrop-blur text-white text-[10px] font-bold px-2 py-1.5 rounded-lg shadow-sm text-center countdown-timer border border-red-500" data-endtime="${p.offerEndTime}">⏳ Calculating...</div>` : ''}
                 </div>  
                 <div class="p-3.5 flex flex-col flex-1">  
-                    <h4 onclick="openProductDetail('${p.id}')" class="font-bold text-sm text-gray-800 line-clamp-2 leading-tight mb-2 cursor-pointer hover:text-primary transition">${escapeHtml(p.title)}</h4>  
+                    <h4 onclick="openProductDetail('${p.id}')" class="font-bold text-sm text-gray-800 line-clamp-2 leading-tight mb-1 cursor-pointer hover:text-primary transition">${escapeHtml(p.title)}</h4>  
+                    ${p.orderCountText ? `<div class="text-[10px] font-bold text-rose-600 mb-2 flex items-center gap-1"><i class="fa-solid fa-fire text-rose-500"></i> ${escapeHtml(p.orderCountText)}</div>` : '<div class="mb-2"></div>'}
                     <div class="mt-auto">  
                         <div class="flex items-baseline gap-1.5 mb-3">  
                             <span class="font-black text-lg text-primary">₹${money(p.basePrice)}</span>  
@@ -1771,6 +1785,27 @@ Thank you for shopping with SHRAYNEX.
         }
         
         gallery.scrollLeft = 0;
+        
+        // Offer & Popularity Setups
+        const pdOfferContainer = document.getElementById('pdOfferTimerContainer');
+        const pdOfferTimer = document.getElementById('pdOfferTimer');
+        if(selectedProduct.offerEndTime) {
+            pdOfferContainer.classList.remove('hidden');
+            pdOfferTimer.setAttribute('data-endtime', selectedProduct.offerEndTime);
+        } else {
+            pdOfferContainer.classList.add('hidden');
+            pdOfferTimer.removeAttribute('data-endtime');
+        }
+
+        const pdPopContainer = document.getElementById('pdPopularityContainer');
+        const pdPop = document.getElementById('pdPopularity');
+        if(selectedProduct.orderCountText) {
+            pdPopContainer.classList.remove('hidden');
+            pdPop.innerHTML = `<i class="fa-solid fa-fire text-rose-500"></i> ${escapeHtml(selectedProduct.orderCountText)}`;
+        } else {
+            pdPopContainer.classList.add('hidden');
+        }
+
         document.getElementById('pdTitle').innerText = selectedProduct.title;  
         document.getElementById('pdPrice').innerText = `₹${money(selectedProduct.basePrice)}`;  
           
@@ -2026,9 +2061,49 @@ Thank you for shopping with SHRAYNEX.
             }
         });  
     }  
+
+    // =========================================================================
+    // 🔴 COUNTDOWN TIMER LOGIC 🔴
+    // =========================================================================
+    setInterval(() => {
+        const timers = document.querySelectorAll('.countdown-timer');
+        const now = new Date().getTime();
+        
+        timers.forEach(el => {
+            const endTimeAttr = el.getAttribute('data-endtime');
+            if(!endTimeAttr) return;
+            
+            const endTime = new Date(endTimeAttr).getTime();
+            const distance = endTime - now;
+            
+            if (distance < 0) {
+                el.innerHTML = "Offer Expired";
+                if(el.id === 'pdOfferTimer') {
+                    el.parentElement.classList.replace('bg-red-50', 'bg-gray-100');
+                    el.parentElement.classList.replace('border-red-100', 'border-gray-200');
+                    el.parentElement.classList.replace('text-red-600', 'text-gray-500');
+                } else {
+                    el.classList.replace('bg-red-600/90', 'bg-gray-600/90');
+                    el.classList.replace('border-red-500', 'border-gray-500');
+                }
+            } else {
+                const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                let text = "";
+                if(d > 0) text += `${d}d `;
+                text += `${h}h ${m}m ${s}s`;
+                
+                if(el.id !== 'pdOfferTimer') text = "⏳ Ends: " + text;
+                el.innerHTML = text;
+            }
+        });
+    }, 1000);
   
     // =========================================================  
-    // ADMIN PANEL LOGIC (Modified to support Bulk Image Paste)
+    // ADMIN PANEL LOGIC 
     // =========================================================  
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     window.handleAdminLogin = async (e) => {  
@@ -2122,30 +2197,30 @@ Thank you for shopping with SHRAYNEX.
         }
     };  
   
-    // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN 🔴
+    // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN (10 IMAGES) 🔴
     function extractImageUrls(text) {
         if(!text) return [];
         const matches = text.match(/https?:\/\/[^\s,]+/gi);
         if(!matches) return [];
-        return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 5);
+        return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 10);
     }
 
     window.processAdminImageUrls = () => {
         const text = document.getElementById("pImgUrls").value;
         const urls = extractImageUrls(text);
         
-        for(let i=1; i<=5; i++) {
+        for(let i=1; i<=10; i++) {
             const el = document.getElementById("pImg"+i);
             if(el) el.value = urls[i-1] || "";
         }
         
         const countText = document.getElementById("adminImageCount");
-        if(countText) countText.innerText = `${urls.length} / 5 Images Added`;
+        if(countText) countText.innerText = `${urls.length} / 10 Images Added`;
         
         const grid = document.getElementById("adminImagePreviewGrid");
         if(grid) {
             let html = "";
-            for(let i=0; i<5; i++) {
+            for(let i=0; i<10; i++) {
                 if(urls[i]) {
                     html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]"><img src="${escapeHtml(urls[i])}" class="w-full h-full object-cover"><div class="absolute top-1 left-1 bg-black/70 text-white text-[9px] px-1.5 rounded">${i+1}</div></div>`;
                 } else {
@@ -2160,7 +2235,7 @@ Thank you for shopping with SHRAYNEX.
     window.resetProductForm = () => { 
         document.getElementById('editProductId').value = ''; 
         document.getElementById('productFormTitle').innerText = '➕ Add New Product'; 
-        ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pDesc','pImgUrls'].forEach(i => {
+        ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pImg6','pImg7','pImg8','pImg9','pImg10','pDesc','pImgUrls','pOfferEndTime','pOrderCountText'].forEach(i => {
             const el = document.getElementById(i);
             if(el) el.value = '';
         }); 
@@ -2172,7 +2247,15 @@ Thank you for shopping with SHRAYNEX.
         const data = {  
             title: document.getElementById('pTitle').value, basePrice: Number(document.getElementById('pBase').value||0), mrp: Number(document.getElementById('pMrp').value||0),  
             category: document.getElementById('pCategory').value, sizes: document.getElementById('pSizes').value.split(',').map(s=>s.trim()).filter(Boolean),  
-            images: [document.getElementById('pImg1').value, document.getElementById('pImg2').value, document.getElementById('pImg3').value, document.getElementById('pImg4').value, document.getElementById('pImg5').value].filter(Boolean),  
+            offerEndTime: document.getElementById('pOfferEndTime').value||"",
+            orderCountText: document.getElementById('pOrderCountText').value.trim()||"",
+            images: [
+                document.getElementById('pImg1').value, document.getElementById('pImg2').value, 
+                document.getElementById('pImg3').value, document.getElementById('pImg4').value, 
+                document.getElementById('pImg5').value, document.getElementById('pImg6').value, 
+                document.getElementById('pImg7').value, document.getElementById('pImg8').value, 
+                document.getElementById('pImg9').value, document.getElementById('pImg10').value
+            ].filter(Boolean),  
             description: document.getElementById('pDesc').value, updatedAt: serverTimestamp()  
         };  
         
@@ -2200,11 +2283,13 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('editProductId').value = p.id; document.getElementById('productFormTitle').innerText = '✏️ Edit Product';  
         document.getElementById('pTitle').value = p.title||''; document.getElementById('pBase').value = p.basePrice||''; document.getElementById('pMrp').value = p.mrp||'';  
         document.getElementById('pCategory').value = p.category||allCategories[0]; document.getElementById('pSizes').value = p.sizes?.join(", ")||'';  
+        document.getElementById('pOfferEndTime').value = p.offerEndTime||''; 
+        document.getElementById('pOrderCountText').value = p.orderCountText||'';
         
         // Populate the multi-URL box
-        const imgs = p.images || [p.image, p.image1, p.image2, p.image3, p.image4, p.image5]; 
+        const imgs = p.images || [p.image, p.image1, p.image2, p.image3, p.image4, p.image5, p.image6, p.image7, p.image8, p.image9, p.image10]; 
         let validImgs = imgs.filter(Boolean);
-        document.getElementById('pImgUrls').value = validImgs.slice(0,5).join('\n');
+        document.getElementById('pImgUrls').value = validImgs.slice(0,10).join('\n');
         
         // Manually trigger the processing function so it creates previews and updates hidden fields
         if(window.processAdminImageUrls) window.processAdminImageUrls();
