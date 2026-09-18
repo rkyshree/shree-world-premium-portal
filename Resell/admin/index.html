@@ -1012,6 +1012,24 @@ placeholder="e.g., Men's Wear">
 
 </div>
 
+<!-- NEW FIELDS ADDED: OFFER TIME & ORDER COUNT -->
+<div class="form-group">
+<label class="form-label">⏳ Limited Offer End Time</label>
+<input
+type="datetime-local"
+class="form-input"
+id="prodOfferEndTime">
+</div>
+
+<div class="form-group">
+<label class="form-label">🔥 Order Popularity Text</label>
+<input
+type="text"
+class="form-input"
+id="prodOrderCountText"
+placeholder="e.g., 7 दिन में 23 ऑर्डर">
+</div>
+
 <div class="form-group full-width">
 
 <label class="form-label">
@@ -1029,26 +1047,24 @@ placeholder="e.g., S, M, L, XL, XXL">
 <div class="form-group full-width">
 
 <label class="form-label">
-🖼️ Product Image URLs (एक साथ 5 लिंक पेस्ट करें)
+🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)
 </label>
 
-<!-- YAHAN MULTIPLE LINKS EK SATH PASTE KIYE JA SAKTE HAIN -->
 <textarea
 class="image-url-box"
 id="prodImageUrls"
 placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें... 
 जैसे:
 https://i.ibb.co/8L7KRkbz/AS973.jpg
-https://i.ibb.co/B5ThVW9S/AS965.jpg
-https://i.ibb.co/rKj3VCn9/AS966.jpg"
+https://i.ibb.co/B5ThVW9S/AS965.jpg"
 oninput="processImageUrls()"
 onpaste="setTimeout(processImageUrls, 100)"></textarea>
 
 <div class="image-help">
-✅ आप एक ही बार में 1 से लेकर 5 इमेज URL कॉपी करके ऊपर बॉक्स में पेस्ट कर सकते हैं। सिस्टम अपने आप उन्हें अलग कर लेगा।
+✅ आप एक ही बार में 1 से लेकर 10 इमेज URL कॉपी करके ऊपर बॉक्स में पेस्ट कर सकते हैं।
 <br>
 <span class="image-count" id="imageCount">
-0 / 5 Images Added
+0 / 10 Images Added
 </span>
 </div>
 
@@ -1058,16 +1074,21 @@ onpaste="setTimeout(processImageUrls, 100)"></textarea>
 <div class="image-preview-item"><div class="image-preview-empty">Image 3</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 4</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 5</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 6</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 7</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 8</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 9</div></div>
+<div class="image-preview-item"><div class="image-preview-empty">Image 10</div></div>
 </div>
 
 </div>
 
 <!-- Hidden inputs database me save karne ke liye -->
-<input type="hidden" id="prodImg1">
-<input type="hidden" id="prodImg2">
-<input type="hidden" id="prodImg3">
-<input type="hidden" id="prodImg4">
-<input type="hidden" id="prodImg5">
+<input type="hidden" id="prodImg1"> <input type="hidden" id="prodImg2">
+<input type="hidden" id="prodImg3"> <input type="hidden" id="prodImg4">
+<input type="hidden" id="prodImg5"> <input type="hidden" id="prodImg6">
+<input type="hidden" id="prodImg7"> <input type="hidden" id="prodImg8">
+<input type="hidden" id="prodImg9"> <input type="hidden" id="prodImg10">
 
 <div class="form-group full-width">
 
@@ -1305,7 +1326,7 @@ Loading withdrawals...
 <div class="withdraw-amount">₹<span id="withdrawAmount">0</span></div>
 </div>
 <div class="processing-box" style="margin-bottom:20px;">
-ℹ️ Payment भेजने के बाद नीचे जिस माध्यम से payment किया है उसे select करें और उसकी Transaction ID डालें।
+ℹ️ Payment भेजने के बाद नीचे जिस माध्यम से payment किया ক্ষমতায় उसे select करें और उसकी Transaction ID डालें।
 </div>
 <div style="margin-bottom:20px;">
 <label class="form-label">Payment Method *</label>
@@ -1336,9 +1357,10 @@ Loading withdrawals...
 
 <script type="module">
 
+// ADDED runTransaction IMPORT FOR FIXING THE BUGS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 /* =========================================
 FIREBASE CONFIG
@@ -1404,7 +1426,7 @@ updateDashboardStats();
 }
 
 /* =========================================
-RESELLERS
+RESELLERS (FIXED APPROVAL & BONUS)
 ========================================= */
 async function fetchResellers(){
 const snap=await getDocs(collection(db,USERS_COL));
@@ -1452,6 +1474,54 @@ ${st!=="approved" ? `<button class="btn btn-secondary btn-sm" style="color:var(-
 </td>
 </tr>`;
 }).join("");
+};
+
+// 🔴 FIXED JOINING BONUS LOGIC 🔴
+window.updateResellerStatus = async (id, status) => {
+    if(!confirm(`Change reseller status to ${status.toUpperCase()}?`)) return;
+    try {
+        const user = state.resellers.find(u => u.id === id);
+        if (!user) throw new Error("User not found");
+
+        if (status === 'approved' && !user.joiningBonusPaid) {
+            await runTransaction(db, async (tx) => {
+                const uRef = doc(db, USERS_COL, id);
+                const userSnap = await tx.get(uRef); // FIX: Read before write
+                if (!userSnap.exists()) throw new Error("User not found in DB");
+
+                tx.update(uRef, {
+                    status: status,
+                    walletBalance: increment(50),
+                    totalEarnings: increment(50),
+                    lifetimeEarnings: increment(50),
+                    joiningBonusPaid: true,
+                    updatedAt: serverTimestamp()
+                });
+
+                const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
+                const oRef = doc(db, ORDERS_COL, bonusId);
+                tx.set(oRef, {
+                    orderId: bonusId,
+                    productName: "Joining Gift 🎁",
+                    profit: 50,
+                    status: "delivered",
+                    resellerId: id,
+                    selectedVariant: "Bonus",
+                    createdAt: serverTimestamp(),
+                    isBonus: true
+                });
+            });
+            alert("✅ Reseller Approved & ₹50 Bonus Added to Wallet!");
+        } else {
+            await updateDoc(doc(db, USERS_COL, id), { status, updatedAt: serverTimestamp() });
+            alert("✅ Status Updated Successfully!");
+        }
+        await fetchResellers();
+        updateDashboardStats();
+    } catch (e) {
+        console.error(e);
+        alert("Update failed: " + e.message);
+    }
 };
 
 window.openMoneyModal=(userId)=>{
@@ -1533,17 +1603,8 @@ btn.innerText="💰 Add Money";
 }
 };
 
-window.updateResellerStatus=async(id,status)=>{
-if(!confirm(`Change reseller status to ${status.toUpperCase()}?`)) return;
-try{
-await updateDoc(doc(db,USERS_COL,id),{ status, updatedAt:serverTimestamp() });
-await fetchResellers();
-updateDashboardStats();
-}catch(e){ alert("Update failed: "+e.message); }
-};
-
 /* =========================================
-PRODUCTS (WITH MULTI-URL PASTE)
+PRODUCTS (WITH 10-URL PASTE)
 ========================================= */
 async function fetchProducts(){
 const snap=await getDocs(collection(db,PRODUCTS_COL));
@@ -1553,32 +1614,31 @@ state.products.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis
 renderProducts();
 }
 
-// YAHI FUNCTION LINKS KO ALAG KARTA HAI REGEX SE
 function extractImageUrls(text){
 if(!text) return [];
-// Matches http/https links even if pasted all together with spaces/newlines/commas
 const matches=text.match(/https?:\/\/[^\s,]+/gi);
 if(!matches) return [];
-return [...new Set(matches.map(url=>url.trim().replace(/[),;]+$/g,"")))].slice(0,5);
+return [...new Set(matches.map(url=>url.trim().replace(/[),;]+$/g,"")))].slice(0,10);
 }
 
 window.processImageUrls=()=>{
 const text=document.getElementById("prodImageUrls").value;
 const urls=extractImageUrls(text);
 
-for(let i=1;i<=5;i++){
-document.getElementById("prodImg"+i).value=urls[i-1]||"";
+for(let i=1;i<=10;i++){
+const el = document.getElementById("prodImg"+i);
+if(el) el.value=urls[i-1]||"";
 }
 
-document.getElementById("imageCount").innerText=`${urls.length} / 5 Images Added`;
+document.getElementById("imageCount").innerText=`${urls.length} / 10 Images Added`;
 
 const grid=document.getElementById("imagePreviewGrid");
 let html="";
-for(let i=0;i<5;i++){
+for(let i=0;i<10;i++){
 if(urls[i]){
-html+=`<div class="image-preview-item"><img src="${escapeHtml(urls[i])}" alt="Product Image ${i+1}" onerror="this.style.display='none';"><div class="image-preview-number">Image ${i+1}</div></div>`;
+html+=`<div class="image-preview-item"><img src="${escapeHtml(urls[i])}" alt="Product Image ${i+1}" onerror="this.style.display='none';"><div class="image-preview-number">${i+1}</div></div>`;
 }else{
-html+=`<div class="image-preview-item"><div class="image-preview-empty">Image ${i+1}<br>Not Added</div></div>`;
+html+=`<div class="image-preview-item"><div class="image-preview-empty">Image ${i+1}</div></div>`;
 }
 }
 grid.innerHTML=html;
@@ -1635,10 +1695,13 @@ title, basePrice,
 mrp:Number(document.getElementById("prodMrp").value||0),
 discount:Number(document.getElementById("prodDiscount").value||0),
 category:document.getElementById("prodCategory").value.trim(),
+offerEndTime:document.getElementById("prodOfferEndTime").value||"",
+orderCountText:document.getElementById("prodOrderCountText").value.trim()||"",
 description:document.getElementById("prodDesc").value.trim(),
 sizes, images,
 image:images[0]||"",
 image1:images[0]||"", image2:images[1]||"", image3:images[2]||"", image4:images[3]||"", image5:images[4]||"",
+image6:images[5]||"", image7:images[6]||"", image8:images[7]||"", image9:images[8]||"", image10:images[9]||"",
 updatedAt:serverTimestamp()
 };
 
@@ -1673,6 +1736,8 @@ document.getElementById("prodBasePrice").value=p.basePrice||"";
 document.getElementById("prodMrp").value=p.mrp||"";
 document.getElementById("prodDiscount").value=p.discount||"";
 document.getElementById("prodCategory").value=p.category||"";
+document.getElementById("prodOfferEndTime").value=p.offerEndTime||"";
+document.getElementById("prodOrderCountText").value=p.orderCountText||"";
 document.getElementById("prodDesc").value=p.description||"";
 
 const sizes=Array.isArray(p.sizes)?p.sizes.join(", "): (p.sizes||"");
@@ -1682,10 +1747,10 @@ let imgs=[];
 if(Array.isArray(p.images)&&p.images.length){
 imgs=p.images;
 }else{
-imgs=[p.image1, p.image2, p.image3, p.image4, p.image5].filter(Boolean);
+imgs=[p.image1, p.image2, p.image3, p.image4, p.image5, p.image6, p.image7, p.image8, p.image9, p.image10].filter(Boolean);
 if(!imgs.length&&p.image){ imgs=[p.image]; }
 }
-imgs=imgs.slice(0,5);
+imgs=imgs.slice(0,10);
 document.getElementById("prodImageUrls").value=imgs.join("\n");
 processImageUrls();
 
@@ -1695,11 +1760,14 @@ window.scrollTo({ top:0, behavior:"smooth" });
 };
 
 window.resetProductForm=()=>{
-["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodSizes","prodDesc","prodImageUrls","prodImg1","prodImg2","prodImg3","prodImg4","prodImg5"].forEach(id=>{ document.getElementById(id).value=""; });
+["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodOfferEndTime","prodOrderCountText","prodSizes","prodDesc","prodImageUrls","prodImg1","prodImg2","prodImg3","prodImg4","prodImg5","prodImg6","prodImg7","prodImg8","prodImg9","prodImg10"].forEach(id=>{ 
+const el = document.getElementById(id);
+if(el) el.value=""; 
+});
 document.getElementById("productFormTitle").innerText="Add New Product";
 document.getElementById("btnSaveProduct").innerText="Save Product";
-document.getElementById("imageCount").innerText="0 / 5 Images Added";
-document.getElementById("imagePreviewGrid").innerHTML=[1,2,3,4,5].map(i=>`<div class="image-preview-item"><div class="image-preview-empty">Image ${i}</div></div>`).join("");
+document.getElementById("imageCount").innerText="0 / 10 Images Added";
+document.getElementById("imagePreviewGrid").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(i=>`<div class="image-preview-item"><div class="image-preview-empty">Image ${i}</div></div>`).join("");
 };
 
 window.deleteProduct=async(id)=>{
@@ -1712,7 +1780,7 @@ updateDashboardStats();
 };
 
 /* =========================================
-ORDERS
+ORDERS (FIXED DELIVERY COMMISSION)
 ========================================= */
 async function fetchOrders(){
 const snap=await getDocs(collection(db,ORDERS_COL));
@@ -1725,14 +1793,15 @@ renderOrders();
 window.renderOrders=()=>{
 const query=document.getElementById("searchOrder").value.toLowerCase();
 const tbody=document.getElementById("orderTableBody");
-const filtered=state.orders.filter(o=>(o.id||"").toLowerCase().includes(query)||(o.customerPhone||"").includes(query)||(o.customerName||"").toLowerCase().includes(query));
+// Filter out bonus records visually so admin only sees real orders
+const filtered=state.orders.filter(o=> !o.isBonus && ((o.id||"").toLowerCase().includes(query)||(o.customerPhone||"").includes(query)||(o.customerName||"").toLowerCase().includes(query)));
 
 if(!filtered.length){
 tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No orders found.</td></tr>`;
 return;
 }
 
-const statuses=["pending","confirmed","processing","shipped","delivered","cancelled","out_of_stock"];
+const statuses=["pending","confirmed","processing","shipped","delivered","returned","cancelled","out_of_stock"];
 tbody.innerHTML=filtered.map(o=>{
 const st=(o.status||"pending").toLowerCase();
 const totalVal=(Number(o.sellingPrice)||0)*(Number(o.quantity)||1);
@@ -1751,12 +1820,53 @@ ${statuses.map(s=>`<option value="${s}" ${st===s?"selected":""}>${s.replace(/_/g
 }).join("");
 };
 
-window.updateOrderStatus=async(id,status)=>{
-try{
-await updateDoc(doc(db,ORDERS_COL,id),{ status, updatedAt:serverTimestamp() });
-await fetchOrders();
-updateDashboardStats();
-}catch(e){ alert("Failed to update status: "+e.message); }
+// 🔴 FIXED ORDER COMMISSION LOGIC 🔴
+window.updateOrderStatus = async (id, status) => {
+    try {
+        const order = state.orders.find(o => o.id === id);
+        if (!order) return;
+
+        if (status === 'delivered' && !order.paidToWallet) {
+            await runTransaction(db, async (tx) => {
+                const uRef = doc(db, USERS_COL, order.resellerId);
+                const oRef = doc(db, ORDERS_COL, id);
+                await tx.get(uRef); // FIX: Read before write
+                
+                tx.update(uRef, { 
+                    walletBalance: increment(order.profit), 
+                    totalEarnings: increment(order.profit), 
+                    lifetimeEarnings: increment(order.profit) 
+                });
+                tx.update(oRef, { status: status, paidToWallet: true, updatedAt: serverTimestamp() });
+            });
+            alert("✅ Delivered! Commission Added to Reseller's Wallet.");
+        } 
+        else if ((status === 'returned' || status === 'cancelled') && order.paidToWallet) {
+            await runTransaction(db, async (tx) => {
+                const uRef = doc(db, USERS_COL, order.resellerId);
+                const oRef = doc(db, ORDERS_COL, id);
+                await tx.get(uRef); // FIX: Read before write
+                
+                tx.update(uRef, { 
+                    walletBalance: increment(-order.profit), 
+                    totalEarnings: increment(-order.profit), 
+                    lifetimeEarnings: increment(-order.profit) 
+                });
+                tx.update(oRef, { status: status, paidToWallet: false, updatedAt: serverTimestamp() });
+            });
+            alert(`⚠️ ${status.toUpperCase()}! Commission Deducted from Wallet.`);
+        } 
+        else {
+            await updateDoc(doc(db, ORDERS_COL, id), { status, updatedAt: serverTimestamp() });
+            alert("✅ Order Status Updated Successfully.");
+        }
+
+        await fetchOrders();
+        updateDashboardStats();
+    } catch (e) {
+        console.error(e);
+        alert("Failed to update status: " + e.message);
+    }
 };
 
 window.viewOrder=(id)=>{
@@ -1944,9 +2054,9 @@ function updateDashboardStats(){
 document.getElementById("statResellers").innerText=state.resellers.length;
 document.getElementById("statPendingResellers").innerText=state.resellers.filter(r=>(r.status||"pending")==="pending").length;
 document.getElementById("statProducts").innerText=state.products.length;
-document.getElementById("statOrders").innerText=state.orders.length;
+document.getElementById("statOrders").innerText=state.orders.filter(o=>!o.isBonus).length;
 const revenue=state.orders.reduce((sum,o)=>{
-if(o.status!=="cancelled" && o.status!=="rejected"){ return sum+(Number(o.sellingPrice||0)*Number(o.quantity||1)); }
+if(o.status!=="cancelled" && o.status!=="rejected" && !o.isBonus){ return sum+(Number(o.sellingPrice||0)*Number(o.quantity||1)); }
 return sum;
 },0);
 document.getElementById("statRevenue").innerText=revenue.toLocaleString("en-IN");
