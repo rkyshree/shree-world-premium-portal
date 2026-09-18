@@ -1326,7 +1326,7 @@ Loading withdrawals...
 <div class="withdraw-amount">₹<span id="withdrawAmount">0</span></div>
 </div>
 <div class="processing-box" style="margin-bottom:20px;">
-ℹ️ Payment भेजने के बाद नीचे जिस माध्यम से payment किया ক্ষমতায় उसे select करें और उसकी Transaction ID डालें।
+ℹ️ Payment भेजने के बाद नीचे जिस माध्यम से payment किया है उसे select करें और उसकी Transaction ID डालें।
 </div>
 <div style="margin-bottom:20px;">
 <label class="form-label">Payment Method *</label>
@@ -1357,10 +1357,10 @@ Loading withdrawals...
 
 <script type="module">
 
-// ADDED runTransaction IMPORT FOR FIXING THE BUGS
+// ADDED writeBatch IMPORT TO FIX THE APPROVAL & COMMISSION BUG
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment, runTransaction } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment, writeBatch } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 /* =========================================
 FIREBASE CONFIG
@@ -1476,7 +1476,7 @@ ${st!=="approved" ? `<button class="btn btn-secondary btn-sm" style="color:var(-
 }).join("");
 };
 
-// 🔴 FIXED JOINING BONUS LOGIC 🔴
+// 🔴 FIXED JOINING BONUS LOGIC (USING writeBatch) 🔴
 window.updateResellerStatus = async (id, status) => {
     if(!confirm(`Change reseller status to ${status.toUpperCase()}?`)) return;
     try {
@@ -1484,33 +1484,34 @@ window.updateResellerStatus = async (id, status) => {
         if (!user) throw new Error("User not found");
 
         if (status === 'approved' && !user.joiningBonusPaid) {
-            await runTransaction(db, async (tx) => {
-                const uRef = doc(db, USERS_COL, id);
-                const userSnap = await tx.get(uRef); // FIX: Read before write
-                if (!userSnap.exists()) throw new Error("User not found in DB");
-
-                tx.update(uRef, {
-                    status: status,
-                    walletBalance: increment(50),
-                    totalEarnings: increment(50),
-                    lifetimeEarnings: increment(50),
-                    joiningBonusPaid: true,
-                    updatedAt: serverTimestamp()
-                });
-
-                const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
-                const oRef = doc(db, ORDERS_COL, bonusId);
-                tx.set(oRef, {
-                    orderId: bonusId,
-                    productName: "Joining Gift 🎁",
-                    profit: 50,
-                    status: "delivered",
-                    resellerId: id,
-                    selectedVariant: "Bonus",
-                    createdAt: serverTimestamp(),
-                    isBonus: true
-                });
+            const batch = writeBatch(db);
+            const uRef = doc(db, USERS_COL, id);
+            
+            // Add bonus & change status atomically
+            batch.update(uRef, {
+                status: status,
+                walletBalance: increment(50),
+                totalEarnings: increment(50),
+                lifetimeEarnings: increment(50),
+                joiningBonusPaid: true,
+                updatedAt: serverTimestamp()
             });
+
+            // Create ledger entry for bonus
+            const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
+            const oRef = doc(db, ORDERS_COL, bonusId);
+            batch.set(oRef, {
+                orderId: bonusId,
+                productName: "Joining Gift 🎁",
+                profit: 50,
+                status: "delivered",
+                resellerId: id,
+                selectedVariant: "Bonus",
+                createdAt: serverTimestamp(),
+                isBonus: true
+            });
+
+            await batch.commit();
             alert("✅ Reseller Approved & ₹50 Bonus Added to Wallet!");
         } else {
             await updateDoc(doc(db, USERS_COL, id), { status, updatedAt: serverTimestamp() });
@@ -1820,40 +1821,44 @@ ${statuses.map(s=>`<option value="${s}" ${st===s?"selected":""}>${s.replace(/_/g
 }).join("");
 };
 
-// 🔴 FIXED ORDER COMMISSION LOGIC 🔴
+// 🔴 FIXED ORDER COMMISSION LOGIC (USING writeBatch) 🔴
 window.updateOrderStatus = async (id, status) => {
     try {
         const order = state.orders.find(o => o.id === id);
         if (!order) return;
 
         if (status === 'delivered' && !order.paidToWallet) {
-            await runTransaction(db, async (tx) => {
-                const uRef = doc(db, USERS_COL, order.resellerId);
-                const oRef = doc(db, ORDERS_COL, id);
-                await tx.get(uRef); // FIX: Read before write
-                
-                tx.update(uRef, { 
-                    walletBalance: increment(order.profit), 
-                    totalEarnings: increment(order.profit), 
-                    lifetimeEarnings: increment(order.profit) 
-                });
-                tx.update(oRef, { status: status, paidToWallet: true, updatedAt: serverTimestamp() });
+            const batch = writeBatch(db);
+            const uRef = doc(db, USERS_COL, order.resellerId);
+            const oRef = doc(db, ORDERS_COL, id);
+            
+            // Add commission to wallet
+            batch.update(uRef, { 
+                walletBalance: increment(order.profit), 
+                totalEarnings: increment(order.profit), 
+                lifetimeEarnings: increment(order.profit) 
             });
+            // Update order status
+            batch.update(oRef, { status: status, paidToWallet: true, updatedAt: serverTimestamp() });
+            
+            await batch.commit();
             alert("✅ Delivered! Commission Added to Reseller's Wallet.");
         } 
         else if ((status === 'returned' || status === 'cancelled') && order.paidToWallet) {
-            await runTransaction(db, async (tx) => {
-                const uRef = doc(db, USERS_COL, order.resellerId);
-                const oRef = doc(db, ORDERS_COL, id);
-                await tx.get(uRef); // FIX: Read before write
-                
-                tx.update(uRef, { 
-                    walletBalance: increment(-order.profit), 
-                    totalEarnings: increment(-order.profit), 
-                    lifetimeEarnings: increment(-order.profit) 
-                });
-                tx.update(oRef, { status: status, paidToWallet: false, updatedAt: serverTimestamp() });
+            const batch = writeBatch(db);
+            const uRef = doc(db, USERS_COL, order.resellerId);
+            const oRef = doc(db, ORDERS_COL, id);
+            
+            // Remove commission from wallet
+            batch.update(uRef, { 
+                walletBalance: increment(-order.profit), 
+                totalEarnings: increment(-order.profit), 
+                lifetimeEarnings: increment(-order.profit) 
             });
+            // Update order status
+            batch.update(oRef, { status: status, paidToWallet: false, updatedAt: serverTimestamp() });
+            
+            await batch.commit();
             alert(`⚠️ ${status.toUpperCase()}! Commission Deducted from Wallet.`);
         } 
         else {
