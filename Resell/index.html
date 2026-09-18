@@ -1894,7 +1894,6 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    // 🔴 NEW MULTI-IMAGE SHARE LOGIC 🔴
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -2103,7 +2102,7 @@ Thank you for shopping with SHRAYNEX.
     }, 1000);
   
     // =========================================================  
-    // ADMIN PANEL LOGIC 
+    // 🔴 ADMIN PANEL LOGIC (FIXED TRANSACTION BUG) 🔴
     // =========================================================  
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     window.handleAdminLogin = async (e) => {  
@@ -2155,19 +2154,24 @@ Thank you for shopping with SHRAYNEX.
         t.innerHTML = f.length ? f.map(u => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4 font-black text-[#00e676]">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end">${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';  
     };  
     
-    // 🔴 NEW JOINING BONUS LOGIC 🔴
+    // 🔴 FIXED JOINING BONUS & APPROVAL LOGIC 🔴
     window.setAdminUserStatus = async (id, st) => { 
         const user = adminUsers.find(u => u.id === id);
         if(!user) return;
         
         try {
             if (st === 'approved' && !user.joiningBonusPaid) {
+                // FIXED: Read document first to satisfy Firestore Transaction Rules
                 await runTransaction(db, async (tx) => {
                     const uRef = doc(db, USERS_COL, id);
+                    const userSnap = await tx.get(uRef); // <--- THIS READ WAS MISSING
+                    if(!userSnap.exists()) throw new Error("User not found");
+
                     tx.update(uRef, { 
                         status: st, 
                         walletBalance: increment(50), 
                         totalEarnings: increment(50),
+                        lifetimeEarnings: increment(50),
                         joiningBonusPaid: true,
                         updatedAt: serverTimestamp() 
                     });
@@ -2193,11 +2197,11 @@ Thank you for shopping with SHRAYNEX.
             refreshAdmin(); 
         } catch(e) {
             console.error(e);
-            showToast("Error updating status");
+            showToast("Error updating status: " + e.message);
         }
     };  
   
-    // 🔴 NEW: MULTI IMAGE PASTE LOGIC FOR ADMIN (10 IMAGES) 🔴
+    // 🔴 MULTI IMAGE PASTE LOGIC FOR ADMIN (10 IMAGES) 🔴
     function extractImageUrls(text) {
         if(!text) return [];
         const matches = text.match(/https?:\/\/[^\s,]+/gi);
@@ -2259,7 +2263,7 @@ Thank you for shopping with SHRAYNEX.
             description: document.getElementById('pDesc').value, updatedAt: serverTimestamp()  
         };  
         
-        // Backup mechanism inside save logic: agar images array khali hai, lekin image parameter use hota tha
+        // Backup mechanism inside save logic
         if(data.images.length > 0) data.image = data.images[0];
 
         if(!data.title || !data.basePrice) return showToast("Title & Base Price required.");  
@@ -2291,7 +2295,6 @@ Thank you for shopping with SHRAYNEX.
         let validImgs = imgs.filter(Boolean);
         document.getElementById('pImgUrls').value = validImgs.slice(0,10).join('\n');
         
-        // Manually trigger the processing function so it creates previews and updates hidden fields
         if(window.processAdminImageUrls) window.processAdminImageUrls();
 
         document.getElementById('pDesc').value = p.description||''; document.getElementById('adminProductsSection').scrollIntoView({behavior:'smooth'});  
@@ -2306,15 +2309,19 @@ Thank you for shopping with SHRAYNEX.
         document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''} | Var: <span class="text-[#00e676] font-bold">${escapeHtml(o.selectedVariant||'Photo 1')}</span></div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
     };  
 
+    // 🔴 FIXED ORDER DELIVERY COMMISSIONS BUG 🔴
     window.updateAdminOrderStatus = async (id, st) => { 
         const order = adminOrders.find(o => o.id === id);
         if(!order) return;
         try {
             if (st === 'delivered' && !order.paidToWallet) {
+                // FIXED: Missing READ in Transaction Rule added below
                 await runTransaction(db, async (tx) => {
                     const uRef = doc(db, USERS_COL, order.resellerId);
                     const oRef = doc(db, ORDERS_COL, id);
-                    tx.update(uRef, { walletBalance: increment(order.profit), totalEarnings: increment(order.profit) });
+                    await tx.get(uRef); // <--- FIX
+                    
+                    tx.update(uRef, { walletBalance: increment(order.profit), totalEarnings: increment(order.profit), lifetimeEarnings: increment(order.profit) });
                     tx.update(oRef, { status: st, paidToWallet: true, updatedAt: serverTimestamp() });
                 });
                 showToast("Delivered! Commission Added to Wallet.");
@@ -2323,7 +2330,9 @@ Thank you for shopping with SHRAYNEX.
                 await runTransaction(db, async (tx) => {
                     const uRef = doc(db, USERS_COL, order.resellerId);
                     const oRef = doc(db, ORDERS_COL, id);
-                    tx.update(uRef, { walletBalance: increment(-order.profit), totalEarnings: increment(-order.profit) });
+                    await tx.get(uRef); // <--- FIX
+                    
+                    tx.update(uRef, { walletBalance: increment(-order.profit), totalEarnings: increment(-order.profit), lifetimeEarnings: increment(-order.profit) });
                     tx.update(oRef, { status: st, paidToWallet: false, updatedAt: serverTimestamp() });
                 });
                 showToast(`${st}! Commission Deducted.`);
@@ -2333,7 +2342,10 @@ Thank you for shopping with SHRAYNEX.
                 showToast("Order Status Updated"); 
             }
             refreshAdmin(); 
-        } catch(e) { showToast("Error updating status"); }
+        } catch(e) { 
+            console.error(e);
+            showToast("Error updating status: " + e.message); 
+        }
     };  
   
     // Admin Withdrawals  
