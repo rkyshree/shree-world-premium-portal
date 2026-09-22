@@ -81,6 +81,27 @@
     </div>
 </div>
 
+<!-- 🔴 GUARANTEED 2-SECOND WEBSITE OPEN SCRIPT 🔴 -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setTimeout(function() {
+            var splash = document.getElementById('splashScreen');
+            if (splash && splash.style.display !== 'none') {
+                splash.style.opacity = '0';
+                setTimeout(function() { splash.style.display = 'none'; }, 300);
+            }
+            
+            var landingPage = document.getElementById('landingPage');
+            var appPage = document.getElementById('appPage');
+            
+            // अगर कोई भी पेज एक्टिव नहीं है, तो लैंडिंग पेज खोल दें
+            if (landingPage && appPage && !landingPage.classList.contains('active') && !appPage.classList.contains('active')) {
+                landingPage.classList.add('active');
+            }
+        }, 2000); // फिक्स 2 सेकंड
+    });
+</script>
+
 <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] hidden transition-all duration-300 w-[90%] max-w-[400px]">  
     <div id="toastMsg" class="bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold flex items-center gap-3 w-full break-words border border-gray-700">  
         <i class="fa-solid fa-bell text-primary-light shrink-0 text-lg"></i>  
@@ -583,7 +604,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है,越 ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -891,31 +912,21 @@
     let currentSelectedImageIndex = 0;
     let orderSelectedImageIndex = 0;
 
-    // 🔴 BULLETPROOF SPLASH SCREEN & ROUTING LOGIC 🔴
-    let splashMinTimePassed = false;
-    let authStateResolved = false;
-    let initialUser = null;
-
-    // 1. Minimum splash screen time (1.5 seconds for premium feel)
-    setTimeout(() => {
-        splashMinTimePassed = true;
-        checkSplashAndRoute();
-    }, 1500);
-
-    // 2. Fallback: If Firebase is slow, offline, or blocked, force open after 3 seconds
-    setTimeout(() => {
-        if(!authStateResolved) {
-            authStateResolved = true;
-            initialUser = null; // assume not logged in to let them see the site
-            checkSplashAndRoute();
-        }
-    }, 3000);
-
     onAuthStateChanged(auth, async (user) => {  
         currentUser = user;
         
+        // स्प्लैश स्क्रीन को छुपाने का कोड
+        const splash = document.getElementById('splashScreen');
+        if(splash && splash.style.display !== 'none') {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 300);
+        }
+
         if(user) {  
             if(!isAdminMode) {  
+                document.getElementById('landingPage').classList.remove('active'); 
+                document.getElementById('appPage').classList.add('active');  
+                switchTab('Feed'); 
                 try {  
                     await initUserDoc(user);  
                     if(unsubUser) unsubUser();  
@@ -931,33 +942,12 @@
         } else {  
             if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
             userData = null;  
-        }  
-        
-        authStateResolved = true;
-        initialUser = user;
-        checkSplashAndRoute();
-    });  
-
-    function checkSplashAndRoute() {
-        if(splashMinTimePassed && authStateResolved) {
-            // Hide splash screen gracefully
-            const splash = document.getElementById('splashScreen');
-            if(splash && splash.style.display !== 'none') {
-                splash.style.opacity = '0';
-                setTimeout(() => { splash.style.display = 'none'; }, 300);
-            }
-
-            // Route directly to products if logged in, else landing page
-            if(initialUser && !isAdminMode) {
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active');  
-                switchTab('Feed'); 
-            } else if (!initialUser && !isAdminMode) {
+            if(!isAdminMode) {
                 document.getElementById('appPage').classList.remove('active'); 
                 document.getElementById('landingPage').classList.add('active');  
             }
-        }
-    }
+        }  
+    });  
   
     window.showToast = (msg) => {  
         const t = document.getElementById('toast'), tm = document.getElementById('toastMsg');  
