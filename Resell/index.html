@@ -7,10 +7,9 @@
     <meta name="description" content="Start your online reselling business with zero investment. Discover products, add your margin and earn money from home.">  
     <meta name="theme-color" content="#db2777">  
     
-    <!-- Added Preconnect for Fast Loading -->
+    <!-- ⚡ Fast Loading Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.gstatic.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
 
     <script src="https://cdn.tailwindcss.com"></script>  
@@ -60,15 +59,15 @@
 </head>  
 <body class="text-gray-800 antialiased">  
 
-<!-- 🔴 SPLASH / LOADING SCREEN (Enhanced Professional Design) 🔴 -->
+<!-- 🔴 SPLASH / LOADING SCREEN (Guaranteed Fast & Professional) 🔴 -->
 <div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-300">
-    <div class="relative w-36 h-36 mb-8 flex items-center justify-center">
+    <div class="relative w-36 h-36 mb-6 flex items-center justify-center">
         <!-- Premium Animated Rings -->
-        <div class="absolute inset-0 border-[3px] border-primary/20 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-        <div class="absolute inset-2 border-[4px] border-primary/40 rounded-full animate-pulse"></div>
+        <div class="absolute inset-0 border-[3px] border-primary/20 rounded-[2.5rem] animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+        <div class="absolute inset-2 border-[4px] border-primary/40 rounded-[2rem] animate-pulse"></div>
         <!-- Elevated Logo Container -->
-        <div class="relative z-10 w-28 h-28 bg-white rounded-3xl shadow-[0_10px_30px_rgba(219,39,119,0.2)] p-2 border border-primary-light flex items-center justify-center overflow-hidden">
-            <img src="logo.png" onerror="this.src='https://i.ibb.co/TD2MM62p/Picsart-26-09-22-18-06-28-111.png'" class="w-full h-full object-contain" alt="SHRAYNEX Logo">
+        <div class="relative z-10 w-28 h-28 bg-white rounded-3xl shadow-[0_10px_40px_rgba(219,39,119,0.2)] p-3 border border-primary-light/50 flex items-center justify-center overflow-hidden">
+            <img src="logo.png" onerror="this.src='https://i.ibb.co/TD2MM62p/Picsart-26-09-22-18-06-28-111.png'" class="w-full h-full object-contain drop-shadow-sm" alt="SHRAYNEX Logo">
         </div>
     </div>
     <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-2 drop-shadow-sm">SHRAY<span class="text-primary">NEX</span></h1>
@@ -891,6 +890,74 @@
     
     let currentSelectedImageIndex = 0;
     let orderSelectedImageIndex = 0;
+
+    // 🔴 BULLETPROOF SPLASH SCREEN & ROUTING LOGIC 🔴
+    let splashMinTimePassed = false;
+    let authStateResolved = false;
+    let initialUser = null;
+
+    // 1. Minimum splash screen time (1.5 seconds for premium feel)
+    setTimeout(() => {
+        splashMinTimePassed = true;
+        checkSplashAndRoute();
+    }, 1500);
+
+    // 2. Fallback: If Firebase is slow, offline, or blocked, force open after 3 seconds
+    setTimeout(() => {
+        if(!authStateResolved) {
+            authStateResolved = true;
+            initialUser = null; // assume not logged in to let them see the site
+            checkSplashAndRoute();
+        }
+    }, 3000);
+
+    onAuthStateChanged(auth, async (user) => {  
+        currentUser = user;
+        
+        if(user) {  
+            if(!isAdminMode) {  
+                try {  
+                    await initUserDoc(user);  
+                    if(unsubUser) unsubUser();  
+                    unsubUser = onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {  
+                        if(doc.exists()) {  
+                            userData = doc.data(); updateProfileUI();  
+                            if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
+                        }  
+                    });  
+                    loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
+                } catch(e) { console.error(e); }  
+            }  
+        } else {  
+            if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
+            userData = null;  
+        }  
+        
+        authStateResolved = true;
+        initialUser = user;
+        checkSplashAndRoute();
+    });  
+
+    function checkSplashAndRoute() {
+        if(splashMinTimePassed && authStateResolved) {
+            // Hide splash screen gracefully
+            const splash = document.getElementById('splashScreen');
+            if(splash && splash.style.display !== 'none') {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.style.display = 'none'; }, 300);
+            }
+
+            // Route directly to products if logged in, else landing page
+            if(initialUser && !isAdminMode) {
+                document.getElementById('landingPage').classList.remove('active'); 
+                document.getElementById('appPage').classList.add('active');  
+                switchTab('Feed'); 
+            } else if (!initialUser && !isAdminMode) {
+                document.getElementById('appPage').classList.remove('active'); 
+                document.getElementById('landingPage').classList.add('active');  
+            }
+        }
+    }
   
     window.showToast = (msg) => {  
         const t = document.getElementById('toast'), tm = document.getElementById('toastMsg');  
@@ -1020,77 +1087,6 @@
     }  
   
     window.handleLogout = async () => { await signOut(auth); showToast("Logged Out Securely"); };  
-  
-    // 🔴 ENHANCED AUTH STATE & SPLASH SCREEN LOGIC (Fast Loading Timer) 🔴
-    let splashMinTimePassed = false;
-    let authStateResolved = false;
-    let initialUser = null;
-
-    // Fast loading timer: reduced to 2000ms (2 seconds) instead of 3000ms
-    setTimeout(() => {
-        splashMinTimePassed = true;
-        checkSplashAndRoute();
-    }, 2000); 
-
-    onAuthStateChanged(auth, async (user) => {  
-        currentUser = user;
-        
-        if(user) {  
-            if(!isAdminMode) {  
-                try {  
-                    await initUserDoc(user);  
-                    if(unsubUser) unsubUser();  
-                    unsubUser = onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {  
-                        if(doc.exists()) {  
-                            userData = doc.data(); updateProfileUI();  
-                            if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
-                        }  
-                    });  
-                    loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
-                } catch(e) { console.error(e); }  
-            }  
-        } else {  
-            if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
-            userData = null;  
-        }  
-        
-        if(!splashMinTimePassed) {
-            // Wait for fast splash timer to finish before routing
-            authStateResolved = true;
-            initialUser = user;
-        } else {
-            // Splash already finished, instantly route
-            if(user && !isAdminMode) {
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active');  
-                switchTab('Feed'); 
-            } else if (!user && !isAdminMode) {
-                document.getElementById('appPage').classList.remove('active'); 
-                document.getElementById('landingPage').classList.add('active');  
-            }
-        }
-    });  
-
-    function checkSplashAndRoute() {
-        if(splashMinTimePassed && authStateResolved) {
-            // Hide splash screen gracefully
-            const splash = document.getElementById('splashScreen');
-            if(splash) {
-                splash.classList.add('opacity-0');
-                setTimeout(() => { splash.style.display = 'none'; }, 300);
-            }
-
-            // Route directly to products if logged in, else landing page
-            if(initialUser && !isAdminMode) {
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active');  
-                switchTab('Feed'); 
-            } else if (!initialUser && !isAdminMode) {
-                document.getElementById('appPage').classList.remove('active'); 
-                document.getElementById('landingPage').classList.add('active');  
-            }
-        }
-    }
   
     window.switchTab = (tab) => {  
         ['Feed', 'Orders', 'Profile'].forEach(t => {  
