@@ -813,14 +813,14 @@ color:#93c5fd;
 <section id="categories" class="section">
 <div class="card">
 <div class="card-header">
-<h3 class="card-title" id="catFormTitle">Add New Category</h3>
+<h3 class="card-title" id="catFormTitle">Add / Edit Category</h3>
 <button class="btn btn-secondary btn-sm" onclick="resetCatForm()">Clear Form</button>
 </div>
 <input type="hidden" id="catId">
 <div class="form-grid">
 <div class="form-group full-width">
 <label class="form-label">Category Name *</label>
-<input type="text" class="form-input" id="catName" placeholder="e.g., Saree, Kurti, Lehenga">
+<input type="text" class="form-input" id="catName" placeholder="e.g., Saree, Kurti, Today's Deal">
 </div>
 </div>
 <div style="margin-top:24px;display:flex;justify-content:flex-end;">
@@ -837,13 +837,12 @@ color:#93c5fd;
 <thead>
 <tr>
 <th>Category Name</th>
-<th>Order Priority</th>
-<th>Reorder</th>
+<th>Reorder Position</th>
 <th>Actions</th>
 </tr>
 </thead>
 <tbody id="categoryTableBody">
-<tr><td colspan="4" class="empty-state">Loading categories...</td></tr>
+<tr><td colspan="3" class="empty-state">Loading categories...</td></tr>
 </tbody>
 </table>
 </div>
@@ -1145,7 +1144,7 @@ const USERS_COL="shraynex_users";
 const PRODUCTS_COL="shraynex_products";
 const ORDERS_COL="shraynex_orders";
 const WITHDRAW_COL="shraynex_withdrawals";
-const CATEGORIES_COL="shraynex_categories"; // NEW COLLECTION
+const CATEGORIES_COL="shraynex_categories"; 
 
 let state={ admin:null, resellers:[], products:[], orders:[], withdrawals:[], categories:[] };
 let selectedMoneyUser=null;
@@ -1191,12 +1190,13 @@ return String(value).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"
 }
 
 /* =========================================
-CATEGORIES MANAGEMENT
+CATEGORIES MANAGEMENT (ADVANCED REORDERING)
 ========================================= */
 async function fetchCategories(){
 const snap = await getDocs(collection(db, CATEGORIES_COL));
 state.categories = [];
 snap.forEach(d => state.categories.push({ id:d.id, ...d.data() }));
+// Sorting dynamically by order
 state.categories.sort((a,b) => (a.order || 0) - (b.order || 0));
 renderCategories();
 populateCategoryDropdown();
@@ -1205,13 +1205,12 @@ populateCategoryDropdown();
 window.renderCategories = () => {
 const tbody = document.getElementById("categoryTableBody");
 if(!state.categories.length){
-tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No categories found.</td></tr>`;
+tbody.innerHTML = `<tr><td colspan="3" class="empty-state">No categories found.</td></tr>`;
 return;
 }
 tbody.innerHTML = state.categories.map((c, idx) => {
 return `<tr>
 <td><div style="font-weight:600;font-size:16px;">${escapeHtml(c.name)}</div></td>
-<td>${c.order || 0}</td>
 <td>
 <button class="btn btn-secondary btn-sm" onclick="moveCategory(${idx}, 'up')" ${idx === 0 ? 'disabled' : ''}>⬆️ Up</button>
 <button class="btn btn-secondary btn-sm" onclick="moveCategory(${idx}, 'down')" ${idx === state.categories.length - 1 ? 'disabled' : ''}>⬇️ Down</button>
@@ -1231,7 +1230,6 @@ const select = document.getElementById("prodCategory");
 const currentVal = select.value;
 select.innerHTML = '<option value="">Select Category</option>' + 
 state.categories.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join("");
-// Preserve selection if it exists
 if(state.categories.some(c => c.name === currentVal)) select.value = currentVal;
 };
 
@@ -1246,7 +1244,8 @@ try {
 if(id){
 await updateDoc(doc(db, CATEGORIES_COL, id), { name, updatedAt: serverTimestamp() });
 } else {
-const maxOrder = state.categories.length > 0 ? Math.max(...state.categories.map(c => c.order || 0)) : 0;
+// New categories get added at the end
+const maxOrder = state.categories.length > 0 ? state.categories.length : 0;
 await addDoc(collection(db, CATEGORIES_COL), { name, order: maxOrder + 1, createdAt: serverTimestamp() });
 }
 resetCatForm();
@@ -1266,28 +1265,39 @@ window.scrollTo({ top:0, behavior:"smooth" });
 };
 
 window.deleteCategory = async (id) => {
-if(!confirm("Are you sure you want to delete this category? Products won't be deleted but their category dropdown will be empty.")) return;
+if(!confirm("Are you sure you want to delete this category? (Products inside will remain safe)")) return;
 await deleteDoc(doc(db, CATEGORIES_COL, id));
 await fetchCategories();
 };
 
+// FULL-PROOF REORDERING LOGIC
 window.moveCategory = async (index, direction) => {
-const batch = writeBatch(db);
-if(direction === 'up' && index > 0) {
-const temp = state.categories[index].order;
-state.categories[index].order = state.categories[index-1].order;
-state.categories[index-1].order = temp;
-batch.update(doc(db, CATEGORIES_COL, state.categories[index].id), { order: state.categories[index].order });
-batch.update(doc(db, CATEGORIES_COL, state.categories[index-1].id), { order: state.categories[index-1].order });
-} else if(direction === 'down' && index < state.categories.length - 1) {
-const temp = state.categories[index].order;
-state.categories[index].order = state.categories[index+1].order;
-state.categories[index+1].order = temp;
-batch.update(doc(db, CATEGORIES_COL, state.categories[index].id), { order: state.categories[index].order });
-batch.update(doc(db, CATEGORIES_COL, state.categories[index+1].id), { order: state.categories[index+1].order });
-}
-await batch.commit();
-await fetchCategories();
+    // 1. Array Swap
+    if (direction === 'up' && index > 0) {
+        const temp = state.categories[index];
+        state.categories[index] = state.categories[index - 1];
+        state.categories[index - 1] = temp;
+    } else if (direction === 'down' && index < state.categories.length - 1) {
+        const temp = state.categories[index];
+        state.categories[index] = state.categories[index + 1];
+        state.categories[index + 1] = temp;
+    } else {
+        return; 
+    }
+
+    // 2. Strict Re-indexing using Firebase Batch (fixes any old missing orders too)
+    const batch = writeBatch(db);
+    state.categories.forEach((cat, i) => {
+        cat.order = i + 1; // force sequential 1, 2, 3...
+        batch.update(doc(db, CATEGORIES_COL, cat.id), { order: cat.order });
+    });
+    
+    // Instantly Update UI to feel fast
+    renderCategories();
+    populateCategoryDropdown();
+    
+    // Save to Database Backgroundly
+    await batch.commit();
 };
 
 window.resetCatForm = () => {
@@ -1298,7 +1308,7 @@ document.getElementById("btnSaveCategory").innerText = "Save Category";
 };
 
 /* =========================================
-RESELLERS
+RESELLERS (BONUS & MONEY SAFEGUARDED)
 ========================================= */
 async function fetchResellers(){
 const snap=await getDocs(collection(db,USERS_COL));
@@ -1347,6 +1357,7 @@ try {
 const user = state.resellers.find(u => u.id === id);
 if (!user) throw new Error("User not found");
 
+// FIXED JOINING BONUS LOGIC
 if (status === 'approved' && !user.joiningBonusPaid) {
 const batch = writeBatch(db);
 batch.update(doc(db, USERS_COL, id), { status: status, walletBalance: increment(50), totalEarnings: increment(50), lifetimeEarnings: increment(50), joiningBonusPaid: true, updatedAt: serverTimestamp() });
@@ -1403,30 +1414,23 @@ finally{ btn.disabled=false; }
 };
 
 /* =========================================
-PRODUCTS (WITH OFFER EXPIRY CHECK)
+PRODUCTS (OFFER AUTO EXPIRY RETAINED)
 ========================================= */
 async function fetchProducts(){
 const snap=await getDocs(collection(db,PRODUCTS_COL));
 state.products=[];
 const now = new Date().getTime();
-let autoUpdateNeeded = false;
 
 snap.forEach(d=>{
 let p = { id:d.id, ...d.data() };
-// Check if the Offer has Expired. If yes, auto revert to MRP!
+// Check if the Offer has Expired. If yes, auto revert to MRP silently!
 if(p.offerEndTime) {
 const endTime = new Date(p.offerEndTime).getTime();
 if(endTime < now) {
-p.basePrice = p.mrp > 0 ? p.mrp : p.basePrice; // Set Price Back to MRP
+p.basePrice = p.mrp > 0 ? p.mrp : p.basePrice; 
 p.discount = 0;
 p.offerEndTime = "";
-// Update silently in database
-updateDoc(doc(db, PRODUCTS_COL, p.id), {
-basePrice: p.basePrice,
-discount: 0,
-offerEndTime: ""
-}).catch(e => console.log(e));
-autoUpdateNeeded = true;
+updateDoc(doc(db, PRODUCTS_COL, p.id), { basePrice: p.basePrice, discount: 0, offerEndTime: "" }).catch(e => console.log(e));
 }
 }
 state.products.push(p);
@@ -1555,7 +1559,7 @@ await fetchProducts();
 };
 
 /* =========================================
-ORDERS
+ORDERS (COMMISSIONS RETAINED)
 ========================================= */
 async function fetchOrders(){
 const snap=await getDocs(collection(db,ORDERS_COL));
