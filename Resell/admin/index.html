@@ -820,7 +820,7 @@ color:#93c5fd;
 <div class="form-grid">
 <div class="form-group full-width">
 <label class="form-label">Category Name *</label>
-<input type="text" class="form-input" id="catName" placeholder="e.g., Saree, Kurti, Today's Deal">
+<input type="text" class="form-input" id="catName" placeholder="e.g., Saree, Kurti, Lehenga">
 </div>
 </div>
 <div style="margin-top:24px;display:flex;justify-content:flex-end;">
@@ -848,7 +848,6 @@ color:#93c5fd;
 </div>
 </div>
 </section>
-
 
 <!-- RESELLERS SECTION -->
 <section id="resellers" class="section">
@@ -1190,13 +1189,12 @@ return String(value).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"
 }
 
 /* =========================================
-CATEGORIES MANAGEMENT (ADVANCED REORDERING)
+CATEGORIES MANAGEMENT
 ========================================= */
 async function fetchCategories(){
 const snap = await getDocs(collection(db, CATEGORIES_COL));
 state.categories = [];
 snap.forEach(d => state.categories.push({ id:d.id, ...d.data() }));
-// Sorting dynamically by order
 state.categories.sort((a,b) => (a.order || 0) - (b.order || 0));
 renderCategories();
 populateCategoryDropdown();
@@ -1244,7 +1242,6 @@ try {
 if(id){
 await updateDoc(doc(db, CATEGORIES_COL, id), { name, updatedAt: serverTimestamp() });
 } else {
-// New categories get added at the end
 const maxOrder = state.categories.length > 0 ? state.categories.length : 0;
 await addDoc(collection(db, CATEGORIES_COL), { name, order: maxOrder + 1, createdAt: serverTimestamp() });
 }
@@ -1270,9 +1267,7 @@ await deleteDoc(doc(db, CATEGORIES_COL, id));
 await fetchCategories();
 };
 
-// FULL-PROOF REORDERING LOGIC
 window.moveCategory = async (index, direction) => {
-    // 1. Array Swap
     if (direction === 'up' && index > 0) {
         const temp = state.categories[index];
         state.categories[index] = state.categories[index - 1];
@@ -1285,30 +1280,26 @@ window.moveCategory = async (index, direction) => {
         return; 
     }
 
-    // 2. Strict Re-indexing using Firebase Batch (fixes any old missing orders too)
     const batch = writeBatch(db);
     state.categories.forEach((cat, i) => {
-        cat.order = i + 1; // force sequential 1, 2, 3...
+        cat.order = i + 1;
         batch.update(doc(db, CATEGORIES_COL, cat.id), { order: cat.order });
     });
     
-    // Instantly Update UI to feel fast
     renderCategories();
     populateCategoryDropdown();
-    
-    // Save to Database Backgroundly
     await batch.commit();
 };
 
 window.resetCatForm = () => {
 document.getElementById("catId").value = "";
 document.getElementById("catName").value = "";
-document.getElementById("catFormTitle").innerText = "Add New Category";
+document.getElementById("catFormTitle").innerText = "Add / Edit Category";
 document.getElementById("btnSaveCategory").innerText = "Save Category";
 };
 
 /* =========================================
-RESELLERS (BONUS & MONEY SAFEGUARDED)
+RESELLERS
 ========================================= */
 async function fetchResellers(){
 const snap=await getDocs(collection(db,USERS_COL));
@@ -1357,7 +1348,6 @@ try {
 const user = state.resellers.find(u => u.id === id);
 if (!user) throw new Error("User not found");
 
-// FIXED JOINING BONUS LOGIC
 if (status === 'approved' && !user.joiningBonusPaid) {
 const batch = writeBatch(db);
 batch.update(doc(db, USERS_COL, id), { status: status, walletBalance: increment(50), totalEarnings: increment(50), lifetimeEarnings: increment(50), joiningBonusPaid: true, updatedAt: serverTimestamp() });
@@ -1414,7 +1404,7 @@ finally{ btn.disabled=false; }
 };
 
 /* =========================================
-PRODUCTS (OFFER AUTO EXPIRY RETAINED)
+PRODUCTS
 ========================================= */
 async function fetchProducts(){
 const snap=await getDocs(collection(db,PRODUCTS_COL));
@@ -1423,7 +1413,6 @@ const now = new Date().getTime();
 
 snap.forEach(d=>{
 let p = { id:d.id, ...d.data() };
-// Check if the Offer has Expired. If yes, auto revert to MRP silently!
 if(p.offerEndTime) {
 const endTime = new Date(p.offerEndTime).getTime();
 if(endTime < now) {
@@ -1559,7 +1548,7 @@ await fetchProducts();
 };
 
 /* =========================================
-ORDERS (COMMISSIONS RETAINED)
+ORDERS
 ========================================= */
 async function fetchOrders(){
 const snap=await getDocs(collection(db,ORDERS_COL));
