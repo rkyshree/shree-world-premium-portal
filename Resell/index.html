@@ -52,7 +52,7 @@
     .size-btn { border: 2px solid #e5e7eb; background: #fff; color: #4b5563; border-radius: 12px; padding: 10px 16px; font-weight: 700; font-size: 14px; transition: 0.2s; }  
     .size-btn.active { border-color: #db2777; background: #fce7f3; color: #db2777; }  
       
-    .input-field { width: 100%; bg: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px; outline: none; transition: 0.2s; font-weight: 500; }  
+    .input-field { width: 100%; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 14px; padding: 14px 16px; outline: none; transition: 0.2s; font-weight: 500; }  
     .input-field:focus { border-color: #db2777; background: #fff; box-shadow: 0 0 0 4px rgba(219,39,119,0.1); }  
 </style>
 
@@ -756,6 +756,13 @@
 <script>
     // यह स्क्रिप्ट बिना इंटरनेट के भी सारे पॉपअप और बटन तुरंत चला देगी
     
+    // स्थानीय फ़ाइल से खोलने पर मॉड्यूल काम नहीं करते, उसके लिए चेतावनी
+    if (window.location.protocol === 'file:') {
+        setTimeout(function() {
+            alert("ध्यान दें: Firebase Modules को काम करने के लिए इसे 'Live Server' (VS Code) या किसी Web Server पर चलाना होगा। सीधे File Manager से खोलने पर Login और Database काम नहीं करेगा।");
+        }, 1500);
+    }
+
     // 1. Guaranteed Splash Screen Removal (2 Seconds)
     window.addEventListener('DOMContentLoaded', function() {
         setTimeout(function() {
@@ -871,9 +878,9 @@
 
 <!-- 🔴 FIREBASE BLOCK (STRICTLY FOR DATABASE LOGIC) 🔴 -->
 <script type="module">  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
-    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";  
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";  
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment, writeBatch } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";  
   
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {  
         apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",  
