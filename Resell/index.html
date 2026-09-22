@@ -52,18 +52,9 @@
 </head>  
 <body class="text-gray-800 antialiased">  
 
-<!-- 🔴 SPLASH / LOADING SCREEN 🔴 -->
-<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
-    <div class="relative w-36 h-36 mb-6 flex items-center justify-center">
-        <!-- Soft Glow behind logo -->
-        <div class="absolute inset-2 bg-primary/10 blur-2xl rounded-full"></div>
-        <!-- Animated Rings -->
-        <div class="absolute inset-0 border-[3px] border-primary/20 rounded-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-        <div class="absolute inset-2 border-[3px] border-primary/40 rounded-full animate-pulse"></div>
-        <!-- Logo PNG (Integrated with Drop Shadow) -->
-        <img src="logo.png" onerror="this.src='https://i.ibb.co/TD2MM62p/Picsart-26-09-22-18-06-28-111.png'" class="w-28 h-28 object-contain drop-shadow-xl relative z-10 transition-transform duration-300 transform scale-105" alt="Logo">
-    </div>
-    <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-2">SHRAY<span class="text-primary">NEX</span></h1>
+<!-- 🔴 SPLASH / LOADING SCREEN (Logo removed, Text only) 🔴 -->
+<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-300">
+    <h1 class="text-4xl font-black text-gray-900 tracking-tight mb-2">SHRAY<span class="text-primary">NEX</span></h1>
     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">India's #1 Reselling Platform</p>
     
     <!-- Loading Dots -->
@@ -1012,18 +1003,18 @@
   
     window.handleLogout = async () => { await signOut(auth); showToast("Logged Out Securely"); };  
   
-    // 🔴 ENHANCED AUTH STATE & FAST SPLASH LOGIC 🔴
+    // 🔴 FAST SPLASH & NETWORK CHECK 🔴
     let splashMinTimePassed = false;
     let authStateResolved = false;
     let initialUser = null;
 
-    // Fast 1.5-second splash screen minimum for a smooth experience
+    // Fast 1.2-second splash screen for instant feel
     setTimeout(() => {
         splashMinTimePassed = true;
         checkSplashAndRoute();
-    }, 1500);
+    }, 1200);
 
-    // Network timeout warning (If data hasn't loaded after 2 seconds)
+    // Network slow check after 2 seconds
     setTimeout(() => {
         if (!authStateResolved) {
             showToast("⚠️ आपका नेटवर्क धीमा चल रहा है। कृपया अच्छे नेटवर्क क्षेत्र में जाएं।");
@@ -1056,7 +1047,6 @@
             authStateResolved = true;
             initialUser = user;
         } else {
-            // Splash already finished, route immediately
             if(user && !isAdminMode) {
                 document.getElementById('landingPage').classList.remove('active'); 
                 document.getElementById('appPage').classList.add('active');  
@@ -1073,7 +1063,7 @@
             const splash = document.getElementById('splashScreen');
             if(splash) {
                 splash.classList.add('opacity-0');
-                setTimeout(() => { splash.style.display = 'none'; }, 300); // Wait for transition
+                setTimeout(() => { splash.style.display = 'none'; }, 200);
             }
 
             if(initialUser && !isAdminMode) {
