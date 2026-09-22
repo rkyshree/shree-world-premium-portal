@@ -1003,18 +1003,18 @@
   
     window.handleLogout = async () => { await signOut(auth); showToast("Logged Out Securely"); };  
   
-    // 🔴 FAST SPLASH & NETWORK CHECK 🔴
+    // 🔴 BULLETPROOF FAST SPLASH & NETWORK CHECK 🔴
     let splashMinTimePassed = false;
     let authStateResolved = false;
     let initialUser = null;
 
-    // Fast 1.2-second splash screen for instant feel
+    // 1. 1.2 सेकंड का मिनिमम लोडिंग टाइम
     setTimeout(() => {
         splashMinTimePassed = true;
-        checkSplashAndRoute();
+        checkAndRoute();
     }, 1200);
 
-    // Network slow check after 2 seconds
+    // 2. अगर 2 सेकंड में डेटा नहीं आया तो वार्निंग
     setTimeout(() => {
         if (!authStateResolved) {
             showToast("⚠️ आपका नेटवर्क धीमा चल रहा है। कृपया अच्छे नेटवर्क क्षेत्र में जाएं।");
@@ -1023,6 +1023,8 @@
 
     onAuthStateChanged(auth, async (user) => {  
         currentUser = user;
+        authStateResolved = true; // डेटा आ गया
+        initialUser = user;
         
         if(user) {  
             if(!isAdminMode) {  
@@ -1043,36 +1045,28 @@
             userData = null;  
         }  
         
-        if(!splashMinTimePassed) {
-            authStateResolved = true;
-            initialUser = user;
-        } else {
-            if(user && !isAdminMode) {
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active');  
-                switchTab('Feed'); 
-            } else if (!user && !isAdminMode) {
-                document.getElementById('appPage').classList.remove('active'); 
-                document.getElementById('landingPage').classList.add('active');  
-            }
-        }
+        checkAndRoute();
     });  
 
-    function checkSplashAndRoute() {
-        if(splashMinTimePassed && authStateResolved) {
+    // 3. लोडिंग स्क्रीन हटाने और पेज दिखाने का परफेक्ट लॉजिक
+    function checkAndRoute() {
+        if (splashMinTimePassed && authStateResolved) {
+            
+            // स्प्लैश स्क्रीन को गायब करें
             const splash = document.getElementById('splashScreen');
-            if(splash) {
+            if (splash && splash.style.display !== 'none') {
                 splash.classList.add('opacity-0');
-                setTimeout(() => { splash.style.display = 'none'; }, 200);
+                setTimeout(() => { splash.style.display = 'none'; }, 300);
             }
 
-            if(initialUser && !isAdminMode) {
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active');  
-                switchTab('Feed'); 
+            // सही पेज पर भेजें
+            if (initialUser && !isAdminMode) {
+                document.getElementById('landingPage').classList.remove('active');
+                document.getElementById('appPage').classList.add('active');
+                switchTab('Feed');
             } else if (!initialUser && !isAdminMode) {
-                document.getElementById('appPage').classList.remove('active'); 
-                document.getElementById('landingPage').classList.add('active');  
+                document.getElementById('appPage').classList.remove('active');
+                document.getElementById('landingPage').classList.add('active');
             }
         }
     }
