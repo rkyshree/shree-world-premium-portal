@@ -33,6 +33,7 @@ color:var(--text-main);
 
 button,input,select,textarea{font-family:inherit}
 button{cursor:pointer;transition:all .2s ease}
+button:disabled {opacity: 0.5; cursor: not-allowed;}
 
 .app-container{
 display:flex;
@@ -510,7 +511,6 @@ border:1px solid rgba(59,130,246,.3);
 }
 
 /* MODAL */
-
 .modal-overlay{
 display:none;
 position:fixed;
@@ -588,7 +588,6 @@ word-break:break-word;
 }
 
 /* MONEY */
-
 .money-user{
 background:var(--bg-main);
 border:1px solid var(--border-color);
@@ -666,7 +665,6 @@ gap:10px;
 }
 
 /* WITHDRAWAL */
-
 .withdraw-summary{
 background:var(--bg-main);
 border:1px solid var(--border-color);
@@ -731,50 +729,19 @@ color:#93c5fd;
 }
 
 @media(max-width:1024px){
-
-.sidebar{
-transform:translateX(-100%);
-}
-
-.sidebar.open{
-transform:translateX(0);
-}
-
-.main-content{
-margin-left:0;
-padding:20px;
-}
-
-.mobile-menu-btn{
-display:block;
-}
-
-.admin-info{
-display:none;
-}
+.sidebar{ transform:translateX(-100%); }
+.sidebar.open{ transform:translateX(0); }
+.main-content{ margin-left:0; padding:20px; }
+.mobile-menu-btn{ display:block; }
+.admin-info{ display:none; }
 }
 
 @media(max-width:700px){
-
-.image-preview-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-.detail-grid{
-grid-template-columns:1fr;
-}
-
-.money-balances{
-grid-template-columns:1fr;
-}
-
-.payment-method-grid{
-grid-template-columns:1fr 1fr;
-}
-
-.modal-content{
-padding:24px;
-}
+.image-preview-grid{ grid-template-columns:repeat(2,1fr); }
+.detail-grid{ grid-template-columns:1fr; }
+.money-balances{ grid-template-columns:1fr; }
+.payment-method-grid{ grid-template-columns:1fr 1fr; }
+.modal-content{ padding:24px; }
 }
 </style>
 </head>
@@ -784,126 +751,115 @@ padding:24px;
 <div class="app-container">
 
 <aside class="sidebar" id="sidebar">
-
 <div class="sidebar-header">
 <h1 class="logo">SHRAY<span>NEX</span></h1>
 <span class="admin-badge">Admin Workspace</span>
 </div>
 
 <nav class="nav-menu">
-
-<button class="nav-btn active" onclick="switchSection('dashboard',this)">
-<span style="font-size:18px;">📊</span> Dashboard
-</button>
-
-<button class="nav-btn" onclick="switchSection('resellers',this)">
-<span style="font-size:18px;">👥</span> Resellers
-</button>
-
-<button class="nav-btn" onclick="switchSection('products',this)">
-<span style="font-size:18px;">📦</span> Products
-</button>
-
-<button class="nav-btn" onclick="switchSection('orders',this)">
-<span style="font-size:18px;">🛒</span> Orders
-</button>
-
-<button class="nav-btn" onclick="switchSection('withdrawals',this)">
-<span style="font-size:18px;">💰</span> Withdrawals
-</button>
-
+<button class="nav-btn active" onclick="switchSection('dashboard',this)"><span style="font-size:18px;">📊</span> Dashboard</button>
+<button class="nav-btn" onclick="switchSection('categories',this)"><span style="font-size:18px;">📁</span> Categories</button>
+<button class="nav-btn" onclick="switchSection('resellers',this)"><span style="font-size:18px;">👥</span> Resellers</button>
+<button class="nav-btn" onclick="switchSection('products',this)"><span style="font-size:18px;">📦</span> Products</button>
+<button class="nav-btn" onclick="switchSection('orders',this)"><span style="font-size:18px;">🛒</span> Orders</button>
+<button class="nav-btn" onclick="switchSection('withdrawals',this)"><span style="font-size:18px;">💰</span> Withdrawals</button>
 </nav>
 
 <div class="sidebar-footer">
-<button class="logout-btn" onclick="handleLogout()">
-🚪 Logout Securely
-</button>
+<button class="logout-btn" onclick="handleLogout()">🚪 Logout Securely</button>
 </div>
-
 </aside>
 
 <main class="main-content">
 
 <header class="topbar">
-
 <div style="display:flex;align-items:center;gap:16px;">
-
 <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-
 <h2 class="page-title" id="pageTitle">Overview</h2>
-
 </div>
-
-<div class="admin-info" id="adminEmailDisplay">
-Verifying Access...
-</div>
-
+<div class="admin-info" id="adminEmailDisplay">Verifying Access...</div>
 </header>
 
+<!-- DASHBOARD SECTION -->
 <section id="dashboard" class="section active">
-
 <div class="metrics-grid">
-
 <div class="metric-card">
 <div class="metric-title">Total Resellers</div>
 <p class="metric-value" id="statResellers">0</p>
 </div>
-
 <div class="metric-card">
 <div class="metric-title">Pending Approvals</div>
 <p class="metric-value" id="statPendingResellers" style="color:var(--warning);">0</p>
 </div>
-
 <div class="metric-card">
 <div class="metric-title">Active Products</div>
 <p class="metric-value" id="statProducts">0</p>
 </div>
-
 <div class="metric-card">
 <div class="metric-title">Total Orders</div>
 <p class="metric-value" id="statOrders">0</p>
 </div>
-
 </div>
-
 <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-
 <div>
 <h3 class="card-title">Gross Platform Revenue</h3>
-<p class="text-xs" style="margin-top:8px;">
-Total value of non-cancelled orders.
-</p>
+<p class="text-xs" style="margin-top:8px;">Total value of non-cancelled orders.</p>
 </div>
-
-<p class="metric-value currency">
-₹<span id="statRevenue">0</span>
-</p>
-
+<p class="metric-value currency">₹<span id="statRevenue">0</span></p>
 </div>
-
 </section>
 
-<section id="resellers" class="section">
-
+<!-- CATEGORIES SECTION -->
+<section id="categories" class="section">
 <div class="card">
-
 <div class="card-header">
-
-<h3 class="card-title">Reseller Management</h3>
-
-<input
-type="text"
-class="search-input"
-id="searchReseller"
-placeholder="Search by name, email, or phone..."
-oninput="renderResellers()">
-
+<h3 class="card-title" id="catFormTitle">Add New Category</h3>
+<button class="btn btn-secondary btn-sm" onclick="resetCatForm()">Clear Form</button>
+</div>
+<input type="hidden" id="catId">
+<div class="form-grid">
+<div class="form-group full-width">
+<label class="form-label">Category Name *</label>
+<input type="text" class="form-input" id="catName" placeholder="e.g., Saree, Kurti, Lehenga">
+</div>
+</div>
+<div style="margin-top:24px;display:flex;justify-content:flex-end;">
+<button class="btn btn-primary" id="btnSaveCategory" onclick="saveCategory()">Save Category</button>
+</div>
 </div>
 
+<div class="card">
+<div class="card-header">
+<h3 class="card-title">Manage Categories (Order / Reorder)</h3>
+</div>
 <div class="table-container">
-
 <table>
+<thead>
+<tr>
+<th>Category Name</th>
+<th>Order Priority</th>
+<th>Reorder</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="categoryTableBody">
+<tr><td colspan="4" class="empty-state">Loading categories...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
 
+
+<!-- RESELLERS SECTION -->
+<section id="resellers" class="section">
+<div class="card">
+<div class="card-header">
+<h3 class="card-title">Reseller Management</h3>
+<input type="text" class="search-input" id="searchReseller" placeholder="Search by name, email, or phone..." oninput="renderResellers()">
+</div>
+<div class="table-container">
+<table>
 <thead>
 <tr>
 <th>Reseller Details</th>
@@ -914,160 +870,68 @@ oninput="renderResellers()">
 <th>Actions</th>
 </tr>
 </thead>
-
 <tbody id="resellerTableBody">
-
-<tr>
-<td colspan="6" class="empty-state">
-Loading resellers...
-</td>
-</tr>
-
+<tr><td colspan="6" class="empty-state">Loading resellers...</td></tr>
 </tbody>
-
 </table>
-
 </div>
 </div>
-
 </section>
 
+<!-- PRODUCTS SECTION -->
 <section id="products" class="section">
-
 <div class="card">
-
 <div class="card-header">
-
-<h3 class="card-title" id="productFormTitle">
-Add New Product
-</h3>
-
-<button class="btn btn-secondary btn-sm" onclick="resetProductForm()">
-Clear Form
-</button>
-
+<h3 class="card-title" id="productFormTitle">Add New Product</h3>
+<button class="btn btn-secondary btn-sm" onclick="resetProductForm()">Clear Form</button>
 </div>
-
 <input type="hidden" id="prodId">
-
 <div class="form-grid">
-
 <div class="form-group full-width">
-
 <label class="form-label">Product Title *</label>
-
-<input
-type="text"
-class="form-input"
-id="prodTitle"
-placeholder="e.g., Premium Cotton T-Shirt">
-
+<input type="text" class="form-input" id="prodTitle" placeholder="e.g., Premium Cotton T-Shirt">
 </div>
-
 <div class="form-group">
-
-<label class="form-label">Base Price (₹) *</label>
-
-<input
-type="number"
-class="form-input"
-id="prodBasePrice"
-placeholder="Wholesale price">
-
+<label class="form-label">Base Price / Offer Price (₹) *</label>
+<input type="number" class="form-input" id="prodBasePrice" placeholder="Selling price">
 </div>
-
 <div class="form-group">
-
 <label class="form-label">MRP (₹)</label>
-
-<input
-type="number"
-class="form-input"
-id="prodMrp"
-placeholder="Maximum Retail Price">
-
+<input type="number" class="form-input" id="prodMrp" placeholder="Maximum Retail Price">
 </div>
-
 <div class="form-group">
-
 <label class="form-label">Discount Percentage (%)</label>
-
-<input
-type="number"
-class="form-input"
-id="prodDiscount"
-placeholder="e.g., 25">
-
+<input type="number" class="form-input" id="prodDiscount" placeholder="e.g., 25">
 </div>
-
 <div class="form-group">
-
 <label class="form-label">Category</label>
-
-<input
-type="text"
-class="form-input"
-id="prodCategory"
-placeholder="e.g., Men's Wear">
-
+<select class="form-input" id="prodCategory">
+<option value="">Select Category</option>
+</select>
 </div>
-
-<!-- NEW FIELDS ADDED: OFFER TIME & ORDER COUNT -->
+<!-- OFFER TIME & ORDER COUNT -->
 <div class="form-group">
 <label class="form-label">⏳ Limited Offer End Time</label>
-<input
-type="datetime-local"
-class="form-input"
-id="prodOfferEndTime">
+<input type="datetime-local" class="form-input" id="prodOfferEndTime">
+<div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Time खत्म होने पर दाम अपने आप MRP हो जाएगा।</div>
 </div>
-
 <div class="form-group">
 <label class="form-label">🔥 Order Popularity Text</label>
-<input
-type="text"
-class="form-input"
-id="prodOrderCountText"
-placeholder="e.g., 7 दिन में 23 ऑर्डर">
+<input type="text" class="form-input" id="prodOrderCountText" placeholder="e.g., 7 दिन में 23 ऑर्डर">
 </div>
 
 <div class="form-group full-width">
-
-<label class="form-label">
-Available Sizes (Comma Separated)
-</label>
-
-<input
-type="text"
-class="form-input"
-id="prodSizes"
-placeholder="e.g., S, M, L, XL, XXL">
-
+<label class="form-label">Available Sizes (Comma Separated)</label>
+<input type="text" class="form-input" id="prodSizes" placeholder="e.g., S, M, L, XL, XXL">
 </div>
 
 <div class="form-group full-width">
-
-<label class="form-label">
-🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)
-</label>
-
-<textarea
-class="image-url-box"
-id="prodImageUrls"
-placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें... 
-जैसे:
-https://i.ibb.co/8L7KRkbz/AS973.jpg
-https://i.ibb.co/B5ThVW9S/AS965.jpg"
-oninput="processImageUrls()"
-onpaste="setTimeout(processImageUrls, 100)"></textarea>
-
+<label class="form-label">🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)</label>
+<textarea class="image-url-box" id="prodImageUrls" placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें..." oninput="processImageUrls()" onpaste="setTimeout(processImageUrls, 100)"></textarea>
 <div class="image-help">
 ✅ आप एक ही बार में 1 से लेकर 10 इमेज URL कॉपी करके ऊपर बॉक्स में पेस्ट कर सकते हैं।
-<br>
-<span class="image-count" id="imageCount">
-0 / 10 Images Added
-</span>
+<br><span class="image-count" id="imageCount">0 / 10 Images Added</span>
 </div>
-
 <div class="image-preview-grid" id="imagePreviewGrid">
 <div class="image-preview-item"><div class="image-preview-empty">Image 1</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 2</div></div>
@@ -1080,10 +944,8 @@ onpaste="setTimeout(processImageUrls, 100)"></textarea>
 <div class="image-preview-item"><div class="image-preview-empty">Image 9</div></div>
 <div class="image-preview-item"><div class="image-preview-empty">Image 10</div></div>
 </div>
-
 </div>
-
-<!-- Hidden inputs database me save karne ke liye -->
+<!-- Hidden inputs -->
 <input type="hidden" id="prodImg1"> <input type="hidden" id="prodImg2">
 <input type="hidden" id="prodImg3"> <input type="hidden" id="prodImg4">
 <input type="hidden" id="prodImg5"> <input type="hidden" id="prodImg6">
@@ -1091,52 +953,23 @@ onpaste="setTimeout(processImageUrls, 100)"></textarea>
 <input type="hidden" id="prodImg9"> <input type="hidden" id="prodImg10">
 
 <div class="form-group full-width">
-
 <label class="form-label">Full Description</label>
-
-<textarea
-class="form-input"
-id="prodDesc"
-placeholder="Detailed product information..."></textarea>
-
+<textarea class="form-input" id="prodDesc" placeholder="Detailed product information..."></textarea>
 </div>
-
 </div>
 
 <div style="margin-top:24px;display:flex;justify-content:flex-end;">
-
-<button
-class="btn btn-primary"
-id="btnSaveProduct"
-onclick="saveProduct()">
-
-Save Product
-
-</button>
-
+<button class="btn btn-primary" id="btnSaveProduct" onclick="saveProduct()">Save Product</button>
 </div>
-
 </div>
 
 <div class="card">
-
 <div class="card-header">
-
 <h3 class="card-title">Product Catalog</h3>
-
-<input
-type="text"
-class="search-input"
-id="searchProduct"
-placeholder="Search by title or category..."
-oninput="renderProducts()">
-
+<input type="text" class="search-input" id="searchProduct" placeholder="Search by title or category..." oninput="renderProducts()">
 </div>
-
 <div class="table-container">
-
 <table>
-
 <thead>
 <tr>
 <th style="width:80px;">Image</th>
@@ -1146,45 +979,23 @@ oninput="renderProducts()">
 <th>Actions</th>
 </tr>
 </thead>
-
 <tbody id="productTableBody">
-
-<tr>
-<td colspan="5" class="empty-state">
-Loading products...
-</td>
-</tr>
-
+<tr><td colspan="5" class="empty-state">Loading products...</td></tr>
 </tbody>
-
 </table>
-
 </div>
 </div>
-
 </section>
 
+<!-- ORDERS SECTION -->
 <section id="orders" class="section">
-
 <div class="card">
-
 <div class="card-header">
-
 <h3 class="card-title">Order Processing</h3>
-
-<input
-type="text"
-class="search-input"
-id="searchOrder"
-placeholder="Search Order ID, Customer, or Phone..."
-oninput="renderOrders()">
-
+<input type="text" class="search-input" id="searchOrder" placeholder="Search Order ID, Customer, or Phone..." oninput="renderOrders()">
 </div>
-
 <div class="table-container">
-
 <table>
-
 <thead>
 <tr>
 <th>Order Info</th>
@@ -1194,47 +1005,26 @@ oninput="renderOrders()">
 <th>Status Update</th>
 </tr>
 </thead>
-
 <tbody id="orderTableBody">
-
-<tr>
-<td colspan="5" class="empty-state">
-Loading orders...
-</td>
-</tr>
-
+<tr><td colspan="5" class="empty-state">Loading orders...</td></tr>
 </tbody>
-
 </table>
-
 </div>
 </div>
-
 </section>
 
-<!-- WITHDRAWALS -->
-
+<!-- WITHDRAWALS SECTION -->
 <section id="withdrawals" class="section">
-
 <div class="card">
-
 <div class="card-header">
-
 <div>
 <h3 class="card-title">Payout Requests</h3>
-<div class="text-xs" style="margin-top:6px;">
-Manage Pending → Processing → Approved payments
+<div class="text-xs" style="margin-top:6px;">Manage Pending → Processing → Approved payments</div>
 </div>
 </div>
-
-</div>
-
 <div class="table-container">
-
 <table>
-
 <thead>
-
 <tr>
 <th>Reseller</th>
 <th>Amount</th>
@@ -1242,31 +1032,18 @@ Manage Pending → Processing → Approved payments
 <th>Status</th>
 <th>Actions</th>
 </tr>
-
 </thead>
-
 <tbody id="withdrawTableBody">
-
-<tr>
-<td colspan="5" class="empty-state">
-Loading withdrawals...
-</td>
-</tr>
-
+<tr><td colspan="5" class="empty-state">Loading withdrawals...</td></tr>
 </tbody>
-
 </table>
-
 </div>
-
 </div>
-
 </section>
-
 </main>
 </div>
 
-<!-- ORDER MODAL -->
+<!-- MODALS (Order, Add Money, Withdraw) -->
 
 <div class="modal-overlay" id="orderModal">
 <div class="modal-content">
@@ -1275,8 +1052,6 @@ Loading withdrawals...
 <div id="orderDetailsContent"></div>
 </div>
 </div>
-
-<!-- ADD MONEY MODAL -->
 
 <div class="modal-overlay" id="moneyModal">
 <div class="modal-content">
@@ -1314,8 +1089,6 @@ Loading withdrawals...
 </div>
 </div>
 
-<!-- WITHDRAWAL PAYMENT MODAL -->
-
 <div class="modal-overlay" id="withdrawModal">
 <div class="modal-content">
 <button class="modal-close" onclick="closeModal('withdrawModal')">×</button>
@@ -1345,9 +1118,7 @@ Loading withdrawals...
 <label class="form-label">Admin Payment Note</label>
 <textarea id="withdrawPaymentNote" class="form-input" style="min-height:90px;" placeholder="Example: Payment sent successfully."></textarea>
 </div>
-<div class="money-warning">
-⚠️ <strong>Important:</strong> Accept करने के बाद withdrawal permanently paid/approved माना जाएगा। Transaction ID और Payment Method reseller को दिखाने के लिए save होंगे।
-</div>
+<div class="money-warning">⚠️ <strong>Important:</strong> Accept करने के बाद withdrawal permanently paid/approved माना जाएगा।</div>
 <div class="money-actions" style="margin-top:20px;">
 <button class="btn btn-secondary" onclick="closeModal('withdrawModal')">Cancel</button>
 <button class="btn btn-primary" id="btnCompleteWithdrawal" onclick="completeWithdrawalPayment()">✅ Accept Payment</button>
@@ -1356,15 +1127,10 @@ Loading withdrawals...
 </div>
 
 <script type="module">
-
-// ADDED writeBatch IMPORT TO FIX THE APPROVAL & COMMISSION BUG
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getFirestore, collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, increment, writeBatch } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-/* =========================================
-FIREBASE CONFIG
-========================================= */
 const firebaseConfig={
 apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",
 authDomain:"rkyshree-2f74b.firebaseapp.com",
@@ -1375,22 +1141,17 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-/* =========================================
-COLLECTIONS
-========================================= */
 const USERS_COL="shraynex_users";
 const PRODUCTS_COL="shraynex_products";
 const ORDERS_COL="shraynex_orders";
 const WITHDRAW_COL="shraynex_withdrawals";
+const CATEGORIES_COL="shraynex_categories"; // NEW COLLECTION
 
-let state={ admin:null, resellers:[], products:[], orders:[], withdrawals:[] };
+let state={ admin:null, resellers:[], products:[], orders:[], withdrawals:[], categories:[] };
 let selectedMoneyUser=null;
 let selectedWithdrawal=null;
 let selectedPaymentMethod="";
 
-/* =========================================
-AUTH
-========================================= */
 onAuthStateChanged(auth,async(user)=>{
 if(!user){
 alert("Please login via the main app first.");
@@ -1421,20 +1182,129 @@ window.location.href="./index.html";
 };
 
 async function loadInitialData(){
-await Promise.all([ fetchResellers(), fetchProducts(), fetchOrders(), fetchWithdrawals() ]);
+await Promise.all([ fetchCategories(), fetchResellers(), fetchProducts(), fetchOrders(), fetchWithdrawals() ]);
 updateDashboardStats();
 }
 
+function escapeHtml(value){
+return String(value).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
 /* =========================================
-RESELLERS (FIXED APPROVAL & BONUS)
+CATEGORIES MANAGEMENT
+========================================= */
+async function fetchCategories(){
+const snap = await getDocs(collection(db, CATEGORIES_COL));
+state.categories = [];
+snap.forEach(d => state.categories.push({ id:d.id, ...d.data() }));
+state.categories.sort((a,b) => (a.order || 0) - (b.order || 0));
+renderCategories();
+populateCategoryDropdown();
+}
+
+window.renderCategories = () => {
+const tbody = document.getElementById("categoryTableBody");
+if(!state.categories.length){
+tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No categories found.</td></tr>`;
+return;
+}
+tbody.innerHTML = state.categories.map((c, idx) => {
+return `<tr>
+<td><div style="font-weight:600;font-size:16px;">${escapeHtml(c.name)}</div></td>
+<td>${c.order || 0}</td>
+<td>
+<button class="btn btn-secondary btn-sm" onclick="moveCategory(${idx}, 'up')" ${idx === 0 ? 'disabled' : ''}>⬆️ Up</button>
+<button class="btn btn-secondary btn-sm" onclick="moveCategory(${idx}, 'down')" ${idx === state.categories.length - 1 ? 'disabled' : ''}>⬇️ Down</button>
+</td>
+<td>
+<div class="action-buttons">
+<button class="btn btn-secondary btn-sm" onclick="editCategory('${c.id}')">Edit</button>
+<button class="btn btn-secondary btn-sm" style="color:var(--danger);border-color:rgba(239,68,68,.3);" onclick="deleteCategory('${c.id}')">Delete</button>
+</div>
+</td>
+</tr>`;
+}).join("");
+};
+
+window.populateCategoryDropdown = () => {
+const select = document.getElementById("prodCategory");
+const currentVal = select.value;
+select.innerHTML = '<option value="">Select Category</option>' + 
+state.categories.map(c => `<option value="${escapeHtml(c.name)}">${escapeHtml(c.name)}</option>`).join("");
+// Preserve selection if it exists
+if(state.categories.some(c => c.name === currentVal)) select.value = currentVal;
+};
+
+window.saveCategory = async () => {
+const id = document.getElementById("catId").value;
+const name = document.getElementById("catName").value.trim();
+if(!name){ alert("Please enter a category name."); return; }
+
+const btn = document.getElementById("btnSaveCategory");
+btn.disabled = true;
+try {
+if(id){
+await updateDoc(doc(db, CATEGORIES_COL, id), { name, updatedAt: serverTimestamp() });
+} else {
+const maxOrder = state.categories.length > 0 ? Math.max(...state.categories.map(c => c.order || 0)) : 0;
+await addDoc(collection(db, CATEGORIES_COL), { name, order: maxOrder + 1, createdAt: serverTimestamp() });
+}
+resetCatForm();
+await fetchCategories();
+} catch(e) { alert("Error: " + e.message); } 
+finally { btn.disabled = false; }
+};
+
+window.editCategory = (id) => {
+const c = state.categories.find(x => x.id === id);
+if(!c) return;
+document.getElementById("catId").value = c.id;
+document.getElementById("catName").value = c.name;
+document.getElementById("catFormTitle").innerText = "Edit Category";
+document.getElementById("btnSaveCategory").innerText = "Update Category";
+window.scrollTo({ top:0, behavior:"smooth" });
+};
+
+window.deleteCategory = async (id) => {
+if(!confirm("Are you sure you want to delete this category? Products won't be deleted but their category dropdown will be empty.")) return;
+await deleteDoc(doc(db, CATEGORIES_COL, id));
+await fetchCategories();
+};
+
+window.moveCategory = async (index, direction) => {
+const batch = writeBatch(db);
+if(direction === 'up' && index > 0) {
+const temp = state.categories[index].order;
+state.categories[index].order = state.categories[index-1].order;
+state.categories[index-1].order = temp;
+batch.update(doc(db, CATEGORIES_COL, state.categories[index].id), { order: state.categories[index].order });
+batch.update(doc(db, CATEGORIES_COL, state.categories[index-1].id), { order: state.categories[index-1].order });
+} else if(direction === 'down' && index < state.categories.length - 1) {
+const temp = state.categories[index].order;
+state.categories[index].order = state.categories[index+1].order;
+state.categories[index+1].order = temp;
+batch.update(doc(db, CATEGORIES_COL, state.categories[index].id), { order: state.categories[index].order });
+batch.update(doc(db, CATEGORIES_COL, state.categories[index+1].id), { order: state.categories[index+1].order });
+}
+await batch.commit();
+await fetchCategories();
+};
+
+window.resetCatForm = () => {
+document.getElementById("catId").value = "";
+document.getElementById("catName").value = "";
+document.getElementById("catFormTitle").innerText = "Add New Category";
+document.getElementById("btnSaveCategory").innerText = "Save Category";
+};
+
+/* =========================================
+RESELLERS
 ========================================= */
 async function fetchResellers(){
 const snap=await getDocs(collection(db,USERS_COL));
 state.resellers=[];
 snap.forEach(d=>{
-if(d.data().role!=="admin"){
-state.resellers.push({ id:d.id, ...d.data() });
-}
+if(d.data().role!=="admin"){ state.resellers.push({ id:d.id, ...d.data() }); }
 });
 renderResellers();
 }
@@ -1448,17 +1318,12 @@ const email=(r.email||"").toLowerCase();
 const phone=(r.phone||"").toLowerCase();
 return(name.includes(query)||email.includes(query)||phone.includes(query));
 });
-
-if(!filtered.length){
-tbody.innerHTML=`<tr><td colspan="6" class="empty-state">No resellers match your search.</td></tr>`;
-return;
-}
+if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="6" class="empty-state">No resellers match your search.</td></tr>`; return; }
 
 tbody.innerHTML=filtered.map(r=>{
 const st=r.status||"pending";
 const wallet=Number(r.walletBalance||0);
 const lifetime=Number(r.lifetimeEarnings||0);
-
 return `<tr>
 <td><div style="font-weight:600;">${escapeHtml(r.name||"Unknown")}</div><div class="text-xs">ID: ${escapeHtml(r.id.slice(0,8))}...</div></td>
 <td><div>${escapeHtml(r.email||"-")}</div><div class="text-xs">${escapeHtml(r.phone||"-")}</div></td>
@@ -1476,141 +1341,96 @@ ${st!=="approved" ? `<button class="btn btn-secondary btn-sm" style="color:var(-
 }).join("");
 };
 
-// 🔴 FIXED JOINING BONUS LOGIC (USING writeBatch) 🔴
 window.updateResellerStatus = async (id, status) => {
-    if(!confirm(`Change reseller status to ${status.toUpperCase()}?`)) return;
-    try {
-        const user = state.resellers.find(u => u.id === id);
-        if (!user) throw new Error("User not found");
+if(!confirm(`Change reseller status to ${status.toUpperCase()}?`)) return;
+try {
+const user = state.resellers.find(u => u.id === id);
+if (!user) throw new Error("User not found");
 
-        if (status === 'approved' && !user.joiningBonusPaid) {
-            const batch = writeBatch(db);
-            const uRef = doc(db, USERS_COL, id);
-            
-            // Add bonus & change status atomically
-            batch.update(uRef, {
-                status: status,
-                walletBalance: increment(50),
-                totalEarnings: increment(50),
-                lifetimeEarnings: increment(50),
-                joiningBonusPaid: true,
-                updatedAt: serverTimestamp()
-            });
-
-            // Create ledger entry for bonus
-            const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
-            const oRef = doc(db, ORDERS_COL, bonusId);
-            batch.set(oRef, {
-                orderId: bonusId,
-                productName: "Joining Gift 🎁",
-                profit: 50,
-                status: "delivered",
-                resellerId: id,
-                selectedVariant: "Bonus",
-                createdAt: serverTimestamp(),
-                isBonus: true
-            });
-
-            await batch.commit();
-            alert("✅ Reseller Approved & ₹50 Bonus Added to Wallet!");
-        } else {
-            await updateDoc(doc(db, USERS_COL, id), { status, updatedAt: serverTimestamp() });
-            alert("✅ Status Updated Successfully!");
-        }
-        await fetchResellers();
-        updateDashboardStats();
-    } catch (e) {
-        console.error(e);
-        alert("Update failed: " + e.message);
-    }
+if (status === 'approved' && !user.joiningBonusPaid) {
+const batch = writeBatch(db);
+batch.update(doc(db, USERS_COL, id), { status: status, walletBalance: increment(50), totalEarnings: increment(50), lifetimeEarnings: increment(50), joiningBonusPaid: true, updatedAt: serverTimestamp() });
+const bonusId = "BONUS" + Math.floor(100000 + Math.random() * 900000);
+batch.set(doc(db, ORDERS_COL, bonusId), { orderId: bonusId, productName: "Joining Gift 🎁", profit: 50, status: "delivered", resellerId: id, selectedVariant: "Bonus", createdAt: serverTimestamp(), isBonus: true });
+await batch.commit();
+alert("✅ Reseller Approved & ₹50 Bonus Added to Wallet!");
+} else {
+await updateDoc(doc(db, USERS_COL, id), { status, updatedAt: serverTimestamp() });
+alert("✅ Status Updated Successfully!");
+}
+await fetchResellers();
+updateDashboardStats();
+} catch (e) { alert("Update failed: " + e.message); }
 };
 
 window.openMoneyModal=(userId)=>{
 const user=state.resellers.find(x=>x.id===userId);
-if(!user){ alert("Reseller not found."); return; }
+if(!user) return;
 selectedMoneyUser=user;
-const wallet=Number(user.walletBalance||0);
-const lifetime=Number(user.lifetimeEarnings||0);
 document.getElementById("moneyUserName").innerText=user.name||"Unknown";
 document.getElementById("moneyUserEmail").innerText=user.email||user.phone||"-";
-document.getElementById("moneyCurrentWallet").innerText="₹"+wallet.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
-document.getElementById("moneyLifetimeEarnings").innerText="₹"+lifetime.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+document.getElementById("moneyCurrentWallet").innerText="₹"+Number(user.walletBalance||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+document.getElementById("moneyLifetimeEarnings").innerText="₹"+Number(user.lifetimeEarnings||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 document.getElementById("moneyAmount").value="";
 document.getElementById("moneyReason").value="";
 document.getElementById("moneyModal").classList.add("active");
-setTimeout(()=>{ document.getElementById("moneyAmount").focus(); },100);
 };
 
 window.addMoneyToReseller=async()=>{
-if(!selectedMoneyUser){ alert("Please select a reseller."); return; }
+if(!selectedMoneyUser) return;
 const amount=Number(document.getElementById("moneyAmount").value);
 const reason=document.getElementById("moneyReason").value.trim();
-if(!Number.isFinite(amount)||amount<=0){ alert("Please enter a valid amount greater than ₹0."); return; }
-if(amount>100000000){ alert("Please enter a valid amount."); return; }
+if(!Number.isFinite(amount)||amount<=0){ alert("Enter valid amount"); return; }
 const user=selectedMoneyUser;
-const currentWallet=Number(user.walletBalance||0);
-const currentLifetime=Number(user.lifetimeEarnings||0);
-const newWallet=currentWallet+amount;
-const newLifetime=currentLifetime+amount;
-
-if(!confirm(`Confirm करें?\n\nReseller: ${user.name||"Unknown"}\nAmount: ₹${amount.toLocaleString("en-IN")}\n\nCurrent Wallet: ₹${currentWallet.toLocaleString("en-IN")}\nNew Wallet: ₹${newWallet.toLocaleString("en-IN")}`)) return;
+if(!confirm(`Confirm add ₹${amount.toLocaleString("en-IN")} to ${user.name}?`)) return;
 
 const btn=document.getElementById("btnAddMoney");
 btn.disabled=true;
-btn.innerText="Adding Money...";
-
 try{
 await updateDoc(doc(db,USERS_COL,user.id),{
 walletBalance:increment(amount),
 lifetimeEarnings:increment(amount),
-updatedAt:serverTimestamp(),
-lastAdminCredit:amount,
-lastAdminCreditAt:serverTimestamp(),
-lastAdminCreditBy:auth.currentUser?.uid||"admin"
+updatedAt:serverTimestamp()
 });
-
 await addDoc(collection(db,USERS_COL,user.id,"walletTransactions"),{
-type:"admin_credit",
-transactionType:"credit",
-amount,
-balanceBefore:currentWallet,
-balanceAfter:newWallet,
-lifetimeEarningsBefore:currentLifetime,
-lifetimeEarningsAfter:newLifetime,
-reason:reason||"Admin credited amount",
-description:reason||"Amount credited by admin",
-adminId:auth.currentUser?.uid||"admin",
-adminEmail:auth.currentUser?.email||state.admin?.email||"admin",
-createdAt:serverTimestamp(),
-status:"completed"
+type:"admin_credit", transactionType:"credit", amount, reason:reason||"Admin bonus", createdAt:serverTimestamp(), status:"completed"
 });
-
-const index=state.resellers.findIndex(x=>x.id===user.id);
-if(index!==-1){
-state.resellers[index].walletBalance=newWallet;
-state.resellers[index].lifetimeEarnings=newLifetime;
-state.resellers[index].lastAdminCredit=amount;
-}
-renderResellers();
+await fetchResellers();
 closeModal("moneyModal");
 alert(`₹${amount.toLocaleString("en-IN")} successfully added.`);
-selectedMoneyUser=null;
-}catch(e){
-console.error(e);
-alert("Money add failed:\n"+e.message);
-}finally{
-btn.disabled=false;
-btn.innerText="💰 Add Money";
-}
+}catch(e){ alert("Money add failed: "+e.message); }
+finally{ btn.disabled=false; }
 };
 
 /* =========================================
-PRODUCTS (WITH 10-URL PASTE)
+PRODUCTS (WITH OFFER EXPIRY CHECK)
 ========================================= */
 async function fetchProducts(){
 const snap=await getDocs(collection(db,PRODUCTS_COL));
 state.products=[];
-snap.forEach(d=>{ state.products.push({ id:d.id, ...d.data() }); });
+const now = new Date().getTime();
+let autoUpdateNeeded = false;
+
+snap.forEach(d=>{
+let p = { id:d.id, ...d.data() };
+// Check if the Offer has Expired. If yes, auto revert to MRP!
+if(p.offerEndTime) {
+const endTime = new Date(p.offerEndTime).getTime();
+if(endTime < now) {
+p.basePrice = p.mrp > 0 ? p.mrp : p.basePrice; // Set Price Back to MRP
+p.discount = 0;
+p.offerEndTime = "";
+// Update silently in database
+updateDoc(doc(db, PRODUCTS_COL, p.id), {
+basePrice: p.basePrice,
+discount: 0,
+offerEndTime: ""
+}).catch(e => console.log(e));
+autoUpdateNeeded = true;
+}
+}
+state.products.push(p);
+});
 state.products.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
 renderProducts();
 }
@@ -1625,50 +1445,33 @@ return [...new Set(matches.map(url=>url.trim().replace(/[),;]+$/g,"")))].slice(0
 window.processImageUrls=()=>{
 const text=document.getElementById("prodImageUrls").value;
 const urls=extractImageUrls(text);
-
 for(let i=1;i<=10;i++){
 const el = document.getElementById("prodImg"+i);
 if(el) el.value=urls[i-1]||"";
 }
-
 document.getElementById("imageCount").innerText=`${urls.length} / 10 Images Added`;
-
 const grid=document.getElementById("imagePreviewGrid");
 let html="";
 for(let i=0;i<10;i++){
-if(urls[i]){
-html+=`<div class="image-preview-item"><img src="${escapeHtml(urls[i])}" alt="Product Image ${i+1}" onerror="this.style.display='none';"><div class="image-preview-number">${i+1}</div></div>`;
-}else{
-html+=`<div class="image-preview-item"><div class="image-preview-empty">Image ${i+1}</div></div>`;
-}
+if(urls[i]){ html+=`<div class="image-preview-item"><img src="${escapeHtml(urls[i])}" alt="IMG"><div class="image-preview-number">${i+1}</div></div>`; }
+else{ html+=`<div class="image-preview-item"><div class="image-preview-empty">Image ${i+1}</div></div>`; }
 }
 grid.innerHTML=html;
 };
-
-function escapeHtml(value){
-return String(value).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#039;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
 
 window.renderProducts=()=>{
 const query=document.getElementById("searchProduct").value.toLowerCase();
 const tbody=document.getElementById("productTableBody");
 const filtered=state.products.filter(p=>(p.title||"").toLowerCase().includes(query)||(p.category||"").toLowerCase().includes(query));
-
-if(!filtered.length){
-tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No products found.</td></tr>`;
-return;
-}
+if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No products found.</td></tr>`; return; }
 
 tbody.innerHTML=filtered.map(p=>{
-let imgUrl="";
-if(Array.isArray(p.images)&&p.images.length>0){ imgUrl=p.images[0]; }
-else if(p.image){ imgUrl=p.image; }
+let imgUrl=Array.isArray(p.images)&&p.images.length>0 ? p.images[0] : p.image||"";
 const sizes=Array.isArray(p.sizes)?p.sizes.join(", "): (p.sizes||"-");
-
 return `<tr>
-<td>${imgUrl?`<img src="${escapeHtml(imgUrl)}" class="product-img-cell" onerror="this.style.display='none'">`:`<div class="product-img-cell" style="display:flex;align-items:center;justify-content:center;font-size:10px;">No Img</div>`}</td>
+<td>${imgUrl?`<img src="${escapeHtml(imgUrl)}" class="product-img-cell">`:`<div class="product-img-cell" style="display:flex;align-items:center;justify-content:center;font-size:10px;">No Img</div>`}</td>
 <td><div style="font-weight:600;margin-bottom:4px;">${escapeHtml(p.title||"Untitled")}</div><div class="text-xs">${escapeHtml(p.category||"Uncategorized")}</div></td>
-<td><div style="font-weight:600;color:var(--accent);">Base: ₹${Number(p.basePrice||0)}</div><div class="text-xs" style="text-decoration:line-through;">MRP: ₹${Number(p.mrp||0)}</div></td>
+<td><div style="font-weight:600;color:var(--accent);">Price: ₹${Number(p.basePrice||0)}</div><div class="text-xs" style="text-decoration:line-through;">MRP: ₹${Number(p.mrp||0)}</div>${p.offerEndTime?`<div class="text-xs" style="color:var(--warning);margin-top:4px;">Offer ends soon</div>`:""}</td>
 <td><div style="max-width:150px;white-space:normal;font-size:12px;">${escapeHtml(sizes)}</div></td>
 <td><div class="action-buttons">
 <button class="btn btn-secondary btn-sm" onclick="editProduct('${p.id}')">Edit</button>
@@ -1682,10 +1485,10 @@ window.saveProduct=async()=>{
 const id=document.getElementById("prodId").value;
 const title=document.getElementById("prodTitle").value.trim();
 const basePrice=Number(document.getElementById("prodBasePrice").value||0);
-if(!title||basePrice<=0){ alert("Title and a valid Base Price are required."); return; }
+if(!title||basePrice<=0){ alert("Title and Price are required."); return; }
+
 const btn=document.getElementById("btnSaveProduct");
 btn.disabled=true;
-btn.innerText="Saving...";
 
 const images=extractImageUrls(document.getElementById("prodImageUrls").value);
 const sizesRaw=document.getElementById("prodSizes").value.trim();
@@ -1699,32 +1502,19 @@ category:document.getElementById("prodCategory").value.trim(),
 offerEndTime:document.getElementById("prodOfferEndTime").value||"",
 orderCountText:document.getElementById("prodOrderCountText").value.trim()||"",
 description:document.getElementById("prodDesc").value.trim(),
-sizes, images,
-image:images[0]||"",
-image1:images[0]||"", image2:images[1]||"", image3:images[2]||"", image4:images[3]||"", image5:images[4]||"",
-image6:images[5]||"", image7:images[6]||"", image8:images[7]||"", image9:images[8]||"", image10:images[9]||"",
-updatedAt:serverTimestamp()
+sizes, images, image:images[0]||"", updatedAt:serverTimestamp()
 };
 
+for(let i=1;i<=10;i++) data["image"+i] = images[i-1]||"";
+
 try{
-if(id){
-await updateDoc(doc(db,PRODUCTS_COL,id),data);
-}else{
-data.createdAt=serverTimestamp();
-data.active=true;
-await addDoc(collection(db,PRODUCTS_COL),data);
-}
+if(id) await updateDoc(doc(db,PRODUCTS_COL,id),data);
+else { data.createdAt=serverTimestamp(); data.active=true; await addDoc(collection(db,PRODUCTS_COL),data); }
 resetProductForm();
 await fetchProducts();
-updateDashboardStats();
 alert("Product saved successfully.");
-}catch(e){
-console.error(e);
-alert("Error saving product: "+e.message);
-}finally{
-btn.disabled=false;
-btn.innerText="Save Product";
-}
+}catch(e){ alert("Error saving product: "+e.message); }
+finally{ btn.disabled=false; }
 };
 
 window.editProduct=(id)=>{
@@ -1740,48 +1530,32 @@ document.getElementById("prodCategory").value=p.category||"";
 document.getElementById("prodOfferEndTime").value=p.offerEndTime||"";
 document.getElementById("prodOrderCountText").value=p.orderCountText||"";
 document.getElementById("prodDesc").value=p.description||"";
+document.getElementById("prodSizes").value=Array.isArray(p.sizes)?p.sizes.join(", "): (p.sizes||"");
 
-const sizes=Array.isArray(p.sizes)?p.sizes.join(", "): (p.sizes||"");
-document.getElementById("prodSizes").value=sizes;
-
-let imgs=[];
-if(Array.isArray(p.images)&&p.images.length){
-imgs=p.images;
-}else{
-imgs=[p.image1, p.image2, p.image3, p.image4, p.image5, p.image6, p.image7, p.image8, p.image9, p.image10].filter(Boolean);
-if(!imgs.length&&p.image){ imgs=[p.image]; }
-}
-imgs=imgs.slice(0,10);
-document.getElementById("prodImageUrls").value=imgs.join("\n");
+let imgs=Array.isArray(p.images)&&p.images.length ? p.images : [p.image1, p.image2, p.image3, p.image4, p.image5, p.image6, p.image7, p.image8, p.image9, p.image10].filter(Boolean);
+if(!imgs.length&&p.image) imgs=[p.image];
+document.getElementById("prodImageUrls").value=imgs.slice(0,10).join("\n");
 processImageUrls();
-
 document.getElementById("productFormTitle").innerText="Edit Product";
 document.getElementById("btnSaveProduct").innerText="Update Product";
 window.scrollTo({ top:0, behavior:"smooth" });
 };
 
 window.resetProductForm=()=>{
-["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodOfferEndTime","prodOrderCountText","prodSizes","prodDesc","prodImageUrls","prodImg1","prodImg2","prodImg3","prodImg4","prodImg5","prodImg6","prodImg7","prodImg8","prodImg9","prodImg10"].forEach(id=>{ 
-const el = document.getElementById(id);
-if(el) el.value=""; 
-});
+["prodId","prodTitle","prodBasePrice","prodMrp","prodDiscount","prodCategory","prodOfferEndTime","prodOrderCountText","prodSizes","prodDesc","prodImageUrls"].forEach(id=> { const el = document.getElementById(id); if(el) el.value=""; });
 document.getElementById("productFormTitle").innerText="Add New Product";
 document.getElementById("btnSaveProduct").innerText="Save Product";
-document.getElementById("imageCount").innerText="0 / 10 Images Added";
-document.getElementById("imagePreviewGrid").innerHTML=[1,2,3,4,5,6,7,8,9,10].map(i=>`<div class="image-preview-item"><div class="image-preview-empty">Image ${i}</div></div>`).join("");
+processImageUrls();
 };
 
 window.deleteProduct=async(id)=>{
 if(!confirm("Are you sure you want to permanently delete this product?")) return;
-try{
 await deleteDoc(doc(db,PRODUCTS_COL,id));
 await fetchProducts();
-updateDashboardStats();
-}catch(e){ alert("Error deleting: "+e.message); }
 };
 
 /* =========================================
-ORDERS (FIXED DELIVERY COMMISSION)
+ORDERS
 ========================================= */
 async function fetchOrders(){
 const snap=await getDocs(collection(db,ORDERS_COL));
@@ -1794,24 +1568,18 @@ renderOrders();
 window.renderOrders=()=>{
 const query=document.getElementById("searchOrder").value.toLowerCase();
 const tbody=document.getElementById("orderTableBody");
-// Filter out bonus records visually so admin only sees real orders
 const filtered=state.orders.filter(o=> !o.isBonus && ((o.id||"").toLowerCase().includes(query)||(o.customerPhone||"").includes(query)||(o.customerName||"").toLowerCase().includes(query)));
-
-if(!filtered.length){
-tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No orders found.</td></tr>`;
-return;
-}
+if(!filtered.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No orders found.</td></tr>`; return; }
 
 const statuses=["pending","confirmed","processing","shipped","delivered","returned","cancelled","out_of_stock"];
 tbody.innerHTML=filtered.map(o=>{
 const st=(o.status||"pending").toLowerCase();
 const totalVal=(Number(o.sellingPrice)||0)*(Number(o.quantity)||1);
-
 return `<tr>
 <td><div style="font-weight:600;font-family:monospace;">${escapeHtml(o.orderId||o.id.slice(0,8))}</div><div class="text-xs" style="margin-bottom:8px;">${escapeHtml(o.productName||"Unknown Product")}</div><button class="btn btn-secondary btn-sm" onclick="viewOrder('${o.id}')">View Details</button></td>
 <td><div style="font-weight:600;">${escapeHtml(o.customerName||"-")}</div><div class="text-xs">${escapeHtml(o.customerPhone||"-")}</div></td>
 <td>${escapeHtml(o.resellerName||"-")}</td>
-<td><div class="text-xs">Order Total:</div><div style="font-weight:600;">₹${totalVal}</div><div class="text-xs" style="margin-top:4px;">Profit:</div><div style="font-weight:600;color:var(--accent);">₹${o.profit||0}</div></td>
+<td><div class="text-xs">Total:</div><div style="font-weight:600;">₹${totalVal}</div><div class="text-xs" style="margin-top:4px;">Profit:</div><div style="font-weight:600;color:var(--accent);">₹${o.profit||0}</div></td>
 <td>
 <select onchange="updateOrderStatus('${o.id}',this.value)" class="form-input" style="padding:8px;font-size:13px;width:140px;margin-bottom:8px;">
 ${statuses.map(s=>`<option value="${s}" ${st===s?"selected":""}>${s.replace(/_/g," ").toUpperCase()}</option>`).join("")}
@@ -1821,57 +1589,30 @@ ${statuses.map(s=>`<option value="${s}" ${st===s?"selected":""}>${s.replace(/_/g
 }).join("");
 };
 
-// 🔴 FIXED ORDER COMMISSION LOGIC (USING writeBatch) 🔴
 window.updateOrderStatus = async (id, status) => {
-    try {
-        const order = state.orders.find(o => o.id === id);
-        if (!order) return;
-
-        if (status === 'delivered' && !order.paidToWallet) {
-            const batch = writeBatch(db);
-            const uRef = doc(db, USERS_COL, order.resellerId);
-            const oRef = doc(db, ORDERS_COL, id);
-            
-            // Add commission to wallet
-            batch.update(uRef, { 
-                walletBalance: increment(order.profit), 
-                totalEarnings: increment(order.profit), 
-                lifetimeEarnings: increment(order.profit) 
-            });
-            // Update order status
-            batch.update(oRef, { status: status, paidToWallet: true, updatedAt: serverTimestamp() });
-            
-            await batch.commit();
-            alert("✅ Delivered! Commission Added to Reseller's Wallet.");
-        } 
-        else if ((status === 'returned' || status === 'cancelled') && order.paidToWallet) {
-            const batch = writeBatch(db);
-            const uRef = doc(db, USERS_COL, order.resellerId);
-            const oRef = doc(db, ORDERS_COL, id);
-            
-            // Remove commission from wallet
-            batch.update(uRef, { 
-                walletBalance: increment(-order.profit), 
-                totalEarnings: increment(-order.profit), 
-                lifetimeEarnings: increment(-order.profit) 
-            });
-            // Update order status
-            batch.update(oRef, { status: status, paidToWallet: false, updatedAt: serverTimestamp() });
-            
-            await batch.commit();
-            alert(`⚠️ ${status.toUpperCase()}! Commission Deducted from Wallet.`);
-        } 
-        else {
-            await updateDoc(doc(db, ORDERS_COL, id), { status, updatedAt: serverTimestamp() });
-            alert("✅ Order Status Updated Successfully.");
-        }
-
-        await fetchOrders();
-        updateDashboardStats();
-    } catch (e) {
-        console.error(e);
-        alert("Failed to update status: " + e.message);
-    }
+try {
+const order = state.orders.find(o => o.id === id);
+if (!order) return;
+if (status === 'delivered' && !order.paidToWallet) {
+const batch = writeBatch(db);
+batch.update(doc(db, USERS_COL, order.resellerId), { walletBalance: increment(order.profit), totalEarnings: increment(order.profit), lifetimeEarnings: increment(order.profit) });
+batch.update(doc(db, ORDERS_COL, id), { status: status, paidToWallet: true, updatedAt: serverTimestamp() });
+await batch.commit();
+alert("✅ Delivered! Commission Added to Reseller's Wallet.");
+} 
+else if ((status === 'returned' || status === 'cancelled') && order.paidToWallet) {
+const batch = writeBatch(db);
+batch.update(doc(db, USERS_COL, order.resellerId), { walletBalance: increment(-order.profit), totalEarnings: increment(-order.profit), lifetimeEarnings: increment(-order.profit) });
+batch.update(doc(db, ORDERS_COL, id), { status: status, paidToWallet: false, updatedAt: serverTimestamp() });
+await batch.commit();
+alert(`⚠️ ${status.toUpperCase()}! Commission Deducted from Wallet.`);
+} 
+else {
+await updateDoc(doc(db, ORDERS_COL, id), { status, updatedAt: serverTimestamp() });
+}
+await fetchOrders();
+updateDashboardStats();
+} catch (e) { alert("Failed to update status: " + e.message); }
 };
 
 window.viewOrder=(id)=>{
@@ -1883,14 +1624,11 @@ document.getElementById("orderDetailsContent").innerHTML=`
 <div class="detail-item"><div class="detail-label">Order ID</div><div class="detail-value">${escapeHtml(o.orderId||o.id)}</div></div>
 <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="status-badge status-${escapeHtml(o.status||"pending")}">${escapeHtml((o.status||"pending").toUpperCase())}</span></div></div>
 <div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Product</div><div class="detail-value">${escapeHtml(o.productName||"-")}</div></div>
-<div class="detail-item"><div class="detail-label">Size</div><div class="detail-value">${escapeHtml(o.size||"N/A")}</div></div>
-<div class="detail-item"><div class="detail-label">Quantity</div><div class="detail-value">${o.quantity||1}</div></div>
-<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Customer Name & Phone</div><div class="detail-value">${escapeHtml(o.customerName||"-")} | ${escapeHtml(o.customerPhone||"-")}</div></div>
-<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Delivery Address</div><div class="detail-value">${escapeHtml(o.customerAddress||"-")}, PIN: ${escapeHtml(o.pincode||"-")}</div></div>
-<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Reseller Name</div><div class="detail-value">${escapeHtml(o.resellerName||"-")}</div></div>
+<div class="detail-item"><div class="detail-label">Size & Quantity</div><div class="detail-value">Size: ${escapeHtml(o.size||"N/A")} | Qty: ${o.quantity||1}</div></div>
+<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Customer</div><div class="detail-value">${escapeHtml(o.customerName||"-")} | ${escapeHtml(o.customerPhone||"-")}</div></div>
+<div class="detail-item" style="grid-column:1/-1;"><div class="detail-label">Address</div><div class="detail-value">${escapeHtml(o.customerAddress||"-")}, PIN: ${escapeHtml(o.pincode||"-")}</div></div>
 <div class="detail-item"><div class="detail-label">Base Price</div><div class="detail-value">₹${o.basePrice||0}</div></div>
 <div class="detail-item"><div class="detail-label">Selling Price</div><div class="detail-value">₹${o.sellingPrice||0}</div></div>
-<div class="detail-item"><div class="detail-label">Total Order Value</div><div class="detail-value">₹${total}</div></div>
 <div class="detail-item"><div class="detail-label">Reseller Profit</div><div class="detail-value" style="color:var(--accent);">₹${o.profit||0}</div></div>
 </div>`;
 document.getElementById("orderModal").classList.add("active");
@@ -1909,29 +1647,21 @@ renderWithdrawals();
 
 window.renderWithdrawals=()=>{
 const tbody=document.getElementById("withdrawTableBody");
-if(!state.withdrawals.length){
-tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No withdrawal requests.</td></tr>`;
-return;
-}
+if(!state.withdrawals.length){ tbody.innerHTML=`<tr><td colspan="5" class="empty-state">No withdrawal requests.</td></tr>`; return; }
 tbody.innerHTML=state.withdrawals.map(w=>{
 const st=(w.status||"pending").toLowerCase();
-const amount=Number(w.amount||0);
 let paymentInfo="-";
-if(w.paymentMethod){ paymentInfo+=`<br><strong>${escapeHtml(w.paymentMethod)}</strong>`; }
-if(w.transactionId){ paymentInfo+=`<br><span class="text-xs">Txn: ${escapeHtml(w.transactionId)}</span>`; }
-if(w.paymentNote){ paymentInfo+=`<br><span class="text-xs">${escapeHtml(w.paymentNote)}</span>`; }
-
+if(w.paymentMethod) paymentInfo+=`<br><strong>${escapeHtml(w.paymentMethod)}</strong>`;
+if(w.transactionId) paymentInfo+=`<br><span class="text-xs">Txn: ${escapeHtml(w.transactionId)}</span>`;
 return `<tr>
-<td><div style="font-weight:600;">${escapeHtml(w.userName||"Unknown")}</div><div class="text-xs">${escapeHtml(w.userEmail||"-")}</div><div class="text-xs">${escapeHtml(w.userId||"")}</div></td>
-<td><div style="font-weight:800;font-size:18px;color:var(--accent);">₹${amount.toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}</div></td>
-<td style="max-width:240px;"><div class="text-xs" style="white-space:normal;line-height:1.6;">${escapeHtml(w.details||"-")}</div><div style="margin-top:8px;line-height:1.6;">${paymentInfo}</div></td>
-<td><span class="status-badge status-${escapeHtml(st)}">${escapeHtml(st)}</span>${st==="processing"?`<div class="text-xs" style="margin-top:7px;color:#60a5fa;">Payment being processed</div>`:""}${st==="approved" && w.transactionId?`<div class="text-xs" style="margin-top:7px;color:var(--accent);">✓ Payment Completed</div>`:""}</td>
+<td><div style="font-weight:600;">${escapeHtml(w.userName||"Unknown")}</div><div class="text-xs">${escapeHtml(w.userEmail||"-")}</div></td>
+<td><div style="font-weight:800;font-size:18px;color:var(--accent);">₹${Number(w.amount||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}</div></td>
+<td style="max-width:240px;"><div class="text-xs" style="white-space:normal;">${escapeHtml(w.details||"-")}</div><div style="margin-top:8px;">${paymentInfo}</div></td>
+<td><span class="status-badge status-${escapeHtml(st)}">${escapeHtml(st)}</span></td>
 <td>
 <div class="action-buttons">
-${st==="pending"?`<button class="btn btn-secondary btn-sm" style="color:#60a5fa;border-color:#3b82f6;" onclick="setWithdrawalProcessing('${w.id}')">⏳ Processing</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);border-color:rgba(239,68,68,.3);" onclick="handleWithdrawal('${w.id}','rejected')">Reject</button>`:""}
-${st==="processing"?`<button class="btn btn-primary btn-sm" onclick="openWithdrawalPayment('${w.id}')">💳 Accept & Pay</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);border-color:rgba(239,68,68,.3);" onclick="handleWithdrawal('${w.id}','rejected')">Reject</button>`:""}
-${st==="approved"?`<div class="text-xs" style="color:var(--accent);">✓ Paid</div>`:""}
-${st==="rejected"?`<div class="text-xs" style="color:var(--danger);">✕ Rejected</div>`:""}
+${st==="pending"?`<button class="btn btn-secondary btn-sm" style="color:#60a5fa;border-color:#3b82f6;" onclick="setWithdrawalProcessing('${w.id}')">⏳ Processing</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="handleWithdrawal('${w.id}','rejected')">Reject</button>`:""}
+${st==="processing"?`<button class="btn btn-primary btn-sm" onclick="openWithdrawalPayment('${w.id}')">💳 Pay</button><button class="btn btn-secondary btn-sm" style="color:var(--danger);" onclick="handleWithdrawal('${w.id}','rejected')">Reject</button>`:""}
 </div>
 </td>
 </tr>`;
@@ -1939,81 +1669,50 @@ ${st==="rejected"?`<div class="text-xs" style="color:var(--danger);">✕ Rejecte
 };
 
 window.setWithdrawalProcessing=async(id)=>{
-const w=state.withdrawals.find(x=>x.id===id);
-if(!w){ alert("Withdrawal request not found."); return; }
-if((w.status||"pending")!=="pending"){ alert("This withdrawal is already processed."); return; }
-if(!confirm(`Withdrawal को Processing में डालें?\n\nUser: ${w.userName||"Unknown"}\nAmount: ₹${Number(w.amount||0).toLocaleString("en-IN")}`)) return;
-try{
-await updateDoc(doc(db,WITHDRAW_COL,id),{ status:"processing", processingStartedAt:serverTimestamp(), processingStartedBy:auth.currentUser?.uid||"admin", updatedAt:serverTimestamp() });
+if(!confirm(`Withdrawal Processing में डालें?`)) return;
+await updateDoc(doc(db,WITHDRAW_COL,id),{ status:"processing", updatedAt:serverTimestamp() });
 await fetchWithdrawals();
-alert("Withdrawal अब Processing में है.");
-}catch(e){ console.error(e); alert("Processing status update failed:\n"+e.message); }
 };
 
 window.openWithdrawalPayment=(id)=>{
 const w=state.withdrawals.find(x=>x.id===id);
-if(!w){ alert("Withdrawal request not found."); return; }
-if((w.status||"")!=="processing"){ alert("पहले withdrawal को Processing में डालें."); return; }
-selectedWithdrawal=w;
-selectedPaymentMethod="";
+if(!w) return;
+selectedWithdrawal=w; selectedPaymentMethod="";
 document.getElementById("withdrawUserName").innerText=w.userName||"Unknown";
 document.getElementById("withdrawUserEmail").innerText=w.userEmail||"-";
 document.getElementById("withdrawAmount").innerText=Number(w.amount||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
 document.getElementById("withdrawTransactionId").value="";
 document.getElementById("withdrawPaymentNote").value="";
-document.querySelectorAll(".payment-method").forEach(btn=>{ btn.classList.remove("selected"); });
+document.querySelectorAll(".payment-method").forEach(b=>b.classList.remove("selected"));
 document.getElementById("withdrawModal").classList.add("active");
 };
 
 window.selectPaymentMethod=(method)=>{
 selectedPaymentMethod=method;
-document.querySelectorAll(".payment-method").forEach(btn=>{ btn.classList.remove("selected"); });
-if(method==="PhonePe"){ document.getElementById("payPhonePe").classList.add("selected"); }
-if(method==="Google Pay"){ document.getElementById("payGPay").classList.add("selected"); }
-if(method==="Paytm"){ document.getElementById("payPaytm").classList.add("selected"); }
-if(method==="UPI"){ document.getElementById("payUPI").classList.add("selected"); }
+document.querySelectorAll(".payment-method").forEach(b=>b.classList.remove("selected"));
+if(method==="PhonePe") document.getElementById("payPhonePe").classList.add("selected");
+if(method==="Google Pay") document.getElementById("payGPay").classList.add("selected");
+if(method==="Paytm") document.getElementById("payPaytm").classList.add("selected");
+if(method==="UPI") document.getElementById("payUPI").classList.add("selected");
 };
 
 window.completeWithdrawalPayment=async()=>{
-if(!selectedWithdrawal){ alert("Withdrawal request not selected."); return; }
-if(!selectedPaymentMethod){ alert("कृपया पहले Payment Method select करें."); return; }
+if(!selectedWithdrawal) return;
+if(!selectedPaymentMethod){ alert("Payment Method select करें."); return; }
 const transactionId=document.getElementById("withdrawTransactionId").value.trim();
-const paymentNote=document.getElementById("withdrawPaymentNote").value.trim();
-if(!transactionId){ alert("कृपया Transaction ID / UTR डालें."); document.getElementById("withdrawTransactionId").focus(); return; }
-if(transactionId.length<4){ alert("Transaction ID सही डालें."); return; }
-const w=selectedWithdrawal;
-const amount=Number(w.amount||0);
-if(!confirm(`क्या payment confirm करना है?\n\nReseller: ${w.userName||"Unknown"}\nAmount: ₹${amount.toLocaleString("en-IN")}\nPayment Method: ${selectedPaymentMethod}\nTransaction ID: ${transactionId}`)) return;
+if(!transactionId){ alert("Transaction ID डालें."); return; }
 
 const btn=document.getElementById("btnCompleteWithdrawal");
 btn.disabled=true;
-btn.innerText="Saving Payment...";
 try{
-await updateDoc(doc(db,WITHDRAW_COL,w.id),{
-status:"approved",
-paymentMethod:selectedPaymentMethod,
-transactionId:transactionId,
-paymentNote:paymentNote||`Payment sent via ${selectedPaymentMethod}`,
-paidAmount:amount,
-paymentStatus:"paid",
-approvedAt:serverTimestamp(),
-processedAt:serverTimestamp(),
-processedBy:auth.currentUser?.uid||"admin",
-processedByEmail:auth.currentUser?.email||state.admin?.email||"admin",
-updatedAt:serverTimestamp()
+await updateDoc(doc(db,WITHDRAW_COL,selectedWithdrawal.id),{
+status:"approved", paymentMethod:selectedPaymentMethod, transactionId:transactionId, paymentNote:document.getElementById("withdrawPaymentNote").value, approvedAt:serverTimestamp(), updatedAt:serverTimestamp()
 });
 closeModal("withdrawModal");
-selectedWithdrawal=null;
-selectedPaymentMethod="";
 await fetchWithdrawals();
-alert(`Payment successfully accepted.\n\nAmount: ₹${amount.toLocaleString("en-IN")}\nTransaction ID: ${transactionId}\nWithdrawal अब Approved/Paid है.`);
-}catch(e){
-console.error(e);
-alert("Payment approval failed:\n\n"+e.message);
-}finally{
-btn.disabled=false;
-btn.innerText="✅ Accept Payment";
-}
+alert(`Payment Accepted!`);
+}catch(e){ alert("Error: "+e.message); }
+finally{ btn.disabled=false; }
 };
 
 window.handleWithdrawal=async(id,action)=>{
@@ -2021,49 +1720,25 @@ const w=state.withdrawals.find(x=>x.id===id);
 if(!w) return;
 const amount=Number(w.amount||0);
 if(action!=="rejected") return;
-if(!confirm(`क्या withdrawal reject करना है?\n\nUser: ${w.userName||"Unknown"}\nAmount: ₹${amount.toLocaleString("en-IN")}\nReject करने पर amount reseller के wallet में वापस add किया जाएगा.`)) return;
+if(!confirm(`क्या withdrawal reject करना है? Amount wallet में वापस जायेगा.`)) return;
 
 try{
-const currentStatus=(w.status||"pending").toLowerCase();
-if(currentStatus!=="pending" && currentStatus!=="processing"){
-alert("This withdrawal cannot be rejected now.");
-return;
-}
-await updateDoc(doc(db,USERS_COL,w.userId),{
-walletBalance:increment(amount),
-updatedAt:serverTimestamp(),
-lastWithdrawalRefund:amount,
-lastWithdrawalRefundAt:serverTimestamp()
-});
-await updateDoc(doc(db,WITHDRAW_COL,id),{
-status:"rejected",
-paymentStatus:"refunded",
-refundAmount:amount,
-processedAt:serverTimestamp(),
-processedBy:auth.currentUser?.uid||"admin",
-processedByEmail:auth.currentUser?.email||state.admin?.email||"admin",
-updatedAt:serverTimestamp()
-});
-alert(`Withdrawal rejected.\n\n₹${amount.toLocaleString("en-IN")} wallet में refund कर दिया गया.`);
+await updateDoc(doc(db,USERS_COL,w.userId),{ walletBalance:increment(amount), updatedAt:serverTimestamp() });
+await updateDoc(doc(db,WITHDRAW_COL,id),{ status:"rejected", paymentStatus:"refunded", updatedAt:serverTimestamp() });
+alert(`Refunded to wallet.`);
 await Promise.all([ fetchWithdrawals(), fetchResellers() ]);
-}catch(e){
-console.error(e);
-alert("Error processing withdrawal:\n"+e.message);
-}
+}catch(e){ alert("Error: "+e.message); }
 };
 
 /* =========================================
-DASHBOARD UI
+UI CONTROLS
 ========================================= */
 function updateDashboardStats(){
 document.getElementById("statResellers").innerText=state.resellers.length;
 document.getElementById("statPendingResellers").innerText=state.resellers.filter(r=>(r.status||"pending")==="pending").length;
 document.getElementById("statProducts").innerText=state.products.length;
 document.getElementById("statOrders").innerText=state.orders.filter(o=>!o.isBonus).length;
-const revenue=state.orders.reduce((sum,o)=>{
-if(o.status!=="cancelled" && o.status!=="rejected" && !o.isBonus){ return sum+(Number(o.sellingPrice||0)*Number(o.quantity||1)); }
-return sum;
-},0);
+const revenue=state.orders.reduce((sum,o)=>{ if(o.status!=="cancelled" && o.status!=="rejected" && !o.isBonus){ return sum+(Number(o.sellingPrice||0)*Number(o.quantity||1)); } return sum; },0);
 document.getElementById("statRevenue").innerText=revenue.toLocaleString("en-IN");
 }
 
@@ -2072,7 +1747,7 @@ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
 if(btn) btn.classList.add("active");
-const titles={ dashboard:"Overview", resellers:"Reseller Management", products:"Product Catalog", orders:"Order Processing", withdrawals:"Payout Requests" };
+const titles={ dashboard:"Overview", categories:"Category Management", resellers:"Reseller Management", products:"Product Catalog", orders:"Order Processing", withdrawals:"Payout Requests" };
 document.getElementById("pageTitle").innerText=titles[id];
 if(window.innerWidth<=1024) toggleSidebar();
 };
@@ -2084,9 +1759,7 @@ document.getElementById("orderModal").addEventListener("click",e=>{ if(e.target.
 document.getElementById("moneyModal").addEventListener("click",e=>{ if(e.target.id==="moneyModal") closeModal("moneyModal"); });
 document.getElementById("withdrawModal").addEventListener("click",e=>{ if(e.target.id==="withdrawModal") closeModal("withdrawModal"); });
 
-document.addEventListener("keydown",e=>{
-if(e.key==="Escape"){ closeModal("orderModal"); closeModal("moneyModal"); closeModal("withdrawModal"); }
-});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal("orderModal"); closeModal("moneyModal"); closeModal("withdrawModal"); }});
 
 </script>
 </body>
