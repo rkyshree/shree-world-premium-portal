@@ -50,12 +50,39 @@
 </style>
 
 </head>  
-<body class="text-gray-800 antialiased">  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] hidden transition-all duration-300 w-[90%] max-w-[400px]">  
+<body class="text-gray-800 antialiased">  
+
+<!-- 🔴 SPLASH / LOADING SCREEN (3 SECONDS) 🔴 -->
+<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-300">
+    <div class="relative w-32 h-32 mb-6 flex items-center justify-center">
+        <!-- Animated Rings -->
+        <div class="absolute inset-0 border-4 border-primary/20 rounded-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+        <div class="absolute inset-2 border-4 border-primary/40 rounded-full animate-pulse"></div>
+        <!-- Logo PNG -->
+        <img src="logo.png" onerror="this.src='https://i.ibb.co/3s6Zzhf/shraynex-logo.png'" class="w-24 h-24 object-contain rounded-2xl shadow-lg relative z-10 bg-white p-2" alt="Logo">
+    </div>
+    <h1 class="text-3xl font-black text-gray-900 tracking-tight mb-2">SHRAY<span class="text-primary">NEX</span></h1>
+    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">India's #1 Reselling Platform</p>
+    
+    <!-- Loading Dots -->
+    <div class="flex items-center gap-2">
+        <div class="w-2.5 h-2.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0s"></div>
+        <div class="w-2.5 h-2.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+        <div class="w-2.5 h-2.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+    </div>
+</div>
+
+<div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] hidden transition-all duration-300 w-[90%] max-w-[400px]">  
     <div id="toastMsg" class="bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold flex items-center gap-3 w-full break-words border border-gray-700">  
         <i class="fa-solid fa-bell text-primary-light shrink-0 text-lg"></i>  
         <span class="flex-1">Notification</span>  
     </div>  
-</div>  <div class="app-container">  <section id="landingPage" class="page active">  
+</div>  
+
+<div class="app-container">  
+
+<!-- Landing Page -->
+<section id="landingPage" class="page">  
     <!-- Header -->  
     <header class="p-4 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-30 border-b border-gray-100">  
         <div>  
@@ -665,7 +692,7 @@
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">⏳ Limited Offer End Time</label><input type="datetime-local" id="pOfferEndTime" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white"></div>
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🔥 Order Popularity Text</label><input type="text" id="pOrderCountText" placeholder="e.g. 7 दिन में 23 ऑर्डर" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white"></div>
 
-                    <!-- MULTI URL PASTE SECTION -->
+                    <!-- 🔴 MULTI URL PASTE SECTION (IMAGE PREVIEW FIXED) 🔴 -->
                     <div class="md:col-span-2">
                         <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (एक साथ 10 लिंक पेस्ट करें)</label>
                         <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="यहाँ सभी फोटो के लिंक एक साथ पेस्ट करें..." oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
@@ -676,7 +703,7 @@
                         </div>
             
                         <div id="adminImagePreviewGrid" class="grid grid-cols-5 gap-2 mt-3">
-                            <!-- Preview Grid generated dynamically -->
+                            <!-- Preview Grid Generated Dynamically -->
                         </div>
                         
                         <!-- Hidden inputs for Database -->
@@ -867,9 +894,6 @@
     const money = (v) => Number(v||0).toLocaleString('en-IN');  
     const escapeHtml = (unsafe) => String(unsafe||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");  
   
-    // =========================================================================
-    // 🔴 FETCH CITY AND STATE USING PINCODE 🔴
-    // =========================================================================
     window.fetchCityState = async (pin) => {
         if(pin.length === 6) {
             try {
@@ -904,15 +928,20 @@
         } catch(e) { console.warn("Cat Load err", e); }  
     }  
 
+    // 🔴 FIXED CATEGORY SELECTION (FOR CATEGORIES WITH ' OR EMOJIS) 🔴
     function renderCategoryUI() {  
         const c = document.getElementById("categoryChips");  
         if(c) {  
             c.innerHTML = `<button onclick="setCategoryFilter('All')" class="cat-chip ${currentFilter==='All'?'active':''}"><span class="${currentFilter==='All'?'':'hidden'}">🔥 </span>All Products</button>` +  
-            allCategories.map(cat => `<button onclick="setCategoryFilter('${escapeHtml(cat)}')" class="cat-chip ${currentFilter===cat?'active':''}"><span class="${currentFilter===cat?'':'hidden'}">🔥 </span>${escapeHtml(cat)}</button>`).join('');  
+            allCategories.map(cat => {
+                const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                return `<button onclick="setCategoryFilter('${safeCat}')" class="cat-chip ${currentFilter===cat?'active':''}"><span class="${currentFilter===cat?'':'hidden'}">🔥 </span>${escapeHtml(cat)}</button>`;
+            }).join('');  
         }  
         const s = document.getElementById("pCategory");  
         if(s) s.innerHTML = allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
+
     window.setCategoryFilter = (cat) => { currentFilter = cat; renderCategoryUI(); filterProducts(); };  
 
     window.adminAddCategory = async () => {  
@@ -982,34 +1011,76 @@
   
     window.handleLogout = async () => { await signOut(auth); showToast("Logged Out Securely"); };  
   
+    // 🔴 ENHANCED AUTH STATE & SPLASH SCREEN LOGIC 🔴
+    let splashMinTimePassed = false;
+    let authStateResolved = false;
+    let initialUser = null;
+
+    // Guaranteed 3-second splash screen minimum
+    setTimeout(() => {
+        splashMinTimePassed = true;
+        checkSplashAndRoute();
+    }, 3000);
+
     onAuthStateChanged(auth, async (user) => {  
-        currentUser = user;  
+        currentUser = user;
+        
         if(user) {  
-            if(isAdminMode) return;  
-            try {  
-                await initUserDoc(user);  
-                if(unsubUser) unsubUser();  
-                unsubUser = onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {  
-                    if(doc.exists()) {  
-                        userData = doc.data(); updateProfileUI();  
-                        if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
-                    }  
-                });  
-                
-                // SKIPS LANDING PAGE AND SHOWS PRODUCTS DIRECTLY
+            if(!isAdminMode) {  
+                try {  
+                    await initUserDoc(user);  
+                    if(unsubUser) unsubUser();  
+                    unsubUser = onSnapshot(doc(db, USERS_COL, user.uid), (doc) => {  
+                        if(doc.exists()) {  
+                            userData = doc.data(); updateProfileUI();  
+                            if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
+                        }  
+                    });  
+                    loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
+                } catch(e) { console.error(e); }  
+            }  
+        } else {  
+            if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
+            userData = null;  
+        }  
+        
+        if(!splashMinTimePassed) {
+            // Wait for splash timer to finish before routing
+            authStateResolved = true;
+            initialUser = user;
+        } else {
+            // Splash already finished, instantly route (e.g. manual login/logout)
+            if(user && !isAdminMode) {
                 document.getElementById('landingPage').classList.remove('active'); 
                 document.getElementById('appPage').classList.add('active');  
                 switchTab('Feed'); 
-                
-                loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
-            } catch(e) { console.error(e); }  
-        } else {  
-            if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders();  
-            userData = null; 
-            document.getElementById('appPage').classList.remove('active'); 
-            document.getElementById('landingPage').classList.add('active');  
-        }  
+            } else if (!user && !isAdminMode) {
+                document.getElementById('appPage').classList.remove('active'); 
+                document.getElementById('landingPage').classList.add('active');  
+            }
+        }
     });  
+
+    function checkSplashAndRoute() {
+        if(splashMinTimePassed && authStateResolved) {
+            // Hide splash screen gracefully
+            const splash = document.getElementById('splashScreen');
+            if(splash) {
+                splash.classList.add('opacity-0');
+                setTimeout(() => { splash.style.display = 'none'; }, 300);
+            }
+
+            // Route directly to products if logged in, else landing page
+            if(initialUser && !isAdminMode) {
+                document.getElementById('landingPage').classList.remove('active'); 
+                document.getElementById('appPage').classList.add('active');  
+                switchTab('Feed'); 
+            } else if (!initialUser && !isAdminMode) {
+                document.getElementById('appPage').classList.remove('active'); 
+                document.getElementById('landingPage').classList.add('active');  
+            }
+        }
+    }
   
     window.switchTab = (tab) => {  
         ['Feed', 'Orders', 'Profile'].forEach(t => {  
@@ -1501,9 +1572,6 @@
         });  
     }  
 
-    // =========================================================================
-    // 🔴 COUNTDOWN TIMER LOGIC 🔴
-    // =========================================================================
     setInterval(() => {
         const timers = document.querySelectorAll('.countdown-timer');
         const now = new Date().getTime();
@@ -1589,9 +1657,7 @@
         renderAdminUsers(); renderAdminProducts(); renderAdminOrders(); renderAdminWithdrawals(); renderAdminCategories();
     };  
 
-    // =========================================================================
-    // 🔴 ADMIN CATEGORY MANAGEMENT (NEW/ENHANCED) 🔴
-    // =========================================================================
+    // Admin Categories
     window.renderAdminCategories = () => {
         const t = document.getElementById('adminCategoriesTable');
         t.innerHTML = allCategories.length ? allCategories.map((cat, i) => `
@@ -1640,7 +1706,6 @@
         await saveCategoriesToDB();
         showToast("Category updated!");
         
-        // Auto Update Products associated with old category name
         updateProductsCategory(oldName, cleanName);
     };
 
@@ -1674,8 +1739,6 @@
         } catch(e) { console.error("Failed to update products category", e); }
     };
 
-    // =========================================================================
-  
     // Admin Users  
     window.renderAdminUsers = () => {  
         const q = document.getElementById('adminUserSearch').value.toLowerCase();  
@@ -1724,6 +1787,43 @@
             refreshAdmin(); 
         } catch(e) { console.error(e); showToast("Error updating status: " + e.message); }
     };  
+
+    // 🔴 10 IMAGES PREVIEW FIX (ADMIN) 🔴
+    function extractImageUrls(text) {
+        if(!text) return [];
+        const matches = text.match(/https?:\/\/[^\s,]+/gi);
+        if(!matches) return [];
+        return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 10);
+    }
+
+    window.processAdminImageUrls = () => {
+        const text = document.getElementById("pImgUrls").value;
+        const urls = extractImageUrls(text);
+        
+        for(let i=1; i<=10; i++) {
+            const el = document.getElementById("pImg"+i);
+            if(el) el.value = urls[i-1] || "";
+        }
+        
+        const countText = document.getElementById("adminImageCount");
+        if(countText) countText.innerText = `${urls.length} / 10 Images Added`;
+        
+        const grid = document.getElementById("adminImagePreviewGrid");
+        if(grid) {
+            let html = "";
+            for(let i=0; i<10; i++) {
+                if(urls[i]) {
+                    html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]">
+                                <img src="${escapeHtml(urls[i])}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-[9px] text-red-500 font-bold bg-[#1a1a1a]\\'>Invalid Link</div>';" class="w-full h-full object-cover">
+                                <div class="absolute top-1 left-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded">${i+1}</div>
+                             </div>`;
+                } else {
+                    html += `<div class="aspect-square bg-[#222] rounded-lg flex flex-col items-center justify-center text-[9px] text-gray-500 border border-[#333] text-center font-bold">Img ${i+1}</div>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+    };
 
     // Admin Products  
     window.resetProductForm = () => { 
