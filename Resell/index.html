@@ -1384,6 +1384,7 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
+    /* 🔴🔴🔴 UPDATED SHARE FUNCTION - POP-UP BLOCKER FIXED 🔴🔴🔴 */
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -1404,12 +1405,16 @@
 
         try {
             const files = [];
-            for (let i = 0; i < images.length; i++) {
-                try {
-                    const response = await fetch(images[i]);
-                    const blob = await response.blob();
-                    files.push(new File([blob], `product_image_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }));
-                } catch(e) { console.warn("Could not fetch image for sharing", e); }
+            // To prevent User Gesture Timeout on iOS/Android, we fetch max 4 images to speed up
+            if(navigator.canShare) {
+                const maxImages = Math.min(images.length, 4);
+                for (let i = 0; i < maxImages; i++) {
+                    try {
+                        const response = await fetch(images[i]);
+                        const blob = await response.blob();
+                        files.push(new File([blob], `product_image_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }));
+                    } catch(e) { console.warn("Could not fetch image for sharing", e); }
+                }
             }
 
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
@@ -1418,18 +1423,20 @@
             } else {
                 const allLinks = images.join("\n");
                 const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
-                await navigator.clipboard.writeText(fallbackMsg);
-                showToast("Text copied! Redirecting to WhatsApp...");
-                setTimeout(() => {
-                    window.open(`https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`, '_blank');
-                    closeModal('shareModal');
-                }, 1500);
+                try { await navigator.clipboard.writeText(fallbackMsg); } catch(e){}
+                showToast("Opening WhatsApp...");
+                // FIX: Used location.href to prevent popup blocker issues on mobile
+                window.location.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fallbackMsg)}`;
+                closeModal('shareModal');
             }
         } catch (error) {
+            // Error handling for User Cancel (AbortError) and Gesture Expiration
             if (error.name !== 'AbortError') { 
                 const allLinks = images.join("\n");
                 const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
-                window.open(`https://wa.me/?text=${encodeURIComponent(fallbackMsg)}`, '_blank');
+                try { await navigator.clipboard.writeText(fallbackMsg); } catch(e){}
+                // FIX: Used location.href to prevent popup blocker issues on mobile
+                window.location.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fallbackMsg)}`;
                 closeModal('shareModal');
             }
         } finally {
