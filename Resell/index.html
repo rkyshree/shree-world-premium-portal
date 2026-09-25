@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
     <title>SHRAYNEX | India's #1 Reselling Platform</title>  
     <meta name="description" content="Start your online reselling business with zero investment. Discover products, add your margin and earn money from home.">  
-    <meta name="theme-color" content="#db2777">  <script src="https://cdn.tailwindcss.com"></script>  
+    <meta name="theme-color" content="#db2777">  
+    
+    <!-- iOS PWA Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SHRAYNEX">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3144/3144456.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>  
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">  
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
 
@@ -82,7 +90,10 @@
             <h1 class="text-2xl font-black text-primary tracking-tight">SHRAYNEX</h1>  
             <p class="text-[9px] font-black text-gray-400 tracking-widest uppercase mt-0.5">Resell • Share • Earn</p>  
         </div>  
-        <button onclick="openModal('authModal')" class="bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg hover:bg-black transition">Login / Join</button>  
+        <div class="flex items-center gap-2">
+            <button class="install-app-btn hidden bg-rose-50 border border-rose-100 text-primary px-3 py-2 rounded-full text-xs font-bold shadow-sm flex items-center gap-1.5 hover:bg-rose-100 transition"><i class="fa-solid fa-download"></i> Install App</button>
+            <button onclick="openModal('authModal')" class="bg-gray-900 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg hover:bg-black transition">Login / Join</button>  
+        </div>
     </header>  
 
     <main class="flex-1 overflow-y-auto">  
@@ -204,7 +215,10 @@
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Dashboard</p>  
             </div>  
         </div>  
-        <button onclick="window.open('https://wa.me/919451239239', '_blank')" class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-lg"><i class="fa-brands fa-whatsapp"></i></button>  
+        <div class="flex items-center gap-3">
+            <button class="install-app-btn hidden bg-rose-50 border border-rose-100 text-primary px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-download"></i> App</button>
+            <button onclick="window.open('https://wa.me/919451239239', '_blank')" class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-lg"><i class="fa-brands fa-whatsapp"></i></button>  
+        </div>
     </header>  
 
     <!-- Approval Banner -->  
@@ -586,6 +600,35 @@
     </div>  
 </div>  
 
+<!-- 🔴 iOS INSTALL MODAL 🔴 -->
+<div id="iosInstallModal" class="bottom-sheet z-[9999]">
+    <div class="bottom-sheet-content bg-white pb-8">
+        <div class="p-4 border-b border-gray-100 flex justify-between items-center rounded-t-[24px]">
+            <h3 class="font-black text-lg">Install SHRAYNEX App</h3>
+            <button onclick="closeModal('iosInstallModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-6 flex flex-col items-center text-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/3144/3144456.png" class="w-20 h-20 mb-4 drop-shadow-md">
+            <p class="text-sm text-gray-600 font-medium mb-6">Install this application on your home screen for quick and easy access.</p>
+            
+            <div class="bg-gray-50 w-full p-4 rounded-2xl border border-gray-100 text-left space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="bg-white shadow-sm w-8 h-8 rounded-full flex items-center justify-center font-bold text-gray-800 shrink-0">1</span>
+                    <p class="text-sm font-semibold text-gray-800">Tap the <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1 text-lg"></i> (Share) button in Safari menu bar.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-white shadow-sm w-8 h-8 rounded-full flex items-center justify-center font-bold text-gray-800 shrink-0">2</span>
+                    <p class="text-sm font-semibold text-gray-800">Scroll down and select <span class="font-bold">Add to Home Screen</span> <i class="fa-regular fa-square-plus text-gray-600 mx-1 text-lg"></i></p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="bg-white shadow-sm w-8 h-8 rounded-full flex items-center justify-center font-bold text-gray-800 shrink-0">3</span>
+                    <p class="text-sm font-semibold text-gray-800">Tap <span class="text-blue-500 font-bold">Add</span> at the top right.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
   
 <!-- Admin Login -->  
 <div id="adminLoginModal" class="bottom-sheet z-[400]">  
@@ -735,6 +778,77 @@
 </div>
 
 </div>  
+
+<!-- 🔴 PWA AND INSTALL SETUP SCRIPT 🔴 -->
+<script>
+    // Create Dummy Manifest for PWA Support
+    const manifest = {
+        name: "SHRAYNEX Reselling",
+        short_name: "SHRAYNEX",
+        start_url: location.href,
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#db2777",
+        icons: [{
+            src: "https://cdn-icons-png.flaticon.com/512/3144/3144456.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable"
+        }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    const manifestUrl = URL.createObjectURL(manifestBlob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestUrl;
+    document.head.appendChild(link);
+
+    // Register Dummy Service Worker for Android Prompt
+    if ('serviceWorker' in navigator) {
+        const swCode = `self.addEventListener('fetch', function(e) {});`;
+        const swBlob = new Blob([swCode], {type: 'application/javascript'});
+        const swUrl = URL.createObjectURL(swBlob);
+        navigator.serviceWorker.register(swUrl).catch(()=>{});
+    }
+
+    let deferredPrompt;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+    window.addEventListener('load', () => {
+        const installBtns = document.querySelectorAll('.install-app-btn');
+        if (isStandalone) {
+            installBtns.forEach(b => b.classList.add('hidden'));
+            return;
+        }
+        
+        if (isIOS) {
+            installBtns.forEach(b => {
+                b.classList.remove('hidden');
+                b.onclick = () => document.getElementById('iosInstallModal').classList.add('active');
+            });
+        }
+    });
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const installBtns = document.querySelectorAll('.install-app-btn');
+        installBtns.forEach(b => {
+            b.classList.remove('hidden');
+            b.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installBtns.forEach(btn => btn.classList.add('hidden'));
+                    }
+                    deferredPrompt = null;
+                }
+            };
+        });
+    });
+</script>
 
 <!-- JAVASCRIPT BLOCK -->
 <script type="module">  
@@ -1384,7 +1498,7 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    /* 🔴🔴🔴 UPDATED SHARE FUNCTION - POP-UP BLOCKER FIXED 🔴🔴🔴 */
+    // 🔴🔴🔴 UPDATED SHARE FUNCTION (FIXED) 🔴🔴🔴 
     window.shareToWhatsApp = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -1400,42 +1514,41 @@
         
         const btn = document.querySelector('#shareModal button[onclick="shareToWhatsApp()"]');
         const origHtml = btn.innerHTML;
-        btn.innerHTML = 'Sharing...';
+        btn.innerHTML = '<div class="spinner white"></div> Preparing...';
         btn.disabled = true;
 
         try {
             const files = [];
-            // To prevent User Gesture Timeout on iOS/Android, we fetch max 4 images to speed up
+            // Concurrent fetching for extremely fast execution to prevent Browser "User Gesture Timeout"
             if(navigator.canShare) {
                 const maxImages = Math.min(images.length, 4);
+                const fetchPromises = [];
                 for (let i = 0; i < maxImages; i++) {
-                    try {
-                        const response = await fetch(images[i]);
-                        const blob = await response.blob();
-                        files.push(new File([blob], `product_image_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }));
-                    } catch(e) { console.warn("Could not fetch image for sharing", e); }
+                    fetchPromises.push(
+                        fetch(images[i])
+                            .then(res => res.blob())
+                            .then(blob => new File([blob], `product_image_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }))
+                            .catch(e => console.warn(e))
+                    );
                 }
+                const resolvedFiles = await Promise.all(fetchPromises);
+                files.push(...resolvedFiles.filter(Boolean));
             }
 
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
                 await navigator.share({ files: files, text: msg });
                 closeModal('shareModal');
             } else {
-                const allLinks = images.join("\n");
-                const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
+                // If fallback happens, send only Text (NO Links as per requirement)
+                const fallbackMsg = msg;
                 try { await navigator.clipboard.writeText(fallbackMsg); } catch(e){}
-                showToast("Opening WhatsApp...");
-                // FIX: Used location.href to prevent popup blocker issues on mobile
                 window.location.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fallbackMsg)}`;
                 closeModal('shareModal');
             }
         } catch (error) {
-            // Error handling for User Cancel (AbortError) and Gesture Expiration
             if (error.name !== 'AbortError') { 
-                const allLinks = images.join("\n");
-                const fallbackMsg = msg + "\n\n*Product Images:*\n" + allLinks;
+                const fallbackMsg = msg;
                 try { await navigator.clipboard.writeText(fallbackMsg); } catch(e){}
-                // FIX: Used location.href to prevent popup blocker issues on mobile
                 window.location.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(fallbackMsg)}`;
                 closeModal('shareModal');
             }
