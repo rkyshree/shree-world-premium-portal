@@ -580,7 +580,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, ডানस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -1497,7 +1497,7 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    // 🔴🔴🔴 UPDATED SHARE FUNCTION (UNIVERSAL NATIVE SHARE - MEESHO STYLE) 🔴🔴🔴 
+    // 🔴🔴🔴 UPDATED SHARE FUNCTION (UNIVERSAL NATIVE SHARE WITH AUTOMATIC TEXT) 🔴🔴🔴 
     window.shareProduct = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -1517,31 +1517,6 @@
         btn.disabled = true;
 
         try {
-            // STEP 1: Copy description to clipboard first (Meesho Style for all phones 2015-2026)
-            let copied = false;
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(msg);
-                    copied = true;
-                } else {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = msg;
-                    textArea.style.position = "fixed";
-                    textArea.style.left = "-999999px";
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    copied = true;
-                }
-                if(copied) {
-                    showToast("Description Copied! 📋 Paste it after sharing photos.");
-                }
-            } catch (err) {
-                console.warn("Clipboard copy failed", err);
-            }
-
             const files = [];
             // Fetch images concurrently
             if(navigator.canShare) {
@@ -1561,12 +1536,10 @@
 
             const fallbackMsg = msg + "\n\n*Product Images:*\n" + images.join("\n");
 
-            // Option 1: Share Files ONLY (Prevents WhatsApp from splitting photos and duplicating captions)
-            if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
+            // Option 1: Share Files WITH Text (Directly sends description with photos without copy-paste)
+            if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files, text: msg })) {
                 try {
-                    // Do NOT pass 'text: msg' here. WhatsApp splits images if text is passed with multiple files.
-                    // Since it's already in the clipboard, user just pastes it.
-                    await navigator.share({ files: files });
+                    await navigator.share({ files: files, text: msg });
                     closeModal('shareModal');
                 } catch(e) {
                     if (e.name !== 'AbortError') throw e;
