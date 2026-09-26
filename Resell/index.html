@@ -580,7 +580,7 @@
                         <li>न्यूनतम निकासी (Min. Withdrawal) <b>₹100</b> है।</li>
                         <li>आपका प्रॉफ़िट पहले <b>'Pending Earnings'</b> में दिखेगा।</li>
                         <li>कस्टमर को प्रोडक्ट डिलीवरी होने के <b>3 दिनों बाद</b> (रिटर्न पॉलिसी खत्म होने पर) आपका कमीशन 'Available Balance' में जुड़ जाएगा, जिसे आप निकाल सकते हैं।</li>
-                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, तो उस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
+                        <li><b>शर्त:</b> यदि कस्टमर ऑर्डर रिटर्न या कैंसिल करता है, ডানस ऑर्डर का कमीशन रद्द कर दिया जाएगा। 100% सफल डिलीवरी पर ही कमीशन मिलेगा।</li>
                     </ul>
                 </div>
             </form>  
@@ -1497,7 +1497,7 @@
         document.getElementById('calcProfitResult').innerText = `₹${money(Math.max(0, s-b))}`;  
     };  
     
-    // 🔴🔴🔴 UPDATED SHARE FUNCTION (UNIVERSAL NATIVE SHARE) 🔴🔴🔴 
+    // 🔴🔴🔴 UPDATED SHARE FUNCTION (UNIVERSAL NATIVE SHARE - MEESHO STYLE) 🔴🔴🔴 
     window.shareProduct = async () => {  
         if(!selectedProduct) return; 
         const s = Number(document.getElementById('calcSellingPrice').value||0);
@@ -1517,10 +1517,35 @@
         btn.disabled = true;
 
         try {
+            // STEP 1: Copy description to clipboard first (Meesho Style for all phones 2015-2026)
+            let copied = false;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(msg);
+                    copied = true;
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = msg;
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    copied = true;
+                }
+                if(copied) {
+                    showToast("Description Copied! 📋 Paste it after sharing photos.");
+                }
+            } catch (err) {
+                console.warn("Clipboard copy failed", err);
+            }
+
             const files = [];
-            // Concurrent fetching for extremely fast execution to prevent Browser "User Gesture Timeout"
+            // Fetch images concurrently
             if(navigator.canShare) {
-                const maxImages = Math.min(images.length, 4);
+                const maxImages = Math.min(images.length, 5); // Allow up to 5 photos together
                 const fetchPromises = [];
                 for (let i = 0; i < maxImages; i++) {
                     fetchPromises.push(
@@ -1536,16 +1561,18 @@
 
             const fallbackMsg = msg + "\n\n*Product Images:*\n" + images.join("\n");
 
-            // Option 1: Native Share with Images and Text (Best for App-like sharing)
+            // Option 1: Share Files ONLY (Prevents WhatsApp from splitting photos and duplicating captions)
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
                 try {
-                    await navigator.share({ files: files, text: msg });
+                    // Do NOT pass 'text: msg' here. WhatsApp splits images if text is passed with multiple files.
+                    // Since it's already in the clipboard, user just pastes it.
+                    await navigator.share({ files: files });
                     closeModal('shareModal');
                 } catch(e) {
                     if (e.name !== 'AbortError') throw e;
                 }
             } 
-            // Option 2: Native Share with Text Only (Fallback for some browsers)
+            // Option 2: Fallback to Text Share if files not supported
             else if (navigator.share) {
                 try {
                     await navigator.share({ text: fallbackMsg });
@@ -1554,7 +1581,6 @@
                     if (e.name !== 'AbortError') throw e;
                 }
             } 
-            // Option 3: Copy to clipboard if nothing works
             else {
                 throw new Error("Fallback to Copy");
             }
@@ -1562,10 +1588,15 @@
             if (error.name !== 'AbortError') { 
                 const fallbackMsg = msg + "\n\n*Product Images:*\n" + images.join("\n");
                 try { 
-                    await navigator.clipboard.writeText(fallbackMsg); 
+                    const textArea = document.createElement("textarea");
+                    textArea.value = fallbackMsg;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
                     showToast("Details copied! Paste anywhere to share.");
                 } catch(e){
-                    showToast("Unable to copy details automatically.");
+                    showToast("Unable to share automatically.");
                 }
                 closeModal('shareModal');
             }
