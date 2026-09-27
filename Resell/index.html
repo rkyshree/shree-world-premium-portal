@@ -74,21 +74,52 @@
         .wa-msg.received { background: #fff; float: left; border-top-left-radius: 0; }
         .wa-img { width: 100%; border-radius: 6px; margin-bottom: 4px; }
         .wa-time { font-size: 9px; color: #999; float: right; margin-top: 4px; margin-left: 8px; }
+
+        /* Custom Splash Animations */
+        @keyframes textWave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .text-wave span { display: inline-block; animation: textWave 1.2s ease-in-out infinite; }
+        @keyframes bgFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .bg-icon { animation: bgFloat 5s ease-in-out infinite; opacity: 0.15; }
     </style>
 </head>  
 <body class="text-gray-800 antialiased">  
 
-<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-200 max-w-[480px] mx-auto">
-    <div class="w-20 h-20 bg-primary rounded-2xl shadow-xl flex items-center justify-center mb-4">
-        <h1 class="text-4xl font-black text-white tracking-tighter">S</h1>
+<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-200 max-w-[480px] mx-auto overflow-hidden">
+    <!-- Floating Background Icons -->
+    <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
+        <i class="fa-solid fa-store absolute text-5xl text-primary bg-icon" style="top: 15%; left: 15%; animation-duration: 6s;"></i>
+        <i class="fa-solid fa-sack-dollar absolute text-6xl text-green-500 bg-icon" style="top: 10%; right: 20%; animation-duration: 7s; animation-delay: 1s;"></i>
+        <i class="fa-solid fa-money-bill-wave absolute text-5xl text-blue-500 bg-icon" style="bottom: 25%; left: 15%; animation-duration: 5.5s; animation-delay: 2s;"></i>
+        <i class="fa-solid fa-hand-holding-dollar absolute text-6xl text-purple-500 bg-icon" style="bottom: 20%; right: 15%; animation-duration: 6.5s; animation-delay: 0.5s;"></i>
+        <i class="fa-solid fa-coins absolute text-4xl text-yellow-500 bg-icon" style="top: 45%; left: 10%; animation-duration: 5s; animation-delay: 1.5s;"></i>
+        <i class="fa-solid fa-boxes-packing absolute text-4xl text-gray-400 bg-icon" style="top: 55%; right: 10%; animation-duration: 7s; animation-delay: 2.5s;"></i>
     </div>
-    <h1 class="text-3xl font-black text-gray-900 tracking-tight">SHRAYNEX</h1>
-    <p class="text-xs font-semibold text-gray-500 mt-2">India's Trusted Reselling App</p>
+
+    <!-- Animated Brand Name -->
+    <h1 class="text-5xl font-black tracking-tight text-wave z-10">
+        <span style="color: #f43397; animation-delay: 0.0s;">S</span>
+        <span style="color: #f43397; animation-delay: 0.1s;">H</span>
+        <span style="color: #f43397; animation-delay: 0.2s;">R</span>
+        <span style="color: #f43397; animation-delay: 0.3s;">A</span>
+        <span style="color: #3b82f6; animation-delay: 0.4s;">Y</span>
+        <span style="color: #10b981; animation-delay: 0.5s;">N</span>
+        <span style="color: #10b981; animation-delay: 0.6s;">E</span>
+        <span style="color: #10b981; animation-delay: 0.7s;">X</span>
+    </h1>
+    <p class="text-sm font-bold text-gray-500 mt-4 z-10">India's Trusted Reselling App</p>
     
-    <div class="flex items-center gap-1.5 mt-8">
-        <div class="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-        <div class="w-2 h-2 bg-primary/80 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
-        <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+    <!-- Loading Dots -->
+    <div class="flex items-center gap-1.5 mt-8 z-10">
+        <div class="w-2.5 h-2.5 bg-primary/60 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+        <div class="w-2.5 h-2.5 bg-blue-500/80 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+        <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
     </div>
 </div>
 
@@ -707,7 +738,6 @@
     </div>  
 </div>  
 
-<!-- ORIGINAL DARK ADMIN PANEL -->  
 <div id="adminPanelModal" class="fixed inset-0 z-[350] bg-[#0a0a0a] text-white hidden flex-col md:flex-row overflow-hidden">  
     <aside id="adminSidebar" class="w-full md:w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex z-20">  
         <div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div>  
@@ -803,7 +833,6 @@
                     <div class="md:col-span-2"><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Description</label><textarea id="pDesc" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] min-h-[100px]"></textarea></div>  
                 </div>  
                 
-                <!-- 🔴 FIXED BUTTON: NOW USES PROPER ID AND CLICK HANDLER 🔴 -->
                 <button id="pSaveBtn" onclick="saveAdminProduct()" class="w-full mt-6 bg-[#00e676] text-black py-4 rounded-xl font-black shadow-lg hover:bg-[#00c853] transition">Save Product</button>  
             </div>  
 
@@ -855,6 +884,11 @@
 </script>
 
 <script type="module">  
+    // Splash timing configuration
+    window.splashStartTime = Date.now();
+    window.requiredSplashTime = sessionStorage.getItem('visited_shraynex') ? 2000 : 3000;
+    sessionStorage.setItem('visited_shraynex', 'true');
+
     const catalogHighlights = [
         { title: "Flipkart", image: "https://i.ibb.co/xK7XwpXX/file-000000001c208208aeacfbdd5655adca.png", link: "https://fktr.in/dZUpMjp" },
         { title: "Myntra", image: "https://i.ibb.co/JFqJMJSv/file-0000000060308211bceb72f6a854dc6d.png", link: "https://myntr.it/8c9m2Xx" },
@@ -1100,19 +1134,25 @@
 
     function checkAndRoute() {
         if (authStateResolved) {
-            const splash = document.getElementById('splashScreen');
-            if (splash && splash.style.display !== 'none') { 
-                splash.classList.add('opacity-0'); 
-                setTimeout(() => { splash.style.display = 'none'; }, 200); 
-            }
-            if (currentUser && !window.isAdminMode) { 
-                document.getElementById('landingPage').classList.remove('active'); 
-                document.getElementById('appPage').classList.add('active'); 
-                switchTab('Feed'); 
-            } else if (!currentUser && !window.isAdminMode) { 
-                document.getElementById('appPage').classList.remove('active'); 
-                document.getElementById('landingPage').classList.add('active'); 
-            }
+            const elapsed = Date.now() - window.splashStartTime;
+            const remaining = Math.max(0, window.requiredSplashTime - elapsed);
+            
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash && splash.style.display !== 'none') { 
+                    splash.classList.add('opacity-0'); 
+                    setTimeout(() => { splash.style.display = 'none'; }, 200); 
+                }
+                
+                if (currentUser && !window.isAdminMode) { 
+                    document.getElementById('landingPage').classList.remove('active'); 
+                    document.getElementById('appPage').classList.add('active'); 
+                    switchTab('Feed'); 
+                } else if (!currentUser && !window.isAdminMode) { 
+                    document.getElementById('appPage').classList.remove('active'); 
+                    document.getElementById('landingPage').classList.add('active'); 
+                }
+            }, remaining);
         }
     }
   
