@@ -68,6 +68,18 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
+        /* NEW: Balance Flashing Animations */
+        @keyframes textFlashGreen { 
+            0% { color: #10b981; transform: scale(1.1); } 
+            100% { color: #f8fafc; transform: scale(1); } 
+        }
+        @keyframes textFlashRed { 
+            0% { color: #ef4444; transform: scale(1.1); } 
+            100% { color: #f8fafc; transform: scale(1); } 
+        }
+        .text-flash-green { animation: textFlashGreen 1.5s ease-out !important; }
+        .text-flash-red { animation: textFlashRed 1.5s ease-out !important; }
+
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -321,41 +333,33 @@
         <!-- View 3: NATIVE ADVANCED SCREENER -->
         <div id="view-screener" class="view-section space-y-4">
             <h1 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2 mb-2">
-                <i class="ph-fill ph-funnel text-app-blue"></i> Stock Screener (Live)
+                <i class="ph-fill ph-funnel text-app-blue"></i> Advanced Screener
             </h1>
             
-            <div class="bg-app-card border border-app-border rounded-xl shadow-xl flex flex-col h-[75vh]">
-                <!-- Screener Toolbar -->
-                <div class="p-3 bg-app-panel border-b border-app-border flex flex-wrap gap-3 items-center justify-between">
-                    <div class="flex gap-2">
-                        <select class="bg-app-bg text-white text-xs font-bold border border-app-border rounded px-2 py-1 outline-none">
-                            <option>Index: Nifty 500</option><option>Nifty 50</option>
-                        </select>
-                        <select class="bg-app-bg text-white text-xs font-bold border border-app-border rounded px-2 py-1 outline-none">
-                            <option>Sector: All</option><option>IT</option><option>Banking</option><option>Energy</option>
-                        </select>
+            <div class="bg-app-card border border-app-border rounded-xl shadow-xl flex flex-col h-[75vh] relative overflow-hidden">
+                <!-- Professional Secure Portal Overlay -->
+                <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-app-card/95 backdrop-blur-md p-6 text-center">
+                    <div class="w-20 h-20 bg-app-blue/10 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(37,99,235,0.3)]">
+                        <i class="ph-fill ph-lock-key text-4xl text-app-blue"></i>
                     </div>
-                    <button class="bg-app-blue text-white px-4 py-1.5 rounded text-xs font-bold shadow-md hover:bg-blue-600 transition">Run Query</button>
+                    <h2 class="text-2xl font-extrabold text-white mb-2 tracking-tight">Screener.in Secure Portal</h2>
+                    <p class="text-app-muted mb-8 text-sm max-w-md mx-auto leading-relaxed">To ensure maximum data security and bypass browser iframe restrictions, the live Screener.in terminal launches in a dedicated, high-speed secure session.</p>
+                    
+                    <button onclick="window.open('https://www.screener.in/', '_blank')" class="bg-app-blue hover:bg-blue-600 text-white px-8 py-3.5 rounded-xl font-extrabold shadow-[0_10px_25px_rgba(37,99,235,0.4)] transition-all active:scale-95 flex items-center gap-3 text-lg">
+                        <i class="ph-bold ph-rocket-launch"></i> Launch Live Screener
+                    </button>
                 </div>
                 
-                <!-- Dense Data Table -->
-                <div class="flex-1 overflow-auto bg-app-bg relative">
-                    <table class="w-full text-left border-collapse data-table whitespace-nowrap">
-                        <thead class="text-[10px] uppercase text-app-muted tracking-widest font-bold">
-                            <tr>
-                                <th class="p-3 border-b border-app-border font-extrabold pl-4">Company</th>
-                                <th class="p-3 border-b border-app-border text-right">LTP (₹)</th>
-                                <th class="p-3 border-b border-app-border text-right">Change %</th>
-                                <th class="p-3 border-b border-app-border text-right">Volume</th>
-                                <th class="p-3 border-b border-app-border text-right">P/E Ratio</th>
-                                <th class="p-3 border-b border-app-border text-right">ROE %</th>
-                                <th class="p-3 border-b border-app-border text-right">Mkt Cap (Cr)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="screener-body" class="text-xs text-white font-medium divide-y divide-app-border/40">
-                            <!-- Rows generated by JS -->
-                        </tbody>
-                    </table>
+                <!-- Background visual to look like it's loading behind the lock -->
+                <div class="absolute inset-0 opacity-20 pointer-events-none filter blur-[2px]">
+                    <div class="w-full h-12 bg-app-panel border-b border-app-border"></div>
+                    <div class="p-4 space-y-3">
+                        <div class="w-full h-8 bg-app-panel rounded"></div>
+                        <div class="w-full h-8 bg-app-panel rounded"></div>
+                        <div class="w-full h-8 bg-app-panel rounded"></div>
+                        <div class="w-full h-8 bg-app-panel rounded"></div>
+                        <div class="w-full h-8 bg-app-panel rounded"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -448,27 +452,44 @@
         let liveTradePrice = 22450.50;
         let tradeChartHistory = Array(50).fill(liveTradePrice).map((p, i) => p + (Math.random()-0.5)*20);
 
+        let lastBalance = window.tradingBalance;
+
         function updateBalanceUI() {
             const str = fmtCurDec(window.tradingBalance);
-            document.getElementById('header-trading-balance').innerText = str;
-            document.getElementById('menu-trading-balance').innerText = str;
-            document.getElementById('terminal-balance').innerText = str;
+            const elements = ['header-trading-balance', 'menu-trading-balance', 'terminal-balance'];
+            
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerText = str;
+                    // Trigger realistic flashing animation if balance changes
+                    if (window.tradingBalance > lastBalance) {
+                        el.classList.remove('text-flash-green', 'text-flash-red');
+                        void el.offsetWidth; // Trigger reflow
+                        el.classList.add('text-flash-green');
+                    } else if (window.tradingBalance < lastBalance) {
+                        el.classList.remove('text-flash-green', 'text-flash-red');
+                        void el.offsetWidth;
+                        el.classList.add('text-flash-red');
+                    }
+                }
+            });
+            lastBalance = window.tradingBalance;
         }
 
         function initApp() {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 500);
+                setTimeout(() => document.getElementById('splash-screen').style.display = 'none', 300);
                 
                 generatePortfolio();
                 renderPortfolio();
-                renderScreener();
                 updateBalanceUI();
                 initTradingChart();
                 
                 // Tick engine: Runs every 1 second
                 setInterval(globalTick, 1000);
-            }, 3000);
+            }, 800); // REDUCED FROM 3000ms TO 800ms for extremely fast startup
         }
 
         function generatePortfolio() {
@@ -626,7 +647,7 @@
             if(isNaN(amount) || amount < 100) return showToast('Enter valid amount', 'error');
             if(amount > window.tradingBalance) return showToast('Insufficient Trading Balance', 'error');
 
-            // 1. Deduct Money
+            // 1. Deduct Money Immediately (Triggers Red Flash)
             window.tradingBalance -= amount;
             updateBalanceUI();
             
@@ -682,10 +703,10 @@
             let profit = 0;
             if(outcome === 'W') {
                 profit = amount * 0.8; // 80% Payout
-                window.tradingBalance += (amount + profit); // Return principal + profit
+                window.tradingBalance += (amount + profit); // Return principal + profit (Triggers Green Flash)
                 showToast(`TRADE WON! +₹${fmtNum(profit)}`, 'success');
             } else {
-                profit = -amount; // Lost principal
+                profit = -amount; // Lost principal (Already deducted)
                 showToast(`TRADE LOST. -₹${fmtNum(amount)}`, 'error');
             }
             updateBalanceUI();
@@ -820,7 +841,7 @@
                 
                 if(tabName === 'trading') { setTimeout(initTradingChart, 50); }
                 window.scrollTo(0,0);
-            }, 500);
+            }, 150); // REDUCED FROM 500ms TO 150ms for instant tab switching
         }
 
         window.toggleProfile = function() {
