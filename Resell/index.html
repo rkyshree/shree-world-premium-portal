@@ -75,15 +75,16 @@
         .wa-img { width: 100%; border-radius: 6px; margin-bottom: 4px; }
         .wa-time { font-size: 9px; color: #999; float: right; margin-top: 4px; margin-left: 8px; }
 
-        /* Custom Splash Animations - Made much smoother and less shaky */
-        @keyframes textWave {
-            0%, 100% { opacity: 0.8; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1.02); }
+        /* Modern Subtle Splash Animations */
+        @keyframes splashText {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-        .text-wave span { display: inline-block; animation: textWave 2s ease-in-out infinite; }
+        .text-wave span { display: inline-block; animation: splashText 0.8s ease-out forwards; opacity: 0; }
+        
         @keyframes bgFloat {
             0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
             100% { transform: translateY(0px) rotate(0deg); }
         }
         .bg-icon { animation: bgFloat 5s ease-in-out infinite; opacity: 0.15; }
@@ -91,7 +92,7 @@
 </head>  
 <body class="text-gray-800 antialiased">  
 
-<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-300 max-w-[480px] mx-auto overflow-hidden">
+<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-200 max-w-[480px] mx-auto overflow-hidden">
     <!-- Floating Background Icons -->
     <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <i class="fa-solid fa-store absolute text-5xl text-primary bg-icon" style="top: 15%; left: 15%; animation-duration: 6s;"></i>
@@ -102,7 +103,7 @@
         <i class="fa-solid fa-boxes-packing absolute text-4xl text-gray-400 bg-icon" style="top: 55%; right: 10%; animation-duration: 7s; animation-delay: 2.5s;"></i>
     </div>
 
-    <!-- Animated Brand Name (Smoother) -->
+    <!-- Animated Brand Name -->
     <h1 class="text-5xl font-black tracking-tight text-wave z-10">
         <span style="color: #f43397; animation-delay: 0.0s;">S</span>
         <span style="color: #f43397; animation-delay: 0.1s;">H</span>
@@ -413,19 +414,6 @@
     </nav>  
 </section>  
 
-<!-- Generic Info Modal For COD & Returns -->
-<div id="infoModal" class="bottom-sheet z-[120]">
-    <div class="bottom-sheet-content">
-        <div class="drag-handle"></div>
-        <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">
-            <h3 id="infoModalTitle" class="font-bold text-gray-900">Information</h3>
-            <button onclick="closeModal('infoModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="infoModalContent" class="p-5 text-sm text-gray-700 leading-relaxed overflow-y-auto pb-10">
-        </div>
-    </div>
-</div>
-
 <!-- Modals -->
 <div id="authModal" class="bottom-sheet">  
     <div class="bottom-sheet-content">  
@@ -477,13 +465,14 @@
                     <span id="pdPrice" class="font-bold text-2xl text-gray-900">₹0</span>  
                     <span id="pdMrp" class="text-sm text-gray-400 line-through mb-1 hidden">₹0</span>  
                 </div>  
-                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold mb-3">
-                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-md"><i class="fa-solid fa-truck text-gray-500 mr-1"></i> Free Delivery</span>
-                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-md" id="pdCategory">Category</span>
-                </div>
                 
-                <!-- Dynamic Policy Tags injected here via JS -->
-                <div id="pdPolicyTags" class="flex flex-col gap-2"></div>
+                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold mt-2" id="pdInteractiveBadges">
+                    <!-- JS will inject COD and Return Badges here -->
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold mt-2 pt-2 border-t border-gray-100">
+                    <span class="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md border border-gray-200" id="pdDelivery"><i class="fa-solid fa-truck text-gray-500 mr-1"></i> Free Delivery</span>
+                    <span class="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md border border-gray-200" id="pdCategory">Category</span>
+                </div>
             </div>  
 
             <div class="p-4 bg-white mb-2 shadow-sm">
@@ -577,14 +566,14 @@
                             <input type="radio" name="payMethod" value="online" checked class="accent-primary" onchange="toggleCodNotice()">
                             <span class="font-semibold text-sm text-gray-700">Online</span>
                         </label>
-                        <label class="border border-gray-300 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-primary-light" id="orderCodRadioLabel">
-                            <input type="radio" name="payMethod" value="cod" class="accent-primary" onchange="toggleCodNotice()" id="orderCodRadioBtn">
+                        <label id="codLabelContainer" class="border border-gray-300 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-primary-light">
+                            <input type="radio" name="payMethod" value="cod" class="accent-primary" onchange="toggleCodNotice()">
                             <span class="font-semibold text-sm text-gray-700">Cash on Delivery</span>
                         </label>
                     </div>
                     
                     <div id="codNotice" class="hidden mt-2 bg-amber-50 border border-amber-100 p-3 rounded text-xs font-medium text-amber-800">
-                        For COD, ₹40 advance payment is required to confirm order.
+                        Cash on Delivery (COD) आर्डर कंफर्म करने के लिए ₹40 एडवांस पेमेंट करना अनिवार्य है।
                         <div class="flex items-center justify-between bg-white px-2 py-1.5 rounded border border-amber-200 mt-2">
                             <span>UPI: <b>9451239239</b></span>
                             <button type="button" onclick="copyGenericText('9451239239', 'Copied!')" class="text-primary font-bold">Copy</button>
@@ -719,6 +708,20 @@
     </div>  
 </div>  
 
+<!-- NEW: Info Modal for COD and Return Policy -->
+<div id="infoModal" class="bottom-sheet z-[200]" onclick="closeModal('infoModal')">
+    <div class="bottom-sheet-content bg-white" onclick="event.stopPropagation()">
+        <div class="drag-handle"></div>
+        <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">
+            <h3 id="infoModalTitle" class="font-bold text-gray-900">Information</h3>
+            <button onclick="closeModal('infoModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="infoModalBody" class="p-5 text-sm text-gray-700 leading-relaxed overflow-y-auto max-h-[60vh]">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+</div>
+
 <div id="iosInstallModal" class="bottom-sheet z-[9999]">
     <div class="bottom-sheet-content bg-white pb-8">
         <div class="drag-handle"></div>
@@ -814,7 +817,6 @@
                     <div class="md:col-span-2"><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Product Title <span class="text-red-500">*</span></label><input id="pTitle" required class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Base Price (₹) <span class="text-red-500">*</span></label><input id="pBase" type="number" required class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
                     <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">MRP (₹)</label><input id="pMrp" type="number" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
-                    
                     <div>  
                         <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Category</label>  
                         <div class="flex gap-2">  
@@ -822,17 +824,17 @@
                             <button onclick="switchAdminTab('categories')" type="button" class="bg-[#222] border border-[#333] px-4 rounded-xl font-bold hover:bg-[#333] text-sm">Edit</button>  
                         </div>  
                     </div>  
-
-                    <!-- COD Status Dropdown added -->
+                    
+                    <!-- NEW: COD Status Dropdown in Admin -->
                     <div>
-                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Cash on Delivery Status</label>
-                        <div class="flex gap-4 mt-2">
-                            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="radio" name="pCodStatus" id="pCodAvailable" value="available" checked class="accent-[#00e676]"> COD Available</label>
-                            <label class="flex items-center gap-2 text-sm text-gray-300"><input type="radio" name="pCodStatus" id="pCodNotAvailable" value="not_available" class="accent-[#00e676]"> COD Not Available</label>
-                        </div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">COD Status <span class="text-red-500">*</span></label>
+                        <select id="pCodStatus" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white">
+                            <option value="available">Cash on Delivery (Available)</option>
+                            <option value="not_available">Prepaid Only (Not Available)</option>
+                        </select>
                     </div>
 
-                    <div class="md:col-span-2"><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Sizes (Comma Separated)</label><input id="pSizes" placeholder="e.g. S, M, L, XL" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
+                    <div><label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">Sizes (Comma Separated)</label><input id="pSizes" placeholder="e.g. S, M, L, XL" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676]"></div>  
                     
                     <div class="md:col-span-2">
                         <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🎥 YouTube Video / Shorts Link (Optional)</label>
@@ -911,6 +913,7 @@
 </script>
 
 <script type="module">  
+    // Splash timing configuration
     window.splashStartTime = Date.now();
     window.requiredSplashTime = sessionStorage.getItem('visited_shraynex') ? 2000 : 3000;
     sessionStorage.setItem('visited_shraynex', 'true');
@@ -937,40 +940,6 @@
     }
     renderCatalogHighlights();
 
-    // New Function for opening info modals
-    window.openInfoModal = (type, isCodAvailable = true) => {
-        const titleEl = document.getElementById('infoModalTitle');
-        const contentEl = document.getElementById('infoModalContent');
-        if (type === 'cod') {
-            if (isCodAvailable) {
-                titleEl.innerText = "Cash on Delivery (COD)";
-                contentEl.innerHTML = `<div class="bg-amber-50 border border-amber-200 p-4 rounded-xl">
-                    <h4 class="font-bold text-amber-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> COD Advance Payment</h4>
-                    <p class="text-amber-900 text-sm">To confirm your Cash on Delivery order, a small advance payment of <b>₹40</b> is required. The remaining balance can be paid directly to the delivery executive when the product reaches your doorstep.</p>
-                </div>`;
-            } else {
-                titleEl.innerText = "Cash on Delivery (COD)";
-                contentEl.innerHTML = `<div class="bg-red-50 border border-red-200 p-4 rounded-xl">
-                    <h4 class="font-bold text-red-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-circle-xmark"></i> COD Not Available</h4>
-                    <p class="text-red-900 text-sm">Cash on Delivery is currently not available for this specific product. Please choose an online payment method while placing the order.</p>
-                </div>`;
-            }
-        } else if (type === 'return') {
-            titleEl.innerText = "3 Days Exchange / Return Policy";
-            contentEl.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
-                <h4 class="font-bold text-blue-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-video"></i> Unboxing Video Required</h4>
-                <ul class="list-disc pl-4 space-y-2 text-blue-900 text-sm marker:text-blue-500">
-                    <li>As soon as the product is delivered to you, you <b>must record an unboxing video</b> while opening the package.</li>
-                    <li>The video must be <b>360-degree</b>, clearly showing all sides of the sealed package before opening.</li>
-                    <li>There should be <b>no cuts or edits</b> in the entire video.</li>
-                    <li>You must share this proof video on our WhatsApp support number for any return or exchange request.</li>
-                    <li><b>Note:</b> Returns or exchanges will <b>strictly not be accepted</b> without this valid unboxing video proof.</li>
-                </ul>
-            </div>`;
-        }
-        openModal('infoModal');
-    };
-
     const policies = {
         about: { title: "About SHRAYNEX", content: `<b>Welcome to SHRAYNEX</b>\n\nSHRAYNEX is India's premium digital reselling platform designed to help individuals start their own online business with absolutely Zero Investment.\n\n<b>Our Mission:</b>\nTo empower housewives, students, and aspiring entrepreneurs to achieve financial independence by providing a seamless platform for product discovery, sharing, and ordering.\n\n<b>Why Us?</b>\n- Wholesale prices directly from manufacturers.\n- Ability to set your own profit margins.\n- End-to-end delivery logistics handled by us.\n- Secure and timely margin payments directly to your bank account or UPI.\n\n<b>Contact Information:</b>\nCompany Name: SHRAYNEX\nEmail: shraynexofficial@gmail.com\nHelpline / WhatsApp: +91 9451239239\nLocation: Uttar Pradesh, India` },
         privacy: { title: "Privacy Policy", content: `<b>Privacy Policy – SHRAYNEX</b>\n\nYour privacy is incredibly important to us. This policy explains how we collect and manage your data.\n\n<b>Data Collection:</b>\nWe collect your Name, Phone Number, Email, and Address solely for the purpose of account creation, order delivery, and margin payments.\n\n<b>Data Usage:</b>\nYour data is used strictly for processing your orders, providing customer support, and notifying you about important updates. We do not sell your personal data to third parties.\n\n<b>Payment Security:</b>\nAll payment transactions are encrypted. For COD, advance payments are securely processed. Margin withdrawals are directly transferred to the provided Bank Account/UPI ID.\n\nFor privacy concerns, contact: <b>shraynexofficial@gmail.com</b>` },
@@ -982,6 +951,41 @@
         const p = policies[type]; if(!p) return; 
         document.getElementById("policyTitle").innerText = p.title; 
         document.getElementById("policyContent").innerHTML = p.content.replace(/\n/g, '<br>'); openModal("policyModal"); 
+    };
+
+    // NEW: Open Info Modal for COD and Return Policies
+    window.openInfoModal = (type, codStatus) => {
+        const titleEl = document.getElementById('infoModalTitle');
+        const bodyEl = document.getElementById('infoModalBody');
+        
+        if (type === 'cod') {
+            titleEl.innerText = "Cash On Delivery (COD)";
+            if (codStatus === 'not_available') {
+                bodyEl.innerHTML = `<div class="bg-red-50 text-red-800 p-4 rounded-lg border border-red-200">
+                    <b class="text-red-900 text-base mb-2 block"><i class="fa-solid fa-circle-xmark"></i> COD Not Available</b>
+                    Cash on delivery (कैश ऑन डिलीवरी) इस प्रोडक्ट पर उपलब्ध नहीं है। कृपया आर्डर करते समय ऑनलाइन पेमेंट (Online Payment) का विकल्प चुनें।
+                </div>`;
+            } else {
+                bodyEl.innerHTML = `<div class="bg-amber-50 text-amber-900 p-4 rounded-lg border border-amber-200 leading-relaxed">
+                    <b class="text-amber-700 text-base mb-2 block"><i class="fa-solid fa-circle-exclamation"></i> COD Important Notice</b>
+                    Cash on Delivery (COD) आर्डर कंफर्म करने के लिए आपको <b>₹40 एडवांस पेमेंट</b> करना अनिवार्य है।<br><br>
+                    यह कूरियर चार्ज सिक्योरिटी के लिए होता है। बाकी का बचा हुआ अमाउंट आप पार्सल डिलीवर होने के समय कैश दे सकते हैं।
+                </div>`;
+            }
+        } else if (type === 'return') {
+            titleEl.innerText = "Exchange & Return Policy";
+            bodyEl.innerHTML = `<div class="bg-blue-50 text-blue-900 p-4 rounded-lg border border-blue-200 space-y-3 leading-relaxed">
+                <p><b class="text-blue-800 text-base"><i class="fa-solid fa-video"></i> Strict Unboxing Video Required!</b></p>
+                <p>प्रोडक्ट आपके पास पहुँचते ही आपको उसका अनबॉक्सिंग (Unboxing) वीडियो बनाना है। रिटर्न या एक्सचेंज के लिए यह अनिवार्य है।</p>
+                <ul class="list-disc pl-5 space-y-1.5 font-medium">
+                    <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
+                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
+                    <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
+                </ul>
+                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+            </div>`;
+        }
+        openModal('infoModal');
     };
 
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
@@ -1268,10 +1272,6 @@
         g.innerHTML = f.map(p => {  
             const img = (p.images && p.images[0]) || p.image || '';  
             const disc = p.mrp > p.basePrice ? Math.round(((p.mrp-p.basePrice)/p.mrp)*100) : 0;  
-            const isCodAvailable = p.codStatus !== 'not_available';
-            const codText = isCodAvailable ? 'COD Available' : 'COD Not Available';
-            const codColor = isCodAvailable ? 'text-green-600 bg-green-50 border-green-200' : 'text-red-500 bg-red-50 border-red-200';
-            
             return `
             <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200/60 flex flex-col cursor-pointer" onclick="openProductDetail('${p.id}')">
                 <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
@@ -1284,17 +1284,6 @@
                     <div class="flex items-end gap-1 mb-1.5">
                         <span class="font-bold text-sm text-gray-900">₹${money(p.basePrice)}</span>
                         ${p.mrp ? `<span class="text-[10px] text-gray-400 line-through mb-[1px]">₹${money(p.mrp)}</span>`:''}
-                    </div>
-                    
-                    <div class="flex flex-col gap-1.5 mt-1 mb-2">
-                        <button onclick="event.stopPropagation(); openInfoModal('cod', ${isCodAvailable})" class="w-full text-left px-1.5 py-1 rounded-[4px] text-[9px] font-bold border ${codColor} flex items-center justify-between transition active:scale-[0.98]">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-money-bill-wave"></i> ${codText}</span>
-                            <i class="fa-solid fa-chevron-right text-[8px] opacity-70"></i>
-                        </button>
-                        <button onclick="event.stopPropagation(); openInfoModal('return')" class="w-full text-left px-1.5 py-1 rounded-[4px] text-[9px] font-bold border border-blue-200 text-blue-600 bg-blue-50 flex items-center justify-between transition active:scale-[0.98]">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-rotate-left"></i> 3 Days Exchange/Return</span>
-                            <i class="fa-solid fa-chevron-right text-[8px] opacity-70"></i>
-                        </button>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-1.5 mt-auto">
@@ -1345,24 +1334,12 @@
             d.innerText = `${Math.round(((selectedProduct.mrp-selectedProduct.basePrice)/selectedProduct.mrp)*100)}% OFF`; d.classList.remove('hidden');  
         } else { m.classList.add('hidden'); d.classList.add('hidden'); }  
           
-        document.getElementById('pdCategory').innerHTML = selectedProduct.category || "General";  
-        
-        // Inject Dynamic Policy Tags inside product detail
-        const isCodAvailable = selectedProduct.codStatus !== 'not_available';
-        const codText = isCodAvailable ? 'Cash on Delivery Available' : 'Cash on Delivery Not Available';
-        const codBg = isCodAvailable ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200';
-        
-        document.getElementById('pdPolicyTags').innerHTML = `
-            <button onclick="openInfoModal('cod', ${isCodAvailable})" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border ${codBg} font-semibold text-xs transition active:scale-[0.98]">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-money-bill-wave"></i> ${codText}</span>
-                <i class="fa-solid fa-chevron-right text-[10px] opacity-70"></i>
-            </button>
-            <button onclick="openInfoModal('return')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 font-semibold text-xs transition active:scale-[0.98]">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-rotate-left"></i> 3 Days Exchange/Return Policy</span>
-                <i class="fa-solid fa-chevron-right text-[10px] opacity-70"></i>
-            </button>
+        // Inject Badges in Detail View
+        document.getElementById('pdInteractiveBadges').innerHTML = `
+            <span class="bg-green-50 text-green-700 px-2 py-1.5 rounded-md cursor-pointer border border-green-200 shadow-sm flex items-center gap-1" onclick="openInfoModal('cod', '${selectedProduct.codStatus||'available'}')"><i class="fa-solid fa-money-bill-wave"></i> ${selectedProduct.codStatus === 'not_available' ? 'Prepaid Only (No COD)' : 'COD Available (Click for details)'}</span>
+            <span class="bg-blue-50 text-blue-700 px-2 py-1.5 rounded-md cursor-pointer border border-blue-200 shadow-sm flex items-center gap-1" onclick="openInfoModal('return')"><i class="fa-solid fa-rotate-left"></i> 3 Days Exchange/Return</span>
         `;
-
+        document.getElementById('pdCategory').innerHTML = selectedProduct.category || "General";  
         document.getElementById('pdDesc').innerText = selectedProduct.description || "No description provided.";  
           
         const sizes = Array.isArray(selectedProduct.sizes) ? selectedProduct.sizes.filter(Boolean) : [];  
@@ -1447,7 +1424,9 @@
     };  
 
     window.toggleCodNotice = () => {
-        const method = document.querySelector('input[name="payMethod"]:checked').value;
+        const methodObj = document.querySelector('input[name="payMethod"]:checked');
+        if(!methodObj) return;
+        const method = methodObj.value;
         const notice = document.getElementById('codNotice');
         if(method === 'cod') { notice.classList.remove('hidden'); } else { notice.classList.add('hidden'); }
     }
@@ -1473,18 +1452,17 @@
 
         document.getElementById('orderForm').reset(); 
         
-        // Hide/Show COD Radio Button depending on Product's codStatus
-        const codRadioBtn = document.getElementById('orderCodRadioBtn');
-        const codRadioLabel = document.getElementById('orderCodRadioLabel');
+        // Hide COD option if product is Prepaid Only
+        const codLabelContainer = document.getElementById('codLabelContainer');
         if(selectedProduct.codStatus === 'not_available') {
-            codRadioLabel.classList.add('hidden');
-            document.querySelector('input[name="payMethod"][value="online"]').checked = true; 
+            codLabelContainer.classList.add('hidden');
+            document.querySelector('input[name="payMethod"][value="online"]').checked = true;
         } else {
-            codRadioLabel.classList.remove('hidden');
-            document.querySelector('input[name="payMethod"][value="online"]').checked = true; 
+            codLabelContainer.classList.remove('hidden');
+            document.querySelector('input[name="payMethod"][value="online"]').checked = true; // Default Online
         }
-
         toggleCodNotice();
+
         document.getElementById('orderQty').value = 1; updateOrderSummary();  
           
         const wrap = document.getElementById('orderSizeWrapper'), cat = (selectedProduct.category||'').toLowerCase();  
@@ -1651,7 +1629,7 @@
         } catch(e) { showToast(e.message); } finally { btn.innerText = "Submit Request"; btn.disabled = false; }  
     };  
 
-    // 🔴 100% FIXED ADMIN LOGIN & MANAGEMENT 🔴
+    // Admin Login Logic
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     
     window.handleAdminLogin = async (e) => {  
@@ -1707,13 +1685,14 @@
         if(window.innerWidth < 768) toggleAdminMenu();  
     };  
 
-    // 🔴 100% FIXED PRODUCT SAVE LOGIC 🔴
+    // Product Save Logic
     window.saveAdminProduct = async () => {  
         const id = document.getElementById('editProductId').value;
         const btn = document.getElementById('pSaveBtn');  
         
         const titleInput = document.getElementById('pTitle').value.trim();
         const basePriceInput = Number(document.getElementById('pBase').value || 0);
+        const codStatusInput = document.getElementById('pCodStatus').value; // Get COD Status
 
         if(!titleInput || basePriceInput <= 0) {
             alert("❌ Error: Product Title and Base Price are strictly required!");
@@ -1722,7 +1701,6 @@
 
         const sizesRaw = document.getElementById('pSizes').value;
         const sizesArr = sizesRaw ? sizesRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
-        const codStatus = document.getElementById('pCodNotAvailable').checked ? 'not_available' : 'available';
 
         const imgUrls = [ 
             document.getElementById('pImg1').value, document.getElementById('pImg2').value, 
@@ -1737,7 +1715,7 @@
             basePrice: basePriceInput, 
             mrp: Number(document.getElementById('pMrp').value || 0),  
             category: document.getElementById('pCategory').value || "General", 
-            codStatus: codStatus,
+            codStatus: codStatusInput, // Save COD Status
             sizes: sizesArr,  
             offerEndTime: document.getElementById('pOfferEndTime').value || "", 
             orderCountText: document.getElementById('pOrderCountText').value.trim() || "",
@@ -1774,7 +1752,7 @@
         }  
     };  
     
-    // 🔴 100% FIXED PRODUCT EDIT LOGIC 🔴
+    // Product Edit Logic
     window.editAdminProduct = (id) => {  
         const p = window.allProducts.find(x => x.id === id); 
         if(!p) return;  
@@ -1786,14 +1764,8 @@
         document.getElementById('pBase').value = p.basePrice || ''; 
         document.getElementById('pMrp').value = p.mrp || '';  
         document.getElementById('pCategory').value = p.category || ''; 
+        document.getElementById('pCodStatus').value = p.codStatus || 'available'; // Populate COD Status
         document.getElementById('pSizes').value = p.sizes ? p.sizes.join(", ") : '';  
-        
-        if(p.codStatus === 'not_available') {
-            document.getElementById('pCodNotAvailable').checked = true;
-        } else {
-            document.getElementById('pCodAvailable').checked = true;
-        }
-
         document.getElementById('pOfferEndTime').value = p.offerEndTime || ''; 
         document.getElementById('pOrderCountText').value = p.orderCountText || '';
         document.getElementById('pVideoUrl').value = p.videoUrl || ''; 
@@ -1809,7 +1781,7 @@
         document.getElementById('adminProductsSection').scrollIntoView({behavior:'smooth'});  
     };  
 
-    // 🔴 100% FIXED PRODUCT DELETE LOGIC 🔴
+    // Product Delete Logic
     window.deleteAdminProduct = async (id) => { 
         if(!confirm("⚠️ Are you sure you want to permanently delete this product?")) return;
         try {
@@ -1826,11 +1798,11 @@
         document.getElementById('productFormTitle').innerText = '➕ Add New Product'; 
         document.getElementById('pSaveBtn').innerText = "Save Product"; 
         
-        document.getElementById('pCodAvailable').checked = true; // reset to default
-        
         const fieldsToClear = ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pImg6','pImg7','pImg8','pImg9','pImg10','pDesc','pImgUrls','pVideoUrl','pOfferEndTime','pOrderCountText'];
         fieldsToClear.forEach(i => { const el = document.getElementById(i); if(el) el.value = ''; }); 
         
+        document.getElementById('pCodStatus').value = 'available'; // Reset Dropdown
+
         document.getElementById('adminImagePreviewGrid').innerHTML = '';
         document.getElementById('adminImageCount').innerText = '0 / 10 Images Added';
     };  
@@ -1964,7 +1936,7 @@
         const q = document.getElementById('adminProdSearch').value.toLowerCase();  
         const f = window.allProducts.filter(p => `${p.title} ${p.category}`.toLowerCase().includes(q));  
         const t = document.getElementById('adminProductsTable');  
-        t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-cover bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | Sizes: ${p.sizes?.join(', ')||'N/A'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
+        t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-cover bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
     };  
   
     window.renderAdminOrders = () => {  
