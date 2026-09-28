@@ -507,7 +507,7 @@
         </div>  
         <div class="p-4 overflow-y-auto">  
             <div class="flex gap-3 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">  
-                <img id="shareProductImg" src="" class="w-16 h-16 rounded object-cover">  
+                <img id="shareProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100">  
                 <div class="flex-1">  
                     <h4 id="shareProductTitle" class="font-medium text-sm text-gray-800 line-clamp-2">Product Name</h4>  
                     <p class="text-xs text-gray-500 mt-1">Base Price: <span id="shareBasePrice" class="font-bold text-gray-900">₹0</span></p>  
@@ -540,7 +540,7 @@
         
         <div class="p-4 overflow-y-auto pb-[100px]">  
             <div class="bg-white p-3 rounded-lg flex gap-3 mb-4 shadow-sm border border-gray-200">  
-                <img id="orderProductImg" src="" class="w-16 h-16 rounded object-cover">  
+                <img id="orderProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100">  
                 <div class="flex-1">  
                     <h4 id="orderProductTitle" class="font-medium text-sm text-gray-800 line-clamp-2">Title</h4>  
                     <p class="text-xs text-gray-500 mt-1">Price: <span id="orderBasePrice" class="font-bold text-gray-900">₹0</span></p>  
@@ -1323,8 +1323,8 @@
             const disc = p.mrp > p.basePrice ? Math.round(((p.mrp-p.basePrice)/p.mrp)*100) : 0;  
             return `
             <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200/60 flex flex-col cursor-pointer" onclick="openProductDetail('${p.id}')">
-                <div class="relative w-full aspect-square bg-gray-50 overflow-hidden">
-                    <img src="${escapeHtml(img)}" class="w-full h-full object-cover" loading="lazy">
+                <div class="relative w-full aspect-[4/5] bg-white overflow-hidden">
+                    <img src="${escapeHtml(img)}" class="w-full h-full object-contain" loading="lazy">
                     ${disc>0 ? `<div class="absolute top-0 left-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">${disc}% OFF</div>`:''}
                     ${p.videoUrl ? `<div class="absolute top-2 right-2 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-play text-[10px]"></i></div>`:''}
                 </div>
@@ -1354,20 +1354,20 @@
         let dotCount = 0;
 
         if(images.length > 0) {
-            mediaHtml += images.map(img => `<div class="min-w-full snap-start relative"><img src="${escapeHtml(img)}" class="w-full aspect-square object-cover bg-gray-50"></div>`).join('');
+            mediaHtml += images.map(img => `<div class="min-w-full snap-start relative flex justify-center bg-white"><img src="${escapeHtml(img)}" class="w-full aspect-[4/5] object-contain"></div>`).join('');
             dotCount += images.length;
         }
 
         const vId = getYouTubeId(selectedProduct.videoUrl);
         if(vId) {
             mediaHtml += `<div class="min-w-full snap-start relative bg-black flex items-center justify-center">
-                <iframe class="w-full aspect-square" src="https://www.youtube.com/embed/${vId}?autoplay=0&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe class="w-full aspect-[4/5]" src="https://www.youtube.com/embed/${vId}?autoplay=0&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>`;
             dotCount += 1;
         }
         
         if (dotCount === 0) {
-            mediaHtml = `<div class="min-w-full snap-start relative"><div class="w-full aspect-square bg-gray-100 flex items-center justify-center text-gray-400">No Image</div></div>`;
+            mediaHtml = `<div class="min-w-full snap-start relative"><div class="w-full aspect-[4/5] bg-gray-100 flex items-center justify-center text-gray-400">No Image</div></div>`;
         }
 
         gallery.innerHTML = mediaHtml;
@@ -1532,7 +1532,7 @@
         const variantContainer = document.getElementById('orderVariantOptions');
         if(images.length > 1) {
             variantWrapper.classList.remove('hidden');
-            variantContainer.innerHTML = images.map((img, i) => `<div onclick="selectOrderVariant(${i})" class="w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === actualImgIndex ? 'border-primary p-0.5' : 'border-transparent'}" id="variant-thumb-${i}"><img src="${img}" class="w-full h-full object-cover rounded-sm"></div>`).join('');
+            variantContainer.innerHTML = images.map((img, i) => `<div onclick="selectOrderVariant(${i})" class="w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === actualImgIndex ? 'border-primary p-0.5' : 'border-transparent'} bg-white" id="variant-thumb-${i}"><img src="${img}" class="w-full h-full object-contain rounded-sm"></div>`).join('');
         } else { variantWrapper.classList.add('hidden'); }
 
         document.getElementById('orderForm').reset(); 
@@ -1565,7 +1565,7 @@
     
     window.selectOrderVariant = (index) => {
         orderSelectedImageIndex = index;
-        document.querySelectorAll('[id^="variant-thumb-"]').forEach((el, i) => { el.className = `w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === index ? 'border-primary p-0.5' : 'border-transparent'}`; });
+        document.querySelectorAll('[id^="variant-thumb-"]').forEach((el, i) => { el.className = `w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === index ? 'border-primary p-0.5' : 'border-transparent'} bg-white`; });
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
         document.getElementById('orderProductImg').src = images[index] || images[0] || '';
     };
@@ -1639,7 +1639,7 @@
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-700">${escapeHtml(o.status||'pending')}</span>  
                     </div>  
                     <div class="flex gap-3 mb-3">
-                        <img src="${escapeHtml(o.productImage)}" class="w-14 h-14 rounded object-cover border border-gray-100">
+                        <img src="${escapeHtml(o.productImage)}" class="w-14 h-14 rounded object-contain bg-white border border-gray-100">
                         <div class="flex-1 min-w-0">
                             <h4 class="font-medium text-sm line-clamp-1 mb-1 text-gray-800">${escapeHtml(o.productName)}</h4>
                             <p class="text-xs text-gray-500">Qty: ${o.quantity||1}${o.size?' • Sz: '+o.size:''} • <span class="text-primary font-semibold">${escapeHtml(o.selectedVariant||'')}</span></p>
@@ -2011,7 +2011,7 @@
         if(grid) {
             let html = "";
             for(let i=0; i<10; i++) {
-                if(urls[i]) { html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]"><img src="${escapeHtml(urls[i])}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-[9px] text-red-500 font-bold bg-[#1a1a1a]\\'>Invalid Link</div>';" class="w-full h-full object-cover"><div class="absolute top-1 left-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded">${i+1}</div></div>`; } 
+                if(urls[i]) { html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]"><img src="${escapeHtml(urls[i])}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-[9px] text-red-500 font-bold bg-[#1a1a1a]\\'>Invalid Link</div>';" class="w-full h-full object-contain"><div class="absolute top-1 left-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded">${i+1}</div></div>`; } 
                 else { html += `<div class="aspect-square bg-[#222] rounded-lg flex flex-col items-center justify-center text-[9px] text-gray-500 border border-[#333] text-center font-bold">Img ${i+1}</div>`; }
             }
             grid.innerHTML = html;
@@ -2022,7 +2022,7 @@
         const q = document.getElementById('adminProdSearch').value.toLowerCase();  
         const f = window.allProducts.filter(p => `${p.title} ${p.category}`.toLowerCase().includes(q));  
         const t = document.getElementById('adminProductsTable');  
-        t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-cover bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
+        t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-contain bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
     };  
   
     window.renderAdminOrders = () => {  
