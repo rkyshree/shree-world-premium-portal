@@ -95,6 +95,29 @@
             background-size: 20px 20px;
         }
 
+        /* NEW: Modals & Overlays */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(10,15,28,0.85); backdrop-filter: blur(5px);
+            z-index: 99999; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-box {
+            background: #111827; border: 1px solid #374151; border-radius: 16px;
+            width: 90%; max-w: 400px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        /* NEW: Stock Detail Fullscreen */
+        #stock-detail-view {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0a0f1c; z-index: 80000; transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column;
+        }
+        #stock-detail-view.active { transform: translateY(0); }
+        .chart-toggle-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+
         /* Notifications */
         #toast-container {
             position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
@@ -185,7 +208,7 @@
                         <div class="px-5 py-4 bg-app-card border-b border-app-border">
                             <p class="text-[10px] text-app-blue font-bold uppercase tracking-wider mb-1">Pro Account</p>
                             <p class="text-lg font-extrabold text-white truncate">RAJAN YADAV</p>
-                            <p class="text-xs text-app-green mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> KYC Verified Tier 3</p>
+                            <p class="text-xs text-app-green mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> KYC Verified</p>
                         </div>
                         <div class="p-2 space-y-1">
                             <div class="px-3 py-2 text-xs text-app-muted flex justify-between">
@@ -193,9 +216,11 @@
                                 <span class="font-bold text-white" id="menu-trading-balance">₹ 0.00</span>
                             </div>
                             <hr class="border-app-border my-1">
-                            <a href="#" class="px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-bank text-lg text-app-muted"></i> Add Funds</a>
-                            <a href="#" class="px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-clock-counter-clockwise text-lg text-app-muted"></i> Trade History</a>
-                            <a href="#" class="px-3 py-2 rounded-lg text-sm text-app-red hover:bg-red-500/10 flex items-center gap-3"><i class="ph ph-sign-out text-lg"></i> Secure Logout</a>
+                            <button onclick="openModal('modal-account')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-user text-lg text-app-muted"></i> Account Details</button>
+                            <button onclick="openModal('modal-add-funds')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-bank text-lg text-app-muted"></i> Add Funds</button>
+                            <button onclick="openModal('modal-withdraw')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-wallet text-lg text-app-muted"></i> Withdraw</button>
+                            <button onclick="switchTab('trading')" class="w-full text-left px-3 py-2 rounded-lg text-sm text-app-text hover:bg-app-card flex items-center gap-3"><i class="ph ph-clock-counter-clockwise text-lg text-app-muted"></i> Trade History</button>
+                            <a href="#" class="px-3 py-2 rounded-lg text-sm text-app-red hover:bg-red-500/10 flex items-center gap-3 mt-2"><i class="ph ph-sign-out text-lg"></i> Secure Logout</a>
                         </div>
                     </div>
                 </div>
@@ -366,6 +391,109 @@
 
     </main>
 
+    <!-- Modals Section -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModals(event)">
+        <!-- Account Modal -->
+        <div id="modal-account" class="modal-box hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-extrabold text-white">Account Details</h2>
+                <i class="ph-bold ph-x text-app-muted hover:text-white cursor-pointer text-xl" onclick="closeModals(null, true)"></i>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-app-panel p-3 rounded-lg border border-app-border">
+                    <p class="text-xs text-app-muted uppercase tracking-wider mb-1">Name</p>
+                    <p class="text-white font-bold">RAJAN YADAV</p>
+                </div>
+                <div class="bg-app-panel p-3 rounded-lg border border-app-border">
+                    <p class="text-xs text-app-muted uppercase tracking-wider mb-1">Demat Account ID</p>
+                    <p class="text-white font-bold">12081600XXXX3912</p>
+                </div>
+                <div class="bg-app-panel p-3 rounded-lg border border-app-border">
+                    <p class="text-xs text-app-muted uppercase tracking-wider mb-1">PAN Number</p>
+                    <p class="text-white font-bold">ABCDE1234F</p>
+                </div>
+                <div class="bg-app-panel p-3 rounded-lg border border-app-border">
+                    <p class="text-xs text-app-muted uppercase tracking-wider mb-1">Linked Bank</p>
+                    <p class="text-white font-bold flex items-center gap-2"><i class="ph-fill ph-bank text-app-blue"></i> HDFC Bank (**** 4567)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Funds Modal -->
+        <div id="modal-add-funds" class="modal-box hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-extrabold text-white">Add Funds</h2>
+                <i class="ph-bold ph-x text-app-muted hover:text-white cursor-pointer text-xl" onclick="closeModals(null, true)"></i>
+            </div>
+            <p class="text-sm text-app-muted mb-4">Transfer funds from your Portfolio holdings to your Trading Balance instantly.</p>
+            <div class="bg-app-panel p-3 rounded-lg border border-app-border flex justify-between items-center mb-4">
+                <span class="text-xs text-app-muted uppercase">Portfolio Value</span>
+                <span class="text-white font-bold" id="modal-add-portfolio-val">₹ 0.00</span>
+            </div>
+            <div class="relative mb-6">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-lg">₹</span>
+                <input type="number" id="input-add-funds" placeholder="Enter Amount" class="w-full bg-app-bg border border-app-border text-white text-lg font-bold rounded-lg py-3 pl-9 pr-4 focus:border-app-blue outline-none transition-colors">
+            </div>
+            <button onclick="submitAddFunds()" class="w-full bg-app-blue hover:bg-blue-600 text-white font-bold py-3 rounded-lg shadow-lg transition-colors">Transfer to Trading</button>
+        </div>
+
+        <!-- Withdraw Modal -->
+        <div id="modal-withdraw" class="modal-box hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-extrabold text-white">Withdraw Funds</h2>
+                <i class="ph-bold ph-x text-app-muted hover:text-white cursor-pointer text-xl" onclick="closeModals(null, true)"></i>
+            </div>
+            <p class="text-sm text-app-muted mb-4">Withdraw from your Trading Balance to your linked Bank Account.</p>
+            <div class="bg-app-panel p-3 rounded-lg border border-app-border flex justify-between items-center mb-4">
+                <span class="text-xs text-app-muted uppercase">Available Margin</span>
+                <span class="text-white font-bold" id="modal-withdraw-margin-val">₹ 0.00</span>
+            </div>
+            <div class="relative mb-6">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-lg">₹</span>
+                <input type="number" id="input-withdraw" placeholder="Enter Amount" class="w-full bg-app-bg border border-app-border text-white text-lg font-bold rounded-lg py-3 pl-9 pr-4 focus:border-app-blue outline-none transition-colors">
+            </div>
+            <button onclick="submitWithdraw()" class="w-full bg-app-green hover:bg-app-green-glow text-white font-bold py-3 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.2)] transition-colors">Withdraw to Bank</button>
+        </div>
+    </div>
+
+    <!-- Stock Detail View (Candlestick / Line) -->
+    <div id="stock-detail-view">
+        <div class="p-4 border-b border-app-border flex justify-between items-center bg-app-panel">
+            <button onclick="closeStockDetail()" class="text-app-blue flex items-center gap-1 font-bold"><i class="ph-bold ph-caret-left text-xl"></i> Back</button>
+            <h2 id="detail-title" class="font-extrabold text-white text-lg">Stock Name</h2>
+            <div class="w-16"></div> <!-- Spacer -->
+        </div>
+        
+        <div class="p-4 bg-app-card border-b border-app-border text-center">
+            <h1 class="text-4xl font-extrabold text-white mb-2" id="detail-ltp">₹ 0.00</h1>
+            <p class="text-sm font-bold flex items-center justify-center gap-1" id="detail-change"><i class="ph-bold ph-trend-up"></i> 0.00 (0.00%)</p>
+        </div>
+
+        <div class="p-4 flex gap-2 justify-center bg-app-bg">
+            <button onclick="setChartType('line')" id="btn-chart-line" class="chart-toggle-btn active px-4 py-1.5 border border-app-border rounded-lg text-xs font-bold text-app-muted hover:text-white transition-colors">Line Chart</button>
+            <button onclick="setChartType('candle')" id="btn-chart-candle" class="chart-toggle-btn px-4 py-1.5 border border-app-border rounded-lg text-xs font-bold text-app-muted hover:text-white transition-colors">Candlestick</button>
+        </div>
+
+        <div class="flex-1 bg-app-bg p-2 relative">
+            <canvas id="stock-detail-canvas" class="w-full h-full block"></canvas>
+            <div class="absolute top-4 left-4 flex gap-2 text-[10px] font-bold">
+                <span class="bg-app-panel text-app-muted px-2 py-1 rounded">1D</span>
+                <span class="bg-app-blue text-white px-2 py-1 rounded shadow-md">LIVE</span>
+            </div>
+        </div>
+        
+        <div class="p-4 bg-app-panel border-t border-app-border grid grid-cols-2 gap-4">
+            <div>
+                <p class="text-xs text-app-muted uppercase font-bold tracking-wider">Your Investment</p>
+                <p class="text-lg font-bold text-white mt-1" id="detail-invested">₹ 0.00</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-app-muted uppercase font-bold tracking-wider">Returns</p>
+                <p class="text-lg font-bold mt-1" id="detail-returns">+₹ 0.00</p>
+            </div>
+        </div>
+    </div>
+
     <div class="sm:hidden fixed bottom-0 left-0 w-full bg-app-panel/95 backdrop-blur-xl border-t border-app-border pb-safe z-40 shadow-[0_-5px_15px_rgba(0,0,0,0.5)]">
         <div class="flex justify-around items-center h-14 px-1">
             <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-blue transition-colors">
@@ -442,6 +570,8 @@
         window.portfolioData = [];
         window.tradingBalance = 1585400.00; // Realistic starting balance for trading
         let activeFilter = 'All';
+        let detailActiveStock = null;
+        let detailChartType = 'line';
 
         // F&O Trading Logic Variables
         const WIN_LOSS_PATTERN = ['W', 'L', 'W', 'W', 'L', 'W', 'W', 'L', 'W', 'L']; // 6 Wins, 4 Losses out of 10
@@ -509,9 +639,24 @@
                 let ltp = current / qty;
                 let prevC = ltp / (1 + ((Math.random()*4 - 1.5)/100)); // random previous day
 
+                // Generate OHLC history for candlesticks
+                let history = [];
+                let p = prevC;
+                for(let j=0; j<40; j++) {
+                    let open = p;
+                    let close = p + (Math.random()-0.5) * (p*0.02);
+                    let high = Math.max(open, close) + (Math.random() * p * 0.01);
+                    let low = Math.min(open, close) - (Math.random() * p * 0.01);
+                    history.push({ o: open, h: high, l: low, c: close });
+                    p = close;
+                }
+                // Overwrite last candle close with LTP
+                history[history.length-1].c = ltp;
+
                 portfolioData.push({
                     id: comp.id, name: comp.name, cap: comp.cap,
-                    qty: qty, avgPrice: avgP, ltp: ltp, prevClose: prevC
+                    qty: qty, avgPrice: avgP, ltp: ltp, prevClose: prevC,
+                    history: history
                 });
             });
             
@@ -553,6 +698,7 @@
 
                 const row = document.createElement('div');
                 row.className = 'p-3 hover:bg-app-panel transition-colors cursor-pointer block grid grid-cols-12 gap-2 items-center';
+                row.onclick = () => openStockDetail(s.id); // NEW: Open detail on click
                 
                 row.innerHTML = `
                     <div class="col-span-5 min-w-0">
@@ -586,14 +732,21 @@
             document.getElementById('dayChangeValue').className = `text-base font-bold flex items-center justify-end gap-1 ${tDay>=0?'text-app-green':'text-app-red'}`;
         }
 
+        // Live Market Simulation Logic
         function globalTick() {
             // Update Portfolio randomly (visual effect)
             const numUpdates = Math.floor(Math.random() * 5) + 3;
             for(let i=0; i<numUpdates; i++) {
                 const s = portfolioData[Math.floor(Math.random() * portfolioData.length)];
-                const move = (Math.random() - 0.5) * (s.ltp * 0.002);
+                const move = (Math.random() - 0.5) * (s.ltp * 0.004); // Increased volatility for visual flair
                 s.ltp += move;
                 
+                // Update history for candlestick
+                let lastCandle = s.history[s.history.length-1];
+                lastCandle.c = s.ltp;
+                if(s.ltp > lastCandle.h) lastCandle.h = s.ltp;
+                if(s.ltp < lastCandle.l) lastCandle.l = s.ltp;
+
                 let cur = s.qty * s.ltp;
                 let pl = cur - (s.qty * s.avgPrice);
                 let plPct = (pl/(s.qty * s.avgPrice))*100;
@@ -609,8 +762,17 @@
                     void ltpEl.offsetWidth;
                     ltpEl.classList.add(move > 0 ? 'flash-green' : 'flash-red');
                 }
+
+                // If this stock is currently open in detail view, update the detail view
+                if(detailActiveStock && detailActiveStock.id === s.id) {
+                    updateDetailValues();
+                    drawDetailChart();
+                }
             }
             
+            // NEW: Recalculate and update Total Portfolio Values every tick to make it feel absolutely LIVE
+            updateTotalPortfolioHeaders();
+
             // Update Trading Live Feed
             if(!isTradeActive) {
                 const volatility = liveTradePrice * 0.0005;
@@ -624,6 +786,37 @@
                 pEl.classList.add(Math.random()>0.5 ? 'text-app-green':'text-app-red');
                 drawTradingChart();
             }
+        }
+
+        // NEW FUNCTION: Live Portfolio Total Calculation
+        function updateTotalPortfolioHeaders() {
+            let tInv=0, tCur=0, tDay=0;
+            portfolioData.forEach(s => {
+                tInv += s.qty * s.avgPrice;
+                tCur += s.qty * s.ltp;
+                tDay += s.qty * (s.ltp - s.prevClose);
+            });
+            
+            const trAmt = tCur - tInv;
+            
+            const curEl = document.getElementById('totalCurrentValue');
+            const oldCur = parseFloat(curEl.innerText.replace(/[^0-9.-]+/g,""));
+            curEl.innerText = fmtCur(tCur);
+            
+            // Flash Total Value slightly based on movement
+            if (Math.abs(tCur - oldCur) > 10) {
+                curEl.classList.remove('text-flash-green', 'text-flash-red');
+                void curEl.offsetWidth;
+                curEl.classList.add(tCur > oldCur ? 'text-flash-green' : 'text-flash-red');
+            }
+
+            document.getElementById('totalReturns').innerText = `${trAmt>=0?'+':''}${fmtCur(trAmt)}`;
+            document.getElementById('totalReturns').className = `text-xl font-extrabold transition-colors ${trAmt>=0?'text-app-green':'text-app-red'}`;
+            document.getElementById('totalReturnPercent').innerText = `${trAmt>=0?'+':''}${((trAmt/tInv)*100).toFixed(2)}%`;
+            document.getElementById('totalReturnPercent').className = `inline-block text-xs font-bold px-2 py-0.5 rounded border mt-1 transition-colors ${trAmt>=0?'text-app-green bg-app-green/10 border-app-green/20':'text-app-red bg-app-red/10 border-app-red/20'}`;
+            
+            document.getElementById('dayChangeValue').innerHTML = `<i class="ph-bold ph-trend-${tDay>=0?'up':'down'}"></i> ${tDay>=0?'+':''}${fmtCur(tDay)}`;
+            document.getElementById('dayChangeValue').className = `text-base font-bold flex items-center justify-end gap-1 transition-colors ${tDay>=0?'text-app-green':'text-app-red'}`;
         }
 
         document.getElementById('trade-asset').addEventListener('change', (e) => {
@@ -735,6 +928,181 @@
             list.prepend(row);
         }
 
+        // --- NEW: Modals Logic ---
+        function openModal(id) {
+            document.getElementById('profileMenu').classList.add('hidden'); // close menu
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.add('active');
+            
+            // Hide all modals, show targeted
+            document.querySelectorAll('.modal-box').forEach(el => el.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+
+            // Update specific modal text
+            if(id === 'modal-add-funds') {
+                let tCur = portfolioData.reduce((acc, s) => acc + (s.qty * s.ltp), 0);
+                document.getElementById('modal-add-portfolio-val').innerText = fmtCur(tCur);
+                document.getElementById('input-add-funds').value = '';
+            }
+            if(id === 'modal-withdraw') {
+                document.getElementById('modal-withdraw-margin-val').innerText = fmtCur(window.tradingBalance);
+                document.getElementById('input-withdraw').value = '';
+            }
+        }
+
+        function closeModals(e, force = false) {
+            if (force || (e && e.target.id === 'modal-overlay')) {
+                document.getElementById('modal-overlay').classList.remove('active');
+            }
+        }
+
+        function submitAddFunds() {
+            let val = parseFloat(document.getElementById('input-add-funds').value);
+            if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
+            
+            let tCur = portfolioData.reduce((acc, s) => acc + (s.qty * s.ltp), 0);
+            if(val > tCur) return showToast('Insufficient Portfolio Funds', 'error');
+
+            // Magically deduct proportionally from portfolio shares to make it perfectly real
+            portfolioData.forEach(s => {
+                let stockVal = s.qty * s.ltp;
+                let ratio = stockVal / tCur;
+                let deductionAmt = val * ratio;
+                s.qty -= (deductionAmt / s.ltp); 
+            });
+
+            window.tradingBalance += val;
+            updateBalanceUI();
+            renderPortfolio();
+            closeModals(null, true);
+            showToast(`₹${fmtNum(val)} Added from Portfolio to Trading Margin!`, 'success');
+        }
+
+        function submitWithdraw() {
+            let val = parseFloat(document.getElementById('input-withdraw').value);
+            if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
+            
+            if(val > window.tradingBalance) return showToast('Insufficient Trading Balance', 'error');
+
+            window.tradingBalance -= val;
+            updateBalanceUI();
+            closeModals(null, true);
+            showToast(`₹${fmtNum(val)} Successfully Withdrawn to Bank Account.`, 'success');
+        }
+
+        // --- NEW: Stock Detail & Candlestick Logic ---
+        function openStockDetail(id) {
+            detailActiveStock = portfolioData.find(s => s.id === id);
+            if(!detailActiveStock) return;
+            
+            document.getElementById('stock-detail-view').classList.add('active');
+            document.getElementById('detail-title').innerText = detailActiveStock.name;
+            
+            updateDetailValues();
+            setTimeout(drawDetailChart, 50); // delay to let UI render height
+        }
+
+        function closeStockDetail() {
+            document.getElementById('stock-detail-view').classList.remove('active');
+            detailActiveStock = null;
+        }
+
+        function setChartType(type) {
+            detailChartType = type;
+            document.querySelectorAll('.chart-toggle-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-chart-${type}`).classList.add('active');
+            if(detailActiveStock) drawDetailChart();
+        }
+
+        function updateDetailValues() {
+            if(!detailActiveStock) return;
+            let s = detailActiveStock;
+            
+            let dayChgAmt = s.ltp - s.prevClose;
+            let dayChgPct = (dayChgAmt / s.prevClose) * 100;
+            let isPos = dayChgAmt >= 0;
+
+            const ltpEl = document.getElementById('detail-ltp');
+            ltpEl.innerText = `₹${fmtNum(s.ltp)}`;
+            ltpEl.className = `text-4xl font-extrabold mb-2 transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
+            
+            const chgEl = document.getElementById('detail-change');
+            chgEl.innerHTML = `<i class="ph-bold ph-trend-${isPos?'up':'down'}"></i> ${Math.abs(dayChgAmt).toFixed(2)} (${Math.abs(dayChgPct).toFixed(2)}%)`;
+            chgEl.className = `text-sm font-bold flex items-center justify-center gap-1 transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
+
+            let inv = s.qty * s.avgPrice;
+            let ret = (s.qty * s.ltp) - inv;
+            document.getElementById('detail-invested').innerText = fmtCur(inv);
+            document.getElementById('detail-returns').innerText = `${ret>=0?'+':''}${fmtCur(ret)}`;
+            document.getElementById('detail-returns').className = `text-lg font-bold mt-1 ${ret>=0?'text-app-green':'text-app-red'}`;
+        }
+
+        function drawDetailChart() {
+            if(!detailActiveStock) return;
+            const cvs = document.getElementById('stock-detail-canvas');
+            const cx = cvs.getContext('2d');
+            
+            const rect = cvs.parentElement.getBoundingClientRect();
+            cvs.width = rect.width * 2;
+            cvs.height = rect.height * 2;
+            cx.scale(2, 2);
+            
+            let w = rect.width, h = rect.height;
+            cx.clearRect(0,0,w,h);
+
+            let hist = detailActiveStock.history;
+            if(hist.length < 2) return;
+
+            let min = Math.min(...hist.map(d=>d.l));
+            let max = Math.max(...hist.map(d=>d.h));
+            let range = (max - min) || 1;
+            
+            let stepX = w / hist.length;
+            
+            const getY = (price) => h - ((price - min) / range) * (h * 0.8) - (h*0.1);
+
+            if(detailChartType === 'line') {
+                cx.beginPath();
+                cx.lineWidth = 3;
+                let isUp = hist[hist.length-1].c >= hist[0].c;
+                cx.strokeStyle = isUp ? '#10b981' : '#ef4444';
+                
+                hist.forEach((d, i) => {
+                    let x = i * stepX + (stepX/2);
+                    let y = getY(d.c);
+                    if(i===0) cx.moveTo(x,y);
+                    else cx.lineTo(x,y);
+                });
+                cx.stroke();
+            } else {
+                // Candlestick rendering
+                let candleW = Math.max(stepX * 0.6, 2);
+                hist.forEach((d, i) => {
+                    let x = i * stepX + (stepX/2);
+                    let yO = getY(d.o);
+                    let yC = getY(d.c);
+                    let yH = getY(d.h);
+                    let yL = getY(d.l);
+
+                    let isBull = d.c >= d.o;
+                    cx.strokeStyle = isBull ? '#10b981' : '#ef4444';
+                    cx.fillStyle = isBull ? '#10b981' : '#ef4444';
+                    
+                    // Wick
+                    cx.beginPath();
+                    cx.lineWidth = 1.5;
+                    cx.moveTo(x, yH);
+                    cx.lineTo(x, yL);
+                    cx.stroke();
+                    
+                    // Body
+                    let bodyTop = Math.min(yO, yC);
+                    let bodyH = Math.max(Math.abs(yO - yC), 2); // min 2px body
+                    cx.fillRect(x - candleW/2, bodyTop, candleW, bodyH);
+                });
+            }
+        }
+
         const tradeCanvas = document.getElementById('trading-chart-canvas');
         const tradeCtx = tradeCanvas.getContext('2d');
         
@@ -841,7 +1209,7 @@
                 
                 if(tabName === 'trading') { setTimeout(initTradingChart, 50); }
                 window.scrollTo(0,0);
-            }, 150); // REDUCED FROM 500ms TO 150ms for instant tab switching
+            }, 150);
         }
 
         window.toggleProfile = function() {
