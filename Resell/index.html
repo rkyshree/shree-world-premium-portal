@@ -20,6 +20,9 @@
     <script src="https://cdn.tailwindcss.com"></script>  
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
+    
+    <!-- ImgBB Upload Plugin -->
+    <script async src="https://imgbb.com/upload.js"></script>
 
     <script>  
         tailwind.config = {  
@@ -845,9 +848,20 @@
                         <p class="text-[10px] text-gray-500 mt-1">Paste your YouTube link here. Customers can watch it by scrolling the product images.</p>
                     </div>
 
+                    <!-- MODIFIED: UPLOAD PHOTOS BUTTON & TEXT AREA INTEGRATION -->
                     <div class="md:col-span-2">
-                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (Paste up to 10 links together)</label>
-                        <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="Paste all image links here..." oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
+                        <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (Upload Photos directly OR Paste links)</label>
+                        
+                        <!-- NEW AUTO IMAGE UPLOAD SYSTEM -->
+                        <div class="flex items-center gap-3 mb-3">
+                            <input type="file" id="adminImageUpload" multiple accept="image/*" class="hidden" onchange="handleAdminImageUpload(event)">
+                            <button type="button" onclick="document.getElementById('adminImageUpload').click()" class="bg-[#00e676]/20 border border-[#00e676]/50 text-[#00e676] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#00e676] hover:text-black transition flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photos
+                            </button>
+                            <span id="uploadStatus" class="text-xs font-bold text-gray-400"></span>
+                        </div>
+
+                        <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="Paste all image links here or upload photos directly..." oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
                         
                         <div class="mt-2 text-xs text-gray-500 flex justify-between">
                             <span>Auto-detects up to 10 URLs.</span>
@@ -990,7 +1004,7 @@
                 <p class="font-bold text-red-600 bg-red-50 p-2 rounded border border-red-200">2 days return/exchange available only for manufacturing defect.</p>
                 <ul class="list-disc pl-5 space-y-1.5 font-medium">
                     <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
-                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
+                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> কমপক্ষে होना चाहिए।</li>
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
                 <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
@@ -2064,5 +2078,51 @@
             showToast(`Withdrawal ${act}`); window.refreshAdmin();  
         } catch(e) { showToast("Error processing."); }  
     };  
+
+    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION
+    window.handleAdminImageUpload = async (e) => {
+        const files = e.target.files;
+        if(!files || files.length === 0) return;
+        
+        const statusEl = document.getElementById('uploadStatus');
+        const textarea = document.getElementById('pImgUrls');
+        
+        // Default free API Key for ImgBB (Create your own at api.imgbb.com if needed)
+        const IMGBB_API_KEY = '8c3b28b789ff9ea0a25696614144be7d'; 
+        
+        statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Uploading ${files.length} photo(s)...</span>`;
+        let uploadedUrls = [];
+        
+        for(let i=0; i<files.length; i++) {
+            const formData = new FormData();
+            formData.append('image', files[i]);
+            
+            try {
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if(data && data.success) {
+                    uploadedUrls.push(data.data.url);
+                }
+            } catch(error) {
+                console.error("Upload failed", error);
+            }
+        }
+        
+        if(uploadedUrls.length > 0) {
+            const currentText = textarea.value.trim();
+            const newText = uploadedUrls.join('\n');
+            textarea.value = currentText ? currentText + '\n' + newText : newText;
+            window.processAdminImageUrls();
+            statusEl.innerHTML = `<span class="text-[#00e676]">✅ ${uploadedUrls.length} Photo(s) uploaded & converted!</span>`;
+        } else {
+            statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed.</span>`;
+        }
+        
+        e.target.value = '';
+        setTimeout(() => { statusEl.innerHTML = ''; }, 5000);
+    };
 </script>  </body>  
 </html>
