@@ -167,6 +167,9 @@
             position: absolute; bottom: 20px; right: 20px;
             background: rgba(251, 191, 36, 0.1);
         }
+        
+        /* Clickable Portfolio Cards Hover */
+        .portfolio-click-card:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
@@ -207,21 +210,26 @@
         
         <!-- View 1: PORTFOLIO -->
         <div id="view-portfolio" class="view-section active space-y-4">
-            <div class="bg-app-card rounded-2xl border border-app-border p-5 shadow-lg relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-64 h-64 bg-app-green/5 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <!-- Highly Clickable Main Portfolio Card -->
+            <div onclick="openHistoryChart()" class="bg-app-card rounded-2xl border border-app-border p-5 shadow-lg relative overflow-hidden cursor-pointer hover:border-app-blue transition-all portfolio-click-card group">
+                <div class="absolute right-0 top-0 w-64 h-64 bg-app-green/5 rounded-full blur-3xl pointer-events-none group-hover:bg-app-blue/10 transition"></div>
+                <div class="absolute top-4 right-4 text-app-muted group-hover:text-app-blue transition">
+                    <i class="ph-bold ph-chart-line-up text-2xl"></i>
+                </div>
                 
                 <div class="mb-4">
                     <p class="text-xs font-bold text-app-muted uppercase tracking-widest mb-1 flex items-center gap-2">
                         Total Portfolio Value <span class="w-2 h-2 rounded-full bg-app-green pulse-live"></span>
                     </p>
-                    <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight cursor-pointer" id="totalCurrentValue" onclick="openHistoryChart()">₹0.00</h1>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight" id="totalCurrentValue">₹0.00</h1>
                     
                     <div class="flex items-center gap-4 mt-3">
-                        <div class="cursor-pointer bg-app-panel px-3 py-1.5 rounded-lg border border-app-border" onclick="openHistoryChart()">
+                        <div class="bg-app-panel px-3 py-1.5 rounded-lg border border-app-border group-hover:border-app-border/80 transition">
                             <p class="text-[10px] text-app-muted uppercase font-bold">1D Returns</p>
                             <p class="text-sm font-bold text-app-green flex items-center gap-1" id="dayChangeValue"><i class="ph-bold ph-trend-up"></i> +₹0.00 (0.00%)</p>
                         </div>
-                        <div class="cursor-pointer bg-app-panel px-3 py-1.5 rounded-lg border border-app-border" onclick="openHistoryChart()">
+                        <div class="bg-app-panel px-3 py-1.5 rounded-lg border border-app-border group-hover:border-app-border/80 transition">
                             <p class="text-[10px] text-app-muted uppercase font-bold">All Time Returns</p>
                             <p class="text-sm font-bold text-app-green flex items-center gap-1" id="totalReturns"><i class="ph-bold ph-trend-up"></i> +₹0.00 (0.00%)</p>
                         </div>
@@ -229,11 +237,12 @@
                 </div>
                 
                 <div class="pt-4 border-t border-app-border/50 flex justify-between items-center">
-                    <div class="cursor-pointer" onclick="openHistoryChart()">
+                    <div>
                         <p class="text-[10px] font-bold text-app-muted uppercase tracking-wider">Invested Value</p>
                         <p class="text-base font-bold text-white mt-0.5" id="totalInvested">₹0.00</p>
                     </div>
-                    <button onclick="switchTab('account')" class="px-4 py-1.5 bg-app-blue/20 text-app-blue border border-app-blue/30 rounded-lg text-xs font-bold hover:bg-app-blue hover:text-white transition">Deposit / Withdraw</button>
+                    <!-- Stop propagation so the button works normally without opening chart -->
+                    <button onclick="event.stopPropagation(); switchTab('account');" class="px-4 py-1.5 bg-app-blue/20 text-app-blue border border-app-blue/30 rounded-lg text-xs font-bold hover:bg-app-blue hover:text-white transition z-10 relative">Deposit / Withdraw</button>
                 </div>
             </div>
 
@@ -347,12 +356,11 @@
                     <button onclick="openNomineeModal()" class="text-xs font-bold bg-app-blue/20 text-app-blue px-3 py-1.5 rounded-lg border border-app-blue/30 hover:bg-app-blue hover:text-white transition">+ Add New</button>
                 </div>
                 <div id="nominee-list" class="space-y-3">
-                    <!-- Populated via JS with dynamic INR values and Edit buttons -->
+                    <!-- Populated via JS -->
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Add Funds -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-plus-circle text-app-green"></i> Add Funds to Portfolio</h3>
                     <div class="relative mb-4">
@@ -362,7 +370,6 @@
                     <button onclick="submitAddFunds()" class="w-full bg-app-green hover:bg-app-green-glow text-white font-extrabold py-3 rounded-xl shadow-lg transition-colors">Deposit Funds</button>
                 </div>
 
-                <!-- Withdraw -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-minus-circle text-app-red"></i> Withdraw Funds</h3>
                     <div class="relative mb-4">
@@ -437,13 +444,11 @@
         </div>
     </div>
 
-    <!-- Modal: Official Nominee Certificate (Mail style) -->
+    <!-- Modal: Official Nominee Certificate -->
     <div id="modal-certificate" class="modal">
         <div class="modal-content !p-0 !bg-app-bg" style="max-width: 500px;">
-            <!-- Certificate Content to Download -->
             <div id="certificate-wrapper" class="cert-container text-white m-2">
                 <div class="cert-watermark">VERIFIED</div>
-                
                 <div class="flex items-center gap-3 mb-6 border-b border-app-border pb-4 relative z-10">
                     <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="Logo" class="w-12 h-12 rounded-lg border border-app-gold">
                     <div>
@@ -451,13 +456,11 @@
                         <p class="text-[10px] text-gray-300 tracking-widest uppercase">Official Letter of Authorization</p>
                     </div>
                 </div>
-
                 <div class="relative z-10 space-y-4 text-sm text-gray-200">
                     <p><strong>To Whom It May Concern,</strong></p>
                     <p class="leading-relaxed text-justify">
                         This document serves as official confirmation that <strong class="text-white">Mr. RAJAN YADAV</strong> (Principal Investor ID: APX-9982345) has successfully registered and authorized a nominee in the Global Share Market portfolio.
                     </p>
-                    
                     <div class="bg-black/40 p-4 rounded-lg border border-gray-700 space-y-2 mt-4 shadow-inner">
                         <p class="flex justify-between border-b border-gray-700 pb-1">
                             <span class="text-gray-400">Nominee Name:</span>
@@ -476,11 +479,9 @@
                             <strong class="text-white tracking-wider" id="cert-aadhaar">...</strong>
                         </p>
                     </div>
-
                     <p class="text-xs text-gray-400 mt-4 leading-relaxed">
                         The nominee is hereby legally entitled to the stated percentage of the total portfolio returns. This transaction has been processed, digitally signed, and securely verified by our global compliance authority.
                     </p>
-
                     <div class="pt-6 pb-2 flex justify-between items-end">
                         <div>
                             <p class="text-xs text-gray-400">Verification Date</p>
@@ -491,14 +492,8 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Official Seal -->
-                <div class="cert-seal shadow-[0_0_15px_rgba(251,191,36,0.3)]">
-                    GLOBAL<br>APPROVED
-                </div>
+                <div class="cert-seal shadow-[0_0_15px_rgba(251,191,36,0.3)]">GLOBAL<br>APPROVED</div>
             </div>
-
-            <!-- Action Buttons -->
             <div class="p-4 bg-app-panel flex gap-3 border-t border-app-border rounded-b-20">
                 <button onclick="closeCertificate()" class="flex-1 py-3 rounded-xl border border-app-border text-white font-bold hover:bg-gray-700 transition">Close</button>
                 <button onclick="downloadCertificate()" class="flex-1 py-3 rounded-xl bg-app-gold text-black font-extrabold hover:bg-yellow-500 flex items-center justify-center gap-2 transition shadow-lg">
@@ -507,7 +502,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Bottom Navigation -->
     <div class="sm:hidden fixed bottom-0 left-0 w-full bg-app-panel/95 backdrop-blur-xl border-t border-app-border pb-safe z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
@@ -527,20 +521,29 @@
         </div>
     </div>
 
-    <!-- 10 Year History Fullscreen View & Stock Detail hidden for brevity but completely functional -->
+    <!-- REAL 30L-80L History Chart View -->
     <div id="history-chart-view" class="fullscreen-view">
         <div class="p-4 sm:p-6 border-b border-app-border flex justify-between items-center bg-app-panel/90 backdrop-blur-md">
             <button onclick="closeHistoryChart()" class="text-white flex items-center gap-2 font-bold hover:text-app-blue transition-colors group"><i class="ph-bold ph-arrow-left text-2xl"></i> Back</button>
-            <h2 class="font-extrabold text-white text-lg sm:text-xl">Portfolio Performance</h2><div class="w-16"></div> 
+            <h2 class="font-extrabold text-white text-lg sm:text-xl">Portfolio Details</h2><div class="w-16"></div> 
         </div>
         <div class="p-6 bg-app-card border-b border-app-border text-center">
-            <p class="text-sm text-app-muted uppercase font-bold tracking-widest mb-1">Total Net Worth</p>
+            <p class="text-sm text-app-muted uppercase font-bold tracking-widest mb-1">Historical Net Worth</p>
             <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="hist-total-val">₹0.00</h1>
             <p class="text-lg font-bold flex items-center justify-center gap-1 text-app-green" id="hist-total-ret"><i class="ph-bold ph-trend-up"></i> +0.00 (+0.00%)</p>
         </div>
+        
+        <!-- Updated Realistic Timeframes -->
         <div class="p-4 flex gap-2 justify-center bg-app-bg overflow-x-auto hide-scroll border-b border-app-border">
-            <button onclick="setHistoryPeriod('10Y')" class="hist-toggle-btn active px-5 py-2 border border-app-blue rounded-xl text-sm font-bold text-white transition-colors bg-app-blue shadow-lg">10Y</button>
+            <button onclick="setHistoryPeriod('1D')" id="btn-hist-1D" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">1D</button>
+            <button onclick="setHistoryPeriod('1W')" id="btn-hist-1W" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">7D</button>
+            <button onclick="setHistoryPeriod('1M')" id="btn-hist-1M" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">1M</button>
+            <button onclick="setHistoryPeriod('1Y')" id="btn-hist-1Y" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">1Y</button>
+            <button onclick="setHistoryPeriod('3Y')" id="btn-hist-3Y" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">3Y</button>
+            <button onclick="setHistoryPeriod('5Y')" id="btn-hist-5Y" class="hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors">5Y</button>
+            <button onclick="setHistoryPeriod('All')" id="btn-hist-All" class="hist-toggle-btn active px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors bg-app-blue border-app-blue text-white shadow-lg">All</button>
         </div>
+        
         <div class="flex-1 bg-app-bg p-4 relative">
             <canvas id="history-chart-canvas" class="w-full h-full block rounded-xl border border-app-border shadow-inner bg-app-card/50"></canvas>
             <div class="absolute bottom-6 w-full text-center px-8 flex justify-between text-xs font-bold text-app-muted" id="history-axis-labels"></div>
@@ -562,26 +565,6 @@
     </div>
 
     <script>
-        // PWA Manifest Injection
-        const manifest = {
-            "name": "ApexTrade Pro",
-            "short_name": "ApexTrade",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#0a0f1c",
-            "theme_color": "#0a0f1c",
-            "icons": [{
-                "src": "https://i.ibb.co/vCQkSDRV/1000696719.jpg",
-                "sizes": "192x192", "type": "image/jpeg"
-            }, {
-                "src": "https://i.ibb.co/vCQkSDRV/1000696719.jpg",
-                "sizes": "512x512", "type": "image/jpeg"
-            }]
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
-
         // Formatter utilities
         window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
         window.fmtCurDec = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amt);
@@ -594,7 +577,6 @@
             toast.className = 'toast';
             if(type === 'success') toast.style.borderLeftColor = '#00b852';
             if(type === 'error') toast.style.borderLeftColor = '#eb5b3c';
-            
             toast.innerHTML = `
                 <div class="flex items-center gap-3">
                     ${type==='success' ? '<i class="ph-fill ph-check-circle text-app-green text-2xl"></i>' : 
@@ -615,8 +597,7 @@
                 let parsed = parseFloat(newVal);
                 if (!isNaN(parsed)) {
                     window.tradingBalance = parsed;
-                    updateBalanceUI(true);
-                    saveDataToStorage();
+                    updateBalanceUI(true); saveDataToStorage();
                     showToast('Trading Balance Updated Manually', 'success');
                 }
             }
@@ -635,79 +616,50 @@
             MASTER_COMPANIES.push({...src, id: src.id + (MASTER_COMPANIES.length), name: src.name + ' ETF'});
         }
 
-        window.portfolioData = [];
-        window.appTradeHistory = [];
-        window.nominees = [];
-        window.tradingBalance = 1585400; 
-        window.marketTrend = 1; 
-        let currentEditIndex = -1;
-        
-        let activeFilter = 'All';
-        let detailActiveStock = null;
-        let isAppReady = false;
+        window.portfolioData = []; window.appTradeHistory = []; window.nominees = [];
+        window.tradingBalance = 1585400; window.marketTrend = 1; let currentEditIndex = -1;
+        let activeFilter = 'All'; let detailActiveStock = null; let isAppReady = false;
 
         function generateMassivePortfolio() {
-            let data = [];
-            const targetInvested = 4500000; 
-            const count = MASTER_COMPANIES.length;
+            let data = []; const targetInvested = 4500000; const count = MASTER_COMPANIES.length;
             MASTER_COMPANIES.forEach((comp, i) => {
-                let variance = 0.5 + (i % 5) * 0.2;
-                let invested = (targetInvested / count) * variance;
-                let qty = Math.max(1, Math.floor(invested / comp.basePrice));
-                if(qty > 500) qty = Math.round(qty/50)*50;
-                
-                let avgP = invested / qty;
-                let ltp = avgP * (1.1 + (Math.random() * 0.5)); 
-                let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
-                
-                data.push({
-                    id: comp.id, name: comp.name, cap: comp.cap,
-                    qty: qty, avgPrice: avgP, ltp: ltp, prevClose: prevC, baseP: comp.basePrice
-                });
+                let variance = 0.5 + (i % 5) * 0.2; let invested = (targetInvested / count) * variance;
+                let qty = Math.max(1, Math.floor(invested / comp.basePrice)); if(qty > 500) qty = Math.round(qty/50)*50;
+                let avgP = invested / qty; let ltp = avgP * (1.1 + (Math.random() * 0.5)); let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
+                data.push({ id: comp.id, name: comp.name, cap: comp.cap, qty: qty, avgPrice: avgP, ltp: ltp, prevClose: prevC, baseP: comp.basePrice });
             });
             return data;
         }
 
         function generatePreloadedTrades() {
-            let trades = [];
-            const assets = ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'BTCUSD'];
+            let trades = []; const assets = ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'BTCUSD'];
             for(let i=0; i<150; i++) {
-                let amount = Math.floor(Math.random() * 90000) + 10000;
-                let isWin = Math.random() < 0.40; 
-                let dir = Math.random() > 0.5 ? 'UP' : 'DOWN';
-                let asset = assets[Math.floor(Math.random() * assets.length)];
-                let profit = isWin ? amount * 0.85 : -amount;
-                let entry = 22000 + Math.random()*1000;
-                let exit = isWin ? entry + (Math.random()*10) : entry - (Math.random()*10);
-                
-                trades.push({
-                    asset: asset, dir: dir, amt: amount, profit: profit, entry: entry, exit: exit, outcome: isWin ? 'W' : 'L', time: Date.now() - (i * 3600000)
-                });
+                let amount = Math.floor(Math.random() * 90000) + 10000; let isWin = Math.random() < 0.40; let dir = Math.random() > 0.5 ? 'UP' : 'DOWN';
+                let asset = assets[Math.floor(Math.random() * assets.length)]; let profit = isWin ? amount * 0.85 : -amount;
+                let entry = 22000 + Math.random()*1000; let exit = isWin ? entry + (Math.random()*10) : entry - (Math.random()*10);
+                trades.push({ asset: asset, dir: dir, amt: amount, profit: profit, entry: entry, exit: exit, outcome: isWin ? 'W' : 'L', time: Date.now() - (i * 3600000) });
             }
             return trades;
         }
 
-        // Cache v8: Forces Default Krishna Yadav and allows Editable features
+        // Cache v9: Enforces new History periods + New 30L-80L wave + Advanced Trading ticks
         function loadDataFromStorage() {
             try {
-                const dataStr = localStorage.getItem('apexTradeState_v8');
+                const dataStr = localStorage.getItem('apexTradeState_v9');
                 if (dataStr) {
                     const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
                     window.appTradeHistory = data.tradeHistory || generatePreloadedTrades();
                     window.nominees = data.nominees || [
                         { name: "Shanti Yadav", share: 80, pan: "XXXXX1234X", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() },
-                        { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() }
+                        { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX 7340", date: new Date().toLocaleDateString() }
                     ];
-                    
                     let lastSavedTime = data.lastSavedTime || Date.now();
                     let hoursPassed = (Date.now() - lastSavedTime) / (1000 * 60 * 60);
                     let growthFactor = 1 + Math.max(0, (hoursPassed * 0.001)); 
-                    
                     const savedHoldings = data.holdings || [];
                     window.portfolioData = savedHoldings.map(saved => {
-                        let ltp = (saved.lastLtp || saved.avgPrice) * growthFactor; 
-                        let prevC = saved.prevClose || ltp / 1.01;
+                        let ltp = (saved.lastLtp || saved.avgPrice) * growthFactor; let prevC = saved.prevClose || ltp / 1.01;
                         return { ...saved, ltp: ltp, prevClose: prevC, history: generatePriceHistory(prevC, ltp, 40) };
                     });
                     return true;
@@ -721,7 +673,7 @@
                 const holdingsToSave = window.portfolioData.map(s => ({
                     id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, baseP: s.baseP, lastLtp: s.ltp, prevClose: s.prevClose
                 }));
-                localStorage.setItem('apexTradeState_v8', JSON.stringify({
+                localStorage.setItem('apexTradeState_v9', JSON.stringify({
                     tradingBalance: window.tradingBalance,
                     holdings: holdingsToSave,
                     tradeHistory: window.appTradeHistory.slice(0, 150),
@@ -734,12 +686,10 @@
         function generatePriceHistory(start, end, points) {
             let hist = []; let p = start;
             for(let j=0; j<points; j++) {
-                let open = p;
-                let close = p + (Math.random()-0.48) * (p*0.02); 
+                let open = p; let close = p + (Math.random()-0.48) * (p*0.02); 
                 let high = Math.max(open, close) + (Math.random() * p * 0.01);
                 let low = Math.min(open, close) - (Math.random() * p * 0.01);
-                hist.push({ o: open, h: high, l: low, c: close });
-                p = close;
+                hist.push({ o: open, h: high, l: low, c: close }); p = close;
             }
             hist[hist.length-1].c = end; return hist;
         }
@@ -751,24 +701,18 @@
                 window.appTradeHistory = generatePreloadedTrades();
                 window.nominees = [
                     { name: "Shanti Yadav", share: 80, pan: "XXXXX1234X", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() },
-                    { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() }
+                    { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX 7340", date: new Date().toLocaleDateString() }
                 ];
                 window.tradingBalance = 1585400.00; 
                 saveDataToStorage();
             }
-            renderPortfolio();
-            updateBalanceUI(false);
-            renderTradeHistory();
-            renderNominees();
-            initTradingChart();
+            renderPortfolio(); updateBalanceUI(false); renderTradeHistory(); renderNominees(); initTradingChart();
             
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('splash-screen').style.display = 'none';
-                    isAppReady = true;
-                    setInterval(globalTick, 1000);
-                    setInterval(saveDataToStorage, 5000); 
+                    isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); 
                 }, 500);
             }, 1200);
         }
@@ -781,8 +725,7 @@
                 el.innerText = str; 
                 if (flash && isAppReady && window.tradingBalance !== lastBalance) {
                     el.classList.remove('text-flash-green', 'text-flash-red');
-                    void el.offsetWidth; 
-                    el.classList.add(window.tradingBalance > lastBalance ? 'text-flash-green' : 'text-flash-red');
+                    void el.offsetWidth; el.classList.add(window.tradingBalance > lastBalance ? 'text-flash-green' : 'text-flash-red');
                 }
             }
             lastBalance = window.tradingBalance;
@@ -791,17 +734,16 @@
         window.globalTick = function() {
             if(!isAppReady) return;
             
-            // 30L - 80L Auto Logic
-            let tCurTotal = 0;
-            portfolioData.forEach(s => tCurTotal += s.qty * s.ltp);
-            if (tCurTotal > 8000000) window.marketTrend = -1; 
-            if (tCurTotal < 3000000) window.marketTrend = 1;  
-            let bias = window.marketTrend === 1 ? 0.05 : -0.05; 
+            let tCurTotal = 0; portfolioData.forEach(s => tCurTotal += s.qty * s.ltp);
+            // 30L - 80L Live Market Logic
+            if (tCurTotal > 7800000) window.marketTrend = -1; 
+            if (tCurTotal < 3200000) window.marketTrend = 1;  
+            let bias = window.marketTrend === 1 ? 0.08 : -0.08; // High multiplier for fast realism
 
             const numUpdates = Math.floor(Math.random() * 8) + 5;
             for(let i=0; i<numUpdates; i++) {
                 const s = portfolioData[Math.floor(Math.random() * portfolioData.length)];
-                const move = (Math.random() - 0.5 + bias) * (s.ltp * 0.004); 
+                const move = (Math.random() - 0.5 + bias) * (s.ltp * 0.008); 
                 s.ltp = Math.max(0.1, s.ltp + move);
                 
                 let lastCandle = s.history[s.history.length-1];
@@ -809,9 +751,7 @@
                 if(s.ltp > lastCandle.h) lastCandle.h = s.ltp;
                 if(s.ltp < lastCandle.l) lastCandle.l = s.ltp;
 
-                let cur = s.qty * s.ltp;
-                let pl = cur - (s.qty * s.avgPrice);
-                let plPct = (pl/(s.qty * s.avgPrice))*100;
+                let cur = s.qty * s.ltp; let pl = cur - (s.qty * s.avgPrice); let plPct = (pl/(s.qty * s.avgPrice))*100;
                 
                 const ltpEl = document.getElementById(`pl-ltp-${s.id}`);
                 const retEl = document.getElementById(`pl-ret-${s.id}`);
@@ -819,22 +759,18 @@
                     ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
                     retEl.innerText = `${pl>=0?'+':''}${window.fmtCurDec(pl)} (${pl>=0?'+':''}${plPct.toFixed(2)}%)`;
                     retEl.className = `text-xxs font-bold mt-0.5 ${pl>=0?'text-app-green':'text-app-red'}`;
-                    
-                    ltpEl.classList.remove('flash-green', 'flash-red');
-                    void ltpEl.offsetWidth;
+                    ltpEl.classList.remove('flash-green', 'flash-red'); void ltpEl.offsetWidth;
                     ltpEl.classList.add(move > 0 ? 'flash-green' : 'flash-red');
                 }
             }
             updateTotalPortfolioHeaders();
 
-            // LIVE TRADE CHART REALISM FIX: Very active charting simulation
+            // LIVE TRADE CHART REALISM
             if(!isTradeActive) {
                 const volatility = liveTradePrice * 0.0008;
-                // Add rapid micro-fluctuations to make chart move more aggressively and naturally
-                liveTradePrice += (Math.random() - 0.49) * volatility + (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 2);
+                liveTradePrice += (Math.random() - 0.49) * volatility + (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 3);
                 tradeChartHistory.push(liveTradePrice);
                 if(tradeChartHistory.length > 50) tradeChartHistory.shift();
-                
                 const pEl = document.getElementById('trade-live-price');
                 pEl.innerText = window.fmtNum(liveTradePrice);
                 pEl.className = `text-4xl font-extrabold tracking-tighter ${Math.random()>0.5 ? 'text-app-green':'text-app-red'}`;
@@ -844,45 +780,27 @@
 
         window.updateTotalPortfolioHeaders = function() {
             let tInv=0, tCur=0, tDay=0;
-            portfolioData.forEach(s => {
-                tInv += s.qty * s.avgPrice;
-                tCur += s.qty * s.ltp;
-                tDay += s.qty * (s.ltp - s.prevClose);
-            });
-            
+            portfolioData.forEach(s => { tInv += s.qty * s.avgPrice; tCur += s.qty * s.ltp; tDay += s.qty * (s.ltp - s.prevClose); });
             const trAmt = tCur - tInv;
-            const curEl = document.getElementById('totalCurrentValue');
-            curEl.innerText = window.fmtCur(tCur); 
-            
+            document.getElementById('totalCurrentValue').innerText = window.fmtCur(tCur); 
             document.getElementById('totalReturns').innerHTML = `<i class="ph-bold ph-trend-${trAmt>=0?'up':'down'}"></i> ${trAmt>=0?'+':''}${window.fmtCur(trAmt)} (${((trAmt/tInv)*100).toFixed(2)}%)`;
             document.getElementById('totalReturns').className = `text-sm font-bold flex items-center gap-1 transition-colors ${trAmt>=0?'text-app-green':'text-app-red'}`;
-            
             document.getElementById('dayChangeValue').innerHTML = `<i class="ph-bold ph-trend-${tDay>=0?'up':'down'}"></i> ${tDay>=0?'+':''}${window.fmtCur(tDay)} (${((tDay/(tCur-tDay))*100).toFixed(2)}%)`;
             document.getElementById('dayChangeValue').className = `text-sm font-bold flex items-center gap-1 transition-colors ${tDay>=0?'text-app-green':'text-app-red'}`;
-            
             document.getElementById('totalInvested').innerText = window.fmtCur(tInv);
 
-            // LIVE UPDATE NOMINEE MONEY VALUES based on Portfolio Size
             window.nominees.forEach((nom, i) => {
                 const el = document.getElementById(`nominee-val-${i}`);
-                if(el) {
-                    let shareAmount = tCur * (nom.share / 100);
-                    el.innerText = window.fmtCur(shareAmount);
-                }
+                if(el) { let shareAmount = tCur * (nom.share / 100); el.innerText = window.fmtCur(shareAmount); }
             });
         }
 
         window.renderPortfolio = function() {
-            const list = document.getElementById('holdingsList');
-            list.innerHTML = '';
+            const list = document.getElementById('holdingsList'); list.innerHTML = '';
             portfolioData.forEach(s => {
-                let inv = s.qty * s.avgPrice;
-                let cur = s.qty * s.ltp;
-                let pl = cur - inv;
-                let plPct = (pl/inv)*100;
+                let inv = s.qty * s.avgPrice; let cur = s.qty * s.ltp; let pl = cur - inv; let plPct = (pl/inv)*100;
                 if(activeFilter !== 'All' && s.cap !== activeFilter) return;
-                const isPos = pl >= 0;
-                const row = document.createElement('div');
+                const isPos = pl >= 0; const row = document.createElement('div');
                 row.className = 'p-4 hover:bg-app-panel transition-colors cursor-pointer block grid grid-cols-12 gap-2 items-center border-l-2 border-transparent hover:border-app-blue';
                 row.onclick = () => openStockDetail(s.id); 
                 row.innerHTML = `
@@ -906,7 +824,7 @@
             updateTotalPortfolioHeaders();
         }
 
-        // Trading Logic
+        // Live Trading
         const WIN_LOSS_PATTERN = ['L', 'L', 'W', 'L', 'W', 'L', 'L', 'W', 'L', 'W']; 
         let tradeCount = 0; window.isTradeActive = false; window.activeTradeAsset = 'NIFTY'; window.liveTradePrice = 22450.50; window.tradeChartHistory = Array(50).fill(liveTradePrice).map((p, i) => p + (Math.random()-0.5)*20);
         
@@ -916,7 +834,6 @@
             let amount = parseFloat(amtInput);
             if(isNaN(amount) || amount < 100) return showToast('Enter valid amount', 'error');
             if(amount > window.tradingBalance) return showToast('Insufficient Trading Balance', 'error');
-
             window.tradingBalance -= amount; updateBalanceUI(true); saveDataToStorage(); 
             
             let outcome = WIN_LOSS_PATTERN[tradeCount % 10]; tradeCount++; isTradeActive = true; let entryPrice = liveTradePrice;
@@ -926,9 +843,7 @@
             let timeRemaining = 7; let timerEl = document.getElementById('trade-countdown'); timerEl.innerText = `${timeRemaining}s`;
             let countdownInterval = setInterval(() => {
                 timeRemaining--; timerEl.innerText = `${timeRemaining}s`;
-                if(timeRemaining <= 0) {
-                    clearInterval(countdownInterval); resolveTrade(amount, direction, outcome, entryPrice);
-                }
+                if(timeRemaining <= 0) { clearInterval(countdownInterval); resolveTrade(amount, direction, outcome, entryPrice); }
             }, 1000);
         }
 
@@ -951,8 +866,7 @@
         window.renderTradeHistory = function() {
             const list = document.getElementById('trade-history-list'); list.innerHTML = '';
             window.appTradeHistory.slice(0, 50).forEach(trade => {
-                const isWin = trade.outcome === 'W';
-                const row = document.createElement('div');
+                const isWin = trade.outcome === 'W'; const row = document.createElement('div');
                 row.className = 'bg-app-bg border border-app-border rounded-xl p-3 flex justify-between items-center shadow-sm';
                 row.innerHTML = `
                     <div>
@@ -968,11 +882,9 @@
             });
         }
 
-        // Updated Editable Nominee & Certificate Flow
+        // Editable Nominees
         window.renderNominees = function() {
-            const container = document.getElementById('nominee-list');
-            container.innerHTML = '';
-            
+            const container = document.getElementById('nominee-list'); container.innerHTML = '';
             window.nominees.forEach((nom, index) => {
                 container.innerHTML += `
                     <div class="bg-app-bg p-3 rounded-lg border border-app-border flex flex-col relative overflow-hidden group">
@@ -1000,10 +912,8 @@
         window.openNomineeModal = function() { document.getElementById('modal-add-nominee').classList.add('active'); }
         window.closeNomineeModal = function() {
             document.getElementById('modal-add-nominee').classList.remove('active');
-            document.getElementById('nominee-name').value = '';
-            document.getElementById('nominee-share').value = '';
-            document.getElementById('nominee-pan').value = '';
-            document.getElementById('nominee-aadhaar').value = '';
+            document.getElementById('nominee-name').value = ''; document.getElementById('nominee-share').value = '';
+            document.getElementById('nominee-pan').value = ''; document.getElementById('nominee-aadhaar').value = '';
         }
         
         window.saveNominee = function() {
@@ -1012,32 +922,21 @@
             const pan = document.getElementById('nominee-pan').value || 'Not Provided';
             const aadhaar = document.getElementById('nominee-aadhaar').value || 'Not Provided';
 
-            if(!name || isNaN(share) || share <= 0 || share > 100) {
-                return showToast('Enter valid Name and Share %', 'error');
-            }
+            if(!name || isNaN(share) || share <= 0 || share > 100) return showToast('Enter valid Name and Share %', 'error');
             
             let newNominee = { name, share, pan: pan.toUpperCase(), aadhaar, date: new Date().toLocaleDateString() };
             window.nominees.push(newNominee);
-            renderNominees(); closeNomineeModal(); saveDataToStorage();
-            showToast('Nominee Added Successfully', 'success');
-            showCertificate(newNominee);
+            renderNominees(); closeNomineeModal(); saveDataToStorage(); showToast('Nominee Added Successfully', 'success'); showCertificate(newNominee);
         }
 
-        // Edit Modal Logic
         window.openEditNomineeModal = function(index) {
-            currentEditIndex = index;
-            const nom = window.nominees[index];
-            document.getElementById('edit-nominee-name').value = nom.name;
-            document.getElementById('edit-nominee-share').value = nom.share;
-            document.getElementById('edit-nominee-pan').value = nom.pan || '';
-            document.getElementById('edit-nominee-aadhaar').value = nom.aadhaar || '';
+            currentEditIndex = index; const nom = window.nominees[index];
+            document.getElementById('edit-nominee-name').value = nom.name; document.getElementById('edit-nominee-share').value = nom.share;
+            document.getElementById('edit-nominee-pan').value = nom.pan || ''; document.getElementById('edit-nominee-aadhaar').value = nom.aadhaar || '';
             document.getElementById('modal-edit-nominee').classList.add('active');
         }
 
-        window.closeEditNomineeModal = function() {
-            document.getElementById('modal-edit-nominee').classList.remove('active');
-            currentEditIndex = -1;
-        }
+        window.closeEditNomineeModal = function() { document.getElementById('modal-edit-nominee').classList.remove('active'); currentEditIndex = -1; }
 
         window.updateNominee = function() {
             if (currentEditIndex === -1) return;
@@ -1045,82 +944,118 @@
             const share = parseFloat(document.getElementById('edit-nominee-share').value);
             const pan = document.getElementById('edit-nominee-pan').value || 'Not Provided';
             const aadhaar = document.getElementById('edit-nominee-aadhaar').value || 'Not Provided';
-
             if(!name || isNaN(share) || share <= 0 || share > 100) return showToast('Enter valid Name and Share %', 'error');
 
-            window.nominees[currentEditIndex] = {
-                name, share, pan: pan.toUpperCase(), aadhaar, date: window.nominees[currentEditIndex].date || new Date().toLocaleDateString()
-            };
-            renderNominees(); closeEditNomineeModal(); saveDataToStorage();
-            showToast('Nominee Successfully Updated', 'success');
+            window.nominees[currentEditIndex] = { name, share, pan: pan.toUpperCase(), aadhaar, date: window.nominees[currentEditIndex].date || new Date().toLocaleDateString() };
+            renderNominees(); closeEditNomineeModal(); saveDataToStorage(); showToast('Nominee Successfully Updated', 'success');
         }
 
         window.deleteNominee = function() {
             if (currentEditIndex === -1) return;
             if(confirm("Are you sure you want to permanently remove this nominee?")) {
                 window.nominees.splice(currentEditIndex, 1);
-                renderNominees(); closeEditNomineeModal(); saveDataToStorage();
-                showToast('Nominee Permanently Removed', 'success');
+                renderNominees(); closeEditNomineeModal(); saveDataToStorage(); showToast('Nominee Permanently Removed', 'success');
             }
         }
 
-        // Certificate logic
         window.viewCertificate = function(index) { showCertificate(window.nominees[index]); }
         window.showCertificate = function(nominee) {
-            document.getElementById('cert-name').innerText = nominee.name;
-            document.getElementById('cert-share').innerText = nominee.share + '%';
-            document.getElementById('cert-pan').innerText = nominee.pan;
-            document.getElementById('cert-aadhaar').innerText = nominee.aadhaar;
+            document.getElementById('cert-name').innerText = nominee.name; document.getElementById('cert-share').innerText = nominee.share + '%';
+            document.getElementById('cert-pan').innerText = nominee.pan; document.getElementById('cert-aadhaar').innerText = nominee.aadhaar;
             document.getElementById('cert-date').innerText = nominee.date || new Date().toLocaleDateString();
             document.getElementById('modal-certificate').classList.add('active');
         }
-
         window.closeCertificate = function() { document.getElementById('modal-certificate').classList.remove('active'); }
         window.downloadCertificate = function() {
-            const element = document.getElementById('certificate-wrapper');
-            const btn = event.currentTarget; let originalText = btn.innerHTML;
+            const element = document.getElementById('certificate-wrapper'); const btn = event.currentTarget; let originalText = btn.innerHTML;
             btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-lg"></i> Generating...';
-            
             html2canvas(element, { scale: 3, backgroundColor: '#0a0f1c' }).then(canvas => {
-                let link = document.createElement('a');
-                link.download = `ApexTrade_Nominee_Auth_${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png'); link.click();
+                let link = document.createElement('a'); link.download = `ApexTrade_Nominee_Auth_${Date.now()}.png`; link.href = canvas.toDataURL('image/png'); link.click();
                 btn.innerHTML = originalText; showToast('Certificate Downloaded Successfully', 'success');
             });
         }
 
-
-        // Basic App Utility Actions
-        window.setFilter = function(capType) { activeFilter = capType; renderPortfolio(); }
-        window.submitAddFunds = function() { let val = parseFloat(document.getElementById('input-add-funds').value); window.tradingBalance += val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-add-funds').value = ''; showToast('Added', 'success'); }
-        window.submitWithdraw = function() { let val = parseFloat(document.getElementById('input-withdraw').value); window.tradingBalance -= val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-withdraw').value = ''; showToast('Withdrawn', 'success'); }
-        window.openHistoryChart = function() { document.getElementById('history-chart-view').classList.add('active'); document.body.style.overflow = 'hidden'; }
+        // Fullscreen Chart 30L-80L Simulation
+        window.openHistoryChart = function() {
+            document.getElementById('history-chart-view').classList.add('active'); document.body.style.overflow = 'hidden';
+            let tCur=0, tInv=0; portfolioData.forEach(s => { tCur += s.qty * s.ltp; tInv += s.qty * s.avgPrice; }); const ret = tCur - tInv;
+            document.getElementById('hist-total-val').innerText = window.fmtCur(tCur);
+            document.getElementById('hist-total-ret').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(ret)} (+${((ret/tInv)*100).toFixed(2)}%)`;
+            setHistoryPeriod('All');
+        }
         window.closeHistoryChart = function() { document.getElementById('history-chart-view').classList.remove('active'); document.body.style.overflow = 'auto'; }
-        window.closeStockDetail = function() { document.getElementById('stock-detail-view').classList.remove('active'); document.body.style.overflow = 'auto'; }
 
-        function initTradingChart() {
-            const tradeCanvas = document.getElementById('trading-chart-canvas');
-            const tradeCtx = tradeCanvas.getContext('2d');
-            const rect = tradeCanvas.parentElement.getBoundingClientRect();
-            tradeCanvas.width = rect.width * 2; tradeCanvas.height = 320 * 2;
-            tradeCtx.scale(2, 2);
-            drawTradingChart();
+        window.setHistoryPeriod = function(period) {
+            document.querySelectorAll('.hist-toggle-btn').forEach(b => { b.className = "hist-toggle-btn px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-app-muted hover:text-white transition-colors"; });
+            event.target.className = "hist-toggle-btn active px-4 py-2 border border-app-border rounded-xl text-sm font-bold text-white transition-colors bg-app-blue shadow-lg";
+            drawHistoryCanvas(period);
         }
 
+        function drawHistoryCanvas(period) {
+            const cvs = document.getElementById('history-chart-canvas'); const cx = cvs.getContext('2d');
+            const rect = cvs.parentElement.getBoundingClientRect(); cvs.width = rect.width * 2; cvs.height = rect.height * 2;
+            cx.scale(2, 2); let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
+
+            let points = period === '1D' ? 24 : period === '1W' ? 14 : period === '1M' ? 30 : period === '1Y' ? 52 : period === '3Y' ? 36 : period === '5Y' ? 60 : 120;
+            let tCur = 0; portfolioData.forEach(s => tCur += s.qty * s.ltp);
+            
+            let data = [];
+            // Real-looking 30L-80L wave generator for long term
+            if (period === '3Y' || period === '5Y' || period === 'All') {
+                let minTarget = 3000000; let maxTarget = 8000000;
+                for(let i=0; i<points; i++) {
+                    let progress = i / (points - 1);
+                    // Create a realistic double wave
+                    let wave = Math.sin(progress * Math.PI * 2.5) + Math.cos(progress * Math.PI * 1.5); 
+                    let normalizedWave = (wave + 1.5) / 3; 
+                    let noise = (Math.random() - 0.5) * 0.15; 
+                    let val = minTarget + (maxTarget - minTarget) * Math.max(0, Math.min(1, normalizedWave + noise));
+                    if (i === points - 1) val = tCur; // connect to current
+                    data.push(val);
+                }
+            } else {
+                // Normal walk for short terms
+                let startVal = tCur * (period === '1Y' ? 0.65 : period === '1M' ? 0.85 : period === '1W' ? 0.92 : 0.98);
+                let p = startVal; let stepVal = (tCur - startVal) / points;
+                data.push(startVal);
+                for(let i=1; i<points; i++) { p += stepVal + (Math.random()-0.45)*(stepVal*0.8); data.push(p); }
+                data.push(tCur);
+            }
+
+            let min = Math.min(...data) * 0.90; let max = Math.max(...data) * 1.05; let range = max - min; let stepX = w / (data.length - 1);
+            let grad = cx.createLinearGradient(0,0,0,h); grad.addColorStop(0, 'rgba(0, 184, 82, 0.4)'); grad.addColorStop(1, 'rgba(0, 184, 82, 0)');
+            cx.beginPath(); cx.moveTo(0, h); cx.lineTo(0, h - ((data[0]-min)/range)*h);
+            data.forEach((val, i) => cx.lineTo(i*stepX, h - ((val-min)/range)*h));
+            cx.lineTo(w, h); cx.fillStyle = grad; cx.fill();
+            cx.beginPath(); cx.lineWidth = 4; cx.strokeStyle = '#00b852'; 
+            data.forEach((val, i) => { let y = h - ((val-min)/range)*h; if(i===0) cx.moveTo(i*stepX, y); else cx.lineTo(i*stepX, y); }); cx.stroke();
+            
+            let labelsHTML = '';
+            if(period === 'All') labelsHTML = '<span>2016</span><span>2019</span><span>2023</span><span>Today</span>';
+            else if(period === '5Y') labelsHTML = '<span>2021</span><span>2023</span><span>Today</span>';
+            else if(period === '3Y') labelsHTML = '<span>2023</span><span>2024</span><span>Today</span>';
+            else if(period === '1Y') labelsHTML = '<span>Oct \'25</span><span>Mar \'26</span><span>Today</span>';
+            else if(period === '1M') labelsHTML = '<span>4 Weeks Ago</span><span>2 Weeks Ago</span><span>Today</span>';
+            else labelsHTML = '<span>Start</span><span>Mid</span><span>Today</span>';
+            document.getElementById('history-axis-labels').innerHTML = labelsHTML;
+        }
+
+        window.submitAddFunds = function() { let val = parseFloat(document.getElementById('input-add-funds').value); window.tradingBalance += val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-add-funds').value = ''; showToast('Added', 'success'); }
+        window.submitWithdraw = function() { let val = parseFloat(document.getElementById('input-withdraw').value); window.tradingBalance -= val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-withdraw').value = ''; showToast('Withdrawn', 'success'); }
+        window.setFilter = function(capType) { activeFilter = capType; renderPortfolio(); }
+
+        function initTradingChart() {
+            const tradeCanvas = document.getElementById('trading-chart-canvas'); const tradeCtx = tradeCanvas.getContext('2d');
+            const rect = tradeCanvas.parentElement.getBoundingClientRect(); tradeCanvas.width = rect.width * 2; tradeCanvas.height = 320 * 2;
+            tradeCtx.scale(2, 2); drawTradingChart();
+        }
         window.drawTradingChart = function() {
-            const tradeCanvas = document.getElementById('trading-chart-canvas');
-            const tradeCtx = tradeCanvas.getContext('2d');
-            const w = tradeCanvas.width/2, h = tradeCanvas.height/2;
-            tradeCtx.clearRect(0,0,w,h);
-            let min = Math.min(...tradeChartHistory); let max = Math.max(...tradeChartHistory);
-            let range = (max - min) || 1;
-            tradeCtx.beginPath(); tradeCtx.lineWidth = 4;
-            tradeCtx.strokeStyle = tradeChartHistory[tradeChartHistory.length-1] >= tradeChartHistory[0] ? '#00b852' : '#eb5b3c';
+            const tradeCanvas = document.getElementById('trading-chart-canvas'); const tradeCtx = tradeCanvas.getContext('2d');
+            const w = tradeCanvas.width/2, h = tradeCanvas.height/2; tradeCtx.clearRect(0,0,w,h);
+            let min = Math.min(...tradeChartHistory); let max = Math.max(...tradeChartHistory); let range = (max - min) || 1;
+            tradeCtx.beginPath(); tradeCtx.lineWidth = 4; tradeCtx.strokeStyle = tradeChartHistory[tradeChartHistory.length-1] >= tradeChartHistory[0] ? '#00b852' : '#eb5b3c';
             let stepX = w / (tradeChartHistory.length - 1);
-            tradeChartHistory.forEach((price, i) => {
-                let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.8) - (h*0.1);
-                if(i===0) tradeCtx.moveTo(x,y); else tradeCtx.lineTo(x,y);
-            });
+            tradeChartHistory.forEach((price, i) => { let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.8) - (h*0.1); if(i===0) tradeCtx.moveTo(x,y); else tradeCtx.lineTo(x,y); });
             tradeCtx.stroke();
         }
 
@@ -1143,7 +1078,6 @@
                 window.scrollTo(0,0);
             }, 250); 
         }
-
         window.onload = bootApp;
     </script>
 </body>
