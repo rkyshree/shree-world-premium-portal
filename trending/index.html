@@ -168,7 +168,8 @@
 
             <div onclick="switchTab('account')" class="flex flex-col items-end justify-center bg-app-card border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-lg group">
                 <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Trading Balance</span>
-                <span class="text-sm font-extrabold text-white group-hover:text-app-green transition-colors" id="header-trading-balance">₹ 15,85,400.00</span>
+                <!-- Fixed Double Rupee Symbol Here -->
+                <span class="text-sm font-extrabold text-white group-hover:text-app-green transition-colors" id="header-trading-balance">₹15,85,400.00</span>
             </div>
         </div>
     </nav>
@@ -184,7 +185,7 @@
                     <p class="text-xs font-bold text-app-muted uppercase tracking-widest mb-1 flex items-center gap-2">
                         Total Portfolio Value <span class="w-2 h-2 rounded-full bg-app-green pulse-live"></span>
                     </p>
-                    <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight cursor-pointer" id="totalCurrentValue" onclick="openHistoryChart()">₹ 0.00</h1>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight cursor-pointer" id="totalCurrentValue" onclick="openHistoryChart()">₹0.00</h1>
                     
                     <div class="flex items-center gap-4 mt-3">
                         <div class="cursor-pointer bg-app-panel px-3 py-1.5 rounded-lg border border-app-border" onclick="openHistoryChart()">
@@ -201,7 +202,7 @@
                 <div class="pt-4 border-t border-app-border/50 flex justify-between items-center">
                     <div class="cursor-pointer" onclick="openHistoryChart()">
                         <p class="text-[10px] font-bold text-app-muted uppercase tracking-wider">Invested Value</p>
-                        <p class="text-base font-bold text-white mt-0.5" id="totalInvested">₹ 0.00</p>
+                        <p class="text-base font-bold text-white mt-0.5" id="totalInvested">₹0.00</p>
                     </div>
                     <button onclick="switchTab('account')" class="px-4 py-1.5 bg-app-blue/20 text-app-blue border border-app-blue/30 rounded-lg text-xs font-bold hover:bg-app-blue hover:text-white transition">Deposit / Withdraw</button>
                 </div>
@@ -373,7 +374,7 @@
         
         <div class="p-6 bg-app-card border-b border-app-border text-center">
             <p class="text-sm text-app-muted uppercase font-bold tracking-widest mb-1">Total Net Worth</p>
-            <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="hist-total-val">₹ 0.00</h1>
+            <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="hist-total-val">₹0.00</h1>
             <p class="text-lg font-bold flex items-center justify-center gap-1 text-app-green" id="hist-total-ret"><i class="ph-bold ph-trend-up"></i> +0.00 (+0.00%)</p>
         </div>
 
@@ -404,7 +405,7 @@
         </div>
         
         <div class="p-6 bg-app-card border-b border-app-border text-center">
-            <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="detail-ltp">₹ 0.00</h1>
+            <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="detail-ltp">₹0.00</h1>
             <p class="text-lg font-bold flex items-center justify-center gap-1" id="detail-change"><i class="ph-bold ph-trend-up"></i> 0.00 (0.00%)</p>
         </div>
 
@@ -423,12 +424,12 @@
         <div class="p-6 bg-app-panel border-t border-app-border grid grid-cols-2 gap-6 pb-safe">
             <div class="bg-app-card p-4 rounded-xl border border-app-border shadow-inner">
                 <p class="text-xs text-app-muted uppercase font-bold tracking-wider">Your Investment</p>
-                <p class="text-xl sm:text-2xl font-extrabold text-white mt-1" id="detail-invested">₹ 0.00</p>
+                <p class="text-xl sm:text-2xl font-extrabold text-white mt-1" id="detail-invested">₹0.00</p>
                 <p class="text-xs text-app-muted mt-1 font-bold" id="detail-qty">Qty: 0</p>
             </div>
             <div class="bg-app-card p-4 rounded-xl border border-app-border shadow-inner text-right">
                 <p class="text-xs text-app-muted uppercase font-bold tracking-wider">Total Returns</p>
-                <p class="text-xl sm:text-2xl font-extrabold mt-1 drop-shadow-sm" id="detail-returns">+₹ 0.00</p>
+                <p class="text-xl sm:text-2xl font-extrabold mt-1 drop-shadow-sm" id="detail-returns">+₹0.00</p>
             </div>
         </div>
     </div>
@@ -601,10 +602,10 @@
             return trades;
         }
 
-        // Changed Key to v4 to ensure hard reset and clear cache so the new logo and Nominee shows up
+        // Cache reset key: v5 (ensures new fixes apply immediately)
         function loadDataFromStorage() {
             try {
-                const dataStr = localStorage.getItem('apexTradeState_v4');
+                const dataStr = localStorage.getItem('apexTradeState_v5');
                 if (dataStr) {
                     const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
@@ -637,7 +638,7 @@
                 }));
                 const trimmedHistory = window.appTradeHistory.slice(0, 150); 
                 
-                localStorage.setItem('apexTradeState_v4', JSON.stringify({
+                localStorage.setItem('apexTradeState_v5', JSON.stringify({
                     tradingBalance: window.tradingBalance,
                     holdings: holdingsToSave,
                     tradeHistory: trimmedHistory,
@@ -694,11 +695,13 @@
         }
 
         let lastBalance = 0;
+        
+        // ---- FIX APPLIED HERE ---- //
         window.updateBalanceUI = function(flash = true) {
-            const str = window.fmtCurDec(window.tradingBalance);
+            const str = window.fmtCurDec(window.tradingBalance); // This already adds "₹" via Intl.NumberFormat
             const el = document.getElementById('header-trading-balance');
             if (el) {
-                el.innerText = `₹ ${str}`;
+                el.innerText = str; // Directly using string instead of `₹ ${str}`
                 if (flash && isAppReady && window.tradingBalance !== lastBalance) {
                     el.classList.remove('text-flash-green', 'text-flash-red');
                     void el.offsetWidth; 
