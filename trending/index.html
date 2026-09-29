@@ -7,7 +7,7 @@
     <!-- PWA Installation Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0a0f1c">
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Custom App Icon -->
@@ -28,9 +28,9 @@
                         'app-panel': '#1f2937',
                         'app-text': '#f8fafc',
                         'app-muted': '#9ca3af',
-                        'app-green': '#00b852', /* More Groww-like Green */
+                        'app-green': '#00b852', 
                         'app-green-glow': '#00d05d',
-                        'app-red': '#eb5b3c',   /* More Groww-like Red */
+                        'app-red': '#eb5b3c',   
                         'app-red-glow': '#ff6644',
                         'app-blue': '#2563eb',  
                         'app-border': '#2d3748'
@@ -226,6 +226,7 @@
             </div>
         </div>
 
+        <!-- View 2: TRADING -->
         <div id="view-trading" class="view-section space-y-4">
             <div class="flex justify-between items-end mb-2">
                 <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
@@ -296,6 +297,7 @@
             </div>
         </div>
 
+        <!-- View 3: ACCOUNT & PROFILE -->
         <div id="view-account" class="view-section space-y-4">
             <h1 class="text-3xl font-extrabold text-white tracking-tight mb-4">My Profile</h1>
             
@@ -310,7 +312,7 @@
                 </div>
             </div>
 
-            <!-- Nominee Section -->
+            <!-- Nominee Section (Shanti Yadav) -->
             <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-fill ph-users text-app-blue"></i> Nominees & Profit Share</h3>
@@ -391,6 +393,7 @@
         </div>
     </div>
 
+    <!-- Stock Detail View -->
     <div id="stock-detail-view" class="fullscreen-view">
         <div class="p-4 sm:p-6 border-b border-app-border flex justify-between items-center bg-app-panel/90 backdrop-blur-md">
             <button onclick="closeStockDetail()" class="text-white flex items-center gap-2 font-bold hover:text-app-blue transition-colors group">
@@ -451,6 +454,7 @@
         </div>
     </div>
 
+    <!-- Bottom Navigation -->
     <div class="sm:hidden fixed bottom-0 left-0 w-full bg-app-panel/95 backdrop-blur-xl border-t border-app-border pb-safe z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
         <div class="flex justify-around items-center h-16 px-1">
             <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-blue transition-colors">
@@ -469,6 +473,26 @@
     </div>
 
     <script>
+        // PWA Manifest Injection
+        const manifest = {
+            "name": "ApexTrade Pro",
+            "short_name": "ApexTrade",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#0a0f1c",
+            "theme_color": "#0a0f1c",
+            "icons": [{
+                "src": "https://i.ibb.co/vCQkSDRV/1000696719.jpg",
+                "sizes": "192x192", "type": "image/jpeg"
+            }, {
+                "src": "https://i.ibb.co/vCQkSDRV/1000696719.jpg",
+                "sizes": "512x512", "type": "image/jpeg"
+            }]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
+
         // Formatter utilities
         window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
         window.fmtCurDec = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amt);
@@ -543,7 +567,7 @@
                 if(qty > 500) qty = Math.round(qty/50)*50;
                 
                 let avgP = invested / qty;
-                let ltp = avgP * (1.1 + (Math.random() * 0.5)); // Positive start
+                let ltp = avgP * (1.1 + (Math.random() * 0.5)); 
                 let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
                 
                 data.push({
@@ -577,20 +601,19 @@
             return trades;
         }
 
-        // Local Storage for robust data persistence
+        // Changed Key to v4 to ensure hard reset and clear cache so the new logo and Nominee shows up
         function loadDataFromStorage() {
             try {
-                const dataStr = localStorage.getItem('apexTradeState_v3');
+                const dataStr = localStorage.getItem('apexTradeState_v4');
                 if (dataStr) {
                     const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
                     window.appTradeHistory = data.tradeHistory || generatePreloadedTrades();
                     window.nominees = data.nominees || [{ name: "Shanti Yadav", share: 80 }];
                     
-                    // Time-based continuous growth simulation 
                     let lastSavedTime = data.lastSavedTime || Date.now();
                     let hoursPassed = (Date.now() - lastSavedTime) / (1000 * 60 * 60);
-                    let growthFactor = 1 + Math.max(0, (hoursPassed * 0.001)); // Slight positive growth when away
+                    let growthFactor = 1 + Math.max(0, (hoursPassed * 0.001)); 
                     
                     const savedHoldings = data.holdings || [];
                     window.portfolioData = savedHoldings.map(saved => {
@@ -614,7 +637,7 @@
                 }));
                 const trimmedHistory = window.appTradeHistory.slice(0, 150); 
                 
-                localStorage.setItem('apexTradeState_v3', JSON.stringify({
+                localStorage.setItem('apexTradeState_v4', JSON.stringify({
                     tradingBalance: window.tradingBalance,
                     holdings: holdingsToSave,
                     tradeHistory: trimmedHistory,
@@ -628,7 +651,7 @@
             let hist = []; let p = start;
             for(let j=0; j<points; j++) {
                 let open = p;
-                let close = p + (Math.random()-0.48) * (p*0.02); // 0.48 = slightly positive bias
+                let close = p + (Math.random()-0.48) * (p*0.02); 
                 let high = Math.max(open, close) + (Math.random() * p * 0.01);
                 let low = Math.min(open, close) - (Math.random() * p * 0.01);
                 hist.push({ o: open, h: high, l: low, c: close });
@@ -643,6 +666,7 @@
                 window.portfolioData = generateMassivePortfolio();
                 window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
                 window.appTradeHistory = generatePreloadedTrades();
+                window.nominees = [{ name: "Shanti Yadav", share: 80 }];
                 window.tradingBalance = 1585400.00; 
                 saveDataToStorage();
             }
@@ -664,7 +688,7 @@
                     document.getElementById('splash-screen').style.display = 'none';
                     isAppReady = true;
                     setInterval(globalTick, 1000);
-                    setInterval(saveDataToStorage, 5000); // Save state every 5s for robust persistence
+                    setInterval(saveDataToStorage, 5000); 
                 }, 500);
             }, 1200);
         }
@@ -689,7 +713,6 @@
             const numUpdates = Math.floor(Math.random() * 8) + 5;
             for(let i=0; i<numUpdates; i++) {
                 const s = portfolioData[Math.floor(Math.random() * portfolioData.length)];
-                // Using 0.48 instead of 0.5 ensures that on average, the market keeps ticking upwards (continuous growth)
                 const move = (Math.random() - 0.48) * (s.ltp * 0.003); 
                 s.ltp = Math.max(0.1, s.ltp + move);
                 
@@ -803,7 +826,6 @@
             updateTotalPortfolioHeaders();
         }
 
-        // 60% loss, 40% win exactly as requested for intraday trades
         const WIN_LOSS_PATTERN = ['L', 'L', 'W', 'L', 'W', 'L', 'L', 'W', 'L', 'W']; 
         let tradeCount = 0;
         window.isTradeActive = false;
@@ -900,7 +922,6 @@
             const list = document.getElementById('trade-history-list');
             list.innerHTML = '';
             
-            // Rendering 100 items for rich history look
             window.appTradeHistory.slice(0, 100).forEach(trade => {
                 const isWin = trade.outcome === 'W';
                 const row = document.createElement('div');
@@ -930,7 +951,7 @@
                             <p class="text-sm font-bold text-white">${nom.name}</p>
                             <p class="text-xs text-app-muted font-semibold mt-1">Profit Share assigned</p>
                         </div>
-                        <div class="bg-app-panel border border-app-border px-3 py-1.5 rounded-lg text-app-green font-bold text-sm">
+                        <div class="bg-app-panel border border-app-border px-3 py-1.5 rounded-lg text-app-green font-bold text-sm shadow-sm">
                             ${nom.share}%
                         </div>
                     </div>
@@ -1027,11 +1048,10 @@
             let p = startVal;
             let stepVal = (tCur - startVal) / points;
             
-            // Highly realistic, volatile chart resembling real 10Y market data
             for(let i=1; i<points; i++) {
                 let volatility = (period === '10Y' || period === '5Y') ? 1.5 : 0.8;
                 p += stepVal + (Math.random()-0.45)*(stepVal*volatility);
-                if(i % 12 === 0 && period === '10Y') p *= 0.85; // Simulated market crashes
+                if(i % 12 === 0 && period === '10Y') p *= 0.85; 
                 data.push(p);
             }
             data.push(tCur);
@@ -1046,7 +1066,7 @@
             data.forEach((val, i) => cx.lineTo(i*stepX, h - ((val-min)/range)*h));
             cx.lineTo(w, h); cx.fillStyle = grad; cx.fill();
 
-            cx.beginPath(); cx.lineWidth = 4; cx.strokeStyle = '#00b852'; // Groww Green
+            cx.beginPath(); cx.lineWidth = 4; cx.strokeStyle = '#00b852'; 
             data.forEach((val, i) => {
                 let y = h - ((val-min)/range)*h;
                 if(i===0) cx.moveTo(i*stepX, y); else cx.lineTo(i*stepX, y);
