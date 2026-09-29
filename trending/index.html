@@ -11,10 +11,10 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Custom App Icon -->
-    <link rel="icon" type="image/png" href="https://i.ibb.co/vCQkSDRV/1000696719.jpg">
+    <link rel="icon" type="image/jpeg" href="https://i.ibb.co/vCQkSDRV/1000696719.jpg">
     <link rel="apple-touch-icon" href="https://i.ibb.co/vCQkSDRV/1000696719.jpg">
     
-    <title>ApexTrade Pro - Terminal</title>
+    <title>ApexTrade Pro - Global Share Market</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -28,12 +28,12 @@
                         'app-panel': '#1f2937',
                         'app-text': '#f8fafc',
                         'app-muted': '#9ca3af',
-                        'app-green': '#059669', 
-                        'app-green-glow': '#10b981',
-                        'app-red': '#dc2626',   
-                        'app-red-glow': '#ef4444',
+                        'app-green': '#00b852', /* More Groww-like Green */
+                        'app-green-glow': '#00d05d',
+                        'app-red': '#eb5b3c',   /* More Groww-like Red */
+                        'app-red-glow': '#ff6644',
                         'app-blue': '#2563eb',  
-                        'app-border': '#374151'
+                        'app-border': '#2d3748'
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
                     fontSize: { 'xxs': '0.65rem' }
@@ -61,14 +61,14 @@
         
         .flash-green { animation: flashGreen 0.8s ease-out; }
         .flash-red { animation: flashRed 0.8s ease-out; }
-        @keyframes flashGreen { 0% { background-color: rgba(16, 185, 129, 0.4); color: #10b981; } 100% { background-color: transparent; } }
-        @keyframes flashRed { 0% { background-color: rgba(239, 68, 68, 0.4); color: #ef4444; } 100% { background-color: transparent; } }
+        @keyframes flashGreen { 0% { background-color: rgba(0, 184, 82, 0.2); color: #00b852; } 100% { background-color: transparent; } }
+        @keyframes flashRed { 0% { background-color: rgba(235, 91, 60, 0.2); color: #eb5b3c; } 100% { background-color: transparent; } }
         
         .pulse-live { animation: pulse 1.5s infinite; }
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(0, 184, 82, 0.6); }
+            70% { box-shadow: 0 0 0 6px rgba(0, 184, 82, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 184, 82, 0); }
         }
 
         .hide-scroll::-webkit-scrollbar { display: none; }
@@ -84,20 +84,6 @@
                 linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
             background-size: 20px 20px;
         }
-
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(10,15,28,0.85); backdrop-filter: blur(5px);
-            z-index: 99999; display: none; align-items: center; justify-content: center;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-box {
-            background: #111827; border: 1px solid #374151; border-radius: 16px;
-            width: 90%; max-w: 450px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-overlay.active .modal-box { transform: scale(1); }
 
         .fullscreen-view {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -127,28 +113,41 @@
         }
         
         .app-icon-lg {
-            width: 100px; height: 100px; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 110px; height: 110px; border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             margin-bottom: 24px;
+            border: 2px solid rgba(255,255,255,0.1);
             animation: floatIcon 3s ease-in-out infinite;
         }
         @keyframes floatIcon {
             0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(37,99,235,0.4); }
+            50% { transform: translateY(-10px); box-shadow: 0 20px 45px rgba(37,99,235,0.3); }
             100% { transform: translateY(0); }
         }
 
         #trading-chart-canvas, #history-chart-canvas, #stock-detail-canvas { width: 100%; height: 100%; display: block; }
+        
+        /* Custom modal for Nominee */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            z-index: 99999; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
+        }
+        .modal.active { display: flex; opacity: 1; }
+        .modal-content {
+            background: #111827; border: 1px solid #2d3748; padding: 24px; border-radius: 20px;
+            width: 90%; max-width: 400px; transform: scale(0.95); transition: transform 0.3s;
+        }
+        .modal.active .modal-content { transform: scale(1); }
     </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 
     <!-- Splash Screen -->
     <div id="splash-screen">
-        <img src="https://i.ibb.co/Z1cYJtqn/file-0000000022ec81fa85a12ae668406b2c.png" alt="App Icon" class="app-icon-lg">
-        <h1 class="text-3xl font-extrabold text-white tracking-tight mb-1">ApexTrade<span class="text-app-blue">.</span> Pro</h1>
-        <p class="text-app-muted text-xs tracking-[0.2em] uppercase mt-4">Syncing Global Data...</p>
-        <div class="mt-6 w-8 h-8 border-4 border-app-border border-t-app-blue rounded-full animate-spin"></div>
+        <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="App Icon" class="app-icon-lg object-cover">
+        <h1 class="text-4xl font-extrabold text-white tracking-tight mb-1">ApexTrade<span class="text-app-blue">.</span> Pro</h1>
+        <p class="text-app-blue font-bold text-sm tracking-[0.25em] uppercase mt-3">Global Share Market</p>
+        <div class="mt-8 w-8 h-8 border-4 border-app-border border-t-app-blue rounded-full animate-spin"></div>
     </div>
 
     <div id="toast-container"></div>
@@ -160,11 +159,14 @@
     <nav class="sticky top-0 z-50 bg-app-bg/95 backdrop-blur-xl border-b border-app-border px-3 py-3 sm:px-6 shadow-sm">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('portfolio')">
-                <img src="https://i.ibb.co/Z1cYJtqn/file-0000000022ec81fa85a12ae668406b2c.png" alt="Icon" class="w-9 h-9 rounded-lg shadow-lg border border-gray-700">
-                <span class="font-bold text-xl tracking-tight text-white">ApexTrade<span class="text-app-blue">.</span></span>
+                <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="Icon" class="w-10 h-10 rounded-xl shadow-lg border border-gray-700 object-cover">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl tracking-tight text-white leading-none">ApexTrade</span>
+                    <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
+                </div>
             </div>
 
-            <div onclick="openModal('modal-add-funds')" class="flex flex-col items-end justify-center bg-app-card border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-lg group">
+            <div onclick="switchTab('account')" class="flex flex-col items-end justify-center bg-app-card border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-lg group">
                 <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Trading Balance</span>
                 <span class="text-sm font-extrabold text-white group-hover:text-app-green transition-colors" id="header-trading-balance">₹ 15,85,400.00</span>
             </div>
@@ -176,13 +178,12 @@
         <!-- View 1: PORTFOLIO -->
         <div id="view-portfolio" class="view-section active space-y-4">
             <div class="bg-app-card rounded-2xl border border-app-border p-5 shadow-lg relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-64 h-64 bg-app-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute right-0 top-0 w-64 h-64 bg-app-green/5 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <div class="mb-4">
                     <p class="text-xs font-bold text-app-muted uppercase tracking-widest mb-1 flex items-center gap-2">
                         Total Portfolio Value <span class="w-2 h-2 rounded-full bg-app-green pulse-live"></span>
                     </p>
-                    <!-- Main Value: Solid White as requested -->
                     <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight cursor-pointer" id="totalCurrentValue" onclick="openHistoryChart()">₹ 0.00</h1>
                     
                     <div class="flex items-center gap-4 mt-3">
@@ -228,7 +229,7 @@
         <div id="view-trading" class="view-section space-y-4">
             <div class="flex justify-between items-end mb-2">
                 <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-                    <i class="ph-fill ph-lightning text-app-blue"></i> Options Trade
+                    <i class="ph-fill ph-lightning text-app-blue"></i> Live Options
                 </h1>
             </div>
 
@@ -247,7 +248,7 @@
                     <div class="relative w-full h-[320px] bg-app-bg terminal-grid p-2 border-b border-app-border">
                         <div class="absolute top-4 left-4 z-10 text-white drop-shadow-md">
                             <h2 class="text-4xl font-extrabold tracking-tighter" id="trade-live-price">0.00</h2>
-                            <p class="text-xs text-app-green font-bold flex items-center gap-1 mt-1 bg-app-card/80 px-2 py-1 rounded w-fit"><i class="ph-bold ph-caret-up"></i> Market Open</p>
+                            <p class="text-xs text-app-green font-bold flex items-center gap-1 mt-1 bg-app-card/80 px-2 py-1 rounded w-fit"><i class="ph-bold ph-caret-up"></i> Live Market</p>
                         </div>
                         <canvas id="trading-chart-canvas"></canvas>
                         
@@ -272,10 +273,10 @@
                                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-lg">₹</span>
                                 <input type="number" id="trade-amount" value="5000" step="1000" class="w-full bg-app-bg border border-app-border text-white text-xl font-bold rounded-xl py-3 pl-9 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
                             </div>
-                            <button onclick="executeTrade('UP')" class="flex-[0.8] bg-app-green hover:bg-app-green-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(16,185,129,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight">
+                            <button onclick="executeTrade('UP')" class="flex-[0.8] bg-app-green hover:bg-app-green-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(0,184,82,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight">
                                 <i class="ph-bold ph-trend-up text-xl mb-0.5"></i> CALL
                             </button>
-                            <button onclick="executeTrade('DOWN')" class="flex-[0.8] bg-app-red hover:bg-app-red-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(239,68,68,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight">
+                            <button onclick="executeTrade('DOWN')" class="flex-[0.8] bg-app-red hover:bg-app-red-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(235,91,60,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight">
                                 <i class="ph-bold ph-trend-down text-xl mb-0.5"></i> PUT
                             </button>
                         </div>
@@ -285,8 +286,8 @@
                 <!-- Recent Trades List -->
                 <div class="bg-app-card border border-app-border rounded-xl shadow-xl flex flex-col h-[500px] lg:h-auto">
                     <div class="p-3 bg-app-panel border-b border-app-border flex justify-between items-center">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="ph-fill ph-list-dashes text-app-blue"></i> Trade History</h3>
-                        <span class="text-xs text-app-muted font-bold">Live</span>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="ph-fill ph-list-dashes text-app-blue"></i> 100+ Live History</h3>
+                        <span class="text-xs text-app-green font-bold animate-pulse">● Live</span>
                     </div>
                     <div class="flex-1 overflow-y-auto p-2 space-y-2" id="trade-history-list">
                         <!-- Populated by JS -->
@@ -295,93 +296,8 @@
             </div>
         </div>
 
-        <div id="view-ipo" class="view-section space-y-4">
-            <div class="flex justify-between items-center mb-4">
-                <h1 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-                    <i class="ph-fill ph-rocket-launch text-app-blue"></i> IPO Center
-                </h1>
-                <span class="text-xs font-bold text-app-green bg-app-green/10 border border-app-green/20 px-2 py-1 rounded">Live Feed</span>
-            </div>
-            
-            <div class="flex gap-4 border-b border-app-border mb-4">
-                <button class="pb-2 border-b-2 border-app-blue text-white font-bold text-sm px-2">Open (Live)</button>
-                <button class="pb-2 border-b-2 border-transparent text-app-muted font-bold text-sm px-2 hover:text-white transition">Upcoming</button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="ipo-list">
-                <!-- IPO Card 1 -->
-                <div class="bg-app-card border border-app-border rounded-2xl p-5 shadow-lg relative overflow-hidden group cursor-pointer hover:border-app-blue transition-colors">
-                    <div class="absolute top-0 right-0 bg-app-green text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">OPEN</div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1"><img src="https://logo.clearbit.com/swiggy.com" onerror="this.src='https://placehold.co/48x48/orange/white?text=S'" class="w-full h-full object-contain rounded"></div>
-                        <div>
-                            <h3 class="font-extrabold text-white text-lg leading-tight">Swiggy Limited</h3>
-                            <p class="text-xs text-app-muted font-semibold">Closes in 2 days</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Min Invest</p>
-                            <p class="font-bold text-white">₹14,850</p>
-                        </div>
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Price Range</p>
-                            <p class="font-bold text-white">₹371 - ₹390</p>
-                        </div>
-                    </div>
-                    <button class="w-full bg-app-blue text-white font-bold py-2.5 rounded-xl shadow-md group-hover:bg-blue-600 transition">Apply Now</button>
-                </div>
-
-                <!-- IPO Card 2 -->
-                <div class="bg-app-card border border-app-border rounded-2xl p-5 shadow-lg relative overflow-hidden group cursor-pointer hover:border-app-blue transition-colors">
-                    <div class="absolute top-0 right-0 bg-app-green text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">OPEN</div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1"><img src="https://logo.clearbit.com/hyundai.com" onerror="this.src='https://placehold.co/48x48/blue/white?text=H'" class="w-full h-full object-contain rounded"></div>
-                        <div>
-                            <h3 class="font-extrabold text-white text-lg leading-tight">Hyundai Motor India</h3>
-                            <p class="text-xs text-app-muted font-semibold">Closes Today</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Min Invest</p>
-                            <p class="font-bold text-white">₹13,713</p>
-                        </div>
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Price Range</p>
-                            <p class="font-bold text-white">₹1865 - ₹1960</p>
-                        </div>
-                    </div>
-                    <button class="w-full bg-app-blue text-white font-bold py-2.5 rounded-xl shadow-md group-hover:bg-blue-600 transition">Apply Now</button>
-                </div>
-                
-                <!-- IPO Card 3 -->
-                <div class="bg-app-card border border-app-border rounded-2xl p-5 shadow-lg relative overflow-hidden group cursor-pointer hover:border-app-blue transition-colors">
-                    <div class="absolute top-0 right-0 bg-app-green text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">OPEN</div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1"><img src="https://logo.clearbit.com/nsdl.co.in" onerror="this.src='https://placehold.co/48x48/blue/white?text=N'" class="w-full h-full object-contain rounded"></div>
-                        <div>
-                            <h3 class="font-extrabold text-white text-lg leading-tight">NSDL</h3>
-                            <p class="text-xs text-app-muted font-semibold">Closes in 4 days</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Min Invest</p>
-                            <p class="font-bold text-white">₹14,990</p>
-                        </div>
-                        <div class="bg-app-panel p-2 rounded-lg border border-app-border">
-                            <p class="text-[10px] text-app-muted uppercase font-bold">Price Range</p>
-                            <p class="font-bold text-white">₹850 - ₹900</p>
-                        </div>
-                    </div>
-                    <button class="w-full bg-app-blue text-white font-bold py-2.5 rounded-xl shadow-md group-hover:bg-blue-600 transition">Apply Now</button>
-                </div>
-            </div>
-        </div>
-
         <div id="view-account" class="view-section space-y-4">
-            <h1 class="text-3xl font-extrabold text-white tracking-tight mb-4">My Account</h1>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight mb-4">My Profile</h1>
             
             <div class="bg-app-card rounded-2xl border border-app-border p-5 shadow-lg flex items-center gap-4">
                 <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl ring-2 ring-app-border shadow-lg">
@@ -394,11 +310,22 @@
                 </div>
             </div>
 
+            <!-- Nominee Section -->
+            <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-fill ph-users text-app-blue"></i> Nominees & Profit Share</h3>
+                    <button onclick="openNomineeModal()" class="text-xs font-bold bg-app-blue/20 text-app-blue px-3 py-1.5 rounded-lg border border-app-blue/30 hover:bg-app-blue hover:text-white transition">+ Add</button>
+                </div>
+                <div id="nominee-list" class="space-y-3">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Add Funds -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-plus-circle text-app-green"></i> Add Funds</h3>
-                    <p class="text-sm text-app-muted mb-4">Deposit funds instantly via UPI or Net Banking into your Trading Balance.</p>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-plus-circle text-app-green"></i> Add Funds to Portfolio</h3>
+                    <p class="text-sm text-app-muted mb-4">Deposit funds instantly via UPI or Net Banking for trading and investments.</p>
                     <div class="relative mb-4">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
                         <input type="number" id="input-add-funds" placeholder="Enter Amount" class="w-full bg-app-bg border border-app-border text-white text-xl font-bold rounded-xl py-3 pl-10 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
@@ -408,7 +335,7 @@
 
                 <!-- Withdraw -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-minus-circle text-app-red"></i> Withdraw</h3>
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-minus-circle text-app-red"></i> Withdraw Funds</h3>
                     <p class="text-sm text-app-muted mb-4">Withdraw your Trading Balance directly to your linked HDFC Bank account.</p>
                     <div class="relative mb-4">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
@@ -432,6 +359,7 @@
 
     </main>
 
+    <!-- 10 Year History Fullscreen View -->
     <div id="history-chart-view" class="fullscreen-view">
         <div class="p-4 sm:p-6 border-b border-app-border flex justify-between items-center bg-app-panel/90 backdrop-blur-md">
             <button onclick="closeHistoryChart()" class="text-white flex items-center gap-2 font-bold hover:text-app-blue transition-colors group">
@@ -502,6 +430,27 @@
         </div>
     </div>
 
+    <!-- Nominee Modal -->
+    <div id="modal-add-nominee" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold text-white mb-4">Add Nominee</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-app-muted font-bold uppercase mb-1 block">Nominee Name</label>
+                    <input type="text" id="nominee-name" class="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2 text-white outline-none focus:border-app-blue">
+                </div>
+                <div>
+                    <label class="text-xs text-app-muted font-bold uppercase mb-1 block">Profit Share (%)</label>
+                    <input type="number" id="nominee-share" class="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2 text-white outline-none focus:border-app-blue" placeholder="e.g. 20">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeNomineeModal()" class="flex-1 py-2 rounded-lg border border-app-border text-white font-bold hover:bg-app-panel">Cancel</button>
+                    <button onclick="saveNominee()" class="flex-1 py-2 rounded-lg bg-app-blue text-white font-bold hover:bg-blue-600">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="sm:hidden fixed bottom-0 left-0 w-full bg-app-panel/95 backdrop-blur-xl border-t border-app-border pb-safe z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
         <div class="flex justify-around items-center h-16 px-1">
             <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-blue transition-colors">
@@ -510,46 +459,17 @@
             </button>
             <button onclick="switchTab('trading')" id="nav-trading" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-muted hover:text-white transition-colors">
                 <i class="ph ph-lightning text-2xl mb-0.5"></i>
-                <span class="text-[10px] font-bold tracking-wide uppercase">Options</span>
+                <span class="text-[10px] font-bold tracking-wide uppercase">Live Trade</span>
             </button>
-            <button onclick="switchTab('ipo')" id="nav-ipo" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-muted hover:text-white transition-colors">
-                <i class="ph ph-rocket-launch text-2xl mb-0.5"></i>
-                <span class="text-[10px] font-bold tracking-wide uppercase">IPO</span>
-            </button>
-            <!-- Account button fixed to open the Account view -->
             <button onclick="switchTab('account')" id="nav-account" class="nav-btn flex flex-col items-center justify-center w-full h-full text-app-muted hover:text-white transition-colors">
                 <i class="ph ph-user-circle text-2xl mb-0.5"></i>
-                <span class="text-[10px] font-bold tracking-wide uppercase">Account</span>
+                <span class="text-[10px] font-bold tracking-wide uppercase">Profile</span>
             </button>
         </div>
     </div>
 
     <script>
-        const manifest = {
-            "name": "ApexTrade Pro",
-            "short_name": "ApexTrade",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#0a0f1c",
-            "theme_color": "#0a0f1c",
-            "icons": [{
-                "src": "https://i.ibb.co/Z1cYJtqn/file-0000000022ec81fa85a12ae668406b2c.png",
-                "sizes": "192x192", "type": "image/png"
-            }, {
-                "src": "https://i.ibb.co/Z1cYJtqn/file-0000000022ec81fa85a12ae668406b2c.png",
-                "sizes": "512x512", "type": "image/png"
-            }]
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+        // Formatter utilities
         window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
         window.fmtCurDec = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amt);
         window.fmtNum = (num) => new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
@@ -559,8 +479,8 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = 'toast';
-            if(type === 'success') toast.style.borderLeftColor = '#10b981';
-            if(type === 'error') toast.style.borderLeftColor = '#ef4444';
+            if(type === 'success') toast.style.borderLeftColor = '#00b852';
+            if(type === 'error') toast.style.borderLeftColor = '#eb5b3c';
             
             toast.innerHTML = `
                 <div class="flex items-center gap-3">
@@ -574,15 +494,8 @@
             setTimeout(() => { if(toast.parentElement) toast.remove(); }, 3000);
         }
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'apex-trade-app-v3';
-        const firebaseConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
-        let db, auth, currentUser;
-
-        // Base Data definition (High investment base values)
+        // Master stock config
         const MASTER_COMPANIES = [
-            { id: 'AAPL', name: 'Apple Inc.', cap: 'Intl', basePrice: 14500 },
-            { id: 'MSFT', name: 'Microsoft', cap: 'Intl', basePrice: 32000 },
-            { id: 'TSLA', name: 'Tesla Inc.', cap: 'Intl', basePrice: 15000 },
             { id: 'RELIANCE', name: 'Reliance Ind.', cap: 'Large', basePrice: 2950 },
             { id: 'TCS', name: 'TCS', cap: 'Large', basePrice: 4050 },
             { id: 'HDFCBANK', name: 'HDFC Bank', cap: 'Large', basePrice: 1550 },
@@ -594,7 +507,10 @@
             { id: 'RVNL', name: 'RVNL', cap: 'Mid', basePrice: 285 },
             { id: 'IREDA', name: 'IREDA', cap: 'Mid', basePrice: 190 },
             { id: 'SUZLON', name: 'Suzlon Energy', cap: 'Mid', basePrice: 42 },
-            { id: 'TATAPOWER', name: 'Tata Power', cap: 'Mid', basePrice: 420 }
+            { id: 'TATAPOWER', name: 'Tata Power', cap: 'Mid', basePrice: 420 },
+            { id: 'AAPL', name: 'Apple Inc.', cap: 'Intl', basePrice: 14500 },
+            { id: 'MSFT', name: 'Microsoft', cap: 'Intl', basePrice: 32000 },
+            { id: 'TSLA', name: 'Tesla Inc.', cap: 'Intl', basePrice: 15000 }
         ];
 
         while(MASTER_COMPANIES.length < 50) {
@@ -602,9 +518,12 @@
             MASTER_COMPANIES.push({...src, id: src.id + (MASTER_COMPANIES.length), name: src.name + ' ETF'});
         }
 
+        // App State
         window.portfolioData = [];
         window.appTradeHistory = [];
-        // Exact default balance requested by user
+        window.nominees = [
+            { name: "Shanti Yadav", share: 80 }
+        ];
         window.tradingBalance = 1585400; 
         
         let activeFilter = 'All';
@@ -612,7 +531,6 @@
         let detailChartType = 'line';
         let isAppReady = false;
 
-        // Generate massive default portfolio if no cloud save exists
         function generateMassivePortfolio() {
             let data = [];
             const targetInvested = 4500000; 
@@ -625,8 +543,8 @@
                 if(qty > 500) qty = Math.round(qty/50)*50;
                 
                 let avgP = invested / qty;
-                let ltp = avgP * (1.5 + Math.random()); 
-                let prevC = ltp / (1 + ((Math.random()*4 - 1.5)/100));
+                let ltp = avgP * (1.1 + (Math.random() * 0.5)); // Positive start
+                let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
                 
                 data.push({
                     id: comp.id, name: comp.name, cap: comp.cap,
@@ -638,13 +556,13 @@
             return data;
         }
 
-        // Generate 500 realistic trades as requested (60% loss, 40% win)
         function generatePreloadedTrades() {
             let trades = [];
             const assets = ['NIFTY', 'BANKNIFTY', 'RELIANCE', 'BTCUSD'];
-            for(let i=0; i<200; i++) { // Using 200 for optimal mobile performance, but visually looks infinite
-                let amount = Math.floor(Math.random() * 90000) + 10000; // 10k to 100k
-                let isWin = Math.random() < 0.4; // 40% win rate exactly as requested
+            // As requested: 100+ transactions (we generate 150), 60% loss, 40% win
+            for(let i=0; i<150; i++) {
+                let amount = Math.floor(Math.random() * 90000) + 10000;
+                let isWin = Math.random() < 0.40; // 40% win rate exactly
                 let dir = Math.random() > 0.5 ? 'UP' : 'DOWN';
                 let asset = assets[Math.floor(Math.random() * assets.length)];
                 
@@ -659,24 +577,25 @@
             return trades;
         }
 
-        async function loadDataFromCloud() {
-            if (!currentUser || !db) return false;
+        // Local Storage for robust data persistence
+        function loadDataFromStorage() {
             try {
-                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'appData', 'stateV2');
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    // Crucial: Load exactly what was saved to prevent reset on refresh
+                const dataStr = localStorage.getItem('apexTradeState_v3');
+                if (dataStr) {
+                    const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
                     window.appTradeHistory = data.tradeHistory || generatePreloadedTrades();
+                    window.nominees = data.nominees || [{ name: "Shanti Yadav", share: 80 }];
+                    
+                    // Time-based continuous growth simulation 
+                    let lastSavedTime = data.lastSavedTime || Date.now();
+                    let hoursPassed = (Date.now() - lastSavedTime) / (1000 * 60 * 60);
+                    let growthFactor = 1 + Math.max(0, (hoursPassed * 0.001)); // Slight positive growth when away
                     
                     const savedHoldings = data.holdings || [];
                     window.portfolioData = savedHoldings.map(saved => {
-                        // Restore precise LTP if saved, else fluctuate slightly from base
-                        let ltp = saved.lastLtp || saved.avgPrice * (1.5 + Math.random()); 
-                        let prevC = saved.prevClose || ltp / (1 + ((Math.random()*4 - 1.5)/100));
-                        
+                        let ltp = (saved.lastLtp || saved.avgPrice) * growthFactor; 
+                        let prevC = saved.prevClose || ltp / 1.01;
                         return {
                             ...saved, ltp: ltp, prevClose: prevC,
                             history: generatePriceHistory(prevC, ltp, 40)
@@ -684,35 +603,32 @@
                     });
                     return true;
                 }
-            } catch (e) { console.error("Cloud load error", e); }
+            } catch (e) { console.error("Storage load error", e); }
             return false;
         }
 
-        // Must await this on critical actions (Add money, withdraw)
-        async function saveDataToCloud() {
-            if (!currentUser || !db) return;
+        function saveDataToStorage() {
             try {
-                const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'appData', 'stateV2');
                 const holdingsToSave = window.portfolioData.map(s => ({
                     id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, baseP: s.baseP, lastLtp: s.ltp, prevClose: s.prevClose
                 }));
-                // Keep history trimmed to save space
-                const trimmedHistory = window.appTradeHistory.slice(0, 100); 
+                const trimmedHistory = window.appTradeHistory.slice(0, 150); 
                 
-                await setDoc(docRef, {
+                localStorage.setItem('apexTradeState_v3', JSON.stringify({
                     tradingBalance: window.tradingBalance,
                     holdings: holdingsToSave,
                     tradeHistory: trimmedHistory,
-                    lastUpdated: new Date().toISOString()
-                });
-            } catch (e) { console.error("Cloud save error", e); }
+                    nominees: window.nominees,
+                    lastSavedTime: Date.now()
+                }));
+            } catch (e) { console.error("Storage save error", e); }
         }
 
         function generatePriceHistory(start, end, points) {
             let hist = []; let p = start;
             for(let j=0; j<points; j++) {
                 let open = p;
-                let close = p + (Math.random()-0.5) * (p*0.02);
+                let close = p + (Math.random()-0.48) * (p*0.02); // 0.48 = slightly positive bias
                 let high = Math.max(open, close) + (Math.random() * p * 0.01);
                 let low = Math.min(open, close) - (Math.random() * p * 0.01);
                 hist.push({ o: open, h: high, l: low, c: close });
@@ -722,29 +638,15 @@
         }
 
         async function bootApp() {
-            try {
-                if (firebaseConfigStr) {
-                    const firebaseConfig = JSON.parse(firebaseConfigStr);
-                    const app = initializeApp(firebaseConfig);
-                    auth = getAuth(app); db = getFirestore(app);
-                    
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else { await signInAnonymously(auth); }
-                    currentUser = auth.currentUser;
-                }
-            } catch(e) { console.warn("Running offline"); }
-
-            const loaded = await loadDataFromCloud();
+            const loaded = loadDataFromStorage();
             if (!loaded) {
                 window.portfolioData = generateMassivePortfolio();
                 window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
                 window.appTradeHistory = generatePreloadedTrades();
-                window.tradingBalance = 1585400.00; // Starting bal exact
-                await saveDataToCloud();
+                window.tradingBalance = 1585400.00; 
+                saveDataToStorage();
             }
 
-            // Render UI
             document.getElementById('count-All').innerText = portfolioData.length;
             document.getElementById('count-Large').innerText = portfolioData.filter(s => s.cap === 'Large').length;
             document.getElementById('count-Mid').innerText = portfolioData.filter(s => s.cap === 'Mid').length;
@@ -753,6 +655,7 @@
             renderPortfolio();
             updateBalanceUI(false);
             renderTradeHistory();
+            renderNominees();
             initTradingChart();
             
             setTimeout(() => {
@@ -761,10 +664,9 @@
                     document.getElementById('splash-screen').style.display = 'none';
                     isAppReady = true;
                     setInterval(globalTick, 1000);
-                    // Periodically save LTPs
-                    setInterval(saveDataToCloud, 10000);
+                    setInterval(saveDataToStorage, 5000); // Save state every 5s for robust persistence
                 }, 500);
-            }, 1000);
+            }, 1200);
         }
 
         let lastBalance = 0;
@@ -784,10 +686,11 @@
 
         window.globalTick = function() {
             if(!isAppReady) return;
-            const numUpdates = Math.floor(Math.random() * 5) + 5;
+            const numUpdates = Math.floor(Math.random() * 8) + 5;
             for(let i=0; i<numUpdates; i++) {
                 const s = portfolioData[Math.floor(Math.random() * portfolioData.length)];
-                const move = (Math.random() - 0.5) * (s.ltp * 0.005); 
+                // Using 0.48 instead of 0.5 ensures that on average, the market keeps ticking upwards (continuous growth)
+                const move = (Math.random() - 0.48) * (s.ltp * 0.003); 
                 s.ltp = Math.max(0.1, s.ltp + move);
                 
                 let lastCandle = s.history[s.history.length-1];
@@ -821,7 +724,7 @@
 
             if(!isTradeActive) {
                 const volatility = liveTradePrice * 0.0008;
-                liveTradePrice += (Math.random() - 0.5) * volatility;
+                liveTradePrice += (Math.random() - 0.49) * volatility;
                 tradeChartHistory.push(liveTradePrice);
                 if(tradeChartHistory.length > 50) tradeChartHistory.shift();
                 
@@ -840,13 +743,9 @@
                 tDay += s.qty * (s.ltp - s.prevClose);
             });
             
-            // Add Trading Balance to Total Portfolio Value for realism (optional based on user preference, keeping strict to stock value to match typical brokers)
-            
             const trAmt = tCur - tInv;
             const curEl = document.getElementById('totalCurrentValue');
-            const oldCur = parseFloat(curEl.innerText.replace(/[^0-9.-]+/g,"")) || 0;
             curEl.innerText = window.fmtCur(tCur); 
-            // Only keeping text white as requested: "total portfolio value jo hai vah ek hi colour mein ho"
             
             document.getElementById('totalReturns').innerHTML = `<i class="ph-bold ph-trend-${trAmt>=0?'up':'down'}"></i> ${trAmt>=0?'+':''}${window.fmtCur(trAmt)} (${((trAmt/tInv)*100).toFixed(2)}%)`;
             document.getElementById('totalReturns').className = `text-sm font-bold flex items-center gap-1 transition-colors ${trAmt>=0?'text-app-green':'text-app-red'}`;
@@ -904,7 +803,8 @@
             updateTotalPortfolioHeaders();
         }
 
-        const WIN_LOSS_PATTERN = ['W', 'L', 'W', 'W', 'L', 'L', 'W', 'W', 'W', 'L']; // 60% win if requested, but user said 6 bar win, 4 bar loss. Wait, prompt said: "10 bar agar Main trading kar raha hun to usmein se 6 bar mujhe fayda mil raha hai aur char bar mujhe nuksan". So 60% Win.
+        // 60% loss, 40% win exactly as requested for intraday trades
+        const WIN_LOSS_PATTERN = ['L', 'L', 'W', 'L', 'W', 'L', 'L', 'W', 'L', 'W']; 
         let tradeCount = 0;
         window.isTradeActive = false;
         
@@ -930,10 +830,9 @@
             if(isNaN(amount) || amount < 100) return showToast('Enter valid amount', 'error');
             if(amount > window.tradingBalance) return showToast('Insufficient Trading Balance', 'error');
 
-            // Instantly deduct
             window.tradingBalance -= amount;
             updateBalanceUI(true);
-            saveDataToCloud(); 
+            saveDataToStorage(); 
             
             let outcome = WIN_LOSS_PATTERN[tradeCount % 10]; 
             tradeCount++;
@@ -988,22 +887,21 @@
                 showToast(`TRADE LOST. -₹${window.fmtNum(amount)}`, 'error');
             }
             
-            // Log History
             window.appTradeHistory.unshift({
                 asset: activeTradeAsset, dir: direction, amt: amount, profit: profit, entry: entryPrice, exit: exitPrice, outcome: outcome
             });
             
             updateBalanceUI(true);
             renderTradeHistory();
-            await saveDataToCloud(); // Await strictly to ensure persistence
+            saveDataToStorage(); 
         }
 
         window.renderTradeHistory = function() {
             const list = document.getElementById('trade-history-list');
             list.innerHTML = '';
             
-            // Render first 50 to keep DOM fast
-            window.appTradeHistory.slice(0, 50).forEach(trade => {
+            // Rendering 100 items for rich history look
+            window.appTradeHistory.slice(0, 100).forEach(trade => {
                 const isWin = trade.outcome === 'W';
                 const row = document.createElement('div');
                 row.className = 'bg-app-bg border border-app-border rounded-xl p-3 flex justify-between items-center shadow-sm';
@@ -1021,7 +919,47 @@
             });
         }
 
-        window.submitAddFunds = async function() {
+        // Nominee Logic
+        window.renderNominees = function() {
+            const container = document.getElementById('nominee-list');
+            container.innerHTML = '';
+            window.nominees.forEach((nom, index) => {
+                container.innerHTML += `
+                    <div class="bg-app-bg p-3 rounded-lg border border-app-border flex justify-between items-center">
+                        <div>
+                            <p class="text-sm font-bold text-white">${nom.name}</p>
+                            <p class="text-xs text-app-muted font-semibold mt-1">Profit Share assigned</p>
+                        </div>
+                        <div class="bg-app-panel border border-app-border px-3 py-1.5 rounded-lg text-app-green font-bold text-sm">
+                            ${nom.share}%
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        window.openNomineeModal = function() {
+            document.getElementById('modal-add-nominee').classList.add('active');
+        }
+        window.closeNomineeModal = function() {
+            document.getElementById('modal-add-nominee').classList.remove('active');
+            document.getElementById('nominee-name').value = '';
+            document.getElementById('nominee-share').value = '';
+        }
+        window.saveNominee = function() {
+            const name = document.getElementById('nominee-name').value;
+            const share = parseFloat(document.getElementById('nominee-share').value);
+            if(!name || isNaN(share) || share <= 0 || share > 100) {
+                return showToast('Enter valid Name and Share %', 'error');
+            }
+            window.nominees.push({ name, share });
+            renderNominees();
+            closeNomineeModal();
+            saveDataToStorage();
+            showToast('Nominee Added Successfully', 'success');
+        }
+
+        window.submitAddFunds = function() {
             let val = parseFloat(document.getElementById('input-add-funds').value);
             if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
             
@@ -1029,11 +967,10 @@
             updateBalanceUI(true);
             document.getElementById('input-add-funds').value = '';
             showToast(`₹${window.fmtNum(val)} Added Successfully!`, 'success');
-            
-            await saveDataToCloud(); // Save instantly to persist refresh
+            saveDataToStorage(); 
         }
 
-        window.submitWithdraw = async function() {
+        window.submitWithdraw = function() {
             let val = parseFloat(document.getElementById('input-withdraw').value);
             if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
             if(val > window.tradingBalance) return showToast('Insufficient Trading Balance', 'error');
@@ -1042,8 +979,7 @@
             updateBalanceUI(true);
             document.getElementById('input-withdraw').value = '';
             showToast(`₹${window.fmtNum(val)} Withdrawn to Bank Account.`, 'success');
-            
-            await saveDataToCloud(); // Save instantly to persist refresh
+            saveDataToStorage(); 
         }
 
         window.openHistoryChart = function() {
@@ -1083,30 +1019,34 @@
             let w = rect.width, h = rect.height;
             cx.clearRect(0,0,w,h);
 
-            let points = period === '1D' ? 12 : period === '1W' ? 7 : period === '1M' ? 30 : period === '1Y' ? 12 : period === '5Y' ? 60 : 120;
+            let points = period === '1D' ? 24 : period === '1W' ? 14 : period === '1M' ? 30 : period === '1Y' ? 52 : period === '5Y' ? 60 : 120;
             let tCur = 0; portfolioData.forEach(s => tCur += s.qty * s.ltp);
-            let startVal = tCur * (period === '10Y' ? 0.2 : period === '5Y' ? 0.4 : period === '1Y' ? 0.7 : period === '1M' ? 0.9 : period === '1W' ? 0.95 : 0.98);
+            let startVal = tCur * (period === '10Y' ? 0.15 : period === '5Y' ? 0.35 : period === '1Y' ? 0.65 : period === '1M' ? 0.85 : period === '1W' ? 0.92 : 0.98);
             
             let data = [startVal];
             let p = startVal;
             let stepVal = (tCur - startVal) / points;
+            
+            // Highly realistic, volatile chart resembling real 10Y market data
             for(let i=1; i<points; i++) {
-                p += stepVal + (Math.random()-0.5)*(stepVal*0.5);
+                let volatility = (period === '10Y' || period === '5Y') ? 1.5 : 0.8;
+                p += stepVal + (Math.random()-0.45)*(stepVal*volatility);
+                if(i % 12 === 0 && period === '10Y') p *= 0.85; // Simulated market crashes
                 data.push(p);
             }
             data.push(tCur);
 
-            let min = Math.min(...data) * 0.95; let max = Math.max(...data) * 1.05; let range = max - min;
+            let min = Math.min(...data) * 0.90; let max = Math.max(...data) * 1.05; let range = max - min;
             let stepX = w / (data.length - 1);
 
             let grad = cx.createLinearGradient(0,0,0,h);
-            grad.addColorStop(0, 'rgba(16, 185, 129, 0.4)'); grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+            grad.addColorStop(0, 'rgba(0, 184, 82, 0.4)'); grad.addColorStop(1, 'rgba(0, 184, 82, 0)');
             
             cx.beginPath(); cx.moveTo(0, h); cx.lineTo(0, h - ((data[0]-min)/range)*h);
             data.forEach((val, i) => cx.lineTo(i*stepX, h - ((val-min)/range)*h));
             cx.lineTo(w, h); cx.fillStyle = grad; cx.fill();
 
-            cx.beginPath(); cx.lineWidth = 4; cx.strokeStyle = '#10b981';
+            cx.beginPath(); cx.lineWidth = 4; cx.strokeStyle = '#00b852'; // Groww Green
             data.forEach((val, i) => {
                 let y = h - ((val-min)/range)*h;
                 if(i===0) cx.moveTo(i*stepX, y); else cx.lineTo(i*stepX, y);
@@ -1114,7 +1054,7 @@
             cx.stroke();
             
             let labelsHTML = '';
-            if(period === '10Y') labelsHTML = '<span>2016</span><span>2021</span><span>Today</span>';
+            if(period === '10Y') labelsHTML = '<span>2016</span><span>2019</span><span>2023</span><span>Today</span>';
             else if(period === '1Y') labelsHTML = '<span>Oct \'25</span><span>Mar \'26</span><span>Today</span>';
             else if(period === '1M') labelsHTML = '<span>4 Weeks Ago</span><span>2 Weeks Ago</span><span>Today</span>';
             else labelsHTML = '<span>Start</span><span>Mid</span><span>Today</span>';
@@ -1193,7 +1133,7 @@
             if(detailChartType === 'line') {
                 cx.beginPath(); cx.lineWidth = 3;
                 let isUp = hist[hist.length-1].c >= hist[0].c;
-                cx.strokeStyle = isUp ? '#10b981' : '#ef4444';
+                cx.strokeStyle = isUp ? '#00b852' : '#eb5b3c';
                 hist.forEach((d, i) => {
                     let x = i * stepX + (stepX/2); let y = getY(d.c);
                     if(i===0) cx.moveTo(x,y); else cx.lineTo(x,y);
@@ -1205,8 +1145,8 @@
                     let x = i * stepX + (stepX/2);
                     let yO = getY(d.o); let yC = getY(d.c); let yH = getY(d.h); let yL = getY(d.l);
                     let isBull = d.c >= d.o;
-                    cx.strokeStyle = isBull ? '#10b981' : '#ef4444';
-                    cx.fillStyle = isBull ? '#10b981' : '#ef4444';
+                    cx.strokeStyle = isBull ? '#00b852' : '#eb5b3c';
+                    cx.fillStyle = isBull ? '#00b852' : '#eb5b3c';
                     
                     cx.beginPath(); cx.lineWidth = 1.5;
                     cx.moveTo(x, yH); cx.lineTo(x, yL); cx.stroke();
@@ -1235,7 +1175,7 @@
             let range = (max - min) || 1;
             
             tradeCtx.beginPath(); tradeCtx.lineWidth = 4;
-            tradeCtx.strokeStyle = tradeChartHistory[tradeChartHistory.length-1] >= tradeChartHistory[0] ? '#10b981' : '#ef4444';
+            tradeCtx.strokeStyle = tradeChartHistory[tradeChartHistory.length-1] >= tradeChartHistory[0] ? '#00b852' : '#eb5b3c';
             
             let stepX = w / (tradeChartHistory.length - 1);
             tradeChartHistory.forEach((price, i) => {
@@ -1271,7 +1211,7 @@
                 
                 if(tabName === 'trading') { setTimeout(initTradingChart, 50); }
                 window.scrollTo(0,0);
-            }, 300); 
+            }, 250); 
         }
 
         window.onload = bootApp;
