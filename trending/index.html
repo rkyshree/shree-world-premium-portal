@@ -10,10 +10,6 @@
     <meta name="theme-color" content="#0a0f1c">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- Custom App Icon -->
-    <link rel="icon" type="image/jpeg" href="https://i.ibb.co/vCQkSDRV/1000696719.jpg">
-    <link rel="apple-touch-icon" href="https://i.ibb.co/vCQkSDRV/1000696719.jpg">
-    
     <title>ApexTrade Pro - Global Share Market</title>
     
     <!-- Tailwind CSS -->
@@ -80,22 +76,33 @@
         #splash-screen { position: fixed; inset: 0; background: #0a0f1c; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         
         .logo-wrapper { animation: popOut 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .app-icon-lg { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 50px rgba(37,99,235,0.3); margin-bottom: 20px; border: 2px solid rgba(255,255,255,0.08); }
-        
         @keyframes popOut { 0% { transform: scale(0.1) translateY(50px); opacity: 0; } 60% { transform: scale(1.1) translateY(-10px); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         
-        /* Realistic Candlestick Loading Animation */
-        .candle-loader { display: flex; gap: 10px; align-items: flex-end; height: 70px; margin-top: 35px; }
-        .candle-load { width: 12px; background: #00b852; position: relative; border-radius: 2px; animation: candleTick 0.6s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(0,184,82,0.4); }
-        .candle-load::before { content: ''; position: absolute; width: 2px; height: 180%; top: -40%; left: 5px; background: #00b852; z-index: -1; }
-        .candle-load:nth-child(2) { background: #eb5b3c; animation-delay: 0.15s; height: 25px; box-shadow: 0 0 10px rgba(235,91,60,0.4); }
-        .candle-load:nth-child(2)::before { background: #eb5b3c; }
-        .candle-load:nth-child(3) { animation-delay: 0.3s; height: 40px; }
-        .candle-load:nth-child(4) { background: #eb5b3c; animation-delay: 0.45s; height: 30px; box-shadow: 0 0 10px rgba(235,91,60,0.4); }
-        .candle-load:nth-child(4)::before { background: #eb5b3c; }
-        .candle-load:nth-child(5) { animation-delay: 0.6s; height: 45px; }
+        /* Realistic Professional Candlestick Loader */
+        .candle-loader { display: flex; gap: 14px; align-items: flex-end; height: 100px; margin-top: 40px; justify-content: center; width: 100%; }
+        .candle-box { position: relative; width: 16px; border-radius: 2px; }
+        .candle-box::before { content: ''; position: absolute; width: 2px; height: 180%; left: 7px; z-index: -1; }
         
-        @keyframes candleTick { 0% { transform: scaleY(0.4); } 100% { transform: scaleY(1.6); } }
+        .candle-1 { background: #eb5b3c; height: 40px; animation: c1 1.2s infinite alternate ease-in-out; }
+        .candle-1::before { background: #eb5b3c; top: -30%; }
+        
+        .candle-2 { background: #00b852; height: 30px; animation: c2 1.2s infinite alternate ease-in-out; animation-delay: 0.2s; }
+        .candle-2::before { background: #00b852; top: -50%; }
+        
+        .candle-3 { background: #00b852; height: 60px; animation: c3 1.2s infinite alternate ease-in-out; animation-delay: 0.4s; }
+        .candle-3::before { background: #00b852; top: -20%; }
+        
+        .candle-4 { background: #eb5b3c; height: 45px; animation: c4 1.2s infinite alternate ease-in-out; animation-delay: 0.6s; }
+        .candle-4::before { background: #eb5b3c; top: -40%; }
+        
+        .candle-5 { background: #00b852; height: 80px; animation: c5 1.2s infinite alternate ease-in-out; animation-delay: 0.8s; box-shadow: 0 0 15px rgba(0,184,82,0.4); }
+        .candle-5::before { background: #00b852; top: -15%; }
+
+        @keyframes c1 { 0% { transform: scaleY(0.8) translateY(10px); } 100% { transform: scaleY(1.2) translateY(-10px); } }
+        @keyframes c2 { 0% { transform: scaleY(0.9) translateY(5px); } 100% { transform: scaleY(1.5) translateY(-20px); } }
+        @keyframes c3 { 0% { transform: scaleY(0.7) translateY(15px); } 100% { transform: scaleY(1.1) translateY(-5px); } }
+        @keyframes c4 { 0% { transform: scaleY(0.8) translateY(10px); } 100% { transform: scaleY(1.3) translateY(-15px); } }
+        @keyframes c5 { 0% { transform: scaleY(0.9) translateY(5px); } 100% { transform: scaleY(1.2) translateY(-10px); } }
 
         #trading-chart-canvas, #history-chart-canvas, #stock-detail-canvas { width: 100%; height: 100%; display: block; }
         
@@ -116,20 +123,19 @@
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 
-    <!-- Splash Screen with Candlestick Loader -->
+    <!-- Splash Screen with Enhanced Candlestick Loader -->
     <div id="splash-screen">
         <div class="logo-wrapper flex flex-col items-center">
-            <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="App Icon" class="app-icon-lg object-cover">
-            <h1 class="text-4xl font-extrabold text-white tracking-tight mb-1">ApexTrade<span class="text-app-blue">.</span> Pro</h1>
+            <h1 class="text-5xl font-extrabold text-white tracking-tight mb-1">ApexTrade<span class="text-app-blue">.</span> Pro</h1>
             <p class="text-app-blue font-bold text-sm tracking-[0.25em] uppercase mt-1">Global Share Market</p>
         </div>
         <!-- Realistic Candle Loader -->
         <div class="candle-loader">
-            <div class="candle-load" style="height: 35px;"></div>
-            <div class="candle-load"></div>
-            <div class="candle-load"></div>
-            <div class="candle-load"></div>
-            <div class="candle-load"></div>
+            <div class="candle-box candle-1"></div>
+            <div class="candle-box candle-2"></div>
+            <div class="candle-box candle-3"></div>
+            <div class="candle-box candle-4"></div>
+            <div class="candle-box candle-5"></div>
         </div>
     </div>
 
@@ -138,7 +144,9 @@
     <nav class="sticky top-0 z-50 bg-app-bg/95 backdrop-blur-xl border-b border-app-border px-3 py-3 sm:px-6 shadow-sm">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('portfolio')">
-                <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="Icon" class="w-10 h-10 rounded-xl shadow-lg border border-gray-700 object-cover">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-app-blue to-indigo-600 flex items-center justify-center shadow-lg border border-gray-700">
+                    <i class="ph-bold ph-chart-line-up text-white text-xl"></i>
+                </div>
                 <div class="flex flex-col">
                     <span class="font-bold text-xl tracking-tight text-white leading-none">ApexTrade</span>
                     <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
@@ -270,22 +278,34 @@
         <!-- View 3: ACCOUNT & PROFILE -->
         <div id="view-account" class="view-section space-y-4">
             
-            <!-- Pro Profile Header Banner -->
+            <!-- Pro Profile Header Banner (With Image Upload) -->
             <div class="bg-gradient-to-br from-app-card to-app-panel rounded-2xl border border-app-border p-5 shadow-xl relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-48 h-48 bg-app-blue/5 rounded-full blur-3xl pointer-events-none group-hover:bg-app-blue/10 transition duration-700"></div>
                 <div class="flex items-center gap-5 relative z-10">
-                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-2xl ring-4 ring-app-bg shadow-[0_0_20px_rgba(37,99,235,0.4)]">RY</div>
+                    
+                    <!-- Editable Profile Image Container -->
+                    <div class="relative w-20 h-20 rounded-2xl group/avatar cursor-pointer" onclick="document.getElementById('profile-upload').click()" title="Change Profile Picture">
+                        <img id="profile-img-preview" src="" class="absolute inset-0 w-full h-full object-cover rounded-2xl hidden ring-4 ring-app-bg shadow-[0_0_20px_rgba(37,99,235,0.4)] z-10">
+                        <div id="profile-initials" class="absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-2xl ring-4 ring-app-bg shadow-[0_0_20px_rgba(37,99,235,0.4)] z-0">RY</div>
+                        <div class="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity z-20">
+                            <i class="ph-bold ph-camera-plus text-white text-2xl"></i>
+                        </div>
+                        <input type="file" id="profile-upload" class="hidden" accept="image/*">
+                    </div>
+
                     <div class="flex-1">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h2 class="text-2xl font-extrabold text-white tracking-tight">RAJAN YADAV</h2>
-                                <p class="text-xs font-mono tracking-widest text-app-muted mt-1 uppercase">Global ID: APX-9982345</p>
+                                <!-- Name in one line -->
+                                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight whitespace-nowrap">RAJAN YADAV</h2>
+                                <!-- Professional Bio -->
+                                <p class="text-[11px] sm:text-xs font-bold text-app-muted mt-0.5 tracking-wide uppercase">Equity & Derivatives Trader <span class="mx-1">•</span> PRO Member</p>
+                                <p class="text-[10px] font-mono tracking-widest text-app-blue mt-1">ID: APX-9982345</p>
                             </div>
-                            <span class="bg-app-gold/10 text-app-gold border border-app-gold/20 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1"><i class="ph-fill ph-crown"></i> PRO TIER</span>
                         </div>
-                        <div class="mt-3 flex items-center gap-4">
-                            <span class="text-xs text-app-green font-bold flex items-center gap-1 bg-app-green/10 px-2 py-1 rounded border border-app-green/20"><i class="ph-fill ph-check-circle"></i> KYC Verified</span>
-                            <span class="text-xs text-white font-bold flex items-center gap-1 bg-app-panel px-2 py-1 rounded border border-app-border"><i class="ph-fill ph-shield-check text-app-blue"></i> Bank Linked</span>
+                        <div class="mt-3 flex items-center gap-3">
+                            <span class="text-[10px] sm:text-xs text-app-green font-bold flex items-center gap-1 bg-app-green/10 px-2 py-1 rounded border border-app-green/20"><i class="ph-fill ph-check-circle"></i> KYC Verified</span>
+                            <span class="text-[10px] sm:text-xs text-white font-bold flex items-center gap-1 bg-app-panel px-2 py-1 rounded border border-app-border"><i class="ph-fill ph-shield-check text-app-blue"></i> Bank Linked</span>
                         </div>
                     </div>
                 </div>
@@ -466,7 +486,9 @@
             <div id="certificate-wrapper" class="cert-container text-white m-2">
                 <div class="cert-watermark">VERIFIED</div>
                 <div class="flex items-center gap-3 mb-6 border-b border-app-border pb-4 relative z-10">
-                    <img src="https://i.ibb.co/vCQkSDRV/1000696719.jpg" alt="Logo" class="w-12 h-12 rounded-lg border border-app-gold">
+                    <div class="w-12 h-12 rounded-lg border border-app-gold bg-app-panel flex items-center justify-center">
+                        <i class="ph-fill ph-chart-line-up text-app-gold text-2xl"></i>
+                    </div>
                     <div>
                         <h2 class="text-lg font-serif font-bold text-app-gold leading-tight">ApexTrade Global Market</h2>
                         <p class="text-[10px] text-gray-300 tracking-widest uppercase">Official Letter of Authorization</p>
@@ -547,17 +569,42 @@
         </div>
     </div>
     
+    <!-- PROFESSIONAL CANDLESTICK STOCK DETAIL VIEW -->
     <div id="stock-detail-view" class="fullscreen-view z-50">
         <div class="p-4 sm:p-6 border-b border-app-border flex justify-between items-center bg-app-panel/90 backdrop-blur-md">
             <button onclick="closeStockDetail()" class="text-white flex items-center gap-2 font-bold hover:text-app-blue transition-colors group"><i class="ph-bold ph-arrow-left text-2xl"></i> Back</button>
-            <h2 id="detail-title" class="font-extrabold text-white text-lg sm:text-xl">Stock Name</h2><div class="w-16"></div> 
+            <h2 id="detail-title" class="font-extrabold text-white text-lg sm:text-xl tracking-tight">Stock Name</h2>
+            <div class="w-16 flex justify-end"><i class="ph-bold ph-star text-app-muted text-xl"></i></div> 
         </div>
-        <div class="p-6 bg-app-card border-b border-app-border text-center">
-            <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-2 tracking-tight" id="detail-ltp">₹0.00</h1>
-            <p class="text-lg font-bold flex items-center justify-center gap-1" id="detail-change"><i class="ph-bold ph-trend-up"></i> 0.00 (0.00%)</p>
+        
+        <div class="p-4 bg-app-card border-b border-app-border flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight" id="detail-ltp">₹0.00</h1>
+                <p class="text-sm font-bold flex items-center gap-1 mt-1" id="detail-change"><i class="ph-bold ph-trend-up"></i> 0.00 (0.00%)</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-app-muted font-bold uppercase tracking-wider">Timeframe</p>
+                <div class="flex gap-1 mt-1">
+                    <span class="px-2 py-1 bg-app-panel border border-app-border rounded text-xs text-white font-bold">1D</span>
+                    <span class="px-2 py-1 bg-app-panel border border-app-border rounded text-xs text-app-muted">1W</span>
+                    <span class="px-2 py-1 bg-app-panel border border-app-border rounded text-xs text-app-muted">1M</span>
+                </div>
+            </div>
         </div>
-        <div class="flex-1 bg-app-bg p-4 relative">
-            <canvas id="stock-detail-canvas" class="w-full h-full block rounded-xl border border-app-border shadow-inner bg-app-card/50"></canvas>
+        
+        <!-- Candlestick Trading Terminal Canvas Area -->
+        <div class="flex-1 bg-app-bg p-2 relative terminal-grid">
+            <canvas id="stock-detail-canvas" class="w-full h-full block rounded-lg border border-app-border/50 shadow-inner"></canvas>
+            
+            <!-- Floating Data overlay (Like TradingView) -->
+            <div class="absolute top-4 left-4 bg-app-card/80 backdrop-blur border border-app-border/50 p-2 rounded-lg pointer-events-none hidden sm:block">
+                <div class="flex gap-3 text-xs font-mono font-bold">
+                    <span class="text-app-muted">O: <span class="text-white" id="term-o">0.00</span></span>
+                    <span class="text-app-muted">H: <span class="text-white" id="term-h">0.00</span></span>
+                    <span class="text-app-muted">L: <span class="text-white" id="term-l">0.00</span></span>
+                    <span class="text-app-muted">C: <span class="text-white" id="term-c">0.00</span></span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -624,6 +671,7 @@
         window.portfolioData = []; window.appTradeHistory = []; window.nominees = [];
         window.tradingBalance = 1585400; window.marketTrend = 1; let currentEditIndex = -1;
         let activeFilter = 'All'; let detailActiveStock = null; let isAppReady = false;
+        window.profileImageStr = null;
 
         function generateMassivePortfolio() {
             let data = []; const targetInvested = 4500000; const count = ALL_COMPANIES.length;
@@ -647,7 +695,29 @@
             return trades;
         }
 
-        // Cache v11: Instant Navigation & Fixed Scripts
+        // Profile Image Handling
+        document.getElementById('profile-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    window.profileImageStr = event.target.result;
+                    saveDataToStorage();
+                    loadProfileImageUI();
+                    showToast('Profile Picture Updated', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function loadProfileImageUI() {
+            if(window.profileImageStr) {
+                document.getElementById('profile-img-preview').src = window.profileImageStr;
+                document.getElementById('profile-img-preview').classList.remove('hidden');
+                document.getElementById('profile-initials').classList.add('hidden');
+            }
+        }
+
         function loadDataFromStorage() {
             try {
                 const dataStr = localStorage.getItem('apexTradeState_v11');
@@ -655,9 +725,10 @@
                     const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
                     window.appTradeHistory = data.tradeHistory || generatePreloadedTrades();
+                    window.profileImageStr = data.profileImage || null;
                     window.nominees = data.nominees || [
                         { name: "Shanti Yadav", share: 80, pan: "XXXXX1234X", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() },
-                        { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() } // Safe Aadhar Formatting
+                        { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() }
                     ];
                     let lastSavedTime = data.lastSavedTime || Date.now();
                     let hoursPassed = (Date.now() - lastSavedTime) / (1000 * 60 * 60);
@@ -667,6 +738,7 @@
                         let ltp = (saved.lastLtp || saved.avgPrice) * growthFactor; let prevC = saved.prevClose || ltp / 1.01;
                         return { ...saved, ltp: ltp, prevClose: prevC, history: generatePriceHistory(prevC, ltp, 40) };
                     });
+                    loadProfileImageUI();
                     return true;
                 }
             } catch (e) { console.error("Storage load error", e); }
@@ -680,7 +752,8 @@
                 }));
                 localStorage.setItem('apexTradeState_v11', JSON.stringify({
                     tradingBalance: window.tradingBalance, holdings: holdingsToSave,
-                    tradeHistory: window.appTradeHistory.slice(0, 150), nominees: window.nominees, lastSavedTime: Date.now()
+                    tradeHistory: window.appTradeHistory.slice(0, 150), nominees: window.nominees, 
+                    profileImage: window.profileImageStr, lastSavedTime: Date.now()
                 }));
             } catch (e) { console.error("Storage save error", e); }
         }
@@ -689,8 +762,8 @@
             let hist = []; let p = start;
             for(let j=0; j<points; j++) {
                 let open = p; let close = p + (Math.random()-0.48) * (p*0.02); 
-                let high = Math.max(open, close) + (Math.random() * p * 0.01);
-                let low = Math.min(open, close) - (Math.random() * p * 0.01);
+                let high = Math.max(open, close) + (Math.random() * p * 0.015);
+                let low = Math.min(open, close) - (Math.random() * p * 0.015);
                 hist.push({ o: open, h: high, l: low, c: close }); p = close;
             }
             hist[hist.length-1].c = end; return hist;
@@ -703,7 +776,7 @@
                 window.appTradeHistory = generatePreloadedTrades();
                 window.nominees = [
                     { name: "Shanti Yadav", share: 80, pan: "XXXXX1234X", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() },
-                    { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() } // Safe Aadhar Formatting
+                    { name: "Krishna Yadav", share: 10, pan: "XXXXX3426R", aadhaar: "XXXX XXXX XXXX", date: new Date().toLocaleDateString() }
                 ];
                 window.tradingBalance = 1585400.00; 
                 saveDataToStorage();
@@ -721,7 +794,7 @@
                     document.getElementById('splash-screen').style.display = 'none';
                     isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); 
                 }, 500);
-            }, 2000); 
+            }, 2500); // slightly longer to appreciate the new loader
         }
 
         let lastBalance = 0;
@@ -768,6 +841,12 @@
                     retEl.className = `text-xxs font-bold mt-0.5 ${pl>=0?'text-app-green':'text-app-red'}`;
                     ltpEl.classList.remove('flash-green', 'flash-red'); void ltpEl.offsetWidth;
                     ltpEl.classList.add(move > 0 ? 'flash-green' : 'flash-red');
+                }
+
+                // If this stock is currently open in the detail view, update the chart live
+                if (detailActiveStock && s.id === detailActiveStock.id) {
+                    updateDetailValues();
+                    drawDetailChart();
                 }
             }
             updateTotalPortfolioHeaders();
@@ -851,27 +930,22 @@
             updateTotalPortfolioHeaders();
         }
 
-        // DOUBLE TAP LOGIC FOR NOMINEES HEADER (Secret Add Nominee)
         window.handleNomineeHeaderClick = function() {
             if(tapTimers['nom_header']) {
                 clearTimeout(tapTimers['nom_header']); 
                 tapTimers['nom_header'] = null;
-                openNomineeModal(); // Double Tap triggers adding
+                openNomineeModal(); 
             } else {
-                tapTimers['nom_header'] = setTimeout(() => { 
-                    tapTimers['nom_header'] = null; 
-                    // Single tap does nothing (keeps it a secret)
-                }, 300); 
+                tapTimers['nom_header'] = setTimeout(() => { tapTimers['nom_header'] = null; }, 300); 
             }
         };
 
-        // DOUBLE TAP LOGIC FOR INDIVIDUAL NOMINEES
         window.handleNomineeClick = function(index) {
             if(tapTimers['nom_' + index]) {
                 clearTimeout(tapTimers['nom_' + index]); tapTimers['nom_' + index] = null;
-                openEditNomineeModal(index); // Double Tap
+                openEditNomineeModal(index); 
             } else {
-                tapTimers['nom_' + index] = setTimeout(() => { tapTimers['nom_' + index] = null; viewCertificate(index); }, 300); // Single Tap
+                tapTimers['nom_' + index] = setTimeout(() => { tapTimers['nom_' + index] = null; viewCertificate(index); }, 300); 
             }
         };
 
@@ -1035,7 +1109,6 @@
             let tCur = 0; portfolioData.forEach(s => tCur += s.qty * s.ltp);
             
             let data = [];
-            // Real-looking 30L-80L wave generator for long term
             if (period === '3Y' || period === '5Y' || period === 'All') {
                 let minTarget = 3000000; let maxTarget = 8000000;
                 for(let i=0; i<points; i++) {
@@ -1085,31 +1158,117 @@
             document.getElementById('input-withdraw').value = ''; showToast('Withdrawal Initiated', 'success'); 
         }
         window.setFilter = function(capType) { activeFilter = capType; renderPortfolio(); }
-        window.closeStockDetail = function() { document.getElementById('stock-detail-view').classList.remove('active'); document.body.style.overflow = 'auto'; }
+        window.closeStockDetail = function() { document.getElementById('stock-detail-view').classList.remove('active'); document.body.style.overflow = 'auto'; detailActiveStock = null;}
 
         window.openStockDetail = function(id) {
             detailActiveStock = portfolioData.find(s => s.id === id); if(!detailActiveStock) return;
-            document.getElementById('stock-detail-view').classList.add('active'); document.getElementById('detail-title').innerText = detailActiveStock.name;
-            document.body.style.overflow = 'hidden'; updateDetailValues(); setTimeout(drawDetailChart, 100); 
+            document.getElementById('stock-detail-view').classList.add('active'); 
+            document.getElementById('detail-title').innerText = detailActiveStock.name;
+            document.body.style.overflow = 'hidden'; 
+            updateDetailValues(); setTimeout(drawDetailChart, 100); 
         }
 
         window.updateDetailValues = function() {
-            if(!detailActiveStock) return; let s = detailActiveStock; let dayChgAmt = s.ltp - s.prevClose; let dayChgPct = (dayChgAmt / s.prevClose) * 100; let isPos = dayChgAmt >= 0;
+            if(!detailActiveStock) return; let s = detailActiveStock; 
+            let dayChgAmt = s.ltp - s.prevClose; let dayChgPct = (dayChgAmt / s.prevClose) * 100; let isPos = dayChgAmt >= 0;
             const ltpEl = document.getElementById('detail-ltp'); ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
-            ltpEl.className = `text-5xl sm:text-6xl font-extrabold mb-2 tracking-tight transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
+            ltpEl.className = `text-4xl sm:text-5xl font-extrabold tracking-tight transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
             const chgEl = document.getElementById('detail-change'); chgEl.innerHTML = `<i class="ph-bold ph-trend-${isPos?'up':'down'}"></i> ${Math.abs(dayChgAmt).toFixed(2)} (${Math.abs(dayChgPct).toFixed(2)}%)`;
-            chgEl.className = `text-lg font-bold flex items-center justify-center gap-1 transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
+            chgEl.className = `text-sm font-bold flex items-center gap-1 mt-1 transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
+            
+            // Update terminal text
+            let lastCandle = s.history[s.history.length-1];
+            document.getElementById('term-o').innerText = window.fmtNum(lastCandle.o);
+            document.getElementById('term-h').innerText = window.fmtNum(lastCandle.h);
+            document.getElementById('term-l').innerText = window.fmtNum(lastCandle.l);
+            document.getElementById('term-c').innerText = window.fmtNum(lastCandle.c);
         }
 
+        // --- NEW PROFESSIONAL CANDLESTICK CHART (Like TradingView) ---
         window.drawDetailChart = function() {
-            if(!detailActiveStock) return; const cvs = document.getElementById('stock-detail-canvas'); const cx = cvs.getContext('2d');
-            const rect = cvs.parentElement.getBoundingClientRect(); cvs.width = rect.width * 2; cvs.height = rect.height * 2;
-            cx.scale(2, 2); let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
-            let hist = detailActiveStock.history; if(hist.length < 2) return;
-            let min = Math.min(...hist.map(d=>d.l)); let max = Math.max(...hist.map(d=>d.h)); let range = (max - min) || 1;
-            let stepX = w / hist.length; const getY = (price) => h - ((price - min) / range) * (h * 0.8) - (h*0.1);
-            cx.beginPath(); cx.lineWidth = 3; let isUp = hist[hist.length-1].c >= hist[0].c; cx.strokeStyle = isUp ? '#00b852' : '#eb5b3c';
-            hist.forEach((d, i) => { let x = i * stepX + (stepX/2); let y = getY(d.c); if(i===0) cx.moveTo(x,y); else cx.lineTo(x,y); }); cx.stroke();
+            if(!detailActiveStock) return; 
+            const cvs = document.getElementById('stock-detail-canvas'); 
+            const cx = cvs.getContext('2d');
+            const rect = cvs.parentElement.getBoundingClientRect(); 
+            cvs.width = rect.width * 2; cvs.height = rect.height * 2;
+            cx.scale(2, 2); 
+            
+            let w = rect.width, h = rect.height; 
+            cx.clearRect(0,0,w,h);
+            
+            let hist = detailActiveStock.history; 
+            if(hist.length < 2) return;
+            
+            // Chart layout setup
+            let rightAxisWidth = 60;
+            let chartW = w - rightAxisWidth; 
+            let chartH = h - 10; 
+            
+            let min = Math.min(...hist.map(d=>d.l)); 
+            let max = Math.max(...hist.map(d=>d.h)); 
+            let padding = (max - min) * 0.1;
+            min -= padding; max += padding;
+            let range = (max - min) || 1;
+            
+            const getY = (price) => chartH - ((price - min) / range) * chartH;
+            
+            let stepX = chartW / hist.length;
+            let candleWidth = Math.max(stepX * 0.7, 1);
+
+            // 1. Draw Grid Lines & Right Price Axis
+            cx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            cx.fillStyle = '#9ca3af';
+            cx.font = "10px Inter";
+            cx.textAlign = "right";
+            cx.lineWidth = 1;
+            
+            for(let i=1; i<=4; i++) {
+                let y = i * (chartH/5);
+                let priceVal = max - (range * (i/5));
+                cx.beginPath(); cx.moveTo(0, y); cx.lineTo(chartW, y); cx.stroke();
+                cx.fillText(priceVal.toFixed(2), w - 5, y + 4);
+            }
+
+            // 2. Draw Candlesticks
+            hist.forEach((d, i) => {
+                let x = i * stepX + (stepX/2); 
+                let yO = getY(d.o); let yC = getY(d.c);
+                let yH = getY(d.h); let yL = getY(d.l);
+                
+                let isUp = d.c >= d.o;
+                let color = isUp ? '#00b852' : '#eb5b3c';
+                
+                cx.strokeStyle = color;
+                cx.fillStyle = color;
+                
+                // Wick
+                cx.lineWidth = 1.5;
+                cx.beginPath(); cx.moveTo(x, yH); cx.lineTo(x, yL); cx.stroke();
+                
+                // Body
+                let bodyTop = Math.min(yO, yC);
+                let bodyHeight = Math.abs(yO - yC);
+                if (bodyHeight < 1) bodyHeight = 1; // Minimum thickness
+                cx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
+            });
+
+            // 3. Draw Active Live Price Line (Dashed)
+            let lastCandle = hist[hist.length-1];
+            let liveY = getY(lastCandle.c);
+            let liveColor = lastCandle.c >= lastCandle.o ? '#00b852' : '#eb5b3c';
+            
+            cx.strokeStyle = liveColor;
+            cx.lineWidth = 1.5;
+            cx.setLineDash([4, 4]);
+            cx.beginPath(); cx.moveTo(0, liveY); cx.lineTo(chartW, liveY); cx.stroke();
+            cx.setLineDash([]);
+            
+            // 4. Live Price Label on Axis
+            cx.fillStyle = liveColor;
+            cx.fillRect(chartW, liveY - 12, rightAxisWidth, 24);
+            cx.fillStyle = '#ffffff';
+            cx.font = "bold 11px Inter";
+            cx.fillText(lastCandle.c.toFixed(2), w - 5, liveY + 4);
         }
 
         function initTradingChart() {
