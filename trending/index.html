@@ -269,46 +269,114 @@
 
         <!-- View 3: ACCOUNT & PROFILE -->
         <div id="view-account" class="view-section space-y-4">
-            <h1 class="text-3xl font-extrabold text-white tracking-tight mb-4">My Profile</h1>
             
-            <div class="bg-app-card rounded-2xl border border-app-border p-5 shadow-lg flex items-center gap-4">
-                <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl ring-2 ring-app-border shadow-lg">RY</div>
-                <div>
-                    <h2 class="text-2xl font-extrabold text-white">RAJAN YADAV</h2>
-                    <p class="text-sm text-app-green mt-1 flex items-center gap-1"><i class="ph-fill ph-check-circle"></i> KYC Verified & Approved</p>
-                    <p class="text-xs text-app-muted mt-1 font-mono tracking-widest">Global ID: APX-9982345</p>
+            <!-- Pro Profile Header Banner -->
+            <div class="bg-gradient-to-br from-app-card to-app-panel rounded-2xl border border-app-border p-5 shadow-xl relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-48 h-48 bg-app-blue/5 rounded-full blur-3xl pointer-events-none group-hover:bg-app-blue/10 transition duration-700"></div>
+                <div class="flex items-center gap-5 relative z-10">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-2xl ring-4 ring-app-bg shadow-[0_0_20px_rgba(37,99,235,0.4)]">RY</div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h2 class="text-2xl font-extrabold text-white tracking-tight">RAJAN YADAV</h2>
+                                <p class="text-xs font-mono tracking-widest text-app-muted mt-1 uppercase">Global ID: APX-9982345</p>
+                            </div>
+                            <span class="bg-app-gold/10 text-app-gold border border-app-gold/20 px-3 py-1 rounded-full text-xs font-bold shadow-sm flex items-center gap-1"><i class="ph-fill ph-crown"></i> PRO TIER</span>
+                        </div>
+                        <div class="mt-3 flex items-center gap-4">
+                            <span class="text-xs text-app-green font-bold flex items-center gap-1 bg-app-green/10 px-2 py-1 rounded border border-app-green/20"><i class="ph-fill ph-check-circle"></i> KYC Verified</span>
+                            <span class="text-xs text-white font-bold flex items-center gap-1 bg-app-panel px-2 py-1 rounded border border-app-border"><i class="ph-fill ph-shield-check text-app-blue"></i> Bank Linked</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Nominee Section (Hidden Buttons, Double Tap to Edit) -->
-            <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md user-select-none">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="ph-fill ph-users text-app-blue"></i> Nominees & Live Profit</h3>
-                    <button onclick="openNomineeModal()" class="text-xs font-bold bg-app-blue/20 text-app-blue px-3 py-1.5 rounded-lg border border-app-blue/30 hover:bg-app-blue hover:text-white transition">+ Add</button>
+            <!-- Nominee Section (Secret Double Tap on Header to Add) -->
+            <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
+                <div class="mb-4">
+                    <h3 id="nominee-header" class="text-lg font-bold text-white flex items-center gap-2 cursor-pointer w-fit user-select-none hover:text-app-blue transition-colors" onclick="handleNomineeHeaderClick()">
+                        <i class="ph-fill ph-users text-app-blue"></i> Nominees & Live Profit
+                    </h3>
                 </div>
-                <p class="text-xs text-app-muted mb-3 italic">Hint: Double Tap on Nominee to Edit/Delete</p>
                 <div id="nominee-list" class="space-y-3"></div>
             </div>
 
+            <!-- Pro Funds Module (Add / Withdraw) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-plus-circle text-app-green"></i> Add Funds to Portfolio</h3>
-                    <div class="relative mb-4">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
-                        <input type="number" id="input-add-funds" placeholder="Enter Amount" class="w-full bg-app-bg border border-app-border text-white text-xl font-bold rounded-xl py-3 pl-10 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
+                <!-- Deposit Card -->
+                <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 text-app-green/5 group-hover:text-app-green/10 transition-colors duration-500 pointer-events-none">
+                        <i class="ph-fill ph-arrow-down-left text-9xl"></i>
                     </div>
-                    <button onclick="submitAddFunds()" class="w-full bg-app-green hover:bg-app-green-glow text-white font-extrabold py-3 rounded-xl shadow-lg transition-colors">Deposit Funds</button>
+                    <div class="relative z-10">
+                        <h3 class="text-sm font-bold text-app-muted uppercase tracking-widest mb-4 flex items-center gap-2"><i class="ph-fill ph-plus-circle text-app-green text-xl"></i> Deposit Funds</h3>
+                        <div class="relative mb-4">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
+                            <input type="number" id="input-add-funds" placeholder="0.00" class="w-full bg-app-bg border border-app-border text-white text-2xl font-bold rounded-xl py-4 pl-10 pr-4 focus:border-app-green outline-none transition-colors shadow-inner font-mono">
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="document.getElementById('input-add-funds').value=10000" class="flex-1 py-1.5 bg-app-panel border border-app-border rounded-lg text-xs font-bold text-app-muted hover:text-white hover:border-app-blue transition">+10K</button>
+                            <button onclick="document.getElementById('input-add-funds').value=50000" class="flex-1 py-1.5 bg-app-panel border border-app-border rounded-lg text-xs font-bold text-app-muted hover:text-white hover:border-app-blue transition">+50K</button>
+                            <button onclick="document.getElementById('input-add-funds').value=100000" class="flex-1 py-1.5 bg-app-panel border border-app-border rounded-lg text-xs font-bold text-app-muted hover:text-white hover:border-app-blue transition">+1L</button>
+                        </div>
+                        <button onclick="submitAddFunds()" class="w-full bg-app-green hover:bg-app-green-glow text-white font-extrabold py-3.5 rounded-xl shadow-[0_5px_15px_rgba(0,184,82,0.2)] transition-all active:scale-95 flex items-center justify-center gap-2">Proceed to Pay <i class="ph-bold ph-arrow-right"></i></button>
+                    </div>
                 </div>
 
-                <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-md">
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2 mb-4"><i class="ph-fill ph-minus-circle text-app-red"></i> Withdraw Funds</h3>
-                    <div class="relative mb-4">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
-                        <input type="number" id="input-withdraw" placeholder="Enter Amount" class="w-full bg-app-bg border border-app-border text-white text-xl font-bold rounded-xl py-3 pl-10 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
+                <!-- Withdraw Card -->
+                <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-lg relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 text-app-red/5 group-hover:text-app-red/10 transition-colors duration-500 pointer-events-none">
+                        <i class="ph-fill ph-arrow-up-right text-9xl"></i>
                     </div>
-                    <button onclick="submitWithdraw()" class="w-full bg-app-blue hover:bg-blue-600 text-white font-extrabold py-3 rounded-xl shadow-lg transition-colors">Withdraw to Bank</button>
+                    <div class="relative z-10">
+                        <h3 class="text-sm font-bold text-app-muted uppercase tracking-widest mb-4 flex items-center gap-2"><i class="ph-fill ph-minus-circle text-app-red text-xl"></i> Withdraw to Bank</h3>
+                        <div class="relative mb-4">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white font-bold text-xl">₹</span>
+                            <input type="number" id="input-withdraw" placeholder="0.00" class="w-full bg-app-bg border border-app-border text-white text-2xl font-bold rounded-xl py-4 pl-10 pr-4 focus:border-app-red outline-none transition-colors shadow-inner font-mono">
+                        </div>
+                        <div class="flex gap-2 mb-4 justify-between items-center px-1">
+                            <span class="text-xs text-app-muted font-bold">Avail: <span id="avail-withdraw-balance" class="text-white tracking-wider">₹15,85,400</span></span>
+                            <button onclick="document.getElementById('input-withdraw').value=window.tradingBalance" class="py-1 px-3 bg-app-panel border border-app-border rounded-lg text-xs font-bold text-app-blue hover:text-white hover:border-app-blue transition">Withdraw Max</button>
+                        </div>
+                        <button onclick="submitWithdraw()" class="w-full bg-app-red hover:bg-app-red-glow text-white font-extrabold py-3.5 rounded-xl shadow-[0_5px_15px_rgba(235,91,60,0.2)] transition-all active:scale-95 flex items-center justify-center gap-2">Withdraw Funds <i class="ph-bold ph-bank"></i></button>
+                    </div>
                 </div>
             </div>
+
+            <!-- Professional App Menu (About, T&C, Settings) -->
+            <div class="bg-app-card border border-app-border rounded-xl shadow-md overflow-hidden mt-6 mb-8">
+                <div class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-app-panel transition">
+                    <div class="flex items-center gap-4">
+                        <div class="p-2.5 bg-app-blue/10 text-app-blue rounded-xl"><i class="ph-fill ph-file-text text-xl"></i></div>
+                        <div>
+                            <p class="text-sm font-bold text-white">Terms & Conditions</p>
+                            <p class="text-xs text-app-muted mt-0.5">Trading policies and user agreement</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-app-muted"></i>
+                </div>
+                <div class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-app-panel transition">
+                    <div class="flex items-center gap-4">
+                        <div class="p-2.5 bg-app-blue/10 text-app-blue rounded-xl"><i class="ph-fill ph-shield-check text-xl"></i></div>
+                        <div>
+                            <p class="text-sm font-bold text-white">Privacy & Security</p>
+                            <p class="text-xs text-app-muted mt-0.5">Data protection and end-to-end encryption</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-app-muted"></i>
+                </div>
+                <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-app-panel transition">
+                    <div class="flex items-center gap-4">
+                        <div class="p-2.5 bg-app-blue/10 text-app-blue rounded-xl"><i class="ph-fill ph-headset text-xl"></i></div>
+                        <div>
+                            <p class="text-sm font-bold text-white">Help & Support</p>
+                            <p class="text-xs text-app-muted mt-0.5">24/7 dedicated pro account manager</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-app-muted"></i>
+                </div>
+            </div>
+            
         </div>
     </main>
 
@@ -660,6 +728,7 @@
         window.updateBalanceUI = function(flash = true) {
             const str = window.fmtCurDec(window.tradingBalance); 
             const el = document.getElementById('header-trading-balance');
+            const availWith = document.getElementById('avail-withdraw-balance');
             if (el) {
                 el.innerText = str; 
                 if (flash && isAppReady && window.tradingBalance !== lastBalance) {
@@ -667,6 +736,7 @@
                     void el.offsetWidth; el.classList.add(window.tradingBalance > lastBalance ? 'text-flash-green' : 'text-flash-red');
                 }
             }
+            if (availWith) availWith.innerText = str;
             lastBalance = window.tradingBalance;
         }
 
@@ -781,7 +851,21 @@
             updateTotalPortfolioHeaders();
         }
 
-        // DOUBLE TAP LOGIC FOR NOMINEES
+        // DOUBLE TAP LOGIC FOR NOMINEES HEADER (Secret Add Nominee)
+        window.handleNomineeHeaderClick = function() {
+            if(tapTimers['nom_header']) {
+                clearTimeout(tapTimers['nom_header']); 
+                tapTimers['nom_header'] = null;
+                openNomineeModal(); // Double Tap triggers adding
+            } else {
+                tapTimers['nom_header'] = setTimeout(() => { 
+                    tapTimers['nom_header'] = null; 
+                    // Single tap does nothing (keeps it a secret)
+                }, 300); 
+            }
+        };
+
+        // DOUBLE TAP LOGIC FOR INDIVIDUAL NOMINEES
         window.handleNomineeClick = function(index) {
             if(tapTimers['nom_' + index]) {
                 clearTimeout(tapTimers['nom_' + index]); tapTimers['nom_' + index] = null;
@@ -987,8 +1071,19 @@
             document.getElementById('history-axis-labels').innerHTML = labelsHTML;
         }
 
-        window.submitAddFunds = function() { let val = parseFloat(document.getElementById('input-add-funds').value); window.tradingBalance += val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-add-funds').value = ''; showToast('Added', 'success'); }
-        window.submitWithdraw = function() { let val = parseFloat(document.getElementById('input-withdraw').value); window.tradingBalance -= val; updateBalanceUI(true); saveDataToStorage(); document.getElementById('input-withdraw').value = ''; showToast('Withdrawn', 'success'); }
+        window.submitAddFunds = function() { 
+            let val = parseFloat(document.getElementById('input-add-funds').value); 
+            if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
+            window.tradingBalance += val; updateBalanceUI(true); saveDataToStorage(); 
+            document.getElementById('input-add-funds').value = ''; showToast('Funds Added Successfully', 'success'); 
+        }
+        window.submitWithdraw = function() { 
+            let val = parseFloat(document.getElementById('input-withdraw').value); 
+            if(isNaN(val) || val <= 0) return showToast('Enter valid amount', 'error');
+            if(val > window.tradingBalance) return showToast('Insufficient Funds', 'error');
+            window.tradingBalance -= val; updateBalanceUI(true); saveDataToStorage(); 
+            document.getElementById('input-withdraw').value = ''; showToast('Withdrawal Initiated', 'success'); 
+        }
         window.setFilter = function(capType) { activeFilter = capType; renderPortfolio(); }
         window.closeStockDetail = function() { document.getElementById('stock-detail-view').classList.remove('active'); document.body.style.overflow = 'auto'; }
 
