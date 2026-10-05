@@ -59,9 +59,6 @@
         .spinner.white { border-color: rgba(255,255,255,0.3); border-top-color: white; }  
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }  
           
-        .cat-chip { white-space: nowrap; padding: 6px 16px; background: #fff; color: #4b5563; border-radius: 20px; font-size: 13px; font-weight: 600; transition: 0.2s; border: 1px solid #e5e7eb; }  
-        .cat-chip.active { background: #fdf2f8; color: #f43397; border-color: #f43397; }  
-          
         .size-btn { border: 1px solid #d1d5db; background: #fff; color: #374151; border-radius: 8px; padding: 8px 16px; font-weight: 600; font-size: 14px; transition: 0.2s; }  
         .size-btn.active { border-color: #f43397; background: #fdf2f8; color: #f43397; }  
           
@@ -330,21 +327,29 @@
                         <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search by product, category..." class="w-full bg-gray-100 border-none rounded-lg py-2.5 pl-10 pr-4 text-sm outline-none focus:bg-gray-200 transition">  
                     </div>  
                 </div>  
-                
-                <!-- NEW VISUAL CATEGORY CATALOG SYSTEM -->
-                <div id="categoryChips" class="flex gap-4 overflow-x-auto hide-scrollbar px-4 py-3 bg-white snap-x border-b border-gray-100">  
-                    <!-- Rendered by JS -->
-                </div>  
             </div>
-
+            
             <div class="bg-blue-50/50 px-4 py-2 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50">
                 <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-blue-500"></i> Delivery in 4-7 Days</span>
                 <span class="flex items-center gap-1"><i class="fa-solid fa-money-bill-wave text-green-500"></i> COD Available</span>
                 <span class="flex items-center gap-1"><i class="fa-solid fa-rotate-left text-primary"></i> Easy Returns</span>
             </div>
 
+            <!-- NEW 3-COLUMN VISUAL CATEGORY CATALOG SYSTEM -->
+            <div class="bg-white p-3 mb-2 shadow-sm border-b border-gray-100">
+                <h3 class="font-black text-gray-900 text-sm mb-3 px-1">Shop by Category</h3>
+                <div id="categoryGrid" class="grid grid-cols-3 gap-3">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
             <div id="catalogHighlightsContainer" class="bg-white pt-4 px-3 pb-3 mb-2"></div>
               
+            <!-- PRODUCTS SECTION HEADING -->
+            <div class="bg-white pt-4 pb-2 px-3 flex justify-between items-center border-b border-gray-100">
+                <h3 class="font-black text-gray-900 text-sm" id="productsHeading">All Products</h3>
+            </div>
+            
             <div id="productsGrid" class="grid grid-cols-2 gap-2 p-2">  
                 <div class="col-span-2 text-center py-10 text-gray-400"><div class="spinner border-gray-300 mx-auto mb-3"></div> Loading latest trends...</div>  
             </div>  
@@ -1009,7 +1014,7 @@
                     <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
-                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
             </div>`;
         }
         openModal('infoModal');
@@ -1177,34 +1182,49 @@
         } catch(e) { }  
     }  
 
+    // NEW GRID CATALOG RENDER SYSTEM
     function renderCategoryUI() {  
-        const c = document.getElementById("categoryChips");  
-        if(c) {  
-            c.innerHTML = `
-                <div class="flex flex-col items-center gap-1.5 shrink-0 w-[70px] cursor-pointer group snap-start" onclick="setCategoryFilter('All')">
-                    <div class="w-[60px] h-[60px] rounded-full p-[2px] ${currentFilter==='All' ? 'bg-primary' : 'bg-gray-200'} transition transform shadow-sm">
-                        <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-gray-500 font-bold border-2 border-white">All</div>
+        const grid = document.getElementById("categoryGrid");  
+        if(grid) {  
+            let html = `
+                <div class="flex flex-col cursor-pointer transform transition active:scale-95 shadow-sm rounded-md overflow-hidden border ${currentFilter === 'All' ? 'border-primary shadow-primary/30' : 'border-gray-200'}" onclick="setCategoryFilter('All')">
+                    <div class="w-full aspect-[3/4] bg-gray-50 flex items-center justify-center">
+                        <i class="fa-solid fa-border-all text-4xl text-gray-300"></i>
                     </div>
-                    <span class="text-[10px] font-bold ${currentFilter==='All' ? 'text-primary' : 'text-gray-700'} text-center w-full truncate px-1">All</span>
-                </div>` +
-            window.allCategories.map(cat => {
+                    <div class="${currentFilter === 'All' ? 'bg-primary' : 'bg-[#ff007f]'} text-white text-center py-1.5 text-[11px] font-bold uppercase truncate px-1">ALL</div>
+                </div>`;
+            
+            html += window.allCategories.map(cat => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                const imgUrl = window.categoryImages[cat] || 'https://placehold.co/100x100/fdf2f8/f43397?text='+encodeURIComponent(cat.substring(0,3));
+                // Generic placeholder using placehold.co to mimic a standard catalog image if no image is uploaded
+                const imgUrl = window.categoryImages[cat] || `https://placehold.co/400x500/fce7f3/f43397?text=${encodeURIComponent(cat.substring(0,6))}`;
                 const isActive = currentFilter === cat;
                 return `
-                <div class="flex flex-col items-center gap-1.5 shrink-0 w-[70px] cursor-pointer group snap-start" onclick="setCategoryFilter('${safeCat}')">
-                    <div class="w-[60px] h-[60px] rounded-full p-[2px] ${isActive ? 'bg-primary' : 'bg-gray-200'} transition transform shadow-sm">
-                        <img src="${escapeHtml(imgUrl)}" class="w-full h-full rounded-full border-2 border-white object-cover bg-gray-100" alt="${escapeHtml(cat)}">
-                    </div>
-                    <span class="text-[10px] font-bold ${isActive ? 'text-primary' : 'text-gray-700'} text-center w-full truncate px-1">${escapeHtml(cat)}</span>
+                <div class="flex flex-col cursor-pointer transform transition active:scale-95 shadow-sm rounded-md overflow-hidden border ${isActive ? 'border-primary shadow-primary/30' : 'border-gray-200'}" onclick="setCategoryFilter('${safeCat}')">
+                    <img src="${escapeHtml(imgUrl)}" class="w-full aspect-[3/4] object-cover bg-gray-100" alt="${escapeHtml(cat)}" loading="lazy">
+                    <div class="${isActive ? 'bg-primary' : 'bg-[#ff007f]'} text-white text-center py-1.5 text-[11px] font-bold uppercase truncate px-1">${escapeHtml(cat)}</div>
                 </div>`;
             }).join('');  
+            grid.innerHTML = html;
         }  
         const s = document.getElementById("pCategory");  
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    window.setCategoryFilter = (cat) => { currentFilter = cat; renderCategoryUI(); filterProducts(); };  
+    window.setCategoryFilter = (cat) => { 
+        currentFilter = cat; 
+        renderCategoryUI(); 
+        filterProducts(); 
+        
+        // Update product heading and scroll smoothly to products
+        const heading = document.getElementById('productsHeading');
+        if(heading) {
+            heading.innerText = cat === 'All' ? 'All Products' : `${cat} Collection`;
+            setTimeout(() => {
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    };  
   
     window.toggleAuthMode = (mode) => {  
         isSignupMode = mode === 'signup';  
