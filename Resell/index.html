@@ -323,15 +323,17 @@
     <main class="flex-1 overflow-y-auto pb-[70px]">  
         <!-- Home Tab -->
         <div id="tabFeed" class="tab-content block">  
-            <div class="bg-white sticky top-0 z-10 shadow-sm pb-2">
+            <div class="bg-white sticky top-0 z-10 shadow-sm pb-1">
                 <div class="p-3">  
                     <div class="relative">  
                         <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>  
                         <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search by product, category..." class="w-full bg-gray-100 border-none rounded-lg py-2.5 pl-10 pr-4 text-sm outline-none focus:bg-gray-200 transition">  
                     </div>  
                 </div>  
-                <div id="categoryChips" class="flex gap-2 overflow-x-auto hide-scrollbar px-3 pb-1">  
-                    <button onclick="setCategoryFilter('All')" class="cat-chip active">All</button>  
+                
+                <!-- NEW VISUAL CATEGORY CATALOG SYSTEM -->
+                <div id="categoryChips" class="flex gap-4 overflow-x-auto hide-scrollbar px-4 py-3 bg-white snap-x border-b border-gray-100">  
+                    <!-- Rendered by JS -->
                 </div>  
             </div>
 
@@ -798,8 +800,8 @@
                     <button onclick="addNewAdminCategory()" class="bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Category</button>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[500px]">
-                        <thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Category Name</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-16">Poster</th><th class="pb-3 px-4">Category Name</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
                         <tbody id="adminCategoriesTable" class="text-sm"></tbody>
                     </table>
                 </div>
@@ -845,11 +847,9 @@
                         <p class="text-[10px] text-gray-500 mt-1">Paste your YouTube link here. Customers can watch it by scrolling the product images.</p>
                     </div>
 
-                    <!-- MODIFIED: UPLOAD PHOTOS BUTTON & TEXT AREA INTEGRATION -->
                     <div class="md:col-span-2">
                         <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest block mb-1.5">🖼️ Product Image URLs (Upload Photos directly OR Paste links)</label>
                         
-                        <!-- NEW AUTO IMAGE UPLOAD SYSTEM -->
                         <div class="flex items-center gap-3 mb-3">
                             <input type="file" id="adminImageUpload" multiple accept="image/*" class="hidden" onchange="handleAdminImageUpload(event)">
                             <button type="button" onclick="document.getElementById('adminImageUpload').click()" class="bg-[#00e676]/20 border border-[#00e676]/50 text-[#00e676] px-4 py-2 rounded-xl text-xs font-bold hover:bg-[#00e676] hover:text-black transition flex items-center gap-2">
@@ -861,15 +861,20 @@
                         <textarea id="pImgUrls" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-[#00e676] text-white min-h-[120px]" placeholder="Paste all image links here or upload photos directly..." oninput="processAdminImageUrls()" onpaste="setTimeout(processAdminImageUrls, 100)"></textarea>
                         
                         <div class="mt-2 text-xs text-gray-500 flex justify-between">
-                            <span>Auto-detects up to 10 URLs.</span>
-                            <span id="adminImageCount" class="text-[#00e676] font-bold">0 / 10 Images Added</span>
+                            <span>Auto-detects up to 20 URLs.</span>
+                            <span id="adminImageCount" class="text-[#00e676] font-bold">0 / 20 Images Added</span>
                         </div>
             
                         <div id="adminImagePreviewGrid" class="grid grid-cols-5 gap-2 mt-3"></div>
                         
                         <input type="hidden" id="pImg1"> <input type="hidden" id="pImg2"> <input type="hidden" id="pImg3">
                         <input type="hidden" id="pImg4"> <input type="hidden" id="pImg5"> <input type="hidden" id="pImg6">
-                        <input type="hidden" id="pImg7"> <input type="hidden" id="pImg8"> <input type="hidden" id="pImg9"> <input type="hidden" id="pImg10">
+                        <input type="hidden" id="pImg7"> <input type="hidden" id="pImg8"> <input type="hidden" id="pImg9">
+                        <input type="hidden" id="pImg10"> <input type="hidden" id="pImg11"> <input type="hidden" id="pImg12">
+                        <input type="hidden" id="pImg13"> <input type="hidden" id="pImg14"> <input type="hidden" id="pImg15">
+                        <input type="hidden" id="pImg16"> <input type="hidden" id="pImg17"> <input type="hidden" id="pImg18">
+                        <input type="hidden" id="pImg19"> <input type="hidden" id="pImg20">
+                        
                         <input type="hidden" id="pOfferEndTime"><input type="hidden" id="pOrderCountText">
                     </div>
 
@@ -1035,6 +1040,7 @@
     const SETTINGS_COL = "shraynex_settings";  
   
     window.allCategories = ["Kurti", "Saree", "Mens Wear"];
+    window.categoryImages = {};
     window.adminUsers = [];
     window.adminOrders = [];
     window.allProducts = [];
@@ -1107,7 +1113,7 @@
         copyGenericText(selectedProduct.description, "Description Copied!");
     };
 
-    // FIXED: Download All Product Images directly from UI
+    // Download All Product Images directly from UI
     window.downloadProductImages = async () => {
         if(!selectedProduct) return;
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
@@ -1162,7 +1168,11 @@
     async function loadCategories() {  
         try {  
             const snap = await getDoc(doc(db, SETTINGS_COL, "categories"));  
-            if(snap.exists() && snap.data().list) window.allCategories = snap.data().list;  
+            if(snap.exists()) {
+                if (snap.data().list) window.allCategories = snap.data().list;
+                if (snap.data().images) window.categoryImages = snap.data().images;
+                else window.categoryImages = {};
+            }
             renderCategoryUI(); if (window.isAdminMode) window.renderAdminCategories();
         } catch(e) { }  
     }  
@@ -1170,10 +1180,24 @@
     function renderCategoryUI() {  
         const c = document.getElementById("categoryChips");  
         if(c) {  
-            c.innerHTML = `<button onclick="setCategoryFilter('All')" class="cat-chip ${currentFilter==='All'?'active':''}">All</button>` +  
+            c.innerHTML = `
+                <div class="flex flex-col items-center gap-1.5 shrink-0 w-[70px] cursor-pointer group snap-start" onclick="setCategoryFilter('All')">
+                    <div class="w-[60px] h-[60px] rounded-full p-[2px] ${currentFilter==='All' ? 'bg-primary' : 'bg-gray-200'} transition transform shadow-sm">
+                        <div class="w-full h-full rounded-full bg-white flex items-center justify-center text-gray-500 font-bold border-2 border-white">All</div>
+                    </div>
+                    <span class="text-[10px] font-bold ${currentFilter==='All' ? 'text-primary' : 'text-gray-700'} text-center w-full truncate px-1">All</span>
+                </div>` +
             window.allCategories.map(cat => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                return `<button onclick="setCategoryFilter('${safeCat}')" class="cat-chip ${currentFilter===cat?'active':''}">${escapeHtml(cat)}</button>`;
+                const imgUrl = window.categoryImages[cat] || 'https://placehold.co/100x100/fdf2f8/f43397?text='+encodeURIComponent(cat.substring(0,3));
+                const isActive = currentFilter === cat;
+                return `
+                <div class="flex flex-col items-center gap-1.5 shrink-0 w-[70px] cursor-pointer group snap-start" onclick="setCategoryFilter('${safeCat}')">
+                    <div class="w-[60px] h-[60px] rounded-full p-[2px] ${isActive ? 'bg-primary' : 'bg-gray-200'} transition transform shadow-sm">
+                        <img src="${escapeHtml(imgUrl)}" class="w-full h-full rounded-full border-2 border-white object-cover bg-gray-100" alt="${escapeHtml(cat)}">
+                    </div>
+                    <span class="text-[10px] font-bold ${isActive ? 'text-primary' : 'text-gray-700'} text-center w-full truncate px-1">${escapeHtml(cat)}</span>
+                </div>`;
             }).join('');  
         }  
         const s = document.getElementById("pCategory");  
@@ -1464,7 +1488,7 @@
         try {
             const files = [];
             if(navigator.canShare) {
-                const maxImages = Math.min(images.length, 10); 
+                const maxImages = Math.min(images.length, 20); // ALLOW UP TO 20 IMAGES
                 const fetchPromises = [];
                 for (let i = 0; i < maxImages; i++) {
                     fetchPromises.push( fetch(images[i]).then(res => res.blob()).then(blob => new File([blob], `product_${i+1}.jpg`, { type: blob.type || 'image/jpeg' })).catch(e => console.warn(e)) );
@@ -1483,7 +1507,6 @@
         finally { btn.innerHTML = origHtml; btn.disabled = false; }
     };  
 
-    // FIXED: Payment UI Logic with QR Code Always Visible
     window.updatePaymentUI = () => {
         const methodObj = document.querySelector('input[name="payMethod"]:checked');
         if(!methodObj) return;
@@ -1599,7 +1622,6 @@
         document.getElementById('summaryTotal').innerText = `₹${money(s*q)}`; document.getElementById('summaryMargin').innerText = `₹${money(Math.max(0, s-b)*q)}`;  
     };  
   
-    // Form will simply place order regardless of actual payment verification
     window.submitOrder = async (e) => {  
         e.preventDefault(); if(!currentUser || !selectedProduct) return;  
         const q = Number(document.getElementById('orderQty').value), s = Number(document.getElementById('orderSellingPrice').value), b = Number(selectedProduct.basePrice);  
@@ -1799,13 +1821,12 @@
         const sizesRaw = document.getElementById('pSizes').value;
         const sizesArr = sizesRaw ? sizesRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
 
-        const imgUrls = [ 
-            document.getElementById('pImg1').value, document.getElementById('pImg2').value, 
-            document.getElementById('pImg3').value, document.getElementById('pImg4').value, 
-            document.getElementById('pImg5').value, document.getElementById('pImg6').value, 
-            document.getElementById('pImg7').value, document.getElementById('pImg8').value, 
-            document.getElementById('pImg9').value, document.getElementById('pImg10').value 
-        ].filter(Boolean);
+        // Updated for 20 Images
+        const imgUrls = [];
+        for (let i = 1; i <= 20; i++) {
+            const val = document.getElementById('pImg' + i).value;
+            if (val) imgUrls.push(val);
+        }
 
         const data = {  
             title: titleInput, 
@@ -1895,13 +1916,15 @@
         document.getElementById('productFormTitle').innerText = '➕ Add New Product'; 
         document.getElementById('pSaveBtn').innerText = "Save Product"; 
         
-        const fieldsToClear = ['pTitle','pBase','pMrp','pSizes','pImg1','pImg2','pImg3','pImg4','pImg5','pImg6','pImg7','pImg8','pImg9','pImg10','pDesc','pImgUrls','pVideoUrl','pOfferEndTime','pOrderCountText'];
+        const fieldsToClear = ['pTitle','pBase','pMrp','pSizes', 'pImgUrls','pVideoUrl','pOfferEndTime','pOrderCountText','pDesc'];
+        for(let i=1; i<=20; i++) fieldsToClear.push('pImg'+i);
+
         fieldsToClear.forEach(i => { const el = document.getElementById(i); if(el) el.value = ''; }); 
         
         document.getElementById('pCodStatus').value = 'available'; 
 
         document.getElementById('adminImagePreviewGrid').innerHTML = '';
-        document.getElementById('adminImageCount').innerText = '0 / 10 Images Added';
+        document.getElementById('adminImageCount').innerText = '0 / 20 Images Added';
     };  
   
     window.refreshAdmin = async () => {  
@@ -1923,7 +1946,36 @@
     // Categories Logic
     window.renderAdminCategories = () => {
         const t = document.getElementById('adminCategoriesTable');
-        t.innerHTML = window.allCategories.length ? window.allCategories.map((cat, i) => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4 font-bold text-white">${escapeHtml(cat)}</td><td class="py-3 px-4 text-center"><button onclick="moveAdminCategory(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-1" ${i===0?'disabled style="opacity:0.5"':''}>⬆️</button><button onclick="moveAdminCategory(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===window.allCategories.length-1?'disabled style="opacity:0.5"':''}>⬇️</button></td><td class="py-3 px-4 text-right flex justify-end gap-2"><button onclick="editAdminCategory(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="deleteAdminCategory(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="3" class="p-8 text-center text-gray-500">No categories found.</td></tr>';
+        t.innerHTML = window.allCategories.length ? window.allCategories.map((cat, i) => {
+            const imgUrl = window.categoryImages[cat] || 'https://placehold.co/100x100/222/555?text=No+Img';
+            return `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
+                <td class="py-3 px-4"><img src="${escapeHtml(imgUrl)}" class="w-12 h-12 rounded object-cover border border-[#333]"></td>
+                <td class="py-3 px-4 font-bold text-white">${escapeHtml(cat)}</td>
+                <td class="py-3 px-4 text-center">
+                    <button onclick="moveAdminCategory(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-1" ${i===0?'disabled style="opacity:0.5"':''}>⬆️</button>
+                    <button onclick="moveAdminCategory(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===window.allCategories.length-1?'disabled style="opacity:0.5"':''}>⬇️</button>
+                </td>
+                <td class="py-3 px-4 text-right flex justify-end gap-2 flex-wrap">
+                    <button onclick="updateAdminCategoryPoster('${escapeHtml(cat.replace(/'/g, "\\'"))}')" class="bg-[#00e676]/20 border border-[#00e676]/50 text-[#00e676] px-3 py-1.5 rounded-lg text-xs font-bold">Poster</button>
+                    <button onclick="editAdminCategory(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button>
+                    <button onclick="deleteAdminCategory(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button>
+                </td>
+            </tr>`;
+        }).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No categories found.</td></tr>';
+    };
+
+    window.updateAdminCategoryPoster = async (catName) => {
+        const url = prompt(`Enter new image URL for category "${catName}":\n(You can use imgbb to host image and paste direct link here)`, window.categoryImages[catName] || "");
+        if (url === null) return;
+        window.categoryImages[catName] = url.trim();
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories, images: window.categoryImages }, { merge: true });
+            renderCategoryUI();
+            if (window.isAdminMode) window.renderAdminCategories();
+            showToast("Category Poster Updated!");
+        } catch (e) {
+            showToast("Error updating poster.");
+        }
     };
 
     window.addNewAdminCategory = async () => { 
@@ -1933,8 +1985,14 @@
         if(window.allCategories.includes(val)) return showToast("Category already exists!"); 
         window.allCategories.push(val); 
         inp.value = ''; 
+        
+        const imgUrl = prompt(`Optional: Enter Poster Image URL for "${val}"`, "");
+        if (imgUrl && imgUrl.trim() !== "") {
+            window.categoryImages[val] = imgUrl.trim();
+        }
+
         try {
-            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories }, { merge: true });
+            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories, images: window.categoryImages }, { merge: true });
             renderCategoryUI();
             if (window.isAdminMode) window.renderAdminCategories();
             showToast("Category Added!");
@@ -1947,7 +2005,7 @@
         window.allCategories[index] = window.allCategories[index + dir]; 
         window.allCategories[index + dir] = temp; 
         try {
-            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories }, { merge: true });
+            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories, images: window.categoryImages }, { merge: true });
             renderCategoryUI();
             if (window.isAdminMode) window.renderAdminCategories();
         } catch(e) { }
@@ -1959,9 +2017,13 @@
         if(!newName || newName.trim() === "" || newName.trim() === oldName) return; 
         const cleanName = newName.trim(); 
         if(window.allCategories.includes(cleanName)) return showToast("Category already exists!"); 
+        
+        window.categoryImages[cleanName] = window.categoryImages[oldName];
+        delete window.categoryImages[oldName];
+        
         window.allCategories[index] = cleanName; 
         try {
-            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories }, { merge: true });
+            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories, images: window.categoryImages }, { merge: true });
             renderCategoryUI();
             if (window.isAdminMode) window.renderAdminCategories();
             showToast("Category Updated!"); 
@@ -1970,10 +2032,12 @@
     };
     
     window.deleteAdminCategory = async (index) => { 
-        if(!confirm(`Delete category "${window.allCategories[index]}"? Products in this category will not be deleted.`)) return; 
+        const catName = window.allCategories[index];
+        if(!confirm(`Delete category "${catName}"? Products in this category will not be deleted.`)) return; 
         window.allCategories.splice(index, 1); 
+        delete window.categoryImages[catName];
         try {
-            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories }, { merge: true });
+            await setDoc(doc(db, SETTINGS_COL, "categories"), { list: window.allCategories, images: window.categoryImages }, { merge: true });
             renderCategoryUI();
             if (window.isAdminMode) window.renderAdminCategories();
             showToast("Category Deleted!");
@@ -2012,16 +2076,17 @@
         } catch(e) { console.error(e); showToast("Error updating status: " + e.message); }
     };  
 
-    function extractImageUrls(text) { if(!text) return []; const matches = text.match(/https?:\/\/[^\s,]+/gi); if(!matches) return []; return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 10); }
+    // Updated for 20 images
+    function extractImageUrls(text) { if(!text) return []; const matches = text.match(/https?:\/\/[^\s,]+/gi); if(!matches) return []; return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 20); }
     
     window.processAdminImageUrls = () => {
         const text = document.getElementById("pImgUrls").value; const urls = extractImageUrls(text);
-        for(let i=1; i<=10; i++) { const el = document.getElementById("pImg"+i); if(el) el.value = urls[i-1] || ""; }
-        const countText = document.getElementById("adminImageCount"); if(countText) countText.innerText = `${urls.length} / 10 Images Added`;
+        for(let i=1; i<=20; i++) { const el = document.getElementById("pImg"+i); if(el) el.value = urls[i-1] || ""; }
+        const countText = document.getElementById("adminImageCount"); if(countText) countText.innerText = `${urls.length} / 20 Images Added`;
         const grid = document.getElementById("adminImagePreviewGrid");
         if(grid) {
             let html = "";
-            for(let i=0; i<10; i++) {
+            for(let i=0; i<20; i++) {
                 if(urls[i]) { html += `<div class="aspect-square bg-[#222] rounded-lg overflow-hidden relative border border-[#333]"><img src="${escapeHtml(urls[i])}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-[9px] text-red-500 font-bold bg-[#1a1a1a]\\'>Invalid Link</div>';" class="w-full h-full object-contain"><div class="absolute top-1 left-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded">${i+1}</div></div>`; } 
                 else { html += `<div class="aspect-square bg-[#222] rounded-lg flex flex-col items-center justify-center text-[9px] text-gray-500 border border-[#333] text-center font-bold">Img ${i+1}</div>`; }
             }
