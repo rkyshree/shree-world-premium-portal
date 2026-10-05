@@ -85,6 +85,13 @@
             100% { transform: translateY(0px) rotate(0deg); }
         }
         .bg-icon { animation: bgFloat 5s ease-in-out infinite; opacity: 0.15; }
+        
+        /* Category Poster Styling */
+        .poster-card { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s ease; border: 1px solid #f1f1f1; background: #fff; }
+        .poster-card:active { transform: scale(0.97); }
+        .poster-img { width: 100%; height: 100%; object-fit: cover; }
+        .poster-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); padding: 30px 15px 15px 15px; }
+        .poster-title { color: #fff; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>  
 <body class="text-gray-800 antialiased">  
@@ -317,42 +324,47 @@
         <p class="text-xs font-medium text-amber-800">Your profile is pending approval. You can browse, but ordering is restricted.</p>  
     </div>  
 
-    <main class="flex-1 overflow-y-auto pb-[70px]">  
+    <main class="flex-1 overflow-y-auto pb-[70px] relative">  
+        
         <!-- Home Tab -->
         <div id="tabFeed" class="tab-content block">  
-            <div class="bg-white sticky top-0 z-10 shadow-sm pb-1">
-                <div class="p-3">  
-                    <div class="relative">  
-                        <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>  
-                        <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search by product, category..." class="w-full bg-gray-100 border-none rounded-lg py-2.5 pl-10 pr-4 text-sm outline-none focus:bg-gray-200 transition">  
-                    </div>  
+            
+            <!-- Sticky Search Bar -->
+            <div class="bg-white sticky top-0 z-10 shadow-sm p-3">
+                <div class="relative">  
+                    <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>  
+                    <input type="text" id="searchInput" oninput="filterProducts()" placeholder="Search by product, category..." class="w-full bg-gray-100 border-none rounded-lg py-2.5 pl-10 pr-4 text-sm outline-none focus:bg-gray-200 transition">  
                 </div>  
             </div>
-            
-            <div class="bg-blue-50/50 px-4 py-2 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50">
-                <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-blue-500"></i> Delivery in 4-7 Days</span>
+
+            <!-- HIGHLIGHTS (Flipkart, Myntra, etc.) - ALWAYS VISIBLE -->
+            <div id="catalogHighlightsContainer" class="bg-white pt-4 px-3 pb-3 mb-2 border-b border-gray-100"></div>
+
+            <div class="bg-blue-50/50 px-4 py-2 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50 mb-2">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-blue-500"></i> Free Delivery</span>
                 <span class="flex items-center gap-1"><i class="fa-solid fa-money-bill-wave text-green-500"></i> COD Available</span>
                 <span class="flex items-center gap-1"><i class="fa-solid fa-rotate-left text-primary"></i> Easy Returns</span>
             </div>
 
-            <!-- NEW 3-COLUMN VISUAL CATEGORY CATALOG SYSTEM -->
-            <div class="bg-white p-3 mb-2 shadow-sm border-b border-gray-100">
-                <h3 class="font-black text-gray-900 text-sm mb-3 px-1">Shop by Category</h3>
-                <div id="categoryGrid" class="grid grid-cols-3 gap-3">
+            <!-- VIEW 1: CATEGORY POSTER CATALOG (Visible initially) -->
+            <div id="feedCategoriesView" class="px-3 pb-6">
+                <h3 class="font-black text-gray-900 text-lg mb-4">Shop by Collection</h3>
+                <div id="dynamicCategoryGrid" class="grid grid-cols-2 gap-3">
                     <!-- Rendered by JS -->
                 </div>
             </div>
 
-            <div id="catalogHighlightsContainer" class="bg-white pt-4 px-3 pb-3 mb-2"></div>
-              
-            <!-- PRODUCTS SECTION HEADING -->
-            <div class="bg-white pt-4 pb-2 px-3 flex justify-between items-center border-b border-gray-100">
-                <h3 class="font-black text-gray-900 text-sm" id="productsHeading">All Products</h3>
+            <!-- VIEW 2: PRODUCTS LIST FOR A SPECIFIC CATEGORY (Hidden initially) -->
+            <div id="feedProductsView" class="hidden pb-6">
+                <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2">
+                    <button onclick="closeCategoryView()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 active:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h3 class="font-black text-gray-900 text-base flex-1 line-clamp-1" id="catViewTitle">All Products</h3>
+                </div>
+                <div id="productsGrid" class="grid grid-cols-2 gap-2 p-2">  
+                    <div class="col-span-2 text-center py-10 text-gray-400"><div class="spinner border-gray-300 mx-auto mb-3"></div> Loading latest trends...</div>  
+                </div>  
             </div>
-            
-            <div id="productsGrid" class="grid grid-cols-2 gap-2 p-2">  
-                <div class="col-span-2 text-center py-10 text-gray-400"><div class="spinner border-gray-300 mx-auto mb-3"></div> Loading latest trends...</div>  
-            </div>  
+
         </div>  
 
         <!-- Orders Tab -->
@@ -414,7 +426,7 @@
     <!-- Navigation -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] bg-white border-t border-gray-200 z-30 pb-[env(safe-area-inset-bottom)]">  
         <div class="flex justify-around items-center h-14">  
-            <button onclick="switchTab('Feed')" id="navBtnFeed" class="flex flex-col items-center justify-center w-full h-full text-primary transition"><i class="fa-solid fa-house text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Home</span></button>  
+            <button onclick="handleHomeNavClick()" id="navBtnFeed" class="flex flex-col items-center justify-center w-full h-full text-primary transition"><i class="fa-solid fa-house text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Home</span></button>  
             <button onclick="switchTab('Orders')" id="navBtnOrders" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-gray-800 transition"><i class="fa-solid fa-box text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Orders</span></button>  
             <button onclick="switchTab('Profile')" id="navBtnProfile" class="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-gray-800 transition"><i class="fa-regular fa-user text-lg mb-0.5"></i><span class="text-[10px] font-semibold">Account</span></button>  
         </div>  
@@ -538,6 +550,7 @@
     </div>  
 </div>  
 
+<!-- MAIN ORDER FORM (Removed QR Code from here) -->
 <div id="orderModal" class="bottom-sheet z-[110]">  
     <div class="bottom-sheet-content h-[95vh] bg-gray-50">  
         <div class="px-4 py-3 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100">  
@@ -554,7 +567,7 @@
                 </div>  
             </div>  
 
-            <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">  
+            <form id="orderForm" onsubmit="submitOrderForm(event)" class="space-y-4">  
                 <div id="orderVariantWrapper" class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 hidden">
                     <label class="block text-xs font-semibold text-gray-700 mb-2">Select Color/Design</label>
                     <div id="orderVariantOptions" class="flex gap-2 overflow-x-auto hide-scrollbar pb-1"></div>
@@ -570,26 +583,13 @@
                     <h4 class="font-bold text-sm text-gray-800 border-b border-gray-100 pb-2">Payment Method</h4>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="border border-gray-300 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-primary-light">
-                            <input type="radio" name="payMethod" value="online" checked class="accent-primary" onchange="updatePaymentUI()">
+                            <input type="radio" name="payMethod" value="online" checked class="accent-primary">
                             <span class="font-semibold text-sm text-gray-700">Online</span>
                         </label>
                         <label id="codLabelContainer" class="border border-gray-300 rounded-lg p-2.5 flex items-center gap-2 cursor-pointer transition has-[:checked]:border-primary has-[:checked]:bg-primary-light">
-                            <input type="radio" name="payMethod" value="cod" class="accent-primary" onchange="updatePaymentUI()">
+                            <input type="radio" name="payMethod" value="cod" class="accent-primary">
                             <span class="font-semibold text-sm text-gray-700">Cash on Delivery</span>
                         </label>
-                    </div>
-                    
-                    <!-- NEW QR CODE & PAYMENT NOTICE UI -->
-                    <div id="paymentNotice" class="mt-3 bg-blue-50 border border-blue-100 p-3 rounded-lg hidden">
-                        <p id="paymentInstructions" class="text-xs font-medium text-blue-900 mb-3 leading-relaxed"></p>
-                        <div class="bg-white p-3 rounded-lg border border-blue-200 text-center">
-                            <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-32 h-32 mx-auto rounded-lg mb-2 shadow-sm border border-gray-100 object-contain">
-                            <div class="flex items-center justify-center gap-2 mb-3">
-                                <span class="text-xs font-bold text-gray-700">UPI: 9451239239</span>
-                                <button type="button" onclick="copyGenericText('9451239239', 'UPI ID Copied!')" class="text-primary text-xs font-bold bg-primary-light px-2 py-1 rounded">Copy</button>
-                            </div>
-                            <button type="button" onclick="downloadQRCode()" class="w-full bg-gray-900 text-white py-2.5 rounded-md text-xs font-bold flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Download QR Code</button>
-                        </div>
                     </div>
                 </div>
 
@@ -634,6 +634,38 @@
         </div>  
     </div>  
 </div>  
+
+<!-- NEW PAYMENT & CONFIRMATION MODAL -->
+<div id="paymentConfirmModal" class="bottom-sheet z-[120]">
+    <div class="bottom-sheet-content bg-gray-50">
+        <div class="drag-handle"></div>
+        <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-200 bg-white">
+            <h3 class="font-bold text-gray-900 text-lg">Complete Payment</h3>
+            <button onclick="closeModal('paymentConfirmModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="p-4 overflow-y-auto pb-6 space-y-4">
+            
+            <div class="bg-blue-50 border border-blue-100 p-3 rounded-lg text-center">
+                <p id="paymentInstructions" class="text-xs font-medium text-blue-900 mb-2 leading-relaxed">
+                    <!-- Text updated by JS based on COD/Online -->
+                </p>
+                <div class="bg-white p-3 rounded-lg border border-blue-200 text-center shadow-sm">
+                    <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-40 h-40 mx-auto rounded-lg mb-3 object-contain">
+                    <div class="flex items-center justify-center gap-2 mb-3">
+                        <span class="text-sm font-black text-gray-800">UPI: 9451239239</span>
+                        <button type="button" onclick="copyGenericText('9451239239', 'UPI ID Copied!')" class="text-primary text-xs font-bold bg-primary-light px-3 py-1.5 rounded border border-primary/20">Copy UPI</button>
+                    </div>
+                    <button type="button" onclick="downloadQRCode()" class="w-full bg-gray-100 text-gray-800 border border-gray-300 py-2.5 rounded-md text-xs font-bold flex items-center justify-center gap-2 hover:bg-gray-200 transition"><i class="fa-solid fa-download"></i> Download QR Code</button>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="finalizeOrder(false)" id="skipPaymentBtn" class="flex-1 bg-white border border-gray-300 text-gray-700 py-3.5 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-50">Skip / Pay Later</button>
+                <button onclick="finalizeOrder(true)" id="confirmPaymentBtn" class="flex-1 bg-green-500 text-white py-3.5 rounded-xl font-bold text-sm shadow-md shadow-green-500/30">I have Paid</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="paymentHistoryModal" class="bottom-sheet">  
     <div class="bottom-sheet-content h-[85vh] bg-gray-50">  
@@ -929,7 +961,7 @@
         // Add Easy Close feature: click on dark background to close modal
         document.querySelectorAll('.bottom-sheet').forEach(sheet => {
             sheet.addEventListener('click', function(e) {
-                if (e.target === this) { closeModal(this.id); }
+                if (e.target === this && !this.classList.contains('no-easy-close')) { closeModal(this.id); }
             });
         });
     });
@@ -960,7 +992,7 @@
     function renderCatalogHighlights() {
         const container = document.getElementById('catalogHighlightsContainer');
         if(!container) return;
-        container.innerHTML = `<div class="flex overflow-x-auto hide-scrollbar items-start w-full gap-4 pb-2 snap-x">
+        container.innerHTML = `<div class="flex overflow-x-auto hide-scrollbar items-start w-full gap-4 snap-x">
             ${catalogHighlights.map(item => `
                 <a href="${item.link}" target="_blank" class="flex flex-col items-center gap-1.5 shrink-0 w-[65px] cursor-pointer group snap-start">
                     <div class="w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-primary to-amber-400 group-hover:scale-105 transition transform shadow-sm"><img src="${item.image}" class="w-full h-full rounded-full border-[2px] border-white object-cover bg-gray-100" alt="${item.title}"></div>
@@ -1014,7 +1046,7 @@
                     <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
-                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
             </div>`;
         }
         openModal('infoModal');
@@ -1057,6 +1089,9 @@
     let selectedProduct = null, unsubUser = null, unsubProducts = null, unsubOrders = null;  
     let isSignupMode = false, currentFilter = 'All';  
     let currentSelectedImageIndex = 0; let orderSelectedImageIndex = 0;
+    
+    // Naya Variable jisme temporary order details save rahenge jab tak popup na confirm ho
+    let tempOrderData = null;
 
     window.getYouTubeId = (url) => {
         if(!url) return null;
@@ -1182,27 +1217,24 @@
         } catch(e) { }  
     }  
 
-    // NEW GRID CATALOG RENDER SYSTEM
+    // NEW GRID CATALOG RENDER SYSTEM (3-COLUMN POSTER LAYOUT)
     function renderCategoryUI() {  
-        const grid = document.getElementById("categoryGrid");  
+        const grid = document.getElementById("dynamicCategoryGrid");  
         if(grid) {  
-            let html = `
-                <div class="flex flex-col cursor-pointer transform transition active:scale-95 shadow-sm rounded-md overflow-hidden border ${currentFilter === 'All' ? 'border-primary shadow-primary/30' : 'border-gray-200'}" onclick="setCategoryFilter('All')">
-                    <div class="w-full aspect-[3/4] bg-gray-50 flex items-center justify-center">
-                        <i class="fa-solid fa-border-all text-4xl text-gray-300"></i>
-                    </div>
-                    <div class="${currentFilter === 'All' ? 'bg-primary' : 'bg-[#ff007f]'} text-white text-center py-1.5 text-[11px] font-bold uppercase truncate px-1">ALL</div>
-                </div>`;
-            
-            html += window.allCategories.map(cat => {
+            let html = window.allCategories.map((cat, index) => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 // Generic placeholder using placehold.co to mimic a standard catalog image if no image is uploaded
-                const imgUrl = window.categoryImages[cat] || `https://placehold.co/400x500/fce7f3/f43397?text=${encodeURIComponent(cat.substring(0,6))}`;
-                const isActive = currentFilter === cat;
+                const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
+                
+                // Pehla item bada (col-span-2), baki sab (col-span-1)
+                const cssClass = index === 0 ? "col-span-2 aspect-[3/4]" : "col-span-1 aspect-[3/4]";
+                
                 return `
-                <div class="flex flex-col cursor-pointer transform transition active:scale-95 shadow-sm rounded-md overflow-hidden border ${isActive ? 'border-primary shadow-primary/30' : 'border-gray-200'}" onclick="setCategoryFilter('${safeCat}')">
-                    <img src="${escapeHtml(imgUrl)}" class="w-full aspect-[3/4] object-cover bg-gray-100" alt="${escapeHtml(cat)}" loading="lazy">
-                    <div class="${isActive ? 'bg-primary' : 'bg-[#ff007f]'} text-white text-center py-1.5 text-[11px] font-bold uppercase truncate px-1">${escapeHtml(cat)}</div>
+                <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
+                    <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy">
+                    <div class="poster-overlay">
+                        <h3 class="poster-title text-base sm:text-lg">${escapeHtml(cat)}</h3>
+                    </div>
                 </div>`;
             }).join('');  
             grid.innerHTML = html;
@@ -1211,20 +1243,27 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    window.setCategoryFilter = (cat) => { 
+    // CATEGORY VIEW SWITCHER LOGIC
+    window.openCategoryView = (cat) => { 
         currentFilter = cat; 
-        renderCategoryUI(); 
+        document.getElementById('feedCategoriesView').classList.add('hidden');
+        document.getElementById('feedProductsView').classList.remove('hidden');
+        document.getElementById('catViewTitle').innerText = cat === 'All' ? 'All Products' : cat + ' Collection';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         filterProducts(); 
-        
-        // Update product heading and scroll smoothly to products
-        const heading = document.getElementById('productsHeading');
-        if(heading) {
-            heading.innerText = cat === 'All' ? 'All Products' : `${cat} Collection`;
-            setTimeout(() => {
-                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
     };  
+    
+    window.closeCategoryView = () => {
+        currentFilter = 'All';
+        document.getElementById('feedProductsView').classList.add('hidden');
+        document.getElementById('feedCategoriesView').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.handleHomeNavClick = () => {
+        switchTab('Feed');
+        closeCategoryView(); // Ye wapas main poster grid pe le aayega
+    };
   
     window.toggleAuthMode = (mode) => {  
         isSignupMode = mode === 'signup';  
@@ -1368,7 +1407,16 @@
         const q = document.getElementById('searchInput').value.toLowerCase().trim();  
         let f = window.allProducts;  
         if(currentFilter !== 'All') f = f.filter(p => (p.category||'').toLowerCase() === currentFilter.toLowerCase());  
-        if(q) f = f.filter(p => `${p.title||''} ${p.category||''}`.toLowerCase().includes(q));  
+        
+        // Agar koi title search kar raha hai, to products view dikha do auto
+        if(q) {
+            f = f.filter(p => `${p.title||''} ${p.category||''}`.toLowerCase().includes(q));  
+            if(document.getElementById('feedProductsView').classList.contains('hidden')) {
+                document.getElementById('feedCategoriesView').classList.add('hidden');
+                document.getElementById('feedProductsView').classList.remove('hidden');
+                document.getElementById('catViewTitle').innerText = 'Search Results';
+            }
+        }
           
         const g = document.getElementById('productsGrid');  
         if(!f.length) { g.innerHTML = '<div class="col-span-2 text-center py-12"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i><p class="font-bold text-gray-500">No products found</p></div>'; return; }  
@@ -1527,14 +1575,12 @@
         finally { btn.innerHTML = origHtml; btn.disabled = false; }
     };  
 
+    // Payment UI in Modal
     window.updatePaymentUI = () => {
         const methodObj = document.querySelector('input[name="payMethod"]:checked');
         if(!methodObj) return;
         const method = methodObj.value;
-        const noticeBox = document.getElementById('paymentNotice');
         const inst = document.getElementById('paymentInstructions');
-        
-        noticeBox.classList.remove('hidden');
         
         if(method === 'cod') {
             inst.innerHTML = `Cash on Delivery (COD) आर्डर कंफर्म करने के लिए आपको <b>₹40 एडवांस पेमेंट</b> करना अनिवार्य है।`;
@@ -1600,8 +1646,7 @@
             codLabelContainer.classList.remove('hidden');
             document.querySelector('input[name="payMethod"][value="online"]').checked = true; // Default Online
         }
-        updatePaymentUI(); // Shows QR Code & Text
-
+        
         document.getElementById('orderQty').value = 1; updateOrderSummary();  
           
         const wrap = document.getElementById('orderSizeWrapper'), cat = (selectedProduct.category||'').toLowerCase();  
@@ -1642,34 +1687,67 @@
         document.getElementById('summaryTotal').innerText = `₹${money(s*q)}`; document.getElementById('summaryMargin').innerText = `₹${money(Math.max(0, s-b)*q)}`;  
     };  
   
-    window.submitOrder = async (e) => {  
+    // NEW ORDER PLACEMENT LOGIC (SPLIT INTO FORM SUBMISSION & PAYMENT CONFIRMATION)
+    window.submitOrderForm = async (e) => {  
         e.preventDefault(); if(!currentUser || !selectedProduct) return;  
         const q = Number(document.getElementById('orderQty').value), s = Number(document.getElementById('orderSellingPrice').value), b = Number(selectedProduct.basePrice);  
         const sz = document.getElementById('selectedSize').value, payMethod = document.querySelector('input[name="payMethod"]:checked').value;
         if(document.getElementById('selectedSize').required && !sz) return showToast("Please select a size.");  
         if(s <= b) return showToast("Customer price must be higher than base price.");  
-          
-        const btn = document.getElementById('submitOrderBtn'); const orig = btn.innerText; btn.innerText = "Placing..."; btn.disabled = true;  
-        try {  
-            const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
-            const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
-            const actualImgIndex = images[orderSelectedImageIndex] ? orderSelectedImageIndex : 0;
-            const imgToSave = images[actualImgIndex] || '';
-            const completeCustAddress = document.getElementById('orderCustAddress').value.trim() + ", " + document.getElementById('orderCustLocality').value.trim() + ", " + document.getElementById('orderCustCity').value + ", " + document.getElementById('orderCustState').value;
+        
+        const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
+        const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
+        const actualImgIndex = images[orderSelectedImageIndex] ? orderSelectedImageIndex : 0;
+        const imgToSave = images[actualImgIndex] || '';
+        const completeCustAddress = document.getElementById('orderCustAddress').value.trim() + ", " + document.getElementById('orderCustLocality').value.trim() + ", " + document.getElementById('orderCustCity').value + ", " + document.getElementById('orderCustState').value;
 
-            await setDoc(doc(db, ORDERS_COL, orderId), {  
-                orderId: orderId, productId: selectedProduct.id, productName: selectedProduct.title||"", productImage: imgToSave,  
-                selectedVariant: "Photo " + (actualImgIndex+1), quantity: q, size: sz!=='N/A'?sz:null, basePrice: b, sellingPrice: s, profit: (s-b)*q, status: "pending",  
-                resellerId: currentUser.uid, resellerName: userData?.name||"", customerName: document.getElementById('orderCustName').value.trim(), customerPhone: document.getElementById('orderCustPhone').value.trim(),  
-                customerAddress: completeCustAddress, pincode: document.getElementById('orderCustPin').value.trim(), paymentMethod: payMethod,
-                paidToWallet: false, createdAt: serverTimestamp(), updatedAt: serverTimestamp()  
-            });  
-
-            showToast("Order Placed!"); closeModal('orderModal'); switchTab('Orders');  
-            const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(`🛍️ *New Order!*\nID: ${orderId}\nProduct: ${selectedProduct.title}\nTotal: ₹${s*q}`)}`;
-            window.open(waUrl, '_blank');
-        } catch(e) { showToast("Order Failed."); } finally { btn.innerText = orig; btn.disabled = false; }  
+        // Store details in global temp variable
+        tempOrderData = {  
+            orderId: orderId, productId: selectedProduct.id, productName: selectedProduct.title||"", productImage: imgToSave,  
+            selectedVariant: "Photo " + (actualImgIndex+1), quantity: q, size: sz!=='N/A'?sz:null, basePrice: b, sellingPrice: s, profit: (s-b)*q, status: "pending",  
+            resellerId: currentUser.uid, resellerName: userData?.name||"", customerName: document.getElementById('orderCustName').value.trim(), customerPhone: document.getElementById('orderCustPhone').value.trim(),  
+            customerAddress: completeCustAddress, pincode: document.getElementById('orderCustPin').value.trim(), paymentMethod: payMethod,
+            paidToWallet: false, createdAt: serverTimestamp(), updatedAt: serverTimestamp()  
+        };  
+        
+        updatePaymentUI();
+        closeModal('orderModal');
+        openModal('paymentConfirmModal');
     };  
+    
+    window.finalizeOrder = async (isPaid) => {
+        if(!tempOrderData) return;
+        
+        const skipBtn = document.getElementById('skipPaymentBtn');
+        const confirmBtn = document.getElementById('confirmPaymentBtn');
+        const origSkip = skipBtn.innerText;
+        const origConfirm = confirmBtn.innerText;
+        
+        if (isPaid) { confirmBtn.innerText = "Processing..."; confirmBtn.disabled = true; skipBtn.disabled = true; } 
+        else { skipBtn.innerText = "Processing..."; skipBtn.disabled = true; confirmBtn.disabled = true; }
+        
+        try {
+            // Update temp data based on payment button click
+            tempOrderData.paymentStatus = isPaid ? 'Paid Online' : 'Pending Verification / Skip';
+            await setDoc(doc(db, ORDERS_COL, tempOrderData.orderId), tempOrderData);  
+
+            showToast("Order Placed Successfully!"); 
+            closeModal('paymentConfirmModal'); 
+            switchTab('Orders');  
+            
+            // Format WhatsApp Message
+            const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(`🛍️ *New Order!*\nID: ${tempOrderData.orderId}\nProduct: ${tempOrderData.productName}\nTotal: ₹${tempOrderData.sellingPrice*tempOrderData.quantity}\nPayment: ${tempOrderData.paymentStatus}`)}`;
+            window.open(waUrl, '_blank');
+            
+            // Clear temp data
+            tempOrderData = null;
+        } catch(e) { 
+            showToast("Order Failed. Try again."); 
+        } finally { 
+            confirmBtn.innerText = origConfirm; confirmBtn.disabled = false;
+            skipBtn.innerText = origSkip; skipBtn.disabled = false;
+        }
+    };
 
     function loadOrders() {  
         if(!currentUser) return; if(unsubOrders) unsubOrders();  
@@ -2124,7 +2202,7 @@
     window.renderAdminOrders = () => {  
         const q = document.getElementById('adminOrdSearch').value.toLowerCase();  
         const f = window.adminOrders.filter(o => !o.isBonus && `${o.orderId} ${o.customerPhone} ${o.resellerName}`.toLowerCase().includes(q));  
-        document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''} | Var: <span class="text-[#00e676] font-bold">${escapeHtml(o.selectedVariant||'Photo 1')}</span><br>Pay: <span class="font-bold ${o.paymentMethod==='cod'?'text-amber-400':'text-blue-400'}">${escapeHtml((o.paymentMethod||'online').toUpperCase())}</span></div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
+        document.getElementById('adminOrdersTable').innerHTML = f.length ? f.map(o => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-xs text-gray-400 font-mono mb-1">${escapeHtml(o.orderId||o.id)}</div><div class="font-bold text-sm text-white line-clamp-1">${escapeHtml(o.productName)}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Qty: ${o.quantity||1} ${o.size?'| Sz: '+o.size:''} | Var: <span class="text-[#00e676] font-bold">${escapeHtml(o.selectedVariant||'Photo 1')}</span><br>Pay: <span class="font-bold ${o.paymentMethod==='cod'?'text-amber-400':'text-blue-400'}">${escapeHtml((o.paymentMethod||'online').toUpperCase())} - ${escapeHtml(o.paymentStatus||'')}</span></div></td><td class="py-4 px-4"><div class="font-bold text-white text-sm">${escapeHtml(o.customerName)}</div><div class="text-[10px] text-gray-400 mt-1">${escapeHtml(o.customerPhone)}<br>${escapeHtml(o.customerAddress)}, ${escapeHtml(o.pincode)}</div></td><td class="py-4 px-4 text-gray-300 text-sm font-medium">${escapeHtml(o.resellerName)}</td><td class="py-4 px-4"><div class="text-[10px] text-gray-500 uppercase tracking-wider">Total: <span class="font-bold text-white text-sm">₹${money(o.sellingPrice*(o.quantity||1))}</span></div><div class="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Profit: <span class="font-bold text-[#00e676]">₹${money(o.profit)}</span></div></td><td class="py-4 px-4 text-right"><select onchange="updateAdminOrderStatus('${o.id}',this.value)" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-2 rounded-lg text-xs outline-none focus:border-[#00e676]"><option value="pending" ${o.status==='pending'?'selected':''}>Pending</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option><option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option><option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option><option value="returned" ${o.status==='returned'?'selected':''}>Returned</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option></select></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No orders found.</td></tr>';  
     };  
 
     window.updateAdminOrderStatus = async (id, st) => { 
