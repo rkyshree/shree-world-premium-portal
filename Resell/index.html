@@ -87,10 +87,10 @@
         .bg-icon { animation: bgFloat 5s ease-in-out infinite; opacity: 0.15; }
         
         /* Category Poster Styling */
-        .poster-card { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s ease; border: 1px solid #f1f1f1; background: #fff; }
+        .poster-card { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s ease; border: 1px solid #f1f1f1; background: #fff; }
         .poster-card:active { transform: scale(0.97); }
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
-        .poster-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); padding: 30px 15px 15px 15px; }
+        .poster-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); padding: 30px 10px 10px 10px; }
         .poster-title { color: #fff; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
     </style>
 </head>  
@@ -337,8 +337,16 @@
                 </div>  
             </div>
 
+            <!-- ADS BANNER CAROUSEL (NEW) -->
+            <div id="mainCarouselContainer" class="relative w-full bg-white mb-2 hidden shadow-sm border-b border-gray-100">
+                <div id="mainCarousel" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar scroll-smooth">
+                    <!-- Slides injected via JS -->
+                </div>
+                <div id="carouselDots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
+            </div>
+
             <!-- HIGHLIGHTS (Flipkart, Myntra, etc.) - ALWAYS VISIBLE -->
-            <div id="catalogHighlightsContainer" class="bg-white pt-4 px-3 pb-3 mb-2 border-b border-gray-100"></div>
+            <div id="catalogHighlightsContainer" class="bg-white pt-3 px-3 pb-3 mb-2 border-b border-gray-100"></div>
 
             <div class="bg-blue-50/50 px-4 py-2 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50 mb-2">
                 <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-blue-500"></i> Free Delivery</span>
@@ -348,16 +356,17 @@
 
             <!-- VIEW 1: CATEGORY POSTER CATALOG (Visible initially) -->
             <div id="feedCategoriesView" class="px-3 pb-6">
-                <h3 class="font-black text-gray-900 text-lg mb-4">Shop by Collection</h3>
-                <div id="dynamicCategoryGrid" class="grid grid-cols-2 gap-3">
+                <h3 class="font-black text-gray-900 text-lg mb-3 mt-2">Shop by Collection</h3>
+                <!-- ALL POSTERS WILL BE UNIFORM 3-COLUMN SIZE NOW -->
+                <div id="dynamicCategoryGrid" class="grid grid-cols-3 gap-2">
                     <!-- Rendered by JS -->
                 </div>
             </div>
 
             <!-- VIEW 2: PRODUCTS LIST FOR A SPECIFIC CATEGORY (Hidden initially) -->
             <div id="feedProductsView" class="hidden pb-6">
-                <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2">
-                    <button onclick="closeCategoryView()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 active:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2 sticky top-[64px] z-10">
+                    <button onclick="closeCategoryViewManual()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 active:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
                     <h3 class="font-black text-gray-900 text-base flex-1 line-clamp-1" id="catViewTitle">All Products</h3>
                 </div>
                 <div id="productsGrid" class="grid grid-cols-2 gap-2 p-2">  
@@ -434,7 +443,7 @@
 </section>  
 
 <!-- Modals -->
-<div id="authModal" class="bottom-sheet">  
+<div id="authModal" class="bottom-sheet no-easy-close z-[900]">  
     <div class="bottom-sheet-content">  
         <div class="drag-handle"></div>
         <div class="px-5 pb-3 pt-1 border-b border-gray-100 flex justify-between items-center">  
@@ -550,7 +559,7 @@
     </div>  
 </div>  
 
-<!-- MAIN ORDER FORM (Removed QR Code from here) -->
+<!-- MAIN ORDER FORM (QR Code Last me) -->
 <div id="orderModal" class="bottom-sheet z-[110]">  
     <div class="bottom-sheet-content h-[95vh] bg-gray-50">  
         <div class="px-4 py-3 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100">  
@@ -636,21 +645,20 @@
 </div>  
 
 <!-- NEW PAYMENT & CONFIRMATION MODAL -->
-<div id="paymentConfirmModal" class="bottom-sheet z-[120]">
+<div id="paymentConfirmModal" class="bottom-sheet z-[120] no-easy-close">
     <div class="bottom-sheet-content bg-gray-50">
-        <div class="drag-handle"></div>
-        <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-200 bg-white">
+        <div class="px-4 py-3 flex justify-between items-center border-b border-gray-200 bg-white shadow-sm">
             <h3 class="font-bold text-gray-900 text-lg">Complete Payment</h3>
             <button onclick="closeModal('paymentConfirmModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="p-4 overflow-y-auto pb-6 space-y-4">
             
             <div class="bg-blue-50 border border-blue-100 p-3 rounded-lg text-center">
-                <p id="paymentInstructions" class="text-xs font-medium text-blue-900 mb-2 leading-relaxed">
+                <p id="paymentInstructions" class="text-xs font-medium text-blue-900 mb-3 leading-relaxed">
                     <!-- Text updated by JS based on COD/Online -->
                 </p>
                 <div class="bg-white p-3 rounded-lg border border-blue-200 text-center shadow-sm">
-                    <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-40 h-40 mx-auto rounded-lg mb-3 object-contain">
+                    <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-40 h-40 mx-auto rounded-lg mb-3 object-contain border border-gray-100">
                     <div class="flex items-center justify-center gap-2 mb-3">
                         <span class="text-sm font-black text-gray-800">UPI: 9451239239</span>
                         <button type="button" onclick="copyGenericText('9451239239', 'UPI ID Copied!')" class="text-primary text-xs font-bold bg-primary-light px-3 py-1.5 rounded border border-primary/20">Copy UPI</button>
@@ -785,7 +793,7 @@
     </div>
 </div>
 
-<div id="adminLoginModal" class="bottom-sheet z-[400]">  
+<div id="adminLoginModal" class="bottom-sheet z-[400] no-easy-close">  
     <div class="bottom-sheet-content">  
         <div class="drag-handle"></div>
         <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">  
@@ -805,6 +813,7 @@
         <div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div>  
         <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p>  
         <button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button>  
+        <button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button>
         <button onclick="switchAdminTab('categories')" id="adminTabCategories" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📁 Categories</button>  
         <button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button>  
         <button onclick="switchAdminTab('products')" id="adminTabProducts" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📦 Products</button>  
@@ -828,6 +837,29 @@
             </div>  
             <div class="bg-[#141414] border border-[#222] p-8 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-4"><div class="min-w-0"><h2 class="text-xl font-black">Gross Platform Revenue</h2><p class="text-xs text-gray-500 mt-1 font-medium">Total value of all valid orders.</p></div><div class="text-4xl font-black text-[#00e676]">₹<span id="statRevenue">0</span></div></div>  
         </div>  
+
+        <div id="adminBannersSection" class="admin-section hidden space-y-6">
+            <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl">
+                <h2 class="font-black text-xl mb-6">📢 Ads & Banners Management</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Banner Image URL</label>
+                        <input id="newBannerImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Link URL (Optional - e.g WhatsApp Group)</label>
+                        <input id="newBannerLink" type="text" placeholder="https://wa.me/..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <button onclick="addNewAdminBanner()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Banner</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
+                        <tbody id="adminBannersTable" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <div id="adminCategoriesSection" class="admin-section hidden space-y-6">
             <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl">
@@ -981,6 +1013,7 @@
     window.requiredSplashTime = sessionStorage.getItem('visited_shraynex') ? 2000 : 3000;
     sessionStorage.setItem('visited_shraynex', 'true');
 
+    // BRAND HIGHLIGHTS (Flipkart, Myntra etc)
     const catalogHighlights = [
         { title: "Flipkart", image: "https://i.ibb.co/m5jSSm6y/file-00000000213c82069585302fe0e6b816.png", link: "https://fktr.in/hLov3CB" },
         { title: "Myntra", image: "https://i.ibb.co/JFqJMJSv/file-0000000060308211bceb72f6a854dc6d.png", link: "https://myntr.it/ecaVkWR" },
@@ -1046,7 +1079,7 @@
                     <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
-                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
             </div>`;
         }
         openModal('infoModal');
@@ -1078,6 +1111,7 @@
   
     window.allCategories = ["Kurti", "Saree", "Mens Wear"];
     window.categoryImages = {};
+    window.siteBanners = []; // ADS & BANNERS CAROUSEL DATA
     window.adminUsers = [];
     window.adminOrders = [];
     window.allProducts = [];
@@ -1090,8 +1124,9 @@
     let isSignupMode = false, currentFilter = 'All';  
     let currentSelectedImageIndex = 0; let orderSelectedImageIndex = 0;
     
-    // Naya Variable jisme temporary order details save rahenge jab tak popup na confirm ho
+    // TEMPORARY ORDER DATA
     let tempOrderData = null;
+    let carouselInterval = null;
 
     window.getYouTubeId = (url) => {
         if(!url) return null;
@@ -1129,11 +1164,21 @@
             }
         }
     }; 
+    
+    // HARDWARE BACK BUTTON SYSTEM
     window.addEventListener('popstate', (e) => {
         const modals = document.querySelectorAll('.bottom-sheet.active');
         if(modals.length > 0) {
-            const topModal = modals[modals.length - 1]; topModal.classList.remove('active');
+            const topModal = modals[modals.length - 1]; 
+            topModal.classList.remove('active');
             if(modals.length === 1) document.body.style.overflow = '';
+            return;
+        }
+        
+        // Category view checking
+        const productsView = document.getElementById('feedProductsView');
+        if (productsView && !productsView.classList.contains('hidden')) {
+            window.closeCategoryView(true);
         }
     });
     
@@ -1153,7 +1198,6 @@
         copyGenericText(selectedProduct.description, "Description Copied!");
     };
 
-    // Download All Product Images directly from UI
     window.downloadProductImages = async () => {
         if(!selectedProduct) return;
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
@@ -1177,7 +1221,6 @@
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             } catch (err) {
-                // Fallback for CORS issues
                 const a = document.createElement('a');
                 a.href = imgSrc;
                 a.download = `product_${Date.now()}_${i+1}.jpg`;
@@ -1186,7 +1229,6 @@
                 a.click();
                 document.body.removeChild(a);
             }
-            // Small delay to prevent browser from blocking multiple file downloads
             await new Promise(res => setTimeout(res, 500));
         }
     };
@@ -1216,24 +1258,83 @@
             renderCategoryUI(); if (window.isAdminMode) window.renderAdminCategories();
         } catch(e) { }  
     }  
+    
+    async function loadBanners() {
+        try {
+            const snap = await getDoc(doc(db, SETTINGS_COL, "banners"));
+            if(snap.exists() && snap.data().list) {
+                window.siteBanners = snap.data().list;
+                renderCarousel();
+                if(window.isAdminMode) window.renderAdminBanners();
+            }
+        } catch(e) {}
+    }
 
-    // NEW GRID CATALOG RENDER SYSTEM (3-COLUMN POSTER LAYOUT)
+    // ADS / BANNERS CAROUSEL
+    function renderCarousel() {
+        const container = document.getElementById('mainCarouselContainer');
+        const carousel = document.getElementById('mainCarousel');
+        const dots = document.getElementById('carouselDots');
+        
+        if(!window.siteBanners || window.siteBanners.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+        container.classList.remove('hidden');
+        
+        carousel.innerHTML = window.siteBanners.map((b, i) => `
+            <div class="min-w-full snap-start relative flex justify-center bg-gray-100 cursor-pointer aspect-[21/9]" onclick="${b.link ? `window.open('${escapeHtml(b.link)}', '_blank')` : ''}">
+                <img src="${escapeHtml(b.img)}" class="w-full h-full object-cover">
+            </div>
+        `).join('');
+        
+        dots.innerHTML = window.siteBanners.length > 1 ? window.siteBanners.map((_, i) => `
+            <div class="w-1.5 h-1.5 rounded-full transition-colors ${i===0?'bg-primary':'bg-white/70'}" id="cdot-${i}"></div>
+        `).join('') : '';
+
+        // Auto slide logic
+        if(carouselInterval) clearInterval(carouselInterval);
+        if(window.siteBanners.length > 1) {
+            let currentSlide = 0;
+            carouselInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % window.siteBanners.length;
+                carousel.scrollTo({ left: carousel.clientWidth * currentSlide, behavior: 'smooth' });
+                updateCarouselDots(currentSlide);
+            }, 3000); // Har 3 second me slide
+        }
+    }
+    
+    function updateCarouselDots(index) {
+        const dotCount = window.siteBanners.length;
+        if(dotCount > 1) {
+            for(let i=0; i<dotCount; i++) {
+                const dot = document.getElementById(`cdot-${i}`);
+                if(dot) dot.className = `w-1.5 h-1.5 rounded-full transition-colors ${i === index ? 'bg-primary' : 'bg-white/70'}`;
+            }
+        }
+    }
+
+    window.updateCarouselDotsOnScroll = () => {
+        const carousel = document.getElementById('mainCarousel');
+        if(!carousel) return;
+        const index = Math.round(carousel.scrollLeft / carousel.offsetWidth); 
+        updateCarouselDots(index);
+    }
+
+    // UNIFORM CATALOG GRID RENDER
     function renderCategoryUI() {  
         const grid = document.getElementById("dynamicCategoryGrid");  
         if(grid) {  
             let html = window.allCategories.map((cat, index) => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                // Generic placeholder using placehold.co to mimic a standard catalog image if no image is uploaded
                 const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
                 
-                // Pehla item bada (col-span-2), baki sab (col-span-1)
-                const cssClass = index === 0 ? "col-span-2 aspect-[3/4]" : "col-span-1 aspect-[3/4]";
-                
+                // SABHI POSTER UNIFORM 3-COLUMN SIZE (col-span-1)
                 return `
-                <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
+                <div class="col-span-1 aspect-[3/4] poster-card" onclick="openCategoryView('${safeCat}')">
                     <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy">
                     <div class="poster-overlay">
-                        <h3 class="poster-title text-base sm:text-lg">${escapeHtml(cat)}</h3>
+                        <h3 class="poster-title text-[10px] sm:text-xs">${escapeHtml(cat)}</h3>
                     </div>
                 </div>`;
             }).join('');  
@@ -1243,26 +1344,42 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    // CATEGORY VIEW SWITCHER LOGIC
+    // CATEGORY VIEW & BACK BUTTON SYSTEM
     window.openCategoryView = (cat) => { 
         currentFilter = cat; 
         document.getElementById('feedCategoriesView').classList.add('hidden');
         document.getElementById('feedProductsView').classList.remove('hidden');
         document.getElementById('catViewTitle').innerText = cat === 'All' ? 'All Products' : cat + ' Collection';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Browser/Phone back button support
+        if(!history.state || !history.state.categoryView) {
+            history.pushState({ categoryView: true }, "");
+        }
         filterProducts(); 
     };  
     
-    window.closeCategoryView = () => {
+    window.closeCategoryViewManual = () => {
+        history.back(); // Automatically calls popstate listener
+    };
+
+    window.closeCategoryView = (fromPopState = false) => {
         currentFilter = 'All';
         document.getElementById('feedProductsView').classList.add('hidden');
         document.getElementById('feedCategoriesView').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        if(!fromPopState && history.state && history.state.categoryView) {
+            history.back();
+        }
     };
 
     window.handleHomeNavClick = () => {
         switchTab('Feed');
-        closeCategoryView(); // Ye wapas main poster grid pe le aayega
+        const productsView = document.getElementById('feedProductsView');
+        if (productsView && !productsView.classList.contains('hidden')) {
+            window.closeCategoryViewManual();
+        }
     };
   
     window.toggleAuthMode = (mode) => {  
@@ -1330,7 +1447,7 @@
                             if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
                         }  
                     });  
-                    loadCategories(); loadProducts(); loadOrders(); loadUserWithdrawals();
+                    loadCategories(); loadBanners(); loadProducts(); loadOrders(); loadUserWithdrawals();
                 } catch(e) {}  
             }  
         } else {  
@@ -1408,13 +1525,16 @@
         let f = window.allProducts;  
         if(currentFilter !== 'All') f = f.filter(p => (p.category||'').toLowerCase() === currentFilter.toLowerCase());  
         
-        // Agar koi title search kar raha hai, to products view dikha do auto
         if(q) {
             f = f.filter(p => `${p.title||''} ${p.category||''}`.toLowerCase().includes(q));  
             if(document.getElementById('feedProductsView').classList.contains('hidden')) {
                 document.getElementById('feedCategoriesView').classList.add('hidden');
                 document.getElementById('feedProductsView').classList.remove('hidden');
                 document.getElementById('catViewTitle').innerText = 'Search Results';
+                
+                if(!history.state || !history.state.categoryView) {
+                    history.pushState({ categoryView: true }, "");
+                }
             }
         }
           
@@ -1605,7 +1725,6 @@
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
         } catch(e) {
-            // Fallback
             const a = document.createElement('a');
             a.href = qrUrl;
             a.download = `SHRAYNEX_Payment_QR.jpg`;
@@ -1637,14 +1756,13 @@
 
         document.getElementById('orderForm').reset(); 
         
-        // Hide COD option if product is Prepaid Only
         const codLabelContainer = document.getElementById('codLabelContainer');
         if(selectedProduct.codStatus === 'not_available') {
             codLabelContainer.classList.add('hidden');
             document.querySelector('input[name="payMethod"][value="online"]').checked = true;
         } else {
             codLabelContainer.classList.remove('hidden');
-            document.querySelector('input[name="payMethod"][value="online"]').checked = true; // Default Online
+            document.querySelector('input[name="payMethod"][value="online"]').checked = true;
         }
         
         document.getElementById('orderQty').value = 1; updateOrderSummary();  
@@ -1687,7 +1805,7 @@
         document.getElementById('summaryTotal').innerText = `₹${money(s*q)}`; document.getElementById('summaryMargin').innerText = `₹${money(Math.max(0, s-b)*q)}`;  
     };  
   
-    // NEW ORDER PLACEMENT LOGIC (SPLIT INTO FORM SUBMISSION & PAYMENT CONFIRMATION)
+    // NEW ORDER PLACEMENT LOGIC
     window.submitOrderForm = async (e) => {  
         e.preventDefault(); if(!currentUser || !selectedProduct) return;  
         const q = Number(document.getElementById('orderQty').value), s = Number(document.getElementById('orderSellingPrice').value), b = Number(selectedProduct.basePrice);  
@@ -1701,7 +1819,6 @@
         const imgToSave = images[actualImgIndex] || '';
         const completeCustAddress = document.getElementById('orderCustAddress').value.trim() + ", " + document.getElementById('orderCustLocality').value.trim() + ", " + document.getElementById('orderCustCity').value + ", " + document.getElementById('orderCustState').value;
 
-        // Store details in global temp variable
         tempOrderData = {  
             orderId: orderId, productId: selectedProduct.id, productName: selectedProduct.title||"", productImage: imgToSave,  
             selectedVariant: "Photo " + (actualImgIndex+1), quantity: q, size: sz!=='N/A'?sz:null, basePrice: b, sellingPrice: s, profit: (s-b)*q, status: "pending",  
@@ -1727,7 +1844,6 @@
         else { skipBtn.innerText = "Processing..."; skipBtn.disabled = true; confirmBtn.disabled = true; }
         
         try {
-            // Update temp data based on payment button click
             tempOrderData.paymentStatus = isPaid ? 'Paid Online' : 'Pending Verification / Skip';
             await setDoc(doc(db, ORDERS_COL, tempOrderData.orderId), tempOrderData);  
 
@@ -1735,11 +1851,9 @@
             closeModal('paymentConfirmModal'); 
             switchTab('Orders');  
             
-            // Format WhatsApp Message
             const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(`🛍️ *New Order!*\nID: ${tempOrderData.orderId}\nProduct: ${tempOrderData.productName}\nTotal: ₹${tempOrderData.sellingPrice*tempOrderData.quantity}\nPayment: ${tempOrderData.paymentStatus}`)}`;
             window.open(waUrl, '_blank');
             
-            // Clear temp data
             tempOrderData = null;
         } catch(e) { 
             showToast("Order Failed. Try again."); 
@@ -1875,6 +1989,7 @@
             document.getElementById('adminPanelModal').classList.add('flex');  
             
             loadCategories(); 
+            loadBanners();
             window.refreshAdmin();  
         } catch(e) { 
             alert("❌ Admin Access Denied!"); 
@@ -1889,7 +2004,7 @@
     window.toggleAdminMenu = () => { document.getElementById('adminSidebar').classList.toggle('hidden'); };  
     
     window.switchAdminTab = (tab) => {  
-        ["dashboard","categories","users","products","orders","withdrawals"].forEach(x => {  
+        ["dashboard","banners","categories","users","products","orders","withdrawals"].forEach(x => {  
             document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden", x!==tab);  
             const b = document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));  
             if (b) {
@@ -1901,6 +2016,48 @@
         document.getElementById('adminPageTitle').innerText = document.getElementById("adminTab"+tab.charAt(0).toUpperCase()+tab.slice(1)).innerText.split(' ')[1];  
         if(window.innerWidth < 768) toggleAdminMenu();  
     };  
+
+    // ADMIN BANNERS LOGIC
+    window.renderAdminBanners = () => {
+        const t = document.getElementById('adminBannersTable');
+        t.innerHTML = window.siteBanners.length ? window.siteBanners.map((b, i) => `
+            <tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
+                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-12 object-contain bg-[#222] rounded"></td>
+                <td class="py-3 px-4 text-xs text-gray-400 max-w-[200px] truncate">${escapeHtml(b.link || 'No Link')}</td>
+                <td class="py-3 px-4 text-right">
+                    <button onclick="deleteAdminBanner(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button>
+                </td>
+            </tr>
+        `).join('') : '<tr><td colspan="3" class="p-8 text-center text-gray-500">No banners found.</td></tr>';
+    };
+
+    window.addNewAdminBanner = async () => {
+        const img = document.getElementById('newBannerImg').value.trim();
+        const link = document.getElementById('newBannerLink').value.trim();
+        if(!img) return showToast("Image URL is required!");
+        
+        window.siteBanners.push({ img, link });
+        document.getElementById('newBannerImg').value = '';
+        document.getElementById('newBannerLink').value = '';
+        
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "banners"), { list: window.siteBanners }, { merge: true });
+            renderCarousel();
+            if(window.isAdminMode) window.renderAdminBanners();
+            showToast("Banner Added!");
+        } catch(e) { showToast("Error saving banner"); }
+    };
+
+    window.deleteAdminBanner = async (index) => {
+        if(!confirm("Delete this banner?")) return;
+        window.siteBanners.splice(index, 1);
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "banners"), { list: window.siteBanners }, { merge: true });
+            renderCarousel();
+            if(window.isAdminMode) window.renderAdminBanners();
+            showToast("Banner Deleted!");
+        } catch(e) { showToast("Error deleting banner"); }
+    };
 
     // Product Save Logic
     window.saveAdminProduct = async () => {  
@@ -2038,7 +2195,7 @@
         document.getElementById('statWithdrawals').innerText = window.adminWithdraws.filter(w=>w.status==='pending').length;  
         document.getElementById('statRevenue').innerText = money(window.adminOrders.filter(o=>o.status!=='cancelled' && !o.isBonus).reduce((s,o)=>s+(Number(o.sellingPrice)*Number(o.quantity||1)),0));  
           
-        window.renderAdminUsers(); window.renderAdminProducts(); window.renderAdminOrders(); window.renderAdminWithdrawals(); window.renderAdminCategories();
+        window.renderAdminUsers(); window.renderAdminProducts(); window.renderAdminOrders(); window.renderAdminWithdrawals(); window.renderAdminCategories(); window.renderAdminBanners();
     };  
 
     // Categories Logic
@@ -2247,7 +2404,6 @@
         const statusEl = document.getElementById('uploadStatus');
         const textarea = document.getElementById('pImgUrls');
         
-        // User's provided ImgBB API Key
         const IMGBB_API_KEY = '02b575ad3a19e8021af3bbcd4c659938'; 
         
         statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Uploading ${files.length} photo(s)...</span>`;
