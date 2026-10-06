@@ -358,7 +358,7 @@
             <!-- VIEW 1: CATEGORY POSTER CATALOG (Visible initially) -->
             <div id="feedCategoriesView" class="px-3 pb-6">
                 <h3 class="font-black text-gray-900 text-lg mb-3 mt-2">Shop by Collection</h3>
-                <!-- ALL POSTERS WILL BE UNIFORM 3-COLUMN SIZE NOW -->
+                <!-- ALL POSTERS ARE NOW UNIFORM 3-COLUMN SIZE (col-span-1) -->
                 <div id="dynamicCategoryGrid" class="grid grid-cols-3 gap-2">
                     <!-- Rendered by JS -->
                 </div>
@@ -595,7 +595,8 @@
                 <div id="orderSizeWrapper" class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">  
                     <label class="block text-xs font-semibold text-gray-700 mb-2">Select Size <span class="text-red-500">*</span></label>  
                     <div id="orderSizeOptions" class="flex gap-2 flex-wrap"></div>  
-                    <input type="hidden" id="selectedSize" required>  
+                    <!-- Removed HTML5 required to fix mobile double click issue, validated manually in JS -->
+                    <input type="hidden" id="selectedSize">  
                 </div>  
                 
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-3">
@@ -668,7 +669,7 @@
     <div class="bottom-sheet-content bg-gray-50">
         <div class="px-4 py-3 flex justify-between items-center border-b border-gray-200 bg-white shadow-sm">
             <h3 class="font-bold text-gray-900 text-lg">Complete Payment</h3>
-            <button onclick="closeModal('paymentConfirmModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="closePaymentConfirmModal()" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="p-4 overflow-y-auto pb-6 space-y-4">
             
@@ -1114,6 +1115,11 @@
         openModal('infoModal');
     };
 
+    window.closePaymentConfirmModal = () => {
+        document.getElementById('paymentConfirmModal').classList.remove('active');
+        // Because we manually managed it outside popstate for safety
+    };
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
     import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
@@ -1358,14 +1364,14 @@
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
                 
-                // Pehla item full width, baki sab 2-column grid
-                const cssClass = index === 0 ? "col-span-3 aspect-square sm:aspect-video" : "col-span-1 aspect-[3/4]";
+                // SABHI POSTER UNIFORM 3-COLUMN SIZE (col-span-1 aspect-[3/4])
+                const cssClass = "col-span-1 aspect-[3/4]";
                 
                 return `
                 <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
                     <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy">
                     <div class="poster-overlay">
-                        <h3 class="poster-title ${index===0?'text-xl':'text-xs'}">${escapeHtml(cat)}</h3>
+                        <h3 class="poster-title text-[10px] sm:text-xs">${escapeHtml(cat)}</h3>
                     </div>
                 </div>`;
             }).join('');  
@@ -1712,7 +1718,7 @@
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
         const descText = selectedProduct.description ? `\n📝 *Details:*\n${selectedProduct.description}\n` : '';
         const videoText = selectedProduct.videoUrl ? `\n🎥 *Watch Video:* ${selectedProduct.videoUrl}\n` : '';
-        const msg = `🛍️️ *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\nMessage me to order!`;  
+        const msg = `🛍 *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\nMessage me to order!`;  
         
         const btn = document.querySelector('#shareModal button[onclick="shareProduct()"]');
         const origHtml = btn.innerHTML; btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
@@ -1816,10 +1822,9 @@
         const sel = document.getElementById('selectedSize');  
           
         if(cat.includes('saree') || sizes.length === 0) {  
-            wrap.classList.add('hidden'); sel.value = "N/A"; sel.required = false;  
+            wrap.classList.add('hidden'); sel.value = "N/A"; 
         } else {  
-            wrap.classList.remove('hidden'); sel.value = ""; sel.required = true;  
-            document.getElementById('orderSizeOptions').innerHTML = sizes.map(s => `<button type="button" onclick="selectOrderSize('${escapeHtml(s)}',this)" class="size-btn">${escapeHtml(s)}</button>`).join('');  
+            wrap.classList.remove('hidden'); sel.value = ""; 
         }  
         openModal('orderModal');  
     };  
@@ -1849,12 +1854,21 @@
         document.getElementById('summaryTotal').innerText = `₹${money(s*q)}`; document.getElementById('summaryMargin').innerText = `₹${money(Math.max(0, s-b)*q)}`;  
     };  
   
-    // NEW ORDER PLACEMENT LOGIC
+    // NEW ORDER PLACEMENT LOGIC (Fix: Manual Validation so 1-click works)
     window.submitOrderForm = async (e) => {  
         e.preventDefault(); if(!currentUser || !selectedProduct) return;  
-        const q = Number(document.getElementById('orderQty').value), s = Number(document.getElementById('orderSellingPrice').value), b = Number(selectedProduct.basePrice);  
-        const sz = document.getElementById('selectedSize').value, payMethod = document.querySelector('input[name="payMethod"]:checked').value;
-        if(document.getElementById('selectedSize').required && !sz) return showToast("Please select a size.");  
+        
+        const sz = document.getElementById('selectedSize').value;
+        const wrap = document.getElementById('orderSizeWrapper');
+        if(!wrap.classList.contains('hidden') && !sz) {
+            return showToast("Please select a size first.");
+        }
+
+        const q = Number(document.getElementById('orderQty').value);
+        const s = Number(document.getElementById('orderSellingPrice').value);
+        const b = Number(selectedProduct.basePrice);  
+        const payMethod = document.querySelector('input[name="payMethod"]:checked').value;
+        
         if(s <= b) return showToast("Customer price must be higher than base price.");  
         
         const orderId = "RS" + Math.floor(100000 + Math.random() * 900000);  
@@ -1872,8 +1886,10 @@
         };  
         
         updatePaymentUI();
-        closeModal('orderModal');
-        openModal('paymentConfirmModal');
+        
+        // Manual class switch to ensure single click works without popstate disruption
+        document.getElementById('orderModal').classList.remove('active');
+        document.getElementById('paymentConfirmModal').classList.add('active');
     };  
     
     window.finalizeOrder = async (isPaid) => {
@@ -1892,7 +1908,7 @@
             await setDoc(doc(db, ORDERS_COL, tempOrderData.orderId), tempOrderData);  
 
             showToast("Order Placed Successfully!"); 
-            closeModal('paymentConfirmModal'); 
+            closePaymentConfirmModal(); 
             switchTab('Orders');  
             
             const waUrl = `https://wa.me/919451239239?text=${encodeURIComponent(`🛍️ *New Order!*\nID: ${tempOrderData.orderId}\nProduct: ${tempOrderData.productName}\nTotal: ₹${tempOrderData.sellingPrice*tempOrderData.quantity}\nPayment: ${tempOrderData.paymentStatus}`)}`;
