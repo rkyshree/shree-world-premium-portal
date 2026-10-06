@@ -337,9 +337,9 @@
                 </div>  
             </div>
 
-            <!-- ADS BANNER CAROUSEL (NEW) -->
+            <!-- ADS BANNER CAROUSEL (NEW 16:9 SIZE) -->
             <div id="mainCarouselContainer" class="relative w-full bg-white mb-2 hidden shadow-sm border-b border-gray-100">
-                <div id="mainCarousel" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar scroll-smooth">
+                <div id="mainCarousel" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar scroll-smooth" onscroll="updateCarouselDotsOnScroll()">
                     <!-- Slides injected via JS -->
                 </div>
                 <div id="carouselDots" class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10"></div>
@@ -348,10 +348,11 @@
             <!-- HIGHLIGHTS (Flipkart, Myntra, etc.) - ALWAYS VISIBLE -->
             <div id="catalogHighlightsContainer" class="bg-white pt-3 px-3 pb-3 mb-2 border-b border-gray-100"></div>
 
-            <div class="bg-blue-50/50 px-4 py-2 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50 mb-2">
-                <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-blue-500"></i> Free Delivery</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-money-bill-wave text-green-500"></i> COD Available</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-rotate-left text-primary"></i> Easy Returns</span>
+            <!-- CLICKABLE INFO STRIP -->
+            <div class="bg-blue-50/50 px-4 py-3 flex justify-between items-center text-[10px] font-semibold text-gray-600 border-b border-blue-100/50 mb-2 shadow-sm">
+                <span class="flex items-center gap-1 cursor-pointer hover:text-blue-600 transition" onclick="openInfoModal('delivery')"><i class="fa-solid fa-truck text-blue-500"></i> Free Delivery</span>
+                <span class="flex items-center gap-1 cursor-pointer hover:text-green-600 transition" onclick="openInfoModal('cod')"><i class="fa-solid fa-money-bill-wave text-green-500"></i> COD Available</span>
+                <span class="flex items-center gap-1 cursor-pointer hover:text-primary transition" onclick="openInfoModal('return')"><i class="fa-solid fa-rotate-left text-primary"></i> Easy Returns</span>
             </div>
 
             <!-- VIEW 1: CATEGORY POSTER CATALOG (Visible initially) -->
@@ -365,7 +366,7 @@
 
             <!-- VIEW 2: PRODUCTS LIST FOR A SPECIFIC CATEGORY (Hidden initially) -->
             <div id="feedProductsView" class="hidden pb-6">
-                <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2 sticky top-[64px] z-10">
+                <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2 sticky top-[64px] z-10 shadow-sm">
                     <button onclick="closeCategoryViewManual()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 active:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
                     <h3 class="font-black text-gray-900 text-base flex-1 line-clamp-1" id="catViewTitle">All Products</h3>
                 </div>
@@ -544,6 +545,15 @@
 
             <div class="mb-6">  
                 <label class="text-xs font-semibold text-gray-700 block mb-2">Enter price to share with customer (Includes your margin)</label>  
+                
+                <!-- Quick Margin Add Buttons -->
+                <div class="flex gap-2 mb-3">
+                    <button type="button" onclick="quickAddPrice('share', 50)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition">+₹50</button>
+                    <button type="button" onclick="quickAddPrice('share', 100)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition">+₹100</button>
+                    <button type="button" onclick="quickAddPrice('share', 150)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition">+₹150</button>
+                    <button type="button" onclick="quickAddPrice('share', 200)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition">+₹200</button>
+                </div>
+
                 <div class="relative">  
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>  
                     <input type="number" id="calcSellingPrice" oninput="updateProfitCalc()" placeholder="e.g. 599" class="w-full bg-white border border-gray-300 rounded-lg py-3 pl-8 pr-4 font-bold text-lg outline-none focus:border-primary">  
@@ -559,7 +569,7 @@
     </div>  
 </div>  
 
-<!-- MAIN ORDER FORM (QR Code Last me) -->
+<!-- MAIN ORDER FORM -->
 <div id="orderModal" class="bottom-sheet z-[110]">  
     <div class="bottom-sheet-content h-[95vh] bg-gray-50">  
         <div class="px-4 py-3 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100">  
@@ -627,6 +637,15 @@
 
                 <div class="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">  
                     <label class="block text-xs font-semibold text-gray-700 mb-2">Final Price for Customer (Per Item) <span class="text-red-500">*</span></label>  
+                    
+                    <!-- Quick Margin Add Buttons -->
+                    <div class="flex gap-2 mb-3">
+                        <button type="button" onclick="quickAddPrice('order', 50)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-1.5 rounded text-xs font-bold hover:bg-gray-200 transition">+₹50</button>
+                        <button type="button" onclick="quickAddPrice('order', 100)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-1.5 rounded text-xs font-bold hover:bg-gray-200 transition">+₹100</button>
+                        <button type="button" onclick="quickAddPrice('order', 150)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-1.5 rounded text-xs font-bold hover:bg-gray-200 transition">+₹150</button>
+                        <button type="button" onclick="quickAddPrice('order', 200)" class="flex-1 bg-gray-100 text-gray-700 border border-gray-300 py-1.5 rounded text-xs font-bold hover:bg-gray-200 transition">+₹200</button>
+                    </div>
+
                     <div class="relative">  
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500">₹</span>  
                         <input type="number" id="orderSellingPrice" required oninput="updateOrderSummary()" placeholder="Price to collect" class="w-full bg-white border border-gray-300 rounded-lg py-2.5 pl-8 pr-4 font-bold outline-none focus:border-primary">  
@@ -638,7 +657,7 @@
                     <div class="flex justify-between text-sm pt-2 border-t border-gray-600"><span class="font-semibold">Your Total Margin</span><span class="font-bold text-green-400" id="summaryMargin">₹0</span></div>  
                 </div>  
 
-                <button type="submit" id="submitOrderBtn" class="w-full bg-primary text-white py-3.5 rounded-lg font-bold text-sm shadow-md mt-4">Place Order</button>  
+                <button type="submit" id="submitOrderBtn" class="w-full bg-primary text-white py-3.5 rounded-lg font-bold text-sm shadow-md mt-4 active:scale-95 transition-transform relative z-20">Place Order</button>  
             </form>  
         </div>  
     </div>  
@@ -840,7 +859,7 @@
 
         <div id="adminBannersSection" class="admin-section hidden space-y-6">
             <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl">
-                <h2 class="font-black text-xl mb-6">📢 Ads & Banners Management</h2>
+                <h2 class="font-black text-xl mb-6">📢 Ads & Banners Management (16:9)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                     <div>
                         <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Banner Image URL</label>
@@ -1049,8 +1068,8 @@
         document.getElementById("policyContent").innerHTML = p.content.replace(/\n/g, '<br>'); openModal("policyModal"); 
     };
 
-    // Open Info Modal for COD and Return Policies
-    window.openInfoModal = (type, codStatus) => {
+    // Open Info Modal for COD, Delivery, and Return Policies
+    window.openInfoModal = (type, codStatus = 'available') => {
         const titleEl = document.getElementById('infoModalTitle');
         const bodyEl = document.getElementById('infoModalBody');
         
@@ -1080,6 +1099,16 @@
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
                 <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+            </div>`;
+        } else if (type === 'delivery') {
+            titleEl.innerText = "Free & Fast Delivery";
+            bodyEl.innerHTML = `<div class="bg-green-50 text-green-900 p-4 rounded-lg border border-green-200 space-y-3 leading-relaxed">
+                <p><b class="text-green-800 text-base"><i class="fa-solid fa-truck-fast"></i> 100% Free Delivery!</b></p>
+                <p>SHRAYNEX par sabhi products par delivery bilkul FREE hai. Customer se koi extra delivery charge nahi liya jayega.</p>
+                <ul class="list-disc pl-5 space-y-1.5 font-medium text-sm">
+                    <li>Order confirm hone ke baad <b>4 se 7 din</b> ke andar delivery ho jati hai.</li>
+                    <li>Tracking link SMS ke through customer ko mil jayega.</li>
+                </ul>
             </div>`;
         }
         openModal('infoModal');
@@ -1270,7 +1299,7 @@
         } catch(e) {}
     }
 
-    // ADS / BANNERS CAROUSEL
+    // ADS / BANNERS CAROUSEL (16:9 Aspect Ratio)
     function renderCarousel() {
         const container = document.getElementById('mainCarouselContainer');
         const carousel = document.getElementById('mainCarousel');
@@ -1283,7 +1312,7 @@
         container.classList.remove('hidden');
         
         carousel.innerHTML = window.siteBanners.map((b, i) => `
-            <div class="min-w-full snap-start relative flex justify-center bg-gray-100 cursor-pointer aspect-[21/9]" onclick="${b.link ? `window.open('${escapeHtml(b.link)}', '_blank')` : ''}">
+            <div class="min-w-full snap-start relative flex justify-center bg-gray-100 cursor-pointer aspect-video" onclick="${b.link ? `window.open('${escapeHtml(b.link)}', '_blank')` : ''}">
                 <img src="${escapeHtml(b.img)}" class="w-full h-full object-cover">
             </div>
         `).join('');
@@ -1329,12 +1358,14 @@
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
                 
-                // SABHI POSTER UNIFORM 3-COLUMN SIZE (col-span-1)
+                // Pehla item full width, baki sab 2-column grid
+                const cssClass = index === 0 ? "col-span-3 aspect-square sm:aspect-video" : "col-span-1 aspect-[3/4]";
+                
                 return `
-                <div class="col-span-1 aspect-[3/4] poster-card" onclick="openCategoryView('${safeCat}')">
+                <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
                     <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy">
                     <div class="poster-overlay">
-                        <h3 class="poster-title text-[10px] sm:text-xs">${escapeHtml(cat)}</h3>
+                        <h3 class="poster-title ${index===0?'text-xl':'text-xs'}">${escapeHtml(cat)}</h3>
                     </div>
                 </div>`;
             }).join('');  
@@ -1379,6 +1410,19 @@
         const productsView = document.getElementById('feedProductsView');
         if (productsView && !productsView.classList.contains('hidden')) {
             window.closeCategoryViewManual();
+        }
+    };
+
+    // Quick Margin Add Feature
+    window.quickAddPrice = (type, marginAmount) => {
+        if(!selectedProduct) return;
+        const base = Number(selectedProduct.basePrice || 0);
+        if (type === 'share') {
+            document.getElementById('calcSellingPrice').value = base + marginAmount;
+            updateProfitCalc();
+        } else if (type === 'order') {
+            document.getElementById('orderSellingPrice').value = base + marginAmount;
+            updateOrderSummary();
         }
     };
   
@@ -1668,7 +1712,7 @@
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
         const descText = selectedProduct.description ? `\n📝 *Details:*\n${selectedProduct.description}\n` : '';
         const videoText = selectedProduct.videoUrl ? `\n🎥 *Watch Video:* ${selectedProduct.videoUrl}\n` : '';
-        const msg = `🛍️ *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\nMessage me to order!`;  
+        const msg = `🛍️️ *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\nMessage me to order!`;  
         
         const btn = document.querySelector('#shareModal button[onclick="shareProduct()"]');
         const origHtml = btn.innerHTML; btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
@@ -2025,6 +2069,7 @@
                 <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-12 object-contain bg-[#222] rounded"></td>
                 <td class="py-3 px-4 text-xs text-gray-400 max-w-[200px] truncate">${escapeHtml(b.link || 'No Link')}</td>
                 <td class="py-3 px-4 text-right">
+                    <button onclick="editAdminBanner(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button>
                     <button onclick="deleteAdminBanner(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button>
                 </td>
             </tr>
@@ -2046,6 +2091,22 @@
             if(window.isAdminMode) window.renderAdminBanners();
             showToast("Banner Added!");
         } catch(e) { showToast("Error saving banner"); }
+    };
+
+    window.editAdminBanner = async (index) => {
+        const b = window.siteBanners[index];
+        const newImg = prompt("Edit Banner Image URL:", b.img);
+        if(newImg === null || newImg.trim() === "") return;
+        const newLink = prompt("Edit Link URL (Optional):", b.link || "");
+        if(newLink === null) return;
+        
+        window.siteBanners[index] = { img: newImg.trim(), link: newLink.trim() };
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "banners"), { list: window.siteBanners }, { merge: true });
+            renderCarousel();
+            if(window.isAdminMode) window.renderAdminBanners();
+            showToast("Banner Updated!");
+        } catch(e) { showToast("Error updating banner"); }
     };
 
     window.deleteAdminBanner = async (index) => {
