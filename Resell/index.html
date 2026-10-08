@@ -1096,7 +1096,7 @@
                 <p class="font-bold text-red-600 bg-red-50 p-2 rounded border border-red-200">2 days return/exchange available only for manufacturing defect.</p>
                 <ul class="list-disc pl-5 space-y-1.5 font-medium">
                     <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
-                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> চিহ্নিত होना चाहिए।</li>
+                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
                     <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
                 </ul>
                 <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
@@ -2473,7 +2473,7 @@
         } catch(e) { showToast("Error processing."); }  
     };  
 
-    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION
+    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION (Fixed with XMLHttpRequest for WebView Compatibility)
     window.handleAdminImageUpload = async (e) => {
         const files = e.target.files;
         if(!files || files.length === 0) return;
@@ -2488,30 +2488,34 @@
         
         for(let i=0; i<files.length; i++) {
             try {
-                // FIX: Convert File to Base64 (यह मोबाइल WebView में नेटवर्क एरर को रोकेगा)
-                const base64Data = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(files[i]);
-                    reader.onload = () => resolve(reader.result.split(',')[1]); // Base64 string
-                    reader.onerror = error => reject(error);
+                // Using XMLHttpRequest (XHR) instead of fetch() to prevent WebView Network Errors
+                const data = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY);
+                    
+                    xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            try { resolve(JSON.parse(xhr.responseText)); } 
+                            catch(err) { reject(err); }
+                        } else { 
+                            reject(new Error("Upload Failed with Status: " + xhr.status)); 
+                        }
+                    };
+                    
+                    xhr.onerror = () => reject(new Error("Network Error in WebView"));
+                    
+                    const formData = new FormData();
+                    formData.append("image", files[i]);
+                    xhr.send(formData);
                 });
 
-                const formData = new FormData();
-                formData.append('image', base64Data);
-
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await res.json();
                 if(data && data.success) {
                     uploadedUrls.push(data.data.url);
                 } else {
                     console.error("ImgBB Error:", data);
                 }
             } catch(error) {
-                console.error("Upload failed", error);
+                console.error("Upload failed:", error);
             }
         }
         
