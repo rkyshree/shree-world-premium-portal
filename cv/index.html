@@ -3,564 +3,1030 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rajan Kumar Yadav - Professional CV</title>
+    <title>Career Services - Premium Documents</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
-
-        :root {
-            --primary-color: #003366; 
-            --text-dark: #111111;
-            --text-regular: #333333;
-            --border-color: #bbbbbb;
-            --bg-light: #f0f4f8;
-            --base-font-size: 12.5px; /* Base font size for dynamic resizing */
-        }
-
-        body {
-            font-family: 'Roboto', Arial, sans-serif;
-            background-color: #e0e0e0;
-            color: var(--text-regular);
-            line-height: 1.4;
-            margin: 0;
-            padding: 20px 0;
-            font-size: var(--base-font-size);
-        }
-
-        .cv-container {
-            width: 210mm; 
-            height: 297mm; /* Strictly 1 page A4 */
-            max-height: 297mm;
-            background-color: #ffffff;
-            margin: 0 auto;
-            padding: 25px 35px; /* Tuned to perfectly fit 1 page */
-            box-sizing: border-box;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            position: relative;
-            overflow: hidden; /* Prevents text from spilling outside the white page */
-        }
-
-        /* Header Styles */
-        .header {
-            text-align: center;
-            border-bottom: 3px solid var(--primary-color);
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-        }
-
-        .header h1 {
-            font-size: 2em; /* Scales with base font */
-            color: var(--primary-color);
-            margin: 0 0 5px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 900;
-        }
-
-        .contact-info {
-            font-size: 1.1em;
-            color: var(--text-dark);
-        }
-
-        /* Highlighted Contact Info */
-        .contact-info p {
-            margin: 4px 0;
-            font-weight: 700;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Roboto:wght@400;700;900&display=swap');
         
-        .highlight-marker {
-            background-color: #ffff00;
-            color: #000000; 
-            font-weight: 900;
-            padding: 2px 6px;
-            border-radius: 3px;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        .contact-label {
-            color: #0044cc; /* Bold Blue Color as requested */
-            font-weight: 900;
-            font-size: 1.15em;
+        /* Anti-screenshot & protection */
+        #anti-screenshot-shield {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: bold;
+            opacity: 0; pointer-events: none; transition: opacity 0.1s;
         }
 
-        .total-exp {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1em;
-            margin-top: 8px;
+        /* UI Elements */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .nav-link.active { color: #2563eb !important; border-bottom: 3px solid #2563eb; }
+
+        /* Document Container & Scaling */
+        .a4-document-wrapper {
+            width: 100%; overflow-x: auto; display: flex; justify-content: center;
+            padding: 20px 0; background-color: #e5e7eb; position: relative;
         }
 
-        /* Section Styles */
-        .section {
-            margin-bottom: 12px; /* Reduced to fit 1 page comfortably */
+        .a4-document {
+            width: 210mm; min-height: 297mm; background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative;
+            overflow: hidden; box-sizing: border-box; transform-origin: top center;
         }
 
-        .section-title {
-            font-size: 1.15em;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            background-color: var(--bg-light);
-            padding: 3px 8px;
-            border-left: 4px solid var(--primary-color);
-            margin-bottom: 6px;
+        @media (max-width: 850px) { .a4-document { transform: scale(0.45); margin-bottom: -150mm; } }
+        @media (max-width: 450px) { .a4-document { transform: scale(0.35); margin-bottom: -180mm; } }
+
+        /* Security Overlays */
+        .watermark {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 5; display: flex; flex-wrap: wrap;
+            justify-content: space-evenly; align-content: space-evenly; overflow: hidden;
+            opacity: 0.15;
+        }
+        .watermark span {
+            font-size: 3rem; color: #000; font-weight: 900;
+            transform: rotate(-35deg); white-space: nowrap; margin: 20px;
         }
 
-        p { margin: 0 0 6px 0; text-align: justify; }
-
-        /* Skills Grid */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px 15px;
-            font-weight: 500;
-        }
-        .skills-grid div {
-            display: flex;
-            align-items: center;
-        }
-        .skills-grid div::before {
-            content: "▪";
-            color: var(--primary-color);
-            margin-right: 6px;
-            font-size: 1.2em;
+        .locked-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(6px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10; transition: all 0.3s ease;
         }
 
-        /* Table Styles (Experience & Education) */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 5px;
-        }
+        .editable-active { outline: 2px dashed #3b82f6 !important; background-color: rgba(59, 130, 246, 0.1) !important; cursor: text; }
 
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 4px 6px;
-            text-align: left;
-            font-size: 1em;
-            vertical-align: middle;
+        /* Modals */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: white; border-radius: 16px; width: 90%; max-width: 420px;
+            padding: 30px; transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
 
-        th {
-            background-color: var(--bg-light);
-            color: var(--primary-color);
-            font-weight: 700;
-        }
+        /* --- Resume Styles --- */
+        .res-box { padding: 30px 40px; color: #333; line-height: 1.5; font-family: 'Roboto', sans-serif; font-size: 13px;}
+        .res-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .res-table th, .res-table td { border: 1px solid #aaa; padding: 6px; text-align: left; }
+        
+        /* TPL 1: Indian Corporate */
+        .tpl-corp .r-header { text-align: center; border-bottom: 3px solid #003366; padding-bottom: 10px; margin-bottom: 15px; }
+        .tpl-corp h1 { font-size: 2.2em; color: #003366; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
+        .tpl-corp .hl-blue { color: #0044cc; font-weight: 900; }
+        .tpl-corp .section-title { font-size: 1.2em; font-weight: 700; color: #003366; text-transform: uppercase; background-color: #f0f4f8; padding: 4px 8px; border-left: 4px solid #003366; margin-bottom: 8px; margin-top: 15px;}
+        .tpl-corp th { background-color: #f0f4f8; color: #003366; font-weight: bold; }
 
-        /* Experience Table Specifics */
-        .exp-table td:nth-child(1) { width: 22%; font-weight: 700; color: var(--text-dark); }
-        .exp-table td:nth-child(2) { width: 43%; font-weight: 700; color: var(--primary-color); }
-        .exp-table td:nth-child(3) { width: 35%; font-weight: 500; font-style: italic; }
+        /* TPL 2: Gulf Modern (Split) */
+        .tpl-gulf { display: flex; height: 100%; padding:0;}
+        .tpl-gulf .left-col { width: 35%; background-color: #0f2c59; color: white; padding: 30px 25px; }
+        .tpl-gulf .right-col { width: 65%; padding: 30px 35px; }
+        .tpl-gulf h1 { font-size: 2.5em; margin: 0; color: #fff; text-transform: uppercase; font-weight: 900; line-height: 1.1;}
+        .tpl-gulf .role { color: #facc15; font-weight: 600; font-size: 1.1em; margin-top: 5px; margin-bottom: 30px;}
+        .tpl-gulf .l-title { font-size: 1.2em; font-weight: 700; color: #facc15; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 15px; margin-top: 20px;}
+        .tpl-gulf .r-title { font-size: 1.4em; font-weight: 700; color: #0f2c59; border-bottom: 2px solid #0f2c59; padding-bottom: 5px; margin-bottom: 15px; margin-top: 20px;}
 
-        /* Personal Details Table */
-        .personal-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0px 20px;
-        }
-        .pd-row {
-            display: flex;
-            margin-bottom: 4px;
-        }
-        .pd-label {
-            font-weight: 700;
-            width: 130px;
-            color: var(--text-dark);
-        }
-        .pd-value {
-            flex: 1;
-        }
+        /* TPL 3: Minimalist */
+        .tpl-mini { padding: 40px 50px; font-family: 'Inter', sans-serif;}
+        .tpl-mini .header-flex { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 25px; }
+        .tpl-mini h1 { font-size: 2.8em; margin: 0; color: #111827; font-weight: 900; letter-spacing:-1px;}
+        .tpl-mini .title-m { font-size: 1.1em; font-weight: 700; color: #111827; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; margin-top: 25px; border-bottom:1px solid #ddd; padding-bottom:5px;}
+        .tpl-mini .exp-card { display: grid; grid-template-columns: 140px 1fr; gap: 15px; margin-bottom: 12px;}
 
-        /* Declaration & Signature */
-        .declaration-box {
-            margin-top: 10px;
-        }
-        .signature-block {
-            margin-top: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .signature-block div {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
+        /* TPL 4: Creative */
+        .tpl-crea { border-left: 15px solid #2563eb; }
+        .tpl-crea h1 { font-size: 3em; color: #1e293b; font-weight: 900; margin-bottom: 5px; text-transform: uppercase;}
+        .tpl-crea .c-title { font-size: 1.3em; font-weight: 900; color: #2563eb; margin-top: 20px; margin-bottom: 10px; display: inline-block;}
+        .tpl-crea .c-pill { display: inline-block; background: #e2e8f0; color: #0f172a; padding: 5px 12px; border-radius: 20px; font-weight: 600; margin: 3px;}
 
-        /* Control Panel Styles (Mobile Friendly) */
-        .control-panel {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            padding: 12px 10px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 3px solid #38bdf8;
-        }
+        /* TPL 5: Executive */
+        .tpl-exec { background-color: #f8fafc; }
+        .tpl-exec .exec-header { background-color: #1e293b; color: white; padding: 30px; text-align: center; }
+        .tpl-exec h1 { font-size: 2.5em; margin:0; font-weight: 900;}
+        .tpl-exec .exec-body { padding: 30px; }
+        .tpl-exec .e-title { color: #1e293b; font-size: 1.3em; font-weight:bold; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin: 20px 0 15px 0;}
 
-        .cp-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            width: 100%;
-        }
+        /* --- Certificate Styles --- */
+        .exp-letter { font-family: 'Times New Roman', Times, serif; padding: 25mm 20mm; color: #000; line-height: 1.6; font-size: 15px;}
+        .exp-letter h3 { text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 25px; font-size: 1.2rem; }
+        .exp-letter p { text-align: justify; margin-bottom: 15px;}
+        .bold-field { font-weight: bold; }
 
-        .btn-action {
-            background-color: #38bdf8;
-            color: #0f172a;
-            padding: 10px 18px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            cursor: pointer;
-            font-weight: 900;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-action:hover {
-            background-color: #0284c7;
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .btn-action:active {
-            transform: translateY(1px);
-        }
-
-        .btn-small {
-            background-color: #475569;
-            color: white;
-            padding: 8px 15px;
-            font-size: 14px;
-            border-radius: 6px;
-        }
-
-        .btn-small:hover {
-            background-color: #64748b;
-        }
-
-        .instructions {
-            font-size: 12px;
-            color: #cbd5e1;
-            text-align: center;
-            margin-top: 2px;
-            font-weight: 500;
-        }
-
-        /* Print Media Queries */
-        @media print {
-            .no-print { display: none !important; }
-            @page { size: A4; margin: 0; }
-            body { background-color: #fff; padding: 0; }
-            .cv-container {
-                box-shadow: none;
-                padding: 10mm; 
-                width: 100%;
-                height: 100%;
-                max-height: none;
-                overflow: visible;
-            }
-            .section-title, th, .total-exp {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-        }
+        /* Hero */
+        .hero-address { font-size: 0.85rem; font-family: Arial, sans-serif; line-height: 1.3;}
+        .hero-details-table td { padding: 6px 10px; }
+        
+        /* Honda */
+        .honda-address { font-size: 0.85rem; font-family: Arial, sans-serif; line-height: 1.3; font-weight: bold;}
+        
+        /* Maruti */
+        .maruti-ref { display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.95rem; margin-bottom: 40px; font-weight: bold;}
+        .maruti-footer-banner { position: absolute; bottom: 20px; left: 20px; right: 20px; border-top: 2px solid #0055a5; padding-top: 10px; display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.65rem; color: #333;}
+        
+        /* HSE */
+        .hse-header { border-bottom: 2px solid #000; padding-bottom: 10px;}
+        .hse-title { font-family: Arial, sans-serif; font-weight: 900; font-size: 1.6rem; margin-bottom: 5px;}
     </style>
 </head>
-<body>
-    <div class="no-print control-panel">
-        <div class="cp-row">
-            <button class="btn-action" id="screenshot-btn" onclick="takeHDScreenshot()">
-                📸 HD Screenshot
-            </button>
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <span style="font-size: 13px; font-weight:bold; color: #94a3b8;">Text Size:</span>
-                <button class="btn-action btn-small" onclick="adjustFontSize(-0.5)">A -</button>
-                <button class="btn-action btn-small" onclick="adjustFontSize(0.5)">A +</button>
-            </div>
-        </div>
-        <div class="instructions">💡 <b>Double-Click</b> any text to edit | Clicking Screenshot auto-crops the A4 page perfectly.</div>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Anti-Screenshot overlay -->
+    <div id="anti-screenshot-shield">
+        <i class="fa-solid fa-shield-halved text-6xl mb-4 text-red-500"></i>
+        <div>SCREENSHOT BLOCKED</div>
+        <div class="text-lg mt-2 font-normal text-gray-300">Security Policy Enforced</div>
     </div>
 
-    <!-- Removed contenteditable="true" to allow script-based double-click editing -->
-    <div class="cv-container" id="resume-container" spellcheck="false" style="outline: none;">
-        <!-- Header -->
-        <div class="header">
-            <h1>Rajan Kumar Yadav</h1>
-            <div class="contact-info">
-                <p><span class="contact-label">Mobile:</span> <span class="highlight-marker">+91 9451 239 239, +91 99 1816 4690</span> | <span class="contact-label">Email:</span> <span class="highlight-marker">india.rajanyadav@gmail.com</span></p>
-                <p><span class="contact-label">Address:</span> Jangal Thakurahi Deoria, Uttar Pradesh, <span class="contact-label">Post:</span> Badhya Bujurg, <span class="contact-label">PIN Code:</span> 274001</p>
-            </div>
-            <div class="total-exp">Experience: 4+ Years</div>
-        </div>
-
-        <!-- Career Objective -->
-        <div class="section">
-            <div class="section-title">Career Objective</div>
-            <p>To seek a challenging position in a reputed manufacturing and engineering organization where I can leverage my 4+ years of diverse technical experience in Electrical, Welding, Assembly, and IT skills to contribute to the company's growth while continuously upgrading my professional knowledge.</p>
-        </div>
-
-        <!-- Core Competencies / Skills -->
-        <div class="section">
-            <div class="section-title">Skills</div>
-            <div class="skills-grid">
-                <div>Automotive Assembly</div>
-                <div>Structural Welding & Fitting</div>
-                <div>MS Office (Word, Excel)</div>
-                <div>Tally ERP-9</div>
-                <div>Fire & Industrial Safety</div>
-                <div>R&D Technical Support</div>
-            </div>
-        </div>
-
-        <!-- Professional Experience (Simplified) -->
-        <div class="section">
-            <div class="section-title">Professional Experience</div>
-            <table class="exp-table">
-                <thead>
-                    <tr>
-                        <th>Duration / Year</th>
-                        <th>Organization Name</th>
-                        <th>Designation / Role</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Mar 2026 – Sep 2026</td>
-                        <td>Hindustan Shipping & Engineering Ltd.</td>
-                        <td>Welder / Fitter</td>
-                    </tr>
-                    <tr>
-                        <td>Nov 2024 – May 2025</td>
-                        <td>Maruti Suzuki India Limited</td>
-                        <td>Temporary Workman (Manufacturing)</td>
-                    </tr>
-                    <tr>
-                        <td>May 2022 – Aug 2024</td>
-                        <td>Honda Cars India Limited</td>
-                        <td>Fixed Term Manufacturing Associate</td>
-                    </tr>
-                    <tr>
-                        <td>Oct 2020 – Oct 2021</td>
-                        <td>Hero MotoCorp Ltd.</td>
-                        <td>R&D Technician</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Technical & Academic Qualifications -->
-        <div class="section">
-            <div class="section-title">Education & Certifications</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 35%;">Qualification / Degree</th>
-                        <th style="width: 50%;">Board / University / Institute</th>
-                        <th style="width: 15%;">Year</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>ITI - Electrician</strong> (NCVT)</td>
-                        <td>B.N. Private ITI, Deoria (Govt. of India)</td>
-                        <td>2019</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Post Diploma in Fire & Industrial Safety</strong></td>
-                        <td>Uma Technical Safety Institute</td>
-                        <td>2019</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tally ERP-9</strong> (Grade A)</td>
-                        <td>Swami Vivekanand Institute of IT, Gorakhpur</td>
-                        <td>2016</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Bachelor of Commerce (B.Com)</strong></td>
-                        <td>Deen Dayal Upadhyaya Gorakhpur University</td>
-                        <td>2017</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Intermediate (12th - Commerce)</strong></td>
-                        <td>U.P. Board (Baba Raghav Das Inter College)</td>
-                        <td>2014</td>
-                    </tr>
-                    <tr>
-                        <td><strong>High School (10th)</strong></td>
-                        <td>U.P. Board (Baba Rahss Walepur Khurd)</td>
-                        <td>2012</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Personal Profile -->
-        <div class="section">
-            <div class="section-title">Personal Profile</div>
-            <div class="personal-details">
-                <!-- Column 1 -->
-                <div>
-                    <div class="pd-row">
-                        <div class="pd-label">Father's Name</div>
-                        <div class="pd-value">: Mr. Gopal Yadav</div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Mother's Name</div>
-                        <div class="pd-value">: Mrs. Gayanti Devi</div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Date of Birth</div>
-                        <div class="pd-value">: 02 March 1997</div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Gender / Nationality</div>
-                        <div class="pd-value">: Male / Indian</div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Marital Status</div>
-                        <div class="pd-value">: Married</div>
-                    </div>
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Secret Admin Trigger on Title -->
+                <div class="flex items-center cursor-pointer" onclick="handleAdminClick()">
+                    <i class="fa-solid fa-briefcase text-blue-600 text-3xl mr-3"></i>
+                    <span class="font-black text-2xl text-gray-900 tracking-tight">Career <span class="text-blue-600">Services</span></span>
                 </div>
-                <!-- Column 2 -->
-                <div>
-                    <div class="pd-row">
-                        <div class="pd-label">Passport Number</div>
-                        <div class="pd-value">: <span class="highlight-marker">AS910147 (Valid till 01/06/2036)</span></div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Nearest Airport</div>
-                        <div class="pd-value">: <span class="highlight-marker">Gorakhpur & Lucknow</span></div>
-                    </div>
-                    <div class="pd-row">
-                        <div class="pd-label">Languages Known</div>
-                        <div class="pd-value">: Hindi & English</div>
-                    </div>
+                <div class="flex items-center space-x-6">
+                    <button onclick="switchTab('resumes')" id="nav-resumes" class="nav-link active font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition">Resumes</button>
+                    <button onclick="switchTab('certs')" id="nav-certs" class="nav-link font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition">Certificates</button>
                 </div>
             </div>
         </div>
+    </nav>
 
-        <!-- Declaration -->
-        <div class="section declaration-box">
-            <div class="section-title">Declaration</div>
-            <p style="margin-bottom: 0;">I hereby declare that the above-mentioned information is correct up to my knowledge and I bear the responsibility for the correctness of the above-mentioned particulars.</p>
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hindi Description Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-10">
+            <h1 class="text-2xl font-black text-gray-900 mb-4 text-center">अपना प्रोफेशनल रिज़्यूमे और एक्सपीरियंस सर्टिफिकेट बनाएँ!</h1>
+            <p class="text-gray-700 text-center font-medium leading-relaxed max-w-4xl mx-auto mb-4">
+                जॉब के लिए इंडिया या इंडिया के बाहर (गल्फ देशों में) जाने के लिए अपना प्रोफेशनल रिज़्यूमे तैयार करें।
+                अगर आपके पास एक्सपीरियंस सर्टिफिकेट नहीं है, तो आप यहाँ से एक्सपीरियंस सर्टिफिकेट बना सकते हैं और कहीं भी इस्तेमाल कर सकते हैं।
+            </p>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800 font-semibold text-center">
+                <i class="fa-solid fa-triangle-exclamation mr-1"></i> याद रखें कि एक्सपीरियंस सर्टिफिकेट आपको डाउनलोड करने के बाद अच्छी क्वालिटी के मोटे पेपर पर प्रिंट कराना होगा। यह ऑनलाइन शो नहीं करेगा। HR और इंटरव्यूअर सिर्फ आपके इंटरव्यू के बेस पर आपका सिलेक्शन करता है। एक्सपीरियंस लेटर बस यह साबित करने के लिए होता है कि आपने कहीं काम किया है। अगर आप अपना अच्छा इंटरव्यू देते हैं तो आपका सिलेक्शन जरूर होगा!
+            </div>
+        </div>
+
+        <!-- ================= RESUMES SECTION ================= -->
+        <div id="resumes-section" class="tab-content active">
+            <div class="flex justify-between items-center border-b-2 border-gray-200 pb-2 mb-8">
+                <h2 class="text-2xl font-black text-gray-800"><i class="fa-solid fa-file-lines text-blue-600 mr-2"></i>Professional Resumes (₹30)</h2>
+            </div>
             
-            <div class="signature-block">
-                <div>
-                    Date: __ / __ / 20__<br>
-                    Place: Deoria, U.P.
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10 mb-20">
+                
+                <!-- Resume 1: Indian Corporate -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">1. Indian Corporate Style</h3>
+                        <div class="flex gap-2" id="actions-res-1">
+                            <button onclick="previewDoc('res-1')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-1', 'Resume (Corporate)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document tpl-corp res-box" id="doc-res-1">
+                            <div class="watermark" id="wm-res-1">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-res-1">
+                                <i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i>
+                                <p class="font-bold text-gray-800">Locked Template</p>
+                            </div>
+
+                            <div class="r-header">
+                                <h1>Rajan Kumar Yadav</h1>
+                                <p><span class="hl-blue">Mobile:</span> +91 9451 239 239, +91 99 1816 4690 | <span class="hl-blue">Email:</span> india.rajanyadav@gmail.com</p>
+                                <p><span class="hl-blue">Address:</span> Jangal Thakurahi Deoria, <span class="hl-blue">Post:</span> Badhya Bujurg, <span class="hl-blue">PIN Code:</span> 274001</p>
+                                <div style="display: inline-block; background-color: #003366; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; margin-top: 10px;">Experience: 4+ Years</div>
+                            </div>
+                            <div class="section-title">Skills</div>
+                            <ul style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding-left: 20px; font-weight: bold;">
+                                <li>Automotive Assembly</li><li>Structural Welding & Fitting</li>
+                                <li>Tally ERP-9</li><li>Fire & Industrial Safety</li>
+                                <li>MS Word & Excel</li><li>R&D Technical Support</li>
+                            </ul>
+                            <div class="section-title">Experience (4+ Years)</div>
+                            <table class="res-table">
+                                <tr><th>Duration</th><th>Organization Name</th><th>Role</th></tr>
+                                <tr><td>Mar 2026 – Sep 2026</td><td>Hindustan Shipping & Engineering Ltd.</td><td>Welder / Fitter</td></tr>
+                                <tr><td>Nov 2024 – May 2025</td><td>Maruti Suzuki India Limited</td><td>Temporary Workman</td></tr>
+                                <tr><td>May 2022 – Aug 2024</td><td>Honda Cars India Limited</td><td>Fixed Term Mfg. Associate</td></tr>
+                                <tr><td>Oct 2020 – Oct 2021</td><td>Hero MotoCorp Ltd.</td><td>R&D Technician</td></tr>
+                            </table>
+                            <div class="section-title">Education & Certifications</div>
+                            <table class="res-table">
+                                <tr><th>Qualification</th><th>Board / Institute</th><th>Year</th></tr>
+                                <tr><td>ITI - Electrician (NCVT)</td><td>B.N. Private ITI, Deoria</td><td>2019</td></tr>
+                                <tr><td>Post Diploma in Fire & Safety</td><td>Uma Technical Safety Institute</td><td>2019</td></tr>
+                                <tr><td>Bachelor of Commerce (B.Com)</td><td>D.D.U. Gorakhpur University</td><td>2017</td></tr>
+                                <tr><td>Tally ERP-9</td><td>Swami Vivekanand Institute of IT</td><td>2016</td></tr>
+                            </table>
+                            <div class="section-title">Personal Details</div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div><p><strong>DOB:</strong> 02 March 1997</p><p><strong>Marital Status:</strong> Married</p></div>
+                                <div><p><strong class="hl-blue">Passport No:</strong> AS910147</p><p><strong class="hl-blue">Nearest Airport:</strong> Gorakhpur / Lucknow</p></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div style="text-align: right; padding-right: 20px;">
-                    <br><br>
-                    (RAJAN KUMAR YADAV)
+
+                <!-- Resume 2: Gulf/Dubai Style -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">2. Gulf / Dubai Style</h3>
+                        <div class="flex gap-2" id="actions-res-2">
+                            <button onclick="previewDoc('res-2')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-2', 'Resume (Gulf Style)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document tpl-gulf res-box" id="doc-res-2">
+                             <div class="watermark" id="wm-res-2">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-res-2"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+
+                            <div class="left-col">
+                                <h1>Rajan<br>Yadav</h1>
+                                <div class="role">Engineering Professional</div>
+                                <div class="l-title">Contact Info</div>
+                                <ul style="list-style: none; padding:0; font-size:12px;">
+                                    <li><strong>Phone:</strong><br>+91 9451 239 239<br>+91 99 1816 4690</li>
+                                    <li style="margin-top:10px;"><strong>Email:</strong><br>india.rajanyadav@gmail.com</li>
+                                    <li style="margin-top:10px;"><strong>Address:</strong><br>Jangal Thakurahi Deoria, Post: Badhya Bujurg, PIN: 274001</li>
+                                </ul>
+                                <div class="l-title">Core Skills</div>
+                                <ul style="list-style: square; font-size:12px;">
+                                    <li>Structural Welding & Fitting</li><li>Automotive Assembly</li><li>Fire & Industrial Safety</li><li>Tally ERP-9, MS Office</li>
+                                </ul>
+                                <div class="l-title">Personal</div>
+                                <ul style="list-style: none; padding:0; font-size:12px;">
+                                    <li><strong>Passport:</strong> <span style="color:#facc15;">AS910147</span></li>
+                                    <li><strong>Airport:</strong> Gorakhpur/Lucknow</li>
+                                    <li><strong>DOB:</strong> 02 Mar 1997</li>
+                                </ul>
+                            </div>
+                            <div class="right-col">
+                                 <div class="r-title">Professional Summary</div>
+                                 <p style="text-align: justify; margin-bottom: 20px;">Result-driven professional with 4+ years of proven expertise in manufacturing, structural welding, and assembly operations. Commended for performance at industry giants like Maruti Suzuki, Honda, and Hero MotoCorp. Seeking to leverage skills in a dynamic international environment.</p>
+
+                                 <div class="r-title">Work Experience</div>
+                                 <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Hindustan Shipping & Engineering</span><span style="color: #666;">Mar '26 – Sep '26</span></div>
+                                    <div style="color: #0f2c59; font-weight: bold;">Welder / Fitter</div>
+                                 </div>
+                                 <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Maruti Suzuki India Limited</span><span style="color: #666;">Nov '24 – May '25</span></div>
+                                    <div style="color: #0f2c59; font-weight: bold;">Temporary Workman</div>
+                                 </div>
+                                 <div style="margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Honda Cars India Limited</span><span style="color: #666;">May '22 – Aug '24</span></div>
+                                    <div style="color: #0f2c59; font-weight: bold;">Fixed Term Mfg. Associate</div>
+                                 </div>
+                                 <div style="margin-bottom: 20px;">
+                                    <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Hero MotoCorp Ltd.</span><span style="color: #666;">Oct '20 – Oct '21</span></div>
+                                    <div style="color: #0f2c59; font-weight: bold;">R&D Technician</div>
+                                 </div>
+
+                                 <div class="r-title">Education & Certifications</div>
+                                 <ul style="list-style: circle;">
+                                    <li><strong>ITI (Electrician)</strong> - B.N. Pvt ITI (2019)</li>
+                                    <li><strong>Diploma in Fire & Safety</strong> - Uma Tech Institute (2019)</li>
+                                    <li><strong>B.Com</strong> - D.D.U. Gorakhpur University (2017)</li>
+                                 </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Resume 3: Minimalist -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">3. Modern Minimalist</h3>
+                        <div class="flex gap-2" id="actions-res-3">
+                            <button onclick="previewDoc('res-3')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-3', 'Resume (Minimalist)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document tpl-mini res-box" id="doc-res-3">
+                            <div class="watermark" id="wm-res-3">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-res-3"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+
+                            <div class="header-flex">
+                                <div>
+                                    <h1>RAJAN K. YADAV</h1>
+                                    <p style="color: #6b7280; font-size: 1.1em; margin: 5px 0 0 0;">Engineering & Manufacturing Specialist</p>
+                                </div>
+                                <div style="text-align: right; line-height: 1.5; font-size:12px;">
+                                    <p style="margin: 0;"><strong>P:</strong> +91 9451 239 239</p>
+                                    <p style="margin: 0;"><strong>E:</strong> india.rajanyadav@gmail.com</p>
+                                    <p style="margin: 0;"><strong>A:</strong> Deoria, UP, PIN: 274001</p>
+                                </div>
+                            </div>
+                            <div class="title-m">Professional Experience</div>
+                            <div class="exp-card"><div class="exp-left">Mar 2026 - Sep 2026</div><div class="exp-right"><h4>Hindustan Shipping & Engineering Ltd.</h4><p style="margin:0; color:#4b5563;">Welder / Fitter</p></div></div>
+                            <div class="exp-card"><div class="exp-left">Nov 2024 - May 2025</div><div class="exp-right"><h4>Maruti Suzuki India Limited</h4><p style="margin:0; color:#4b5563;">Temporary Workman (Manufacturing)</p></div></div>
+                            <div class="exp-card"><div class="exp-left">May 2022 - Aug 2024</div><div class="exp-right"><h4>Honda Cars India Limited</h4><p style="margin:0; color:#4b5563;">Fixed Term Manufacturing Associate</p></div></div>
+                            <div class="exp-card"><div class="exp-left">Oct 2020 - Oct 2021</div><div class="exp-right"><h4>Hero MotoCorp Ltd.</h4><p style="margin:0; color:#4b5563;">R&D Technician</p></div></div>
+
+                            <div class="title-m">Education</div>
+                            <div class="exp-card"><div class="exp-left">2019</div><div class="exp-right"><h4>ITI - Electrician (NCVT)</h4><p style="margin:0; color:#6b7280;">B.N. Private ITI, Deoria</p></div></div>
+                            <div class="exp-card"><div class="exp-left">2019</div><div class="exp-right"><h4>Diploma in Fire & Industrial Safety</h4><p style="margin:0; color:#6b7280;">Uma Technical Safety Institute</p></div></div>
+                            <div class="exp-card"><div class="exp-left">2017</div><div class="exp-right"><h4>B.Com</h4><p style="margin:0; color:#6b7280;">D.D.U. Gorakhpur University</p></div></div>
+
+                            <div class="title-m">Key Information</div>
+                            <div style="display:flex; justify-content:space-between; background:#f9fafb; padding:15px; border-radius:8px;">
+                                <div><p style="margin:2px 0;"><strong>Passport:</strong> AS910147</p><p style="margin:2px 0;"><strong>Airports:</strong> Gorakhpur / Lucknow</p></div>
+                                <div><p style="margin:2px 0;"><strong>Skills:</strong> Auto Assembly, Welding, Safety, Tally</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume 4: Creative -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">4. Creative Professional</h3>
+                        <div class="flex gap-2" id="actions-res-4">
+                            <button onclick="previewDoc('res-4')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-4', 'Resume (Creative)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document tpl-crea res-box" id="doc-res-4">
+                            <div class="watermark" id="wm-res-4">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-res-4"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+
+                            <div>
+                                <h1>Rajan Yadav</h1>
+                                <div style="display: flex; gap: 15px; font-weight: 600; color: #475569; margin-bottom: 20px; border-bottom: 2px solid #2563eb; padding-bottom: 15px;">
+                                    <span>P: +91 9451 239 239</span><span>E: india.rajanyadav@gmail.com</span><span>Loc: Deoria, UP</span>
+                                </div>
+
+                                <div class="c-title">EXPERIENCE</div>
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Hindustan Shipping & Engineering Ltd.</div>
+                                    <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Welder / Fitter | Mar 2026 – Sep 2026</div>
+                                </div>
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Maruti Suzuki India Limited</div>
+                                    <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Temporary Workman | Nov 2024 – May 2025</div>
+                                </div>
+                                <div style="margin-bottom:12px;">
+                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Honda Cars India Limited</div>
+                                    <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Fixed Term Mfg. Associate | May 2022 – Aug 2024</div>
+                                </div>
+                                <div style="margin-bottom:20px;">
+                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Hero MotoCorp Ltd.</div>
+                                    <div style="color:#2563eb; font-weight:bold;">R&D Technician | Oct 2020 – Oct 2021</div>
+                                </div>
+
+                                <div class="c-title">EDUCATION</div>
+                                <ul style="list-style: square; padding-left:20px; font-weight:500; color:#333; margin-bottom: 20px;">
+                                    <li><strong>ITI Electrician</strong> - B.N. Pvt ITI (2019)</li>
+                                    <li><strong>Diploma Fire & Safety</strong> - Uma Tech (2019)</li>
+                                    <li><strong>B.Com</strong> - DDU Gorakhpur (2017)</li>
+                                </ul>
+
+                                <div class="c-title">EXPERTISE</div>
+                                <div style="margin-bottom: 20px;">
+                                    <span class="c-pill">Auto Assembly</span><span class="c-pill">Welding & Fitting</span>
+                                    <span class="c-pill">Ind. Safety</span><span class="c-pill">Tally/MS Office</span>
+                                </div>
+
+                                <div class="c-title">PERSONAL INFO</div>
+                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; font-weight:500; color:#333;">
+                                    <div>Passport: AS910147</div><div>Airport: Gorakhpur/Lucknow</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resume 5: Executive -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 xl:col-span-2 w-full max-w-3xl mx-auto">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">5. Executive Layout</h3>
+                        <div class="flex gap-2" id="actions-res-5">
+                            <button onclick="previewDoc('res-5')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-5', 'Resume (Executive)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document tpl-exec res-box" style="padding:0;" id="doc-res-5">
+                            <div class="watermark" id="wm-res-5">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-res-5"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+
+                            <div class="exec-header">
+                                <h1>RAJAN KUMAR YADAV</h1>
+                                <p style="margin-top: 10px; color:#cbd5e1;">Jangal Thakurahi Deoria, UP 274001 | +91 9451 239 239 | india.rajanyadav@gmail.com</p>
+                            </div>
+                            <div class="exec-body">
+                                <div class="e-title">PROFESSIONAL SUMMARY</div>
+                                <p style="text-align:justify;">Dedicated professional with over 4 years of experience in automotive manufacturing, structural engineering, and R&D support. Adept at adhering to strict safety protocols and precision workflows in high-paced environments.</p>
+                                
+                                <div class="e-title">EXPERIENCE HISTORY</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hindustan Shipping & Engineering Ltd.</span><span>Mar 2026 – Sep 2026</span></div><div style="margin-bottom:10px;">Welder / Fitter</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Maruti Suzuki India Limited</span><span>Nov 2024 – May 2025</span></div><div style="margin-bottom:10px;">Temporary Workman (Manufacturing)</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Honda Cars India Limited</span><span>May 2022 – Aug 2024</span></div><div style="margin-bottom:10px;">Fixed Term Manufacturing Associate</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hero MotoCorp Ltd.</span><span>Oct 2020 – Oct 2021</span></div><div style="margin-bottom:10px;">R&D Technician</div>
+
+                                <div class="e-title">EDUCATION & CREDENTIALS</div>
+                                <ul style="padding-left: 20px;">
+                                    <li>ITI (Electrician) - B.N. Private ITI, NCVT (2019)</li>
+                                    <li>Post Diploma in Fire & Industrial Safety - Uma Technical Safety Institute (2019)</li>
+                                    <li>Bachelor of Commerce (B.Com) - D.D.U. Gorakhpur University (2017)</li>
+                                </ul>
+
+                                <div class="e-title">PASSPORT & TRAVEL</div>
+                                <p><strong>Passport No:</strong> AS910147 (Valid till 2036) | <strong>Nearest Airport:</strong> Gorakhpur / Lucknow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
+        <!-- ================= CERTIFICATES SECTION ================= -->
+        <div id="certs-section" class="tab-content">
+            <div class="flex justify-between items-center border-b-2 border-gray-200 pb-2 mb-8">
+                <h2 class="text-2xl font-black text-gray-800"><i class="fa-solid fa-certificate text-green-600 mr-2"></i>Experience Certificates (₹500)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10 mb-20">
+                
+                <!-- Cert 1: Hero MotoCorp -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Hero MotoCorp Format</h3>
+                        <div class="flex gap-2" id="actions-cert-1">
+                            <button onclick="previewDoc('cert-1')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-1', 'Certificate (Hero)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document exp-letter" id="doc-cert-1">
+                            <div class="watermark" id="wm-cert-1">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-cert-1"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+                            
+                            <!-- Header based on OCR -->
+                            <div style="display:flex; justify-content:space-between; margin-bottom:40px;">
+                                <div class="hero-address">
+                                    <span style="color:#e31837; font-weight:900; font-size:1.2rem;">Hero MotoCorp Ltd.</span><br>
+                                    Plot No. 101-103, 108 & 109<br>RiICO Industrial Area<br>Delhi Jaipur Highway<br>Neemrana Distt - Alwar - 301705<br>Tel: +91 1494 673000
+                                </div>
+                                <div style="color:#e31837; font-size: 3rem; font-weight:900; letter-spacing:-2px; display:flex; align-items:center;">
+                                    <div style="display:flex; flex-direction:column; margin-right:5px; line-height:0.8;">
+                                        <span style="font-size:1.8rem;">▶</span><span style="font-size:1.8rem; color:black;">◀</span>
+                                    </div>hero
+                                </div>
+                            </div>
+                            <div style="font-family: Arial, sans-serif; font-size:0.9rem; margin-bottom: 40px;">
+                                CIN: L35911DL1984PLC017354<br>HMAN:HR:2021: J3916<br>October 04, 2021
+                            </div>
+                            
+                            <h3>TO WHOM SO EVER IT MAY CONCERN</h3>
+                            <p>This is to certify that <span class="bold-field">Mr. Rajan Kumar Yadav</span>, S/o. <span class="bold-field">Sh. Gopal Yadav</span> was employed in our Neemrana Plant against term employment on fixed term basis.</p>
+                            <p>The particulars of his employment are detailed below:</p>
+                            
+                            <table class="hero-details-table" style="width: 80%; margin-left: 20px; margin-bottom: 30px;">
+                                <tr><td>1.</td><td>Name</td><td>:</td><td class="bold-field">Mr. Rajan Yadav</td></tr>
+                                <tr><td>2.</td><td>Date of joining</td><td>:</td><td>October 05, 2020</td></tr>
+                                <tr><td>3.</td><td>Date of relieving</td><td>:</td><td>October 04, 2021</td></tr>
+                                <tr><td>4.</td><td>Designation</td><td>:</td><td class="bold-field">R&D Technician</td></tr>
+                                <tr><td>5.</td><td>Department</td><td>:</td><td>Research & Development</td></tr>
+                                <tr><td>6.</td><td>Reason for Leaving</td><td>:</td><td>Tenure Completion</td></tr>
+                                <tr><td>7.</td><td>Conduct</td><td>:</td><td>Good</td></tr>
+                            </table>
+
+                            <p>We wish him success for his future endeavours.</p>
+                            <div style="margin-top: 50px;">
+                                <p class="bold-field">for Hero MotoCorp Ltd.</p>
+                                <div style="height: 60px; width:150px; margin-bottom:5px; position:relative;">
+                                    <span style="font-family: 'Brush Script MT', cursive; font-size:2.5rem; color: #000080; position:absolute; bottom:5px;">Yashwant</span>
+                                </div>
+                                <p class="bold-field" style="margin:0;">Yashwant Bhaid</p>
+                                <p style="margin:0; font-weight:bold;">AGM-HR</p>
+                            </div>
+                            
+                            <div style="position: absolute; bottom: 20px; left:20px; right:20px; text-align:center; font-family:Arial; font-size:0.6rem; color:#666;">
+                                Regd. Office: 34, Community Centre, Basant Lok, Vasant Vihar, New Delhi-110057, India<br>
+                                Tel. +91-11-26142451, 46044100, Fax +91-11-26143321, 26143198<br>
+                                HeroMotoCorp.com CIN: L35911DL1984PLC017354 PAN: AAACH08121
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 2: Honda -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Honda Cars Format</h3>
+                        <div class="flex gap-2" id="actions-cert-2">
+                            <button onclick="previewDoc('cert-2')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-2', 'Certificate (Honda)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document exp-letter" id="doc-cert-2">
+                            <div class="watermark" id="wm-cert-2">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-cert-2"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <div class="text-red-600 font-black text-5xl tracking-tighter mb-4" style="font-family: Arial, sans-serif;">HONDA</div>
+                                <div class="honda-address">
+                                    Honda Cars India Limited<br>SPL-1, Tapukara Industrial Area<br>Khushkhera, Distt. - ALWAR<br>RAJASTHAN 301707<br>E-mail : corporate@hondacarindia.com<br>Tel. : 01493-522000, Fax : 01493-522006<br>Mobile : 9116630293, 9116630289
+                                </div>
+                            </div>
+                            <div class="text-right font-bold font-sans mb-16 text-lg">Date:- 28/8/2024</div>
+                            
+                            <h3 style="font-size:1.3rem;"><u>TO WHOMSOEVER IT MAY CONCERN</u></h3>
+                            
+                            <p style="margin-top: 50px; font-size:1.2rem; line-height:2;">This is to certify that <span class="bold-field">Mr. Rajan kumar Yadav(70011392)</span> S/o Mr. Gopal Yadav has worked with us as <span class="bold-field">Fixed Term Manufacturing Associate</span> in <span class="bold-field">Assembly Frame</span> Department from <span class="bold-field">18/5/2022 to 28/8/2024</span></p>
+                            
+                            <p style="margin-top: 40px; font-size:1.2rem;">We wish him best of luck for his future endeavors.</p>
+
+                            <div style="margin-top: 80px; font-family: Arial, sans-serif;">
+                                <p class="bold-field">For Honda Cars India Limited</p>
+                                <div style="height: 70px; width:150px; margin-bottom:5px; position:relative;">
+                                    <span style="font-family: 'Caveat', cursive; font-size:3rem; color: #000080; position:absolute; bottom:0;">Lalit</span>
+                                </div>
+                                <p class="bold-field" style="margin:0; font-size:1.1rem;">(Lalit Kumar Singh)</p>
+                                <p style="margin:0; font-weight:bold; font-size:1.1rem;">Manager - Associate Relations</p>
+                            </div>
+
+                            <div style="position: absolute; bottom: 20px; left:20px; right:20px; text-align:center; font-family:Arial; font-size:0.6rem; font-weight:bold;">
+                                Regd. Office: Plot No. A-1, Sector- 40141, Surajpur-Kasna Road, Greater Noida, Industrial Development Area,
+                                Distt. Gautam Budha Nagar (U.P.) Pin-201306, CIN : U15114UP1995PLC098377, Website : www.hondacarindia.com
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 3: Maruti Suzuki -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Maruti Suzuki Format</h3>
+                        <div class="flex gap-2" id="actions-cert-3">
+                            <button onclick="previewDoc('cert-3')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-3', 'Certificate (Maruti)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document exp-letter" style="font-family: Arial, sans-serif;" id="doc-cert-3">
+                            <div class="watermark" id="wm-cert-3">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-cert-3"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+                            
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
+                                <div class="text-right">
+                                    <div class="text-blue-800 font-black text-3xl tracking-tight"><span class="text-red-600">MARUTI</span> <i class="fa-solid fa-car text-red-600 text-sm"></i> SUZUKI</div>
+                                    <div class="text-sm font-bold text-gray-800">Way of Life!</div>
+                                </div>
+                            </div>
+                            
+                            <div class="maruti-ref mt-16">
+                                <div>MSIL-G/EMR-G/2021/EXP/ES1-2/443180</div>
+                                <div>31-JUL-2025</div>
+                            </div>
+                            
+                            <h3 style="text-align:left; text-decoration: underline; margin-top:50px; margin-bottom:40px; font-size:1.1rem;">TO WHOMSOEVER IT MAY CONCERN</h3>
+                            
+                            <p style="font-size:1.2rem; line-height:2;">This is to certify that <span class="uppercase">MR. RAJAN KUMAR YADAV</span> (Staff ID. 443180) S/o SH. GOPAL YADAV was hired in our organization as Temporary Workman for a period of 7 months from 02-NOV-2024 to 01-MAY-2025.</p>
+                            
+                            <p style="margin-top: 40px; font-size:1.2rem;">We wish him all success in his future endeavors.</p>
+                            <p style="font-size:1.2rem;">With best wishes.</p>
+
+                            <div style="margin-top: 50px;">
+                                <p class="bold-field">For Maruti Suzuki India Limited</p>
+                                <div style="height: 70px; width:150px; margin-bottom:5px; position:relative;">
+                                    <span style="font-family: 'Brush Script MT', cursive; font-size:3rem; color: #000080; position:absolute; bottom:0;">Gaurav</span>
+                                </div>
+                                <p class="bold-field" style="margin:0;">(Gaurav M Sharma)</p>
+                                <p style="margin:0; font-weight:bold;">Senior Manager - HR</p>
+                            </div>
+
+                            <div class="maruti-footer-banner">
+                                <div>
+                                    <strong style="color:#0055a5; font-size:0.85rem;">MARUTI SUZUKI INDIA LIMITED</strong><br><br>
+                                    <strong>Head Office</strong><br>Maruti Suzuki India Limited,<br>1, Nelson Mandela Road, Vasant Kunj,<br>New Delhi - 110070, India
+                                </div>
+                                <div>
+                                    <br><br><strong>Gurgaon Plant</strong><br>Old Palam Gurgaon Road,<br>Gurgaon - 122015, Haryana, India
+                                </div>
+                                <div>
+                                    <br><br><strong>Manesar Plant</strong><br>Plot no.1, Phase-3A, IMT Manesar,<br>Gurgaon - 122051, Haryana, India
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cert 4: Hindustan Shipping -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800">Hindustan Shipping Format</h3>
+                        <div class="flex gap-2" id="actions-cert-4">
+                            <button onclick="previewDoc('cert-4')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-4', 'Certificate (Hindustan Shipping)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        </div>
+                    </div>
+                    <div class="a4-document-wrapper">
+                        <div class="a4-document exp-letter" id="doc-cert-4">
+                             <div class="watermark" id="wm-cert-4">
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                                <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
+                            </div>
+                            <div class="locked-overlay" id="overlay-cert-4"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
+                            
+                            <div class="hse-header flex justify-between items-start mb-8">
+                                <div style="width: 120px; height: 120px; border: 2px solid #005f00; border-radius: 50%; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:Arial; font-size:0.6rem; color:#005f00; font-weight:bold; text-align:center; position:relative;">
+                                    <div style="position:absolute; top:5px; font-size:0.5rem; letter-spacing:1px; transform: rotate(-30deg);">CLEANING FORW</div>
+                                    <i class="fa-solid fa-ship text-4xl mb-1"></i>
+                                    <span style="font-size:1.2rem;">HSE</span>
+                                    <div style="position:absolute; bottom:5px; font-size:0.5rem; transform: rotate(30deg);">AND SHIPPING</div>
+                                </div>
+                                <div style="text-align: center; flex-grow: 1;">
+                                    <div class="hse-title">Hindustan Shipping & Engineering Ltd.</div>
+                                    <div style="font-family: Arial, sans-serif; font-size: 0.9rem;">
+                                        CHURCH GATE, KULSHEKAR<br>MANGALORE - 575 005 KARNATAKA<br><br>
+                                        COCHIN SHIP YARD, KERALA.<br>KHIDIRPUR SHIP YARD, CALCUTTA.
+                                    </div>
+                                </div>
+                                <div style="font-family: Arial, sans-serif; font-size: 0.9rem; text-align:right;">
+                                    Tel.: 26760<br><br>Telex :
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between font-bold font-sans mb-10 text-lg">
+                                <div>Ref No:119015/AHR/3173</div>
+                                <div>Date:- 06.09.2026</div>
+                            </div>
+                            
+                            <h3 style="font-family: 'Times New Roman', serif; font-size: 1.4rem;"><u>TO WHOM SO EVER IT MAY CONCERN</u></h3>
+                            
+                            <p style="margin-top: 40px; font-family: 'Times New Roman', serif; font-weight:bold; font-size: 1.15rem; line-height: 2.2; text-align:center;">
+                            This is to certify that <u>MR. RAJAN KUMAR YADAV</u> has<br><br>
+                            been working with us as a 'WELDER/FITTER' with effect<br><br>
+                            form 20.03.2026 to 06.09.2026<br><br>
+                            During is above period af employment with us we<br><br>
+                            We wish him all the very best for his future endeavors.</p>
+
+                            <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div style="font-family: 'Times New Roman', serif;">
+                                    <p class="bold-field" style="font-size:1.2rem; margin-bottom:0;">Col.(Retd) ak singh</p>
+                                    <p class="bold-field" style="font-size:1.2rem; margin-top:0;">Sr. Manager-HR&Administration</p>
+                                </div>
+                                <div style="text-align: center; font-family: Arial, sans-serif; color: #000080; font-weight:bold;">
+                                    <div style="height: 60px; width:150px; position:relative;">
+                                        <span style="font-family: 'Caveat', cursive; font-size:4rem; position:absolute; bottom:5px; left:20px;">Sign</span>
+                                    </div>
+                                    HINDUSTAN SHIPPING<br>& ENGINEERING LTD.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content relative">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 bg-gray-100 rounded-full p-2 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-indian-rupee-sign text-3xl text-blue-600"></i>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900">Unlock Document</h3>
+                <p class="text-sm text-gray-500 font-semibold mt-1" id="modal-item-name">Premium Template</p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-5 mb-6 border border-gray-200">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-200">
+                    <span class="text-gray-600 font-bold">Amount to Pay:</span>
+                    <span class="text-3xl font-black text-blue-700" id="modal-amount">₹30</span>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 uppercase font-bold mb-1">Pay via UPI (GPay/PhonePe/Paytm)</p>
+                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-300">
+                        <p class="font-black text-xl tracking-wider text-gray-800">9451239239</p>
+                        <button onclick="copyUPI()" class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded bg-blue-50 hover:bg-blue-100 font-bold text-sm">
+                            <i class="fa-regular fa-copy mr-1"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="sendWhatsApp()" class="w-full flex justify-center items-center py-4 px-4 rounded-xl shadow-lg text-lg font-black text-white bg-[#25D366] hover:bg-[#128C7E] transition mb-3">
+                <i class="fa-brands fa-whatsapp text-2xl mr-2"></i> Send Screenshot on WhatsApp
+            </button>
+            <button onclick="showPinModal()" class="w-full py-2 text-blue-600 font-bold underline hover:text-blue-800">
+                I have already sent it. Enter Code.
+            </button>
+        </div>
+    </div>
+
+    <!-- PIN Modal -->
+    <div class="modal-overlay" id="pin-modal">
+        <div class="modal-content relative">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 bg-gray-100 rounded-full p-2 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-black text-gray-900">Enter Unlock Code</h3>
+                <p class="text-sm text-gray-500 font-semibold mt-2">Please enter the 4-digit code provided by Admin on WhatsApp.</p>
+                <div class="bg-red-50 text-red-600 text-xs font-bold p-2 rounded mt-3 border border-red-200">
+                    ध्यान दें: आपके पास सिर्फ 3 मौके (Attempts) हैं।
+                </div>
+            </div>
+            <div class="mb-4">
+                <input type="password" id="pin-input" maxlength="4" class="w-full text-center text-3xl font-black tracking-[1em] p-4 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none" placeholder="****">
+                <p class="text-center text-sm font-bold mt-2 text-gray-600">Attempts left: <span id="attempt-count" class="text-red-500">3</span></p>
+            </div>
+            <button onclick="verifyPin()" class="w-full py-3 bg-blue-600 text-white rounded-lg font-black shadow-lg hover:bg-blue-700 transition">
+                Unlock Document
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Modal (Secret) -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-content relative">
+            <button onclick="closeModals()" class="absolute top-4 right-4 text-gray-500 bg-gray-100 rounded-full p-2 w-8 h-8 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-black text-gray-900 mb-4"><i class="fa-solid fa-user-shield text-blue-600 mr-2"></i>Admin Panel</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Resume PIN Code</label>
+                <input type="text" id="admin-res-pin" class="w-full p-2 border border-gray-300 rounded" value="9451">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Certificate PIN Code</label>
+                <input type="text" id="admin-cert-pin" class="w-full p-2 border border-gray-300 rounded" value="9918">
+            </div>
+            <button onclick="saveAdminPins()" class="w-full py-2 bg-green-600 text-white rounded font-bold">Save Changes</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full font-bold shadow-2xl transition-opacity duration-300 opacity-0 pointer-events-none z-[9999]">
+        Notification
     </div>
 
     <script>
-        // 1. Double Click to Edit functionality
-        document.getElementById('resume-container').addEventListener('dblclick', function(e) {
-            const target = e.target;
-            
-            // Allow editing only on elements that hold text (paragraphs, spans, table cells, divs)
-            if(target !== this && !target.classList.contains('skills-grid') && !target.classList.contains('personal-details')) {
-                // Make editable
-                target.setAttribute('contenteditable', 'true');
-                target.focus();
+        // Data & State
+        const VENDOR_UPI = '9451239239';
+        let state = {
+            resPin: '9451',
+            certPin: '9918',
+            attempts: 3,
+            currentDocId: '',
+            currentDocType: '' // 'resume' or 'cert'
+        };
+
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId + '-section').classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        // --- Anti Screenshot / Protection ---
+        function showAntiScreenshotShield() {
+            const shield = document.getElementById('anti-screenshot-shield');
+            shield.style.opacity = '1';
+            setTimeout(() => { shield.style.opacity = '0'; }, 3000);
+            showToast("Screenshots are strictly blocked before payment.");
+        }
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen' || e.keyCode == 44) showAntiScreenshotShield();
+        });
+
+        // --- Edit Functionality (Double Click) ---
+        document.addEventListener('dblclick', function(e) {
+            const docContainer = e.target.closest('.a4-document');
+            if (docContainer) {
+                const docId = docContainer.id.replace('doc-', '');
+                const overlay = document.getElementById(`overlay-${docId}`);
                 
-                // Visual highlight to show it's being edited
-                target.style.outline = '2px dashed #0044cc';
-                target.style.backgroundColor = 'rgba(0, 68, 204, 0.05)';
-                
-                // When clicked outside, save and remove editable status
-                target.addEventListener('blur', function() {
-                    target.removeAttribute('contenteditable');
-                    target.style.outline = 'none';
-                    target.style.backgroundColor = 'transparent';
-                }, { once: true }); // Ensure listener is only fired once
+                // Allow edit ONLY if unlocked (overlay is hidden)
+                if (overlay && overlay.style.display === 'none') {
+                    if(!e.target.classList.contains('a4-document') && !['TABLE','TBODY','TR','UL'].includes(e.target.tagName)) {
+                        e.target.setAttribute('contenteditable', 'true');
+                        e.target.classList.add('editable-active');
+                        e.target.focus();
+                        
+                        e.target.addEventListener('blur', function() {
+                            e.target.removeAttribute('contenteditable');
+                            e.target.classList.remove('editable-active');
+                        }, { once: true });
+                    }
+                }
             }
         });
 
-        // 2. Dynamic Text Resizing (to ensure perfectly fitting 1 page)
-        let currentFontSize = 12.5; // Starting base font size
+        // --- Preview Logic ---
+        function previewDoc(docId) {
+            const overlay = document.getElementById(`overlay-${docId}`);
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+                showToast('Preview Mode: Locked & Watermarked');
 
-        function adjustFontSize(change) {
-            currentFontSize += change;
-            
-            // Limit the resizing so it doesn't get unreadable or break completely
-            if (currentFontSize < 10) currentFontSize = 10; 
-            if (currentFontSize > 16) currentFontSize = 16;
-            
-            // Apply the new font size to the root variable
-            document.documentElement.style.setProperty('--base-size', currentFontSize + 'px');
-            document.body.style.fontSize = currentFontSize + 'px';
+                // Re-lock after 3.5 seconds
+                setTimeout(() => {
+                    overlay.style.display = 'flex';
+                    setTimeout(() => { overlay.style.opacity = '1'; }, 50);
+                }, 3500);
+            }
         }
 
-        // 3. HD Screenshot Functionality (Document Scanner Style)
-        function takeHDScreenshot() {
-            const resumeElement = document.getElementById('resume-container');
-            const btn = document.getElementById('screenshot-btn');
-            const originalText = btn.innerHTML;
-            
-            // Change button text to show progress
-            btn.innerHTML = "⏳ Capturing...";
-            btn.style.backgroundColor = "#eab308"; // yellow warning color
+        // --- Flow: Unlock -> WhatsApp -> PIN ---
+        function initiateUnlock(docId, itemName, amount, type) {
+            state.currentDocId = docId;
+            state.currentDocType = type;
+            state.attempts = 3; // Reset attempts for new request
+            document.getElementById('attempt-count').innerText = state.attempts;
 
-            // html2canvas takes a picture of the exact div
-            html2canvas(resumeElement, {
-                scale: 3, // Scale 3 gives Full HD/High-Res quality
-                useCORS: true, 
-                backgroundColor: '#ffffff', // Ensures the background is perfectly white
-                logging: false
+            document.getElementById('modal-amount').innerText = `₹${amount}`;
+            document.getElementById('modal-item-name').innerText = itemName;
+            document.getElementById('payment-modal').classList.add('active');
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            document.getElementById('pin-input').value = '';
+        }
+
+        function copyUPI() {
+            const temp = document.createElement("input"); temp.value = VENDOR_UPI;
+            document.body.appendChild(temp); temp.select(); document.execCommand("copy");
+            document.body.removeChild(temp);
+            showToast("UPI Number copied!");
+        }
+
+        function sendWhatsApp() {
+            const msg = `Hello, I have paid the amount to unlock ${state.currentDocId}. [Please find screenshot attached]. Send me the PIN code.`;
+            window.open(`https://wa.me/91${VENDOR_UPI}?text=${msg}`, '_blank');
+            showPinModal();
+        }
+
+        function showPinModal() {
+            document.getElementById('payment-modal').classList.remove('active');
+            document.getElementById('pin-modal').classList.add('active');
+        }
+
+        function verifyPin() {
+            if (state.attempts <= 0) {
+                showToast("Maximum attempts reached. Contact Admin.");
+                closeModals();
+                return;
+            }
+
+            const input = document.getElementById('pin-input').value;
+            const correctPin = state.currentDocType === 'resume' ? state.resPin : state.certPin;
+
+            if (input === correctPin) {
+                unlockDocument(state.currentDocId);
+                closeModals();
+                showToast("Success! Document Unlocked. You can now Double-Click to Edit and Download.");
+            } else {
+                state.attempts--;
+                document.getElementById('attempt-count').innerText = state.attempts;
+                showToast("Incorrect Code!");
+                document.getElementById('pin-input').value = '';
+                if(state.attempts === 0) closeModals();
+            }
+        }
+
+        function unlockDocument(docId) {
+            const overlay = document.getElementById(`overlay-${docId}`);
+            const watermark = document.getElementById(`wm-${docId}`);
+            
+            if (overlay) overlay.style.display = 'none';
+            if (watermark) watermark.style.display = 'none'; // Permanently remove watermark
+            
+            // Change Action Buttons to "HD Download"
+            const actionsContainer = document.getElementById(`actions-${docId}`);
+            actionsContainer.innerHTML = `
+                <span class="text-xs font-bold text-green-600 mr-2"><i class="fa-solid fa-check"></i> Unlocked</span>
+                <button onclick="downloadHD('${docId}', this)" class="px-4 py-2 bg-blue-600 text-white rounded font-black shadow-md hover:bg-blue-700 text-sm transition">
+                    <i class="fa-solid fa-download mr-1"></i> HD Download
+                </button>
+            `;
+        }
+
+        // --- HD Download Logic ---
+        function downloadHD(docId, btnElement) {
+            const docElement = document.getElementById(`doc-${docId}`);
+            const originalText = btnElement.innerHTML;
+            
+            btnElement.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Processing...";
+            btnElement.style.pointerEvents = "none";
+
+            // Remove scaling for accurate high-res capture
+            const originalTransform = docElement.style.transform;
+            docElement.style.transform = 'none';
+
+            html2canvas(docElement, {
+                scale: 3, // Full HD Resolution
+                useCORS: true, backgroundColor: '#ffffff', logging: false
             }).then(canvas => {
-                // Convert the canvas to a high quality PNG image data URL
                 const image = canvas.toDataURL("image/png");
-                
-                // Create a temporary link element to trigger the download
                 const link = document.createElement('a');
-                link.href = image;
-                link.download = 'Rajan_Yadav_Resume_HD.png'; // Name of the saved image
+                link.href = image; link.download = `${docId}_HD.png`;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 
-                // Append, click, and remove the link
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                btnElement.innerHTML = "<i class='fa-solid fa-check'></i> Downloaded!";
+                btnElement.classList.replace('bg-blue-600', 'bg-green-600');
                 
-                // Reset button
-                btn.innerHTML = "✅ Saved to Gallery!";
-                btn.style.backgroundColor = "#22c55e"; // green success color
-                
+                docElement.style.transform = originalTransform;
+
                 setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.backgroundColor = "#38bdf8"; // original color
+                    btnElement.innerHTML = originalText;
+                    btnElement.classList.replace('bg-green-600', 'bg-blue-600');
+                    btnElement.style.pointerEvents = "auto";
                 }, 3000);
 
             }).catch(err => {
-                console.error("Screenshot error: ", err);
-                btn.innerHTML = "❌ Failed";
-                btn.style.backgroundColor = "#ef4444";
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.style.backgroundColor = "#38bdf8";
-                }, 3000);
+                btnElement.innerHTML = "❌ Failed";
+                docElement.style.transform = originalTransform;
+                setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.pointerEvents = "auto"; }, 3000);
             });
+        }
+
+        // --- Secret Admin Logic ---
+        let clickCount = 0;
+        let clickTimer;
+        function handleAdminClick() {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount >= 3) {
+                document.getElementById('admin-res-pin').value = state.resPin;
+                document.getElementById('admin-cert-pin').value = state.certPin;
+                document.getElementById('admin-modal').classList.add('active');
+                clickCount = 0;
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 600); // 600ms window
+            }
+        }
+
+        function saveAdminPins() {
+            state.resPin = document.getElementById('admin-res-pin').value;
+            state.certPin = document.getElementById('admin-cert-pin').value;
+            closeModals();
+            showToast("PIN Codes Updated Successfully!");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message; toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3500);
         }
     </script>
 </body>
