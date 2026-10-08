@@ -1085,7 +1085,7 @@
                 bodyEl.innerHTML = `<div class="bg-amber-50 text-amber-900 p-4 rounded-lg border border-amber-200 leading-relaxed">
                     <b class="text-amber-700 text-base mb-2 block"><i class="fa-solid fa-circle-exclamation"></i> COD Important Notice</b>
                     Cash on Delivery (COD) आर्डर कंफर्म करने के लिए आपको <b>₹40 एडवांस पेमेंट</b> करना अनिवार्य है।<br><br>
-                    यह कूरियर चार्ज सिक्योरिटी के लिए होता है। बाकी का बचा हुआ अमाउंट आप पार्सल डिलीवर होने के समय कैश देপ্পसकते हैं।
+                    यह कूरियर चार्ज सिक्योरिटी के लिए होता है। बाकी का बचा हुआ अमाउंट आप पार्सल डिलीवर होने के समय कैश दे सकते हैं।
                 </div>`;
             }
         } else if (type === 'return') {
@@ -2473,7 +2473,7 @@
         } catch(e) { showToast("Error processing."); }  
     };  
 
-    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION (FIXED WITH BASE64)
+    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION (FIXED WITH BASE64 & SMART API KEY PROMPT)
     window.handleAdminImageUpload = async (e) => {
         const files = e.target.files;
         if(!files || files.length === 0) return;
@@ -2481,23 +2481,23 @@
         const statusEl = document.getElementById('uploadStatus');
         const textarea = document.getElementById('pImgUrls');
         
-        const IMGBB_API_KEY = '02b575ad3a19e8021af3bbcd4c659938'; 
+        // Use saved key if available, otherwise use default shared key
+        let IMGBB_API_KEY = localStorage.getItem('shraynex_imgbb_key') || '02b575ad3a19e8021af3bbcd4c659938'; 
         
         statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Uploading ${files.length} photo(s)...</span>`;
         let uploadedUrls = [];
+        let limitReached = false;
         
         // Helper: Convert File to Base64 to avoid CORS/FormData MIME issues
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => {
-                const base64String = reader.result.split(',')[1];
-                resolve(base64String);
-            };
+            reader.onload = () => resolve(reader.result.split(',')[1]);
             reader.onerror = error => reject(error);
         });
         
         for(let i=0; i<files.length; i++) {
+            if(limitReached) break;
             try {
                 const base64Image = await fileToBase64(files[i]);
                 const formData = new FormData();
@@ -2511,12 +2511,29 @@
                 const data = await res.json();
                 if(data && data.success) {
                     uploadedUrls.push(data.data.url);
-                } else {
-                    console.error("ImgBB Error:", data);
+                } else if (data.error) {
+                    console.error("ImgBB Error:", data.error.message);
+                    if (data.error.message.toLowerCase().includes('limit') || data.error.message.toLowerCase().includes('invalid')) {
+                        limitReached = true;
+                    }
                 }
             } catch(error) {
                 console.error("Upload failed", error);
             }
+        }
+        
+        // Smart Fallback if API Limit is Reached
+        if(limitReached) {
+            const newKey = prompt("⚠️ ImgBB API Limit Reached!\n\nThis happens because you are using a shared default API key.\n\nTo fix this 100% permanently:\n1. Go to https://api.imgbb.com/\n2. Login & copy your FREE API Key.\n3. Paste it below to save it forever:", "");
+            
+            if(newKey && newKey.trim() !== "") {
+                localStorage.setItem('shraynex_imgbb_key', newKey.trim());
+                statusEl.innerHTML = `<span class="text-blue-500">✅ New API Key Saved! Please select photos and upload again.</span>`;
+            } else {
+                statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed due to API Limit.</span>`;
+            }
+            e.target.value = '';
+            return;
         }
         
         if(uploadedUrls.length > 0) {
@@ -2526,11 +2543,11 @@
             window.processAdminImageUrls();
             statusEl.innerHTML = `<span class="text-[#00e676]">✅ ${uploadedUrls.length} Photo(s) Uploaded!</span>`;
         } else {
-            statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed. Check API Key limit.</span>`;
+            statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed. Check network.</span>`;
         }
         
         e.target.value = '';
-        setTimeout(() => { statusEl.innerHTML = ''; }, 5000);
+        setTimeout(() => { if(!limitReached) statusEl.innerHTML = ''; }, 5000);
     };
 </script>  </body>  
 </html>
