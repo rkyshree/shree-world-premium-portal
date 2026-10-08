@@ -2473,7 +2473,7 @@
         } catch(e) { showToast("Error processing."); }  
     };  
 
-    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION (Fixed with XMLHttpRequest for WebView Compatibility)
+    // IMGBB AUTO UPLOAD PLUGIN INTEGRATION
     window.handleAdminImageUpload = async (e) => {
         const files = e.target.files;
         if(!files || files.length === 0) return;
@@ -2488,34 +2488,22 @@
         
         for(let i=0; i<files.length; i++) {
             try {
-                // Using XMLHttpRequest (XHR) instead of fetch() to prevent WebView Network Errors
-                const data = await new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open("POST", "https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY);
-                    
-                    xhr.onload = () => {
-                        if (xhr.status >= 200 && xhr.status < 300) {
-                            try { resolve(JSON.parse(xhr.responseText)); } 
-                            catch(err) { reject(err); }
-                        } else { 
-                            reject(new Error("Upload Failed with Status: " + xhr.status)); 
-                        }
-                    };
-                    
-                    xhr.onerror = () => reject(new Error("Network Error in WebView"));
-                    
-                    const formData = new FormData();
-                    formData.append("image", files[i]);
-                    xhr.send(formData);
-                });
+                const formData = new FormData();
+                formData.append('image', files[i]);
 
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await res.json();
                 if(data && data.success) {
                     uploadedUrls.push(data.data.url);
                 } else {
                     console.error("ImgBB Error:", data);
                 }
             } catch(error) {
-                console.error("Upload failed:", error);
+                console.error("Upload failed", error);
             }
         }
         
