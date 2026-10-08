@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rajan Kumar Yadav - Professional CV</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
 
@@ -188,55 +189,77 @@
             color: var(--text-dark);
         }
 
-        /* Control Panel Styles */
+        /* Control Panel Styles (Mobile Friendly) */
         .control-panel {
-            text-align: center;
-            background-color: #333;
-            padding: 10px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 12px 10px;
             position: sticky;
             top: 0;
             z-index: 100;
             margin-bottom: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid #38bdf8;
+        }
+
+        .cp-row {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
+            width: 100%;
         }
 
         .btn-action {
-            background-color: #0044cc;
-            color: white;
-            padding: 8px 15px;
+            background-color: #38bdf8;
+            color: #0f172a;
+            padding: 10px 18px;
             border: none;
-            border-radius: 4px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 15px;
             cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: background 0.3s;
+            font-weight: 900;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .btn-action:hover {
-            background-color: #003399;
+            background-color: #0284c7;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-action:active {
+            transform: translateY(1px);
         }
 
         .btn-small {
-            background-color: #555;
-            padding: 5px 10px;
-            font-size: 13px;
+            background-color: #475569;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 6px;
         }
 
         .btn-small:hover {
-            background-color: #777;
+            background-color: #64748b;
         }
 
         .instructions {
-            font-size: 13px;
-            color: #aaa;
-            margin: 0 10px;
+            font-size: 12px;
+            color: #cbd5e1;
+            text-align: center;
+            margin-top: 2px;
+            font-weight: 500;
         }
 
         /* Print Media Queries */
@@ -261,10 +284,17 @@
 </head>
 <body>
     <div class="no-print control-panel">
-        <button class="btn-action" onclick="window.print()">⬇️ Download CV / Print</button>
-        <span class="instructions">| 🖱️ Double-Click on any text to Edit | Text Size:</span>
-        <button class="btn-action btn-small" onclick="adjustFontSize(-0.5)">A -</button>
-        <button class="btn-action btn-small" onclick="adjustFontSize(0.5)">A +</button>
+        <div class="cp-row">
+            <button class="btn-action" id="screenshot-btn" onclick="takeHDScreenshot()">
+                📸 HD Screenshot
+            </button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="font-size: 13px; font-weight:bold; color: #94a3b8;">Text Size:</span>
+                <button class="btn-action btn-small" onclick="adjustFontSize(-0.5)">A -</button>
+                <button class="btn-action btn-small" onclick="adjustFontSize(0.5)">A +</button>
+            </div>
+        </div>
+        <div class="instructions">💡 <b>Double-Click</b> any text to edit | Clicking Screenshot auto-crops the A4 page perfectly.</div>
     </div>
 
     <!-- Removed contenteditable="true" to allow script-based double-click editing -->
@@ -481,6 +511,56 @@
             // Apply the new font size to the root variable
             document.documentElement.style.setProperty('--base-size', currentFontSize + 'px');
             document.body.style.fontSize = currentFontSize + 'px';
+        }
+
+        // 3. HD Screenshot Functionality (Document Scanner Style)
+        function takeHDScreenshot() {
+            const resumeElement = document.getElementById('resume-container');
+            const btn = document.getElementById('screenshot-btn');
+            const originalText = btn.innerHTML;
+            
+            // Change button text to show progress
+            btn.innerHTML = "⏳ Capturing...";
+            btn.style.backgroundColor = "#eab308"; // yellow warning color
+
+            // html2canvas takes a picture of the exact div
+            html2canvas(resumeElement, {
+                scale: 3, // Scale 3 gives Full HD/High-Res quality
+                useCORS: true, 
+                backgroundColor: '#ffffff', // Ensures the background is perfectly white
+                logging: false
+            }).then(canvas => {
+                // Convert the canvas to a high quality PNG image data URL
+                const image = canvas.toDataURL("image/png");
+                
+                // Create a temporary link element to trigger the download
+                const link = document.createElement('a');
+                link.href = image;
+                link.download = 'Rajan_Yadav_Resume_HD.png'; // Name of the saved image
+                
+                // Append, click, and remove the link
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Reset button
+                btn.innerHTML = "✅ Saved to Gallery!";
+                btn.style.backgroundColor = "#22c55e"; // green success color
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = "#38bdf8"; // original color
+                }, 3000);
+
+            }).catch(err => {
+                console.error("Screenshot error: ", err);
+                btn.innerHTML = "❌ Failed";
+                btn.style.backgroundColor = "#ef4444";
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.backgroundColor = "#38bdf8";
+                }, 3000);
+            });
         }
     </script>
 </body>
