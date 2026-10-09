@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Viewport adjusted to prevent unwanted zooming when editing text on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Career Services - Premium Documents</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,36 +35,48 @@
 
         .nav-link.active { color: #2563eb !important; border-bottom: 3px solid #2563eb; }
 
-        /* Document Container & Scaling */
+        /* Perfect A4 Document Container & Auto-Scaling */
         .a4-document-wrapper {
-            width: 100%; overflow-x: auto; display: flex; justify-content: center;
-            padding: 20px 0; background-color: #e5e7eb; position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 10px 0;
+            background-color: #e5e7eb;
+            position: relative;
+            overflow: hidden; /* Prevents scrollbars when scaled */
+            transition: height 0.3s ease;
         }
 
+        /* Using Exact Pixels for A4 at 96 DPI for perfect JS scaling */
         .a4-document {
-            width: 210mm; min-height: 297mm; background: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative;
-            overflow: hidden; box-sizing: border-box; transform-origin: top center;
+            width: 794px;
+            min-height: 1123px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            position: relative;
+            box-sizing: border-box;
+            transform-origin: top center;
+            /* Allow selection inside document */
+            user-select: auto;
+            -webkit-user-select: auto;
         }
-
-        @media (max-width: 850px) { .a4-document { transform: scale(0.45); margin-bottom: -150mm; } }
-        @media (max-width: 450px) { .a4-document { transform: scale(0.35); margin-bottom: -180mm; } }
 
         /* Security Overlays */
         .watermark {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 5; display: flex; flex-wrap: wrap;
             justify-content: space-evenly; align-content: space-evenly; overflow: hidden;
-            opacity: 0.15;
+            opacity: 0.15; background: rgba(255,255,255,0.2);
         }
         .watermark span {
-            font-size: 3rem; color: #000; font-weight: 900;
+            font-size: 3.5rem; color: #000; font-weight: 900;
             transform: rotate(-35deg); white-space: nowrap; margin: 20px;
         }
 
         .locked-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 10; transition: all 0.3s ease;
         }
@@ -85,66 +98,66 @@
         .modal-overlay.active .modal-content { transform: translateY(0); }
 
         /* --- Resume Styles --- */
-        .res-box { padding: 30px 40px; color: #333; line-height: 1.5; font-family: 'Roboto', sans-serif; font-size: 13px;}
+        .res-box { padding: 40px 50px; color: #333; line-height: 1.5; font-family: 'Roboto', sans-serif; font-size: 15px;}
         .res-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .res-table th, .res-table td { border: 1px solid #aaa; padding: 6px; text-align: left; }
+        .res-table th, .res-table td { border: 1px solid #aaa; padding: 8px; text-align: left; }
         
         /* TPL 1: Indian Corporate */
-        .tpl-corp .r-header { text-align: center; border-bottom: 3px solid #003366; padding-bottom: 10px; margin-bottom: 15px; }
-        .tpl-corp h1 { font-size: 2.2em; color: #003366; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
+        .tpl-corp .r-header { text-align: center; border-bottom: 3px solid #003366; padding-bottom: 15px; margin-bottom: 20px; }
+        .tpl-corp h1 { font-size: 2.5em; color: #003366; margin: 0 0 5px 0; text-transform: uppercase; font-weight: 900; }
         .tpl-corp .hl-blue { color: #0044cc; font-weight: 900; }
-        .tpl-corp .section-title { font-size: 1.2em; font-weight: 700; color: #003366; text-transform: uppercase; background-color: #f0f4f8; padding: 4px 8px; border-left: 4px solid #003366; margin-bottom: 8px; margin-top: 15px;}
+        .tpl-corp .section-title { font-size: 1.3em; font-weight: 700; color: #003366; text-transform: uppercase; background-color: #f0f4f8; padding: 6px 10px; border-left: 4px solid #003366; margin-bottom: 10px; margin-top: 20px;}
         .tpl-corp th { background-color: #f0f4f8; color: #003366; font-weight: bold; }
 
         /* TPL 2: Gulf Modern (Split) */
         .tpl-gulf { display: flex; height: 100%; padding:0;}
-        .tpl-gulf .left-col { width: 35%; background-color: #0f2c59; color: white; padding: 30px 25px; }
-        .tpl-gulf .right-col { width: 65%; padding: 30px 35px; }
-        .tpl-gulf h1 { font-size: 2.5em; margin: 0; color: #fff; text-transform: uppercase; font-weight: 900; line-height: 1.1;}
-        .tpl-gulf .role { color: #facc15; font-weight: 600; font-size: 1.1em; margin-top: 5px; margin-bottom: 30px;}
-        .tpl-gulf .l-title { font-size: 1.2em; font-weight: 700; color: #facc15; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 15px; margin-top: 20px;}
-        .tpl-gulf .r-title { font-size: 1.4em; font-weight: 700; color: #0f2c59; border-bottom: 2px solid #0f2c59; padding-bottom: 5px; margin-bottom: 15px; margin-top: 20px;}
+        .tpl-gulf .left-col { width: 35%; background-color: #0f2c59; color: white; padding: 40px 30px; box-sizing: border-box;}
+        .tpl-gulf .right-col { width: 65%; padding: 40px 40px; box-sizing: border-box;}
+        .tpl-gulf h1 { font-size: 3em; margin: 0; color: #fff; text-transform: uppercase; font-weight: 900; line-height: 1.1;}
+        .tpl-gulf .role { color: #facc15; font-weight: 600; font-size: 1.2em; margin-top: 5px; margin-bottom: 40px;}
+        .tpl-gulf .l-title { font-size: 1.3em; font-weight: 700; color: #facc15; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 15px; margin-top: 25px;}
+        .tpl-gulf .r-title { font-size: 1.6em; font-weight: 700; color: #0f2c59; border-bottom: 2px solid #0f2c59; padding-bottom: 5px; margin-bottom: 20px; margin-top: 20px;}
 
         /* TPL 3: Minimalist */
-        .tpl-mini { padding: 40px 50px; font-family: 'Inter', sans-serif;}
-        .tpl-mini .header-flex { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 25px; }
-        .tpl-mini h1 { font-size: 2.8em; margin: 0; color: #111827; font-weight: 900; letter-spacing:-1px;}
-        .tpl-mini .title-m { font-size: 1.1em; font-weight: 700; color: #111827; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; margin-top: 25px; border-bottom:1px solid #ddd; padding-bottom:5px;}
-        .tpl-mini .exp-card { display: grid; grid-template-columns: 140px 1fr; gap: 15px; margin-bottom: 12px;}
+        .tpl-mini { padding: 50px 60px; font-family: 'Inter', sans-serif;}
+        .tpl-mini .header-flex { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; margin-bottom: 30px; }
+        .tpl-mini h1 { font-size: 3.2em; margin: 0; color: #111827; font-weight: 900; letter-spacing:-1px;}
+        .tpl-mini .title-m { font-size: 1.3em; font-weight: 700; color: #111827; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; margin-top: 30px; border-bottom:1px solid #ddd; padding-bottom:5px;}
+        .tpl-mini .exp-card { display: grid; grid-template-columns: 160px 1fr; gap: 20px; margin-bottom: 15px;}
 
         /* TPL 4: Creative */
-        .tpl-crea { border-left: 15px solid #2563eb; }
-        .tpl-crea h1 { font-size: 3em; color: #1e293b; font-weight: 900; margin-bottom: 5px; text-transform: uppercase;}
-        .tpl-crea .c-title { font-size: 1.3em; font-weight: 900; color: #2563eb; margin-top: 20px; margin-bottom: 10px; display: inline-block;}
-        .tpl-crea .c-pill { display: inline-block; background: #e2e8f0; color: #0f172a; padding: 5px 12px; border-radius: 20px; font-weight: 600; margin: 3px;}
+        .tpl-crea { border-left: 20px solid #2563eb; }
+        .tpl-crea h1 { font-size: 3.5em; color: #1e293b; font-weight: 900; margin-bottom: 5px; text-transform: uppercase;}
+        .tpl-crea .c-title { font-size: 1.4em; font-weight: 900; color: #2563eb; margin-top: 25px; margin-bottom: 15px; display: inline-block;}
+        .tpl-crea .c-pill { display: inline-block; background: #e2e8f0; color: #0f172a; padding: 6px 14px; border-radius: 20px; font-weight: 600; margin: 4px;}
 
         /* TPL 5: Executive */
         .tpl-exec { background-color: #f8fafc; }
-        .tpl-exec .exec-header { background-color: #1e293b; color: white; padding: 30px; text-align: center; }
-        .tpl-exec h1 { font-size: 2.5em; margin:0; font-weight: 900;}
-        .tpl-exec .exec-body { padding: 30px; }
-        .tpl-exec .e-title { color: #1e293b; font-size: 1.3em; font-weight:bold; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin: 20px 0 15px 0;}
+        .tpl-exec .exec-header { background-color: #1e293b; color: white; padding: 40px; text-align: center; }
+        .tpl-exec h1 { font-size: 3em; margin:0; font-weight: 900;}
+        .tpl-exec .exec-body { padding: 40px 50px; }
+        .tpl-exec .e-title { color: #1e293b; font-size: 1.4em; font-weight:bold; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin: 25px 0 20px 0;}
 
         /* --- Certificate Styles --- */
-        .exp-letter { font-family: 'Times New Roman', Times, serif; padding: 25mm 20mm; color: #000; line-height: 1.6; font-size: 15px;}
-        .exp-letter h3 { text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 25px; font-size: 1.2rem; }
-        .exp-letter p { text-align: justify; margin-bottom: 15px;}
+        .exp-letter { font-family: 'Times New Roman', Times, serif; padding: 35mm 25mm; color: #000; line-height: 1.6; font-size: 17px;}
+        .exp-letter h3 { text-align: center; text-decoration: underline; font-weight: bold; margin-bottom: 30px; font-size: 1.4rem; }
+        .exp-letter p { text-align: justify; margin-bottom: 20px;}
         .bold-field { font-weight: bold; }
 
         /* Hero */
-        .hero-address { font-size: 0.85rem; font-family: Arial, sans-serif; line-height: 1.3;}
-        .hero-details-table td { padding: 6px 10px; }
+        .hero-address { font-size: 0.95rem; font-family: Arial, sans-serif; line-height: 1.3;}
+        .hero-details-table td { padding: 8px 15px; }
         
         /* Honda */
-        .honda-address { font-size: 0.85rem; font-family: Arial, sans-serif; line-height: 1.3; font-weight: bold;}
+        .honda-address { font-size: 0.95rem; font-family: Arial, sans-serif; line-height: 1.3; font-weight: bold;}
         
         /* Maruti */
-        .maruti-ref { display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.95rem; margin-bottom: 40px; font-weight: bold;}
-        .maruti-footer-banner { position: absolute; bottom: 20px; left: 20px; right: 20px; border-top: 2px solid #0055a5; padding-top: 10px; display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.65rem; color: #333;}
+        .maruti-ref { display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 1.05rem; margin-bottom: 50px; font-weight: bold;}
+        .maruti-footer-banner { position: absolute; bottom: 30px; left: 30px; right: 30px; border-top: 2px solid #0055a5; padding-top: 15px; display: flex; justify-content: space-between; font-family: Arial, sans-serif; font-size: 0.75rem; color: #333;}
         
         /* HSE */
-        .hse-header { border-bottom: 2px solid #000; padding-bottom: 10px;}
-        .hse-title { font-family: Arial, sans-serif; font-weight: 900; font-size: 1.6rem; margin-bottom: 5px;}
+        .hse-header { border-bottom: 2px solid #000; padding-bottom: 15px;}
+        .hse-title { font-family: Arial, sans-serif; font-weight: 900; font-size: 1.8rem; margin-bottom: 5px;}
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -156,17 +169,18 @@
         <div class="text-lg mt-2 font-normal text-gray-300">Security Policy Enforced</div>
     </div>
 
+    <!-- Navigation -->
     <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <!-- Secret Admin Trigger on Title -->
+                <!-- Secret Admin Trigger on Title (Click 3 times) -->
                 <div class="flex items-center cursor-pointer" onclick="handleAdminClick()">
                     <i class="fa-solid fa-briefcase text-blue-600 text-3xl mr-3"></i>
                     <span class="font-black text-2xl text-gray-900 tracking-tight">Career <span class="text-blue-600">Services</span></span>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <button onclick="switchTab('resumes')" id="nav-resumes" class="nav-link active font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition">Resumes</button>
-                    <button onclick="switchTab('certs')" id="nav-certs" class="nav-link font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition">Certificates</button>
+                    <button onclick="switchTab('resumes')" id="nav-resumes" class="nav-link active font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition text-sm sm:text-base">Resumes</button>
+                    <button onclick="switchTab('certs')" id="nav-certs" class="nav-link font-bold text-gray-600 hover:text-blue-600 pb-1 px-2 transition text-sm sm:text-base">Certificates</button>
                 </div>
             </div>
         </div>
@@ -174,18 +188,6 @@
 
     <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Hindi Description Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-10">
-            <h1 class="text-2xl font-black text-gray-900 mb-4 text-center">अपना प्रोफेशनल रिज़्यूमे और एक्सपीरियंस सर्टिफिकेट बनाएँ!</h1>
-            <p class="text-gray-700 text-center font-medium leading-relaxed max-w-4xl mx-auto mb-4">
-                जॉब के लिए इंडिया या इंडिया के बाहर (गल्फ देशों में) जाने के लिए अपना प्रोफेशनल रिज़्यूमे तैयार करें।
-                अगर आपके पास एक्सपीरियंस सर्टिफिकेट नहीं है, तो आप यहाँ से एक्सपीरियंस सर्टिफिकेट बना सकते हैं और कहीं भी इस्तेमाल कर सकते हैं।
-            </p>
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800 font-semibold text-center">
-                <i class="fa-solid fa-triangle-exclamation mr-1"></i> याद रखें कि एक्सपीरियंस सर्टिफिकेट आपको डाउनलोड करने के बाद अच्छी क्वालिटी के मोटे पेपर पर प्रिंट कराना होगा। यह ऑनलाइन शो नहीं करेगा। HR और इंटरव्यूअर सिर्फ आपके इंटरव्यू के बेस पर आपका सिलेक्शन करता है। एक्सपीरियंस लेटर बस यह साबित करने के लिए होता है कि आपने कहीं काम किया है। अगर आप अपना अच्छा इंटरव्यू देते हैं तो आपका सिलेक्शन जरूर होगा!
-            </div>
-        </div>
-
         <!-- ================= RESUMES SECTION ================= -->
         <div id="resumes-section" class="tab-content active">
             <div class="flex justify-between items-center border-b-2 border-gray-200 pb-2 mb-8">
@@ -196,14 +198,15 @@
                 
                 <!-- Resume 1: Indian Corporate -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">1. Indian Corporate Style</h3>
-                        <div class="flex gap-2" id="actions-res-1">
-                            <button onclick="previewDoc('res-1')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('res-1', 'Resume (Corporate)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-res-1">
+                            <button onclick="previewDoc('res-1')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-1', 'Resume (Corporate)', 30, 'resume')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <!-- Wrapper for JS Auto-Scaling -->
+                    <div class="a4-document-wrapper" id="wrap-res-1">
                         <div class="a4-document tpl-corp res-box" id="doc-res-1">
                             <div class="watermark" id="wm-res-1">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -253,14 +256,14 @@
 
                 <!-- Resume 2: Gulf/Dubai Style -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">2. Gulf / Dubai Style</h3>
-                        <div class="flex gap-2" id="actions-res-2">
-                            <button onclick="previewDoc('res-2')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('res-2', 'Resume (Gulf Style)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-res-2">
+                            <button onclick="previewDoc('res-2')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-2', 'Resume (Gulf Style)', 30, 'resume')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-res-2">
                         <div class="a4-document tpl-gulf res-box" id="doc-res-2">
                              <div class="watermark" id="wm-res-2">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -272,17 +275,17 @@
                                 <h1>Rajan<br>Yadav</h1>
                                 <div class="role">Engineering Professional</div>
                                 <div class="l-title">Contact Info</div>
-                                <ul style="list-style: none; padding:0; font-size:12px;">
+                                <ul style="list-style: none; padding:0; font-size:14px;">
                                     <li><strong>Phone:</strong><br>+91 9451 239 239<br>+91 99 1816 4690</li>
-                                    <li style="margin-top:10px;"><strong>Email:</strong><br>india.rajanyadav@gmail.com</li>
-                                    <li style="margin-top:10px;"><strong>Address:</strong><br>Jangal Thakurahi Deoria, Post: Badhya Bujurg, PIN: 274001</li>
+                                    <li style="margin-top:15px;"><strong>Email:</strong><br>india.rajanyadav@gmail.com</li>
+                                    <li style="margin-top:15px;"><strong>Address:</strong><br>Jangal Thakurahi Deoria, Post: Badhya Bujurg, PIN: 274001</li>
                                 </ul>
                                 <div class="l-title">Core Skills</div>
-                                <ul style="list-style: square; font-size:12px;">
+                                <ul style="list-style: square; font-size:14px;">
                                     <li>Structural Welding & Fitting</li><li>Automotive Assembly</li><li>Fire & Industrial Safety</li><li>Tally ERP-9, MS Office</li>
                                 </ul>
                                 <div class="l-title">Personal</div>
-                                <ul style="list-style: none; padding:0; font-size:12px;">
+                                <ul style="list-style: none; padding:0; font-size:14px;">
                                     <li><strong>Passport:</strong> <span style="color:#facc15;">AS910147</span></li>
                                     <li><strong>Airport:</strong> Gorakhpur/Lucknow</li>
                                     <li><strong>DOB:</strong> 02 Mar 1997</li>
@@ -290,22 +293,22 @@
                             </div>
                             <div class="right-col">
                                  <div class="r-title">Professional Summary</div>
-                                 <p style="text-align: justify; margin-bottom: 20px;">Result-driven professional with 4+ years of proven expertise in manufacturing, structural welding, and assembly operations. Commended for performance at industry giants like Maruti Suzuki, Honda, and Hero MotoCorp. Seeking to leverage skills in a dynamic international environment.</p>
+                                 <p style="text-align: justify; margin-bottom: 25px;">Result-driven professional with 4+ years of proven expertise in manufacturing, structural welding, and assembly operations. Commended for performance at industry giants like Maruti Suzuki, Honda, and Hero MotoCorp. Seeking to leverage skills in a dynamic international environment.</p>
 
                                  <div class="r-title">Work Experience</div>
-                                 <div style="margin-bottom: 12px;">
+                                 <div style="margin-bottom: 15px;">
                                     <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Hindustan Shipping & Engineering</span><span style="color: #666;">Mar '26 – Sep '26</span></div>
                                     <div style="color: #0f2c59; font-weight: bold;">Welder / Fitter</div>
                                  </div>
-                                 <div style="margin-bottom: 12px;">
+                                 <div style="margin-bottom: 15px;">
                                     <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Maruti Suzuki India Limited</span><span style="color: #666;">Nov '24 – May '25</span></div>
                                     <div style="color: #0f2c59; font-weight: bold;">Temporary Workman</div>
                                  </div>
-                                 <div style="margin-bottom: 12px;">
+                                 <div style="margin-bottom: 15px;">
                                     <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Honda Cars India Limited</span><span style="color: #666;">May '22 – Aug '24</span></div>
                                     <div style="color: #0f2c59; font-weight: bold;">Fixed Term Mfg. Associate</div>
                                  </div>
-                                 <div style="margin-bottom: 20px;">
+                                 <div style="margin-bottom: 25px;">
                                     <div style="display: flex; justify-content: space-between; font-weight: bold;"><span>Hero MotoCorp Ltd.</span><span style="color: #666;">Oct '20 – Oct '21</span></div>
                                     <div style="color: #0f2c59; font-weight: bold;">R&D Technician</div>
                                  </div>
@@ -323,14 +326,14 @@
 
                 <!-- Resume 3: Minimalist -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">3. Modern Minimalist</h3>
-                        <div class="flex gap-2" id="actions-res-3">
-                            <button onclick="previewDoc('res-3')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('res-3', 'Resume (Minimalist)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-res-3">
+                            <button onclick="previewDoc('res-3')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-3', 'Resume (Minimalist)', 30, 'resume')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-res-3">
                         <div class="a4-document tpl-mini res-box" id="doc-res-3">
                             <div class="watermark" id="wm-res-3">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -341,9 +344,9 @@
                             <div class="header-flex">
                                 <div>
                                     <h1>RAJAN K. YADAV</h1>
-                                    <p style="color: #6b7280; font-size: 1.1em; margin: 5px 0 0 0;">Engineering & Manufacturing Specialist</p>
+                                    <p style="color: #6b7280; font-size: 1.2em; margin: 5px 0 0 0;">Engineering & Manufacturing Specialist</p>
                                 </div>
-                                <div style="text-align: right; line-height: 1.5; font-size:12px;">
+                                <div style="text-align: right; line-height: 1.5; font-size:14px;">
                                     <p style="margin: 0;"><strong>P:</strong> +91 9451 239 239</p>
                                     <p style="margin: 0;"><strong>E:</strong> india.rajanyadav@gmail.com</p>
                                     <p style="margin: 0;"><strong>A:</strong> Deoria, UP, PIN: 274001</p>
@@ -371,14 +374,14 @@
 
                 <!-- Resume 4: Creative -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">4. Creative Professional</h3>
-                        <div class="flex gap-2" id="actions-res-4">
-                            <button onclick="previewDoc('res-4')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('res-4', 'Resume (Creative)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-res-4">
+                            <button onclick="previewDoc('res-4')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-4', 'Resume (Creative)', 30, 'resume')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-res-4">
                         <div class="a4-document tpl-crea res-box" id="doc-res-4">
                             <div class="watermark" id="wm-res-4">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -388,37 +391,37 @@
 
                             <div>
                                 <h1>Rajan Yadav</h1>
-                                <div style="display: flex; gap: 15px; font-weight: 600; color: #475569; margin-bottom: 20px; border-bottom: 2px solid #2563eb; padding-bottom: 15px;">
+                                <div style="display: flex; gap: 15px; font-weight: 600; color: #475569; margin-bottom: 25px; border-bottom: 2px solid #2563eb; padding-bottom: 15px;">
                                     <span>P: +91 9451 239 239</span><span>E: india.rajanyadav@gmail.com</span><span>Loc: Deoria, UP</span>
                                 </div>
 
                                 <div class="c-title">EXPERIENCE</div>
-                                <div style="margin-bottom:12px;">
-                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Hindustan Shipping & Engineering Ltd.</div>
+                                <div style="margin-bottom:15px;">
+                                    <div style="font-size:1.2em; font-weight:bold; color:#1e293b;">Hindustan Shipping & Engineering Ltd.</div>
                                     <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Welder / Fitter | Mar 2026 – Sep 2026</div>
                                 </div>
-                                <div style="margin-bottom:12px;">
-                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Maruti Suzuki India Limited</div>
+                                <div style="margin-bottom:15px;">
+                                    <div style="font-size:1.2em; font-weight:bold; color:#1e293b;">Maruti Suzuki India Limited</div>
                                     <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Temporary Workman | Nov 2024 – May 2025</div>
                                 </div>
-                                <div style="margin-bottom:12px;">
-                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Honda Cars India Limited</div>
+                                <div style="margin-bottom:15px;">
+                                    <div style="font-size:1.2em; font-weight:bold; color:#1e293b;">Honda Cars India Limited</div>
                                     <div style="color:#2563eb; font-weight:bold; margin-bottom:2px;">Fixed Term Mfg. Associate | May 2022 – Aug 2024</div>
                                 </div>
-                                <div style="margin-bottom:20px;">
-                                    <div style="font-size:1.1em; font-weight:bold; color:#1e293b;">Hero MotoCorp Ltd.</div>
+                                <div style="margin-bottom:25px;">
+                                    <div style="font-size:1.2em; font-weight:bold; color:#1e293b;">Hero MotoCorp Ltd.</div>
                                     <div style="color:#2563eb; font-weight:bold;">R&D Technician | Oct 2020 – Oct 2021</div>
                                 </div>
 
                                 <div class="c-title">EDUCATION</div>
-                                <ul style="list-style: square; padding-left:20px; font-weight:500; color:#333; margin-bottom: 20px;">
+                                <ul style="list-style: square; padding-left:20px; font-weight:500; color:#333; margin-bottom: 25px;">
                                     <li><strong>ITI Electrician</strong> - B.N. Pvt ITI (2019)</li>
                                     <li><strong>Diploma Fire & Safety</strong> - Uma Tech (2019)</li>
                                     <li><strong>B.Com</strong> - DDU Gorakhpur (2017)</li>
                                 </ul>
 
                                 <div class="c-title">EXPERTISE</div>
-                                <div style="margin-bottom: 20px;">
+                                <div style="margin-bottom: 25px;">
                                     <span class="c-pill">Auto Assembly</span><span class="c-pill">Welding & Fitting</span>
                                     <span class="c-pill">Ind. Safety</span><span class="c-pill">Tally/MS Office</span>
                                 </div>
@@ -433,15 +436,15 @@
                 </div>
 
                 <!-- Resume 5: Executive -->
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 xl:col-span-2 w-full max-w-3xl mx-auto">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 xl:col-span-2 w-full max-w-4xl mx-auto">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">5. Executive Layout</h3>
-                        <div class="flex gap-2" id="actions-res-5">
-                            <button onclick="previewDoc('res-5')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('res-5', 'Resume (Executive)', 30, 'resume')" class="px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-res-5">
+                            <button onclick="previewDoc('res-5')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('res-5', 'Resume (Executive)', 30, 'resume')" class="flex-1 sm:flex-none px-3 py-1.5 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹30)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-res-5">
                         <div class="a4-document tpl-exec res-box" style="padding:0;" id="doc-res-5">
                             <div class="watermark" id="wm-res-5">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -458,10 +461,10 @@
                                 <p style="text-align:justify;">Dedicated professional with over 4 years of experience in automotive manufacturing, structural engineering, and R&D support. Adept at adhering to strict safety protocols and precision workflows in high-paced environments.</p>
                                 
                                 <div class="e-title">EXPERIENCE HISTORY</div>
-                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hindustan Shipping & Engineering Ltd.</span><span>Mar 2026 – Sep 2026</span></div><div style="margin-bottom:10px;">Welder / Fitter</div>
-                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Maruti Suzuki India Limited</span><span>Nov 2024 – May 2025</span></div><div style="margin-bottom:10px;">Temporary Workman (Manufacturing)</div>
-                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Honda Cars India Limited</span><span>May 2022 – Aug 2024</span></div><div style="margin-bottom:10px;">Fixed Term Manufacturing Associate</div>
-                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hero MotoCorp Ltd.</span><span>Oct 2020 – Oct 2021</span></div><div style="margin-bottom:10px;">R&D Technician</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hindustan Shipping & Engineering Ltd.</span><span>Mar 2026 – Sep 2026</span></div><div style="margin-bottom:15px;">Welder / Fitter</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Maruti Suzuki India Limited</span><span>Nov 2024 – May 2025</span></div><div style="margin-bottom:15px;">Temporary Workman (Manufacturing)</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Honda Cars India Limited</span><span>May 2022 – Aug 2024</span></div><div style="margin-bottom:15px;">Fixed Term Manufacturing Associate</div>
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>Hero MotoCorp Ltd.</span><span>Oct 2020 – Oct 2021</span></div><div style="margin-bottom:15px;">R&D Technician</div>
 
                                 <div class="e-title">EDUCATION & CREDENTIALS</div>
                                 <ul style="padding-left: 20px;">
@@ -490,14 +493,14 @@
                 
                 <!-- Cert 1: Hero MotoCorp -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">Hero MotoCorp Format</h3>
-                        <div class="flex gap-2" id="actions-cert-1">
-                            <button onclick="previewDoc('cert-1')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('cert-1', 'Certificate (Hero)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-cert-1">
+                            <button onclick="previewDoc('cert-1')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-1', 'Certificate (Hero)', 500, 'cert')" class="flex-1 sm:flex-none px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-cert-1">
                         <div class="a4-document exp-letter" id="doc-cert-1">
                             <div class="watermark" id="wm-cert-1">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -508,16 +511,16 @@
                             <!-- Header based on OCR -->
                             <div style="display:flex; justify-content:space-between; margin-bottom:40px;">
                                 <div class="hero-address">
-                                    <span style="color:#e31837; font-weight:900; font-size:1.2rem;">Hero MotoCorp Ltd.</span><br>
+                                    <span style="color:#e31837; font-weight:900; font-size:1.3rem;">Hero MotoCorp Ltd.</span><br>
                                     Plot No. 101-103, 108 & 109<br>RiICO Industrial Area<br>Delhi Jaipur Highway<br>Neemrana Distt - Alwar - 301705<br>Tel: +91 1494 673000
                                 </div>
-                                <div style="color:#e31837; font-size: 3rem; font-weight:900; letter-spacing:-2px; display:flex; align-items:center;">
+                                <div style="color:#e31837; font-size: 3.5rem; font-weight:900; letter-spacing:-2px; display:flex; align-items:center;">
                                     <div style="display:flex; flex-direction:column; margin-right:5px; line-height:0.8;">
-                                        <span style="font-size:1.8rem;">▶</span><span style="font-size:1.8rem; color:black;">◀</span>
+                                        <span style="font-size:2rem;">▶</span><span style="font-size:2rem; color:black;">◀</span>
                                     </div>hero
                                 </div>
                             </div>
-                            <div style="font-family: Arial, sans-serif; font-size:0.9rem; margin-bottom: 40px;">
+                            <div style="font-family: Arial, sans-serif; font-size:1rem; margin-bottom: 40px;">
                                 CIN: L35911DL1984PLC017354<br>HMAN:HR:2021: J3916<br>October 04, 2021
                             </div>
                             
@@ -539,13 +542,13 @@
                             <div style="margin-top: 50px;">
                                 <p class="bold-field">for Hero MotoCorp Ltd.</p>
                                 <div style="height: 60px; width:150px; margin-bottom:5px; position:relative;">
-                                    <span style="font-family: 'Brush Script MT', cursive; font-size:2.5rem; color: #000080; position:absolute; bottom:5px;">Yashwant</span>
+                                    <span style="font-family: 'Brush Script MT', cursive; font-size:3rem; color: #000080; position:absolute; bottom:5px;">Yashwant</span>
                                 </div>
                                 <p class="bold-field" style="margin:0;">Yashwant Bhaid</p>
                                 <p style="margin:0; font-weight:bold;">AGM-HR</p>
                             </div>
                             
-                            <div style="position: absolute; bottom: 20px; left:20px; right:20px; text-align:center; font-family:Arial; font-size:0.6rem; color:#666;">
+                            <div style="position: absolute; bottom: 30px; left:30px; right:30px; text-align:center; font-family:Arial; font-size:0.7rem; color:#666;">
                                 Regd. Office: 34, Community Centre, Basant Lok, Vasant Vihar, New Delhi-110057, India<br>
                                 Tel. +91-11-26142451, 46044100, Fax +91-11-26143321, 26143198<br>
                                 HeroMotoCorp.com CIN: L35911DL1984PLC017354 PAN: AAACH08121
@@ -556,14 +559,14 @@
 
                 <!-- Cert 2: Honda -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">Honda Cars Format</h3>
-                        <div class="flex gap-2" id="actions-cert-2">
-                            <button onclick="previewDoc('cert-2')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('cert-2', 'Certificate (Honda)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-cert-2">
+                            <button onclick="previewDoc('cert-2')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-2', 'Certificate (Honda)', 500, 'cert')" class="flex-1 sm:flex-none px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-cert-2">
                         <div class="a4-document exp-letter" id="doc-cert-2">
                             <div class="watermark" id="wm-cert-2">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -572,29 +575,29 @@
                             <div class="locked-overlay" id="overlay-cert-2"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
                             
                             <div style="margin-bottom: 30px;">
-                                <div class="text-red-600 font-black text-5xl tracking-tighter mb-4" style="font-family: Arial, sans-serif;">HONDA</div>
+                                <div class="text-red-600 font-black text-6xl tracking-tighter mb-4" style="font-family: Arial, sans-serif;">HONDA</div>
                                 <div class="honda-address">
                                     Honda Cars India Limited<br>SPL-1, Tapukara Industrial Area<br>Khushkhera, Distt. - ALWAR<br>RAJASTHAN 301707<br>E-mail : corporate@hondacarindia.com<br>Tel. : 01493-522000, Fax : 01493-522006<br>Mobile : 9116630293, 9116630289
                                 </div>
                             </div>
-                            <div class="text-right font-bold font-sans mb-16 text-lg">Date:- 28/8/2024</div>
+                            <div class="text-right font-bold font-sans mb-16 text-xl">Date:- 28/8/2024</div>
                             
-                            <h3 style="font-size:1.3rem;"><u>TO WHOMSOEVER IT MAY CONCERN</u></h3>
+                            <h3 style="font-size:1.4rem;"><u>TO WHOMSOEVER IT MAY CONCERN</u></h3>
                             
-                            <p style="margin-top: 50px; font-size:1.2rem; line-height:2;">This is to certify that <span class="bold-field">Mr. Rajan kumar Yadav(70011392)</span> S/o Mr. Gopal Yadav has worked with us as <span class="bold-field">Fixed Term Manufacturing Associate</span> in <span class="bold-field">Assembly Frame</span> Department from <span class="bold-field">18/5/2022 to 28/8/2024</span></p>
+                            <p style="margin-top: 50px; font-size:1.3rem; line-height:2;">This is to certify that <span class="bold-field">Mr. Rajan kumar Yadav(70011392)</span> S/o Mr. Gopal Yadav has worked with us as <span class="bold-field">Fixed Term Manufacturing Associate</span> in <span class="bold-field">Assembly Frame</span> Department from <span class="bold-field">18/5/2022 to 28/8/2024</span></p>
                             
-                            <p style="margin-top: 40px; font-size:1.2rem;">We wish him best of luck for his future endeavors.</p>
+                            <p style="margin-top: 40px; font-size:1.3rem;">We wish him best of luck for his future endeavors.</p>
 
                             <div style="margin-top: 80px; font-family: Arial, sans-serif;">
                                 <p class="bold-field">For Honda Cars India Limited</p>
                                 <div style="height: 70px; width:150px; margin-bottom:5px; position:relative;">
-                                    <span style="font-family: 'Caveat', cursive; font-size:3rem; color: #000080; position:absolute; bottom:0;">Lalit</span>
+                                    <span style="font-family: 'Caveat', cursive; font-size:3.5rem; color: #000080; position:absolute; bottom:0;">Lalit</span>
                                 </div>
-                                <p class="bold-field" style="margin:0; font-size:1.1rem;">(Lalit Kumar Singh)</p>
-                                <p style="margin:0; font-weight:bold; font-size:1.1rem;">Manager - Associate Relations</p>
+                                <p class="bold-field" style="margin:0; font-size:1.2rem;">(Lalit Kumar Singh)</p>
+                                <p style="margin:0; font-weight:bold; font-size:1.2rem;">Manager - Associate Relations</p>
                             </div>
 
-                            <div style="position: absolute; bottom: 20px; left:20px; right:20px; text-align:center; font-family:Arial; font-size:0.6rem; font-weight:bold;">
+                            <div style="position: absolute; bottom: 30px; left:30px; right:30px; text-align:center; font-family:Arial; font-size:0.7rem; font-weight:bold;">
                                 Regd. Office: Plot No. A-1, Sector- 40141, Surajpur-Kasna Road, Greater Noida, Industrial Development Area,
                                 Distt. Gautam Budha Nagar (U.P.) Pin-201306, CIN : U15114UP1995PLC098377, Website : www.hondacarindia.com
                             </div>
@@ -604,14 +607,14 @@
 
                 <!-- Cert 3: Maruti Suzuki -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">Maruti Suzuki Format</h3>
-                        <div class="flex gap-2" id="actions-cert-3">
-                            <button onclick="previewDoc('cert-3')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('cert-3', 'Certificate (Maruti)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-cert-3">
+                            <button onclick="previewDoc('cert-3')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-3', 'Certificate (Maruti)', 500, 'cert')" class="flex-1 sm:flex-none px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-cert-3">
                         <div class="a4-document exp-letter" style="font-family: Arial, sans-serif;" id="doc-cert-3">
                             <div class="watermark" id="wm-cert-3">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -621,8 +624,8 @@
                             
                             <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
                                 <div class="text-right">
-                                    <div class="text-blue-800 font-black text-3xl tracking-tight"><span class="text-red-600">MARUTI</span> <i class="fa-solid fa-car text-red-600 text-sm"></i> SUZUKI</div>
-                                    <div class="text-sm font-bold text-gray-800">Way of Life!</div>
+                                    <div class="text-blue-800 font-black text-4xl tracking-tight"><span class="text-red-600">MARUTI</span> <i class="fa-solid fa-car text-red-600 text-sm"></i> SUZUKI</div>
+                                    <div class="text-base font-bold text-gray-800">Way of Life!</div>
                                 </div>
                             </div>
                             
@@ -631,17 +634,17 @@
                                 <div>31-JUL-2025</div>
                             </div>
                             
-                            <h3 style="text-align:left; text-decoration: underline; margin-top:50px; margin-bottom:40px; font-size:1.1rem;">TO WHOMSOEVER IT MAY CONCERN</h3>
+                            <h3 style="text-align:left; text-decoration: underline; margin-top:50px; margin-bottom:40px; font-size:1.2rem;">TO WHOMSOEVER IT MAY CONCERN</h3>
                             
-                            <p style="font-size:1.2rem; line-height:2;">This is to certify that <span class="uppercase">MR. RAJAN KUMAR YADAV</span> (Staff ID. 443180) S/o SH. GOPAL YADAV was hired in our organization as Temporary Workman for a period of 7 months from 02-NOV-2024 to 01-MAY-2025.</p>
+                            <p style="font-size:1.3rem; line-height:2;">This is to certify that <span class="uppercase">MR. RAJAN KUMAR YADAV</span> (Staff ID. 443180) S/o SH. GOPAL YADAV was hired in our organization as Temporary Workman for a period of 7 months from 02-NOV-2024 to 01-MAY-2025.</p>
                             
-                            <p style="margin-top: 40px; font-size:1.2rem;">We wish him all success in his future endeavors.</p>
-                            <p style="font-size:1.2rem;">With best wishes.</p>
+                            <p style="margin-top: 40px; font-size:1.3rem;">We wish him all success in his future endeavors.</p>
+                            <p style="font-size:1.3rem;">With best wishes.</p>
 
                             <div style="margin-top: 50px;">
                                 <p class="bold-field">For Maruti Suzuki India Limited</p>
                                 <div style="height: 70px; width:150px; margin-bottom:5px; position:relative;">
-                                    <span style="font-family: 'Brush Script MT', cursive; font-size:3rem; color: #000080; position:absolute; bottom:0;">Gaurav</span>
+                                    <span style="font-family: 'Brush Script MT', cursive; font-size:3.5rem; color: #000080; position:absolute; bottom:0;">Gaurav</span>
                                 </div>
                                 <p class="bold-field" style="margin:0;">(Gaurav M Sharma)</p>
                                 <p style="margin:0; font-weight:bold;">Senior Manager - HR</p>
@@ -649,7 +652,7 @@
 
                             <div class="maruti-footer-banner">
                                 <div>
-                                    <strong style="color:#0055a5; font-size:0.85rem;">MARUTI SUZUKI INDIA LIMITED</strong><br><br>
+                                    <strong style="color:#0055a5; font-size:0.95rem;">MARUTI SUZUKI INDIA LIMITED</strong><br><br>
                                     <strong>Head Office</strong><br>Maruti Suzuki India Limited,<br>1, Nelson Mandela Road, Vasant Kunj,<br>New Delhi - 110070, India
                                 </div>
                                 <div>
@@ -665,14 +668,14 @@
 
                 <!-- Cert 4: Hindustan Shipping -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
                         <h3 class="font-bold text-gray-800">Hindustan Shipping Format</h3>
-                        <div class="flex gap-2" id="actions-cert-4">
-                            <button onclick="previewDoc('cert-4')" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs"><i class="fa-solid fa-eye"></i> Preview</button>
-                            <button onclick="initiateUnlock('cert-4', 'Certificate (Hindustan Shipping)', 500, 'cert')" class="px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
+                        <div class="flex gap-2 w-full sm:w-auto" id="actions-cert-4">
+                            <button onclick="previewDoc('cert-4')" class="flex-1 sm:flex-none px-3 py-1.5 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 text-xs sm:text-sm"><i class="fa-solid fa-eye"></i> Preview</button>
+                            <button onclick="initiateUnlock('cert-4', 'Certificate (Hindustan)', 500, 'cert')" class="flex-1 sm:flex-none px-3 py-1.5 bg-green-600 text-white rounded font-bold hover:bg-green-700 text-xs sm:text-sm"><i class="fa-solid fa-lock"></i> Unlock (₹500)</button>
                         </div>
                     </div>
-                    <div class="a4-document-wrapper">
+                    <div class="a4-document-wrapper" id="wrap-cert-4">
                         <div class="a4-document exp-letter" id="doc-cert-4">
                              <div class="watermark" id="wm-cert-4">
                                 <span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span><span>www.rkyshree.in</span>
@@ -681,32 +684,32 @@
                             <div class="locked-overlay" id="overlay-cert-4"><i class="fa-solid fa-lock text-5xl text-gray-700 mb-2"></i></div>
                             
                             <div class="hse-header flex justify-between items-start mb-8">
-                                <div style="width: 120px; height: 120px; border: 2px solid #005f00; border-radius: 50%; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:Arial; font-size:0.6rem; color:#005f00; font-weight:bold; text-align:center; position:relative;">
-                                    <div style="position:absolute; top:5px; font-size:0.5rem; letter-spacing:1px; transform: rotate(-30deg);">CLEANING FORW</div>
-                                    <i class="fa-solid fa-ship text-4xl mb-1"></i>
-                                    <span style="font-size:1.2rem;">HSE</span>
-                                    <div style="position:absolute; bottom:5px; font-size:0.5rem; transform: rotate(30deg);">AND SHIPPING</div>
+                                <div style="width: 140px; height: 140px; border: 2px solid #005f00; border-radius: 50%; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:Arial; font-size:0.7rem; color:#005f00; font-weight:bold; text-align:center; position:relative;">
+                                    <div style="position:absolute; top:8px; font-size:0.6rem; letter-spacing:1px; transform: rotate(-30deg);">CLEANING FORW</div>
+                                    <i class="fa-solid fa-ship text-5xl mb-1"></i>
+                                    <span style="font-size:1.4rem;">HSE</span>
+                                    <div style="position:absolute; bottom:8px; font-size:0.6rem; transform: rotate(30deg);">AND SHIPPING</div>
                                 </div>
                                 <div style="text-align: center; flex-grow: 1;">
                                     <div class="hse-title">Hindustan Shipping & Engineering Ltd.</div>
-                                    <div style="font-family: Arial, sans-serif; font-size: 0.9rem;">
+                                    <div style="font-family: Arial, sans-serif; font-size: 1rem;">
                                         CHURCH GATE, KULSHEKAR<br>MANGALORE - 575 005 KARNATAKA<br><br>
                                         COCHIN SHIP YARD, KERALA.<br>KHIDIRPUR SHIP YARD, CALCUTTA.
                                     </div>
                                 </div>
-                                <div style="font-family: Arial, sans-serif; font-size: 0.9rem; text-align:right;">
+                                <div style="font-family: Arial, sans-serif; font-size: 1rem; text-align:right;">
                                     Tel.: 26760<br><br>Telex :
                                 </div>
                             </div>
                             
-                            <div class="flex justify-between font-bold font-sans mb-10 text-lg">
+                            <div class="flex justify-between font-bold font-sans mb-10 text-xl">
                                 <div>Ref No:119015/AHR/3173</div>
                                 <div>Date:- 06.09.2026</div>
                             </div>
                             
-                            <h3 style="font-family: 'Times New Roman', serif; font-size: 1.4rem;"><u>TO WHOM SO EVER IT MAY CONCERN</u></h3>
+                            <h3 style="font-family: 'Times New Roman', serif; font-size: 1.5rem;"><u>TO WHOM SO EVER IT MAY CONCERN</u></h3>
                             
-                            <p style="margin-top: 40px; font-family: 'Times New Roman', serif; font-weight:bold; font-size: 1.15rem; line-height: 2.2; text-align:center;">
+                            <p style="margin-top: 40px; font-family: 'Times New Roman', serif; font-weight:bold; font-size: 1.25rem; line-height: 2.2; text-align:center;">
                             This is to certify that <u>MR. RAJAN KUMAR YADAV</u> has<br><br>
                             been working with us as a 'WELDER/FITTER' with effect<br><br>
                             form 20.03.2026 to 06.09.2026<br><br>
@@ -715,15 +718,22 @@
 
                             <div style="margin-top: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
                                 <div style="font-family: 'Times New Roman', serif;">
-                                    <p class="bold-field" style="font-size:1.2rem; margin-bottom:0;">Col.(Retd) ak singh</p>
-                                    <p class="bold-field" style="font-size:1.2rem; margin-top:0;">Sr. Manager-HR&Administration</p>
+                                    <p class="bold-field" style="font-size:1.3rem; margin-bottom:0;">Col.(Retd) ak singh</p>
+                                    <p class="bold-field" style="font-size:1.3rem; margin-top:0;">Sr. Manager-HR&Administration</p>
                                 </div>
                                 <div style="text-align: center; font-family: Arial, sans-serif; color: #000080; font-weight:bold;">
                                     <div style="height: 60px; width:150px; position:relative;">
-                                        <span style="font-family: 'Caveat', cursive; font-size:4rem; position:absolute; bottom:5px; left:20px;">Sign</span>
+                                        <span style="font-family: 'Caveat', cursive; font-size:4.5rem; position:absolute; bottom:5px; left:20px;">Sign</span>
                                     </div>
                                     HINDUSTAN SHIPPING<br>& ENGINEERING LTD.
                                 </div>
+                            </div>
+                            <div style="position: absolute; bottom: 30px; left:30px; right:30px; border-top: 2px solid #000; padding-top: 5px; font-family: Arial, sans-serif; font-size: 0.8rem; font-weight: bold; color: #333;">
+                                FACILITIES :<br>
+                                FABRICATION AND WELDING -: PIPE, STRUCTURAL, PRESSURE VESSELS AND TANKS,<br>
+                                SHIP REPAIRS :- STEEL, MECHANICAL, ELECTRICAL, TANK CLEANING, BLASTING AND PAINTING,<br>
+                                UNDER WATER SERVICES : UNDER WATER INSPECTION, CLEANING, WELDING,<br>
+                                AND GENERAL SERVICES
                             </div>
                         </div>
                     </div>
@@ -731,6 +741,18 @@
 
             </div>
         </div>
+
+        <!-- Professional Hindi Info Section at Bottom -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mt-10">
+            <h3 class="text-xl font-black text-gray-900 mb-3 text-center border-b pb-2"><i class="fa-solid fa-circle-info text-blue-600 mr-2"></i>करियर सर्विसेज पोर्टल में आपका स्वागत है</h3>
+            <p class="text-gray-700 text-center font-medium leading-relaxed max-w-4xl mx-auto mb-4">
+                यहाँ से आप भारत एवं गल्फ देशों में जॉब अप्लाई करने के लिए अपना प्रोफेशनल रिज़्यूमे और उच्च गुणवत्ता वाले एक्सपीरियंस सर्टिफिकेट तैयार कर सकते हैं। 
+            </p>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800 font-semibold text-center">
+                <strong>महत्वपूर्ण नोट:</strong> ध्यान रखें कि एक्सपीरियंस सर्टिफिकेट आपको डाउनलोड करने के बाद अच्छी क्वालिटी के मोटे पेपर (A4) पर कलर प्रिंट कराना होगा। HR और इंटरव्यूअर आपके कौशल का आकलन मुख्यतः आपके इंटरव्यू से करते हैं। एक्सपीरियंस लेटर यह साबित करने के लिए होता है कि आपने कहीं काम किया है। अगर आप अपना अच्छा इंटरव्यू देते हैं तो आपका सिलेक्शन जरूर होगा!
+            </div>
+        </div>
+
     </main>
 
     <!-- Payment Modal -->
@@ -812,6 +834,7 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full font-bold shadow-2xl transition-opacity duration-300 opacity-0 pointer-events-none z-[9999]">
         Notification
     </div>
@@ -827,12 +850,42 @@
             currentDocType: '' // 'resume' or 'cert'
         };
 
+        // --- Auto Scale Documents for Perfect Mobile View ---
+        function scaleDocuments() {
+            const wrappers = document.querySelectorAll('.a4-document-wrapper');
+            wrappers.forEach(wrapper => {
+                const doc = wrapper.querySelector('.a4-document');
+                if (doc) {
+                    const wrapperWidth = wrapper.clientWidth;
+                    const docWidth = 794; // Explicit width defined in CSS (pixels)
+                    
+                    if (wrapperWidth < docWidth) {
+                        const scaleFactor = wrapperWidth / docWidth;
+                        // Transform origin is top center via CSS
+                        doc.style.transform = `scale(${scaleFactor})`;
+                        // Adjust wrapper height to match scaled document
+                        wrapper.style.height = `${1123 * scaleFactor}px`;
+                    } else {
+                        doc.style.transform = 'scale(1)';
+                        wrapper.style.height = '1123px';
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('resize', scaleDocuments);
+        window.addEventListener('load', () => {
+            setTimeout(scaleDocuments, 100); // initial calculation
+        });
+
         // Tab Switching
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId + '-section').classList.add('active');
             document.getElementById('nav-' + tabId).classList.add('active');
+            // Recalculate scale when tab is switched as invisible elements have 0 width
+            setTimeout(scaleDocuments, 50); 
         }
 
         // --- Anti Screenshot / Protection ---
@@ -848,7 +901,11 @@
         });
 
         // --- Edit Functionality (Double Click) ---
+        // Prevent default double click zoom on mobile iOS
+        let lastClick = 0;
         document.addEventListener('dblclick', function(e) {
+            e.preventDefault(); // Prevent double tap zoom
+            
             const docContainer = e.target.closest('.a4-document');
             if (docContainer) {
                 const docId = docContainer.id.replace('doc-', '');
@@ -954,9 +1011,9 @@
             // Change Action Buttons to "HD Download"
             const actionsContainer = document.getElementById(`actions-${docId}`);
             actionsContainer.innerHTML = `
-                <span class="text-xs font-bold text-green-600 mr-2"><i class="fa-solid fa-check"></i> Unlocked</span>
-                <button onclick="downloadHD('${docId}', this)" class="px-4 py-2 bg-blue-600 text-white rounded font-black shadow-md hover:bg-blue-700 text-sm transition">
-                    <i class="fa-solid fa-download mr-1"></i> HD Download
+                <span class="text-xs font-bold text-green-600 mr-2 hidden sm:inline"><i class="fa-solid fa-check"></i> Unlocked</span>
+                <button onclick="downloadHD('${docId}', this)" class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded font-black shadow-md hover:bg-blue-700 text-sm transition">
+                    <i class="fa-solid fa-download mr-1"></i> HD Screenshot
                 </button>
             `;
         }
@@ -965,39 +1022,51 @@
         function downloadHD(docId, btnElement) {
             const docElement = document.getElementById(`doc-${docId}`);
             const originalText = btnElement.innerHTML;
+            const wrapper = document.getElementById(`wrap-${docId}`);
             
             btnElement.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Processing...";
             btnElement.style.pointerEvents = "none";
 
             // Remove scaling for accurate high-res capture
             const originalTransform = docElement.style.transform;
-            docElement.style.transform = 'none';
+            const originalHeight = wrapper.style.height;
+            
+            docElement.style.transform = 'scale(1)';
+            wrapper.style.height = '1123px'; // Force real height for capture
 
-            html2canvas(docElement, {
-                scale: 3, // Full HD Resolution
-                useCORS: true, backgroundColor: '#ffffff', logging: false
-            }).then(canvas => {
-                const image = canvas.toDataURL("image/png");
-                const link = document.createElement('a');
-                link.href = image; link.download = `${docId}_HD.png`;
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                
-                btnElement.innerHTML = "<i class='fa-solid fa-check'></i> Downloaded!";
-                btnElement.classList.replace('bg-blue-600', 'bg-green-600');
-                
-                docElement.style.transform = originalTransform;
+            // Slight delay to allow DOM to recalculate before canvas takes photo
+            setTimeout(() => {
+                html2canvas(docElement, {
+                    scale: 3, // Full HD Resolution
+                    useCORS: true, 
+                    backgroundColor: '#ffffff', 
+                    logging: false
+                }).then(canvas => {
+                    const image = canvas.toDataURL("image/png");
+                    const link = document.createElement('a');
+                    link.href = image; link.download = `${docId}_HD.png`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    
+                    btnElement.innerHTML = "<i class='fa-solid fa-check'></i> Downloaded!";
+                    btnElement.classList.replace('bg-blue-600', 'bg-green-600');
+                    
+                    // Restore original scale
+                    docElement.style.transform = originalTransform;
+                    wrapper.style.height = originalHeight;
 
-                setTimeout(() => {
-                    btnElement.innerHTML = originalText;
-                    btnElement.classList.replace('bg-green-600', 'bg-blue-600');
-                    btnElement.style.pointerEvents = "auto";
-                }, 3000);
+                    setTimeout(() => {
+                        btnElement.innerHTML = originalText;
+                        btnElement.classList.replace('bg-green-600', 'bg-blue-600');
+                        btnElement.style.pointerEvents = "auto";
+                    }, 3000);
 
-            }).catch(err => {
-                btnElement.innerHTML = "❌ Failed";
-                docElement.style.transform = originalTransform;
-                setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.pointerEvents = "auto"; }, 3000);
-            });
+                }).catch(err => {
+                    btnElement.innerHTML = "❌ Failed";
+                    docElement.style.transform = originalTransform;
+                    wrapper.style.height = originalHeight;
+                    setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.pointerEvents = "auto"; }, 3000);
+                });
+            }, 100);
         }
 
         // --- Secret Admin Logic ---
