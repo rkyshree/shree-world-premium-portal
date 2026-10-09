@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang='en' class="scroll-smooth">
 <head>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'/>
-    <title>GrowthHub | Premium Panel</title>
+    <title>GrowthHub | Premium Social Media Services</title>
 
     <script src='https://cdn.tailwindcss.com'></script>
     <script>
@@ -12,16 +11,18 @@
             theme: {
                 extend: {
                     colors: {
-                        base: '#050505',
-                        panel: '#111113',
-                        panelHover: '#1a1a1d',
+                        darkBg: '#050507',
+                        glassBg: 'rgba(17, 17, 19, 0.7)',
+                        glassBorder: 'rgba(255, 255, 255, 0.08)',
                         primary: '#6366f1', 
+                        primaryHover: '#4f46e5',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
                     animation: {
-                        'blob': 'blob 7s infinite',
+                        'blob': 'blob 10s infinite',
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
                     },
                     keyframes: {
                         blob: {
@@ -29,32 +30,39 @@
                             '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
                             '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
                             '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
             }
         }
     </script>
-    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap' rel='stylesheet'/>
+    <link href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap' rel='stylesheet'/>
     
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #050505;
+            background-color: #050507;
             color: #f8fafc;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        .dashboard-panel {
-            background: #111113;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(17, 17, 19, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
         .input-field {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
             transition: all 0.3s ease;
         }
@@ -62,76 +70,74 @@
         .input-field:focus {
             outline: none;
             border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-            background: rgba(0,0,0,0.2);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background: rgba(0,0,0,0.6);
         }
 
         .service-card {
-            background: #111113;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
         
         .service-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.1);
-            background: #1a1a1d;
-        }
-
-        .btn-gradient {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            transition: opacity 0.3s ease, transform 0.1s ease;
-        }
-        .btn-gradient:hover { opacity: 0.9; }
-        .btn-gradient:active { transform: scale(0.98); }
-
-        .glow-bg {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.07;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .glow-1 { top: -200px; left: -200px; background: #6366f1; animation: blob 7s infinite; }
-        .glow-2 { bottom: -200px; right: -200px; background: #ec4899; animation: blob 7s infinite 2s; }
-
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-
-        .nav-pill {
-            transition: all 0.3s ease;
-            color: #94a3b8;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-pill:hover { color: #f8fafc; }
-        .nav-pill.active {
-            color: #6366f1;
-            border-bottom-color: #6366f1;
+            border-color: rgba(99, 102, 241, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -5px rgba(99, 102, 241, 0.2);
             background: rgba(99, 102, 241, 0.05);
         }
 
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: opacity 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
+        }
+        .btn-gradient:hover { 
+            opacity: 0.95; 
+            box-shadow: 0 8px 20px -5px rgba(99, 102, 241, 0.5);
+        }
+        .btn-gradient:active { transform: scale(0.98); }
+
+        /* Animated Background Orbs */
+        .glow-bg {
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.08;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .glow-1 { top: -200px; left: -200px; background: #4f46e5; animation: blob 10s infinite; }
+        .glow-2 { bottom: -200px; right: -200px; background: #ec4899; animation: blob 10s infinite 3s; }
+        .glow-3 { top: 40%; left: 50%; background: #06b6d4; animation: blob 12s infinite 1s; opacity: 0.05;}
+
+        ::-webkit-scrollbar { width: 6px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #050507; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
         .platform-btn {
-            transition: all 0.2s ease;
-            filter: brightness(0.7) grayscale(0.5);
+            transition: all 0.3s ease;
+            filter: grayscale(0.8) opacity(0.6);
         }
         .platform-btn:hover {
-            filter: brightness(1) grayscale(0);
-            background: rgba(255,255,255,0.05);
+            filter: grayscale(0) opacity(1);
+            background: rgba(255,255,255,0.08);
         }
         .platform-btn.active {
-            filter: brightness(1) grayscale(0);
+            filter: grayscale(0) opacity(1);
             border-color: #6366f1;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+        
+        .discount-badge {
+            clip-path: polygon(100% 0, 100% 100%, 50% 85%, 0 100%, 0 0);
         }
     </style>
 </head>
@@ -139,180 +145,280 @@
 
     <div class="glow-bg glow-1"></div>
     <div class="glow-bg glow-2"></div>
+    <div class="glow-bg glow-3"></div>
 
-    <header class="fixed top-0 left-0 right-0 z-50 dashboard-panel h-16 flex items-center justify-between px-4 sm:px-6 border-b-0 border-white/5 shadow-md">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel h-16 flex items-center justify-between px-4 sm:px-8 border-b border-white/5 border-t-0 border-l-0 border-r-0">
         <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
             </div>
             <div>
-                <h1 class="text-xl font-bold tracking-tight leading-none text-white flex items-center gap-1">
-                    GROWTH<span class="text-indigo-400">HUB</span>
+                <h1 class="text-xl font-extrabold tracking-tight leading-none text-white flex items-center gap-1">
+                    GROWTH<span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">HUB</span>
                 </h1>
+                <span class="text-[9px] font-medium text-emerald-400 uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Premium Panel
+                </span>
             </div>
         </div>
-        <!-- Support and Profile icons removed as requested -->
+        <div class="hidden sm:flex items-center gap-4">
+            <span class="text-xs font-semibold text-slate-300 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+                <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                Top Rated Provider 2026
+            </span>
+        </div>
     </header>
 
-    <main class='flex-grow pt-20 pb-12 px-4 sm:px-6 max-w-[1400px] mx-auto w-full relative z-10 flex flex-col lg:flex-row gap-6'>
+    <main class='flex-grow pt-24 pb-16 px-4 sm:px-6 max-w-[1400px] mx-auto w-full relative z-10 flex flex-col lg:flex-row gap-6 lg:gap-8'>
         
+        <!-- LEFT COLUMN: Platform, Category, Packages -->
         <div class="w-full lg:w-3/5 xl:w-2/3 space-y-6">
             
-            <div class="dashboard-panel rounded-3xl p-5 sm:p-8 shadow-2xl">
-                <!-- Centered Professional New Order Heading -->
-                <div class="text-center mb-8 border-b border-white/5 pb-6">
-                    <h2 class="text-2xl sm:text-3xl font-black flex items-center justify-center gap-2 tracking-widest uppercase text-white mb-2">
-                        <svg class="w-7 h-7 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        New Order
-                    </h2>
-                    <p class="text-xs text-slate-400 font-medium tracking-wide">Select your platform and build your package below</p>
+            <div class="glass-panel rounded-3xl p-5 sm:p-8">
+                <!-- Heading -->
+                <div class="mb-8 border-b border-white/10 pb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-black flex items-center gap-3 text-white mb-1">
+                            <span class="bg-indigo-500/20 p-2 rounded-xl text-indigo-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                            </span>
+                            Create Order
+                        </h2>
+                        <p class="text-sm text-slate-400 font-medium ml-1">Select platform, choose package, and grow instantly.</p>
+                    </div>
                 </div>
                 
-                <!-- Dynamic Platform Selection (Horizontal Scroll App-Style Grid) -->
-                <div class="mb-8 bg-black/20 p-4 rounded-2xl border border-white/5">
-                    <label class="block text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-[10px]">1</span> 
+                <!-- Platform Selection -->
+                <div class="mb-8 bg-black/40 p-4 rounded-2xl border border-white/5 shadow-inner">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-indigo-500 text-white flex items-center justify-center text-[10px]">1</span> 
                         Select Platform
                     </label>
                     <div class="flex overflow-x-auto no-scrollbar gap-3 pb-2 snap-x" id="platform-list">
-                        <!-- Populated completely from CONFIG via JS -->
+                        <!-- Populated via JS -->
                     </div>
                 </div>
 
-                <!-- Dynamic Category Tabs -->
+                <!-- Category Tabs -->
                 <div class="mb-8">
-                    <label class="block text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-[10px]">2</span> 
-                        Select Service Type
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <span class="w-5 h-5 rounded-md bg-indigo-500 text-white flex items-center justify-center text-[10px]">2</span> 
+                        Service Type
                     </label>
-                    <div class="flex overflow-x-auto no-scrollbar gap-2" id="category-tabs">
-                        <!-- Populated completely from CONFIG via JS -->
+                    <div class="flex flex-wrap gap-2" id="category-tabs">
+                        <!-- Populated via JS -->
                     </div>
                 </div>
 
-                <!-- Dynamic Packages Grid -->
+                <!-- Packages Grid -->
                 <div>
-                    <label class="block text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-[10px]">3</span> 
-                        Choose Package
-                    </label>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="packages-grid">
-                        <!-- Populated completely from CONFIG via JS -->
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                            <span class="w-5 h-5 rounded-md bg-indigo-500 text-white flex items-center justify-center text-[10px]">3</span> 
+                            Choose Package
+                        </label>
+                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md border border-emerald-400/20">All Prices include 5% OFF</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" id="packages-grid">
+                        <!-- Populated via JS -->
                     </div>
                 </div>
             </div>
             
-            <!-- Information Box -->
-            <div class="dashboard-panel rounded-2xl p-5 border-l-2 border-l-indigo-500">
-                <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Service Information
-                </h4>
-                <ul class="text-xs text-slate-400 space-y-1.5 font-medium">
-                    <li><strong class="text-slate-300">Start Time:</strong> 0-20 Minutes (Instant)</li>
-                    <li><strong class="text-slate-300">Speed:</strong> Fast & Natural Delivery</li>
-                    <li><strong class="text-slate-300">Quality:</strong> High Quality Real Accounts</li>
-                    <li><strong class="text-slate-300">Guarantee:</strong> 100% Safe, No Password Required, Refill Guarantee</li>
-                </ul>
+            <!-- Features Information Box -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="glass-panel rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-blue-500/10 p-3 rounded-xl text-blue-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Instant Start</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">0-20 Minutes delivery</p>
+                    </div>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-emerald-500/10 p-3 rounded-xl text-emerald-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">100% Safe</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">No password required</p>
+                    </div>
+                </div>
+                <div class="glass-panel rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-purple-500/10 p-3 rounded-xl text-purple-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Free Refill</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">30-Days Guarantee</p>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- RIGHT COLUMN: Checkout & Payment -->
         <div class="w-full lg:w-2/5 xl:w-1/3">
-            <div class="dashboard-panel rounded-2xl p-5 sm:p-6 sticky top-24 shadow-2xl" id="checkout-panel">
+            <div class="glass-panel rounded-3xl p-6 sticky top-24 border-t-4 border-t-indigo-500" id="checkout-panel">
                 
-                <!-- Sleek One-Line Strict Notice -->
-                <div class="bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] px-3 py-2 rounded-lg flex items-start gap-2 mb-5">
-                    <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <span><strong>Public Profile Only.</strong> No refund/refill for private accounts.</span>
+                <h3 class="text-lg font-black text-white mb-5 flex items-center justify-between">
+                    Order Summary
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                </h3>
+
+                <!-- Sleek Notice -->
+                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-3 flex gap-3 mb-6">
+                    <svg class="w-5 h-5 shrink-0 text-rose-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <p class="text-rose-200 text-xs leading-relaxed"><strong>Public Profile Required.</strong> Do not make your account private during the process. No refunds for private accounts.</p>
                 </div>
 
-                <div class="space-y-4 mb-6">
+                <div class="space-y-5 mb-6">
                     <!-- Selected Service Display -->
-                    <div class="bg-white/5 border border-white/5 rounded-xl p-3.5 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500"></div>
-                        <div class="pl-2">
-                            <span class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Selected Package</span>
-                            <span class="text-sm font-bold text-white truncate max-w-[200px] block" id="checkout-service-name">Select a package first</span>
+                    <div class="bg-black/30 border border-white/5 rounded-xl p-4 relative overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider block mb-1">Current Selection</span>
+                                <span class="text-base font-bold text-white leading-tight block" id="checkout-service-name">Please select a package</span>
+                            </div>
+                            <div class="text-right flex flex-col items-end">
+                                <span class="text-xs text-slate-500 line-through font-medium" id="checkout-original-price"></span>
+                                <span class="text-2xl font-black text-emerald-400" id="checkout-price">₹0</span>
+                            </div>
                         </div>
-                        <span class="text-lg font-black text-emerald-400" id="checkout-price">₹0</span>
                     </div>
 
                     <!-- Link Input Area -->
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5 ml-1">Target Link / Username *</label>
-                        <input type="text" id="order-link" placeholder="Paste best link or username here..." class="w-full input-field rounded-xl p-3.5 text-sm">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 ml-1 flex items-center gap-2">
+                            Link / Username <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" id="order-link" placeholder="https://instagram.com/your_profile" class="w-full input-field rounded-xl p-4 text-sm font-medium">
                     </div>
                 </div>
 
-                <div class="border-t border-white/10 pt-5">
+                <div class="border-t border-white/10 pt-6">
                     
-                    <div class="flex flex-col items-center justify-center mb-5 relative min-h-[180px]">
+                    <div class="flex flex-col items-center justify-center mb-6 relative min-h-[200px]">
                         <!-- QR Placeholder -->
-                        <div id="qr-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-white/[0.02] rounded-2xl border border-white/5">
-                            <svg class="w-8 h-8 mb-2 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
-                            <span class="text-[11px] font-medium uppercase tracking-wider">Select package to view QR</span>
+                        <div id="qr-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-black/20 rounded-2xl border border-white/5 border-dashed">
+                            <svg class="w-10 h-10 mb-3 opacity-40 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Select package for QR</span>
                         </div>
 
                         <!-- Actual QR Code Display -->
-                        <div id="qr-container" class="hidden flex-col items-center w-full">
-                            <span class="text-[10px] text-slate-400 uppercase tracking-wider mb-2 font-semibold">Scan & Pay via any app</span>
-                            <div class="bg-white p-3 rounded-2xl shadow-lg border-2 border-indigo-500/30">
-                                <img id="qr-code-img" src="" alt="Payment QR" class="w-32 h-32 object-contain">
+                        <div id="qr-container" class="hidden flex-col items-center w-full animate-fade-in">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="text-xs text-slate-300 font-bold uppercase tracking-wider">Scan & Pay</span>
+                                <span class="bg-indigo-500/20 text-indigo-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-indigo-500/30">100% Secure</span>
                             </div>
-                            <a id="download-qr-btn" href="#" target="_blank" download="Payment_QR.png" class="mt-3 text-[10px] font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-4 py-1.5 rounded-lg uppercase tracking-wider hover:bg-indigo-500/20 transition-colors">⬇ Download QR</a>
+                            <div class="bg-white p-3.5 rounded-2xl shadow-xl shadow-indigo-500/10 border-4 border-indigo-500/20 relative">
+                                <div class="absolute -top-3 -right-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md transform rotate-12">Verified</div>
+                                <img id="qr-code-img" src="" alt="Payment QR" class="w-36 h-36 object-contain">
+                            </div>
                         </div>
                     </div>
 
                     <!-- Direct Copy Payment Details -->
-                    <div class="grid grid-cols-1 gap-2 mb-6">
-                        <!-- PhonePe/Gpay/Paytm -->
-                        <div class="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-white/10 transition-colors">
-                            <div>
-                                <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 block">PhonePe / GPay / Paytm</span>
-                                <span class="text-sm font-bold text-white tracking-wide" id="display-phone">9451239239</span>
+                    <div class="space-y-2 mb-6">
+                        <!-- UPI ID -->
+                        <div class="bg-black/30 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-white/20 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 block">Direct UPI ID</span>
+                                    <span class="text-sm font-bold text-white tracking-wide" id="display-upi">Loading...</span>
+                                </div>
                             </div>
-                            <button onclick="copyText('number')" class="bg-white/10 hover:bg-white/20 text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase transition-colors">Copy</button>
+                            <button onclick="copyText('upi')" class="bg-indigo-500/10 hover:bg-indigo-500/30 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold px-3 py-2 rounded-lg uppercase transition-all">Copy</button>
                         </div>
                         
-                        <!-- UPI ID -->
-                        <div class="bg-white/5 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-white/10 transition-colors">
-                            <div>
-                                <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 block">Direct UPI ID</span>
-                                <span class="text-sm font-bold text-white tracking-wide truncate max-w-[180px]" id="display-upi">9451239239-3@ybl</span>
+                        <!-- Phone Number -->
+                        <div class="bg-black/30 border border-white/5 rounded-xl p-3 flex items-center justify-between group hover:border-white/20 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5 block">Paytm / PhonePe / GPay</span>
+                                    <span class="text-sm font-bold text-white tracking-wide" id="display-phone">Loading...</span>
+                                </div>
                             </div>
-                            <button onclick="copyText('upi')" class="bg-white/10 hover:bg-white/20 text-slate-300 text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase transition-colors">Copy</button>
+                            <button onclick="copyText('number')" class="bg-indigo-500/10 hover:bg-indigo-500/30 text-indigo-400 border border-indigo-500/20 text-[10px] font-bold px-3 py-2 rounded-lg uppercase transition-all">Copy</button>
                         </div>
                     </div>
 
-                    <button onclick="submitOrder()" class="w-full btn-gradient text-white font-bold py-3.5 rounded-xl text-sm uppercase tracking-wide flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/25">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Submit Order (WhatsApp)
+                    <button onclick="submitOrder()" class="w-full btn-gradient text-white font-extrabold py-4 rounded-xl text-sm uppercase tracking-widest flex items-center justify-center gap-2">
+                        Confirm & Send on WhatsApp
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M13.601 2.326A10.854 10.854 0 0 0 2 13.576c0 2.052.569 4.025 1.602 5.75L2.247 24l4.908-1.28a10.853 10.853 0 0 0 6.446 2.06h.004c5.986 0 10.85-4.864 10.85-10.846a10.835 10.835 0 0 0-3.181-7.683A10.838 10.838 0 0 0 13.6 2.326zm.004 17.57a8.98 8.98 0 0 1-4.577-1.246l-.328-.194-3.4.887.908-3.315-.213-.339A8.995 8.995 0 0 1 4.6 9.878c0-4.966 4.045-9.006 9.014-9.006a8.96 8.96 0 0 1 6.368 2.637 8.956 8.956 0 0 1 2.637 6.365c-.001 4.965-4.048 9.008-9.014 9.022z"/></svg>
                     </button>
+                    <p class="text-[10px] text-slate-500 text-center mt-3 font-medium">Please attach payment screenshot on WhatsApp</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Custom Sleek Alert Modal -->
-    <div id="custom-alert" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-        <div class="bg-[#111113] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl text-center transform scale-95 transition-transform" id="custom-alert-box">
-            <h3 id="custom-alert-title" class="text-lg font-bold text-white mb-2">Notice</h3>
-            <p id="custom-alert-msg" class="text-slate-400 text-sm mb-6 leading-relaxed">Message</p>
-            <button onclick="closeAlert()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-sm uppercase tracking-wider">Acknowledge</button>
-        </div>
-        <footer class='border-t border-white/5 bg-[#0a0a0c] py-6 text-center relative z-10 mt-auto'>
-        <div class='text-[11px] text-slate-500 font-medium'>
-            © 2026 GrowthHub. 24/7 Service.<br>Ensure profile is public before ordering.
+    <footer class='border-t border-white/10 bg-black/50 py-8 relative z-10 mt-auto backdrop-blur-md'>
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <h2 class="text-lg font-bold text-white tracking-tight mb-1">GROWTH<span class="text-indigo-400">HUB</span></h2>
+                <p class='text-[11px] text-slate-500 font-medium'>© 2026 GrowthHub. All rights reserved. 24/7 Premium Service.</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 sm:gap-6">
+                <button onclick="openModal('about')" class="text-xs text-slate-400 hover:text-white transition-colors font-medium">About Us</button>
+                <button onclick="openModal('terms')" class="text-xs text-slate-400 hover:text-white transition-colors font-medium">Terms & Conditions</button>
+                <button onclick="openModal('policy')" class="text-xs text-slate-400 hover:text-white transition-colors font-medium">Return & Refill Policy</button>
+            </div>
         </div>
     </footer>
+
+    <!-- Text Information Modal -->
+    <div id="info-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
+        <div class="bg-[#111113] border border-white/10 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-2xl transform scale-95 transition-transform flex flex-col max-h-[80vh]" id="info-modal-box">
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-white/10">
+                <h3 id="info-modal-title" class="text-xl font-bold text-white">Title</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white bg-white/5 rounded-lg p-1.5 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="info-modal-content" class="text-slate-300 text-sm leading-relaxed overflow-y-auto pr-2 custom-scrollbar space-y-4">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/10">
+                <button onclick="closeModal()" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition-colors text-sm uppercase tracking-wider">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="custom-alert" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+        <div class="bg-[#151518] border border-white/10 rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center transform scale-95 transition-transform" id="custom-alert-box">
+            <div class="w-12 h-12 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 id="custom-alert-title" class="text-lg font-bold text-white mb-2">Notice</h3>
+            <p id="custom-alert-msg" class="text-slate-400 text-sm mb-6 leading-relaxed">Message</p>
+            <button onclick="closeAlert()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-6 rounded-xl transition-colors text-sm uppercase tracking-wider">Okay</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white px-6 py-3 rounded-full font-bold text-sm shadow-xl shadow-emerald-500/20 transition-all duration-300 translate-y-20 opacity-0 z-[120] flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-text">Copied!</span>
+    </div>
 
     <script>
         /** 
          * =========================================================================
-         * ⚙️ ULTIMATE CONFIGURATION SECTION (EASY EDIT)
+         * ⚙️ CONFIGURATION & PRICING
+         * Note: All prices below have been mathematically increased by 40% 
+         * from the original values provided, rounded to the nearest whole number.
+         * The UI will automatically generate a "+5% Off" visual based on these prices.
          * =========================================================================
-         * Admin: Edit anything here! Platforms, categories, packages, prices.
-         * The UI will automatically build itself based on this data.
          */
         const CONFIG = {
             adminWhatsapp: "919451239239", 
@@ -323,41 +429,37 @@
                 phoneNumber: "9451239239"         
             },
 
-            // Built-in Icons for dynamic loading
             icons: {
-                instagram: `<svg class="w-7 h-7 text-pink-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
-                youtube: `<svg class="w-7 h-7 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
-                facebook: `<svg class="w-7 h-7 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
-                tiktok: `<svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.04.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.8-5.46-.4-2.51.76-5.14 2.82-6.6 1.73-1.2 3.96-1.55 5.95-1.07V13.9c-1.35-.12-2.74.42-3.59 1.4-.76.85-1.04 2.05-.72 3.16.27 1.05 1.13 1.91 2.18 2.22 1.34.4 2.94.13 4-.79.88-.74 1.32-1.87 1.38-3 .06-3.84.04-7.69.04-11.53.01-1.78.01-3.57.02-5.35z"/></svg>`,
-                xtwitter: `<svg class="w-7 h-7 text-gray-300" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
-                whatsapp: `<svg class="w-7 h-7 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M13.601 2.326A10.854 10.854 0 0 0 2 13.576c0 2.052.569 4.025 1.602 5.75L2.247 24l4.908-1.28a10.853 10.853 0 0 0 6.446 2.06h.004c5.986 0 10.85-4.864 10.85-10.846a10.835 10.835 0 0 0-3.181-7.683A10.838 10.838 0 0 0 13.6 2.326zm.004 17.57a8.98 8.98 0 0 1-4.577-1.246l-.328-.194-3.4.887.908-3.315-.213-.339A8.995 8.995 0 0 1 4.6 9.878c0-4.966 4.045-9.006 9.014-9.006a8.96 8.96 0 0 1 6.368 2.637 8.956 8.956 0 0 1 2.637 6.365c-.001 4.965-4.048 9.008-9.014 9.022z"/></svg>`,
-                landing: `<svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>`,
-                default: `<svg class="w-7 h-7 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>`
+                instagram: `<svg class="w-8 h-8 text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+                youtube: `<svg class="w-8 h-8 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+                facebook: `<svg class="w-8 h-8 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+                tiktok: `<svg class="w-8 h-8 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.04.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.12-3.44-3.17-3.8-5.46-.4-2.51.76-5.14 2.82-6.6 1.73-1.2 3.96-1.55 5.95-1.07V13.9c-1.35-.12-2.74.42-3.59 1.4-.76.85-1.04 2.05-.72 3.16.27 1.05 1.13 1.91 2.18 2.22 1.34.4 2.94.13 4-.79.88-.74 1.32-1.87 1.38-3 .06-3.84.04-7.69.04-11.53.01-1.78.01-3.57.02-5.35z"/></svg>`,
+                xtwitter: `<svg class="w-8 h-8 text-gray-300 drop-shadow-[0_0_8px_rgba(209,213,219,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+                whatsapp: `<svg class="w-8 h-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" fill="currentColor" viewBox="0 0 24 24"><path d="M13.601 2.326A10.854 10.854 0 0 0 2 13.576c0 2.052.569 4.025 1.602 5.75L2.247 24l4.908-1.28a10.853 10.853 0 0 0 6.446 2.06h.004c5.986 0 10.85-4.864 10.85-10.846a10.835 10.835 0 0 0-3.181-7.683A10.838 10.838 0 0 0 13.6 2.326zm.004 17.57a8.98 8.98 0 0 1-4.577-1.246l-.328-.194-3.4.887.908-3.315-.213-.339A8.995 8.995 0 0 1 4.6 9.878c0-4.966 4.045-9.006 9.014-9.006a8.96 8.96 0 0 1 6.368 2.637 8.956 8.956 0 0 1 2.637 6.365c-.001 4.965-4.048 9.008-9.014 9.022z"/></svg>`,
             },
 
-            // Services & Pricing Data (Expandable)
             services: {
                 instagram: {
                     label: "Instagram", iconKey: "instagram",
                     categories: {
                         Followers: [
-                            { qty: "100", price: 59, best: false },
-                            { qty: "1,000", price: 599, best: true },
-                            { qty: "5,000", price: 2999, best: false },
-                            { qty: "10,000", price: 4999, best: true }
+                            { qty: "100", price: 83, best: false },     // 59 + 40%
+                            { qty: "1,000", price: 839, best: true },   // 599 + 40%
+                            { qty: "5,000", price: 4199, best: false }, // 2999 + 40%
+                            { qty: "10,000", price: 6999, best: true }  // 4999 + 40%
                         ],
                         Likes: [
-                            { qty: "1,000", price: 30, best: false },
-                            { qty: "5,000", price: 149, best: true },
-                            { qty: "10,000", price: 289, best: false }
+                            { qty: "1,000", price: 42, best: false },
+                            { qty: "5,000", price: 209, best: true },
+                            { qty: "10,000", price: 405, best: false }
                         ],
                         Views: [
-                            { qty: "10,000", price: 69, best: false },
-                            { qty: "50,000", price: 299, best: true }
+                            { qty: "10,000", price: 97, best: false },
+                            { qty: "50,000", price: 419, best: true }
                         ],
                         Comments: [
-                            { qty: "100", price: 199, best: true },
-                            { qty: "500", price: 899, best: false }
+                            { qty: "100", price: 279, best: true },
+                            { qty: "500", price: 1259, best: false }
                         ]
                     }
                 },
@@ -365,14 +467,14 @@
                     label: "Facebook", iconKey: "facebook",
                     categories: {
                         Followers: [
-                            { qty: "1,000", price: 199, best: false },
-                            { qty: "5,000", price: 799, best: true }
+                            { qty: "1,000", price: 279, best: false },
+                            { qty: "5,000", price: 1119, best: true }
                         ],
                         Likes: [
-                            { qty: "1,000", price: 299, best: true }
+                            { qty: "1,000", price: 419, best: true }
                         ],
                         Views: [
-                            { qty: "10,000", price: 119, best: false }
+                            { qty: "10,000", price: 167, best: false }
                         ]
                     }
                 },
@@ -380,35 +482,56 @@
                     label: "YouTube", iconKey: "youtube",
                     categories: {
                         Subscribers: [
-                            { qty: "1,000", price: 1499, best: true },
-                            { qty: "5,000", price: 6999, best: false }
+                            { qty: "1,000", price: 2099, best: true },
+                            { qty: "5,000", price: 9799, best: false }
                         ],
                         Views: [
-                            { qty: "10,000", price: 499, best: false }
+                            { qty: "10,000", price: 699, best: false }
                         ]
                     }
                 },
                 tiktok: {
                     label: "TikTok", iconKey: "tiktok",
                     categories: {
-                        Followers: [{ qty: "1,000", price: 299, best: true }],
-                        Views: [{ qty: "10,000", price: 99, best: false }]
+                        Followers: [{ qty: "1,000", price: 419, best: true }],
+                        Views: [{ qty: "10,000", price: 139, best: false }]
                     }
                 },
                 xtwitter: {
-                    label: "X - Twitter", iconKey: "xtwitter",
+                    label: "X (Twitter)", iconKey: "xtwitter",
                     categories: {
-                        Followers: [{ qty: "1,000", price: 899, best: true }]
+                        Followers: [{ qty: "1,000", price: 1259, best: true }]
                     }
                 },
                 whatsapp: {
                     label: "WhatsApp", iconKey: "whatsapp",
-                    categories: { ChannelMembers: [{ qty: "1,000", price: 599, best: true }] }
-                },
-                landingpage: {
-                    label: "Website / Landing", iconKey: "landing",
-                    categories: { Design: [{ qty: "1 Page", price: 999, best: true }] }
+                    categories: { ChannelMembers: [{ qty: "1,000", price: 839, best: true }] }
                 }
+            }
+        };
+
+        const TEXT_CONTENT = {
+            about: {
+                title: "About GrowthHub",
+                body: `We are a premium social media growth agency dedicated to helping individuals and brands scale their online presence rapidly. <br><br>
+                With years of experience, we provide high-quality, stable services that comply with platform algorithms to ensure your safety and success. Our automated panel ensures immediate processing of your orders 24/7.`
+            },
+            terms: {
+                title: "Terms & Conditions",
+                body: `By placing an order, you accept the following terms:<br><br>
+                1. <strong>Public Profiles Only:</strong> Your account MUST remain public during the entire delivery process. No refunds will be provided for private accounts.<br>
+                2. <strong>No Concurrent Orders:</strong> Do not order the same service for the same link from us or anywhere else at the same time. Let the first order complete.<br>
+                3. <strong>Delivery Times:</strong> Most services start within 0-20 minutes, but large orders may take longer to complete safely.<br>
+                4. <strong>Content:</strong> We do not support illegal, adult, or politically extreme content.`
+            },
+            policy: {
+                title: "Return & Refill Policy",
+                body: `<strong>30-Day Free Refill Guarantee:</strong><br>
+                If your purchased followers/likes drop within 30 days of your purchase, we will refill them absolutely free of charge! Just contact our support with your order ID.<br><br>
+                <strong>Refunds:</strong><br>
+                - We offer a full refund ONLY if we are unable to deliver your order.<br>
+                - No cash refunds will be provided once an order is placed and processing has started.<br>
+                - No refunds or refills are provided if your account is made private, deleted, or if the username is changed during the process.`
             }
         };
 
@@ -419,7 +542,6 @@
         window.onload = () => {
             document.getElementById('display-upi').innerText = CONFIG.payment.primaryUpiId;
             document.getElementById('display-phone').innerText = CONFIG.payment.phoneNumber;
-            
             renderPlatforms();
         };
 
@@ -431,12 +553,13 @@
                 const pData = CONFIG.services[key];
                 const btn = document.createElement('button');
                 
-                // Redesigned: Vertical layout for platforms like app icons, horizontally scrollable
-                btn.className = `platform-btn flex flex-col items-center justify-center gap-1.5 p-3 w-20 sm:w-[90px] rounded-2xl bg-white/5 border border-white/5 shrink-0 hover:bg-white/10 transition-all outline-none shadow-sm snap-start`;
+                btn.className = `platform-btn flex flex-col items-center justify-center gap-2 p-3 w-[85px] rounded-2xl bg-white/5 border border-white/5 shrink-0 hover:bg-white/10 outline-none snap-start`;
                 btn.id = `btn-plat-${key}`;
                 
-                const iconHTML = CONFIG.icons[pData.iconKey] || CONFIG.icons.default;
-                btn.innerHTML = `<div class="flex items-center justify-center mb-0.5">${iconHTML}</div> <span class="text-[10px] sm:text-xs font-bold text-slate-300 text-center leading-tight truncate w-full">${pData.label}</span>`;
+                btn.innerHTML = `
+                    <div class="flex items-center justify-center">${CONFIG.icons[pData.iconKey]}</div> 
+                    <span class="text-[11px] font-bold text-slate-300 text-center leading-tight truncate w-full">${pData.label}</span>
+                `;
                 
                 btn.onclick = () => selectPlatform(key);
                 listContainer.appendChild(btn);
@@ -448,15 +571,13 @@
         function selectPlatform(platformKey) {
             currentPlatform = platformKey;
             
-            // Highlight active platform pill
             document.querySelectorAll('.platform-btn').forEach(btn => {
-                btn.classList.remove('active', 'ring-2', 'ring-indigo-500', 'bg-indigo-500/10');
+                btn.classList.remove('active');
             });
             
             const activeBtn = document.getElementById(`btn-plat-${platformKey}`);
             if(activeBtn) {
-                activeBtn.classList.add('active', 'ring-2', 'ring-indigo-500', 'bg-indigo-500/10');
-                // Scroll the selected platform into view smoothly within its container
+                activeBtn.classList.add('active');
                 activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
 
@@ -479,8 +600,7 @@
                 const btn = document.createElement('button');
                 const isSelected = cat === currentCategory;
                 
-                // Redesigned: Pill shaped category buttons
-                btn.className = `px-5 py-2.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider whitespace-nowrap outline-none transition-all border ${isSelected ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/30' : 'bg-transparent text-slate-400 border-white/10 hover:bg-white/5 hover:text-white'}`;
+                btn.className = `px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider whitespace-nowrap outline-none transition-all border ${isSelected ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-500/30' : 'bg-black/30 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'}`;
                 btn.innerText = cat;
                 
                 btn.onclick = () => {
@@ -502,48 +622,60 @@
             
             packages.forEach((pkg, index) => {
                 const card = document.createElement('div');
-                card.className = `service-card rounded-2xl p-4 sm:p-5 flex flex-col justify-between group`;
+                card.className = `service-card rounded-2xl p-5 flex flex-col justify-between group`;
                 
+                // Calculate fake original price for 5% off visual
+                const originalPrice = Math.round(pkg.price / 0.95);
+
                 let bestTag = '';
                 if(pkg.best) {
-                    bestTag = `<span class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-md">Best Value</span>`;
+                    bestTag = `<div class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-md">Most Popular</div>`;
                 }
 
                 card.innerHTML = `
                     ${bestTag}
-                    <div>
-                        <span class="text-slate-400 text-[9px] sm:text-[10px] uppercase font-bold tracking-widest block mb-1">${CONFIG.services[currentPlatform].label} ${currentCategory}</span>
-                        <h4 class="text-white font-extrabold text-xl sm:text-2xl">${pkg.qty}</h4>
+                    
+                    <div class="absolute -top-6 -right-6 w-16 h-16 bg-indigo-500/20 rounded-full blur-xl group-hover:bg-indigo-500/40 transition-colors"></div>
+
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-indigo-400 text-[10px] uppercase font-bold tracking-widest">${CONFIG.services[currentPlatform].label}</span>
+                            <span class="bg-emerald-500/10 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-emerald-500/20 discount-badge">SAVE 5%</span>
+                        </div>
+                        <h4 class="text-white font-black text-2xl tracking-tight">${pkg.qty} <span class="text-sm font-semibold text-slate-400">${currentCategory}</span></h4>
                     </div>
-                    <div class="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                        <span class="text-emerald-400 font-black text-lg sm:text-xl">₹${pkg.price}</span>
+                    
+                    <div class="mt-5 flex items-end justify-between border-t border-white/10 pt-4 relative z-10">
+                        <div class="flex flex-col">
+                            <span class="text-slate-500 text-xs line-through font-medium">₹${originalPrice}</span>
+                            <span class="text-emerald-400 font-black text-2xl leading-none">₹${pkg.price}</span>
+                        </div>
                         
-                        <!-- Added explicit "Buy Now" button inside the package card -->
-                        <button class="bg-indigo-600 group-hover:bg-indigo-500 text-white text-[10px] sm:text-xs uppercase font-bold py-2 px-4 rounded-xl transition-all shadow-md active:scale-95 flex items-center gap-1.5">
-                            Buy Now
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                        </button>
+                        <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-500 transition-colors">
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
                     </div>
                 `;
                 
-                card.onclick = () => selectPackage(pkg, card);
+                card.onclick = () => selectPackage(pkg, originalPrice, card);
                 container.appendChild(card);
             });
         }
 
-        function selectPackage(pkgObj, cardElement) {
+        function selectPackage(pkgObj, originalPrice, cardElement) {
             document.querySelectorAll('.service-card').forEach(c => {
-                c.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                c.style.background = '#111113';
+                c.style.borderColor = 'rgba(255, 255, 255, 0.06)';
+                c.style.background = 'rgba(255, 255, 255, 0.02)';
             });
-            cardElement.style.borderColor = '#6366f1';
-            cardElement.style.background = 'rgba(99, 102, 241, 0.05)';
+            cardElement.style.borderColor = 'rgba(99, 102, 241, 0.8)';
+            cardElement.style.background = 'rgba(99, 102, 241, 0.08)';
 
             selectedPackageData = {
                 platform: CONFIG.services[currentPlatform].label,
                 category: currentCategory,
                 qty: pkgObj.qty,
                 price: pkgObj.price,
+                originalPrice: originalPrice,
                 label: `${pkgObj.qty} ${currentCategory}`
             };
             
@@ -554,28 +686,27 @@
             if(!selectedPackageData) return;
 
             if (window.innerWidth < 1024) {
-                document.getElementById('checkout-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.getElementById('checkout-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
-            document.getElementById('checkout-service-name').innerHTML = `<span class="text-slate-400 font-normal text-xs block">${selectedPackageData.platform}</span>${selectedPackageData.label}`;
+            document.getElementById('checkout-service-name').innerText = `${selectedPackageData.platform} - ${selectedPackageData.label}`;
+            document.getElementById('checkout-original-price').innerText = `₹${selectedPackageData.originalPrice}`;
             document.getElementById('checkout-price').innerText = `₹${selectedPackageData.price}`;
             
-            // Handle Live QR Generation
             const amount = selectedPackageData.price;
-            const upiString = `upi://pay?pa=${CONFIG.payment.primaryUpiId}&pn=${encodeURIComponent(CONFIG.merchantName)}&am=${amount}&cu=INR&tn=GrowthHubOrder`;
+            const upiString = `upi://pay?pa=${CONFIG.payment.primaryUpiId}&pn=${encodeURIComponent(CONFIG.merchantName)}&am=${amount}&cu=INR&tn=Order`;
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}&margin=5`;
             
             document.getElementById('qr-placeholder').classList.add('hidden');
             document.getElementById('qr-container').classList.remove('hidden');
             document.getElementById('qr-container').classList.add('flex');
-            
             document.getElementById('qr-code-img').src = qrUrl;
-            document.getElementById('download-qr-btn').href = qrUrl;
         }
 
         function resetCheckout() {
             selectedPackageData = null;
-            document.getElementById('checkout-service-name').innerText = "Select a package first";
+            document.getElementById('checkout-service-name').innerText = "Please select a package";
+            document.getElementById('checkout-original-price').innerText = "";
             document.getElementById('checkout-price').innerText = "₹0";
             document.getElementById('qr-placeholder').classList.remove('hidden');
             document.getElementById('qr-container').classList.add('hidden');
@@ -590,21 +721,21 @@
 
             const link = document.getElementById('order-link').value.trim();
             if(!link) {
-                showAlert("Missing Details", "Please paste your Profile Link or Username.");
+                showAlert("Missing Link", "Please paste your Profile Link or Username before confirming.");
                 document.getElementById('order-link').focus();
                 return;
             }
 
             const orderId = 'ORD' + Math.floor(1000000 + Math.random() * 9000000);
             
-            const message = `*🚀 NEW ORDER [${orderId}]*
+            const message = `*🚀 NEW PREMIUM ORDER [${orderId}]*
 
 *Platform:* ${selectedPackageData.platform}
 *Service:* ${selectedPackageData.category}
 *Quantity:* ${selectedPackageData.qty}
-*Amount Payable:* ₹${selectedPackageData.price}
+*Amount Paid:* ₹${selectedPackageData.price}
 
-*Target Link/Username:* 
+*Target Link:* 
 ${link}
 
 _⚠️ I confirm my profile is PUBLIC._
@@ -614,12 +745,45 @@ _Attached is my payment screenshot._`;
             
             showAlert(
                 "Final Step!", 
-                "You are being redirected to WhatsApp. Please attach your PAYMENT SCREENSHOT there so we can start your order immediately."
+                "You are being redirected to WhatsApp. Please attach your PAYMENT SCREENSHOT there so we can process your order instantly."
             );
             
             setTimeout(() => {
                 window.open(waUrl, '_blank');
-            }, 2000);
+            }, 2500);
+        }
+
+        function openModal(type) {
+            const data = TEXT_CONTENT[type];
+            if(!data) return;
+            
+            document.getElementById('info-modal-title').innerText = data.title;
+            document.getElementById('info-modal-content').innerHTML = data.body;
+            
+            const modal = document.getElementById('info-modal');
+            const box = document.getElementById('info-modal-box');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Small delay for CSS transition
+            setTimeout(() => {
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('info-modal');
+            const box = document.getElementById('info-modal-box');
+            
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
         }
 
         function showAlert(title, message) {
@@ -631,7 +795,6 @@ _Attached is my payment screenshot._`;
             
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            
             setTimeout(() => {
                 box.classList.remove('scale-95');
                 box.classList.add('scale-100');
@@ -644,7 +807,6 @@ _Attached is my payment screenshot._`;
             
             box.classList.remove('scale-100');
             box.classList.add('scale-95');
-            
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
@@ -658,7 +820,7 @@ _Attached is my payment screenshot._`;
 
             if (type === 'number') {
                 textToCopy = CONFIG.payment.phoneNumber;
-                label = "PhonePe/GPay/Paytm";
+                label = "Number";
             } else if (type === 'upi') {
                 textToCopy = CONFIG.payment.primaryUpiId;
                 label = "UPI ID";
@@ -674,13 +836,13 @@ _Attached is my payment screenshot._`;
         }
 
         function showToast(message) {
-            const toast = document.getElementById('toast-msg');
+            const toast = document.getElementById('toast');
             document.getElementById('toast-text').innerText = message;
             
-            toast.classList.remove('translate-x-full', 'opacity-0');
+            toast.classList.remove('translate-y-20', 'opacity-0');
             
             setTimeout(() => { 
-                toast.classList.add('translate-x-full', 'opacity-0'); 
+                toast.classList.add('translate-y-20', 'opacity-0'); 
             }, 2500);
         }
     </script>
