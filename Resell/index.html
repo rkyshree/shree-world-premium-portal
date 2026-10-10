@@ -364,6 +364,14 @@
                 </div>
             </div>
 
+            <!-- EXPLORE BRANDS SECTION -->
+            <div id="exploreBrandsView" class="px-3 pb-6 border-t border-gray-100 pt-4">
+                <h3 class="font-black text-gray-900 text-lg mb-4">Explore brands</h3>
+                <div id="dynamicBrandsGrid" class="grid grid-cols-4 gap-y-5 gap-x-3">
+                    <!-- Brands injected via JS -->
+                </div>
+            </div>
+
             <!-- VIEW 2: PRODUCTS LIST FOR A SPECIFIC CATEGORY (Hidden initially) -->
             <div id="feedProductsView" class="hidden pb-6">
                 <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2 sticky top-[64px] z-10 shadow-sm">
@@ -834,6 +842,7 @@
         <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p>  
         <button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button>  
         <button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button>
+        <button onclick="switchAdminTab('brands')" id="adminTabBrands" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🌟 Explore Brands</button>
         <button onclick="switchAdminTab('categories')" id="adminTabCategories" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📁 Categories</button>  
         <button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button>  
         <button onclick="switchAdminTab('products')" id="adminTabProducts" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📦 Products</button>  
@@ -876,6 +885,37 @@
                     <table class="w-full text-left border-collapse min-w-[600px]">
                         <thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
                         <tbody id="adminBannersTable" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminBrandsSection" class="admin-section hidden space-y-6">
+            <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl">
+                <h2 class="font-black text-xl mb-6">🌟 Explore Brands Management</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Name (Title)</label>
+                        <input id="newBrandTitle" type="text" placeholder="e.g. Amazon" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Logo URL</label>
+                        <input id="newBrandImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Affiliate / Target Link URL</label>
+                        <input id="newBrandLink" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Top Badge Text (e.g. 0.5% OR Leave Empty)</label>
+                        <input id="newBrandBadge" type="text" placeholder="e.g. 0.5% or 50% OFF" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]">
+                    </div>
+                    <button onclick="addNewAdminBrand()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Explore Brand</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-20">Logo</th><th class="pb-3 px-4">Title</th><th class="pb-3 px-4">Badge Text</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead>
+                        <tbody id="adminBrandsTable" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
@@ -1147,6 +1187,23 @@
     window.allCategories = ["Kurti", "Saree", "Mens Wear"];
     window.categoryImages = {};
     window.siteBanners = []; // ADS & BANNERS CAROUSEL DATA
+    
+    // EXPLORE BRANDS DATA WITH PRE-LOADED DEFAULTS FROM IMAGE
+    window.exploreBrands = [
+        { title: "Amazon", img: "https://logo.clearbit.com/amazon.in", link: "#", badge: "0.5%" },
+        { title: "Flipkart", img: "https://logo.clearbit.com/flipkart.com", link: "#", badge: "" },
+        { title: "Myntra", img: "https://logo.clearbit.com/myntra.com", link: "#", badge: "" },
+        { title: "Domino's Pizza", img: "https://logo.clearbit.com/dominos.co.in", link: "#", badge: "16.8%" },
+        { title: "PVR Cinemas", img: "https://logo.clearbit.com/pvrcinemas.com", link: "#", badge: "21.0%" },
+        { title: "Blinkit", img: "https://logo.clearbit.com/blinkit.com", link: "#", badge: "1.4%" },
+        { title: "Zepto", img: "https://logo.clearbit.com/zeptonow.com", link: "#", badge: "0.6%" },
+        { title: "Instamart", img: "https://logo.clearbit.com/swiggy.com", link: "#", badge: "" },
+        { title: "Ajio", img: "https://logo.clearbit.com/ajio.com", link: "#", badge: "" },
+        { title: "BookMyShow", img: "https://logo.clearbit.com/in.bookmyshow.com", link: "#", badge: "5.4%" },
+        { title: "Bigbasket", img: "https://logo.clearbit.com/bigbasket.com", link: "#", badge: "2.6%" },
+        { title: "Meesho", img: "https://logo.clearbit.com/meesho.com", link: "#", badge: "" }
+    ];
+
     window.adminUsers = [];
     window.adminOrders = [];
     window.allProducts = [];
@@ -1305,6 +1362,20 @@
         } catch(e) {}
     }
 
+    async function loadBrands() {
+        try {
+            const snap = await getDoc(doc(db, SETTINGS_COL, "brands"));
+            if(snap.exists() && snap.data().list) {
+                window.exploreBrands = snap.data().list;
+            } else {
+                // If it doesn't exist, we save the default mock data immediately
+                await setDoc(doc(db, SETTINGS_COL, "brands"), { list: window.exploreBrands }, { merge: true });
+            }
+            renderExploreBrandsUI();
+            if(window.isAdminMode) window.renderAdminBrands();
+        } catch(e) {}
+    }
+
     // ADS / BANNERS CAROUSEL (16:9 Aspect Ratio)
     function renderCarousel() {
         const container = document.getElementById('mainCarouselContainer');
@@ -1381,10 +1452,34 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
+    // EXPLORE BRANDS UI RENDER (4-COLUMN GRID)
+    function renderExploreBrandsUI() {
+        const grid = document.getElementById("dynamicBrandsGrid");
+        const container = document.getElementById("exploreBrandsView");
+        
+        if(!window.exploreBrands || window.exploreBrands.length === 0) {
+            container.classList.add('hidden');
+            return;
+        }
+        container.classList.remove('hidden');
+
+        grid.innerHTML = window.exploreBrands.map(b => {
+            return `
+            <a href="${escapeHtml(b.link)}" target="_blank" class="flex flex-col items-center gap-1.5 relative cursor-pointer hover:scale-105 transition-transform duration-200">
+                <div class="relative w-full aspect-square rounded-[18px] bg-white shadow-sm border border-gray-200 flex items-center justify-center p-2.5 overflow-visible">
+                   <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}" onerror="this.onerror=null; this.src='https://placehold.co/100x100/f8f8f9/cccccc?text=Icon';">
+                   ${b.badge ? `<div class="absolute -top-1.5 -left-1.5 bg-[#00e676] text-black text-[9px] font-bold px-1.5 py-[2px] rounded-md shadow-sm z-10 whitespace-nowrap">${escapeHtml(b.badge)}</div>` : ''}
+                </div>
+                <span class="text-[10px] font-semibold text-gray-700 text-center w-full truncate px-0.5 leading-tight">${escapeHtml(b.title)}</span>
+            </a>`;
+        }).join('');
+    }
+
     // CATEGORY VIEW & BACK BUTTON SYSTEM
     window.openCategoryView = (cat) => { 
         currentFilter = cat; 
         document.getElementById('feedCategoriesView').classList.add('hidden');
+        document.getElementById('exploreBrandsView').classList.add('hidden');
         document.getElementById('feedProductsView').classList.remove('hidden');
         document.getElementById('catViewTitle').innerText = cat === 'All' ? 'All Products' : cat + ' Collection';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1404,6 +1499,7 @@
         currentFilter = 'All';
         document.getElementById('feedProductsView').classList.add('hidden');
         document.getElementById('feedCategoriesView').classList.remove('hidden');
+        if(window.exploreBrands && window.exploreBrands.length > 0) document.getElementById('exploreBrandsView').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         if(!fromPopState && history.state && history.state.categoryView) {
@@ -1497,7 +1593,7 @@
                             if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
                         }  
                     });  
-                    loadCategories(); loadBanners(); loadProducts(); loadOrders(); loadUserWithdrawals();
+                    loadCategories(); loadBanners(); loadBrands(); loadProducts(); loadOrders(); loadUserWithdrawals();
                 } catch(e) {}  
             }  
         } else {  
@@ -1579,6 +1675,7 @@
             f = f.filter(p => `${p.title||''} ${p.category||''}`.toLowerCase().includes(q));  
             if(document.getElementById('feedProductsView').classList.contains('hidden')) {
                 document.getElementById('feedCategoriesView').classList.add('hidden');
+                document.getElementById('exploreBrandsView').classList.add('hidden');
                 document.getElementById('feedProductsView').classList.remove('hidden');
                 document.getElementById('catViewTitle').innerText = 'Search Results';
                 
@@ -2050,6 +2147,7 @@
             
             loadCategories(); 
             loadBanners();
+            loadBrands();
             window.refreshAdmin();  
         } catch(e) { 
             alert("❌ Admin Access Denied!"); 
@@ -2064,7 +2162,7 @@
     window.toggleAdminMenu = () => { document.getElementById('adminSidebar').classList.toggle('hidden'); };  
     
     window.switchAdminTab = (tab) => {  
-        ["dashboard","banners","categories","users","products","orders","withdrawals"].forEach(x => {  
+        ["dashboard","banners","brands","categories","users","products","orders","withdrawals"].forEach(x => {  
             document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden", x!==tab);  
             const b = document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));  
             if (b) {
@@ -2073,7 +2171,7 @@
                 if(x!==tab) { b.classList.remove("text-[#00e676]","bg-[#00e676]/10"); b.classList.add("text-gray-400"); }  
             }
         });  
-        document.getElementById('adminPageTitle').innerText = document.getElementById("adminTab"+tab.charAt(0).toUpperCase()+tab.slice(1)).innerText.split(' ')[1];  
+        document.getElementById('adminPageTitle').innerText = document.getElementById("adminTab"+tab.charAt(0).toUpperCase()+tab.slice(1)).innerText.split(' ').slice(1).join(' ');  
         if(window.innerWidth < 768) toggleAdminMenu();  
     };  
 
@@ -2134,6 +2232,79 @@
             if(window.isAdminMode) window.renderAdminBanners();
             showToast("Banner Deleted!");
         } catch(e) { showToast("Error deleting banner"); }
+    };
+
+    // ADMIN EXPLORE BRANDS LOGIC
+    window.renderAdminBrands = () => {
+        const t = document.getElementById('adminBrandsTable');
+        t.innerHTML = window.exploreBrands.length ? window.exploreBrands.map((b, i) => `
+            <tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
+                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-10 w-10 object-contain bg-white rounded-lg"></td>
+                <td class="py-3 px-4 font-bold text-white">${escapeHtml(b.title)}</td>
+                <td class="py-3 px-4"><span class="bg-[#00e676] text-black px-2 py-0.5 rounded text-[10px] font-bold">${escapeHtml(b.badge || 'None')}</span></td>
+                <td class="py-3 px-4 text-xs text-gray-400 max-w-[150px] truncate">${escapeHtml(b.link || 'No Link')}</td>
+                <td class="py-3 px-4 text-right">
+                    <button onclick="editAdminBrand(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button>
+                    <button onclick="deleteAdminBrand(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button>
+                </td>
+            </tr>
+        `).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No brands found.</td></tr>';
+    };
+
+    window.addNewAdminBrand = async () => {
+        const title = document.getElementById('newBrandTitle').value.trim();
+        const img = document.getElementById('newBrandImg').value.trim();
+        const link = document.getElementById('newBrandLink').value.trim();
+        const badge = document.getElementById('newBrandBadge').value.trim();
+        
+        if(!title || !img || !link) return showToast("Title, Image URL, and Link URL are required!");
+        
+        window.exploreBrands.push({ title, img, link, badge });
+        document.getElementById('newBrandTitle').value = '';
+        document.getElementById('newBrandImg').value = '';
+        document.getElementById('newBrandLink').value = '';
+        document.getElementById('newBrandBadge').value = '';
+        
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "brands"), { list: window.exploreBrands }, { merge: true });
+            renderExploreBrandsUI();
+            if(window.isAdminMode) window.renderAdminBrands();
+            showToast("Brand Added!");
+        } catch(e) { showToast("Error saving brand"); }
+    };
+
+    window.editAdminBrand = async (index) => {
+        const b = window.exploreBrands[index];
+        const newTitle = prompt("Edit Brand Title:", b.title);
+        if(newTitle === null || newTitle.trim() === "") return;
+        
+        const newImg = prompt("Edit Brand Image URL:", b.img);
+        if(newImg === null || newImg.trim() === "") return;
+        
+        const newLink = prompt("Edit Target/Affiliate Link URL:", b.link || "");
+        if(newLink === null || newLink.trim() === "") return;
+        
+        const newBadge = prompt("Edit Top Badge Text (e.g. 0.5% OR Leave Empty):", b.badge || "");
+        if(newBadge === null) return;
+        
+        window.exploreBrands[index] = { title: newTitle.trim(), img: newImg.trim(), link: newLink.trim(), badge: newBadge.trim() };
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "brands"), { list: window.exploreBrands }, { merge: true });
+            renderExploreBrandsUI();
+            if(window.isAdminMode) window.renderAdminBrands();
+            showToast("Brand Updated!");
+        } catch(e) { showToast("Error updating brand"); }
+    };
+
+    window.deleteAdminBrand = async (index) => {
+        if(!confirm("Delete this brand?")) return;
+        window.exploreBrands.splice(index, 1);
+        try {
+            await setDoc(doc(db, SETTINGS_COL, "brands"), { list: window.exploreBrands }, { merge: true });
+            renderExploreBrandsUI();
+            if(window.isAdminMode) window.renderAdminBrands();
+            showToast("Brand Deleted!");
+        } catch(e) { showToast("Error deleting brand"); }
     };
 
     // Product Save Logic
@@ -2272,7 +2443,7 @@
         document.getElementById('statWithdrawals').innerText = window.adminWithdraws.filter(w=>w.status==='pending').length;  
         document.getElementById('statRevenue').innerText = money(window.adminOrders.filter(o=>o.status!=='cancelled' && !o.isBonus).reduce((s,o)=>s+(Number(o.sellingPrice)*Number(o.quantity||1)),0));  
           
-        window.renderAdminUsers(); window.renderAdminProducts(); window.renderAdminOrders(); window.renderAdminWithdrawals(); window.renderAdminCategories(); window.renderAdminBanners();
+        window.renderAdminUsers(); window.renderAdminProducts(); window.renderAdminOrders(); window.renderAdminWithdrawals(); window.renderAdminCategories(); window.renderAdminBanners(); window.renderAdminBrands();
     };  
 
     // Categories Logic
