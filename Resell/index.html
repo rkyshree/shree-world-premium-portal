@@ -387,7 +387,6 @@
                 <button onclick="openModal('editProfileModal')" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600"><i class="fa-solid fa-pen text-xs"></i></button>
             </div>  
 
-            <!-- CUSTOMER CASHBACK CLAIM FORM -->
             <div class="bg-white mb-2 shadow-sm p-4 border-l-4 border-l-blue-500 relative overflow-hidden">
                 <i class="fa-solid fa-gift absolute -right-3 -top-3 text-6xl text-blue-50 opacity-50 pointer-events-none"></i>
                 <h4 class="font-bold text-gray-800 text-sm mb-2 relative z-10">🎁 Claim Brand Cashback</h4>
@@ -448,7 +447,6 @@
     </nav>  
 </section>  
 
-<!-- AUTH MODAL -->
 <div id="authModal" class="bottom-sheet no-easy-close z-[900]">  
     <div class="bottom-sheet-content">  
         <div class="drag-handle"></div>
@@ -1398,7 +1396,6 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    // ------------- NEW FEATURE 2 & 3: BRAND SHARING & ₹0.05 COMMISSION LOGIC -------------
     function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
@@ -1414,6 +1411,7 @@
         }
         container.classList.remove('hidden');
 
+        // Share button precisely below brand name
         grid.innerHTML = window.exploreBrands.map((b, i) => {
             return `
             <div class="flex flex-col items-center gap-1.5 relative hover:scale-105 transition-transform duration-200">
@@ -1421,10 +1419,10 @@
                    <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}">
                    ${b.badge ? `<div class="absolute -top-1.5 -left-1.5 bg-[#00e676] text-black text-[9px] font-bold px-1.5 py-[2px] rounded-md shadow-sm z-10 whitespace-nowrap">${escapeHtml(b.badge)}</div>` : ''}
                 </a>
-                <div class="flex items-center justify-between w-full px-1 gap-1">
-                    <span class="text-[10px] font-semibold text-gray-700 truncate leading-tight flex-1 text-center">${escapeHtml(b.title)}</span>
-                    <button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 p-1.5 rounded-full hover:bg-green-100 transition shadow-sm shrink-0 border border-green-200">
-                        <i class="fa-solid fa-share-nodes text-[10px]"></i>
+                <div class="flex flex-col items-center w-full gap-1 mt-0.5">
+                    <span class="text-[10px] font-semibold text-gray-700 truncate w-full text-center">${escapeHtml(b.title)}</span>
+                    <button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto">
+                        <i class="fa-solid fa-share-nodes text-[9px]"></i> <span class="text-[9px] font-bold">Share</span>
                     </button>
                 </div>
             </div>`;
@@ -1477,7 +1475,6 @@
         } catch(e) { console.error("Error processing share comm:", e); }
     };
 
-    // ------------- NEW FEATURE 1: BRAND CASHBACK CLAIM LOGIC -------------
     window.submitBrandClaimFirebase = async () => {
         if(!currentUser || userData?.status !== 'approved') return showToast("Profile approval required for Claims.");
         
@@ -2055,7 +2052,6 @@
         return { w: '0%', c1: '', c2: '', c3: '' }; 
     }
 
-    // ------------- WALLET & ORDERS FETCH LOGIC -------------
     function loadOrders() {  
         if(!currentUser) return; if(unsubOrders) unsubOrders();  
         unsubOrders = onSnapshot(query(collection(db, ORDERS_COL), where("resellerId", "==", currentUser.uid)), (snap) => {  
@@ -2265,7 +2261,7 @@
         window.renderAdminClaims();
     };  
 
-    // ------------- NEW FEATURE: ADMIN CLAIMS & SHARES PANEL -------------
+    // ------------- ADMIN CLAIMS & SHARES PANEL -------------
     window.renderAdminClaims = () => {
         const q = document.getElementById('adminClaimSearch')?.value.toLowerCase() || '';
         const f = window.adminOrders.filter(o => (o.isBrandClaim || o.isShareBonus) && `${o.productName} ${o.resellerName}`.toLowerCase().includes(q));
