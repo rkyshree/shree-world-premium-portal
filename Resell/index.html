@@ -407,6 +407,17 @@
                 <button onclick="openModal('editProfileModal')" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600"><i class="fa-solid fa-pen text-xs"></i></button>
             </div>  
 
+            <!-- CUSTOMER CASHBACK CLAIM FORM -->
+            <div class="bg-white mb-2 shadow-sm p-4 border-l-4 border-l-blue-500 relative overflow-hidden">
+                <i class="fa-solid fa-gift absolute -right-3 -top-3 text-6xl text-blue-50 opacity-50 pointer-events-none"></i>
+                <h4 class="font-bold text-gray-800 text-sm mb-2 relative z-10">🎁 Claim Brand Cashback</h4>
+                <p class="text-xs text-gray-500 mb-3 relative z-10 leading-relaxed">Flipkart, Myntra ya Ajio par order karne ke baad apna <b>Order ID</b> yahan submit karein apna commission paane ke liye.</p>
+                <div class="flex gap-2 relative z-10">
+                    <input type="text" id="claimBrandOrderId" placeholder="Enter Order ID..." class="input-field flex-1 !py-2 border-blue-200 focus:border-blue-500 focus:ring-blue-100">
+                    <button onclick="submitBrandClaim()" class="bg-[#25D366] text-white px-4 rounded-lg font-bold text-sm shadow-sm flex items-center gap-1.5 hover:bg-[#20b858] transition"><i class="fa-brands fa-whatsapp text-lg"></i> Claim</button>
+                </div>
+            </div>
+
             <div class="bg-white mb-2 shadow-sm p-4">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-gray-800 text-sm">My Bank & Payments</h4>
@@ -1528,6 +1539,23 @@
         }
     };
   
+    // BRAND CASHBACK CLAIM FUNCTION
+    window.submitBrandClaim = () => {
+        const oid = document.getElementById('claimBrandOrderId').value.trim();
+        if(!oid) {
+            showToast("Kripya Order ID enter karein.");
+            return;
+        }
+        
+        const customerName = (typeof userData !== 'undefined' && userData) ? userData.name : "Customer";
+        const text = `🎁 *Cashback Claim Request* 🎁\n\n👤 *Name:* ${customerName}\n🆔 *Order ID:* ${oid}\n\nKripya mera order verify karein aur commission wallet mein add karein.`;
+        const encodedText = encodeURIComponent(text);
+        const whatsappUrl = `https://wa.me/919451239239?text=${encodedText}`;
+        
+        window.open(whatsappUrl, '_blank');
+        document.getElementById('claimBrandOrderId').value = '';
+    };
+
     window.toggleAuthMode = (mode) => {  
         isSignupMode = mode === 'signup';  
         document.getElementById('signupFieldsGroup').classList.toggle('hidden', !isSignupMode);  
