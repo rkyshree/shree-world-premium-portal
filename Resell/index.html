@@ -7,7 +7,7 @@
     <meta name="description" content="Start your online reselling business with zero investment. Discover products, add your margin and earn money from home.">  
     <meta name="theme-color" content="#f43397">  
     
-    <!-- iOS PWA Tags -->
+    <!-- iOS & PWA Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SHRAYNEX">
@@ -92,6 +92,14 @@
         .poster-img { width: 100%; height: 100%; object-fit: cover; }
         .poster-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); padding: 30px 10px 10px 10px; }
         .poster-title { color: #fff; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+        /* Progress Bar Styling */
+        .step-circle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; z-index: 10; transition: all 0.3s; border: 2px solid #e5e7eb; background: #fff; }
+        .step-circle.active { background: #22c55e; border-color: #22c55e; color: #fff; }
+        .step-circle.error { background: #ef4444; border-color: #ef4444; color: #fff; }
+        .step-line-bg { position: absolute; top: 12px; left: 12px; right: 12px; height: 3px; background: #e5e7eb; z-index: 5; }
+        .step-line-fill { position: absolute; top: 12px; left: 12px; height: 3px; background: #22c55e; z-index: 6; transition: width 0.3s ease; }
+        .step-line-error { background: #ef4444; }
     </style>
 </head>  
 <body class="text-gray-800 antialiased">  
@@ -390,7 +398,7 @@
             <div class="bg-white p-4 shadow-sm mb-2 sticky top-0 z-10">
                 <h2 class="text-lg font-black text-gray-900">My Orders</h2>  
             </div>
-            <div id="ordersList" class="space-y-2 p-2">  
+            <div id="ordersList" class="space-y-3 p-2">  
                 <div class="text-center py-10 text-gray-400">Loading orders...</div>  
             </div>  
         </div>  
@@ -411,10 +419,17 @@
             <div class="bg-white mb-2 shadow-sm p-4 border-l-4 border-l-blue-500 relative overflow-hidden">
                 <i class="fa-solid fa-gift absolute -right-3 -top-3 text-6xl text-blue-50 opacity-50 pointer-events-none"></i>
                 <h4 class="font-bold text-gray-800 text-sm mb-2 relative z-10">🎁 Claim Brand Cashback</h4>
-                <p class="text-xs text-gray-500 mb-3 relative z-10 leading-relaxed">Flipkart, Myntra ya Ajio par order karne ke baad apna <b>Order ID</b> yahan submit karein apna commission paane ke liye.</p>
-                <div class="flex gap-2 relative z-10">
-                    <input type="text" id="claimBrandOrderId" placeholder="Enter Order ID..." class="input-field flex-1 !py-2 border-blue-200 focus:border-blue-500 focus:ring-blue-100">
-                    <button onclick="submitBrandClaim()" class="bg-[#25D366] text-white px-4 rounded-lg font-bold text-sm shadow-sm flex items-center gap-1.5 hover:bg-[#20b858] transition"><i class="fa-brands fa-whatsapp text-lg"></i> Claim</button>
+                <p class="text-xs text-gray-500 mb-3 relative z-10 leading-relaxed">Brands par order karne ke baad apna <b>Order ID</b> yahan submit karein apna commission paane ke liye.</p>
+                
+                <div class="space-y-2 relative z-10">
+                    <select id="claimBrandSelect" class="input-field !py-2.5 border-blue-200 focus:border-blue-500 font-semibold text-sm">
+                        <!-- Options injected by JS -->
+                        <option value="Flipkart">Flipkart</option>
+                    </select>
+                    <div class="flex gap-2">
+                        <input type="text" id="claimBrandOrderId" placeholder="Enter Order ID..." class="input-field flex-1 !py-2.5 border-blue-200 focus:border-blue-500">
+                        <button onclick="submitBrandClaim()" class="bg-[#25D366] text-white px-5 rounded-lg font-bold text-sm shadow-sm flex items-center gap-1.5 hover:bg-[#20b858] transition"><i class="fa-brands fa-whatsapp text-lg"></i> Claim</button>
+                    </div>
                 </div>
             </div>
 
@@ -614,7 +629,6 @@
                 <div id="orderSizeWrapper" class="bg-white p-3 rounded-lg shadow-sm border border-gray-200">  
                     <label class="block text-xs font-semibold text-gray-700 mb-2">Select Size <span class="text-red-500">*</span></label>  
                     <div id="orderSizeOptions" class="flex gap-2 flex-wrap"></div>  
-                    <!-- Removed HTML5 required to fix mobile double click issue, validated manually in JS -->
                     <input type="hidden" id="selectedSize">  
                 </div>  
                 
@@ -824,9 +838,9 @@
             <p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p>
             
             <div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3">
-                <p class="text-sm text-gray-700">1. Tap <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1"></i> in Safari.</p>
+                <p class="text-sm text-gray-700">1. Tap <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1"></i> in browser menu.</p>
                 <p class="text-sm text-gray-700">2. Select <b>Add to Home Screen</b> <i class="fa-regular fa-square-plus mx-1"></i></p>
-                <p class="text-sm text-gray-700">3. Tap <b>Add</b>.</p>
+                <p class="text-sm text-gray-700">3. Tap <b>Add / Install</b>.</p>
             </div>
         </div>
     </div>
@@ -951,7 +965,7 @@
         <div id="adminUsersSection" class="admin-section hidden">  
             <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl">  
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Reseller Management</h2><input id="adminUserSearch" oninput="renderAdminUsers()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search users..."></div>  
-                <div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[800px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Contact</th><th class="pb-3 px-4">Wallet</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminUsersTable" class="text-sm"></tbody></table></div>  
+                <div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Contact</th><th class="pb-3 px-4">Wallet</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminUsersTable" class="text-sm"></tbody></table></div>  
             </div>  
         </div>  
 
@@ -1049,9 +1063,10 @@
 </div>  
 
 <script>
+    // PWA Manifest setup with Base64 for maximum reliability
     const manifest = { name: "SHRAYNEX", short_name: "SHRAYNEX", start_url: location.href, display: "standalone", background_color: "#ffffff", theme_color: "#f43397", icons: [{ src: "https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }] };
-    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-    const manifestUrl = URL.createObjectURL(manifestBlob);
+    const manifestStr = JSON.stringify(manifest);
+    const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestStr);
     const link = document.createElement('link'); link.rel = 'manifest'; link.href = manifestUrl; document.head.appendChild(link);
     if ('serviceWorker' in navigator) { const swCode = `self.addEventListener('fetch', function(e) {});`; const swBlob = new Blob([swCode], {type: 'application/javascript'}); const swUrl = URL.createObjectURL(swBlob); navigator.serviceWorker.register(swUrl).catch(()=>{}); }
 
@@ -1148,7 +1163,7 @@
                 <ul class="list-disc pl-5 space-y-1.5 font-medium">
                     <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
                     <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
-                    <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> करना होगा।</li>
+                    <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> margin paane ke liye share karna hoga.</li>
                 </ul>
                 <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
             </div>`;
@@ -1379,7 +1394,6 @@
             if(snap.exists() && snap.data().list) {
                 window.exploreBrands = snap.data().list;
             } else {
-                // If it doesn't exist, we save the default mock data immediately
                 await setDoc(doc(db, SETTINGS_COL, "brands"), { list: window.exploreBrands }, { merge: true });
             }
             renderExploreBrandsUI();
@@ -1409,7 +1423,6 @@
             <div class="w-1.5 h-1.5 rounded-full transition-colors ${i===0?'bg-primary':'bg-white/70'}" id="cdot-${i}"></div>
         `).join('') : '';
 
-        // Auto slide logic
         if(carouselInterval) clearInterval(carouselInterval);
         if(window.siteBanners.length > 1) {
             let currentSlide = 0;
@@ -1417,7 +1430,7 @@
                 currentSlide = (currentSlide + 1) % window.siteBanners.length;
                 carousel.scrollTo({ left: carousel.clientWidth * currentSlide, behavior: 'smooth' });
                 updateCarouselDots(currentSlide);
-            }, 3000); // Har 3 second me slide
+            }, 3000); 
         }
     }
     
@@ -1438,17 +1451,13 @@
         updateCarouselDots(index);
     }
 
-    // UNIFORM CATALOG GRID RENDER
     function renderCategoryUI() {  
         const grid = document.getElementById("dynamicCategoryGrid");  
         if(grid) {  
             let html = window.allCategories.map((cat, index) => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
-                
-                // SABHI POSTER UNIFORM 3-COLUMN SIZE (col-span-1 aspect-[3/4])
                 const cssClass = "col-span-1 aspect-[3/4]";
-                
                 return `
                 <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
                     <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy">
@@ -1463,11 +1472,18 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    // EXPLORE BRANDS UI RENDER (4-COLUMN GRID)
+    // EXPLORE BRANDS UI RENDER & SELECT POPULATE
     function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
         
+        // Populate Claim Cashback Select Dropdown
+        const claimSelect = document.getElementById("claimBrandSelect");
+        if(claimSelect && window.exploreBrands) {
+            claimSelect.innerHTML = window.exploreBrands.map(b => `<option value="${escapeHtml(b.title)}">${escapeHtml(b.title)}</option>`).join('');
+            claimSelect.innerHTML += `<option value="Other">Other Brand</option>`;
+        }
+
         if(!window.exploreBrands || window.exploreBrands.length === 0) {
             container.classList.add('hidden');
             return;
@@ -1486,7 +1502,25 @@
         }).join('');
     }
 
-    // CATEGORY VIEW & BACK BUTTON SYSTEM
+    // BRAND CASHBACK CLAIM FUNCTION (Sends professional message to WhatsApp)
+    window.submitBrandClaim = () => {
+        const brand = document.getElementById('claimBrandSelect').value;
+        const oid = document.getElementById('claimBrandOrderId').value.trim();
+        
+        if(!oid) {
+            showToast("Kripya Order ID enter karein.");
+            return;
+        }
+        
+        const customerName = (typeof userData !== 'undefined' && userData) ? userData.name : "Customer";
+        const text = `🎉 *New Cashback Claim Request* 🎉\n\n👤 *Name:* ${customerName}\n🏢 *Brand:* ${brand}\n🆔 *Order ID:* ${oid}\n\nSir/Madam, maine is brand se order place kiya hai. Kripya mera order verify karein aur mere wallet mein cashback commission add karein. Thank you! ✨`;
+        const encodedText = encodeURIComponent(text);
+        const whatsappUrl = `https://wa.me/919451239239?text=${encodedText}`;
+        
+        window.open(whatsappUrl, '_blank');
+        document.getElementById('claimBrandOrderId').value = '';
+    };
+
     window.openCategoryView = (cat) => { 
         currentFilter = cat; 
         document.getElementById('feedCategoriesView').classList.add('hidden');
@@ -1495,7 +1529,6 @@
         document.getElementById('catViewTitle').innerText = cat === 'All' ? 'All Products' : cat + ' Collection';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        // Browser/Phone back button support
         if(!history.state || !history.state.categoryView) {
             history.pushState({ categoryView: true }, "");
         }
@@ -1503,7 +1536,7 @@
     };  
     
     window.closeCategoryViewManual = () => {
-        history.back(); // Automatically calls popstate listener
+        history.back(); 
     };
 
     window.closeCategoryView = (fromPopState = false) => {
@@ -1526,7 +1559,6 @@
         }
     };
 
-    // Quick Margin Add Feature
     window.quickAddPrice = (type, marginAmount) => {
         if(!selectedProduct) return;
         const base = Number(selectedProduct.basePrice || 0);
@@ -1539,23 +1571,6 @@
         }
     };
   
-    // BRAND CASHBACK CLAIM FUNCTION
-    window.submitBrandClaim = () => {
-        const oid = document.getElementById('claimBrandOrderId').value.trim();
-        if(!oid) {
-            showToast("Kripya Order ID enter karein.");
-            return;
-        }
-        
-        const customerName = (typeof userData !== 'undefined' && userData) ? userData.name : "Customer";
-        const text = `🎁 *Cashback Claim Request* 🎁\n\n👤 *Name:* ${customerName}\n🆔 *Order ID:* ${oid}\n\nKripya mera order verify karein aur commission wallet mein add karein.`;
-        const encodedText = encodeURIComponent(text);
-        const whatsappUrl = `https://wa.me/919451239239?text=${encodedText}`;
-        
-        window.open(whatsappUrl, '_blank');
-        document.getElementById('claimBrandOrderId').value = '';
-    };
-
     window.toggleAuthMode = (mode) => {  
         isSignupMode = mode === 'signup';  
         document.getElementById('signupFieldsGroup').classList.toggle('hidden', !isSignupMode);  
@@ -2048,6 +2063,15 @@
         }
     };
 
+    // Helper for Progress Bar
+    function getStatusProgress(status) {
+        if(status === 'delivered') return { w: '100%', c1: 'active', c2: 'active', c3: 'active' };
+        if(status === 'shipped') return { w: '50%', c1: 'active', c2: 'active', c3: '' };
+        if(status === 'confirmed') return { w: '0%', c1: 'active', c2: '', c3: '' };
+        if(status === 'cancelled' || status === 'returned') return { w: '100%', c1: 'error', c2: 'error', c3: 'error', err: true };
+        return { w: '0%', c1: '', c2: '', c3: '' }; // Pending
+    }
+
     function loadOrders() {  
         if(!currentUser) return; if(unsubOrders) unsubOrders();  
         unsubOrders = onSnapshot(query(collection(db, ORDERS_COL), where("resellerId", "==", currentUser.uid)), (snap) => {  
@@ -2062,11 +2086,17 @@
             const list = document.getElementById('ordersList');  
             const displayOrds = ords.filter(o => !o.isBonus);
             if(!displayOrds.length) { list.innerHTML = '<div class="bg-white p-8 rounded-lg shadow-sm text-center border border-gray-100"><i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i><h3 class="font-bold text-gray-800">No Orders Yet</h3></div>'; return; }  
-            list.innerHTML = displayOrds.map(o => `  
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3">  
+            
+            list.innerHTML = displayOrds.map(o => {
+                const prog = getStatusProgress(o.status || 'pending');
+                const errCls = prog.err ? 'step-line-error' : '';
+                const errTxt = prog.err ? (o.status==='cancelled'?'Cancelled':'Returned') : '';
+
+                return `  
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 mb-3">  
                     <div class="flex justify-between items-start mb-2 border-b border-gray-100 pb-2">  
                         <div><span class="text-[10px] text-gray-500 block mb-0.5">Order ID: ${escapeHtml(o.orderId||o.id)}</span></div>  
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-700">${escapeHtml(o.status||'pending')}</span>  
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${prog.err ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-700'}">${escapeHtml(o.status||'pending')}</span>  
                     </div>  
                     <div class="flex gap-3 mb-3">
                         <img src="${escapeHtml(o.productImage)}" class="w-14 h-14 rounded object-contain bg-white border border-gray-100">
@@ -2075,12 +2105,33 @@
                             <p class="text-xs text-gray-500">Qty: ${o.quantity||1}${o.size?' • Sz: '+o.size:''} • <span class="text-primary font-semibold">${escapeHtml(o.selectedVariant||'')}</span></p>
                         </div>
                     </div>  
-                    <div class="bg-gray-50 rounded p-2 flex justify-between text-center items-center">
+                    <div class="bg-gray-50 rounded p-2 mb-3 flex justify-between text-center items-center">
                         <p class="text-[10px] text-gray-600">Cust. Paid: <span class="font-bold text-gray-900">₹${money(o.sellingPrice*(o.quantity||1))}</span></p>
                         <p class="text-[10px] text-gray-600">Profit: <span class="font-bold text-green-600 text-sm">₹${money(o.profit)}</span></p>
-                    </div>  
+                    </div> 
+                    
+                    <!-- FLIPKART STYLE PROGRESS BAR[span_1](start_span)[span_1](end_span) -->
+                    <div class="relative px-2 pt-2 pb-1">
+                        <div class="step-line-bg"></div>
+                        <div class="step-line-fill ${errCls}" style="width: ${prog.w}"></div>
+                        <div class="flex justify-between relative z-10">
+                            <div class="flex flex-col items-center">
+                                <div class="step-circle ${prog.c1}"><i class="fa-solid ${prog.err?'fa-xmark':'fa-check'}"></i></div>
+                                <span class="text-[9px] mt-1.5 font-semibold ${prog.c1?'text-gray-800':'text-gray-400'}">${prog.err?errTxt:'Confirmed'}</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="step-circle ${prog.c2}"><i class="fa-solid ${prog.err?'fa-xmark':'fa-check'}"></i></div>
+                                <span class="text-[9px] mt-1.5 font-semibold ${prog.c2?'text-gray-800':'text-gray-400'}">${prog.err?errTxt:'Shipped'}</span>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="step-circle ${prog.c3}"><i class="fa-solid ${prog.err?'fa-xmark':'fa-check'}"></i></div>
+                                <span class="text-[9px] mt-1.5 font-semibold ${prog.c3?'text-gray-800':'text-gray-400'}">${prog.err?errTxt:'Delivery'}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>  
-            `).join('');  
+                `;
+            }).join('');  
         });  
     }  
 
@@ -2106,7 +2157,7 @@
             let stColor = 'text-amber-500', stIcon = '⏳', stText = 'Pending';
             if(o.status === 'delivered') { stColor = 'text-green-500'; stIcon = '✅'; stText = 'Confirmed'; } 
             else if(o.status === 'cancelled' || o.status === 'returned') { stColor = 'text-red-500'; stIcon = '❌'; stText = 'Failed'; }
-            return `<div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200"><div class="flex justify-between items-start mb-1"><div><p class="text-[10px] text-gray-500">${o.isBonus ? 'Reward' : 'Order: ' + escapeHtml(o.orderId)}</p><p class="font-medium text-sm text-gray-800 line-clamp-1">${escapeHtml(o.productName)}</p></div><div class="text-right"><p class="font-bold text-base ${stColor}">₹${money(o.profit)}</p></div></div><div class="pt-2 mt-2 border-t border-gray-100 flex justify-between items-center"><p class="text-xs text-gray-500">${o.isBonus?'🎉':'Var:'} ${escapeHtml(o.selectedVariant||'')}</p><p class="text-[10px] font-bold ${stColor}">${stIcon} ${stText}</p></div></div>`;
+            return `<div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200"><div class="flex justify-between items-start mb-1"><div><p class="text-[10px] text-gray-500">${o.isBonus ? 'Reward / Cashback' : 'Order: ' + escapeHtml(o.orderId)}</p><p class="font-medium text-sm text-gray-800 line-clamp-1">${escapeHtml(o.productName)}</p></div><div class="text-right"><p class="font-bold text-base ${stColor}">₹${money(o.profit)}</p></div></div><div class="pt-2 mt-2 border-t border-gray-100 flex justify-between items-center"><p class="text-xs text-gray-500">${o.isBonus?'🎉':'Var:'} ${escapeHtml(o.selectedVariant||'')}</p><p class="text-[10px] font-bold ${stColor}">${stIcon} ${stText}</p></div></div>`;
         }).join('') || '<div class="text-center py-8 text-gray-400 text-sm">No earnings found.</div>';
 
         const pList = document.getElementById('phPayoutsList');
@@ -2352,7 +2403,6 @@
         const sizesRaw = document.getElementById('pSizes').value;
         const sizesArr = sizesRaw ? sizesRaw.split(',').map(s=>s.trim()).filter(Boolean) : [];
 
-        // Updated for 20 Images
         const imgUrls = [];
         for (let i = 1; i <= 20; i++) {
             const val = document.getElementById('pImg' + i).value;
@@ -2401,7 +2451,6 @@
         }  
     };  
     
-    // Product Edit Logic
     window.editAdminProduct = (id) => {  
         const p = window.allProducts.find(x => x.id === id); 
         if(!p) return;  
@@ -2430,7 +2479,6 @@
         document.getElementById('adminProductsSection').scrollIntoView({behavior:'smooth'});  
     };  
 
-    // Product Delete Logic
     window.deleteAdminProduct = async (id) => { 
         if(!confirm("⚠️ Are you sure you want to permanently delete this product?")) return;
         try {
@@ -2441,6 +2489,20 @@
             alert("❌ Error deleting product: " + e.message);
         }
     };  
+
+    // REORDER PRODUCT FUNCTION (Up / Down Array Swap via Timestamp)
+    window.moveAdminProduct = async (index, dir) => {
+        if(index + dir < 0 || index + dir >= window.allProducts.length) return;
+        const p1 = window.allProducts[index];
+        const p2 = window.allProducts[index + dir];
+        
+        try {
+            const tempTime = p1.createdAt;
+            await updateDoc(doc(db, PRODUCTS_COL, p1.id), { createdAt: p2.createdAt });
+            await updateDoc(doc(db, PRODUCTS_COL, p2.id), { createdAt: tempTime });
+            window.refreshAdmin();
+        } catch(e) { showToast("Error moving product."); }
+    };
 
     window.resetProductForm = () => { 
         document.getElementById('editProductId').value = ''; 
@@ -2474,7 +2536,6 @@
         window.renderAdminUsers(); window.renderAdminProducts(); window.renderAdminOrders(); window.renderAdminWithdrawals(); window.renderAdminCategories(); window.renderAdminBanners(); window.renderAdminBrands();
     };  
 
-    // Categories Logic
     window.renderAdminCategories = () => {
         const t = document.getElementById('adminCategoriesTable');
         t.innerHTML = window.allCategories.length ? window.allCategories.map((cat, i) => {
@@ -2586,13 +2647,40 @@
         } catch(e) { } 
     };
 
+    // ADMIN USER/RESELLER & DIRECT CASHBACK SENDING LOGIC
     window.renderAdminUsers = () => {  
         const q = document.getElementById('adminUserSearch').value.toLowerCase();  
         const f = window.adminUsers.filter(u => u.role !== 'admin' && `${u.name} ${u.phone} ${u.email}`.toLowerCase().includes(q));  
         const t = document.getElementById('adminUsersTable');  
-        t.innerHTML = f.length ? f.map(u => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4 font-black text-[#00e676]">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end">${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';  
+        t.innerHTML = f.length ? f.map(u => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4 font-black text-[#00e676]">₹${money(u.walletBalance)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end items-center"><button onclick="sendAdminCashback('${u.id}')" class="bg-blue-600/20 border border-blue-600/50 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold mr-2 hover:bg-blue-600 hover:text-white transition" title="Send Direct Cashback">🎁 Reward</button>${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join('') : '<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';  
     };  
     
+    // DIRECT CASHBACK SYSTEM FOR EARNKARO / BRANDS
+    window.sendAdminCashback = async (userId) => {
+         const user = window.adminUsers.find(u => u.id === userId);
+         if(!user) return;
+         
+         const amt = prompt(`Enter Cashback Amount (in ₹) for ${user.name}:`);
+         if(!amt || isNaN(amt) || Number(amt) <= 0) return;
+         
+         const reason = prompt("Enter Note / Description (e.g. Flipkart Order #123 Cashback):", "Brand Cashback Bonus");
+         if(!reason) return;
+
+         try {
+             const batch = writeBatch(db);
+             const uRef = doc(db, USERS_COL, userId);
+             batch.update(uRef, { walletBalance: increment(Number(amt)), totalEarnings: increment(Number(amt)), lifetimeEarnings: increment(Number(amt)), updatedAt: serverTimestamp() });
+
+             const bonusId = "CB" + Math.floor(100000 + Math.random() * 900000);
+             const oRef = doc(db, ORDERS_COL, bonusId);
+             batch.set(oRef, { orderId: bonusId, productName: reason, profit: Number(amt), status: "delivered", resellerId: userId, selectedVariant: "Cashback", createdAt: serverTimestamp(), isBonus: true });
+
+             await batch.commit();
+             showToast("✅ Cashback Sent Successfully!");
+             window.refreshAdmin();
+         } catch(e) { showToast("Error sending cashback: " + e.message); }
+    }
+
     window.setAdminUserStatus = async (id, st) => { 
         const user = window.adminUsers.find(u => u.id === id); if(!user) return;
         try {
@@ -2607,7 +2695,6 @@
         } catch(e) { console.error(e); showToast("Error updating status: " + e.message); }
     };  
 
-    // Updated for 20 images
     function extractImageUrls(text) { if(!text) return []; const matches = text.match(/https?:\/\/[^\s,]+/gi); if(!matches) return []; return [...new Set(matches.map(url => url.trim().replace(/[),;]+$/g, "")))].slice(0, 20); }
     
     window.processAdminImageUrls = () => {
@@ -2629,7 +2716,7 @@
         const q = document.getElementById('adminProdSearch').value.toLowerCase();  
         const f = window.allProducts.filter(p => `${p.title} ${p.category}`.toLowerCase().includes(q));  
         const t = document.getElementById('adminProductsTable');  
-        t.innerHTML = f.length ? f.map(p => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-contain bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right"><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
+        t.innerHTML = f.length ? f.map((p, i) => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-contain bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right flex items-center justify-end gap-1"><button onclick="moveAdminProduct(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button><button onclick="moveAdminProduct(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-2" ${i===f.length-1?'disabled style="opacity:0.3"':''}>⬇️</button><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-1">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
     };  
   
     window.renderAdminOrders = () => {  
@@ -2687,7 +2774,6 @@
         let uploadedUrls = [];
         let limitReached = false;
         
-        // Helper: Convert File to Base64 to avoid CORS/FormData MIME issues
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -2721,7 +2807,6 @@
             }
         }
         
-        // Smart Fallback if API Limit is Reached
         if(limitReached) {
             const newKey = prompt("⚠️ ImgBB API Limit Reached!\n\nThis happens because you are using a shared default API key.\n\nTo fix this 100% permanently:\n1. Go to https://api.imgbb.com/\n2. Login & copy your FREE API Key.\n3. Paste it below to save it forever:", "");
             
