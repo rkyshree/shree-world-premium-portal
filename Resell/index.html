@@ -1406,7 +1406,7 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    function renderExploreBrandsUI() {
+        function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
         const claimSelect = document.getElementById("claimBrandSelect");
@@ -1421,8 +1421,29 @@
         }
         container.classList.remove('hidden');
 
-        // Share button precisely below brand name
+        // 24 Hour Timer Logic
+        const now = Date.now();
+        let shareData = JSON.parse(localStorage.getItem('shraynex_share_timer') || '{}');
+
         grid.innerHTML = window.exploreBrands.map((b, i) => {
+            let btnHtml = '';
+            let lastShared = shareData[b.title] || 0;
+            let timeLeft = (lastShared + 86400000) - now; // 86400000 ms = 24 Hours
+
+            if (timeLeft > 0) {
+                // Time remaining - Show Timer Button
+                let hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                let minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                btnHtml = `<button disabled class="text-gray-500 bg-gray-200 px-2 py-1 rounded-full text-[9px] font-bold w-[80%] mx-auto flex items-center justify-center gap-1 cursor-not-allowed border border-gray-300">
+                    <i class="fa-solid fa-clock text-[9px]"></i> <span>${hours}h ${minutes}m</span>
+                </button>`;
+            } else {
+                // 24 hours passed - Show Active Share Button
+                btnHtml = `<button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto">
+                    <i class="fa-solid fa-share-nodes text-[9px]"></i> <span class="text-[9px] font-bold">Share</span>
+                </button>`;
+            }
+
             return `
             <div class="flex flex-col items-center gap-1.5 relative hover:scale-105 transition-transform duration-200">
                 <a href="${escapeHtml(b.link)}" target="_blank" class="relative w-full aspect-square rounded-[18px] bg-white shadow-sm border border-gray-200 flex items-center justify-center p-2.5 overflow-visible">
@@ -1431,13 +1452,12 @@
                 </a>
                 <div class="flex flex-col items-center w-full gap-1 mt-0.5">
                     <span class="text-[10px] font-semibold text-gray-700 truncate w-full text-center">${escapeHtml(b.title)}</span>
-                    <button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto">
-                        <i class="fa-solid fa-share-nodes text-[9px]"></i> <span class="text-[9px] font-bold">Share</span>
-                    </button>
+                    ${btnHtml}
                 </div>
             </div>`;
         }).join('');
     }
+
 
     window.shareExploreBrand = async (index) => {
         const b = window.exploreBrands[index];
@@ -1454,26 +1474,31 @@
         } catch(e) { console.warn("Share cancelled/failed", e); }
     };
 
-    window.processShareCommission = async (brandTitle) => {
+        window.processShareCommission = async (brandTitle) => {
         if(!currentUser || !userData || userData.status !== 'approved') return;
         
-        const todayStr = new Date().toDateString();
-        let shareData = JSON.parse(localStorage.getItem('shraynex_shares') || '{}');
-        if(shareData.date !== todayStr) { shareData = { date: todayStr, count: 0, brands: [] }; }
+        const now = Date.now();
+        let shareData = JSON.parse(localStorage.getItem('shraynex_share_timer') || '{}');
+        let lastShared = shareData[brandTitle] || 0;
 
-        if(shareData.brands.includes(brandTitle)) return showToast("You already earned commission for sharing this brand today!");
-        if(shareData.count >= 5) return showToast("Daily share bonus limit (5) reached. Try again tomorrow!");
+        // Check if 24 hours have passed
+        if (now - lastShared < 86400000) {
+            return showToast("Please wait 24 hours to share this brand again!");
+        }
 
-        shareData.count += 1;
-        shareData.brands.push(brandTitle);
-        localStorage.setItem('shraynex_shares', JSON.stringify(shareData));
+        // Save current timestamp to local storage
+        shareData[brandTitle] = now;
+        localStorage.setItem('shraynex_share_timer', JSON.stringify(shareData));
+        
+        // Refresh UI to show the timer instantly
+        renderExploreBrandsUI();
 
         const shareId = "SH" + Math.floor(100000 + Math.random() * 900000);
         try {
             await setDoc(doc(db, ORDERS_COL, shareId), {
                 orderId: shareId,
                 productName: "Share Bonus: " + brandTitle,
-                profit: 0.05,
+                profit: 0.10, // Changed from 0.05 to 0.10
                 status: "pending", 
                 resellerId: currentUser.uid,
                 resellerName: userData.name || "",
@@ -1481,7 +1506,7 @@
                 isShareBonus: true,
                 paidToWallet: false
             });
-            showToast("₹0.05 Share Bonus Added to Pending Wallet!");
+            showToast("₹0.10 Share Bonus Added to Pending Wallet!");
         } catch(e) { console.error("Error processing share comm:", e); }
     };
 
