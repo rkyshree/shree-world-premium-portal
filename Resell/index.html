@@ -1117,7 +1117,7 @@
                 <p>SHRAYNEX par sabhi products par delivery bilkul FREE hai. Customer se koi extra delivery charge nahi liya jayega.</p>
                 <ul class="list-disc pl-5 space-y-1.5 font-medium text-sm">
                     <li>Order confirm hone ke baad <b>4 se 7 din</b> ke andar delivery ho jati hai.</li>
-                    <li>Tracking link SMS ke through customer ko mil jayega.</li>
+                    <li>Tracking link SMS ke through customer ko milেজyega.</li>
                 </ul>
             </div>`;
         }
@@ -1183,6 +1183,40 @@
     
     let tempOrderData = null;
     let carouselInterval = null;
+
+    let brandTimerInterval = null;
+    window.startLiveTimers = () => {
+        if(brandTimerInterval) clearInterval(brandTimerInterval);
+        
+        const updateTimers = () => {
+            const timerElements = document.querySelectorAll('.brand-timer');
+            let allDone = true;
+            const now = Date.now();
+            
+            timerElements.forEach(el => {
+                let target = parseInt(el.getAttribute('data-target'));
+                let diff = target - now;
+                
+                if(diff > 0) {
+                    allDone = false;
+                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+                    let m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+                    let s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+                    el.innerHTML = `${h}<span class="text-[7px] font-bold text-red-400 ml-[1px]">h</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${m}<span class="text-[7px] font-bold text-red-400 ml-[1px]">m</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${s}<span class="text-[7px] font-bold text-red-400 ml-[1px]">s</span>`;
+                } else {
+                    if(el.innerText !== "Ready!") {
+                        el.innerText = "Ready!";
+                        setTimeout(renderExploreBrandsUI, 1000); 
+                    }
+                }
+            });
+            
+            if(allDone && timerElements.length > 0) clearInterval(brandTimerInterval);
+        };
+        
+        updateTimers(); 
+        brandTimerInterval = setInterval(updateTimers, 1000); 
+    };
 
     window.getYouTubeId = (url) => {
         if(!url) return null;
@@ -1407,42 +1441,6 @@
         if(s) s.innerHTML = window.allCategories.map(cat => `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`).join('');  
     }  
 
-    // ------------- LIVE TIMER & SHARE LOGIC -------------
-    let brandTimerInterval = null;
-
-    window.startLiveTimers = () => {
-        if(brandTimerInterval) clearInterval(brandTimerInterval);
-        
-        const updateTimers = () => {
-            const timerElements = document.querySelectorAll('.brand-timer');
-            let allDone = true;
-            const now = Date.now();
-            
-            timerElements.forEach(el => {
-                let target = parseInt(el.getAttribute('data-target'));
-                let diff = target - now;
-                
-                if(diff > 0) {
-                    allDone = false;
-                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-                    let m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
-                    let s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
-                    el.innerHTML = `${h}<span class="text-[8px] font-medium text-red-400">h</span> : ${m}<span class="text-[8px] font-medium text-red-400">m</span> : ${s}<span class="text-[8px] font-medium text-red-400">s</span>`;
-                } else {
-                    if(el.innerText !== "Ready!") {
-                        el.innerText = "Ready!";
-                        setTimeout(renderExploreBrandsUI, 1000); 
-                    }
-                }
-            });
-            
-            if(allDone && timerElements.length > 0) clearInterval(brandTimerInterval);
-        };
-        
-        updateTimers(); 
-        brandTimerInterval = setInterval(updateTimers, 1000); 
-    };
-
     function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
@@ -1468,9 +1466,9 @@
             let timeLeft = targetTime - now;
 
             if (timeLeft > 0) {
-                btnHtml = `<button disabled class="text-red-600 bg-red-50 py-1.5 rounded-md text-[10px] font-black w-[90%] mx-auto flex items-center justify-center gap-1 cursor-not-allowed border border-red-200 shadow-sm mt-0.5">
-                    <i class="fa-regular fa-clock fa-spin-pulse text-red-500"></i> 
-                    <span class="brand-timer tracking-wider font-mono" data-target="${targetTime}">--:--:--</span>
+                btnHtml = `<button disabled class="text-red-600 bg-red-50 py-1 px-1 rounded w-[95%] mx-auto flex items-center justify-center gap-[3px] cursor-not-allowed border border-red-200 mt-0.5 whitespace-nowrap overflow-hidden">
+                    <i class="fa-regular fa-clock fa-spin-pulse text-[9px] opacity-90"></i> 
+                    <span class="brand-timer text-[10px] font-bold font-mono tracking-tight" data-target="${targetTime}">--:--:--</span>
                 </button>`;
             } else {
                 btnHtml = `<button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto mt-0.5">
@@ -2267,7 +2265,6 @@
         } catch(e) { showToast(e.message); } finally { btn.innerText = "Submit Request"; btn.disabled = false; }  
     };  
 
-    // ------------- ADMIN LOGIN & PANEL LOGIC -------------
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
     
     window.handleAdminLogin = async (e) => {  
@@ -2328,7 +2325,6 @@
         window.renderAdminClaims();
     };  
 
-    // ------------- ADMIN CLAIMS & SHARES PANEL -------------
     window.renderAdminClaims = () => {
         const q = document.getElementById('adminClaimSearch')?.value.toLowerCase() || '';
         const f = window.adminOrders.filter(o => (o.isBrandClaim || o.isShareBonus) && `${o.productName} ${o.resellerName}`.toLowerCase().includes(q));
@@ -2397,7 +2393,6 @@
         }
     };
 
-    // ------------- ADMIN CATEGORIES, BANNERS, BRANDS, USERS, PRODUCTS LOGIC -------------
     window.renderAdminBanners = () => {
         const t = document.getElementById('adminBannersTable');
         t.innerHTML = window.siteBanners.length ? window.siteBanners.map((b, i) => `
