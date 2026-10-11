@@ -1407,6 +1407,42 @@
     }  
 
         function renderExploreBrandsUI() {
+            let brandTimerInterval = null;
+
+    window.startLiveTimers = () => {
+        if(brandTimerInterval) clearInterval(brandTimerInterval);
+        
+        const updateTimers = () => {
+            const timerElements = document.querySelectorAll('.brand-timer');
+            let allDone = true;
+            const now = Date.now();
+            
+            timerElements.forEach(el => {
+                let target = parseInt(el.getAttribute('data-target'));
+                let diff = target - now;
+                
+                if(diff > 0) {
+                    allDone = false;
+                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+                    let m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+                    let s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+                    el.innerHTML = `${h}<span class="text-[8px] font-medium text-red-400">h</span> : ${m}<span class="text-[8px] font-medium text-red-400">m</span> : ${s}<span class="text-[8px] font-medium text-red-400">s</span>`;
+                } else {
+                    if(el.innerText !== "Ready!") {
+                        el.innerText = "Ready!";
+                        setTimeout(renderExploreBrandsUI, 1000); // 24 घंटे पूरे होते ही अपने आप हरा Share बटन आ जाएगा
+                    }
+                }
+            });
+            
+            if(allDone && timerElements.length > 0) clearInterval(brandTimerInterval);
+        };
+        
+        updateTimers(); 
+        brandTimerInterval = setInterval(updateTimers, 1000); // हर 1 सेकंड में अपडेट करेगा
+    };
+
+    function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
         const claimSelect = document.getElementById("claimBrandSelect");
@@ -1421,25 +1457,24 @@
         }
         container.classList.remove('hidden');
 
-        // 24 Hour Timer Logic
         const now = Date.now();
         let shareData = JSON.parse(localStorage.getItem('shraynex_share_timer') || '{}');
 
         grid.innerHTML = window.exploreBrands.map((b, i) => {
             let btnHtml = '';
             let lastShared = shareData[b.title] || 0;
-            let timeLeft = (lastShared + 86400000) - now; // 86400000 ms = 24 Hours
+            let targetTime = lastShared + 86400000; // 24 Hours later
+            let timeLeft = targetTime - now;
 
             if (timeLeft > 0) {
-                // Time remaining - Show Timer Button
-                let hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-                let minutes = Math.floor((timeLeft / 1000 / 60) % 60);
-                btnHtml = `<button disabled class="text-gray-500 bg-gray-200 px-2 py-1 rounded-full text-[9px] font-bold w-[80%] mx-auto flex items-center justify-center gap-1 cursor-not-allowed border border-gray-300">
-                    <i class="fa-solid fa-clock text-[9px]"></i> <span>${hours}h ${minutes}m</span>
+                // Flipkart Style Live Timer (Red, Bold, Monospace)
+                btnHtml = `<button disabled class="text-red-600 bg-red-50 py-1.5 rounded-md text-[10px] font-black w-[90%] mx-auto flex items-center justify-center gap-1 cursor-not-allowed border border-red-200 shadow-sm mt-0.5">
+                    <i class="fa-regular fa-clock fa-spin-pulse text-red-500"></i> 
+                    <span class="brand-timer tracking-wider font-mono" data-target="${targetTime}">--:--:--</span>
                 </button>`;
             } else {
-                // 24 hours passed - Show Active Share Button
-                btnHtml = `<button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto">
+                // Active Share Button
+                btnHtml = `<button onclick="shareExploreBrand('${i}')" class="text-green-600 bg-green-50 px-2 py-1 rounded-full hover:bg-green-100 transition shadow-sm border border-green-200 flex items-center justify-center gap-1 w-[80%] mx-auto mt-0.5">
                     <i class="fa-solid fa-share-nodes text-[9px]"></i> <span class="text-[9px] font-bold">Share</span>
                 </button>`;
             }
@@ -1450,13 +1485,17 @@
                    <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}">
                    ${b.badge ? `<div class="absolute -top-1.5 -left-1.5 bg-[#00e676] text-black text-[9px] font-bold px-1.5 py-[2px] rounded-md shadow-sm z-10 whitespace-nowrap">${escapeHtml(b.badge)}</div>` : ''}
                 </a>
-                <div class="flex flex-col items-center w-full gap-1 mt-0.5">
+                <div class="flex flex-col items-center w-full gap-0.5 mt-0.5">
                     <span class="text-[10px] font-semibold text-gray-700 truncate w-full text-center">${escapeHtml(b.title)}</span>
                     ${btnHtml}
                 </div>
             </div>`;
         }).join('');
+        
+        // Timer चालू करें
+        startLiveTimers();
     }
+
 
 
     window.shareExploreBrand = async (index) => {
