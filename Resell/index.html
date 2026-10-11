@@ -1442,6 +1442,41 @@
         brandTimerInterval = setInterval(updateTimers, 1000); // हर 1 सेकंड में अपडेट करेगा
     };
 
+        let brandTimerInterval = null;
+
+    window.startLiveTimers = () => {
+        if(brandTimerInterval) clearInterval(brandTimerInterval);
+        
+        const updateTimers = () => {
+            const timerElements = document.querySelectorAll('.brand-timer');
+            let allDone = true;
+            const now = Date.now();
+            
+            timerElements.forEach(el => {
+                let target = parseInt(el.getAttribute('data-target'));
+                let diff = target - now;
+                
+                if(diff > 0) {
+                    allDone = false;
+                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
+                    let m = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
+                    let s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+                    el.innerHTML = `${h}<span class="text-[8px] font-medium text-red-400">h</span> : ${m}<span class="text-[8px] font-medium text-red-400">m</span> : ${s}<span class="text-[8px] font-medium text-red-400">s</span>`;
+                } else {
+                    if(el.innerText !== "Ready!") {
+                        el.innerText = "Ready!";
+                        setTimeout(renderExploreBrandsUI, 1000); // 24 घंटे पूरे होते ही अपने आप हरा Share बटन आ जाएगा
+                    }
+                }
+            });
+            
+            if(allDone && timerElements.length > 0) clearInterval(brandTimerInterval);
+        };
+        
+        updateTimers(); 
+        brandTimerInterval = setInterval(updateTimers, 1000); // हर 1 सेकंड में अपडेट करेगा
+    };
+
     function renderExploreBrandsUI() {
         const grid = document.getElementById("dynamicBrandsGrid");
         const container = document.getElementById("exploreBrandsView");
@@ -1495,6 +1530,7 @@
         // Timer चालू करें
         startLiveTimers();
     }
+
 
 
 
