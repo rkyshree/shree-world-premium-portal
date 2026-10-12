@@ -113,7 +113,7 @@
         .step-line-fill { position: absolute; top: 12px; left: 12px; height: 3px; background: #22c55e; z-index: 6; transition: width 0.3s ease; }
         .step-line-error { background: #ef4444; }
 
-        /* NEW CENTER TOAST NOTIFICATIONS (Professional Circles) */
+        /* CENTER TOAST NOTIFICATIONS */
         #centerToastContainer {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 9999; pointer-events: none; display: flex; flex-direction: column; gap: 10px; align-items: center;
@@ -129,12 +129,8 @@
         .center-toast.hide {
             animation: toastHide 0.3s ease-in forwards;
         }
-        @keyframes toastPop {
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes toastHide {
-            to { opacity: 0; transform: scale(0.8); }
-        }
+        @keyframes toastPop { to { opacity: 1; transform: scale(1); } }
+        @keyframes toastHide { to { opacity: 0; transform: scale(0.8); } }
         .toast-icon-circle {
             width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
             color: white; font-size: 14px;
@@ -149,6 +145,7 @@
 <!-- CENTER TOAST CONTAINER -->
 <div id="centerToastContainer"></div>
 
+<!-- SPLASH SCREEN -->
 <div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-200 max-w-[480px] mx-auto overflow-hidden">
     <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <i class="fa-solid fa-store absolute text-5xl text-primary bg-icon" style="top: 15%; left: 15%; animation-duration: 6s;"></i>
@@ -208,7 +205,7 @@
 
 <div class="app-container">  
 
-<!-- Old Landing Page Removed. Directly Show Feed -->
+<!-- APP DIRECT FEED INTERFACE -->
 <section id="appPage" class="page active bg-meesho-gray">  
     <header class="px-4 py-3 flex items-center justify-between sticky top-0 bg-white z-20 shadow-sm">  
         <div class="flex items-center gap-3">  
@@ -277,7 +274,6 @@
             </div>
         </div>  
 
-        <!-- Orders Tab -->
         <div id="tabOrders" class="tab-content hidden">  
             <div class="bg-white p-4 shadow-sm mb-2 sticky top-0 z-10">
                 <h2 class="text-lg font-black text-gray-900">My Orders</h2>  
@@ -287,7 +283,6 @@
             </div>  
         </div>  
 
-        <!-- Profile Tab -->
         <div id="tabProfile" class="tab-content hidden">  
             <div class="bg-white p-5 shadow-sm mb-2 flex items-center gap-4">
                 <div id="profileAvatarBig" class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl">U</div>  
@@ -401,7 +396,7 @@
                 </div>
             </div>
 
-            <!-- Explore Brands Terms -->
+            <!-- Affiliate Terms -->
             <div class="p-5 bg-blue-50/50 border-y border-blue-100">
                 <h3 class="text-sm font-black text-gray-900 mb-3"><i class="fa-solid fa-tags text-blue-500"></i> Brands & Affiliate Commission Policy</h3>
                 <ul class="text-[10px] text-gray-600 space-y-2 font-medium leading-relaxed list-disc pl-4">
@@ -792,7 +787,7 @@
     </div>  
 </div>  
 
-<div id="policyModal" class="bottom-sheet">  
+<div id="policyModal" class="bottom-sheet z-[300]">  
     <div class="bottom-sheet-content h-[85vh]">  
         <div class="drag-handle"></div>
         <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">  
@@ -1089,10 +1084,9 @@
         setTimeout(() => {
             toast.classList.add('hide');
             setTimeout(() => { toast.remove(); }, 300);
-        }, 2000);
+        }, 1500); // Popup stays for 1.5 seconds
     };
 
-    // Override generic showToast slightly if needed, but keeping it for generic errors.
     window.showToast = (msg) => {  
         const t = document.getElementById('toast'), tm = document.getElementById('toastMsg');  
         tm.innerHTML = `<i class="fa-solid fa-circle-check text-[#4ade80] shrink-0 text-lg"></i><span class="flex-1">${msg}</span>`;  
@@ -1147,7 +1141,6 @@
         }
     };
 
-    // Helper for Auth Check
     window.checkAuthAndOpenModal = (modalId) => {
         if (!currentUser && !window.isAdminMode) {
             openModal('authModal');
@@ -1156,6 +1149,146 @@
         if (modalId) openModal(modalId);
         return true;
     };
+
+    const catalogHighlights = [
+        { title: "Flipkart", image: "https://i.ibb.co/m5jSSm6y/file-00000000213c82069585302fe0e6b816.png", link: "https://fktr.in/Lpt3E44" },
+        { title: "Myntra", image: "https://i.ibb.co/JFqJMJSv/file-0000000060308211bceb72f6a854dc6d.png", link: "https://myntr.it/ecaVkWR" },
+        { title: "Ajio", image: "https://i.ibb.co/JwHV5hGg/file-00000000c5048208b51a67323cbf9e21.png", link: "https://bitli.in/O828Gkb" },
+        { title: "Xyxx", image: "https://i.ibb.co/M56YYJPP/file-0000000044888208a51d63bc1f15b322.png", link: "https://bitli.in/IaBa0vu" },
+        { title: "Earn💱", image: "https://i.ibb.co/Z1cYJtqn/file-0000000022ec81fa85a12ae668406b2c.png", link: "https://www.goldenteam.in/?hkg=QklPeCszWUd3WVBNS0FOYlN1UTFhQT09" }
+    ];
+
+    function renderCatalogHighlights() {
+        const container = document.getElementById('catalogHighlightsContainer');
+        if(!container) return;
+        container.innerHTML = `<div class="flex overflow-x-auto hide-scrollbar items-start w-full gap-4 snap-x">
+            ${catalogHighlights.map(item => `
+                <a href="${item.link}" target="_blank" class="flex flex-col items-center gap-1.5 shrink-0 w-[65px] cursor-pointer group snap-start">
+                    <div class="w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-primary to-amber-400 group-hover:scale-105 transition transform shadow-sm"><img src="${item.image}" class="w-full h-full rounded-full border-[2px] border-white object-cover bg-gray-100" alt="${item.title}"></div>
+                    <span class="text-[10px] font-bold text-gray-700 text-center w-full truncate px-1">${item.title}</span>
+                </a>
+            `).join('')}
+        </div>`;
+    }
+    renderCatalogHighlights();
+
+    const policies = {
+        about: { title: "About SHRAYNEX", content: `<b>Welcome to SHRAYNEX</b>\n\nSHRAYNEX is India's premium digital reselling platform designed to help individuals start their own online business with absolutely Zero Investment.\n\n<b>Our Mission:</b>\nTo empower housewives, students, and aspiring entrepreneurs to achieve financial independence by providing a seamless platform for product discovery, sharing, and ordering.\n\n<b>Contact Information:</b>\nCompany Name: SHRAYNEX\nEmail: shraynexofficial@gmail.com\nHelpline / WhatsApp: +91 9451239239\nLocation: Uttar Pradesh, India` },
+        privacy: { title: "Privacy Policy", content: `<b>Privacy Policy – SHRAYNEX</b>\n\nYour privacy is incredibly important to us. This policy explains how we collect and manage your data.\n\n<b>Data Collection:</b>\nWe collect your Name, Phone Number, Email, and Address solely for the purpose of account creation, order delivery, and margin payments.\n\n<b>Data Usage:</b>\nYour data is used strictly for processing your orders, providing customer support, and notifying you about important updates. We do not sell your personal data to third parties.\n\nFor privacy concerns, contact: <b>shraynexofficial@gmail.com</b>` },
+        terms: { title: "Terms of Service", content: `<b>Terms & Conditions</b>\n\nBy joining SHRAYNEX, you agree to the following terms:\n\n1. <b>Account Approval:</b> All new reseller accounts must be verified and approved by the admin before placing orders.\n2. <b>Fair Practices:</b> Resellers must not engage in fraudulent activities or place fake COD orders. Doing so will lead to permanent account suspension and freezing of margins.\n3. <b>Margin Payments:</b> Your profit margin will reflect as 'Available Balance' 2 days after the successful delivery of a product (once the return window is closed).\n4. <b>Minimum Withdrawal:</b> The minimum withdrawal limit is ₹100.\n\nHelpline: +91 9451239239` },
+        return: { title: "Return & Refund Policy", content: `<b>Return & Refund Policy</b>\n\nWe strive for 100% satisfaction. Please review our return policies carefully:\n\n<b>Eligibility for Returns:</b>\n- 2 days return/exchange available only for manufacturing defect.\n- Items must be unused, unwashed, and in original packaging with tags intact.\n- Valid reasons for return: Damaged product, wrong item received, or size issues.\n\n<b>How to Initiate a Return:</b>\nContact our helpline at <b>9451239239</b> or email us at <b>shraynexofficial@gmail.com</b> with the Order ID and photos of the defective product.` }
+    };
+
+    window.openPolicy = (type) => { 
+        const p = policies[type]; if(!p) return; 
+        document.getElementById("policyTitle").innerText = p.title; 
+        document.getElementById("policyContent").innerHTML = p.content.replace(/\n/g, '<br>'); openModal("policyModal"); 
+    };
+
+    window.openInfoModal = (type, codStatus = 'available') => {
+        const titleEl = document.getElementById('infoModalTitle');
+        const bodyEl = document.getElementById('infoModalBody');
+        
+        if (type === 'cod') {
+            titleEl.innerText = "Cash On Delivery (COD)";
+            if (codStatus === 'not_available') {
+                bodyEl.innerHTML = `<div class="bg-red-50 text-red-800 p-4 rounded-lg border border-red-200">
+                    <b class="text-red-900 text-base mb-2 block"><i class="fa-solid fa-circle-xmark"></i> COD Not Available</b>
+                    Cash on delivery (कैश ऑन डिलीवरी) इस प्रोडक्ट पर उपलब्ध नहीं है। कृपया आर्डर करते समय ऑनलाइन पेमेंट (Online Payment) का विकल्प चुनें।
+                </div>`;
+            } else {
+                bodyEl.innerHTML = `<div class="bg-amber-50 text-amber-900 p-4 rounded-lg border border-amber-200 leading-relaxed">
+                    <b class="text-amber-700 text-base mb-2 block"><i class="fa-solid fa-circle-exclamation"></i> COD Important Notice</b>
+                    Cash on Delivery (COD) आर्डर कंफर्म करने के लिए आपको <b>₹40 एडवांस पेमेंट</b> करना अनिवार्य है।<br><br>
+                    यह कूरियर चार्ज सिक्योरिटी के लिए होता है। बाकी का बचा हुआ अमाउंट आप पार्सल डिलीवर होने के समय कैश दे सकते हैं।
+                </div>`;
+            }
+        } else if (type === 'return') {
+            titleEl.innerText = "Exchange & Return Policy";
+            bodyEl.innerHTML = `<div class="bg-blue-50 text-blue-900 p-4 rounded-lg border border-blue-200 space-y-3 leading-relaxed">
+                <p><b class="text-blue-800 text-base"><i class="fa-solid fa-video"></i> Strict Unboxing Video Required!</b></p>
+                <p>प्रोडक्ट आपके पास पहुँचते ही आपको उसका अनबॉक्सिंग (Unboxing) वीडियो बनाना है। रिटर्न या एक्सचेंज के लिए यह अनिवार्य है।</p>
+                <p class="font-bold text-red-600 bg-red-50 p-2 rounded border border-red-200">2 days return/exchange available only for manufacturing defect.</p>
+                <ul class="list-disc pl-5 space-y-1.5 font-medium">
+                    <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
+                    <li>वीडियो में कोई भी <b>कट (Cut) या पॉज (Pause)</b> नहीं होना चाहिए।</li>
+                    <li>डिफेक्ट या गलत प्रोडक्ट आने पर आपको यही वीडियो हमारे <b>WhatsApp पर शेयर</b> margin paane ke liye share karna hoga.</li>
+                </ul>
+                <p class="mt-3 text-red-600 font-bold bg-white p-2 rounded border border-red-100 text-xs">⚠️ बिना प्रॉपर अनबॉक्सिंग वीडियो के रिटर्न/एक्सचेंज किसी भी हालत में स्वीकार नहीं किया जाएगा।</p>
+            </div>`;
+        } else if (type === 'delivery') {
+            titleEl.innerText = "Free & Fast Delivery";
+            bodyEl.innerHTML = `<div class="bg-green-50 text-green-900 p-4 rounded-lg border border-green-200 space-y-3 leading-relaxed">
+                <p><b class="text-green-800 text-base"><i class="fa-solid fa-truck-fast"></i> 100% Free Delivery!</b></p>
+                <p>SHRAYNEX par sabhi products par delivery bilkul FREE hai. Customer se koi extra delivery charge nahi liya jayega.</p>
+                <ul class="list-disc pl-5 space-y-1.5 font-medium text-sm">
+                    <li>Order confirm hone ke baad <b>4 se 7 din</b> ke andar delivery ho jati hai.</li>
+                    <li>Tracking link SMS ke through customer ko mil jayega.</li>
+                </ul>
+            </div>`;
+        }
+        openModal('infoModal');
+    };
+
+    window.closePaymentConfirmModal = () => { document.getElementById('paymentConfirmModal').classList.remove('active'); };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
+    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
+  
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {  
+        apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",  
+        authDomain: "rkyshree-2f74b.firebaseapp.com",  
+        projectId: "rkyshree-2f74b",  
+        storageBucket: "rkyshree-2f74b.firebasestorage.app",  
+        messagingSenderId: "354823113610",  
+        appId: "1:354823113610:web:1249f2952249ac1a9c9673"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const auth = getAuth(app);  
+    const db = getFirestore(app);  
+    const googleProvider = new GoogleAuthProvider();  
+  
+    const USERS_COL = "shraynex_users";  
+    const PRODUCTS_COL = "shraynex_products";  
+    const ORDERS_COL = "shraynex_orders"; 
+    const WITHDRAW_COL = "shraynex_withdrawals";  
+    const SETTINGS_COL = "shraynex_settings";  
+  
+    window.allCategories = ["Kurti", "Saree", "Mens Wear"];
+    window.categoryImages = {};
+    window.siteBanners = []; 
+    
+    window.exploreBrands = [
+        { title: "Amazon", img: "https://logo.clearbit.com/amazon.in", link: "#", badge: "0.5%" },
+        { title: "Flipkart", img: "https://logo.clearbit.com/flipkart.com", link: "#", badge: "" },
+        { title: "Myntra", img: "https://logo.clearbit.com/myntra.com", link: "#", badge: "" },
+        { title: "Domino's Pizza", img: "https://logo.clearbit.com/dominos.co.in", link: "#", badge: "16.8%" },
+        { title: "PVR Cinemas", img: "https://logo.clearbit.com/pvrcinemas.com", link: "#", badge: "21.0%" },
+        { title: "Blinkit", img: "https://logo.clearbit.com/blinkit.com", link: "#", badge: "1.4%" },
+        { title: "Zepto", img: "https://logo.clearbit.com/zeptonow.com", link: "#", badge: "0.6%" },
+        { title: "Instamart", img: "https://logo.clearbit.com/swiggy.com", link: "#", badge: "" },
+        { title: "Ajio", img: "https://logo.clearbit.com/ajio.com", link: "#", badge: "" },
+        { title: "BookMyShow", img: "https://logo.clearbit.com/in.bookmyshow.com", link: "#", badge: "5.4%" },
+        { title: "Bigbasket", img: "https://logo.clearbit.com/bigbasket.com", link: "#", badge: "2.6%" },
+        { title: "Meesho", img: "https://logo.clearbit.com/meesho.com", link: "#", badge: "" }
+    ];
+
+    window.adminUsers = [];
+    window.adminOrders = [];
+    window.allProducts = [];
+    window.adminWithdraws = [];
+    window.isAdminMode = false;
+    
+    let currentUser = null, userData = null;  
+    let userOrdersList = []; let userWithdrawalsList = [];
+    let selectedProduct = null, unsubUser = null, unsubProducts = null, unsubOrders = null;  
+    let isSignupMode = false, currentFilter = 'All';  
+    let currentSelectedImageIndex = 0; let orderSelectedImageIndex = 0;
+    
+    let tempOrderData = null;
+    let carouselInterval = null;
 
     let brandTimerInterval = null;
     window.startLiveTimers = () => {
@@ -1503,7 +1636,7 @@
                 isShareBonus: true,
                 paidToWallet: false
             });
-            showCenterToast("success", "Product Shared Successfully!", "0.10");
+            showCenterToast("success", "Shared Successfully!", "0.10");
         } catch(e) { console.error("Error processing share comm:", e); }
     };
 
@@ -1619,7 +1752,7 @@
                 const nm = document.getElementById('authName').value.trim(), ph = document.getElementById('authPhone').value.trim();  
                 const res = await createUserWithEmailAndPassword(auth, em, pw);  
                 await initUserDoc(res.user, { name: nm, phone: ph, loginType: "email" });  
-                showCenterToast("success", "Account Created & Logged In!");  
+                showCenterToast("success", "Account Created!");  
             } else { await signInWithEmailAndPassword(auth, em, pw); showCenterToast("success", "Login Successful!"); }  
             closeModal('authModal');  
         } catch(e) { showToast(e.message.replace('Firebase: ','')); } finally { btn.innerText = orig; btn.disabled = false; }  
@@ -1684,13 +1817,11 @@
                     setTimeout(() => { splash.style.display = 'none'; }, 200); 
                 }
                 
+                document.getElementById('appPage').classList.add('active'); 
+                
                 if (currentUser && !window.isAdminMode) { 
-                    document.getElementById('appPage').classList.add('active'); 
-                    switchTab('Feed'); 
                     document.getElementById('sidebarAuthBtn').classList.add('hidden');
                 } else if (!currentUser && !window.isAdminMode) { 
-                    document.getElementById('appPage').classList.add('active'); 
-                    switchTab('Feed');
                     document.getElementById('headerUserName').innerText = "Guest";
                     document.getElementById('userAvatarInitials').innerText = "G";
                     document.getElementById('sidebarAuthBtn').classList.remove('hidden');
@@ -1917,6 +2048,7 @@
                 await navigator.share({ text: msg + "\n\n*Images:*\n" + images.join("\n") });
             }
             closeModal('shareModal');
+            showCenterToast("success", "Product Shared Successfully!");
         } catch (error) { closeModal('shareModal'); } 
         finally { btn.innerHTML = origHtml; btn.disabled = false; }
     };  
@@ -2096,6 +2228,18 @@
             skipBtn.innerText = origSkip; skipBtn.disabled = false;
         }
     };
+
+    // FAILSAFE: Agar internet slow ho ya local file ho, to 4 second me website open ho jayegi
+    setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        if(splash && splash.style.display !== 'none') {
+            splash.classList.add('opacity-0');
+            setTimeout(() => { splash.style.display = 'none'; }, 300);
+            if(!authStateResolved) {
+                document.getElementById('appPage').classList.add('active');
+            }
+        }
+    }, 4000);
 
     function getStatusProgress(status) {
         if(status === 'delivered') return { w: '100%', c1: 'active', c2: 'active', c3: 'active' };
