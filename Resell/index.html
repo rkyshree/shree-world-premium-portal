@@ -1271,6 +1271,25 @@
         window.toastTimer = setTimeout(() => { t.classList.add('hidden'); }, 3000);  
     };  
     
+    window.openModal = (id) => { 
+        const el = document.getElementById(id);
+        if(!el.classList.contains('active')) {
+            el.classList.add('active'); 
+            document.body.style.overflow = 'hidden';
+            history.pushState({ modalOpen: true, id: id }, "");
+        }
+    };  
+    window.closeModal = (id) => { 
+        const modal = document.getElementById(id);
+        if(modal.classList.contains('active')) {
+            if(history.state && history.state.modalOpen) { history.back(); } 
+            else {
+                modal.classList.remove('active');
+                if(document.querySelectorAll('.bottom-sheet.active').length === 0) { document.body.style.overflow = ''; }
+            }
+        }
+    }; 
+    
     window.addEventListener('popstate', (e) => {
         const modals = document.querySelectorAll('.bottom-sheet.active');
         if(modals.length > 0) {
@@ -1696,6 +1715,13 @@
         currentUser = user; 
         authStateResolved = true; 
 
+        if(!window.isAdminMode) {
+            loadCategories(); 
+            loadBanners(); 
+            loadBrands(); 
+            loadProducts(); 
+        }
+
         if(user) {  
             if(!window.isAdminMode) {  
                 try {  
@@ -1707,11 +1733,11 @@
                             if(userData.status === 'suspended' && userData.role !== 'admin') { signOut(auth); showToast("Account Suspended."); }  
                         }  
                     });  
-                    loadCategories(); loadBanners(); loadBrands(); loadProducts(); loadOrders(); loadUserWithdrawals();
+                    loadOrders(); loadUserWithdrawals();
                 } catch(e) {}  
             }  
         } else {  
-            if(unsubUser) unsubUser(); if(unsubProducts) unsubProducts(); if(unsubOrders) unsubOrders(); userData = null;  
+            if(unsubUser) unsubUser(); if(unsubOrders) unsubOrders(); userData = null;  
         }  
         checkAndRoute();
     });  
