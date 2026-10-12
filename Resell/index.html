@@ -138,6 +138,8 @@
         .toast-success .toast-icon-circle { background: #22c55e; }
         .toast-error .toast-icon-circle { background: #ef4444; }
         .toast-info .toast-icon-circle { background: #3b82f6; }
+        
+        .transition-opacity { transition: opacity 0.3s ease; }
     </style>
 </head>  
 <body class="text-gray-800 antialiased">  
@@ -146,7 +148,7 @@
 <div id="centerToastContainer"></div>
 
 <!-- SPLASH SCREEN -->
-<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-200 max-w-[480px] mx-auto overflow-hidden">
+<div id="splashScreen" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-300 max-w-[480px] mx-auto overflow-hidden">
     <div class="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden">
         <i class="fa-solid fa-store absolute text-5xl text-primary bg-icon" style="top: 15%; left: 15%; animation-duration: 6s;"></i>
         <i class="fa-solid fa-sack-dollar absolute text-6xl text-green-500 bg-icon" style="top: 10%; right: 20%; animation-duration: 7s; animation-delay: 1s;"></i>
@@ -174,6 +176,22 @@
         <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
     </div>
 </div>
+
+<!-- FAILSAFE SCRIPT TO GUARANTEE APP OPENS FAST -->
+<script>
+    // This runs immediately and guarantees the splash screen hides after 2.5 seconds maximum
+    setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+            splash.classList.add('opacity-0');
+            setTimeout(() => { 
+                splash.style.display = 'none'; 
+                // Ensure page is visible even if Firebase is blocked
+                document.getElementById('appPage').classList.add('active');
+            }, 300);
+        }
+    }, 2500);
+</script>
 
 <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] hidden transition-all duration-300 w-[90%] max-w-[400px]">  
     <div id="toastMsg" class="bg-gray-800 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-3 w-full">  
@@ -476,7 +494,8 @@
                 <button onclick="closeModal('appInfoModal'); openAdminLogin()" class="text-[10px] text-gray-500 font-bold uppercase hover:text-gray-400 transition mb-3">Admin Panel Access</button>  
                 <h2 class="font-black text-xl mb-1">SHRAY<span class="text-primary">NEX</span></h2>  
                 <p class="text-[10px] text-gray-400 mb-4">India's premium reselling platform. © 2026</p>
-                <button onclick="closeModal('appInfoModal'); checkAuthAndOpenModal('authModal');" class="bg-primary text-white px-6 py-2 rounded-lg font-bold text-xs shadow-sm">Login Now to Start</button>
+                <!-- IF NOT LOGGED IN, SHOW THIS BUTTON -->
+                <button id="infoModalLoginBtn" onclick="closeModal('appInfoModal'); checkAuthAndOpenModal('authModal');" class="bg-primary text-white px-6 py-2 rounded-lg font-bold text-xs shadow-sm">Login Now to Start</button>
             </div>
         </div>
     </div>
@@ -1048,7 +1067,6 @@
     window.requiredSplashTime = sessionStorage.getItem('visited_shraynex') ? 2000 : 3000;
     sessionStorage.setItem('visited_shraynex', 'true');
 
-    // PROFESSIONAL CENTER TOAST ANIMATION LOGIC
     window.showCenterToast = (type, message, amount = null) => {
         const container = document.getElementById('centerToastContainer');
         const toast = document.createElement('div');
@@ -2086,18 +2104,6 @@
         }
     };
 
-    // FAILSAFE: Agar internet slow ho ya local file ho, to 4 second me website open ho jayegi
-    setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        if(splash && splash.style.display !== 'none') {
-            splash.classList.add('opacity-0');
-            setTimeout(() => { splash.style.display = 'none'; }, 300);
-            if(!authStateResolved) {
-                document.getElementById('appPage').classList.add('active');
-            }
-        }
-    }, 4000);
-
     function getStatusProgress(status) {
         if(status === 'delivered') return { w: '100%', c1: 'active', c2: 'active', c3: 'active' };
         if(status === 'shipped') return { w: '50%', c1: 'active', c2: 'active', c3: '' };
@@ -2230,7 +2236,7 @@
         e.preventDefault(); const btn = document.getElementById('submitEditProfileBtn'); btn.innerText = "Saving..."; btn.disabled = true;  
         try {  
             await updateDoc(doc(db, USERS_COL, currentUser.uid), { name: document.getElementById('epName').value.trim(), phone: document.getElementById('epPhone').value.trim(), address: document.getElementById('epAddress').value.trim(), pincode: document.getElementById('epPincode').value.trim(), updatedAt: serverTimestamp() });  
-            showToast("Profile saved."); closeModal('editProfileModal');  
+            showCenterToast("success", "Profile saved."); closeModal('editProfileModal');  
         } catch(e) { showToast("Error saving."); } finally { btn.innerText = "Save Changes"; btn.disabled = false; }  
     };  
       
@@ -2250,7 +2256,7 @@
                 tx.update(uRef, { walletBalance: increment(-amt), updatedAt: serverTimestamp() });  
                 tx.set(doc(collection(db, WITHDRAW_COL)), { userId: currentUser.uid, userName: userData.name, userEmail: userData.email, amount: amt, details: det, status: 'pending', createdAt: serverTimestamp() });  
             });  
-            showToast("Withdrawal requested."); closeModal('withdrawModal');  
+            showCenterToast("success", "Withdrawal requested."); closeModal('withdrawModal');  
         } catch(e) { showToast(e.message); } finally { btn.innerText = "Submit Request"; btn.disabled = false; }  
     };  
 
