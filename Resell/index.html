@@ -54,8 +54,6 @@
 
     <style>  
         body { background-color: #e5e7eb; -webkit-tap-highlight-color: transparent; margin: 0; }  
-        
-        /* Mobile-First Centered Container for Desktop */
         .app-container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; background-color: #f8f8f9; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.1); overflow-x: hidden; display: flex; flex-direction: column; }  
         
         .hide-scrollbar::-webkit-scrollbar { display: none; }  
@@ -140,9 +138,6 @@
         .toast-success .toast-icon-circle { background: #22c55e; }
         .toast-error .toast-icon-circle { background: #ef4444; }
         .toast-info .toast-icon-circle { background: #3b82f6; }
-        
-        /* Admin Sidebar Mobile Transition Styles */
-        #adminSidebar { transition: transform 0.3s ease-in-out; }
     </style>
 </head>  
 <body class="text-gray-800 antialiased">  
@@ -187,26 +182,26 @@
     </div>  
 </div>  
 
-<!-- MAIN APP SIDEBAR -->
+<!-- MAIN APP SIDEBAR (Clean & Refined) -->
 <div id="mainSidebar" class="fixed inset-0 z-[1000] pointer-events-none">
     <div id="sidebarOverlay" class="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 hidden pointer-events-auto" onclick="toggleSidebar()"></div>
     <div id="sidebarContent" class="absolute top-0 left-0 w-[280px] h-full bg-white shadow-2xl transform -translate-x-full transition-transform duration-300 pointer-events-auto flex flex-col z-10">
-        <div class="bg-gray-900 text-white p-5">
-            <h2 class="text-2xl font-black tracking-tight">SHRAY<span class="text-primary">NEX</span></h2>
-            <p class="text-xs text-gray-400 mt-1">India's Premium Reselling App</p>
+        <div class="bg-gray-900 text-white p-5 flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center"><span class="text-white font-black text-xl">S</span></div>
+            <div>
+                <h2 class="text-2xl font-black tracking-tight">SHRAY<span class="text-primary">NEX</span></h2>
+                <p class="text-[10px] text-gray-400 mt-0.5">India's Premium Reselling App</p>
+            </div>
         </div>
-        <div class="p-4 flex-1 flex flex-col gap-2 overflow-y-auto">
-            <button onclick="toggleSidebar(); checkAuthAndOpenModal('authModal')" id="sidebarAuthBtn" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-user-circle text-primary text-xl w-6 text-center"></i> Login / Sign Up</button>
-            <button onclick="shareAppFromSidebar()" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-share-nodes text-green-500 text-xl w-6 text-center"></i> Share App</button>
-            <button onclick="toggleSidebar(); openModal('appInfoModal')" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-circle-info text-blue-500 text-xl w-6 text-center"></i> App Info</button>
-            
-            <div class="mt-auto pt-6 pb-2" id="sidebarInstallContainer">
-                <button onclick="installAppFromSidebar()" class="install-app-btn w-full bg-yellow-400 text-black py-3.5 rounded-xl font-black text-sm shadow-md animate-pulse border border-yellow-500 flex justify-center items-center gap-2"><i class="fa-solid fa-download"></i> INSTALL APP</button>
-            </div>
-            
-            <div class="text-center mt-2">
-                <button onclick="toggleSidebar(); openAdminLogin()" class="text-[10px] text-gray-400 font-bold uppercase hover:text-gray-600 transition">Admin Panel</button>
-            </div>
+        
+        <div class="p-5 flex-1 flex flex-col gap-4 overflow-y-auto mt-2">
+            <!-- Sidebar ONLY contains Share and App Info now -->
+            <button onclick="shareAppFromSidebar()" class="w-full text-left flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 font-bold text-gray-800 text-sm shadow-sm border border-gray-100 transition">
+                <i class="fa-solid fa-share-nodes text-green-500 text-xl w-6 text-center"></i> Share App
+            </button>
+            <button onclick="toggleSidebar(); openModal('appInfoModal')" class="w-full text-left flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 font-bold text-gray-800 text-sm shadow-sm border border-gray-100 transition">
+                <i class="fa-solid fa-circle-info text-blue-500 text-xl w-6 text-center"></i> App Info
+            </button>
         </div>
     </div>
 </div>
@@ -215,17 +210,22 @@
 
 <!-- APP DIRECT FEED INTERFACE -->
 <section id="appPage" class="page active bg-meesho-gray">  
-    <header class="px-4 py-3 flex items-center justify-between sticky top-0 bg-white z-20 shadow-sm">  
+    <header class="px-4 py-3 flex items-center justify-between sticky top-0 bg-white z-20 shadow-sm border-b border-gray-100">  
         <div class="flex items-center gap-3">  
-            <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center text-gray-700 text-xl active:bg-gray-100 rounded-full shrink-0"><i class="fa-solid fa-bars"></i></button>
-            <div id="userAvatarInitials" class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">G</div>  
-            <div>  
-                <h2 id="headerUserName" class="font-bold text-gray-900 text-sm">Guest</h2>  
-                <p class="text-[10px] font-medium text-gray-500">Welcome!</p>  
-            </div>  
+            <!-- HAMBURGER MENU BUTTON -->
+            <button onclick="toggleSidebar()" class="w-9 h-9 flex items-center justify-center text-gray-700 text-xl active:bg-gray-100 rounded-full shrink-0 transition"><i class="fa-solid fa-bars"></i></button>
+            
+            <!-- ORIGINAL LOGO RESTORED -->
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">  
+                <div class="w-7 h-7 bg-primary rounded-lg flex items-center justify-center"><span class="text-white font-black text-sm">S</span></div>
+                <h1 class="text-lg font-black text-gray-900 tracking-tight">SHRAY<span class="text-primary">NEX</span></h1>  
+            </div>
         </div>  
         <div class="flex items-center gap-3">
-            <button class="install-app-btn hidden bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-md text-xs font-bold shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-download"></i> App</button>
+            <!-- AVATAR PROFILE BUTTON -->
+            <button onclick="switchTab('Profile')" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 border border-gray-200 flex items-center justify-center font-bold text-sm shadow-sm hover:bg-gray-200 transition">
+                <i class="fa-solid fa-user text-xs"></i>
+            </button>
         </div>
     </header>  
 
@@ -281,6 +281,7 @@
             </div>
         </div>  
 
+        <!-- Orders Tab -->
         <div id="tabOrders" class="tab-content hidden">  
             <div class="bg-white p-4 shadow-sm mb-2 sticky top-0 z-10">
                 <h2 class="text-lg font-black text-gray-900">My Orders</h2>  
@@ -290,6 +291,7 @@
             </div>  
         </div>  
 
+        <!-- Profile Tab -->
         <div id="tabProfile" class="tab-content hidden">  
             <div class="bg-white p-5 shadow-sm mb-2 flex items-center gap-4">
                 <div id="profileAvatarBig" class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl">U</div>  
@@ -340,6 +342,10 @@
                     <div class="flex items-center gap-3"><i class="fa-solid fa-location-dot text-gray-400 w-5 text-center"></i><span class="font-medium text-sm text-gray-700">My Address</span></div>  
                     <span id="profileHasAddress" class="text-[10px] font-bold text-red-500">Add</span>  
                 </button>  
+                <button onclick="window.open('https://wa.me/919451239239', '_blank')" class="w-full text-left p-4 border-b border-gray-100 flex justify-between items-center hover:bg-gray-50">  
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-headset text-gray-400 w-5 text-center"></i><span class="font-medium text-sm text-gray-700">Help & Support</span></div>  
+                    <i class="fa-brands fa-whatsapp text-green-500"></i>  
+                </button>  
                 <button onclick="handleLogout()" class="w-full text-left p-4 flex items-center gap-3 hover:bg-gray-50 text-red-500">  
                     <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center"></i><span class="font-medium text-sm">Logout</span>  
                 </button>  
@@ -356,7 +362,7 @@
     </nav>  
 </section>  
 
-<!-- App Info Modal -->
+<!-- APP INFO MODAL (REPLACES OLD LANDING PAGE) -->
 <div id="appInfoModal" class="bottom-sheet z-[200]">
     <div class="bottom-sheet-content h-[90vh] bg-white">
         <div class="drag-handle"></div>
@@ -466,9 +472,11 @@
                 </div>
             </div>  
 
-            <!-- Admin Panel Only Button at Bottom -->
-            <div class="p-5 text-center">
-                <button onclick="closeModal('appInfoModal'); openAdminLogin()" class="text-[10px] text-gray-500 font-bold uppercase hover:text-gray-800 transition py-2 px-4 border border-gray-200 rounded-lg">Admin Panel Access</button>  
+            <div class="p-5 bg-gray-900 text-white text-center">
+                <button onclick="closeModal('appInfoModal'); openAdminLogin()" class="text-[10px] text-gray-500 font-bold uppercase hover:text-gray-400 transition mb-3">Admin Panel Access</button>  
+                <h2 class="font-black text-xl mb-1">SHRAY<span class="text-primary">NEX</span></h2>  
+                <p class="text-[10px] text-gray-400 mb-4">India's premium reselling platform. © 2026</p>
+                <button onclick="closeModal('appInfoModal'); checkAuthAndOpenModal('authModal');" class="bg-primary text-white px-6 py-2 rounded-lg font-bold text-xs shadow-sm">Login Now to Start</button>
             </div>
         </div>
     </div>
@@ -527,7 +535,7 @@
                 
                 <div class="flex flex-wrap items-center gap-2 text-xs font-semibold mt-2" id="pdInteractiveBadges"></div>
                 <div class="flex items-center gap-2 text-xs font-semibold mt-2 pt-2 border-t border-gray-100">
-                    <span class="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md border border-gray-200" id="pdDelivery"><i class="fa-solid fa-truck text-gray-500 mr-1"></i> Free Delivery</span>
+                    <span class="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md border border-gray-200 cursor-pointer" onclick="openInfoModal('delivery')"><i class="fa-solid fa-truck text-gray-500 mr-1"></i> Free Delivery</span>
                     <span class="bg-gray-100 text-gray-700 px-2 py-1.5 rounded-md border border-gray-200" id="pdCategory">Category</span>
                 </div>
             </div>  
@@ -788,7 +796,7 @@
     </div>  
 </div>  
 
-<div id="policyModal" class="bottom-sheet z-[300]">  
+<div id="policyModal" class="bottom-sheet z-[9999]">  
     <div class="bottom-sheet-content h-[85vh]">  
         <div class="drag-handle"></div>
         <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">  
@@ -799,7 +807,7 @@
     </div>  
 </div>  
 
-<div id="infoModal" class="bottom-sheet z-[200]">
+<div id="infoModal" class="bottom-sheet z-[9999]">
     <div class="bottom-sheet-content bg-white">
         <div class="drag-handle"></div>
         <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">
@@ -807,26 +815,6 @@
             <button onclick="closeModal('infoModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div id="infoModalBody" class="p-5 text-sm text-gray-700 leading-relaxed overflow-y-auto max-h-[60vh]"></div>
-    </div>
-</div>
-
-<div id="iosInstallModal" class="bottom-sheet z-[9999]">
-    <div class="bottom-sheet-content bg-white pb-8">
-        <div class="drag-handle"></div>
-        <div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100">
-            <h3 class="font-bold text-gray-900">Install App</h3>
-            <button onclick="closeModal('iosInstallModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="p-6 flex flex-col items-center text-center">
-            <img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm">
-            <p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p>
-            
-            <div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3">
-                <p class="text-sm text-gray-700">1. Tap <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1"></i> in browser menu.</p>
-                <p class="text-sm text-gray-700">2. Select <b>Add to Home Screen</b> <i class="fa-regular fa-square-plus mx-1"></i></p>
-                <p class="text-sm text-gray-700">3. Tap <b>Add / Install</b>.</p>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -845,33 +833,25 @@
     </div>  
 </div>  
 
-<!-- Mobile-Friendly Admin Panel Transition and Structure -->
 <div id="adminPanelModal" class="fixed inset-0 z-[350] bg-[#0a0a0a] text-white hidden flex-col md:flex-row overflow-hidden">  
-    <aside id="adminSidebar" class="absolute md:relative w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 h-full transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-30">  
+    <aside id="adminSidebar" class="w-full md:w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex z-20">  
         <div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div>  
         <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p>  
-        
-        <div class="flex-1 overflow-y-auto hide-scrollbar space-y-2">
-            <button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button>  
-            <button onclick="switchAdminTab('claims')" id="adminTabClaims" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">🎫 Claims & Shares</button>
-            <button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button>
-            <button onclick="switchAdminTab('brands')" id="adminTabBrands" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">🌟 Explore Brands</button>
-            <button onclick="switchAdminTab('categories')" id="adminTabCategories" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">📁 Categories</button>  
-            <button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button>  
-            <button onclick="switchAdminTab('products')" id="adminTabProducts" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">📦 Products</button>  
-            <button onclick="switchAdminTab('orders')" id="adminTabOrders" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">🛒 Orders</button>  
-            <button onclick="switchAdminTab('withdrawals')" id="adminTabWithdrawals" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm text-gray-400 hover:bg-[#222] hover:text-white transition">💰 Withdrawals</button>  
-        </div>
-        
-        <div class="pt-4 mt-2 border-t border-[#222]"><button onclick="closeAdminPanel()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition">🚪 Exit Admin</button></div>  
+        <button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button>  
+        <button onclick="switchAdminTab('claims')" id="adminTabClaims" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🎫 Claims & Shares</button>
+        <button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button>
+        <button onclick="switchAdminTab('brands')" id="adminTabBrands" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🌟 Explore Brands</button>
+        <button onclick="switchAdminTab('categories')" id="adminTabCategories" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📁 Categories</button>  
+        <button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button>  
+        <button onclick="switchAdminTab('products')" id="adminTabProducts" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📦 Products</button>  
+        <button onclick="switchAdminTab('orders')" id="adminTabOrders" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🛒 Orders</button>  
+        <button onclick="switchAdminTab('withdrawals')" id="adminTabWithdrawals" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">💰 Withdrawals</button>  
+        <div class="mt-auto pt-8"><button onclick="closeAdminPanel()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-500 hover:text-white transition">🚪 Exit Admin</button></div>  
     </aside>  
 
-    <!-- Admin Mobile Overlay -->
-    <div id="adminMobileOverlay" class="absolute inset-0 bg-black/50 z-20 hidden md:hidden" onclick="toggleAdminMenu()"></div>
-
-    <main class="flex-1 p-4 md:p-8 min-w-0 overflow-y-auto relative bg-[#0a0a0a]">  
+    <main class="flex-1 p-4 md:p-8 min-w-0 overflow-y-auto relative">  
         <header class="flex justify-between items-center mb-8 pb-4 border-b border-[#222]">  
-            <div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl"><i class="fa-solid fa-bars"></i></button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Overview</h1></div>  
+            <div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl">☰</button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Overview</h1></div>  
             <div class="flex gap-3"><button onclick="refreshAdmin()" class="bg-[#222] border border-[#333] px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#333] transition hidden sm:block">↻ Refresh</button><div id="adminEmailDisplay" class="text-xs text-gray-500 font-medium py-2.5">Admin</div></div>  
         </header>  
 
@@ -1039,47 +1019,26 @@
     const manifestStr = JSON.stringify(manifest);
     const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestStr);
     const link = document.createElement('link'); link.rel = 'manifest'; link.href = manifestUrl; document.head.appendChild(link);
-    
-    let deferredPrompt; const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    
-    // PWA Install Button Visibility Logic
-    function checkPWAStatus() {
-        const installContainers = document.querySelectorAll('#sidebarInstallContainer, .install-app-btn');
-        if (isStandalone) {
-            installContainers.forEach(el => el.classList.add('hidden'));
-        } else if (isIOS) {
-            installContainers.forEach(el => {
-                el.classList.remove('hidden');
-                if(el.tagName === 'BUTTON') el.onclick = () => { window.toggleSidebar(); openModal('iosInstallModal'); };
-            });
-        }
-    }
+    if ('serviceWorker' in navigator) { const swCode = `self.addEventListener('fetch', function(e) {});`; const swBlob = new Blob([swCode], {type: 'application/javascript'}); const swUrl = URL.createObjectURL(swBlob); navigator.serviceWorker.register(swUrl).catch(()=>{}); }
 
+    let deferredPrompt; const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream; const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     window.addEventListener('load', () => { 
-        checkPWAStatus();
+        const installBtns = document.querySelectorAll('.install-app-btn'); 
+        if (isStandalone) { installBtns.forEach(b => b.classList.add('hidden')); return; } 
+        if (isIOS) { installBtns.forEach(b => { b.classList.remove('hidden'); b.onclick = () => document.getElementById('iosInstallModal').classList.add('active'); }); } 
+        
         document.querySelectorAll('.bottom-sheet').forEach(sheet => {
             sheet.addEventListener('click', function(e) {
                 if (e.target === this && !this.classList.contains('no-easy-close')) { closeModal(this.id); }
             });
         });
     });
-
     window.addEventListener('beforeinstallprompt', (e) => { 
         e.preventDefault(); deferredPrompt = e; 
-        const installContainers = document.querySelectorAll('#sidebarInstallContainer, .install-app-btn'); 
-        installContainers.forEach(el => { 
-            el.classList.remove('hidden'); 
-            if(el.tagName === 'BUTTON') {
-                el.onclick = async () => { 
-                    window.toggleSidebar();
-                    if (deferredPrompt) { 
-                        deferredPrompt.prompt(); 
-                        const { outcome } = await deferredPrompt.userChoice; 
-                        if (outcome === 'accepted') { installContainers.forEach(c => c.classList.add('hidden')); } 
-                        deferredPrompt = null; 
-                    } 
-                }; 
-            }
+        const installBtns = document.querySelectorAll('.install-app-btn'); 
+        installBtns.forEach(b => { 
+            b.classList.remove('hidden'); 
+            b.onclick = async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') { installBtns.forEach(btn => btn.classList.add('hidden')); } deferredPrompt = null; } }; 
         }); 
     });
 </script>
@@ -1145,19 +1104,6 @@
         }
     };
 
-    window.toggleAdminMenu = () => { 
-        const sidebar = document.getElementById('adminSidebar');
-        const overlay = document.getElementById('adminMobileOverlay');
-        
-        if (sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-    };  
-
     window.shareAppFromSidebar = async () => {
         window.toggleSidebar();
         const textToShare = `Start your online business with Zero Investment!\nDownload SHRAYNEX App now & earn ₹25,000+ monthly.\n👉 https://www.rkyshree.in/Resell`;
@@ -1189,7 +1135,7 @@
             openModal('authModal');
             return false;
         }
-        if (modalId) openModal(modalId);
+        if (modalId && modalId !== 'authModal') openModal(modalId);
         return true;
     };
 
@@ -1335,64 +1281,6 @@
             } catch(e) {}
         } else { document.getElementById('orderCustCity').value = ""; document.getElementById('orderCustState').value = ""; }
     };
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";  
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";  
-    import { getFirestore, collection, doc, getDoc, getDocs, updateDoc, setDoc, addDoc, deleteDoc, onSnapshot, query, where, serverTimestamp, runTransaction, increment, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";  
-  
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {  
-        apiKey: "AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",  
-        authDomain: "rkyshree-2f74b.firebaseapp.com",  
-        projectId: "rkyshree-2f74b",  
-        storageBucket: "rkyshree-2f74b.firebasestorage.app",  
-        messagingSenderId: "354823113610",  
-        appId: "1:354823113610:web:1249f2952249ac1a9c9673"  
-    };  
-  
-    const app = initializeApp(firebaseConfig);  
-    const auth = getAuth(app);  
-    const db = getFirestore(app);  
-    const googleProvider = new GoogleAuthProvider();  
-  
-    const USERS_COL = "shraynex_users";  
-    const PRODUCTS_COL = "shraynex_products";  
-    const ORDERS_COL = "shraynex_orders"; 
-    const WITHDRAW_COL = "shraynex_withdrawals";  
-    const SETTINGS_COL = "shraynex_settings";  
-  
-    window.allCategories = ["Kurti", "Saree", "Mens Wear"];
-    window.categoryImages = {};
-    window.siteBanners = []; 
-    
-    window.exploreBrands = [
-        { title: "Amazon", img: "https://logo.clearbit.com/amazon.in", link: "#", badge: "0.5%" },
-        { title: "Flipkart", img: "https://logo.clearbit.com/flipkart.com", link: "#", badge: "" },
-        { title: "Myntra", img: "https://logo.clearbit.com/myntra.com", link: "#", badge: "" },
-        { title: "Domino's Pizza", img: "https://logo.clearbit.com/dominos.co.in", link: "#", badge: "16.8%" },
-        { title: "PVR Cinemas", img: "https://logo.clearbit.com/pvrcinemas.com", link: "#", badge: "21.0%" },
-        { title: "Blinkit", img: "https://logo.clearbit.com/blinkit.com", link: "#", badge: "1.4%" },
-        { title: "Zepto", img: "https://logo.clearbit.com/zeptonow.com", link: "#", badge: "0.6%" },
-        { title: "Instamart", img: "https://logo.clearbit.com/swiggy.com", link: "#", badge: "" },
-        { title: "Ajio", img: "https://logo.clearbit.com/ajio.com", link: "#", badge: "" },
-        { title: "BookMyShow", img: "https://logo.clearbit.com/in.bookmyshow.com", link: "#", badge: "5.4%" },
-        { title: "Bigbasket", img: "https://logo.clearbit.com/bigbasket.com", link: "#", badge: "2.6%" },
-        { title: "Meesho", img: "https://logo.clearbit.com/meesho.com", link: "#", badge: "" }
-    ];
-
-    window.adminUsers = [];
-    window.adminOrders = [];
-    window.allProducts = [];
-    window.adminWithdraws = [];
-    window.isAdminMode = false;
-    
-    let currentUser = null, userData = null;  
-    let userOrdersList = []; let userWithdrawalsList = [];
-    let selectedProduct = null, unsubUser = null, unsubProducts = null, unsubOrders = null;  
-    let isSignupMode = false, currentFilter = 'All';  
-    let currentSelectedImageIndex = 0; let orderSelectedImageIndex = 0;
-    
-    let tempOrderData = null;
-    let carouselInterval = null;
 
     async function loadCategories() {  
         try {  
@@ -1994,23 +1882,31 @@
         try {
             const files = [];
             if(navigator.canShare) {
-                const maxImages = Math.min(images.length, 20); 
-                const fetchPromises = [];
+                const maxImages = Math.min(images.length, 10); 
                 for (let i = 0; i < maxImages; i++) {
-                    fetchPromises.push( fetch(images[i]).then(res => res.blob()).then(blob => new File([blob], `product_${i+1}.jpg`, { type: blob.type || 'image/jpeg' })).catch(e => console.warn(e)) );
+                    try {
+                        const res = await fetch(images[i]);
+                        const blob = await res.blob();
+                        files.push(new File([blob], `product_${i+1}.jpg`, { type: blob.type || 'image/jpeg' }));
+                    } catch(err) {
+                        console.warn("Image fetch failed, skipping", err);
+                    }
                 }
-                const resolvedFiles = await Promise.all(fetchPromises);
-                files.push(...resolvedFiles.filter(Boolean));
             }
 
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
                 await navigator.share({ text: msg, files: files, title: selectedProduct.title });
             } else if (navigator.share) {
                 await navigator.share({ text: msg + "\n\n*Images:*\n" + images.join("\n") });
+            } else {
+                window.copyGenericText(msg + "\n\n*Images:*\n" + images.join("\n"), "Product Details Copied!");
             }
             closeModal('shareModal');
             showCenterToast("success", "Product Shared Successfully!");
-        } catch (error) { closeModal('shareModal'); } 
+        } catch (error) { 
+            console.error(error);
+            closeModal('shareModal'); 
+        } 
         finally { btn.innerHTML = origHtml; btn.disabled = false; }
     };  
 
@@ -2190,6 +2086,18 @@
         }
     };
 
+    // FAILSAFE: Agar internet slow ho ya local file ho, to 4 second me website open ho jayegi
+    setTimeout(() => {
+        const splash = document.getElementById('splashScreen');
+        if(splash && splash.style.display !== 'none') {
+            splash.classList.add('opacity-0');
+            setTimeout(() => { splash.style.display = 'none'; }, 300);
+            if(!authStateResolved) {
+                document.getElementById('appPage').classList.add('active');
+            }
+        }
+    }, 4000);
+
     function getStatusProgress(status) {
         if(status === 'delivered') return { w: '100%', c1: 'active', c2: 'active', c3: 'active' };
         if(status === 'shipped') return { w: '50%', c1: 'active', c2: 'active', c3: '' };
@@ -2346,7 +2254,6 @@
         } catch(e) { showToast(e.message); } finally { btn.innerText = "Submit Request"; btn.disabled = false; }  
     };  
 
-    // ------------- ADMIN LOGIN & PANEL LOGIC -------------
     window.openAdminLogin = () => { document.getElementById('adminEmail').value = ''; document.getElementById('adminPassword').value = ''; openModal('adminLoginModal'); };  
     
     window.handleAdminLogin = async (e) => {  
