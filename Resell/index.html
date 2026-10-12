@@ -161,7 +161,7 @@
             <p class="text-xs text-gray-400 mt-1">India's Premium Reselling App</p>
         </div>
         <div class="p-4 flex-1 flex flex-col gap-2 overflow-y-auto">
-            <button onclick="toggleSidebar(); openModal('authModal')" id="sidebarAuthBtn" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-user-circle text-primary text-xl w-6 text-center"></i> Login / Sign Up</button>
+            <button onclick="toggleSidebar(); checkAuthAndOpenModal('authModal')" id="sidebarAuthBtn" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-user-circle text-primary text-xl w-6 text-center"></i> Login / Sign Up</button>
             <button onclick="shareAppFromSidebar()" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-share-nodes text-green-500 text-xl w-6 text-center"></i> Share App</button>
             <button onclick="toggleSidebar(); openModal('appInfoModal')" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-solid fa-circle-info text-blue-500 text-xl w-6 text-center"></i> App Info</button>
             <button onclick="toggleSidebar(); window.open('https://wa.me/919451239239', '_blank')" class="w-full text-left flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 font-bold text-gray-800"><i class="fa-brands fa-whatsapp text-[#25D366] text-xl w-6 text-center"></i> Help & Support</button>
@@ -247,6 +247,7 @@
             </div>
         </div>  
 
+        <!-- Orders Tab -->
         <div id="tabOrders" class="tab-content hidden">  
             <div class="bg-white p-4 shadow-sm mb-2 sticky top-0 z-10">
                 <h2 class="text-lg font-black text-gray-900">My Orders</h2>  
@@ -256,6 +257,7 @@
             </div>  
         </div>  
 
+        <!-- Profile Tab -->
         <div id="tabProfile" class="tab-content hidden">  
             <div class="bg-white p-5 shadow-sm mb-2 flex items-center gap-4">
                 <div id="profileAvatarBig" class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center font-bold text-2xl">U</div>  
@@ -327,7 +329,7 @@
 </section>  
 
 <!-- ALL MODALS -->
-<!-- App Info Modal (Replaces Old Landing Page) -->
+<!-- App Info Modal -->
 <div id="appInfoModal" class="bottom-sheet z-[200]">
     <div class="bottom-sheet-content h-[90vh] bg-white">
         <div class="drag-handle"></div>
@@ -415,10 +417,21 @@
                 </div>
             </div>
             
+            <div class="grid grid-cols-2 gap-4 p-5 bg-white border-t border-gray-100">  
+                <div class="flex flex-col items-start gap-2">
+                    <button onclick="openPolicy('about')" class="text-xs text-primary font-bold hover:underline transition">About Us</button>  
+                    <button onclick="openPolicy('terms')" class="text-xs text-primary font-bold hover:underline transition">Terms & Conditions</button>  
+                </div>
+                <div class="flex flex-col items-start gap-2">
+                    <button onclick="openPolicy('privacy')" class="text-xs text-primary font-bold hover:underline transition">Privacy Policy</button>  
+                    <button onclick="openPolicy('return')" class="text-xs text-primary font-bold hover:underline transition">Return Policy</button>  
+                </div>
+            </div>  
+
             <div class="p-5 bg-gray-900 text-white text-center">
                 <h2 class="font-black text-xl mb-1">SHRAY<span class="text-primary">NEX</span></h2>  
                 <p class="text-[10px] text-gray-400 mb-4">India's premium reselling platform.</p>
-                <button onclick="closeModal('appInfoModal'); openModal('authModal');" class="bg-primary text-white px-6 py-2 rounded-lg font-bold text-xs">Login Now to Start</button>
+                <button onclick="closeModal('appInfoModal'); checkAuthAndOpenModal('authModal');" class="bg-primary text-white px-6 py-2 rounded-lg font-bold text-xs">Login Now to Start</button>
             </div>
         </div>
     </div>
@@ -788,7 +801,7 @@
             <button onclick="closeModal('adminLoginModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>  
         </div>  
         <form onsubmit="handleAdminLogin(event)" class="p-5 space-y-4">  
-            <input id="adminEmail" type="email" class="input-field bg-gray-50" placeholder="Admin Email" required>  
+            <input id="adminEmail" type="email" class="input-field bg-gray-50" placeholder="Admin Email" autocomplete="off" required>  
             <input id="adminPassword" type="password" minlength="6" class="input-field bg-gray-50" placeholder="Password" required>  
             <button id="adminLoginBtn" type="submit" class="w-full bg-blue-600 text-white py-3.5 rounded-lg font-bold text-sm mt-2 shadow-lg shadow-blue-600/30">Access Control Panel</button>  
         </form>  
@@ -1056,19 +1069,15 @@
         }
     };
 
-    let loginPromptInterval = null;
-    function startLoginPrompt() {
-        if (loginPromptInterval) clearInterval(loginPromptInterval);
-        loginPromptInterval = setInterval(() => {
-            if (!currentUser && !window.isAdminMode) {
-                if (!document.getElementById('authModal').classList.contains('active') && !document.querySelector('.bottom-sheet.active')) {
-                    openModal('authModal');
-                }
-            } else {
-                clearInterval(loginPromptInterval);
-            }
-        }, 5000);
-    }
+    // Helper for Auth Check
+    window.checkAuthAndOpenModal = (modalId) => {
+        if (!currentUser && !window.isAdminMode) {
+            openModal('authModal');
+            return false;
+        }
+        if (modalId) openModal(modalId);
+        return true;
+    };
 
     const catalogHighlights = [
         { title: "Flipkart", image: "https://i.ibb.co/m5jSSm6y/file-00000000213c82069585302fe0e6b816.png", link: "https://fktr.in/Lpt3E44" },
@@ -1261,25 +1270,6 @@
         clearTimeout(window.toastTimer);  
         window.toastTimer = setTimeout(() => { t.classList.add('hidden'); }, 3000);  
     };  
-    
-    window.openModal = (id) => { 
-        const el = document.getElementById(id);
-        if(!el.classList.contains('active')) {
-            el.classList.add('active'); 
-            document.body.style.overflow = 'hidden';
-            history.pushState({ modalOpen: true, id: id }, "");
-        }
-    };  
-    window.closeModal = (id) => { 
-        const modal = document.getElementById(id);
-        if(modal.classList.contains('active')) {
-            if(history.state && history.state.modalOpen) { history.back(); } 
-            else {
-                modal.classList.remove('active');
-                if(document.querySelectorAll('.bottom-sheet.active').length === 0) { document.body.style.overflow = ''; }
-            }
-        }
-    }; 
     
     window.addEventListener('popstate', (e) => {
         const modals = document.querySelectorAll('.bottom-sheet.active');
@@ -1519,6 +1509,8 @@
     }
 
     window.shareExploreBrand = async (index) => {
+        if(!checkAuthAndOpenModal()) return; 
+
         const b = window.exploreBrands[index];
         if(!b) return;
         const textToShare = `🛍️ Shop from ${b.title} and get amazing discounts!\n👉 Click here: ${b.link}\n\n*Via SHRAYNEX App*`;
@@ -1567,6 +1559,8 @@
     };
 
     window.submitBrandClaimFirebase = async () => {
+        if(!checkAuthAndOpenModal()) return;
+
         if(!currentUser || userData?.status !== 'approved') return showToast("Profile approval required for Claims.");
         
         const brand = document.getElementById('claimBrandSelect').value;
@@ -1737,12 +1731,10 @@
                 if (currentUser && !window.isAdminMode) { 
                     document.getElementById('appPage').classList.add('active'); 
                     switchTab('Feed'); 
-                    if(loginPromptInterval) clearInterval(loginPromptInterval);
                     document.getElementById('sidebarAuthBtn').classList.add('hidden');
                 } else if (!currentUser && !window.isAdminMode) { 
                     document.getElementById('appPage').classList.add('active'); 
                     switchTab('Feed');
-                    startLoginPrompt();
                     document.getElementById('headerUserName').innerText = "Guest";
                     document.getElementById('userAvatarInitials').innerText = "G";
                     document.getElementById('sidebarAuthBtn').classList.remove('hidden');
@@ -1918,6 +1910,8 @@
     window.openOrderFromDetail = () => { if(selectedProduct) openOrderUI(selectedProduct.id, currentSelectedImageIndex); };  
   
     window.openShareUI = (id, imgIndex = 0) => {  
+        if(!checkAuthAndOpenModal()) return;
+
         currentSelectedImageIndex = imgIndex; selectedProduct = window.allProducts.find(p => p.id === id); if(!selectedProduct) return;  
         document.getElementById('shareProductTitle').innerText = selectedProduct.title;  
         document.getElementById('shareBasePrice').innerText = `₹${money(selectedProduct.basePrice)}`;  
@@ -2011,6 +2005,8 @@
     };
 
     window.openOrderUI = (id, imgIndex = 0) => {  
+        if(!checkAuthAndOpenModal()) return;
+
         if(userData?.status !== 'approved') return showToast("Profile approval required.");  
         selectedProduct = window.allProducts.find(p => p.id === id); if(!selectedProduct) return;  
         
@@ -2301,7 +2297,7 @@
         } catch(e) { showToast(e.message); } finally { btn.innerText = "Submit Request"; btn.disabled = false; }  
     };  
 
-    window.openAdminLogin = () => { document.getElementById('adminEmail').value = currentUser?.email||''; openModal('adminLoginModal'); };  
+    window.openAdminLogin = () => { document.getElementById('adminEmail').value = ''; document.getElementById('adminPassword').value = ''; openModal('adminLoginModal'); };  
     
     window.handleAdminLogin = async (e) => {  
         e.preventDefault(); 
