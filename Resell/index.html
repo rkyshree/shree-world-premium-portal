@@ -355,7 +355,6 @@
                 <span class="flex items-center gap-1 cursor-pointer hover:text-primary transition" onclick="openInfoModal('return')"><i class="fa-solid fa-rotate-left text-primary"></i> Easy Returns</span>
             </div>
 
-            <!-- Changed Order: Explore Brands is now above Shop by Collection -->
             <div id="exploreBrandsView" class="px-3 pb-6 pt-4">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-black text-gray-900 text-lg">Explore Brands</h3>
@@ -532,7 +531,7 @@
         </div>  
 
         <div class="absolute bottom-0 left-0 w-full p-3 bg-white border-t border-gray-200 flex gap-3 z-20 pb-[env(safe-area-inset-bottom,12px)]">  
-             <button onclick="openShareFromDetail()" class="flex-1 bg-white border border-gray-300 text-gray-800 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp text-green-500 text-lg"></i> Share</button>  
+             <button onclick="openShareFromDetail()" class="flex-1 bg-white border border-gray-300 text-gray-800 py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-share-nodes text-lg"></i> Share</button>  
              <button onclick="openOrderFromDetail()" class="flex-1 bg-primary text-white py-3 rounded-lg font-bold text-sm shadow-md">Order Now</button>  
         </div>  
     </div>  
@@ -574,7 +573,7 @@
                 </div>  
             </div>  
 
-            <button onclick="shareProduct()" class="w-full bg-[#25D366] text-white py-3.5 rounded-lg font-bold text-sm shadow-md flex justify-center items-center gap-2"><i class="fa-brands fa-whatsapp text-lg"></i> Share on WhatsApp</button>  
+            <button onclick="shareProduct()" class="w-full bg-blue-600 text-white py-3.5 rounded-lg font-bold text-sm shadow-md flex justify-center items-center gap-2"><i class="fa-solid fa-share-nodes text-lg"></i> Share Product</button>  
         </div>  
     </div>  
 </div>  
@@ -885,7 +884,7 @@
                     <div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Link URL (Optional)</label><input id="newBannerLink" type="text" placeholder="https://wa.me/..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div>
                     <button onclick="addNewAdminBanner()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Banner</button>
                 </div>
-                <div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBannersTable" class="text-sm"></tbody></table></div>
+                <div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBannersTable" class="text-sm"></tbody></table></div>
             </div>
         </div>
 
@@ -1102,7 +1101,7 @@
             titleEl.innerText = "Exchange & Return Policy";
             bodyEl.innerHTML = `<div class="bg-blue-50 text-blue-900 p-4 rounded-lg border border-blue-200 space-y-3 leading-relaxed">
                 <p><b class="text-blue-800 text-base"><i class="fa-solid fa-video"></i> Strict Unboxing Video Required!</b></p>
-                <p>प्रोडक्ट आपके पास पहुँचते ही आपको उसका अनबॉक्सिंग (Unboxing) वीडियो बनाना है। रिटर्न या एक्सचेंज के लिए यह अनिवार्य है।</p>
+                <p>प्रोडक्ट आपके पास पहुँचते ही आपको उसका अनबॉक्सिंग (Unboxing) वीडियो बनाना है। रिटर्न या एक्सचेंज के लिए यह अनिवार्य কাশী है।</p>
                 <p class="font-bold text-red-600 bg-red-50 p-2 rounded border border-red-200">2 days return/exchange available only for manufacturing defect.</p>
                 <ul class="list-disc pl-5 space-y-1.5 font-medium">
                     <li>वीडियो <b>360 डिग्री</b> (चारों तरफ से पार्सल दिखाते हुए) होना चाहिए।</li>
@@ -1907,9 +1906,13 @@
         if(s <= b) return showToast("Customer price must be higher than base price.");  
         
         const images = selectedProduct.images && selectedProduct.images.length > 0 ? selectedProduct.images.filter(Boolean) : [selectedProduct.image].filter(Boolean);
-        const descText = selectedProduct.description ? `\n📝 *Details:*\n${selectedProduct.description}\n` : '';
+        const descText = selectedProduct.description ? `\n\n📝 *Details:*\n${selectedProduct.description}\n` : '';
         const videoText = selectedProduct.videoUrl ? `\n🎥 *Watch Video:* ${selectedProduct.videoUrl}\n` : '';
-        const msg = `🛍 *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\nMessage me to order!`;  
+        
+        // Generate a dynamic generic link for the product
+        const productLink = window.location.origin + window.location.pathname + "?pid=" + selectedProduct.id;
+
+        const msg = `🛍 *${selectedProduct.title}*${descText}${videoText}\n💰 *Price:* ₹${s}\n🚚 *Delivery:* Free Delivery in 4-7 Days\n\n🔗 *Buy Now:* ${productLink}\nMessage me to order!`;  
         
         const btn = document.querySelector('#shareModal button[onclick="shareProduct()"]');
         const origHtml = btn.innerHTML; btn.innerHTML = '<div class="spinner white"></div>'; btn.disabled = true;
@@ -1917,7 +1920,7 @@
         try {
             const files = [];
             if(navigator.canShare) {
-                const maxImages = Math.min(images.length, 20); 
+                const maxImages = Math.min(images.length, 4); // Limited to 4 images for faster robust sharing
                 const fetchPromises = [];
                 for (let i = 0; i < maxImages; i++) {
                     fetchPromises.push( fetch(images[i]).then(res => res.blob()).then(blob => new File([blob], `product_${i+1}.jpg`, { type: blob.type || 'image/jpeg' })).catch(e => console.warn(e)) );
@@ -1929,7 +1932,9 @@
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files: files })) {
                 await navigator.share({ text: msg, files: files, title: selectedProduct.title });
             } else if (navigator.share) {
-                await navigator.share({ text: msg + "\n\n*Images:*\n" + images.join("\n") });
+                await navigator.share({ text: msg + "\n\n*Images:*\n" + images.join("\n"), title: selectedProduct.title, url: productLink });
+            } else {
+                window.copyGenericText(msg, "Text Copied! Paste anywhere to share.");
             }
             closeModal('shareModal');
         } catch (error) { closeModal('shareModal'); } 
@@ -2400,12 +2405,29 @@
             <tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
                 <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-12 object-contain bg-[#222] rounded"></td>
                 <td class="py-3 px-4 text-xs text-gray-400 max-w-[200px] truncate">${escapeHtml(b.link || 'No Link')}</td>
+                <td class="py-3 px-4 text-center">
+                    <button onclick="moveAdminBanner(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button>
+                    <button onclick="moveAdminBanner(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-2" ${i===window.siteBanners.length-1?'disabled style="opacity:0.3"':''}>⬇️</button>
+                </td>
                 <td class="py-3 px-4 text-right">
                     <button onclick="editAdminBanner(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button>
                     <button onclick="deleteAdminBanner(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button>
                 </td>
             </tr>
-        `).join('') : '<tr><td colspan="3" class="p-8 text-center text-gray-500">No banners found.</td></tr>';
+        `).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No banners found.</td></tr>';
+    };
+
+    // New Function: Move Banners
+    window.moveAdminBanner = async (index, dir) => {
+        if(index + dir < 0 || index + dir >= window.siteBanners.length) return;
+        const temp = window.siteBanners[index];
+        window.siteBanners[index] = window.siteBanners[index + dir];
+        window.siteBanners[index + dir] = temp;
+        try { 
+            await setDoc(doc(db, SETTINGS_COL, "banners"), { list: window.siteBanners }, { merge: true }); 
+            renderCarousel(); 
+            if(window.isAdminMode) window.renderAdminBanners(); 
+        } catch(e) {}
     };
 
     window.addNewAdminBanner = async () => {
