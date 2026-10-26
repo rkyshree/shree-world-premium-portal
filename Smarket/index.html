@@ -1,561 +1,862 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#071426">
-<meta name="description" content="SHRAYNEX के साथ Demat Account खोलने की प्रक्रिया, जरूरी दस्तावेज, ब्रोकर विकल्प और WhatsApp सहायता।">
-<title>SHRAYNEX | Demat Account Opening</title>
+<meta name="description" content="SHRAYNEX के साथ शेयर बाजार सीखें, Stock Screener इस्तेमाल करें, Demat Account खोलें, SIP और EMI कैलकुलेट करें।">
+<title>SHRAYNEX | Live Demat, Stock Screener & Market Guide</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --bg:#071426;
-  --panel:#101f36;
-  --panel2:#152943;
-  --blue:#3478f6;
-  --green:#20d18b;
-  --yellow:#ffd54a;
-  --white:#f5f8ff;
-  --muted:#a9b9cf;
-  --border:#ffffff18;
+  --bg:#040d1a;
+  --panel:#0a172a;
+  --panel2:#112240;
+  --blue:#3b82f6;
+  --green:#10b981;
+  --red:#ef4444;
+  --yellow:#fbbf24;
+  --white:#f8fafc;
+  --muted:#94a3b8;
+  --border:#1e293b;
+  --glass: rgba(15, 23, 42, 0.85);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:90px}
+html{scroll-behavior:smooth;scroll-padding-top:110px}
 body{
   margin:0;background:var(--bg);color:var(--white);
   font-family:Inter,"Noto Sans Devanagari",sans-serif;
-  line-height:1.7
+  line-height:1.7; overflow-x: hidden;
 }
 a{color:inherit;text-decoration:none}
 button,input,select{font:inherit}
 .wrap{width:min(1120px,92%);margin:auto}
+
+/* MARKET TICKER TAPE */
+.ticker-wrap {
+  width: 100%; background: #020617; border-bottom: 1px solid var(--border);
+  overflow: hidden; white-space: nowrap; padding: 8px 0; font-size: 13px; font-weight: 600;
+}
+.ticker {
+  display: inline-block; animation: ticker 35s linear infinite;
+}
+.ticker:hover { animation-play-state: paused; }
+.ticker-item { margin-right: 40px; color: var(--muted); }
+.ticker-item .up { color: var(--green); }
+.ticker-item .down { color: var(--red); }
+@keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+/* HEADER & NAV */
 header{
-  position:sticky;top:0;z-index:20;
-  background:#071426f5;backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:50;
+  background:var(--glass);backdrop-filter:blur(16px); -webkit-backdrop-filter: blur(16px);
   border-bottom:1px solid var(--border)
 }
 .nav{min-height:76px;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-icon{
-  height:46px;width:46px;border-radius:14px;
+  height:46px;width:46px;border-radius:12px;
   display:grid;place-items:center;
-  background:linear-gradient(135deg,#a855f7,#246bff);
-  font-size:29px;font-weight:800
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  font-size:26px;font-weight:800; color:white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
-.brand strong{font-size:21px;letter-spacing:1px}
-.brand small{display:block;font-size:10px;color:#b4c7e2}
-.nav-links{display:flex;gap:22px;align-items:center;font-size:13px;color:#c8d5e8}
+.brand strong{font-size:22px;letter-spacing:1px; line-height:1;}
+.brand small{display:block;font-size:11px;color:var(--muted); margin-top:2px;}
+.nav-links{display:flex;gap:25px;align-items:center;font-size:14px;color:var(--muted); font-weight:500;}
+.nav-links a:hover{color:var(--white);}
+
+/* BUTTONS */
 .btn{
   display:inline-flex;justify-content:center;align-items:center;
-  padding:13px 20px;border:0;border-radius:11px;
-  font-weight:800;cursor:pointer;transition:.2s
+  padding:10px 22px;border:0;border-radius:8px;
+  font-weight:600;cursor:pointer;transition:.2s; font-size: 14px;
 }
-.btn:hover{transform:translateY(-2px)}
+.btn:hover{transform:translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
 .btn-blue{background:var(--blue);color:white}
-.btn-yellow{background:var(--yellow);color:#14213b}
-.btn-green{background:#19bd78;color:#032719}
-.btn-outline{border:1px solid #ffffff35;color:white;background:#ffffff08}
-section{padding:70px 0}
+.btn-yellow{background:var(--yellow);color:#0f172a}
+.btn-green{background:var(--green);color:white}
+.btn-outline{border:1px solid var(--border);color:white;background:transparent}
+
+/* LANGUAGE TOGGLE */
+.lang-toggle-btn{
+  background: transparent; border: 1px solid var(--border); color: white;
+  padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600;
+  display: flex; align-items: center; gap: 8px; transition: 0.3s; font-size:13px;
+}
+.lang-toggle-btn:hover{ background: #ffffff10; }
+body.lang-en .hi-text { display: none !important; }
+body.lang-en .en-text { display: block !important; }
+body:not(.lang-en) .hi-text { display: block !important; }
+body:not(.lang-en) .en-text { display: none !important; }
+body.lang-en span.hi-text { display: none !important; }
+body.lang-en span.en-text { display: inline !important; }
+body:not(.lang-en) span.hi-text { display: inline !important; }
+body:not(.lang-en) span.en-text { display: none !important; }
+
+/* UTILS */
+section{padding:80px 0}
+.eyebrow{display:inline-block;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--blue); text-transform:uppercase; margin-bottom:10px;}
+.section-title{text-align:center;max-width:750px;margin:0 auto 50px}
+.section-title h2{font-size:clamp(28px,4vw,42px);line-height:1.2;margin:0 0 15px}
+.section-title p{color:var(--muted);margin:0;font-size:16px}
+.yellow{color:var(--yellow)}
+.green{color:var(--green)}
+.red{color:var(--red)}
+
+/* HERO */
 .hero{
   position:relative;overflow:hidden;
-  background:
-  radial-gradient(ellipse at 85% 15%,#1552a8 0,transparent 35%),
-  radial-gradient(ellipse at 5% 85%,#33206d 0,transparent 30%),
-  linear-gradient(135deg,#071426,#0c1e39)
+  background: radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+              radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+  padding: 100px 0;
 }
-.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:35px;align-items:center}
-.eyebrow{
-  display:inline-block;font-size:12px;font-weight:800;
-  letter-spacing:1.5px;color:var(--green)
+.hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:50px;align-items:center}
+h1{font-size:clamp(40px,5vw,65px);line-height:1.1;letter-spacing:-1px;margin:0 0 25px}
+.hero p{color:var(--muted);font-size:18px; margin-bottom: 35px;}
+.actions{display:flex;gap:15px;flex-wrap:wrap;}
+
+/* HERO CHART VISUAL */
+.hero-visual{
+  background: linear-gradient(145deg, #0a172a, #040d1a); border: 1px solid var(--border); border-radius: 20px; 
+  padding: 30px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); position: relative; overflow:hidden;
 }
-h1{font-size:clamp(37px,5.8vw,66px);line-height:1.15;letter-spacing:-1.7px;margin:20px 0}
-.yellow{color:var(--yellow)}
-.hero p{color:#c1d0e5;font-size:16px}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-.disclaimer-small{font-size:11px!important;color:#8fa4c0!important}
-.market-card{
-  border:1px solid #ffffff24;border-radius:24px;padding:23px;
-  background:linear-gradient(145deg,#182e4c,#0d1b31);
-  box-shadow:0 25px 80px #0004
+.live-badge{position:absolute; top:20px; right:20px; background:rgba(16, 185, 129, 0.2); color:var(--green); font-size:11px; padding:4px 10px; border-radius:10px; font-weight:800; display:flex; align-items:center; gap:5px; letter-spacing:1px;}
+.live-badge::before{content:""; width:6px; height:6px; background:var(--green); border-radius:50%; animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+/* SCREENER WIDGET */
+.screener-section{background: #020617; border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+.screener-box{
+  background: linear-gradient(145deg, #0a172a, #0f172a); border: 1px solid #1e293b; border-radius: 24px;
+  padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-width: 1000px; margin: 0 auto;
 }
-.market-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.market-top small{color:var(--muted)}
-.live-dot{color:var(--green);font-size:11px}
-.market-number{font-size:27px;font-weight:800;margin:14px 0 0}
-.market-sub{color:var(--muted);font-size:12px}
-.chart{width:100%;height:130px;display:block;margin:10px 0}
-.market-row{display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid var(--border);font-size:12px}
-.market-row span{color:#c0cfe2}
-.green{color:var(--green)}
-.pill{
-  display:inline-block;padding:5px 10px;border-radius:30px;
-  background:#ffffff0c;border:1px solid var(--border);font-size:11px;color:#c7d8ee
+.search-bar-wrap{position: relative; margin-bottom: 35px;}
+.search-icon{position:absolute; left:18px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:20px;}
+.screener-search{
+  width: 100%; padding: 18px 20px 18px 55px; border-radius: 12px; border: 2px solid var(--border);
+  background: #050b14; color: white; font-size: 18px; outline: none; transition: 0.3s; font-weight:500;
 }
-.section-title{text-align:center;max-width:730px;margin:0 auto 34px}
-.section-title h2{font-size:clamp(27px,4vw,40px);line-height:1.35;margin:9px 0}
-.section-title p{color:var(--muted);margin:0;font-size:14px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
-.card{
-  background:linear-gradient(145deg,#14263e,#0f1e33);
-  border:1px solid var(--border);border-radius:18px;padding:23px
+.screener-search:focus{border-color: var(--blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);}
+.search-dropdown{
+  position: absolute; top: 100%; left: 0; width: 100%; background: #111827;
+  border: 1px solid var(--border); border-radius: 12px; margin-top: 8px; z-index: 20;
+  display: none; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
-.card-icon{
-  width:49px;height:49px;border-radius:14px;display:grid;place-items:center;
-  background:#3478f620;color:#75a4ff;font-size:25px
+.search-dropdown div{
+  padding: 15px 20px; cursor: pointer; border-bottom: 1px solid var(--border); font-size:15px; display:flex; justify-content:space-between;
 }
-.card h3{margin:13px 0 5px;font-size:17px}
-.card p{color:var(--muted);font-size:13px;margin:0}
-.broker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.search-dropdown div:hover{background: #1e293b;}
+.search-dropdown div small{color:var(--muted);}
+
+.screener-result{display: none;}
+.screener-result.active{display: block; animation:fadeIn 0.5s ease;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+.company-header{display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px;}
+.company-header h3{margin: 0; font-size: 32px; color: var(--white); display:flex; align-items:center; gap:15px;}
+.company-header h3 span.symbol {font-size:14px; background:#1e293b; padding:4px 10px; border-radius:6px; color:var(--muted); font-weight:600;}
+.company-header .price-box{text-align:right;}
+.company-header .price{font-size: 36px; font-weight: 800; color: var(--green); line-height:1;}
+.company-header .price-change{font-size:14px; font-weight:600; color:var(--green); margin-top:5px; display:block;}
+
+.screener-grid{display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;}
+.sg-item{background: #040d1a; padding: 20px; border-radius: 12px; border: 1px solid var(--border); display:flex; flex-direction:column; justify-content:center;}
+.sg-item span{font-size: 13px; color: var(--muted); margin-bottom: 8px; text-transform:uppercase; letter-spacing:1px; font-weight:600;}
+.sg-item strong{font-size: 20px; color: var(--white); font-weight:700;}
+
+/* EDUCATION MODERN ACCORDION */
+.edu-accordion { max-width: 900px; margin: 0 auto; }
+.edu-item {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 16px; margin-bottom: 20px; overflow: hidden;
+  transition: all 0.3s ease;
+}
+.edu-item:hover { border-color: #3b82f655; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.edu-header {
+  padding: 25px 30px; display: flex; justify-content: space-between;
+  align-items: center; cursor: pointer; font-size: 20px; font-weight: 700;
+  color: var(--white); background: linear-gradient(90deg, #0a172a, #0f172a);
+}
+.edu-header .icon {
+  width: 40px; height: 40px; border-radius: 50%; background: #1e293b;
+  display: grid; place-items: center; color: var(--blue); transition: 0.3s;
+}
+.edu-item.active .edu-header .icon { background: var(--blue); color: white; transform: rotate(180deg); }
+.edu-item.active { border-color: var(--blue); }
+.edu-body {
+  padding: 0 30px; max-height: 0; overflow: hidden; transition: all 0.4s ease;
+  color: var(--muted); font-size: 15px; line-height: 1.8;
+}
+.edu-item.active .edu-body { padding: 25px 30px; max-height: 2000px; border-top: 1px solid var(--border); }
+
+.speaker-btn{
+  background: #1e293b; color: white; border: 1px solid var(--border);
+  border-radius: 50%; width: 40px; height: 40px;
+  display: inline-grid; place-items: center; cursor: pointer;
+  font-size: 18px; transition: 0.3s; margin-left: 15px;
+}
+.speaker-btn:hover{ background: var(--blue); border-color:var(--blue); }
+.speaker-btn.playing{ animation: pulse 1.5s infinite; background: var(--green); border-color:var(--green); }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px; margin-top: 25px;}
+.pc-card{background: #050b14; padding: 25px; border-radius: 12px; border: 1px solid var(--border);}
+.pc-card h4{margin:0 0 15px 0; font-size:18px;}
+.pc-card ul{padding-left: 20px; margin:0;}
+.pc-card li{margin-bottom: 12px; font-size: 14px;}
+
+/* CALCULATORS */
+.calc-wrapper{
+  background: linear-gradient(145deg, #0a172a, #0f172a); border: 1px solid var(--border); border-radius: 24px; 
+  padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); max-width:1000px; margin:0 auto;
+}
+.calc-tabs{display: flex; gap: 15px; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; overflow-x:auto;}
+.calc-tab{
+  background: transparent; color: var(--muted); border: 1px solid transparent;
+  font-size: 16px; font-weight: 600; cursor: pointer; padding: 12px 25px;
+  border-radius: 10px; transition: 0.3s; white-space:nowrap;
+}
+.calc-tab:hover{ color:white; }
+.calc-tab.active{background: rgba(59, 130, 246, 0.1); color: var(--blue); border-color: var(--blue);}
+.calc-container{display: none; grid-template-columns: 1fr 1fr; gap: 60px;}
+.calc-container.active{display: grid; animation:fadeIn 0.5s ease;}
+
+.calc-input-group{margin-bottom: 30px;}
+.calc-input-header{display: flex; justify-content: space-between; margin-bottom: 15px; align-items:center;}
+.calc-input-header label{font-weight: 600; font-size: 15px; color:var(--white);}
+.calc-input-header .val-box{
+  background: #040d1a; padding: 8px 15px; border-radius: 8px; font-family: monospace; 
+  font-size: 16px; font-weight: bold; color: var(--blue); border: 1px solid var(--border);
+}
+.range-slider{
+  width: 100%; -webkit-appearance: none; height: 8px; border-radius: 4px;
+  background: #1e293b; outline: none;
+}
+.range-slider::-webkit-slider-thumb{
+  -webkit-appearance: none; appearance: none; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--blue); cursor: pointer; border:4px solid var(--white);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.calc-result{
+  background: #040d1a; border: 1px solid var(--border);
+  border-radius: 16px; padding: 35px; display: flex; flex-direction: column; justify-content: center;
+  position:relative; overflow:hidden;
+}
+.calc-result::before{
+  content:""; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg, var(--blue), var(--green));
+}
+.res-row{display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 16px; color: var(--muted);}
+.res-row strong{color: white; font-size: 20px; font-weight:700;}
+.res-total{
+  margin-top: 15px; padding-top: 25px; border-top: 1px dashed var(--border);
+  font-size: 36px; font-weight: 800; color: var(--green); text-align: center; line-height:1.2;
+}
+
+/* BROKERS (2x2 Grid setup) */
+.broker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:25px; max-width:900px; margin:0 auto;}
 .broker{
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:17px;padding:19px;display:flex;flex-direction:column;align-items:flex-start
+  background:var(--panel);border:1px solid var(--border); transition:all 0.3s ease;
+  border-radius:16px;padding:30px; display:flex; align-items:center; gap:25px;
 }
+.broker:hover{border-color:var(--blue); transform:translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.3);}
 .broker-logo{
-  width:46px;height:46px;border-radius:12px;background:#fff;color:#12315b;
-  display:grid;place-items:center;font-size:21px;font-weight:800
+  width:70px;height:70px;border-radius:16px;display:grid;place-items:center; flex-shrink:0;
+  background:#1e293b;color:white;font-size:32px; font-weight: 800; box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
-.broker h3{margin:12px 0 3px;font-size:17px}
-.broker p{font-size:12px;color:var(--muted);margin:0 0 15px}
-.broker button{
-  margin-top:auto;border:1px solid #4d83f5;color:#bcd0ff;
-  border-radius:9px;padding:8px 12px;background:#3478f610;
-  font-size:12px;font-weight:700;cursor:pointer
+.broker-info {flex-grow:1;}
+.broker h3{margin:0 0 5px; font-size:22px;}
+.broker p{font-size:14px; color:var(--muted); margin:0 0 15px 0;}
+.broker a{
+  display:inline-block; border:1px solid var(--blue);color:var(--blue); 
+  border-radius:8px;padding:8px 20px;background:rgba(59, 130, 246, 0.1);
+  font-size:14px;font-weight:700;cursor:pointer; transition:0.3s; text-align:center;
 }
-.notice{
-  padding:16px 19px;border-radius:13px;
-  background:#302b174d;border:1px solid #e9c34d50;
-  color:#e7dcae;font-size:12px;margin-top:22px
+.broker a:hover{background:var(--blue); color:white; box-shadow: 0 5px 15px rgba(59,130,246,0.3);}
+
+/* FAQ */
+.faq-box{margin-bottom: 15px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); overflow: hidden; transition:0.3s;}
+.faq-box:hover{border-color:#3b82f655;}
+.faq-box summary{
+  padding: 22px 25px; font-weight: 600; cursor: pointer; list-style: none;
+  display: flex; justify-content: space-between; align-items: center; font-size:16px;
+}
+.faq-box summary::-webkit-details-marker{display: none;}
+.faq-box summary:after{content: '▼'; font-size: 14px; color: var(--muted); transition: 0.3s;}
+.faq-box[open] summary:after{transform: rotate(180deg); color: var(--blue);}
+.faq-content{padding: 0 25px 25px; color: var(--muted); font-size: 15px; line-height:1.8;}
+
+/* ABOUT FOUNDER SECTION (UPDATED IMAGE) */
+.founder-section {
+  padding: 80px 0; background: linear-gradient(to bottom, #020617, #040d1a);
+  text-align: center; border-top: 1px solid var(--border);
+}
+.founder-card {
+  display: inline-block; padding: 40px; background: linear-gradient(145deg, #0a172a, #050b14); 
+  border: 1px solid var(--border); border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4); min-width: 350px;
+}
+.founder-img {
+  width: 180px; height: 180px; border-radius: 50%; object-fit: cover;
+  border: 4px solid var(--blue); padding: 5px; margin-bottom: 25px;
+  background: #ffffff;
+  box-shadow: 0 15px 35px rgba(59, 130, 246, 0.2);
+}
+.founder-name {
+  font-size: 26px; font-weight: 800; letter-spacing: 2px; 
+  margin: 0 0 8px 0; color: var(--white);
+}
+.founder-title {
+  font-size: 15px; font-weight: 600; color: var(--blue);
+  letter-spacing: 4px; text-transform: uppercase; margin: 0;
 }
 
-/* DOCUMENTS */
-.documents{background:#0b192d}
-.doc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:17px}
-.doc-card{
-  display:flex;gap:15px;align-items:flex-start;
-  padding:22px;border:1px solid var(--border);
-  border-radius:17px;background:linear-gradient(135deg,#152943,#101d32)
-}
-.doc-icon{
-  flex:0 0 45px;height:45px;border-radius:12px;
-  display:grid;place-items:center;background:#20d18b17;color:var(--green);font-size:23px
-}
-.doc-card h3{margin:0 0 8px;font-size:16px}
-.doc-card ul{padding-left:19px;margin:0;color:#b7c7dc;font-size:13px}
-.doc-card li{margin:4px 0}
-.checklist{
-  margin-top:24px;border-radius:18px;padding:23px;
-  border:1px solid #20d18b42;background:#0d2928
-}
-.checklist h3{margin-top:0}
-.checklist ul{padding-left:20px;color:#c2d9d4;font-size:13px}
+/* TERMS */
+.terms-box{background: #050b14; padding: 35px; border-radius: 16px; border: 1px solid var(--border);}
+.terms-box h3{color: var(--yellow); margin-top: 0; font-size:20px;}
+.terms-box ul{padding-left: 20px; font-size: 14px; color: var(--muted); line-height:1.8;}
+.terms-box li{margin-bottom: 12px;}
 
-/* PROCESS */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
-.step{background:var(--panel);border:1px solid var(--border);padding:22px;border-radius:16px}
-.step-number{font-size:12px;color:var(--green);font-weight:800;letter-spacing:1px}
-.step h3{margin:8px 0}
-.step p{color:var(--muted);font-size:13px;margin:0}
+footer{padding:40px 0;border-top:1px solid var(--border);background:#020617; text-align: center;}
 
-/* FORM */
-.form-section{background:linear-gradient(140deg,#0b1d36,#132c4b)}
-.form-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:25px;align-items:start}
-.form-info{
-  padding:27px;border-radius:21px;
-  background:linear-gradient(145deg,#1c4d91,#17294b);
-  border:1px solid #ffffff25
-}
-.form-info h2{font-size:29px;line-height:1.35}
-.form-info p,.form-info li{color:#d2e1f6;font-size:13px}
-.form-info li{margin:10px 0}
-.form-card{padding:27px;border-radius:21px;background:#f9fbff;color:#14233b}
-.form-card h2{margin:0;font-size:27px}
-.form-card>p{color:#66758b;font-size:13px}
-.field{margin-bottom:15px}
-.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
-.field input,.field select{
-  width:100%;padding:12px;border:1px solid #d8e0ed;
-  border-radius:10px;background:white;color:#17243a;outline:none
-}
-.field input:focus,.field select:focus{border-color:#3478f6;box-shadow:0 0 0 3px #3478f615}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.consent{display:flex;align-items:flex-start;gap:10px;color:#536176;font-size:11px;margin:18px 0}
-.consent input{margin-top:5px}
-.submit{width:100%;padding:15px;background:#17a866;color:white;border:0;border-radius:11px;font-weight:800;cursor:pointer}
-.submit:hover{background:#128851}
-.form-footnote{font-size:11px!important;color:#6b7a8f!important}
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
-.price-card{background:var(--panel);border:1px solid var(--border);padding:25px;border-radius:18px}
-.price-card.featured{border-color:#3478f6}
-.price{font-size:35px;font-weight:800;color:var(--green)}
-.price-card p{color:var(--muted);font-size:13px}
-footer{padding:35px 0 95px;border-top:1px solid var(--border);background:#050e1c}
-.footer-row{display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}
-footer p,footer a{font-size:12px;color:#aabbd1}
-.footer-links{display:flex;gap:15px;flex-wrap:wrap}
-.wa-float{
-  position:fixed;right:16px;bottom:17px;z-index:25;
-  background:#19bd78;color:#04291a;border-radius:40px;
-  padding:12px 17px;font-size:13px;font-weight:800;
-  box-shadow:0 8px 30px #0006
-}
-@media(max-width:760px){
-  .hero-grid,.form-layout{grid-template-columns:1fr}
-  .hero-grid{gap:28px}
-  .cards,.broker-grid{grid-template-columns:repeat(2,1fr)}
-  .doc-grid,.steps{grid-template-columns:1fr}
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero-grid, .calc-container{grid-template-columns:1fr}
+  .screener-grid{grid-template-columns:repeat(2,1fr)}
   .nav-links{display:none}
-  section{padding:52px 0}
+  .hero{padding: 60px 0;}
 }
-@media(max-width:460px){
-  .cards,.broker-grid,.price-grid{grid-template-columns:1fr}
-  .two{grid-template-columns:1fr}
-  .brand strong{font-size:17px}
-  .brand-icon{width:40px;height:40px}
-  .nav .btn{padding:10px;font-size:11px}
-  .doc-card{padding:17px}
+@media(max-width:600px){
+  .screener-grid, .broker-grid, .pc-grid{grid-template-columns:1fr}
+  h1{font-size: 36px;}
+  .calc-wrapper, .screener-box, .founder-card{padding: 20px;}
+  .company-header{flex-direction:column; align-items:flex-start; gap:15px;}
+  .company-header .price-box{text-align:left;}
+  .broker{flex-direction:column; text-align:center;}
 }
 </style>
 </head>
+<body class="">
 
-<body>
+<!-- TICKER TAPE (Dynamically updated via JS) -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker-content">
+    <!-- Items will be injected by JavaScript -->
+  </div>
+</div>
 
 <header>
   <div class="wrap nav">
-    <a href="https://www.rkyshree.in" class="brand">
+    <a href="#" class="brand">
       <span class="brand-icon">S</span>
-      <span><strong>SHRAYNEX</strong><small>श्रायनेक्स | Resell • Share • Earn</small></span>
+      <span><strong>SHRAYNEX</strong><small class="hi-text">निवेश एवं वित्तीय शिक्षा</small><small class="en-text">Investment & Financial Edu.</small></span>
     </a>
     <nav class="nav-links">
-      <a href="#benefits">लाभ</a>
-      <a href="#brokers">ब्रोकर</a>
-      <a href="#documents">जरूरी दस्तावेज</a>
-      <a href="#register">रजिस्ट्रेशन</a>
+      <a href="#screener"><span class="hi-text">स्टॉक स्क्रीनर</span><span class="en-text">Screener</span></a>
+      <a href="#learn"><span class="hi-text">सीखें</span><span class="en-text">Learn</span></a>
+      <a href="#calculators"><span class="hi-text">कैलकुलेटर</span><span class="en-text">Calculators</span></a>
+      <a href="#brokers"><span class="hi-text">ब्रोकर</span><span class="en-text">Brokers</span></a>
     </nav>
-    <a href="#register" class="btn btn-yellow">FREE* Demat</a>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <button class="lang-toggle-btn" onclick="toggleLanguage()">
+        🌐 <span id="lang-label">English</span>
+      </button>
+    </div>
   </div>
 </header>
 
 <main>
 
-<!-- HERO -->
+<!-- HERO SECTION -->
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">✦ YOUR FINANCIAL JOURNEY STARTS HERE</span>
-      <h1>Demat Account<br>खुलवाएँ <span class="yellow">बिल्कुल FREE*</span></h1>
-      <p>SHRAYNEX के माध्यम से Demat Account खोलने की प्रक्रिया समझें। जरूरी दस्तावेज तैयार रखें, अपना पसंदीदा ब्रोकर चुनें और WhatsApp पर सहायता के लिए अनुरोध भेजें।</p>
+      <span class="eyebrow">YOUR FINANCIAL JOURNEY</span>
+      <h1 class="hi-text">शेयर बाजार सीखें और<br>सही Broker <span class="yellow">चुनें</span></h1>
+      <h1 class="en-text">Learn Stock Market &<br>Choose Right Broker</h1>
+      
+      <p class="hi-text">SHRAYNEX के साथ शुरुआत करें। निवेश करना सीखें, फ्री लाइव स्टॉक स्क्रीनर व कैलकुलेटर्स का उपयोग करें और अपनी पसंद का ब्रोकर चुनें।</p>
+      <p class="en-text">Start with SHRAYNEX. Learn investing, use our free live stock screener & calculators, and choose the right broker.</p>
+      
       <div class="actions">
-        <a class="btn btn-yellow" href="#register">अभी आवेदन करें ↗</a>
-        <a class="btn btn-outline" href="#documents">दस्तावेज देखें</a>
-      </div>
-      <p class="disclaimer-small">*फ्री खाता खोलने की सुविधा संबंधित ब्रोकर की वर्तमान शर्तों पर निर्भर है। AMC, ब्रोकरेज और अन्य शुल्क अलग हो सकते हैं।</p>
-      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:20px">
-        <span class="pill">✓ आसान प्रक्रिया</span>
-        <span class="pill">✓ ऑनलाइन KYC</span>
-        <span class="pill">✓ WhatsApp सहायता</span>
+        <a class="btn btn-blue" href="#screener"><span class="hi-text">स्टॉक एनालाइज करें</span><span class="en-text">Analyze Stocks</span></a>
+        <a class="btn btn-outline" href="#learn"><span class="hi-text">मार्केट सीखें ↗</span><span class="en-text">Learn Market ↗</span></a>
       </div>
     </div>
-
-    <div class="market-card">
-      <div class="market-top">
-        <div><strong>MARKET LEARNING</strong><br><small>शेयर बाजार को समझें</small></div>
-        <span class="live-dot">● DEMO GRAPH</span>
+    
+    <div>
+      <div class="hero-visual">
+        <div class="live-badge">LIVE</div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+          <div><strong style="font-size:24px;">NIFTY 50</strong><br><small style="color:var(--muted)">Index Value</small></div>
+          <div style="text-align:right;"><strong id="nifty-val" style="font-size:26px; color:var(--green)">24,530.50</strong><br><small id="nifty-change" style="color:var(--green)">+120.40 (0.49%)</small></div>
+        </div>
+        <svg viewBox="0 0 400 120" style="width:100%; height:120px;">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.5"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient>
+          </defs>
+          <path d="M0 100 L40 80 L80 90 L120 50 L160 60 L200 20 L240 40 L280 10 L320 30 L360 5 L400 15 L400 120 L0 120 Z" fill="url(#g)"/>
+          <polyline points="0,100 40,80 80,90 120,50 160,60 200,20 240,40 280,10 320,30 360,5 400,15" fill="none" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+        </svg>
       </div>
-      <div class="market-number">Learn Before You Invest</div>
-      <div class="market-sub">यह केवल सजावटी उदाहरण है, लाइव मार्केट डेटा नहीं।</div>
-      <svg class="chart" viewBox="0 0 340 130" preserveAspectRatio="none" role="img" aria-label="सजावटी शेयर मार्केट ग्राफ">
-        <defs>
-          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#20d18b" stop-opacity=".35"/>
-            <stop offset="100%" stop-color="#20d18b" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <g stroke="#ffffff12" stroke-width="1">
-          <path d="M0 25H340 M0 55H340 M0 85H340 M0 115H340"/>
-        </g>
-        <path d="M0 108 L28 88 L52 96 L78 68 L104 80 L130 48 L157 61 L182 35 L208 49 L234 20 L258 36 L285 13 L311 25 L340 5 L340 130 L0 130Z" fill="url(#fill)"/>
-        <polyline points="0,108 28,88 52,96 78,68 104,80 130,48 157,61 182,35 208,49 234,20 258,36 285,13 311,25 340,5" fill="none" stroke="#20d18b" stroke-width="3" stroke-linejoin="round"/>
-      </svg>
-      <div class="market-row"><span>Demat Account</span><strong class="green">Getting Started</strong></div>
-      <div class="market-row"><span>KYC Documents</span><strong>Keep Ready</strong></div>
-      <div class="market-row"><span>Investment Decision</span><strong>Research First</strong></div>
-      <p class="disclaimer-small">निवेश में बाजार जोखिम शामिल है। कोई निश्चित लाभ सुनिश्चित नहीं है।</p>
     </div>
   </div>
 </section>
 
-<!-- BENEFITS -->
-<section id="benefits">
+<!-- STOCK SCREENER SECTION -->
+<section id="screener" class="screener-section">
   <div class="wrap">
     <div class="section-title">
-      <span class="eyebrow">WHY SHRAYNEX?</span>
-      <h2>SHRAYNEX से Demat Account खुलवाने के लाभ</h2>
-      <p>आसान भाषा में जानकारी और खाता खोलने की प्रक्रिया में मार्गदर्शन।</p>
+      <span class="eyebrow" style="display:flex; align-items:center; justify-content:center; gap:8px;"><span class="live-badge" style="position:static; padding:3px 10px; font-size:11px;">LIVE</span> SHRAYNEX STOCK SCREENER</span>
+      <h2 class="hi-text">SHRAYNEX स्टॉक स्क्रीनर</h2>
+      <h2 class="en-text">SHRAYNEX Stock Screener</h2>
+      <p class="hi-text">भारत और अमेरिका की टॉप 100+ कंपनियों के लाइव फंडामेंटल्स चेक करें। (उदा: Reliance, Tata, SBI, Apple, Tesla)</p>
+      <p class="en-text">Check live fundamentals of Top 100+ Indian & US companies. (e.g. Reliance, Tata, SBI, Apple, Tesla)</p>
     </div>
-    <div class="cards">
-      <article class="card"><div class="card-icon">📈</div><h3>शेयर बाजार की जानकारी</h3><p>कंपनियों, बाजार के जोखिम और निवेश से जुड़ी बुनियादी बातें समझें।</p></article>
-      <article class="card"><div class="card-icon">🔎</div><h3>कंपनियों पर रिसर्च</h3><p>कंपनी के कारोबार, नतीजों और उपलब्ध सार्वजनिक जानकारी को समझने में सहायता लें।</p></article>
-      <article class="card"><div class="card-icon">📱</div><h3>ऑनलाइन प्रक्रिया</h3><p>मोबाइल से आवेदन करें और आगे की प्रक्रिया की जानकारी प्राप्त करें।</p></article>
-      <article class="card"><div class="card-icon">🗓️</div><h3>30 दिन की जानकारी*</h3><p>खाता खुलने के बाद पहले 30 दिनों की उपलब्ध जानकारी सेवा की शर्तें पूछें।</p></article>
-      <article class="card"><div class="card-icon">💬</div><h3>WhatsApp सहायता</h3><p>अपनी पसंद और सवाल सीधे SHRAYNEX को भेजें।</p></article>
-      <article class="card"><div class="card-icon">🛡️</div><h3>सुरक्षित KYC</h3><p>अपनी KYC केवल संबंधित ब्रोकर के आधिकारिक माध्यम से पूरी करें।</p></article>
+
+    <div class="screener-box">
+      <div class="search-bar-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="stockSearch" class="screener-search" placeholder="Search Companies (e.g. Reliance, Tata, Apple, HDFC)..." onkeyup="filterStocks()" autocomplete="off">
+        <div id="searchDropdown" class="search-dropdown"></div>
+      </div>
+
+      <div id="screenerResult" class="screener-result">
+        <div class="company-header">
+          <div>
+            <h3><span id="sr-name">Reliance Industries Ltd</span> <span id="sr-symbol" class="symbol">RELIANCE</span></h3>
+          </div>
+          <div class="price-box">
+            <div class="price"><span id="sr-currency">₹</span> <span id="sr-price">2,980.00</span></div>
+            <div class="price-change" id="sr-price-change">▲ +15.40 (0.51%)</div>
+          </div>
+        </div>
+        
+        <div class="screener-grid">
+          <div class="sg-item"><span>Market Cap</span><strong id="sr-mc" style="color:var(--blue)">₹ 19,85,000 Cr.</strong></div>
+          <div class="sg-item"><span>Current Price</span><strong id="sr-cp">₹ 2,980.00</strong></div>
+          <div class="sg-item"><span>High / Low</span><strong id="sr-hl">₹ 3,024 / 2,220</strong></div>
+          <div class="sg-item"><span>Stock P/E</span><strong id="sr-pe">28.5</strong></div>
+          <div class="sg-item"><span>Book Value</span><strong id="sr-bv">₹ 1,150.4</strong></div>
+          <div class="sg-item"><span>Dividend Yield</span><strong id="sr-div">0.30 %</strong></div>
+          <div class="sg-item"><span>ROCE</span><strong id="sr-roce" style="color:var(--green)">9.80 %</strong></div>
+          <div class="sg-item"><span>ROE</span><strong id="sr-roe" style="color:var(--green)">8.90 %</strong></div>
+          <div class="sg-item"><span>Face Value</span><strong id="sr-fv">₹ 10.00</strong></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- BROKERS -->
-<section id="brokers" style="background:#0b192d">
+<!-- EDUCATIONAL SECTION: ZERO TO HERO -->
+<section id="learn">
+  <div class="wrap">
+    <div class="section-title">
+      <span class="eyebrow">BEGINNER'S GUIDE</span>
+      <h2 class="hi-text">शेयर मार्केट क्या है? (सरल भाषा में)</h2>
+      <h2 class="en-text">What is the Share Market?</h2>
+      <p class="hi-text">निवेश करने से पहले यह जानना बहुत जरूरी है कि आप अपना पैसा कहाँ लगा रहे हैं।</p>
+      <p class="en-text">Before investing, it is crucial to understand where you are putting your money.</p>
+    </div>
+
+    <div class="edu-accordion">
+      
+      <!-- Topic 1 -->
+      <div class="edu-item active" id="edu-1">
+        <div class="edu-header" onclick="toggleEdu(this.parentElement)">
+          <div style="display:flex; align-items:center; gap:15px;">
+            <span class="hi-text">1. शेयर बाज़ार का मतलब क्या है?</span>
+            <span class="en-text">1. Meaning of Share Market</span>
+            <button class="speaker-btn hi-text" onclick="event.stopPropagation(); speakText('edu-1-hi', this)" title="Listen">🔊</button>
+            <button class="speaker-btn en-text" onclick="event.stopPropagation(); speakText('edu-1-en', this)" title="Listen">🔊</button>
+          </div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="edu-body">
+          <div id="edu-1-hi" class="hi-text">
+            <p>शेयर बाजार (Share Market) एक ऐसी जगह है जहाँ आप देश की बड़ी-बड़ी कंपनियों के हिस्सेदार (Shareholder) बन सकते हैं। मान लीजिए एक कंपनी है 'ABC'। उसे अपना बिज़नेस बढ़ाने के लिए पैसों की ज़रूरत है। वह अपने बिज़नेस को छोटे-छोटे हिस्सों में बाँट देती है, जिन्हें <strong>'शेयर (Share)'</strong> कहते हैं।</p>
+            <p>जब आप उस कंपनी का शेयर खरीदते हैं, तो आप उस कंपनी के उतने ही हिस्से के मालिक बन जाते हैं। अगर कंपनी को मुनाफा (Profit) होता है, तो आपके शेयर की कीमत बढ़ती है और आपको फायदा होता है। अगर कंपनी को नुकसान होता है, तो आपके शेयर की कीमत गिर सकती है।</p>
+          </div>
+          <div id="edu-1-en" class="en-text">
+            <p>The share market is a place where you can become a part-owner (Shareholder) of large companies. Suppose there is a company 'ABC'. It needs money to grow its business. It divides its business into tiny pieces, which are called <strong>'Shares'</strong>.</p>
+            <p>When you buy a share of that company, you become an owner of that specific portion. If the company makes a profit, the value of your share increases, and you make money. If the company suffers a loss, your share value may fall.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topic 2 -->
+      <div class="edu-item" id="edu-2">
+        <div class="edu-header" onclick="toggleEdu(this.parentElement)">
+          <div style="display:flex; align-items:center; gap:15px;">
+            <span class="hi-text">2. शेयर बाजार के फायदे और नुकसान</span>
+            <span class="en-text">2. Pros & Cons of Share Market</span>
+            <button class="speaker-btn hi-text" onclick="event.stopPropagation(); speakText('edu-2-hi', this)" title="Listen">🔊</button>
+            <button class="speaker-btn en-text" onclick="event.stopPropagation(); speakText('edu-2-en', this)" title="Listen">🔊</button>
+          </div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="edu-body">
+          <div id="edu-2-hi" class="hi-text">
+            <div class="pc-grid" style="margin-top:0;">
+              <div class="pc-card" style="border-top: 3px solid var(--green);">
+                <h4 class="green">🟢 फायदे (Pros)</h4>
+                <ul>
+                  <li>बैंक FD से काफी ज्यादा रिटर्न मिलने की संभावना।</li>
+                  <li>लंबे समय (Long Term) में वेल्थ बनाने का बेहतरीन तरीका।</li>
+                  <li>डिविडेंड (Dividend) के रूप में बैंक खाते में एक्स्ट्रा कमाई।</li>
+                  <li>आप बहुत कम पैसों (जैसे ₹500 SIP) से भी शुरुआत कर सकते हैं।</li>
+                </ul>
+              </div>
+              <div class="pc-card" style="border-top: 3px solid var(--red);">
+                <h4 class="red">🔴 नुकसान व जोखिम (Cons)</h4>
+                <ul>
+                  <li>बाज़ार में उतार-चढ़ाव (Volatility) बहुत होता है।</li>
+                  <li>बिना सोचे-समझे या किसी के कहने पर पैसा लगाने से नुकसान हो सकता है।</li>
+                  <li>खराब कंपनी डूबने पर आपका पूरा पैसा भी डूब सकता है।</li>
+                  <li>कम समय (Short Term) के लिए यह रिस्की हो सकता है।</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div id="edu-2-en" class="en-text">
+            <div class="pc-grid" style="margin-top:0;">
+              <div class="pc-card" style="border-top: 3px solid var(--green);">
+                <h4 class="green">🟢 Pros (Benefits)</h4>
+                <ul>
+                  <li>Potential for much higher returns than Bank FDs.</li>
+                  <li>Excellent way to build wealth in the Long Term.</li>
+                  <li>Extra income directly to bank via Dividends.</li>
+                  <li>You can start with very little money (e.g. ₹500 SIP).</li>
+                </ul>
+              </div>
+              <div class="pc-card" style="border-top: 3px solid var(--red);">
+                <h4 class="red">🔴 Cons (Risks)</h4>
+                <ul>
+                  <li>High market volatility (prices go up and down daily).</li>
+                  <li>Investing blindly on tips can lead to heavy losses.</li>
+                  <li>If a bad company goes bankrupt, your investment becomes zero.</li>
+                  <li>Can be very risky for Short Term goals.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topic 3 -->
+      <div class="edu-item" id="edu-3">
+        <div class="edu-header" onclick="toggleEdu(this.parentElement)">
+          <div style="display:flex; align-items:center; gap:15px;">
+            <span class="hi-text">3. समझदारी से निवेश कैसे करें? (ट्रेडिंग vs इन्वेस्टिंग)</span>
+            <span class="en-text">3. How to invest wisely? (Trading vs Investing)</span>
+            <button class="speaker-btn hi-text" onclick="event.stopPropagation(); speakText('edu-3-hi', this)" title="Listen">🔊</button>
+            <button class="speaker-btn en-text" onclick="event.stopPropagation(); speakText('edu-3-en', this)" title="Listen">🔊</button>
+          </div>
+          <div class="icon">▼</div>
+        </div>
+        <div class="edu-body">
+          <div id="edu-3-hi" class="hi-text">
+            <p>मार्केट में काम करने के दो मुख्य तरीके होते हैं:</p>
+            <ul style="color:var(--muted)">
+              <li><strong style="color:white">ट्रेडिंग (Trading):</strong> इसमें लोग आज शेयर खरीदते हैं और आज ही या कुछ दिनों में बेच देते हैं। उनका मकसद जल्दी मुनाफा कमाना होता है। यह <strong>बहुत रिस्की</strong> होता है और 90% नए लोग इसमें पैसा गँवा देते हैं।</li>
+              <li><strong style="color:white">इन्वेस्टिंग (Investing):</strong> इसमें लोग अच्छी कंपनियों (जैसे Tata, Reliance) के शेयर खरीद कर उन्हें सालो-साल (5-10 साल) के लिए होल्ड करते हैं। ऊपर जो 'स्क्रीनर' दिया गया है (P/E, ROCE चेक करने के लिए), उसका इस्तेमाल इन्वेस्टिंग के लिए अच्छी कंपनी खोजने में किया जाता है।</li>
+            </ul>
+            <p style="color:var(--green); font-weight:600; margin-top:15px;">सुझाव: नए लोगों को हमेशा इन्वेस्टिंग (Investing) या SIP से ही शुरुआत करनी चाहिए।</p>
+          </div>
+          <div id="edu-3-en" class="en-text">
+            <p>There are two main ways to participate in the market:</p>
+            <ul style="color:var(--muted)">
+              <li><strong style="color:white">Trading:</strong> Buying and selling shares on the same day or within a few days for quick profits. It is <strong>highly risky</strong> and 90% of beginners lose money here.</li>
+              <li><strong style="color:white">Investing:</strong> Buying shares of fundamentally strong companies (like Tata, Reliance) and holding them for years (5-10 years). The 'Screener' tool above is used to find good companies for investing.</li>
+            </ul>
+            <p style="color:var(--green); font-weight:600; margin-top:15px;">Advice: Beginners should always start with Investing or Mutual Fund SIPs.</p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATORS SECTION -->
+<section id="calculators" style="background:#020617; border-top:1px solid var(--border);">
+  <div class="wrap">
+    <div class="section-title">
+      <span class="eyebrow">FINANCIAL TOOLS</span>
+      <h2 class="hi-text">फ्री फाइनेंस कैलकुलेटर</h2>
+      <h2 class="en-text">Free Financial Calculators</h2>
+      <p class="hi-text">अपने निवेश और लोन की गणना खुद करें। स्लाइडर को खिसका कर तुरंत नतीजे देखें।</p>
+      <p class="en-text">Calculate your investments and loans yourself. Move the sliders to see instant results.</p>
+    </div>
+
+    <div class="calc-wrapper">
+      <div class="calc-tabs">
+        <button class="calc-tab active" onclick="switchCalc('sip')">📈 SIP (Mutual Fund)</button>
+        <button class="calc-tab" onclick="switchCalc('lumpsum')">💰 Lumpsum (One Time)</button>
+        <button class="calc-tab" onclick="switchCalc('loan')">🏦 Loan (EMI)</button>
+      </div>
+
+      <!-- SIP Calculator -->
+      <div id="calc-sip" class="calc-container active">
+        <div>
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">महीने का निवेश (Monthly Inv.)</label>
+              <label class="en-text">Monthly Investment</label>
+              <div class="val-box">₹<span id="sip-val-amount">5000</span></div>
+            </div>
+            <input type="range" class="range-slider" id="sip-amount" min="500" max="100000" step="500" value="5000" oninput="updateSIP()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">अनुमानित रिटर्न (Expected Return)</label>
+              <label class="en-text">Expected Return Rate</label>
+              <div class="val-box"><span id="sip-val-rate">12</span>%</div>
+            </div>
+            <input type="range" class="range-slider" id="sip-rate" min="1" max="30" step="1" value="12" oninput="updateSIP()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">समय (Time Period)</label>
+              <label class="en-text">Time Period (Years)</label>
+              <div class="val-box"><span id="sip-val-years">10</span> Yrs</div>
+            </div>
+            <input type="range" class="range-slider" id="sip-years" min="1" max="40" step="1" value="10" oninput="updateSIP()">
+          </div>
+        </div>
+        
+        <div class="calc-result">
+          <div class="res-row">
+            <span class="hi-text">कुल निवेश (Total Invested):</span>
+            <span class="en-text">Total Invested:</span>
+            <strong>₹<span id="sip-res-invested">6,00,000</span></strong>
+          </div>
+          <div class="res-row">
+            <span class="hi-text">अनुमानित लाभ (Est. Returns):</span>
+            <span class="en-text">Est. Returns:</span>
+            <strong style="color:var(--green)">₹<span id="sip-res-returns">5,61,695</span></strong>
+          </div>
+          <div class="res-total">
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="hi-text">कुल वैल्यू (Total Value)</div>
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="en-text">Total Value</div>
+            ₹<span id="sip-res-total">11,61,695</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lumpsum Calculator -->
+      <div id="calc-lumpsum" class="calc-container">
+        <div>
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">एकमुश्त निवेश (Total Inv.)</label>
+              <label class="en-text">Total Investment</label>
+              <div class="val-box">₹<span id="lum-val-amount">100000</span></div>
+            </div>
+            <input type="range" class="range-slider" id="lum-amount" min="5000" max="5000000" step="5000" value="100000" oninput="updateLum()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">अनुमानित रिटर्न (Expected Return)</label>
+              <label class="en-text">Expected Return Rate</label>
+              <div class="val-box"><span id="lum-val-rate">12</span>%</div>
+            </div>
+            <input type="range" class="range-slider" id="lum-rate" min="1" max="30" step="1" value="12" oninput="updateLum()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">समय (Time Period)</label>
+              <label class="en-text">Time Period (Years)</label>
+              <div class="val-box"><span id="lum-val-years">10</span> Yrs</div>
+            </div>
+            <input type="range" class="range-slider" id="lum-years" min="1" max="40" step="1" value="10" oninput="updateLum()">
+          </div>
+        </div>
+        
+        <div class="calc-result">
+          <div class="res-row">
+            <span class="hi-text">कुल निवेश (Invested):</span>
+            <span class="en-text">Total Invested:</span>
+            <strong>₹<span id="lum-res-invested">1,00,000</span></strong>
+          </div>
+          <div class="res-row">
+            <span class="hi-text">अनुमानित लाभ (Est. Returns):</span>
+            <span class="en-text">Est. Returns:</span>
+            <strong style="color:var(--green)">₹<span id="lum-res-returns">2,10,585</span></strong>
+          </div>
+          <div class="res-total">
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="hi-text">कुल वैल्यू (Total Value)</div>
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="en-text">Total Value</div>
+            ₹<span id="lum-res-total">3,10,585</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loan Calculator -->
+      <div id="calc-loan" class="calc-container">
+        <div>
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">लोन की राशि (Loan Amount)</label>
+              <label class="en-text">Loan Amount</label>
+              <div class="val-box">₹<span id="loan-val-amount">500000</span></div>
+            </div>
+            <input type="range" class="range-slider" id="loan-amount" min="10000" max="10000000" step="10000" value="500000" oninput="updateLoan()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">ब्याज दर (Interest Rate)</label>
+              <label class="en-text">Interest Rate (p.a)</label>
+              <div class="val-box"><span id="loan-val-rate">9</span>%</div>
+            </div>
+            <input type="range" class="range-slider" id="loan-rate" min="1" max="25" step="0.5" value="9" oninput="updateLoan()">
+          </div>
+
+          <div class="calc-input-group">
+            <div class="calc-input-header">
+              <label class="hi-text">समय (Tenure in Yrs)</label>
+              <label class="en-text">Tenure (Years)</label>
+              <div class="val-box"><span id="loan-val-years">5</span> Yrs</div>
+            </div>
+            <input type="range" class="range-slider" id="loan-years" min="1" max="30" step="1" value="5" oninput="updateLoan()">
+          </div>
+        </div>
+        
+        <div class="calc-result">
+          <div class="res-row">
+            <span class="hi-text">मूल राशि (Principal):</span>
+            <span class="en-text">Principal Amount:</span>
+            <strong>₹<span id="loan-res-principal">5,00,000</span></strong>
+          </div>
+          <div class="res-row">
+            <span class="hi-text">कुल ब्याज (Total Interest):</span>
+            <span class="en-text">Total Interest:</span>
+            <strong style="color:var(--red)">₹<span id="loan-res-interest">1,22,751</span></strong>
+          </div>
+          <div class="res-total" style="color:var(--blue)">
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="hi-text">मासिक किश्त (Monthly EMI)</div>
+            <div style="font-size: 15px; color:var(--muted); font-weight:600; margin-bottom:5px;" class="en-text">Monthly EMI</div>
+            ₹<span id="loan-res-emi">10,379</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BROKERS SECTION (Dynamic 2x2 Grid) -->
+<section id="brokers">
   <div class="wrap">
     <div class="section-title">
       <span class="eyebrow">CHOOSE YOUR BROKER</span>
-      <h2>अपना पसंदीदा Demat Account चुनें</h2>
-      <p>ये ब्रोकर विकल्प हैं। किसी ब्रोकर की फीस, ऑफर और पात्रता की पुष्टि उसकी आधिकारिक वेबसाइट से करें।</p>
+      <h2 class="hi-text">अपना पसंदीदा Demat Account चुनें</h2>
+      <h2 class="en-text">Choose your preferred Demat Account</h2>
+      <p class="hi-text">नीचे दिए गए टॉप ब्रोकर्स में से अपना अकाउंट खोलने के लिए लिंक पर क्लिक करें।</p>
+      <p class="en-text">Click on the links below to open your account with top brokers.</p>
     </div>
-    <div class="broker-grid">
-      <article class="broker"><div class="broker-logo" style="color:#713ce8">U</div><h3>Upstox</h3><p>ऑनलाइन Demat और Trading Account</p><button type="button" data-broker="Upstox">इसे चुनें ↗</button></article>
-      <article class="broker"><div class="broker-logo" style="color:#e34a4a">K</div><h3>Kotak Neo</h3><p>ऑनलाइन निवेश और ट्रेडिंग सुविधाएँ</p><button type="button" data-broker="Kotak Neo">इसे चुनें ↗</button></article>
-      <article class="broker"><div class="broker-logo" style="color:#e87722">A</div><h3>Angel One</h3><p>डिजिटल निवेश और ट्रेडिंग प्लेटफॉर्म</p><button type="button" data-broker="Angel One">इसे चुनें ↗</button></article>
-      <article class="broker"><div class="broker-logo" style="color:#087bdc">H</div><h3>HDFC SKY</h3><p>ऑनलाइन निवेश खाता विकल्प</p><button type="button" data-broker="HDFC SKY">इसे चुनें ↗</button></article>
-      <article class="broker"><div class="broker-logo" style="color:#087bb9">B</div><h3>Bajaj Securities</h3><p>Demat और ट्रेडिंग सेवाएँ</p><button type="button" data-broker="Bajaj Securities">इसे चुनें ↗</button></article>
-      <article class="broker"><div class="broker-logo" style="color:#7548c9">R</div><h3>Rupeezy</h3><p>डिजिटल निवेश सेवाओं का विकल्प</p><button type="button" data-broker="Rupeezy">इसे चुनें ↗</button></article>
-    </div>
-    <div class="notice">महत्वपूर्ण: SHRAYNEX की इस वेबसाइट पर ब्रोकर के नाम दिखाना अपने आप में किसी ब्रोकर की आधिकारिक साझेदारी या अनुमोदन का दावा नहीं है। खाता खोलने से पहले आधिकारिक लिंक, नियम, शुल्क और शर्तें जाँचें।</div>
+    
+    <!-- Brokers will be injected here by JavaScript -->
+    <div id="broker-list" class="broker-grid"></div>
+    
   </div>
 </section>
 
-<!-- DOCUMENT CHECKLIST -->
-<section class="documents" id="documents">
-  <div class="wrap">
+<!-- FAQ SECTION -->
+<section id="faq" style="background:#020617; border-top:1px solid var(--border)">
+  <div class="wrap" style="max-width: 800px;">
     <div class="section-title">
-      <span class="eyebrow">DOCUMENT CHECKLIST</span>
-      <h2>📄 Demat Account खोलने के लिए जरूरी दस्तावेज</h2>
-      <p>SHRAYNEX के माध्यम से Demat Account खुलवाने की प्रक्रिया शुरू करने से पहले निम्नलिखित दस्तावेज और जानकारी तैयार रखें।</p>
+      <span class="eyebrow">COMMON QUESTIONS</span>
+      <h2 class="hi-text">अक्सर पूछे जाने वाले सवाल (FAQ)</h2>
+      <h2 class="en-text">Frequently Asked Questions (FAQ)</h2>
     </div>
 
-    <div class="doc-grid">
-      <article class="doc-card">
-        <div class="doc-icon">🪪</div>
-        <div><h3>1. आधार कार्ड (Aadhaar Card)</h3>
-          <ul>
-            <li>आधार कार्ड और KYC विवरण।</li>
-            <li>आधार से लिंक मोबाइल नंबर, जहाँ OTP आधारित सत्यापन लागू हो।</li>
-          </ul>
-        </div>
-      </article>
+    <details class="faq-box">
+      <summary><span class="hi-text">Demat Account क्या होता है?</span><span class="en-text">What is a Demat Account?</span></summary>
+      <div class="faq-content">
+        <span class="hi-text">जैसे पैसे रखने के लिए बैंक अकाउंट होता है, वैसे ही ख़रीदे गए शेयर्स को डिजिटल रूप में सुरक्षित रखने के लिए Demat Account (Dematerialized Account) की जरूरत होती है। इसके बिना आप शेयर बाजार में निवेश नहीं कर सकते।</span>
+        <span class="en-text">Just like a bank account holds your money, a Demat account holds your shares and securities in digital format. You cannot invest in the stock market without it.</span>
+      </div>
+    </details>
 
-      <article class="doc-card">
-        <div class="doc-icon">📇</div>
-        <div><h3>2. PAN कार्ड (PAN Card)</h3>
-          <ul>
-            <li>वैध PAN कार्ड।</li>
-            <li>PAN पर नाम और जन्मतिथि सही होनी चाहिए।</li>
-          </ul>
-        </div>
-      </article>
+    <details class="faq-box">
+      <summary><span class="hi-text">क्या शेयर बाजार में निवेश करने के लिए बहुत पैसे चाहिए?</span><span class="en-text">Do I need a lot of money to invest?</span></summary>
+      <div class="faq-content">
+        <span class="hi-text">बिल्कुल नहीं! आप केवल ₹500 से भी Mutual Fund में SIP शुरू कर सकते हैं। आप किसी कंपनी का सिर्फ 1 शेयर भी खरीद सकते हैं जिसकी कीमत ₹50 या ₹100 भी हो सकती है।</span>
+        <span class="en-text">Not at all! You can start a Mutual Fund SIP with just ₹500. You can also buy a single share of a company which might cost just ₹50 or ₹100.</span>
+      </div>
+    </details>
 
-      <article class="doc-card">
-        <div class="doc-icon">🏦</div>
-        <div><h3>3. बैंक अकाउंट की जानकारी</h3>
-          <ul>
-            <li>बैंक अकाउंट नंबर और IFSC Code।</li>
-            <li>अकाउंट होल्डर का नाम।</li>
-            <li>जरूरत पड़ने पर पासबुक, कैंसिल चेक या बैंक स्टेटमेंट।</li>
-          </ul>
-        </div>
-      </article>
+    <details class="faq-box">
+      <summary><span class="hi-text">Demat Account खोलने के लिए कौनसे डाक्यूमेंट्स चाहिए?</span><span class="en-text">Documents needed for a Demat Account?</span></summary>
+      <div class="faq-content">
+        <span class="hi-text">मुख्य रूप से 3 चीज़ें चाहिए: 1. PAN Card 2. Aadhaar Card (जो मोबाइल नंबर से लिंक हो) 3. बैंक अकाउंट नंबर और IFSC कोड (या कैंसल चेक)।</span>
+        <span class="en-text">Mainly 3 things are required: 1. PAN Card 2. Aadhaar Card (linked to a mobile number for OTP) 3. Bank Account details (Account No. & IFSC).</span>
+      </div>
+    </details>
 
-      <article class="doc-card">
-        <div class="doc-icon">📲</div>
-        <div><h3>4. चालू मोबाइल नंबर</h3>
-          <ul>
-            <li>सक्रिय मोबाइल नंबर।</li>
-            <li>OTP प्राप्त करने के लिए फोन अपने पास रखें।</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="doc-card">
-        <div class="doc-icon">✉️</div>
-        <div><h3>5. ईमेल आईडी (Email ID)</h3>
-          <ul>
-            <li>चालू ईमेल आईडी।</li>
-            <li>इस पर जरूरी जानकारी और अपडेट प्राप्त हो सकते हैं।</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="doc-card">
-        <div class="doc-icon">✍️</div>
-        <div><h3>6. फोटो और हस्ताक्षर</h3>
-          <ul>
-            <li>पासपोर्ट साइज फोटो, यदि ब्रोकर माँगे।</li>
-            <li>डिजिटल हस्ताक्षर या अन्य हस्ताक्षर सत्यापन, यदि आवश्यक हो।</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="doc-card">
-        <div class="doc-icon">📑</div>
-        <div><h3>7. अन्य दस्तावेज (यदि माँगे जाएँ)</h3>
-          <ul>
-            <li>पते का अतिरिक्त प्रमाण, यदि जरूरी हो।</li>
-            <li>F&O जैसे सेगमेंट के लिए आय प्रमाण, यदि लागू हो।</li>
-          </ul>
-        </div>
-      </article>
-    </div>
-
-    <div class="checklist">
-      <h3>📌 महत्वपूर्ण बातें</h3>
-      <ul>
-        <li>आमतौर पर PAN, KYC/पहचान सत्यापन और बैंक विवरण की जरूरत होती है।</li>
-        <li>आधार से लिंक मोबाइल उपलब्ध न होने पर ऑनलाइन KYC की प्रक्रिया प्रभावित हो सकती है; ब्रोकर से वैकल्पिक तरीका पूछें।</li>
-        <li>दस्तावेजों की वास्तविक जरूरत ब्रोकर, KYC प्रक्रिया और अकाउंट के प्रकार पर निर्भर करती है।</li>
-        <li>सभी विवरण सही भरें और केवल आधिकारिक ब्रोकर वेबसाइट या ऐप पर दस्तावेज जमा करें।</li>
-        <li><strong>अपना OTP, UPI PIN, बैंक पासवर्ड या पूरे दस्तावेज WhatsApp पर किसी अनजान व्यक्ति को न भेजें।</strong></li>
-      </ul>
-      <a class="btn btn-green" href="#register">मेरे दस्तावेज तैयार हैं — आवेदन करें ↗</a>
-    </div>
+    <details class="faq-box">
+      <summary><span class="hi-text">शेयर बाजार में टैक्स (Tax) कैसे लगता है?</span><span class="en-text">How does Tax work in the stock market?</span></summary>
+      <div class="faq-content">
+        <span class="hi-text">शेयर बाजार में मुनाफे पर टैक्स लगता है। अगर आप 1 साल से पहले शेयर बेचकर मुनाफा कमाते हैं, तो उसे STCG (Short Term Capital Gains) कहते हैं जिस पर 20% टैक्स लगता है। अगर आप 1 साल के बाद बेचते हैं तो उसे LTCG कहते हैं, जिस पर 1.25 लाख रुपये से ऊपर के मुनाफे पर 12.5% टैक्स लगता है। (Note: टैक्स नियम बदल सकते हैं)।</span>
+        <span class="en-text">Taxes apply on profits. Selling before 1 year is STCG (Short Term Capital Gains) taxed at 20%. Selling after 1 year is LTCG (Long Term Capital Gains) taxed at 12.5% on profits exceeding ₹1.25 Lakh. (Note: Tax rules are subject to change).</span>
+      </div>
+    </details>
+    
+    <details class="faq-box">
+      <summary><span class="hi-text">क्या मेरा पैसा डूब सकता है?</span><span class="en-text">Can I lose all my money?</span></summary>
+      <div class="faq-content">
+        <span class="hi-text">हाँ, शेयर बाजार में रिस्क होता है। अगर आप बिना रिसर्च किये किसी भी खराब कंपनी (पेनी स्टॉक) में पैसा लगाते हैं और वह कंपनी डूब जाती है, तो आपका पैसा जीरो हो सकता है। लेकिन अगर आप निफ्टी 50 (Nifty 50) की टॉप कंपनियों या इंडेक्स फण्ड में लम्बे समय के लिए निवेश करते हैं, तो पैसा डूबने का रिस्क बहुत कम हो जाता है।</span>
+        <span class="en-text">Yes, there is risk. If you invest blindly in bad companies (penny stocks) and they go bankrupt, your money can become zero. However, if you invest in Top Nifty 50 companies or Index Funds for the long term, the risk of losing all money is extremely low.</span>
+      </div>
+    </details>
   </div>
 </section>
 
-<!-- PROCESS -->
-<section>
+<!-- TERMS AND CONDITIONS -->
+<section id="terms" style="padding-top:40px; padding-bottom:0;">
   <div class="wrap">
-    <div class="section-title">
-      <span class="eyebrow">SIMPLE PROCESS</span>
-      <h2>Demat Account कैसे खुलवाएँ?</h2>
-      <p>आवेदन से लेकर KYC पूरा करने तक इन चरणों का पालन करें।</p>
-    </div>
-    <div class="steps">
-      <article class="step"><div class="step-number">STEP 01</div><h3>दस्तावेज तैयार करें</h3><p>PAN, KYC विवरण, बैंक जानकारी, मोबाइल और ईमेल तैयार रखें।</p></article>
-      <article class="step"><div class="step-number">STEP 02</div><h3>फॉर्म भरें</h3><p>अपना नाम, संपर्क नंबर और पसंदीदा ब्रोकर चुनकर WhatsApp पर अनुरोध भेजें।</p></article>
-      <article class="step"><div class="step-number">STEP 03</div><h3>आधिकारिक KYC पूरी करें</h3><p>ब्रोकर के आधिकारिक ऐप या वेबसाइट पर सत्यापन पूरा करें और लागू शुल्क जाँचें।</p></article>
-    </div>
-  </div>
-</section>
-
-<!-- REGISTRATION FORM -->
-<section class="form-section" id="register">
-  <div class="wrap">
-    <div class="section-title">
-      <span class="eyebrow">REGISTRATION OPEN</span>
-      <h2>Demat Account के लिए रजिस्ट्रेशन करें</h2>
-      <p>फॉर्म सबमिट करने पर आपके WhatsApp ऐप में जानकारी तैयार होकर खुलेगी।</p>
-    </div>
-
-    <div class="form-layout">
-      <aside class="form-info">
-        <span class="pill">SHRAYNEX FINANCIAL ASSISTANCE</span>
-        <h2>आपकी निवेश यात्रा की शुरुआत</h2>
-        <p>हमसे संपर्क करने से पहले अपने जरूरी दस्तावेज तैयार रखें। आवेदन और KYC की अंतिम प्रक्रिया संबंधित ब्रोकर के माध्यम से होगी।</p>
+    <div class="terms-box">
+      <h3 class="hi-text">⚠️ नियम, शर्तें एवं जोखिम चेतावनी (Terms & Conditions)</h3>
+      <h3 class="en-text">⚠️ Terms & Conditions & Risk Disclaimer</h3>
+      
+      <div class="hi-text">
         <ul>
-          <li>पसंदीदा ब्रोकर का चयन।</li>
-          <li>खाता खोलने की प्रक्रिया की जानकारी।</li>
-          <li>लागू शुल्क और शर्तों को समझने में सहायता।</li>
-          <li>पहले 30 दिनों की जानकारी सेवा की शर्तें पूछने का विकल्प।</li>
+          <li><strong>बाज़ार जोखिम:</strong> शेयर बाज़ार, म्यूच्यूअल फण्ड और IPO में निवेश बाज़ार के जोखिमों (Market Risks) के अधीन हैं। कोई भी निवेश करने से पहले सभी संबंधित दस्तावेजों को ध्यान से पढ़ें।</li>
+          <li><strong>कोई गारंटी नहीं:</strong> SHRAYNEX या कोई भी ब्रोकर भविष्य में मुनाफे (Profit) या कैपिटल सुरक्षित रहने की कोई गारंटी नहीं देता है।</li>
+          <li><strong>शैक्षिक उद्देश्य:</strong> इस वेबसाइट पर दी गई जानकारी, कैलकुलेटर और स्क्रीनर डेटा केवल शैक्षिक (Educational) उद्देश्यों के लिए है। हम SEBI रजिस्टर्ड फाइनेंसियल एडवाइजर नहीं हैं।</li>
+          <li><strong>थर्ड पार्टी ब्रोकर:</strong> SHRAYNEX केवल एक सहायक प्लेटफॉर्म है। आपका अकाउंट संबंधित ब्रोकर के पास खुलेगा। ब्रोकर के चार्जेज (AMC, Brokerage) उनकी पालिसी के अनुसार होंगे।</li>
         </ul>
-        <p><strong>WhatsApp:</strong> 9451239239</p>
-      </aside>
-
-      <form class="form-card" id="dematForm">
-        <h2>Apply Now</h2>
-        <p>कृपया नीचे की जानकारी सही भरें। तारांकित (*) फ़ील्ड जरूरी हैं।</p>
-
-        <div class="field">
-          <label for="name">पूरा नाम *</label>
-          <input id="name" name="name" type="text" placeholder="अपना पूरा नाम लिखें" autocomplete="name" minlength="2" maxlength="80" required>
-        </div>
-
-        <div class="two">
-          <div class="field">
-            <label for="mobile">मोबाइल नंबर *</label>
-            <input id="mobile" name="mobile" type="tel" inputmode="numeric" placeholder="10 अंकों का नंबर" pattern="[6-9][0-9]{9}" maxlength="10" autocomplete="tel-national" required>
-          </div>
-          <div class="field">
-            <label for="city">शहर / जिला</label>
-            <input id="city" name="city" type="text" placeholder="वैकल्पिक" maxlength="60" autocomplete="address-level2">
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="broker">पसंदीदा ब्रोकर *</label>
-          <select id="broker" name="broker" required>
-            <option value="">ब्रोकर चुनें</option>
-            <option>Upstox</option>
-            <option>Kotak Neo</option>
-            <option>Angel One</option>
-            <option>HDFC SKY</option>
-            <option>Bajaj Securities</option>
-            <option>Rupeezy</option>
-            <option>अभी तय नहीं किया</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="documentsReady">दस्तावेजों की स्थिति *</label>
-          <select id="documentsReady" name="documentsReady" required>
-            <option value="">विकल्प चुनें</option>
-            <option>सभी जरूरी दस्तावेज तैयार हैं</option>
-            <option>कुछ दस्तावेज तैयार हैं</option>
-            <option>पहले दस्तावेजों की जानकारी चाहिए</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="service">किस जानकारी की जरूरत है? *</label>
-          <select id="service" name="service" required>
-            <option value="">विकल्प चुनें</option>
-            <option>Demat Account खोलने की प्रक्रिया</option>
-            <option>कंपनियों के बारे में जानकारी</option>
-            <option>शेयर बाजार की बुनियादी जानकारी</option>
-            <option>30 दिनों की जानकारी सेवा की शर्तें</option>
-            <option>₹199 वाली आगे की सेवा की जानकारी</option>
-            <option>अन्य जानकारी</option>
-          </select>
-        </div>
-
-        <label class="consent">
-          <input id="consent" type="checkbox" required>
-          <span>मैं सहमत हूँ कि मेरे द्वारा दी गई जानकारी WhatsApp संदेश में शामिल करके SHRAYNEX से संपर्क करने के लिए इस्तेमाल की जाए। मैं समझता/समझती हूँ कि खाता खोलने की फीस, ब्रोकरेज और अन्य शुल्क ब्रोकर की शर्तों पर निर्भर करते हैं। *</span>
-        </label>
-
-        <button class="submit" type="submit">WhatsApp पर फॉर्म भेजें ↗</button>
-        <p class="form-footnote">यह फॉर्म किसी सर्वर पर जानकारी सेव नहीं करता। WhatsApp में संदेश तैयार होगा; उसे भेजने के लिए आपको Send दबाना होगा। यहाँ PAN नंबर, आधार नंबर, OTP, बैंक अकाउंट नंबर या दस्तावेज अपलोड न करें।</p>
-      </form>
+      </div>
+      
+      <div class="en-text">
+        <ul>
+          <li><strong>Market Risks:</strong> Investments in the stock market, mutual funds, and IPOs are subject to market risks. Read all related documents carefully before investing.</li>
+          <li><strong>No Guarantees:</strong> SHRAYNEX does not guarantee any future profits or capital protection.</li>
+          <li><strong>Educational Purpose Only:</strong> The information, calculators, and screener data provided on this website are strictly for educational purposes. We are not SEBI registered financial advisors.</li>
+          <li><strong>Third-Party Brokers:</strong> Your actual account is opened directly with respective brokers. Broker charges (AMC, Brokerage) apply as per their policies.</li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- GUIDANCE TERMS -->
-<section id="guidance">
+<!-- ABOUT FOUNDER -->
+<section class="founder-section">
   <div class="wrap">
-    <div class="section-title">
-      <span class="eyebrow">GUIDANCE & PRICING</span>
-      <h2>जानकारी सेवा और शुल्क</h2>
-      <p>सेवा लेने से पहले अवधि, शुल्क और मिलने वाली सहायता की पुष्टि करें।</p>
-    </div>
-    <div class="price-grid">
-      <article class="price-card featured">
-        <span class="eyebrow">FIRST 30 DAYS</span>
-        <h3>पहले 30 दिन की जानकारी</h3>
-        <div class="price">FREE*</div>
-        <p>आपके बताए ऑफर के अनुसार खाता खुलने के बाद पहले 30 दिनों तक जानकारी सेवा की उपलब्धता और शर्तें पहले स्पष्ट की जाएँगी।</p>
-      </article>
-      <article class="price-card">
-        <span class="eyebrow">FURTHER GUIDANCE</span>
-        <h3>आगे की जानकारी सेवा</h3>
-        <div class="price">₹199</div>
-        <p>पहले 30 दिनों के बाद अतिरिक्त जानकारी सेवा के लिए ₹199 का शुल्क प्रस्तावित है। भुगतान से पहले सेवा का दायरा और अवधि लिखित रूप में स्पष्ट करें।</p>
-      </article>
-    </div>
-
-    <div class="notice">
-      <strong>निवेश संबंधी महत्वपूर्ण सूचना:</strong> शेयर बाजार, IPO और म्यूचुअल फंड में निवेश जोखिम के अधीन हैं। किसी कंपनी की सूची देना या जानकारी साझा करना मुनाफे की गारंटी नहीं है। “आँख बंद करके निवेश करें” जैसी सलाह पर भरोसा न करें। निवेश से पहले स्वयं रिसर्च करें। निवेश सलाह देने वाली सेवा लागू नियमों और आवश्यक पंजीकरण के अनुरूप ही प्रदान की जानी चाहिए।
+    <div class="founder-card">
+      <img src="https://i.ibb.co/rRnrLtLx/file-000000001e308208a8941d8cff4bfebb.png" alt="R.K Yadav" class="founder-img">
+      <h2 class="founder-name">ʀ.ᴋ ʏᴀᴅᴀᴠ</h2>
+      <p class="founder-title">ꜰᴏᴜɴᴅᴇʀ ᴏꜰ ꜱʜʀᴀʏɴᴇx</p>
     </div>
   </div>
 </section>
@@ -563,82 +864,354 @@ footer p,footer a{font-size:12px;color:#aabbd1}
 </main>
 
 <footer>
-  <div class="wrap footer-row">
-    <div>
-      <a href="https://www.rkyshree.in" class="brand">
-        <span class="brand-icon">S</span>
-        <span><strong>SHRAYNEX</strong><small>श्रायनेक्स | Resell • Share • Earn</small></span>
-      </a>
-      <p>Demat Account प्रक्रिया और डिजिटल सहायता।</p>
-    </div>
-    <div>
-      <strong>Quick Links</strong>
-      <div class="footer-links">
-        <a href="https://www.rkyshree.in">Main Website</a>
-        <a href="https://www.rkyshree.in/Resell">Resell</a>
-        <a href="https://www.rkyshree.in/DematAccount">Demat Account</a>
-      </div>
-      <p>WhatsApp: 9451239239</p>
-    </div>
-  </div>
   <div class="wrap">
-    <p>© <span id="year"></span> SHRAYNEX. All rights reserved.</p>
-    <p>सभी ब्रोकर नाम उनके संबंधित मालिकों के ट्रेडमार्क हो सकते हैं। इस पेज पर किसी आधिकारिक साझेदारी का दावा नहीं किया जाता।</p>
+    <p style="color:var(--muted); font-size: 14px; max-width: 600px; margin: 0 auto 15px;">
+      Empowering beginners to understand the stock market and start their investment journey safely.
+    </p>
+    <p style="font-size: 13px; color: #475569; margin:0;">
+      © <span id="year"></span> SHRAYNEX. All rights reserved. <br>
+      Trademarks and logos of brokers belong to their respective owners.
+    </p>
   </div>
 </footer>
 
-<a class="wa-float" href="#register">🟢 WhatsApp सहायता</a>
-
 <script>
-const form = document.getElementById("dematForm");
-const brokerSelect = document.getElementById("broker");
-
+// --- UTILITIES ---
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// ब्रोकर कार्ड से चयन करने पर फॉर्म में विकल्प अपने आप चुना जाएगा।
-document.querySelectorAll("[data-broker]").forEach(button => {
-  button.addEventListener("click", () => {
-    brokerSelect.value = button.dataset.broker;
-    document.getElementById("register").scrollIntoView({behavior:"smooth"});
+// --- BILINGUAL TOGGLE LOGIC ---
+let currentLang = 'hi'; 
+function toggleLanguage() {
+  const body = document.body;
+  const langLabel = document.getElementById('lang-label');
+  
+  if(currentLang === 'hi') {
+    body.classList.add('lang-en');
+    currentLang = 'en';
+    langLabel.textContent = 'हिंदी';
+  } else {
+    body.classList.remove('lang-en');
+    currentLang = 'hi';
+    langLabel.textContent = 'English';
+  }
+  window.speechSynthesis.cancel();
+}
+
+// --- TEXT TO SPEECH ---
+let currentSpeakerBtn = null;
+function speakText(containerId, btnElement) {
+  if (!('speechSynthesis' in window)) {
+    alert(currentLang === 'hi' ? 'आपका ब्राउज़र बोलने की सुविधा सपोर्ट नहीं करता।' : 'Your browser does not support text-to-speech.');
+    return;
+  }
+  if(window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    if(currentSpeakerBtn) currentSpeakerBtn.classList.remove('playing');
+    if(currentSpeakerBtn === btnElement) {
+      currentSpeakerBtn = null;
+      return;
+    }
+  }
+
+  const container = document.getElementById(containerId);
+  if(!container) return;
+
+  const textToRead = container.innerText || container.textContent;
+  const utterance = new SpeechSynthesisUtterance(textToRead);
+  utterance.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
+  utterance.rate = 0.9;
+
+  utterance.onstart = () => { btnElement.classList.add('playing'); currentSpeakerBtn = btnElement; };
+  utterance.onend = () => { btnElement.classList.remove('playing'); currentSpeakerBtn = null; };
+  utterance.onerror = () => { btnElement.classList.remove('playing'); currentSpeakerBtn = null; };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// ACCORDION TOGGLE
+function toggleEdu(element) {
+  const isActive = element.classList.contains('active');
+  document.querySelectorAll('.edu-item').forEach(item => item.classList.remove('active'));
+  if (!isActive) { element.classList.add('active'); }
+}
+
+
+// --- BROKERS DATA (ADD/EDIT LINKS HERE) ---
+// यहाँ आप अपने ब्रोकर्स के नाम और लिंक बदल/जोड़ सकते हैं
+const brokersList = [
+  { name: "Upstox", logo: "U", color: "#a855f7", desc: "Online Demat & Trading", link: "https://leads.banksathi.com/?h=TkdWbExUZHU3bUlTK3RMQzhTOE1jdz09" },
+  { name: "Kotak Neo", logo: "K", color: "#ef4444", desc: "Zero Brokerage Options", link: "https://leads.banksathi.com/?h=eEtIY2xsQmJaaFEyS0dKUHRkK24vQT09" },
+  { name: "Angel One", logo: "A", color: "#f97316", desc: "Digital Investing Platform", link: "#" }, // '#' की जगह अपना लिंक डालें
+  { name: "HDFC SKY", logo: "H", color: "#3b82f6", desc: "Trusted by Millions", link: "#" },
+  { name: "Bajaj Sec.", logo: "B", color: "#0ea5e9", desc: "Secure Demat Services", link: "#" },
+  { name: "Rupeezy", logo: "R", color: "#8b5cf6", desc: "Fast Trading App", link: "#" }
+];
+
+const brokerContainer = document.getElementById('broker-list');
+brokersList.forEach(broker => {
+  const article = document.createElement('article');
+  article.className = 'broker';
+  article.innerHTML = `
+    <div class="broker-logo" style="color:${broker.color}">${broker.logo}</div>
+    <div class="broker-info">
+      <h3>${broker.name}</h3>
+      <p>${broker.desc}</p>
+      <a href="${broker.link}" target="_blank">Open Account ↗</a>
+    </div>
+  `;
+  brokerContainer.appendChild(article);
+});
+
+
+// --- SHRAYNEX LIVE SCREENER LOGIC (100+ COMPANIES) ---
+const mockStocks = {
+  // Indian Top Companies
+  "RELIANCE": { name: "Reliance Industries", price: "2,980.00", mc: "20,15,000", pe: "28.5", bv: "1,150.4", div: "0.33", roce: "9.80", roe: "8.90", hl: "3,024 / 2,220", fv: "10.00", currency: "₹" },
+  "TCS": { name: "Tata Consultancy Services", price: "3,950.25", mc: "14,35,000", pe: "31.2", bv: "285.5", div: "1.85", roce: "46.9", roe: "51.5", hl: "4,254 / 3,156", fv: "1.00", currency: "₹" },
+  "HDFCBANK": { name: "HDFC Bank Ltd", price: "1,640.10", mc: "12,50,000", pe: "16.8", bv: "540.2", div: "1.10", roce: "6.20", roe: "15.8", hl: "1,757 / 1,363", fv: "1.00", currency: "₹" },
+  "INFY": { name: "Infosys Ltd", price: "1,480.00", mc: "6,15,000", pe: "24.5", bv: "195.0", div: "2.40", roce: "31.8", roe: "26.5", hl: "1,733 / 1,215", fv: "5.00", currency: "₹" },
+  "SBIN": { name: "State Bank of India", price: "845.50", mc: "7,55,000", pe: "11.5", bv: "385.0", div: "1.60", roce: "5.40", roe: "16.2", hl: "912 / 543", fv: "1.00", currency: "₹" },
+  "ICICIBANK": { name: "ICICI Bank Ltd", price: "1,150.00", mc: "8,05,000", pe: "18.2", bv: "320.5", div: "0.80", roce: "6.50", roe: "17.1", hl: "1,170 / 899", fv: "2.00", currency: "₹" },
+  "ITC": { name: "ITC Ltd", price: "435.20", mc: "5,43,000", pe: "26.1", bv: "55.4", div: "3.20", roce: "38.5", roe: "29.2", hl: "499 / 399", fv: "1.00", currency: "₹" },
+  "BHARTIARTL": { name: "Bharti Airtel Ltd", price: "1,320.40", mc: "7,85,000", pe: "45.6", bv: "145.2", div: "0.30", roce: "12.4", roe: "10.2", hl: "1,350 / 810", fv: "5.00", currency: "₹" },
+  "LT": { name: "Larsen & Toubro", price: "3,650.00", mc: "5,02,000", pe: "38.2", bv: "620.0", div: "0.65", roce: "14.5", roe: "12.8", hl: "3,900 / 2,250", fv: "2.00", currency: "₹" },
+  "HINDUNILVR": { name: "Hindustan Unilever", price: "2,250.00", mc: "5,28,000", pe: "52.4", bv: "210.8", div: "1.75", roce: "26.8", roe: "20.1", hl: "2,769 / 2,172", fv: "1.00", currency: "₹" },
+  "BAJFINANCE": { name: "Bajaj Finance", price: "6,950.25", mc: "4,30,000", pe: "29.8", bv: "1,250.5", div: "0.45", roce: "11.2", roe: "22.5", hl: "8,192 / 6,180", fv: "2.00", currency: "₹" },
+  "MARUTI": { name: "Maruti Suzuki", price: "12,450.00", mc: "3,91,000", pe: "28.5", bv: "2,550.0", div: "0.75", roce: "16.8", roe: "13.5", hl: "13,000 / 9,250", fv: "5.00", currency: "₹" },
+  "TATAMOTORS": { name: "Tata Motors", price: "980.50", mc: "3,25,000", pe: "15.4", bv: "185.0", div: "0.25", roce: "13.5", roe: "35.2", hl: "1,065 / 550", fv: "2.00", currency: "₹" },
+  "SUNPHARMA": { name: "Sun Pharmaceutical", price: "1,550.00", mc: "3,72,000", pe: "35.2", bv: "285.5", div: "0.85", roce: "17.4", roe: "14.2", hl: "1,630 / 965", fv: "1.00", currency: "₹" },
+  "ADANIENT": { name: "Adani Enterprises", price: "3,150.00", mc: "3,59,000", pe: "95.5", bv: "350.2", div: "0.05", roce: "9.20", roe: "8.50", hl: "3,400 / 2,150", fv: "1.00", currency: "₹" },
+  "ONGC": { name: "Oil & Natural Gas", price: "275.50", mc: "3,46,000", pe: "7.80", bv: "250.0", div: "4.50", roce: "15.2", roe: "14.8", hl: "290 / 155", fv: "5.00", currency: "₹" },
+  "NTPC": { name: "NTPC Ltd", price: "360.00", mc: "3,49,000", pe: "16.5", bv: "165.5", div: "2.20", roce: "9.80", roe: "12.5", hl: "375 / 195", fv: "10.00", currency: "₹" },
+  "M&M": { name: "Mahindra & Mahindra", price: "2,850.50", mc: "3,54,000", pe: "28.5", bv: "620.0", div: "0.85", roce: "18.5", roe: "20.2", hl: "3,050 / 1,450", fv: "5.00", currency: "₹" },
+  "POWERGRID": { name: "Power Grid Corp", price: "310.50", mc: "2,88,000", pe: "18.5", bv: "105.0", div: "4.10", roce: "11.5", roe: "18.2", hl: "325 / 215", fv: "10.00", currency: "₹" },
+  "TATASTEEL": { name: "Tata Steel", price: "165.50", mc: "2,05,000", pe: "45.5", bv: "85.0", div: "2.50", roce: "12.5", roe: "10.2", hl: "175 / 115", fv: "1.00", currency: "₹" },
+  "WIPRO": { name: "Wipro Ltd", price: "485.00", mc: "2,53,000", pe: "22.5", bv: "145.0", div: "0.20", roce: "18.5", roe: "15.8", hl: "545 / 380", fv: "2.00", currency: "₹" },
+  "ZOMATO": { name: "Zomato Ltd", price: "215.50", mc: "1,89,000", pe: "115.5", bv: "25.0", div: "0.00", roce: "4.50", roe: "2.80", hl: "235 / 75", fv: "1.00", currency: "₹" },
+  "JIOFIN": { name: "Jio Financial", price: "350.00", mc: "2,22,000", pe: "145.5", bv: "185.0", div: "0.00", roce: "2.50", roe: "1.80", hl: "395 / 205", fv: "10.00", currency: "₹" },
+  "IRFC": { name: "Indian Railway Fin", price: "185.50", mc: "2,42,000", pe: "35.5", bv: "40.0", div: "0.80", roce: "5.50", roe: "12.8", hl: "215 / 65", fv: "10.00", currency: "₹" },
+  "IREDA": { name: "IREDA", price: "245.00", mc: "65,000", pe: "52.5", bv: "35.0", div: "0.00", roce: "8.50", roe: "15.8", hl: "310 / 50", fv: "10.00", currency: "₹" },
+  "COALINDIA": { name: "Coal India", price: "485.50", mc: "3,02,000", pe: "8.50", bv: "120.0", div: "5.50", roce: "65.5", roe: "48.2", hl: "525 / 225", fv: "10.00", currency: "₹" },
+  "HAL": { name: "Hindustan Aeronautics", price: "4,550.00", mc: "3,04,000", pe: "42.5", bv: "420.0", div: "0.50", roce: "28.5", roe: "25.2", hl: "5,450 / 1,850", fv: "5.00", currency: "₹" },
+  "DLF": { name: "DLF Ltd", price: "850.50", mc: "2,10,000", pe: "75.5", bv: "165.0", div: "0.50", roce: "6.50", roe: "10.2", hl: "965 / 450", fv: "2.00", currency: "₹" },
+  "VEDL": { name: "Vedanta Ltd", price: "450.00", mc: "1,67,000", pe: "35.5", bv: "110.0", div: "5.80", roce: "18.5", roe: "12.8", hl: "510 / 215", fv: "1.00", currency: "₹" },
+  "PAYTM": { name: "One97 Communications", price: "420.50", mc: "26,500", pe: "-15.5", bv: "185.0", div: "0.00", roce: "-12.5", roe: "-18.2", hl: "998 / 310", fv: "1.00", currency: "₹" },
+  "NYKAA": { name: "FSN E-Commerce", price: "185.20", mc: "52,800", pe: "145.5", bv: "15.0", div: "0.00", roce: "8.5", roe: "5.2", hl: "225 / 125", fv: "1.00", currency: "₹" },
+  "HDFCLIFE": { name: "HDFC Life Insurance", price: "615.00", mc: "1,32,000", pe: "85.2", bv: "65.5", div: "0.40", roce: "15.5", roe: "12.2", hl: "710 / 515", fv: "10.00", currency: "₹" },
+  "SBI LIFE": { name: "SBI Life Insurance", price: "1,450.50", mc: "1,45,000", pe: "75.5", bv: "145.0", div: "0.20", roce: "18.2", roe: "14.5", hl: "1,560 / 1,120", fv: "10.00", currency: "₹" },
+  // US Top Companies (converted approx values for display context)
+  "AAPL": { name: "Apple Inc.", price: "185.50", mc: "2,850 B", pe: "28.5", bv: "4.5", div: "0.55", roce: "155.0", roe: "160.2", hl: "199 / 165", fv: "0.00", currency: "$" },
+  "MSFT": { name: "Microsoft Corp.", price: "415.20", mc: "3,050 B", pe: "35.2", bv: "32.0", div: "0.75", roce: "45.5", roe: "38.2", hl: "430 / 310", fv: "0.00", currency: "$" },
+  "NVDA": { name: "NVIDIA Corp.", price: "880.00", mc: "2,200 B", pe: "75.5", bv: "15.0", div: "0.02", roce: "85.5", roe: "72.2", hl: "974 / 265", fv: "0.00", currency: "$" },
+  "GOOGL": { name: "Alphabet (Google)", price: "165.50", mc: "2,050 B", pe: "25.5", bv: "22.5", div: "0.45", roce: "32.5", roe: "28.2", hl: "175 / 115", fv: "0.00", currency: "$" },
+  "AMZN": { name: "Amazon.com", price: "180.20", mc: "1,850 B", pe: "45.5", bv: "18.5", div: "0.00", roce: "12.5", roe: "15.2", hl: "191 / 115", fv: "0.00", currency: "$" },
+  "META": { name: "Meta (Facebook)", price: "485.50", mc: "1,250 B", pe: "28.5", bv: "55.0", div: "0.40", roce: "35.5", roe: "28.2", hl: "530 / 235", fv: "0.00", currency: "$" },
+  "TSLA": { name: "Tesla Inc.", price: "175.50", mc: "550 B", pe: "45.2", bv: "18.0", div: "0.00", roce: "15.2", roe: "12.5", hl: "299 / 138", fv: "0.00", currency: "$" }
+};
+
+const searchInput = document.getElementById("stockSearch");
+const dropdown = document.getElementById("searchDropdown");
+const resultBox = document.getElementById("screenerResult");
+
+// Build dynamic ticker items
+const tickerContent = document.getElementById("ticker-content");
+const tickerKeys = ["NIFTY 50", "SENSEX", "RELIANCE", "TCS", "HDFCBANK", "INFY", "AAPL", "MSFT", "TSLA"];
+let tickerData = {
+  "NIFTY 50": { price: 24530.50, change: 120.40 },
+  "SENSEX": { price: 80450.20, change: 350.10 },
+  "RELIANCE": { price: 2980.00, change: -15.50 },
+  "TCS": { price: 3950.25, change: 45.00 },
+  "HDFCBANK": { price: 1640.10, change: 12.30 },
+  "INFY": { price: 1480.00, change: -8.40 },
+  "AAPL": { price: 185.50, change: 1.20, cur: "$" },
+  "MSFT": { price: 415.20, change: -2.50, cur: "$" },
+  "TSLA": { price: 175.50, change: 5.40, cur: "$" }
+};
+
+function renderTicker() {
+  let html = "";
+  // loop twice for seamless scroll
+  for(let i=0; i<2; i++) {
+    tickerKeys.forEach(k => {
+      let d = tickerData[k];
+      let cur = d.cur || "";
+      let cls = d.change >= 0 ? "up" : "down";
+      let arrow = d.change >= 0 ? "▲ +" : "▼ ";
+      let pct = ((d.change / (d.price - d.change)) * 100).toFixed(2);
+      html += `<span class="ticker-item">${k}: ${cur}${d.price.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2})} <span class="${cls}">${arrow}${d.change.toFixed(2)} (${pct}%)</span></span>`;
+    });
+  }
+  tickerContent.innerHTML = html;
+}
+renderTicker();
+
+// Screener Logic
+let activeStockKey = "RELIANCE";
+
+function filterStocks() {
+  const query = searchInput.value.toUpperCase();
+  dropdown.innerHTML = "";
+  
+  if(query.length < 1) {
+    dropdown.style.display = "none";
+    return;
+  }
+
+  let matches = Object.keys(mockStocks).filter(key => key.includes(query) || mockStocks[key].name.toUpperCase().includes(query));
+  
+  if(matches.length > 0) {
+    dropdown.style.display = "block";
+    matches.forEach(key => {
+      let div = document.createElement("div");
+      div.innerHTML = `<div><strong style="color:var(--white)">${key}</strong> <small style="margin-left:10px">${mockStocks[key].name}</small></div> <span style="color:var(--green)">Live</span>`;
+      div.onclick = () => selectStock(key);
+      dropdown.appendChild(div);
+    });
+  } else {
+    dropdown.style.display = "block";
+    let div = document.createElement("div");
+    div.innerHTML = `<span style="color:var(--muted)">Company not found. Try Reliance, Tata, SBI, Apple...</span>`;
+    dropdown.appendChild(div);
+  }
+}
+
+function selectStock(key) {
+  activeStockKey = key;
+  updateScreenerUI();
+  
+  searchInput.value = mockStocks[key].name;
+  dropdown.style.display = "none";
+  resultBox.classList.add("active");
+}
+
+function updateScreenerUI() {
+  const data = mockStocks[activeStockKey];
+  const cur = data.currency;
+  const isCr = cur === "₹" ? " Cr." : "";
+  
+  document.getElementById("sr-name").innerText = data.name;
+  document.getElementById("sr-symbol").innerText = activeStockKey;
+  document.getElementById("sr-currency").innerText = cur;
+  document.getElementById("sr-price").innerText = parseFloat(data.price.replace(/,/g, '')).toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+  
+  document.getElementById("sr-mc").innerText = cur + " " + data.mc + isCr;
+  document.getElementById("sr-cp").innerText = cur + " " + data.price;
+  document.getElementById("sr-hl").innerText = cur + " " + data.hl;
+  document.getElementById("sr-pe").innerText = data.pe;
+  document.getElementById("sr-bv").innerText = cur + " " + data.bv;
+  document.getElementById("sr-div").innerText = data.div + " %";
+  document.getElementById("sr-roce").innerText = data.roce + " %";
+  document.getElementById("sr-roe").innerText = data.roe + " %";
+  document.getElementById("sr-fv").innerText = cur + " " + data.fv;
+  
+  // Random small change for visual effect
+  let p = parseFloat(data.price.replace(/,/g, ''));
+  let change = p * (Math.random() * 0.01);
+  let isUp = Math.random() > 0.5;
+  let pct = (change/p)*100;
+  let el = document.getElementById("sr-price-change");
+  el.innerText = (isUp ? "▲ +" : "▼ -") + change.toFixed(2) + " (" + pct.toFixed(2) + "%)";
+  el.style.color = isUp ? "var(--green)" : "var(--red)";
+}
+
+document.addEventListener("click", function(e) {
+  if (e.target !== searchInput) dropdown.style.display = "none";
+});
+
+// --- LIVE DATA SIMULATION (FLUCTUATION) ---
+setInterval(() => {
+  // 1. Update Nifty
+  let nVal = parseFloat(document.getElementById("nifty-val").innerText.replace(/,/g, ''));
+  let nChange = nVal * (Math.random() * 0.001) * (Math.random() > 0.5 ? 1 : -1);
+  let newNifty = nVal + nChange;
+  document.getElementById("nifty-val").innerText = newNifty.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+  let chgEl = document.getElementById("nifty-change");
+  chgEl.innerText = (nChange >= 0 ? "▲ +" : "▼ ") + nChange.toFixed(2) + " (" + ((Math.abs(nChange)/newNifty)*100).toFixed(2) + "%)";
+  chgEl.style.color = nChange >= 0 ? "var(--green)" : "var(--red)";
+  
+  // 2. Update Ticker Data
+  tickerKeys.forEach(k => {
+      let d = tickerData[k];
+      let move = d.price * (Math.random() * 0.002) * (Math.random() > 0.5 ? 1 : -1);
+      d.price += move;
+      d.change = move; // just showing latest tick move
   });
-});
+  renderTicker();
+  
+  // 3. Update Screener Active Stock
+  if(resultBox.classList.contains("active")) {
+      let data = mockStocks[activeStockKey];
+      let p = parseFloat(data.price.replace(/,/g, ''));
+      let move = p * (Math.random() * 0.001) * (Math.random() > 0.5 ? 1 : -1);
+      data.price = (p + move).toString();
+      updateScreenerUI();
+  }
+}, 3000); // Updates every 3 seconds
 
-form.addEventListener("submit", function(event) {
-  event.preventDefault();
+// --- CALCULATORS LOGIC ---
+function switchCalc(type) {
+  document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.calc-container').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('calc-' + type).classList.add('active');
+}
 
-  if (!form.reportValidity()) return;
+function formatCurrency(num) { return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
-  const name = document.getElementById("name").value.trim();
-  const mobile = document.getElementById("mobile").value.trim();
-  const city = document.getElementById("city").value.trim();
-  const broker = brokerSelect.value;
-  const docs = document.getElementById("documentsReady").value;
-  const service = document.getElementById("service").value;
+function updateSIP() {
+  const P = parseFloat(document.getElementById('sip-amount').value);
+  const rate = parseFloat(document.getElementById('sip-rate').value);
+  const years = parseFloat(document.getElementById('sip-years').value);
+  
+  document.getElementById('sip-val-amount').textContent = P.toLocaleString('en-IN');
+  document.getElementById('sip-val-rate').textContent = rate;
+  document.getElementById('sip-val-years').textContent = years;
 
-  // SHRAYNEX WhatsApp नंबर: भारत का कोड 91 + 9451239239
-  const whatsappNumber = "919451239239";
+  const n = years * 12; const i = (rate / 100) / 12;
+  const futureValue = P * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+  const totalInvested = P * n;
+  
+  document.getElementById('sip-res-invested').textContent = formatCurrency(totalInvested);
+  document.getElementById('sip-res-returns').textContent = formatCurrency(futureValue - totalInvested);
+  document.getElementById('sip-res-total').textContent = formatCurrency(futureValue);
+}
 
-  const message =
-`नमस्ते SHRAYNEX!
+function updateLum() {
+  const P = parseFloat(document.getElementById('lum-amount').value);
+  const rate = parseFloat(document.getElementById('lum-rate').value);
+  const years = parseFloat(document.getElementById('lum-years').value);
+  
+  document.getElementById('lum-val-amount').textContent = P.toLocaleString('en-IN');
+  document.getElementById('lum-val-rate').textContent = rate;
+  document.getElementById('lum-val-years').textContent = years;
 
-मैं Demat Account खुलवाने की प्रक्रिया की जानकारी चाहता/चाहती हूँ।
+  const futureValue = P * Math.pow(1 + (rate/100), years);
+  
+  document.getElementById('lum-res-invested').textContent = formatCurrency(P);
+  document.getElementById('lum-res-returns').textContent = formatCurrency(futureValue - P);
+  document.getElementById('lum-res-total').textContent = formatCurrency(futureValue);
+}
 
-नाम: ${name}
-मोबाइल नंबर: ${mobile}
-शहर/जिला: ${city || "नहीं बताया"}
-पसंदीदा ब्रोकर: ${broker}
-दस्तावेजों की स्थिति: ${docs}
-जानकारी की जरूरत: ${service}
+function updateLoan() {
+  const P = parseFloat(document.getElementById('loan-amount').value);
+  const rate = parseFloat(document.getElementById('loan-rate').value);
+  const years = parseFloat(document.getElementById('loan-years').value);
+  
+  document.getElementById('loan-val-amount').textContent = P.toLocaleString('en-IN');
+  document.getElementById('loan-val-rate').textContent = rate;
+  document.getElementById('loan-val-years').textContent = years;
 
-कृपया खाता खोलने की प्रक्रिया, लागू शुल्क और उपलब्ध सहायता की शर्तें बताएं।
+  const n = years * 12; const r = (rate / 100) / 12;
+  let emi = (r === 0) ? (P / n) : P * r * (Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const totalPayment = emi * n;
 
-मैं समझता/समझती हूँ कि निवेश में जोखिम होता है और लाभ की गारंटी नहीं है।`;
+  document.getElementById('loan-res-principal').textContent = formatCurrency(P);
+  document.getElementById('loan-res-interest').textContent = formatCurrency(totalPayment - P);
+  document.getElementById('loan-res-emi').textContent = formatCurrency(emi);
+}
 
-  const url = "https://wa.me/" + whatsappNumber +
-    "?text=" + encodeURIComponent(message);
+updateSIP(); updateLum(); updateLoan();
 
-  window.location.href = url;
-});
 </script>
 
 </body>
