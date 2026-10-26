@@ -111,11 +111,6 @@
       <!-- Actions -->
       <div class="flex items-center gap-2 sm:gap-3">
         
-        <!-- App Install Button (Hidden by default, shown via JS if applicable) -->
-        <button id="installAppBtn" class="hidden items-center gap-1.5 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-gray-800 transition whitespace-nowrap">
-          <i class="fas fa-download"></i> <span class="hidden sm:inline">Install</span> App
-        </button>
-
         <!-- Language Toggle -->
         <button onclick="toggleLanguage()" class="flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition shrink-0">
           <span id="lang-label" class="text-xs">HI</span>
@@ -485,7 +480,6 @@ function toggleLanguage() {
 // 2. PWA APP INSTALL LOGIC
 // ==========================================
 let deferredPrompt;
-const installAppBtn = document.getElementById("installAppBtn");
 const installAppHeroBtn = document.getElementById("installAppHeroBtn");
 
 window.addEventListener("beforeinstallprompt", (e) => {
@@ -493,8 +487,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   // Stash the event so it can be triggered later.
   deferredPrompt = e;
-  // Update UI to notify the user they can add to home screen
-  if(installAppBtn) { installAppBtn.classList.remove("hidden"); installAppBtn.classList.add("flex"); }
+  // Update UI to notify the user they can add to home screen (Only the hero button now)
   if(installAppHeroBtn) { installAppHeroBtn.classList.remove("hidden"); installAppHeroBtn.classList.add("flex"); }
 });
 
@@ -507,12 +500,10 @@ async function triggerInstall() {
   console.log(`User response to the install prompt: ${outcome}`);
   // We've used the prompt, and can't use it again, throw it away
   deferredPrompt = null;
-  // Hide the buttons
-  if(installAppBtn) { installAppBtn.classList.add("hidden"); installAppBtn.classList.remove("flex"); }
+  // Hide the button
   if(installAppHeroBtn) { installAppHeroBtn.classList.add("hidden"); installAppHeroBtn.classList.remove("flex"); }
 }
 
-if(installAppBtn) installAppBtn.addEventListener("click", triggerInstall);
 if(installAppHeroBtn) installAppHeroBtn.addEventListener("click", triggerInstall);
 
 
