@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bihar STET Paper-II CBT Mock Test</title>
+<style>
+:root{--blue:#174ea6;--green:#16804a;--red:#d93025;--bg:#f2f5fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,"Noto Sans Devanagari",sans-serif;color:#202938}
+header{background:#123c75;color:white;padding:15px 18px}
+header h2{font-size:19px;margin:0 0 6px}
+header p{margin:0;font-size:13px}
+.container{max-width:1250px;margin:18px auto;padding:0 12px}
+.card{background:white;border:1px solid #dce2ec;border-radius:9px;padding:20px;margin-bottom:15px}
+h3{margin-top:0}
+label{display:block;font-weight:bold;margin:13px 0 6px}
+input{width:100%;padding:12px;border:1px solid #b9c4d5;border-radius:6px;font-size:16px}
+button{border:0;border-radius:5px;padding:11px 15px;font-size:14px;font-weight:bold;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e8edf5;color:#24344c}
+.green{background:var(--green);color:white}
+.danger{background:var(--red);color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hidden{display:none!important}
+.notice{background:#fff8e1;border:1px solid #f1d37a;padding:12px;border-radius:6px;font-size:14px;line-height:1.7}
+.stats{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.stat{background:#eef3fb;border-radius:6px;padding:9px 12px;font-size:13px}
+.examhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.timer{font-size:21px;font-weight:bold;color:#b3261e;background:#fff0ee;padding:10px 14px;border-radius:6px}
+.examgrid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:15px}
+.questiontop{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #e0e5ed;padding-bottom:12px}
+.qtext{font-size:18px;font-weight:bold;line-height:1.8;margin:20px 0}
+.option{display:flex;gap:10px;align-items:flex-start;padding:13px;margin:10px 0;border:1px solid #d4dce8;border-radius:7px;cursor:pointer;line-height:1.6}
+.option:hover{background:#f3f7ff}
+.option.selected{background:#e8f0fe;border-color:#174ea6}
+.option input{width:auto;margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}
+.pbtn{padding:10px 2px;background:#edf0f5;color:#202938;border:1px solid #d6dce5}
+.pbtn.current{outline:3px solid #174ea6}
+.pbtn.answered{background:#16804a;color:white}
+.pbtn.review{background:#8155b7;color:white}
+.pbtn.answered.review{background:#007f91;color:white}
+.legend{font-size:12px;line-height:2}
+.dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px}
+.resultbig{font-size:34px;font-weight:bold;color:var(--green)}
+.reviewrow{padding:13px 0;border-bottom:1px solid #e0e5ed;line-height:1.8}
+.correct{color:#137333;font-weight:bold}
+.wrong{color:#b3261e;font-weight:bold}
+footer{text-align:center;font-size:12px;color:#65738a;padding:18px}
+@media(max-width:760px){
+ .examgrid{grid-template-columns:1fr}
+ .examhead{align-items:flex-start}
+ .timer{font-size:18px}
+ .container{margin:10px auto}
+ .card{padding:14px}
+ .qtext{font-size:16px}
+ .palette{grid-template-columns:repeat(5,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>BIHAR STET — PAPER-II</h2>
+  <p>Secondary Teacher Eligibility Test | Sociology (समाजशास्त्र)</p>
+</header>
+
+<div class="container">
+
+<section id="login" class="card">
+  <h3>Candidate Login / अभ्यर्थी लॉगिन</h3>
+  <div class="notice">
+    यह केवल अभ्यास के लिए बनाया गया CBT मॉक टेस्ट है।
+    यह आधिकारिक परीक्षा पोर्टल नहीं है। यहाँ अपनी वास्तविक
+    व्यक्तिगत जानकारी भरना आवश्यक नहीं है।
+  </div>
+  <label for="candidate">Candidate Name / अभ्यर्थी का नाम</label>
+  <input id="candidate" placeholder="अपना नाम लिखें" autocomplete="name">
+  <label for="roll">Roll Number / रोल नंबर</label>
+  <input id="roll" placeholder="उदाहरण: DEMO2026" autocomplete="off">
+  <div class="stats">
+    <div class="stat">विषय: Sociology</div>
+    <div class="stat">कुल प्रश्न: 50</div>
+    <div class="stat">समय: 150 मिनट</div>
+    <div class="stat">कुल अंक: 50</div>
+  </div>
+  <p>निर्देश: प्रत्येक प्रश्न में चार विकल्प हैं। एक विकल्प चुनें।
+    गलत उत्तर के लिए इस डेमो में अंक नहीं काटे जाएंगे।</p>
+  <button class="primary" onclick="startExam()">Start Examination / परीक्षा शुरू करें</button>
+</section>
+
+<section id="exam" class="hidden">
+  <div class="card examhead">
+    <div>
+      <b id="welcome"></b>
+      <div style="font-size:13px;margin-top:5px">Paper-II | Sociology | CBT Mock Test</div>
+    </div>
+    <div class="timer" id="timer">150:00</div>
+  </div>
+
+  <div class="examgrid">
+    <main class="card">
+      <div class="questiontop">
+        <b id="qnumber">Question 1 of 50</b>
+        <span id="marks">Maximum Marks: 50</span>
+      </div>
+      <div id="qtext" class="qtext"></div>
+      <div id="options"></div>
+      <div class="actions">
+        <button class="secondary" onclick="previousQ()">← Previous</button>
+        <button class="secondary" onclick="clearAnswer()">Clear Response</button>
+        <button class="secondary" onclick="markReview()">Mark for Review</button>
+        <button class="primary" onclick="nextQ()">Save & Next →</button>
+      </div>
+    </main>
+
+    <aside class="card">
+      <h3>Question Palette</h3>
+      <p style="font-size:13px">किसी भी नंबर पर क्लिक करके उस प्रश्न पर जाएँ।</p>
+      <div class="legend">
+        <span class="dot" style="background:#16804a"></span> उत्तर दिया<br>
+        <span class="dot" style="background:#8155b7"></span> Review के लिए चिह्नित<br>
+        <span class="dot" style="background:#edf0f5;border:1px solid #bbb"></span> उत्तर नहीं दिया<br>
+        <span class="dot" style="background:#174ea6"></span> वर्तमान प्रश्न
+      </div>
+      <div id="palette" class="palette"></div>
+      <div class="stats">
+        <div class="stat">Answered: <b id="answeredCount">0</b></div>
+        <div class="stat">Unanswered: <b id="unansweredCount">50</b></div>
+        <div class="stat">Review: <b id="reviewCount">0</b></div>
+      </div>
+      <button class="danger" style="width:100%" onclick="confirmSubmit()">Submit Test / परीक्षा जमा करें</button>
+    </aside>
+  </div>
+</section>
+
+<section id="result" class="hidden">
+  <div class="card">
+    <h2>Examination Submitted Successfully</h2>
+    <p id="resultName"></p>
+    <p id="resultRoll"></p>
+    <div class="resultbig" id="score">0 / 50</div>
+    <p id="percentage"></p>
+    <div class="stats">
+      <div class="stat">सही उत्तर: <b id="correctCount"></b></div>
+      <div class="stat">गलत उत्तर: <b id="wrongCount"></b></div>
+      <div class="stat">छोड़े गए: <b id="skipCount"></b></div>
+    </div>
+    <div class="notice">
+      यह आपके अभ्यास का स्कोर है, आधिकारिक STET परिणाम या
+      पात्रता प्रमाणपत्र नहीं। यह डेमो परिणाम सर्वर पर जमा नहीं होता।
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="showReview()">View Answers / उत्तर देखें</button>
+      <button class="secondary" onclick="location.reload()">Restart Test / फिर से अभ्यास करें</button>
+      <button class="secondary" onclick="window.print()">Print Result</button>
+    </div>
+  </div>
+  <div id="answerReview" class="card hidden">
+    <h3>Answer Review / उत्तरों की समीक्षा</h3>
+    <div id="reviewContent"></div>
+  </div>
+</section>
+</div>
+
+<footer>Practice CBT Demo • Not an official Bihar STET website</footer>
+
+<script>
+const questions = [
+{q:"समाजशास्त्र के जनक के रूप में किसे जाना जाता है?",o:["कार्ल मार्क्स","ऑगस्त कॉम्ट","मैक्स वेबर","एमिल दुर्खीम"],a:1},
+{q:"Sociology शब्द का प्रयोग सबसे पहले किसने किया?",o:["ऑगस्त कॉम्ट","हर्बर्ट स्पेंसर","मैक्स वेबर","टालकॉट पार्सन्स"],a:0},
+{q:"'The Rules of Sociological Method' पुस्तक के लेखक कौन हैं?",o:["कार्ल मार्क्स","एमिल दुर्खीम","मैक्स वेबर","जॉर्ज सिमेल"],a:1},
+{q:"'Das Kapital' किसकी प्रसिद्ध रचना है?",o:["कार्ल मार्क्स","ऑगस्त कॉम्ट","मीड","मर्टन"],a:0},
+{q:"सामाजिक क्रिया (Social Action) की अवधारणा किससे जुड़ी है?",o:["मैक्स वेबर","दुर्खीम","स्पेंसर","पार्सन्स"],a:0},
+{q:"प्राथमिक समूह की अवधारणा किस समाजशास्त्री ने दी?",o:["चार्ल्स हॉर्टन कूली","मैक्स वेबर","कार्ल मार्क्स","ऑगस्त कॉम्ट"],a:0},
+{q:"'Looking-glass self' की अवधारणा किसने दी?",o:["जी.एच. मीड","सी.एच. कूली","दुर्खीम","मर्टन"],a:1},
+{q:"समाज में व्यक्ति के सीखे हुए व्यवहार को क्या कहते हैं?",o:["समाजीकरण","वियोजन","औद्योगीकरण","नगरीकरण"],a:0},
+{q:"समाजीकरण की पहली और प्रमुख संस्था सामान्यतः कौन-सी है?",o:["बाजार","परिवार","राजनीतिक दल","कार्यालय"],a:1},
+{q:"सामाजिक मानदंडों का उल्लंघन किससे संबंधित है?",o:["अनुरूपता","विचलन","समाजीकरण","सामाजिक गतिशीलता"],a:1},
+{q:"सामाजिक स्तरीकरण का अर्थ क्या है?",o:["समाज का स्तरों में विभाजन","जनसंख्या में कमी","भाषा का परिवर्तन","केवल प्रवास"],a:0},
+{q:"जाति व्यवस्था परंपरागत रूप से किस प्रकार की स्तरीकरण व्यवस्था है?",o:["पूर्णतः खुली","बंद","केवल आर्थिक","अस्थायी"],a:1},
+{q:"वर्ग व्यवस्था में सामाजिक स्थिति मुख्यतः किससे प्रभावित हो सकती है?",o:["आर्थिक स्थिति और उपलब्धि","केवल जन्म","केवल आयु","केवल भाषा"],a:0},
+{q:"सामाजिक गतिशीलता का अर्थ है—",o:["स्थान का स्थिर रहना","सामाजिक स्थिति में परिवर्तन","जनसंख्या का घटना","परिवार का छोटा होना"],a:1},
+{q:"संस्कृति में क्या शामिल होता है?",o:["केवल भोजन","केवल वस्त्र","मूल्य, मानदंड, विश्वास और व्यवहार","केवल भाषा"],a:2},
+{q:"भौतिक संस्कृति का उदाहरण कौन-सा है?",o:["विश्वास","नैतिक मूल्य","औजार","रीति-रिवाज"],a:2},
+{q:"सांस्कृतिक विलंबना (Cultural Lag) की अवधारणा किसने दी?",o:["डब्ल्यू.एफ. ऑगबर्न","मैक्स वेबर","कूली","दुर्खीम"],a:0},
+{q:"सांस्कृतिक सापेक्षवाद का मुख्य विचार क्या है?",o:["हर संस्कृति को उसके संदर्भ में समझना","एक संस्कृति श्रेष्ठ है","संस्कृति बदलती नहीं","सभी समाज समान हैं"],a:0},
+{q:"नृजातिकेंद्रवाद (Ethnocentrism) का अर्थ क्या है?",o:["अपनी संस्कृति के मानकों से अन्य संस्कृतियों का मूल्यांकन","सभी संस्कृतियों का समान अध्ययन","संस्कृति का लोप","सांस्कृतिक आदान-प्रदान"],a:0},
+{q:"सामाजिक संस्था का उदाहरण कौन-सा है?",o:["परिवार","एक व्यक्ति का मूड","एक क्षणिक विचार","अकेला पेड़"],a:0},
+{q:"संयुक्त परिवार में सामान्यतः क्या विशेषता हो सकती है?",o:["केवल एक व्यक्ति","एक से अधिक पीढ़ियों का साथ रहना","कोई रिश्तेदारी नहीं","केवल अविवाहित व्यक्ति"],a:1},
+{q:"एकल परिवार में सामान्यतः कौन शामिल होते हैं?",o:["केवल पूरा गाँव","माता-पिता और उनके बच्चे","पूरा समुदाय","सभी रिश्तेदार अनिवार्य रूप से"],a:1},
+{q:"विवाह संस्था किससे संबंधित है?",o:["सामाजिक रूप से मान्य दांपत्य संबंध","केवल व्यापार","केवल शिक्षा","केवल राजनीति"],a:0},
+{q:"पितृवंशीय व्यवस्था में वंश का निर्धारण किसके माध्यम से होता है?",o:["माता की वंश-रेखा","पिता की वंश-रेखा","केवल मित्रों से","पड़ोसियों से"],a:1},
+{q:"मातृवंशीय व्यवस्था में वंश का निर्धारण किसके माध्यम से होता है?",o:["पिता की वंश-रेखा","माता की वंश-रेखा","शिक्षक से","पेशा से"],a:1},
+{q:"सामाजिक नियंत्रण का औपचारिक साधन कौन-सा है?",o:["कानून","अफवाह","व्यक्तिगत पसंद","अनौपचारिक प्रशंसा"],a:0},
+{q:"अनौपचारिक सामाजिक नियंत्रण का उदाहरण क्या है?",o:["न्यायालय का निर्णय","पुलिस की गिरफ्तारी","परिवार की सलाह","संसद का कानून"],a:2},
+{q:"सामाजिक परिवर्तन का अर्थ क्या है?",o:["सामाजिक संरचना और संबंधों में परिवर्तन","केवल मौसम बदलना","केवल व्यक्ति का नाम बदलना","किसी बदलाव का न होना"],a:0},
+{q:"औद्योगीकरण का एक सामान्य सामाजिक प्रभाव क्या है?",o:["शहरीकरण में वृद्धि","सभी व्यवसायों का समाप्त होना","प्रवास का पूर्ण अंत","सामाजिक परिवर्तन का अंत"],a:0},
+{q:"नगरीकरण किस प्रक्रिया से संबंधित है?",o:["शहरी आबादी और शहरी जीवन का विस्तार","केवल कृषि उत्पादन","जंगलों का विस्तार","जनसंख्या का शून्य होना"],a:0},
+{q:"जनसांख्यिकी (Demography) किसका अध्ययन करती है?",o:["जनसंख्या","केवल धर्म","केवल राजनीति","केवल साहित्य"],a:0},
+{q:"जन्म दर का संबंध किससे है?",o:["एक अवधि में जन्मों की संख्या","कुल विद्यालयों की संख्या","मृत्यु का कारण मात्र","प्रवासियों की आय"],a:0},
+{q:"प्रवास (Migration) का अर्थ क्या है?",o:["निवास स्थान का बदलना","एक ही जगह रहना","केवल विवाह करना","केवल पढ़ाई करना"],a:0},
+{q:"सामाजिक अनुसंधान में परिकल्पना क्या होती है?",o:["जाँच योग्य प्रस्ताव","अंतिम सत्य जिसे जाँचा न जा सके","केवल व्यक्तिगत राय","संदर्भ सूची"],a:0},
+{q:"प्रश्नावली (Questionnaire) किस प्रकार का साधन है?",o:["डेटा संग्रह का साधन","केवल नमूना चयन","विश्लेषण का परिणाम","जनगणना का पर्याय"],a:0},
+{q:"साक्षात्कार विधि में शोधकर्ता क्या करता है?",o:["उत्तरदाता से प्रश्न पूछता है","केवल पुस्तक छापता है","डेटा को हमेशा अनदेखा करता है","नमूना समाप्त करता है"],a:0},
+{q:"प्रतिभागी अवलोकन (Participant Observation) में शोधकर्ता—",o:["समूह की गतिविधियों में भाग लेते हुए अध्ययन कर सकता है","केवल दूर से आँकड़े पढ़ता है","कोई अवलोकन नहीं करता","केवल परीक्षा लेता है"],a:0},
+{q:"यादृच्छिक नमूना (Random Sampling) की विशेषता क्या है?",o:["चयन में प्रत्येक इकाई को ज्ञात अवसर मिलना","केवल परिचितों का चयन","केवल सबसे अमीर का चयन","केवल एक व्यक्ति का चयन"],a:0},
+{q:"जनगणना में सामान्यतः क्या किया जाता है?",o:["निर्धारित जनसंख्या की सभी इकाइयों की गणना","केवल दस लोगों का चयन","केवल साक्षात्कार","केवल प्रयोग"],a:0},
+{q:"सहसंबंध (Correlation) क्या बताता है?",o:["चरों के बीच संबंध की दिशा और मात्रा","हमेशा कारण-परिणाम","केवल जनसंख्या आकार","केवल ऐतिहासिक तिथि"],a:0},
+{q:"सामाजिक संरचना का संबंध किससे है?",o:["सामाजिक संबंधों और संस्थाओं के व्यवस्थित ढाँचे से","केवल भवन निर्माण से","केवल मौसम से","केवल जैविक उम्र से"],a:0},
+{q:"भूमिका (Role) किससे संबंधित है?",o:["किसी सामाजिक स्थिति से जुड़ी अपेक्षित क्रियाएँ","केवल व्यक्ति का नाम","केवल आय","केवल निवास स्थान"],a:0},
+{q:"प्रस्थिति (Status) का अर्थ समाजशास्त्र में क्या है?",o:["समाज में व्यक्ति की सामाजिक स्थिति","केवल व्यक्ति की ऊँचाई","केवल उसकी उम्र","केवल उसकी भाषा"],a:0},
+{q:"भूमिका संघर्ष (Role Conflict) कब होता है?",o:["दो या अधिक भूमिकाओं की अपेक्षाएँ टकराएँ","कोई भूमिका न हो","केवल आय बढ़े","व्यक्ति अकेला हो"],a:0},
+{q:"संदर्भ समूह (Reference Group) क्या है?",o:["वह समूह जिससे व्यक्ति तुलना या मार्गदर्शन लेता है","केवल परिवार का नाम","एक अनिवार्य सरकारी संस्था","केवल जनगणना इकाई"],a:0},
+{q:"सामाजिक आंदोलन सामान्यतः किससे जुड़ा होता है?",o:["सामूहिक प्रयास द्वारा सामाजिक परिवर्तन की माँग","केवल व्यक्तिगत खरीदारी","केवल मौसम","केवल जैविक वृद्धि"],a:0},
+{q:"नारीवादी दृष्टिकोण मुख्यतः किसका अध्ययन करता है?",o:["लैंगिक असमानता और सत्ता संबंध","केवल जनसंख्या घनत्व","केवल औद्योगिक मशीनें","केवल भाषा व्याकरण"],a:0},
+{q:"शिक्षा का एक प्रमुख सामाजिक कार्य क्या है?",o:["ज्ञान और सामाजिक मानदंडों का संचार","सामाजिक संबंधों को पूरी तरह समाप्त करना","केवल आयु निर्धारित करना","केवल जन्म दर तय करना"],a:0},
+{q:"वैश्वीकरण का अर्थ क्या है?",o:["देशों और समाजों के बीच बढ़ते वैश्विक संबंध","सभी देशों का अलग-थलग होना","केवल ग्रामीण जीवन","केवल स्थानीय मौसम"],a:0},
+{q:"सामाजिक समावेशन (Social Inclusion) का लक्ष्य क्या है?",o:["विभिन्न समूहों की भागीदारी और अवसर बढ़ाना","कुछ समूहों को हमेशा बाहर रखना","असमानता बढ़ाना","सभी संस्थाएँ बंद करना"],a:0}
+];
+
+let answers = Array(50).fill(null);
+let flagged = Array(50).fill(false);
+let current = 0;
+let remaining = 150 * 60;
+let interval = null;
+let submitted = false;
+let shuffled = [];
+
+function shuffleQuestions(){
+  shuffled = questions.map((q,i)=>({...q,original:i}));
+  for(let i=shuffled.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+  }
+}
+
+function startExam(){
+  const name=document.getElementById("candidate").value.trim();
+  const roll=document.getElementById("roll").value.trim();
+  if(!name || !roll){
+    alert("कृपया नाम और रोल नंबर भरें।");
+    return;
+  }
+  shuffleQuestions();
+  document.getElementById("welcome").textContent="Candidate: "+name+" | Roll No: "+roll;
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("exam").classList.remove("hidden");
+  renderPalette();
+  renderQuestion();
+  updateCounts();
+  interval=setInterval(tick,1000);
+}
+
+function tick(){
+  if(submitted)return;
+  remaining--;
+  const m=Math.floor(remaining/60);
+  const s=remaining%60;
+  document.getElementById("timer").textContent=
+    String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  if(remaining<=0){
+    clearInterval(interval);
+    submitExam(true);
+  }
+}
+
+function renderQuestion(){
+  const q=shuffled[current];
+  document.getElementById("qnumber").textContent=
+    "Question "+(current+1)+" of "+shuffled.length;
+  document.getElementById("qtext").textContent=q.q;
+  const box=document.getElementById("options");
+  box.innerHTML="";
+  q.o.forEach((opt,i)=>{
+    const label=document.createElement("label");
+    label.className="option"+(answers[current]===i?" selected":"");
+    const radio=document.createElement("input");
+    radio.type="radio";
+    radio.name="answer";
+    radio.checked=answers[current]===i;
+    radio.addEventListener("change",()=>{
+      answers[current]=i;
+      renderQuestion();
+      renderPalette();
+      updateCounts();
+    });
+    const text=document.createElement("span");
+    text.textContent=String.fromCharCode(65+i)+". "+opt;
+    label.append(radio,text);
+    box.append(label);
+  });
+  renderPalette();
+  updateCounts();
+}
+
+function renderPalette(){
+  const p=document.getElementById("palette");
+  p.innerHTML="";
+  shuffled.forEach((q,i)=>{
+    const b=document.createElement("button");
+    b.className="pbtn";
+    if(answers[i]!==null)b.classList.add("answered");
+    if(flagged[i])b.classList.add("review");
+    if(i===current)b.classList.add("current");
+    b.textContent=i+1;
+    b.title="Question "+(i+1);
+    b.onclick=()=>{current=i;renderQuestion()};
+    p.append(b);
+  });
+}
+
+function updateCounts(){
+  const a=answers.filter(x=>x!==null).length;
+  document.getElementById("answeredCount").textContent=a;
+  document.getElementById("unansweredCount").textContent=50-a;
+  document.getElementById("reviewCount").textContent=flagged.filter(Boolean).length;
+}
+
+function nextQ(){
+  if(current<49){current++;renderQuestion()}
+}
+function previousQ(){
+  if(current>0){current--;renderQuestion()}
+}
+function clearAnswer(){
+  answers[current]=null;
+  renderQuestion();
+}
+function markReview(){
+  flagged[current]=!flagged[current];
+  if(current<49)current++;
+  renderQuestion();
+}
+function confirmSubmit(){
+  const unanswered=answers.filter(x=>x===null).length;
+  const msg="क्या आप परीक्षा जमा करना चाहते हैं?\n"+
+    "उत्तर दिए गए: "+(50-unanswered)+"\n"+
+    "बिना उत्तर वाले: "+unanswered+"\n\n"+
+    "जमा करने के बाद आप उत्तर बदल नहीं पाएँगे।";
+  if(confirm(msg))submitExam(false);
+}
+
+function submitExam(auto){
+  if(submitted)return;
+  submitted=true;
+  clearInterval(interval);
+  document.getElementById("exam").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+
+  let correct=0,wrong=0,skip=0;
+  shuffled.forEach((q,i)=>{
+    if(answers[i]===null)skip++;
+    else if(answers[i]===q.a)correct++;
+    else wrong++;
+  });
+  const name=document.getElementById("candidate").value.trim();
+  const roll=document.getElementById("roll").value.trim();
+  document.getElementById("resultName").textContent="Candidate Name: "+name;
+  document.getElementById("resultRoll").textContent="Roll Number: "+roll;
+  document.getElementById("score").textContent=correct+" / 50";
+  document.getElementById("percentage").textContent=
+    "Score: "+(correct*2)+"%?";
+
+  // 50 questions: each question carries 1 mark.
+  document.getElementById("percentage").textContent=
+    "Percentage: "+(correct/50*100).toFixed(2)+"%"+
+    (auto?" | Time expired; test submitted automatically.":" | Test submitted.");
+  document.getElementById("correctCount").textContent=correct;
+  document.getElementById("wrongCount").textContent=wrong;
+  document.getElementById("skipCount").textContent=skip;
+  buildReview();
+}
+
+function buildReview(){
+  const box=document.getElementById("reviewContent");
+  box.innerHTML="";
+  shuffled.forEach((q,i)=>{
+    const div=document.createElement("div");
+    div.className="reviewrow";
+    const selected=answers[i]===null?"उत्तर नहीं दिया":
+      String.fromCharCode(65+answers[i])+". "+q.o[answers[i]];
+    const right=String.fromCharCode(65+q.a)+". "+q.o[q.a];
+    const status=answers[i]===null?"छोड़ा गया":
+      answers[i]===q.a?"सही उत्तर":"गलत उत्तर";
+    div.innerHTML="<b>Q"+(i+1)+". </b>";
+    const qt=document.createElement("span");
+    qt.textContent=q.q;
+    div.append(qt,document.createElement("br"));
+    const your=document.createElement("span");
+    your.textContent="आपका उत्तर: "+selected+" | ";
+    your.className=answers[i]===q.a?"correct":answers[i]===null?"":"wrong";
+    const st=document.createElement("b");
+    st.textContent=status;
+    st.className=answers[i]===q.a?"correct":answers[i]===null?"":"wrong";
+    const rightLine=document.createElement("div");
+    rightLine.className="correct";
+    rightLine.textContent="सही उत्तर: "+right;
+    div.append(your,st,rightLine);
+    box.append(div);
+  });
+}
+function showReview(){
+  const r=document.getElementById("answerReview");
+  r.classList.remove("hidden");
+  r.scrollIntoView({behavior:"smooth"});
+}
+</script>
+</body>
+</html>
