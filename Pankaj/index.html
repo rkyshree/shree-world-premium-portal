@@ -537,6 +537,10 @@
             designation: "अधिवक्ता एवं ग्राम प्रधान प्रत्याशी",
             location: "जंगल ठकुरही, देवरिया",
             
+            // ऐप का नाम और लोगो (जो मोबाइल में इंस्टॉल होने पर दिखेगा)
+            appName: "पंकज",
+            appLogoUrl: "https://i.ibb.co/RKN6Q8M/IMG-20261020-WA0000.jpg",
+            
             // फोटो और पोस्टर (URL)
             logoUrl: "https://i.ibb.co/wNTXh0nb/FB-IMG-1786870377911.jpg",
             profileUrl: "https://i.ibb.co/TxNbhfQq/Picsart-26-08-16-13-29-50-308.jpg",
@@ -558,7 +562,7 @@
                 { name: "www.rkyshree.in/Resell", url: "https://www.rkyshree.in/Resell" }
             ],
 
-            // गैलरी (यहाँ आप किसी भी साइज का पोस्टर डाल सकते हैं, वह कटेगा नहीं)
+            // गैलरी (यहाँ आप अनलिमिटेड फोटो डाल सकते हैं, वेबसाइट स्लो नहीं होगी)
             galleryImages: [
                 "https://i.ibb.co/sdRTyr1L/Picsart-26-08-16-19-40-26-978.jpg",
                 "https://i.ibb.co/SXNDwDwf/FB-IMG-1786870365881.jpg",
@@ -573,33 +577,37 @@
         // --------------------------------------------------------
         let deferredPrompt; // For PWA Install
 
-        // 1. डायनामिक मेनिफेस्ट (PWA के लिए)
+        // 1. डायनामिक मेनिफेस्ट (PWA के लिए - Blob URL का उपयोग करके ताकि Chrome इसे असली फाइल माने)
         const manifestJSON = JSON.stringify({
-            name: `${CONFIG.nameFirst} ${CONFIG.nameLast} - प्रधान प्रत्याशी`,
-            short_name: "पंकज यादव",
-            start_url: window.location.href, // सुनिश्चित करता है कि यह हर डोमेन पर काम करे
+            name: "पंकज कुमार यादव - प्रधान प्रत्याशी",
+            short_name: CONFIG.appName, // ऐप का नाम (पंकज) यहाँ सेट किया गया है
+            start_url: window.location.href.split('?')[0],
             display: "standalone",
             background_color: "#064e3b",
             theme_color: "#064e3b",
             description: "अधिवक्ता एवं ग्राम प्रधान प्रत्याशी, जंगल ठकुरही",
             icons: [
-                { src: CONFIG.logoUrl, sizes: "192x192", type: "image/jpeg", purpose: "any maskable" },
-                { src: CONFIG.logoUrl, sizes: "512x512", type: "image/jpeg", purpose: "any maskable" }
+                { src: CONFIG.appLogoUrl, sizes: "192x192", type: "image/jpeg", purpose: "any maskable" },
+                { src: CONFIG.appLogoUrl, sizes: "512x512", type: "image/jpeg", purpose: "any maskable" }
             ]
         });
-        document.getElementById('dynamic-manifest').href = 'data:application/json;charset=utf-8,' + encodeURIComponent(manifestJSON);
+        const manifestBlob = new Blob([manifestJSON], { type: 'application/json' });
+        document.getElementById('dynamic-manifest').href = URL.createObjectURL(manifestBlob);
 
-        // 2. सर्विस वर्कर (Service Worker) - एंड्रॉइड में डायरेक्ट इंस्टॉल प्रॉम्प्ट (फोटो वाला) लाने के लिए यह बहुत जरूरी है
+        // 2. सर्विस वर्कर (Service Worker) - असली PWA इंस्टॉल प्रॉम्प्ट के लिए यह सबसे जरूरी है
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
                     self.addEventListener('install', (e) => self.skipWaiting());
                     self.addEventListener('activate', (e) => self.clients.claim());
-                    self.addEventListener('fetch', (e) => { /* Dummy fetch to pass PWA criteria */ });
+                    self.addEventListener('fetch', (e) => { 
+                        // इससे Chrome को लगता है कि साइट ऑफलाइन भी काम कर सकती है (Install Popup के लिए जरूरी)
+                        e.respondWith(fetch(e.request).catch(() => new Response('Offline')));
+                    });
                 `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Error:", err));
+                const swBlob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl).then(()=>console.log("PWA Ready")).catch(err => console.log("SW Error:", err));
             });
         }
 
@@ -651,14 +659,15 @@
                 }
             });
 
-            // Masonry Gallery Setup (Responsive, No Crop)
+            // Masonry Gallery Setup (Performance Optimized: Lazy Loading + Async Decoding)
+            // इससे अनलिमिटेड फोटो डालने पर भी वेबसाइट स्लो नहीं होगी
             const galleryGrid = document.getElementById('ui-gallery-grid');
             CONFIG.galleryImages.forEach(imgUrl => {
                 if(imgUrl.trim() !== "") {
                     const div = document.createElement('div');
                     div.className = 'relative break-inside-avoid rounded-2xl overflow-hidden cursor-pointer group shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 bg-white mb-6';
                     div.innerHTML = `
-                        <img src="${imgUrl}" alt="Gallery" loading="lazy" class="w-full h-auto block transform group-hover:scale-[1.03] transition-transform duration-500">
+                        <img src="${imgUrl}" alt="Gallery" loading="lazy" decoding="async" class="w-full h-auto block transform group-hover:scale-[1.03] transition-transform duration-500">
                         <div class="absolute inset-0 bg-primary/70 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
                             <span class="text-accentLight text-5xl drop-shadow-lg scale-50 group-hover:scale-100 transition-transform duration-300">🔍</span>
                         </div>`;
@@ -667,8 +676,8 @@
                 }
             });
 
-            // YouTube Video Setup (Plays inside Website)
-            let videoId = "";
+            // YouTube Video Setup (Fast Loading)
+            let videoId = "https://youtu.be/8PhqMHD9-Tg";
             try {
                 let url = new URL(CONFIG.youtubeVideoLink);
                 if(url.hostname === "youtu.be") videoId = url.pathname.slice(1);
@@ -677,7 +686,8 @@
             
             const vidContainer = document.getElementById('ui-video-container');
             if(videoId) {
-                vidContainer.innerHTML = `<iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                // iframe में lazy loading लगाया गया है ताकि पेज तुरंत खुले
+                vidContainer.innerHTML = `<iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             } else {
                 vidContainer.innerHTML = `<div class="text-white font-hindi text-xl py-20">वीडियो जल्द ही अपलोड किया जाएगा।</div>`;
             }
@@ -705,12 +715,11 @@
         // Install Button Click Handler
         function installApp() {
             if (deferredPrompt) {
-                // अगर Android/Chrome का नेटिव सपोर्ट है, तो डायरेक्ट इंस्टॉल पॉपअप दिखाएं (फोटो और इंस्टॉल बटन के साथ)
+                // डायरेक्ट इंस्टॉल पॉपअप (Android/Chrome)
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => { 
                     if (choiceResult.outcome === 'accepted') {
                         console.log('App Installed');
-                        // इंस्टॉल होने के बाद बटन छिपा दें
                         document.querySelectorAll('.app-install-btn').forEach(btn => btn.style.display = 'none');
                     }
                     deferredPrompt = null; 
@@ -718,7 +727,6 @@
                 return;
             }
 
-            // अगर नेटिव पॉपअप अभी रेडी नहीं है या iPhone है
             const modal = document.getElementById('install-modal');
             const instructions = document.getElementById('install-instructions');
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -734,8 +742,7 @@
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             } else {
-                // अगर एंड्रॉइड है लेकिन प्रॉम्प्ट फेल हो गया (जैसे डेस्कटॉप या पहले से इंस्टॉल)
-                alert("ऐप इंस्टॉल करने के लिए ब्राउज़र के थ्री-डॉट मेनू (⋮) से 'Install App' चुनें।");
+                alert("ऐप इंस्टॉल करने के लिए ब्राउज़र के थ्री-डॉट मेनू (⋮) से 'Install App' या 'Add to Home screen' चुनें।");
             }
         }
 
