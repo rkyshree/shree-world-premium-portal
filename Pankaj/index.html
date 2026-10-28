@@ -135,19 +135,19 @@
                     <a href="#gallery" class="hover:text-accent transition-colors">गैलरी</a>
                     <a href="#contact" class="hover:text-accent transition-colors">संपर्क</a>
                     <!-- Install App Button (Desktop) -->
-                    <button onclick="installApp()" class="app-install-btn hidden ml-2 px-4 py-1.5 bg-gradient-to-r from-primary to-primaryLight text-white text-sm rounded-full shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5 flex items-center gap-2">
+                    <button onclick="installApp()" class="app-install-btn ml-2 px-4 py-1.5 bg-gradient-to-r from-accent to-yellow-500 text-dark font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5 flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         App इंस्टॉल करें
                     </button>
                 </nav>
 
                 <!-- Mobile Menu Button & Install App -->
-                <div class="flex items-center gap-3 lg:hidden">
-                    <button onclick="installApp()" class="app-install-btn hidden px-3 py-1.5 bg-primary text-white text-xs rounded-full shadow-md font-hindi flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <div class="flex items-center gap-2 sm:gap-3 lg:hidden">
+                    <button onclick="installApp()" class="app-install-btn px-3 py-1.5 bg-accent hover:bg-yellow-500 text-dark font-bold text-sm rounded-full shadow-md font-hindi flex items-center gap-1.5 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         App
                     </button>
-                    <button id="mobile-menu-btn" class="text-primary text-3xl focus:outline-none">&#9776;</button>
+                    <button id="mobile-menu-btn" class="text-primary text-3xl focus:outline-none ml-1">&#9776;</button>
                 </div>
             </div>
         </div>
@@ -509,26 +509,16 @@
         <img id="lightbox-img" src="" alt="Zoomed" class="max-w-full max-h-[90vh] rounded-lg border-2 border-white/20 shadow-2xl object-contain">
     </div>
 
-    <!-- iOS Install Modal -->
-    <div id="ios-install-modal" class="fixed inset-0 bg-black/80 z-[100000] hidden items-end justify-center pb-10 px-4">
+    <!-- Unified Install Modal (For both Android & iOS if prompt fails) -->
+    <div id="install-modal" class="fixed inset-0 bg-black/80 z-[100000] hidden items-end justify-center pb-10 px-4">
         <div class="bg-white rounded-3xl p-8 text-center max-w-sm w-full relative transform transition-transform translate-y-full animate-slideUp">
-            <button onclick="document.getElementById('ios-install-modal').classList.add('hidden')" class="absolute top-4 right-5 text-gray-500 hover:text-red-500 text-3xl focus:outline-none">&times;</button>
+            <button onclick="document.getElementById('install-modal').classList.add('hidden')" class="absolute top-4 right-5 text-gray-500 hover:text-red-500 text-3xl focus:outline-none">&times;</button>
             <h3 class="text-2xl font-bold text-primary font-hindi mb-2 mt-2">App इंस्टॉल करें</h3>
-            <p class="text-gray-600 mb-6 font-hindi">iPhone/iPad में इंस्टॉल करने के लिए:</p>
-            <ol class="text-left text-base font-hindi text-gray-800 space-y-4 mb-8">
-                <li class="flex items-center gap-3">
-                    <span class="bg-gray-100 p-2 rounded-full">1</span> 
-                    नीचे दिए गए <strong>Share</strong> आइकॉन <svg class="w-6 h-6 inline text-blue-500 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> पर टैप करें।
-                </li>
-                <li class="flex items-center gap-3">
-                    <span class="bg-gray-100 p-2 rounded-full">2</span> 
-                    मेनू में थोड़ा नीचे जाएँ और <strong>"Add to Home Screen"</strong> चुनें।
-                </li>
-                <li class="flex items-center gap-3">
-                    <span class="bg-gray-100 p-2 rounded-full">3</span> 
-                    ऊपर कोने में <strong>"Add"</strong> पर टैप करें।
-                </li>
-            </ol>
+            
+            <div id="install-instructions" class="text-left text-base font-hindi text-gray-800 space-y-4 mb-8 mt-4">
+                <!-- Instructions injected via JS based on Device -->
+            </div>
+            
             <div class="w-16 h-1.5 bg-gray-300 rounded-full mx-auto"></div>
         </div>
     </div>
@@ -692,35 +682,54 @@
             const swBlob = new Blob([swCode], {type: 'application/javascript'});
             if ('serviceWorker' in navigator) navigator.serviceWorker.register(URL.createObjectURL(swBlob));
 
+            // Check if App is already installed (Standalone Mode)
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            if (isStandalone) {
+                // Hide install buttons if already installed
+                document.querySelectorAll('.app-install-btn').forEach(btn => btn.style.display = 'none');
+            }
+
             // Catch Install Prompt (Android/Chrome)
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                document.querySelectorAll('.app-install-btn').forEach(btn => btn.classList.remove('hidden'));
             });
-
-            // If iOS, show button anyway (no beforeinstallprompt on iOS)
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-            if (isIOS && !isStandalone) {
-                document.querySelectorAll('.app-install-btn').forEach(btn => btn.classList.remove('hidden'));
-            }
         }
 
         // Install Button Click Handler
         function installApp() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (isIOS) {
-                // Show iOS Tooltip
-                const modal = document.getElementById('ios-install-modal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            } else if (deferredPrompt) {
+            if (deferredPrompt) {
+                // Show native install prompt if available
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => { deferredPrompt = null; });
-            } else {
-                alert("ऐप इंस्टॉल करने के लिए ब्राउज़र के मेनू (तीन डॉट) में जाकर 'Add to Home screen' या 'Install App' पर क्लिक करें।");
+                return;
             }
+
+            // If native prompt is blocked/unavailable (iOS or Custom Browser), show instructions
+            const modal = document.getElementById('install-modal');
+            const instructions = document.getElementById('install-instructions');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+            if (isIOS) {
+                instructions.innerHTML = `
+                    <p class="text-gray-600 mb-2 font-bold">iPhone/iPad में इंस्टॉल करने के लिए:</p>
+                    <ol class="space-y-4">
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">1</span> नीचे दिए गए <strong>Share</strong> आइकॉन <svg class="w-5 h-5 inline text-blue-500 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> पर टैप करें।</li>
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">2</span> मेनू में थोड़ा नीचे जाएँ और <strong>"Add to Home Screen"</strong> चुनें।</li>
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">3</span> ऊपर कोने में <strong>"Add"</strong> पर टैप करें।</li>
+                    </ol>`;
+            } else {
+                instructions.innerHTML = `
+                    <p class="text-gray-600 mb-2 font-bold">Android में इंस्टॉल करने के लिए:</p>
+                    <ol class="space-y-4">
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">1</span> ब्राउज़र के ऊपर दाईं ओर <strong>मेनू (⋮)</strong> पर क्लिक करें।</li>
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">2</span> <strong>"Add to Home screen"</strong> या <strong>"Install app"</strong> चुनें।</li>
+                        <li class="flex items-center gap-3"><span class="bg-gray-100 p-2 rounded-full font-bold">3</span> पॉपअप में <strong>"Install"</strong> पर टैप करें।</li>
+                    </ol>`;
+            }
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         // Mobile Menu
