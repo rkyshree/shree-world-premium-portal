@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#702035">
+    <!-- PWA Manifest & Favicon (Updated with your Logo) -->
+    <link rel="icon" href="https://i.ibb.co/z0L0ZsZ/file-00000000e398821191893f981c0d1d61.png" type="image/png">
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Volume Salon","short_name":"Volume","start_url":".","display":"standalone","background_color":"%23fffaf5","theme_color":"%23702035","icons":[{"src":"https://i.ibb.co/z0L0ZsZ/file-00000000e398821191893f981c0d1d61.png","sizes":"512x512","type":"image/png"}]}'>
     <title>Volume Salon | Premium Ladies Beauty Studio</title>
     <!-- Google Fonts for Elegant Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,6 +84,21 @@
             transform: scale(1) translateY(0);
         }
 
+        /* --- NEW: MAIN CONTENT REVEAL ANIMATION --- */
+        #main-content {
+            opacity: 0;
+            filter: blur(15px);
+            transform: translateY(50px);
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        filter 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.page-loaded #main-content {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+
         /* Spin Wheel Custom CSS (6 Slices) */
         .spin-wheel-bg {
             background: conic-gradient(
@@ -92,6 +110,51 @@
                 #fbcfe8 300deg 360deg
             );
         }
+
+        /* Splash Screen with Circular Reveal Animation */
+        #splash-screen {
+            position: fixed; inset: 0; z-index: 99999;
+            background-color: theme('colors.cream');
+            display: flex; justify-content: center; align-items: center;
+            transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+            clip-path: circle(150% at 50% 50%);
+        }
+        #splash-screen.hidden-splash {
+            clip-path: circle(0% at 50% 50%);
+            opacity: 0; pointer-events: none;
+        }
+        .splash-logo-wrapper {
+            width: 170px; height: 170px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 10px 40px rgba(112, 32, 53, 0.4);
+            animation: pulse-logo 2s infinite alternate;
+            padding: 12px;
+            position: relative;
+            z-index: 10;
+        }
+        .splash-logo {
+            width: 100%; height: 100%;
+            object-fit: contain; /* Prevents cutting off */
+        }
+        @keyframes pulse-logo {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            100% { transform: scale(1.05); box-shadow: 0 0 0 25px rgba(212, 175, 55, 0); }
+        }
+        .splash-content { position: relative; text-align: center; }
+        .emoji-float {
+            position: absolute; filter: blur(1.5px); opacity: 0.6;
+            animation: float-anim 3s ease-in-out infinite alternate;
+        }
+        @keyframes float-anim {
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            100% { transform: translateY(-15px) scale(1.1) rotate(15deg); }
+        }
+        .em-1 { top: -30px; left: -40px; font-size: 2.5rem; animation-delay: 0s; }
+        .em-2 { top: -20px; right: -30px; font-size: 2rem; animation-delay: 0.5s; }
+        .em-3 { bottom: -30px; left: -20px; font-size: 3rem; animation-delay: 1s; }
+        .em-4 { bottom: -20px; right: -40px; font-size: 2.2rem; animation-delay: 1.5s; }
         
         /* Floating Call to Action */
         .floating-cta {
@@ -106,6 +169,22 @@
 </head>
 <body class="text-gray-800 antialiased font-sans">
 
+    <!-- SPLASH SCREEN (With New Logo) -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <span class="emoji-float em-1">✂️</span>
+            <span class="emoji-float em-2">🧴</span>
+            <span class="emoji-float em-3">💄</span>
+            <span class="emoji-float em-4">🪮</span>
+            <div class="splash-logo-wrapper">
+                <img src="https://i.ibb.co/z0L0ZsZ/file-00000000e398821191893f981c0d1d61.png" alt="Volume Salon Logo" class="splash-logo">
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <div id="main-content">
+        
     <!-- Top Info Bar -->
     <div class="bg-wine-900 text-gold-300 text-xs sm:text-sm py-2 px-4 text-center font-bold tracking-wide z-50 relative">
         <span data-en="PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR" data-hi="प्रीमियम लेडीज ब्यूटी स्टूडियो | गोरखपुर">PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR</span>
@@ -116,7 +195,7 @@
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <!-- Logo -->
             <a href="#" class="flex items-center gap-3">
-                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-wine-600 flex items-center justify-center text-white text-xl md:text-2xl font-serif shadow-inner border border-gold-400">V</div>
+                <img src="https://i.ibb.co/z0L0ZsZ/file-00000000e398821191893f981c0d1d61.png" alt="Volume Salon" class="w-12 h-12 md:w-14 md:h-14 bg-white p-1.5 rounded-full border border-gold-400 object-contain shadow-md">
                 <div>
                     <h1 class="font-serif text-xl md:text-2xl font-bold text-wine-700 leading-none tracking-wide">Volume</h1>
                     <span class="text-[9px] md:text-[10px] uppercase tracking-[0.25em] text-gold-500 font-bold" data-en="Ladies Salon" data-hi="लेडीज सैलून">Ladies Salon</span>
@@ -135,20 +214,30 @@
                     <button onclick="setLanguage('hi')" id="btn-hi" class="px-4 py-1.5 rounded-full text-xs font-bold text-gray-400 hover:text-wine-700 transition-all">HI</button>
                 </div>
 
-                <!-- TOP BOOK APPOINTMENT BUTTON -->
-                <button onclick="openBookingModal()" class="btn-primary px-8 py-3 rounded-full text-xs shadow-lg flex items-center gap-2">
-                    <span data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</span>
-                </button>
+                <!-- TOP SHARE & BOOK APPOINTMENT BUTTON -->
+                <div class="flex items-center gap-3">
+                    <button onclick="shareWebsite()" class="text-gold-600 hover:text-gold-700 bg-gold-50 hover:bg-gold-100 border border-gold-200 px-4 py-2.5 rounded-full font-bold text-xs shadow-sm flex items-center gap-1.5 transition-colors uppercase tracking-wide">
+                        <span class="text-base">🎁</span>
+                        <span data-en="Share & Earn" data-hi="शेयर और कमाएं">Share & Earn</span>
+                    </button>
+                    
+                    <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-8 py-3 rounded-full text-xs shadow-[0_5px_15px_rgba(30,189,92,0.4)] flex items-center gap-2 font-bold uppercase tracking-wider transform transition-all hover:scale-105 border border-[#1a9e4d]">
+                        <span data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</span>
+                    </button>
+                </div>
             </nav>
 
             <!-- Mobile Controls (Includes Language + Top Book Button) -->
             <div class="flex md:hidden items-center gap-2">
+                <button onclick="shareWebsite()" class="text-gold-600 bg-gold-50 border border-gold-200 w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-sm">
+                    🎁
+                </button>
                 <div class="flex items-center bg-gray-100 rounded-full p-1">
                     <button onclick="setLanguage('en')" id="btn-en-mob" class="px-3 py-1 rounded-full text-[10px] font-bold bg-white text-wine-700 shadow">EN</button>
                     <button onclick="setLanguage('hi')" id="btn-hi-mob" class="px-3 py-1 rounded-full text-[10px] font-bold text-gray-400">HI</button>
                 </div>
                 <!-- Top Book Button (Mobile Visible) -->
-                <button onclick="openBookingModal()" class="bg-wine-900 hover:bg-wine-700 text-gold-400 px-4 py-1.5 rounded-full text-xs font-bold shadow-md uppercase">
+                <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-[0_4px_10px_rgba(30,189,92,0.3)] uppercase tracking-wide">
                     <span data-en="Book" data-hi="बुक">Book</span>
                 </button>
             </div>
@@ -167,16 +256,16 @@
                 <p class="text-lg text-gray-600 mb-10 max-w-lg mx-auto lg:mx-0" data-en="Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists." data-hi="विशेषज्ञ स्टाइलिस्टों द्वारा विशेष रूप से महिलाओं के लिए तैयार की गई प्रीमियम हेयर केयर, फेशियल और ग्रूमिंग सेवाओं का अनुभव लें।">
                     Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists.
                 </p>
-                <button onclick="openBookingModal()" class="bg-gradient-to-r from-wine-700 to-wine-900 hover:from-wine-600 hover:to-wine-800 text-white px-10 py-4 rounded-full text-base lg:text-lg font-bold shadow-[0_10px_25px_-5px_rgba(112,32,53,0.5)] flex items-center gap-3 mx-auto lg:mx-0 transform transition-all hover:scale-105 border border-wine-500 hover:border-gold-400 group">
+                <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-base lg:text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.5)] flex items-center gap-3 mx-auto lg:mx-0 transform transition-all hover:-translate-y-1 uppercase tracking-wide border border-[#1a9e4d] group">
                     <span data-en="Book Your Visit Today" data-hi="आज ही अपनी बुकिंग करें">Book Your Visit Today</span> 
-                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    <span class="group-hover:translate-x-1.5 transition-transform text-xl">→</span>
                 </button>
             </div>
             
             <div class="relative reveal-up" style="transition-delay: 0.2s;">
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80" alt="Hair Styling" class="rounded-3xl rounded-tr-[80px] shadow-2xl object-cover h-64 w-full border border-gray-100">
-                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80" alt="Facial Makeup" class="rounded-3xl rounded-bl-[80px] shadow-2xl object-cover h-64 w-full mt-10 border border-gray-100">
+                <div class="grid grid-cols-2 gap-4 lg:gap-6">
+                    <img src="https://images.unsplash.com/photo-1595476108010-b4d1f10d5e43?auto=format&fit=crop&w=600&q=80" alt="Hair Styling" class="rounded-3xl rounded-tr-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full border-[6px] border-white">
+                    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80" alt="Facial Makeup" class="rounded-3xl rounded-bl-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full mt-12 border-[6px] border-white">
                 </div>
             </div>
         </div>
@@ -253,71 +342,82 @@
     </section>
 
     <!-- Footer & Bottom Book Appointment -->
-    <footer id="about" class="bg-wine-900 text-rose-50 pt-20 pb-28 border-t border-wine-700">
-        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-3 gap-12 text-center md:text-left reveal-up">
-            <div>
-                <h1 class="font-serif text-3xl font-bold text-white mb-4">Volume Salon</h1>
-                <p class="text-rose-200 mb-6 leading-relaxed" data-en="A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort." data-hi="विशेष रूप से महिलाओं के लिए एक सुरक्षित, स्वच्छ और प्रीमियम जगह। हम आपके आराम के लिए उच्च गुणवत्ता वाले ब्रांड और केवल महिला कर्मचारियों का उपयोग करते हैं।">
+    <footer id="about" class="bg-wine-900 text-rose-50 pt-20 pb-10 border-t border-wine-700">
+        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 reveal-up">
+            
+            <!-- Left Side: About & Booking -->
+            <div class="text-center md:text-left">
+                <h1 class="font-serif text-4xl font-bold text-white mb-6">Volume Salon</h1>
+                <p class="text-rose-200 mb-10 leading-relaxed text-lg" data-en="A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort." data-hi="विशेष रूप से महिलाओं के लिए एक सुरक्षित, स्वच्छ और प्रीमियम जगह। हम आपके आराम के लिए उच्च गुणवत्ता वाले ब्रांड और केवल महिला कर्मचारियों का उपयोग करते हैं।">
                     A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort.
                 </p>
-            </div>
-            
-            <div class="bg-wine-800/50 p-8 rounded-3xl border border-wine-700/50 backdrop-blur-sm hover:border-gold-400/30 transition-colors">
-                <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                    <h4 class="text-gold-400 font-bold text-lg uppercase tracking-wider m-0" data-en="Visit Us" data-hi="हमारा पता">Visit Us</h4>
-                </div>
-                <div class="text-lg leading-relaxed text-rose-50 space-y-2 font-medium">
-                    <p class="flex items-start gap-2 justify-center md:justify-start"><span class="text-gold-500 mt-1">✦</span> <span>Beside RR Building,</span></p>
-                    <p class="flex items-start gap-2 justify-center md:justify-start"><span class="text-gold-500 mt-1">✦</span> <span>Mohaddipur,</span></p>
-                    <p class="flex items-start gap-2 justify-center md:justify-start"><span class="text-gold-500 mt-1">✦</span> <span>Gorakhpur, UP</span></p>
+                <div class="inline-block">
+                    <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.4)] transition-all uppercase tracking-wide flex items-center justify-center gap-3 transform hover:scale-105 mx-auto md:mx-0">
+                        <span data-en="Book Appointment Now" data-hi="अभी अपॉइंटमेंट बुक करें">Book Appointment Now</span>
+                        <span class="text-2xl leading-none">→</span>
+                    </button>
                 </div>
             </div>
             
-            <div class="bg-wine-800/50 p-8 rounded-3xl border border-wine-700/50 backdrop-blur-sm hover:border-gold-400/30 transition-colors">
-                <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                    </div>
-                    <h4 class="text-gold-400 font-bold text-lg uppercase tracking-wider m-0" data-en="Contact Details" data-hi="संपर्क विवरण">Contact Details</h4>
-                </div>
+            <!-- Right Side: Vertical Contact Info -->
+            <div class="bg-wine-800/50 p-8 rounded-3xl border border-wine-700/50 backdrop-blur-sm shadow-xl">
+                <h4 class="text-gold-400 font-bold text-2xl uppercase tracking-wider mb-8 border-b border-wine-700/60 pb-5 text-center md:text-left" data-en="Contact & Location" data-hi="संपर्क और स्थान">Contact & Location</h4>
                 
-                <div class="space-y-4">
-                    <a href="tel:7703067241" class="block group">
-                        <p class="text-xl font-bold text-white group-hover:text-gold-300 transition-colors">7703067241</p>
-                    </a>
-                    <a href="tel:9044333399" class="block group">
-                        <p class="text-xl font-bold text-white group-hover:text-gold-300 transition-colors">9044333399</p>
-                    </a>
+                <div class="space-y-8">
+                    <!-- Location Row -->
+                    <div class="flex items-center gap-5 group">
+                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">
+                            📍
+                        </div>
+                        <div>
+                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Location" data-hi="स्थान">Location</h5>
+                            <p class="text-lg font-medium text-white leading-snug">Beside RR Building,<br>Mohaddipur, Gorakhpur, UP</p>
+                        </div>
+                    </div>
                     
-                    <div class="pt-4 border-t border-wine-700/50">
-                        <a href="mailto:volumesalon4@gmail.com" class="inline-flex items-center gap-2 text-rose-200 hover:text-gold-300 transition-colors group">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <span class="font-medium tracking-wide break-all">volumesalon4@gmail.com</span>
-                        </a>
+                    <!-- Phone Row -->
+                    <div class="flex items-center gap-5 group">
+                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">
+                            📞
+                        </div>
+                        <div>
+                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Call Us" data-hi="हमें कॉल करें">Call Us</h5>
+                            <a href="tel:7703067241" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">7703067241</a>
+                            <a href="tel:9044333399" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">9044333399</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Email Row -->
+                    <div class="flex items-center gap-5 group">
+                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">
+                            ✉️
+                        </div>
+                        <div>
+                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Email" data-hi="ईमेल">Email</h5>
+                            <a href="mailto:volumesalon4@gmail.com" class="block text-lg font-medium text-white hover:text-gold-300 break-all transition-colors">volumesalon4@gmail.com</a>
+                        </div>
                     </div>
                 </div>
             </div>
+            
         </div>
         
-        <!-- BOTTOM BOOK APPOINTMENT (Static in footer) -->
-        <div class="mt-16 pt-10 border-t border-wine-800 text-center reveal-up">
-            <h4 class="font-serif text-2xl text-gold-400 mb-6" data-en="Ready for your transformation?" data-hi="क्या आप अपने मेकओवर के लिए तैयार हैं?">Ready for your transformation?</h4>
-            <button onclick="openBookingModal()" class="bg-gold-400 hover:bg-gold-500 text-wine-900 px-12 py-4 rounded-full text-lg font-bold shadow-xl transition-all uppercase tracking-wide">
-                <span data-en="Book Appointment Now" data-hi="अभी अपॉइंटमेंट बुक करें">Book Appointment Now</span>
-            </button>
+        <!-- Developer Credit -->
+        <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-wine-800 text-center reveal-up">
+            <p class="text-rose-200/70 text-sm tracking-widest uppercase">
+                Website Developer by <a href="https://www.rkyshree.in" target="_blank" class="text-gold-400 hover:text-gold-300 font-bold transition-colors">Shraynex</a>
+            </p>
         </div>
     </footer>
 
     <!-- Floating Mobile Bottom Bar (Always visible on mobile) -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-40">
-        <button onclick="openBookingModal()" class="w-full btn-primary py-3.5 rounded-xl font-bold text-sm shadow-md flex justify-center items-center gap-2 uppercase tracking-wide floating-cta">
+    <div class="md:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-[0_-10px_20px_rgba(0,0,0,0.08)] z-40">
+        <button onclick="openBookingModal()" class="w-full bg-[#1ebd5c] hover:bg-[#189e4c] text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_5px_15px_rgba(30,189,92,0.3)] flex justify-center items-center gap-2 uppercase tracking-wide floating-cta">
             <span data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</span>
         </button>
     </div>
 
+    </div> <!-- END OF MAIN CONTENT WRAPPER -->
 
     <!-- ========================================== -->
     <!-- SMART BOOKING MODAL (POPUP) -->
@@ -393,6 +493,12 @@
         const SALON_CONFIG = {
             whatsappNumber: "917703067241", // अपना WhatsApp नंबर यहाँ डालें (91 के साथ)
             
+            // 📸 HERO SECTION IMAGES (वेबसाइट के सबसे ऊपर दिखने वाली 2 फोटो)
+            heroImages: {
+                img1: "https://images.unsplash.com/photo-1595476108010-b4d1f10d5e43?auto=format&fit=crop&w=600&q=80", // पहली फोटो
+                img2: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"  // दूसरी फोटो
+            },
+
             // 🎉 SPECIAL OFFER SETTING (ऑफर का नाम और चकरी के इनाम बदलें)
             specialOffer: {
                 titleEN: "Diwali Special Offer!", 
@@ -477,7 +583,8 @@
                     descHI: "आपकी ब्यूटी रूटीन के लिए एक सिंपल रिफ्रेश।",
                     itemsEN: ["Advance Hair Cut", "D-Tan Cleanup", "Hair Loss Treatment"],
                     itemsHI: ["एडवांस हेयर कट", "डी-टैन क्लीनअप", "हेयर लॉस ट्रीटमेंट"],
-                    price: 850
+                    price: 850,
+                    imgUrl: "https://images.unsplash.com/photo-1512496015851-a1cbf5c5509e?auto=format&fit=crop&w=800&q=80"
                 },
                 {
                     id: "p2",
@@ -487,7 +594,8 @@
                     descHI: "सिर से पैर तक की देखभाल और आराम।",
                     itemsEN: ["Lotus Facial", "D-Tan", "Rica Full Waxing", "Back Polishing"],
                     itemsHI: ["लोटस फेशियल", "डी-टैन", "रिका फुल वैक्सिंग", "बैक पॉलिशिंग"],
-                    price: 2550
+                    price: 2550,
+                    imgUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80"
                 }
             ]
         };
@@ -496,10 +604,48 @@
         // State Variables
         let currentLang = 'en';
         let wonDiscount = 0; 
+        let shareBonusDiscount = parseInt(localStorage.getItem('salon_share_bonus') || '0');
 
         // Initialize Date constraints
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('b-date').setAttribute('min', today);
+
+        // -- SPLASH SCREEN LOGIC --
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('hidden-splash');
+                document.body.classList.add('page-loaded'); // Starts Blur Reveal Animation
+            }, 2000); // 2 seconds delay
+        });
+
+        // -- SHARE & EARN LOGIC --
+        async function shareWebsite() {
+            const shareData = {
+                title: 'Volume Salon - Gorakhpur',
+                text: 'Hey! Check out Volume Salon for amazing festive beauty packages. Book now and get a special discount! 🎀',
+                url: 'https://www.rkyshree.in/VolumeSalon'
+            };
+            
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    grantShareBonus();
+                } else {
+                    // Fallback to copy link
+                    navigator.clipboard.writeText(shareData.url);
+                    alert(currentLang === 'en' ? 'Link copied! Share it with friends to get a 1% extra discount.' : 'लिंक कॉपी हो गया! अतिरिक्त 1% छूट के लिए इसे दोस्तों के साथ शेयर करें।');
+                    grantShareBonus();
+                }
+            } catch (err) {
+                console.log('Share window closed or error:', err);
+            }
+        }
+
+        function grantShareBonus() {
+            shareBonusDiscount = 1; 
+            localStorage.setItem('salon_share_bonus', '1');
+            alert(currentLang === 'en' ? '🎉 Congratulations! You unlocked a 1% Share Bonus Discount for your next booking!' : '🎉 बधाई हो! आपको अपनी अगली बुकिंग के लिए 1% शेयर बोनस छूट मिल गई है!');
+        }
 
         // -- SCROLL REVEAL ANIMATION --
         function initScrollAnimations() {
@@ -586,8 +732,8 @@
                         </div>
                         <div class="p-8 flex-grow flex flex-col">
                             <h4 class="font-serif font-bold text-2xl text-wine-900 mb-3">${name}</h4>
-                            <p class="text-gray-600 text-sm mb-6 flex-grow">${desc}</p>
-                            <button onclick="openBookingModal('${srv.id}')" class="w-full py-3 rounded-xl border-2 border-wine-700 text-wine-900 font-bold hover:bg-wine-700 hover:text-white transition-colors uppercase tracking-wide text-xs">
+                            <p class="text-gray-700 text-sm mb-6 flex-grow font-medium">${desc}</p>
+                            <button onclick="openBookingModal('${srv.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-3.5 rounded-xl font-bold shadow-[0_4px_12px_rgba(30,189,92,0.3)] transition-all uppercase tracking-wide text-xs">
                                 ${currentLang === 'en' ? 'Select Service' : 'सर्विस चुनें'}
                             </button>
                         </div>
@@ -608,28 +754,38 @@
                 
                 let listHtml = '';
                 items.forEach(item => {
-                    listHtml += `<li class="flex items-center gap-3 text-sm text-wine-900 mb-3 font-medium">
+                    listHtml += `<li class="flex items-center gap-3 text-sm text-wine-900 mb-3 font-semibold">
                         <span class="text-gold-500 text-lg">✓</span> ${item}
                     </li>`;
                 });
 
                 const html = `
-                    <div class="bg-white rounded-[2rem] p-8 lg:p-12 flex flex-col h-full shadow-xl border border-gray-100 reveal-up hover:border-gold-400 transition-colors">
-                        <div class="flex justify-between items-start mb-4">
-                            <h4 class="font-serif text-3xl font-bold text-wine-900">${name}</h4>
-                            <span class="bg-wine-900 text-gold-400 font-bold px-5 py-2 rounded-xl text-2xl shadow-md">₹${pkg.price}</span>
-                        </div>
-                        <p class="mb-8 text-gray-500">${desc}</p>
-                        
-                        <div class="bg-gray-50 rounded-2xl p-6 mb-10 flex-grow border border-gray-100">
-                            <ul class="m-0 p-0 list-none">
-                                ${listHtml}
-                            </ul>
+                    <div class="bg-white rounded-[2rem] flex flex-col h-full shadow-xl border border-gray-100 reveal-up hover:border-gold-400 transition-all overflow-hidden group">
+                        <!-- पैकेज का पोस्टर (Image) -->
+                        <div class="h-56 lg:h-64 w-full relative overflow-hidden">
+                            <img src="${pkg.imgUrl}" alt="${name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-wine-900/80 via-transparent to-transparent"></div>
+                            <!-- Price Tag on Image -->
+                            <div class="absolute bottom-4 right-4 bg-gold-400 text-wine-900 font-bold px-5 py-2 rounded-xl text-2xl shadow-md">
+                                ₹${pkg.price}
+                            </div>
                         </div>
                         
-                        <button onclick="openBookingModal('${pkg.id}')" class="btn-primary w-full py-4 rounded-xl font-bold shadow-lg mt-auto text-sm">
-                            ${currentLang === 'en' ? 'Book This Package' : 'यह पैकेज बुक करें'}
-                        </button>
+                        <!-- पैकेज की डिटेल्स -->
+                        <div class="p-8 lg:p-10 flex flex-col flex-grow">
+                            <h4 class="font-serif text-3xl font-bold text-wine-900 mb-2">${name}</h4>
+                            <p class="mb-6 text-gray-600 font-medium">${desc}</p>
+                            
+                            <div class="bg-gray-50 rounded-2xl p-6 mb-8 flex-grow border border-gray-100">
+                                <ul class="m-0 p-0 list-none">
+                                    ${listHtml}
+                                </ul>
+                            </div>
+                            
+                            <button onclick="openBookingModal('${pkg.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-4 rounded-xl font-bold shadow-[0_5px_15px_rgba(30,189,92,0.4)] mt-auto text-sm uppercase tracking-wide transition-all transform hover:-translate-y-1">
+                                ${currentLang === 'en' ? 'Book This Package' : 'यह पैकेज बुक करें'}
+                            </button>
+                        </div>
                     </div>
                 `;
                 container.innerHTML += html;
@@ -786,7 +942,7 @@
             const service = document.getElementById('b-service').value;
             const offerTitle = currentLang === 'en' ? SALON_CONFIG.specialOffer.titleEN : SALON_CONFIG.specialOffer.titleHI;
 
-            // PROFESSIONAL WHATSAPP MESSAGE FORMATTING (NO EMOJIS, CLEAN TEXT)
+            // PROFESSIONAL WHATSAPP MESSAGE FORMATTING
             let msg = "";
             
             if(currentLang === 'en') {
@@ -799,6 +955,9 @@
                 
                 if(wonDiscount > 0) {
                     msg += `*Offer Applied:* ${wonDiscount}% DISCOUNT (${offerTitle})\n`;
+                }
+                if(shareBonusDiscount > 0) {
+                    msg += `*Share Bonus:* +${shareBonusDiscount}% Extra Discount\n`;
                 }
                 
                 msg += "--------------------------------------\n";
@@ -813,6 +972,9 @@
                 
                 if(wonDiscount > 0) {
                     msg += `*ऑफर लागू:* ${wonDiscount}% की छूट (${offerTitle})\n`;
+                }
+                if(shareBonusDiscount > 0) {
+                    msg += `*शेयर बोनस:* +${shareBonusDiscount}% अतिरिक्त छूट\n`;
                 }
                 
                 msg += "--------------------------------------\n";
@@ -830,6 +992,10 @@
 
         // Initialize Everything on Load
         document.addEventListener('DOMContentLoaded', () => {
+            // Set Hero Images from Config
+            document.getElementById('hero-img-1').src = SALON_CONFIG.heroImages.img1;
+            document.getElementById('hero-img-2').src = SALON_CONFIG.heroImages.img2;
+
             initOfferSection();
             setLanguage('en'); 
             initScrollAnimations();
