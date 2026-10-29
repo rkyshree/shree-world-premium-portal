@@ -1,1525 +1,1273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#702035">
-    <!-- PWA Manifest & Favicon -->
-    <link rel="icon" href="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" type="image/png">
-    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Volume Salon","short_name":"Volume","start_url":".","display":"standalone","background_color":"%23fffaf5","theme_color":"%23702035","icons":[{"src":"https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png","sizes":"512x512","type":"image/png"}]}'>
-    <title>Volume Salon | Premium Ladies Beauty Studio</title>
-    <!-- Google Fonts for Elegant Typography -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        wine: { 500: '#8b2742', 600: '#702035', 700: '#521727', 800: '#45121f', 900: '#350f19' },
-                        gold: { 300: '#e5ca75', 400: '#d4af37', 500: '#c5a028' },
-                        cream: '#fffaf5',
-                        darkmenu: '#1a0a0f'
-                    },
-                    fontFamily: {
-                        sans: ['"DM Sans"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { background-color: theme('colors.cream'); scroll-behavior: smooth; overflow-x: hidden; }
-        
-        /* Glass Navigation */
-        .glass-nav {
-            background: rgba(255, 250, 245, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        /* Scroll Reveal Animation */
-        .reveal-up {
-            opacity: 0;
-            transform: translateY(60px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-        }
-        .reveal-up.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Modal Animations */
-        .modal-overlay {
-            backdrop-filter: blur(8px);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transform: scale(0.9) translateY(30px);
-            transition: all 0.3s ease;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1) translateY(0);
-        }
-
-        /* Main Content Reveal Animation */
-        #main-content {
-            opacity: 0;
-            filter: blur(15px);
-            transform: translateY(50px);
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
-                        filter 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
-                        transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        body.page-loaded #main-content {
-            opacity: 1; filter: blur(0); transform: translateY(0);
-        }
-
-        /* Spin Wheel Custom CSS */
-        .spin-wheel-bg {
-            background: conic-gradient(
-                #fecdd6 0deg 60deg, #fce7f3 60deg 120deg, 
-                #fbcfe8 120deg 180deg, #fecdd6 180deg 240deg, 
-                #fce7f3 240deg 300deg, #fbcfe8 300deg 360deg
-            );
-        }
-
-        /* Splash Screen */
-        #splash-screen {
-            position: fixed; inset: 0; z-index: 99999;
-            background-color: theme('colors.cream');
-            display: flex; justify-content: center; align-items: center;
-            transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
-            clip-path: circle(150% at 50% 50%);
-        }
-        #splash-screen.hidden-splash {
-            clip-path: circle(0% at 50% 50%);
-            opacity: 0; pointer-events: none;
-        }
-        .splash-logo-wrapper {
-            width: 170px; height: 170px; background-color: white;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 10px 40px rgba(112, 32, 53, 0.4);
-            animation: pulse-logo 2s infinite alternate; padding: 12px; position: relative; z-index: 10;
-        }
-        .splash-logo { width: 100%; height: 100%; object-fit: contain; }
-        @keyframes pulse-logo {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            100% { transform: scale(1.05); box-shadow: 0 0 0 25px rgba(212, 175, 55, 0); }
-        }
-        .splash-content { position: relative; text-align: center; }
-        .emoji-float {
-            position: absolute; filter: blur(1.5px); opacity: 0.6;
-            animation: float-anim 3s ease-in-out infinite alternate;
-        }
-        @keyframes float-anim {
-            0% { transform: translateY(0) scale(1) rotate(0deg); }
-            100% { transform: translateY(-15px) scale(1.1) rotate(15deg); }
-        }
-        .em-1 { top: -30px; left: -40px; font-size: 2.5rem; animation-delay: 0s; }
-        .em-2 { top: -20px; right: -30px; font-size: 2rem; animation-delay: 0.5s; }
-        .em-3 { bottom: -30px; left: -20px; font-size: 3rem; animation-delay: 1s; }
-        .em-4 { bottom: -20px; right: -40px; font-size: 2.2rem; animation-delay: 1.5s; }
-        
-        .floating-cta { animation: pulse-glow 2s infinite; }
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(30, 189, 92, 0.6); }
-            70% { box-shadow: 0 0 0 15px rgba(30, 189, 92, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(30, 189, 92, 0); }
-        }
-        
-        /* Shimmering Free Ribbon (Highlighted) */
-        .free-ribbon {
-            position: absolute; top: 12px; left: -8px; z-index: 10; overflow: hidden;
-            background: linear-gradient(135deg, #1ebd5c, #168a42);
-            color: white; padding: 6px 16px; font-size: 0.8rem; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(30,189,92,0.4); border-radius: 0 8px 8px 0; letter-spacing: 0.5px;
-        }
-        .free-ribbon::after {
-            content: ''; position: absolute; bottom: -6px; left: 0;
-            border-top: 6px solid #0f612d; border-left: 8px solid transparent;
-        }
-        .free-ribbon::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg); animation: shimmer-ribbon 2s infinite; z-index: 1;
-        }
-        @keyframes shimmer-ribbon { 100% { left: 200%; } }
-
-        /* Professional Glowing Round Circle Badge */
-        .round-badge {
-            background: radial-gradient(circle at top left, #ffd700 0%, #ff8c00 70%, #d45d00 100%);
-            border-radius: 50%;
-            width: 85px; height: 85px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            font-weight: 900; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
-            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5), inset 0 0 10px rgba(255,255,255,0.5);
-            border: 3px solid #fff;
-            animation: badge-pulse 2s infinite alternate;
-            flex-shrink: 0; line-height: 1.1; margin-left: 1rem;
-        }
-        .round-badge .sm-text { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-        .round-badge .lg-text { font-size: 16px; }
-        @media(min-width: 768px) {
-            .round-badge { width: 95px; height: 95px; }
-            .round-badge .sm-text { font-size: 12px; }
-            .round-badge .lg-text { font-size: 19px; }
-        }
-        @keyframes badge-pulse {
-            0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5), 0 0 0 0 rgba(255,215,0,0.4); }
-            100% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255, 140, 0, 0.7), 0 0 0 10px rgba(255,215,0,0); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#702035">
+<!-- PWA Manifest & Favicon -->
+<link rel="icon" href="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" type="image/png">
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Volume Salon","short_name":"Volume","start_url":".","display":"standalone","background_color":"%23fffaf5","theme_color":"%23702035","icons":[{"src":"https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png","sizes":"512x512","type":"image/png"}]}'>
+<title>Volume Salon | Premium Ladies Beauty Studio</title>
+<!-- Google Fonts for Elegant Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+wine: { 500: '#8b2742', 600: '#702035', 700: '#521727', 800: '#45121f', 900: '#350f19' },
+gold: { 300: '#e5ca75', 400: '#d4af37', 500: '#c5a028' },
+cream: '#fffaf5',
+darkmenu: '#1a0a0f'
+},
+fontFamily: {
+sans: ['"DM Sans"', 'sans-serif'],
+serif: ['"Playfair Display"', 'serif'],
+}
+}
+}
+}
+</script>
+<style>
+body { background-color: theme('colors.cream'); scroll-behavior: smooth; overflow-x: hidden; position: relative; }
+​/* Floating Background Emojis (Visible, soft and magical) */
+.bg-emoji {
+position: absolute;
+filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.4));
+opacity: 0;
+z-index: 1;
+pointer-events: none;
+animation: float-up-bg linear infinite;
+will-change: transform, opacity;
+}
+@keyframes float-up-bg {
+0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+15% { opacity: 0.55; }
+50% { opacity: 0.8; }
+85% { opacity: 0.55; }
+100% { transform: translateY(-15vh) rotate(360deg) scale(1.2); opacity: 0; }
+}
+​/* Glass Navigation */
+.glass-nav {
+background: rgba(255, 250, 245, 0.92);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+​/* Scroll Reveal Animation */
+.reveal-up {
+opacity: 0;
+transform: translateY(60px);
+transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+.reveal-up.active {
+opacity: 1;
+transform: translateY(0);
+}
+​/* Modal Animations */
+.modal-overlay {
+backdrop-filter: blur(8px);
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease;
+}
+.modal-content {
+transform: scale(0.9) translateY(30px);
+transition: all 0.3s ease;
+}
+.modal-overlay.active {
+opacity: 1;
+pointer-events: auto;
+}
+.modal-overlay.active .modal-content {
+transform: scale(1) translateY(0);
+}
+​/* Main Content Reveal Animation */
+#main-content {
+opacity: 0;
+filter: blur(15px);
+transform: translateY(50px);
+transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+filter 1.5s cubic-bezier(0.4, 0, 0.2, 1),
+transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+z-index: 2;
+}
+body.page-loaded #main-content {
+opacity: 1; filter: blur(0); transform: translateY(0);
+}
+​/* Spin Wheel Custom CSS */
+.spin-wheel-bg {
+background: conic-gradient(
+#fecdd6 0deg 60deg, #fce7f3 60deg 120deg,
+#fbcfe8 120deg 180deg, #fecdd6 180deg 240deg,
+#fce7f3 240deg 300deg, #fbcfe8 300deg 360deg
+);
+}
+​/* Splash Screen */
+#splash-screen {
+position: fixed; inset: 0; z-index: 99999;
+background-color: theme('colors.cream');
+display: flex; justify-content: center; align-items: center;
+transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.2s ease;
+clip-path: circle(150% at 50% 50%);
+}
+#splash-screen.hidden-splash {
+clip-path: circle(0% at 50% 50%);
+opacity: 0; pointer-events: none;
+}
+.splash-logo-wrapper {
+width: 170px; height: 170px; background-color: white;
+border-radius: 50%; display: flex; justify-content: center; align-items: center;
+box-shadow: 0 10px 40px rgba(112, 32, 53, 0.4);
+animation: pulse-logo 2s infinite alternate; padding: 12px; position: relative; z-index: 10;
+}
+.splash-logo { width: 100%; height: 100%; object-fit: contain; }
+@keyframes pulse-logo {
+0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+100% { transform: scale(1.05); box-shadow: 0 0 0 25px rgba(212, 175, 55, 0); }
+}
+​.floating-cta { animation: pulse-glow 2s infinite; }
+@keyframes pulse-glow {
+0% { box-shadow: 0 0 0 0 rgba(30, 189, 92, 0.6); }
+70% { box-shadow: 0 0 0 15px rgba(30, 189, 92, 0); }
+100% { box-shadow: 0 0 0 0 rgba(30, 189, 92, 0); }
+}
+​/* Shimmering Free Ribbon (Highlighted) */
+.free-ribbon {
+position: absolute; top: 12px; left: -8px; z-index: 10; overflow: hidden;
+background: linear-gradient(135deg, #1ebd5c, #168a42);
+color: white; padding: 6px 16px; font-size: 0.8rem; font-weight: bold;
+box-shadow: 0 4px 10px rgba(30,189,92,0.4); border-radius: 0 8px 8px 0; letter-spacing: 0.5px;
+}
+.free-ribbon::before {
+content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+transform: skewX(-25deg); animation: shimmer-ribbon 2s infinite; z-index: 1;
+}
+@keyframes shimmer-ribbon { 100% { left: 200%; } }
+​/* Professional Glowing Round Circle Badge */
+.round-badge {
+background: radial-gradient(circle at top left, #ffd700 0%, #ff8c00 70%, #d45d00 100%);
+border-radius: 50%;
+width: 85px; height: 85px;
+display: flex; flex-direction: column; justify-content: center; align-items: center;
+font-weight: 900; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5), inset 0 0 10px rgba(255,255,255,0.5);
+border: 3px solid #fff;
+animation: badge-pulse 2s infinite alternate;
+flex-shrink: 0; line-height: 1.1; margin-left: 1rem;
+}
+.round-badge .sm-text { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.round-badge .lg-text { font-size: 16px; }
+​/* Animated Brand Title */
+.animated-brand-title {
+background: linear-gradient(135deg, #702035, #c5a028, #702035);
+background-size: 200% auto;
+color: transparent;
+-webkit-background-clip: text;
+background-clip: text;
+animation: shine-gradient 4s linear infinite;
+}
+@keyframes shine-gradient {
+0% { background-position: 0% 50%; }
+50% { background-position: 100% 50%; }
+100% { background-position: 0% 50%; }
+}
+​/* Floating Animation */
+.floating-anim {
+animation: float-slow 3s ease-in-out infinite alternate;
+}
+@keyframes float-slow {
+0% { transform: translateY(0px); }
+100% { transform: translateY(-6px); }
+}
+​/* Bounce Animation for View Rate List */
+.bounce-anim {
+animation: bounce-smooth 2s infinite;
+}
+@keyframes bounce-smooth {
+0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+40% { transform: translateY(-6px); }
+60% { transform: translateY(-3px); }
+}
+​/* Clean Blinking Share Button */
+.clean-blink {
+animation: clean-pulse-btn 1.5s infinite;
+}
+@keyframes clean-pulse-btn {
+0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 39, 66, 0.4); }
+70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(139, 39, 66, 0); }
+100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139, 39, 66, 0); }
+}
+</style>
 </head>
 <body class="text-gray-800 antialiased font-sans">
-
-    <!-- SPLASH SCREEN -->
-    <div id="splash-screen">
-        <div class="splash-content">
-            <span class="emoji-float em-1">✂️</span>
-            <span class="emoji-float em-2">🧴</span>
-            <span class="emoji-float em-3">💄</span>
-            <span class="emoji-float em-4">🪮</span>
-            <div class="splash-logo-wrapper">
-                <img src="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" alt="Volume Salon Logo" class="splash-logo">
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN CONTENT WRAPPER -->
-    <div id="main-content">
-        
-    <!-- Top Info Bar -->
-    <div class="bg-wine-900 text-gold-300 text-xs sm:text-sm py-2 px-4 text-center font-bold tracking-wide z-50 relative">
-        <span data-en="PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR" data-hi="प्रीमियम लेडीज ब्यूटी स्टूडियो | गोरखपुर">PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR</span>
-    </div>
-
-    <!-- Smart Header (Search & Voice) -->
-    <header class="glass-nav sticky top-0 z-40 w-full transition-all shadow-sm">
-        <div class="max-w-7xl mx-auto px-2 md:px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
-            
-            <!-- Row 1 (Mobile): Language (Left), Logo (Center), Share (Right) -->
-            <div class="flex items-center justify-between w-full md:w-auto gap-2 shrink-0">
-                <!-- EN / HI Toggle (Left aligned) -->
-                <div class="flex items-center bg-gray-100 rounded-full p-1 border border-gray-200 shrink-0">
-                    <button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-wine-700 shadow transition-all">EN</button>
-                    <button onclick="setLanguage('hi')" id="btn-hi" class="px-3 py-1.5 rounded-full text-xs font-bold text-gray-400 hover:text-wine-700 transition-all">HI</button>
-                </div>
-                
-                <!-- Logo -->
-                <a href="#" class="flex items-center gap-2 mx-auto md:ml-4 md:mr-8">
-                    <img src="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" alt="Volume Salon" class="w-10 h-10 bg-white p-1 rounded-full border border-gold-400 object-contain shadow-sm">
-                </a>
-
-                <!-- Mobile Share Button (Right aligned on Mobile) -->
-                <button onclick="showShareNotification()" class="md:hidden text-gold-600 bg-gold-50 border border-gold-200 px-3 py-1.5 rounded-full flex items-center justify-center shadow-sm text-[10px] font-bold uppercase gap-1 shrink-0 transition-colors">
-                    🎁 <span data-en="Share" data-hi="शेयर">Share</span>
-                </button>
-            </div>
-
-            <!-- Search Bar & Mic (Center aligned and dominant) -->
-            <div class="w-full md:flex-1 max-w-xl relative group">
-                <input type="text" id="searchInput" onkeyup="handleSearch(this.value)" class="w-full bg-white border border-gold-300 focus:border-gold-500 rounded-full py-2.5 pl-5 pr-12 text-sm text-wine-900 outline-none shadow-inner transition-all placeholder-gray-400" placeholder="Search services...">
-                <button id="micBtn" onclick="startVoiceSearch()" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-gray-100 text-wine-700 hover:bg-rose-100 hover:text-wine-900 rounded-full transition-colors shadow-sm text-lg" title="Voice Search">
-                    🎤
-                </button>
-            </div>
-
-            <!-- Desktop Links (Right aligned) -->
-            <div class="hidden md:flex items-center gap-3 shrink-0 ml-4">
-                <a href="#ratelist-section" class="bg-wine-900 text-gold-400 hover:bg-wine-800 px-4 py-2.5 rounded-full border border-gold-400/50 shadow-sm flex items-center gap-2 transition-all">
-                    <span class="text-sm">📄</span> <span class="text-xs font-bold uppercase" data-en="Rate List" data-hi="रेट लिस्ट">Rate List</span>
-                </a>
-                <button onclick="showShareNotification()" class="text-gold-600 hover:text-gold-700 bg-gold-50 hover:bg-gold-100 border border-gold-200 px-4 py-2.5 rounded-full font-bold text-xs shadow-sm flex items-center gap-1.5 uppercase transition-colors">
-                    <span class="text-sm">🎁</span> <span data-en="Share" data-hi="शेयर">Share</span>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="relative pt-12 pb-20 lg:pt-24 lg:pb-32 overflow-hidden bg-gradient-to-b from-rose-50 to-cream">
-        <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-            <div class="text-center lg:text-left z-10 reveal-up">
-                <span class="inline-block py-1.5 px-4 rounded-full bg-wine-50 text-wine-700 text-xs font-bold tracking-[0.2em] uppercase mb-6 border border-wine-100" data-en="Redefining Your Beauty" data-hi="आपकी सुंदरता को निखारें">Redefining Your Beauty</span>
-                <h2 class="font-serif text-5xl lg:text-7xl text-wine-900 leading-[1.1] mb-6 font-bold">
-                    <span data-en="Elegance in" data-hi="हर पल में">Elegance in</span><br>
-                    <i class="text-gold-500 font-medium" data-en="Every Detail." data-hi="खूबसूरती।">Every Detail.</i>
-                </h2>
-                <p class="text-lg text-gray-600 mb-10 max-w-lg mx-auto lg:mx-0" data-en="Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists." data-hi="विशेषज्ञ स्टाइलिस्टों द्वारा विशेष रूप से महिलाओं के लिए तैयार की गई प्रीमियम हेयर केयर, फेशियल और ग्रूमिंग सेवाओं का अनुभव लें।">
-                    Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists.
-                </p>
-                <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-base lg:text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.5)] flex items-center gap-3 mx-auto lg:mx-0 transform transition-all hover:-translate-y-1 uppercase tracking-wide border border-[#1a9e4d] group">
-                    <span data-en="Book Your Visit Today" data-hi="आज ही अपनी बुकिंग करें">Book Your Visit Today</span> 
-                    <span class="group-hover:translate-x-1.5 transition-transform text-xl">→</span>
-                </button>
-            </div>
-            
-            <div class="relative reveal-up" style="transition-delay: 0.2s;">
-                <div class="grid grid-cols-2 gap-4 lg:gap-6">
-                    <img id="hero-img-1" src="" alt="Hair Styling" class="rounded-3xl rounded-tr-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full border-[6px] border-white">
-                    <img id="hero-img-2" src="" alt="Facial Makeup" class="rounded-3xl rounded-bl-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full mt-12 border-[6px] border-white">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SPECIAL OFFER: DAILY SPIN AND WIN -->
-    <section id="offer" class="py-20 bg-wine-900 relative overflow-hidden text-center border-y-[6px] border-gold-400">
-        <div class="max-w-4xl mx-auto px-4 relative z-10 reveal-up search-card">
-            <h3 class="font-serif text-4xl md:text-5xl text-gold-400 font-bold mb-4" id="offer-title">Daily Spin & Win!</h3>
-            <p class="text-white text-lg mb-10 max-w-xl mx-auto" id="offer-desc">
-                Spin the wheel to win exclusive discounts on your next appointment.
-            </p>
-
-            <div class="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-10">
-                <div class="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 z-20 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[35px] border-t-gold-400 filter drop-shadow-lg"></div>
-                
-                <div id="spinWheel" class="w-full h-full rounded-full border-[6px] border-gold-400 shadow-[0_0_40px_rgba(212,175,55,0.4)] relative spin-wheel-bg" style="transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-                </div>
-            </div>
-
-            <div id="spinActionArea">
-                <button onclick="startSpin()" id="spinBtn" class="bg-gradient-to-r from-gold-400 to-gold-500 text-wine-900 px-12 py-4 rounded-full text-xl font-bold shadow-xl hover:scale-105 transition-transform uppercase tracking-wider">
-                    <span data-en="Spin & Win" data-hi="स्पिन करें और जीतें">Spin & Win</span>
-                </button>
-            </div>
-            
-            <div id="winResultArea" class="hidden mt-6 bg-white/10 p-6 rounded-3xl border border-gold-400/30 backdrop-blur-sm max-w-md mx-auto">
-                <h4 class="text-gold-400 text-2xl font-bold mb-2" id="winTitle">Congratulations!</h4>
-                <p class="text-white text-lg mb-6" id="winDesc">You won X% discount.</p>
-                <button onclick="claimOffer()" class="w-full bg-white text-wine-900 px-8 py-3 rounded-xl text-lg font-bold shadow-lg hover:bg-gold-50 transition-colors uppercase">
-                    <span data-en="Claim Offer & Book" data-hi="ऑफर क्लेम करें और बुक करें">Claim Offer & Book</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services (With Shining Free Offers) -->
-    <section id="services" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-16 reveal-up">
-                <span class="text-wine-600 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Exclusive Services" data-hi="विशेष सेवाएं">Exclusive Services</span>
-                <h3 class="font-serif text-4xl lg:text-5xl text-wine-900 font-bold mb-4" data-en="Premium Parlour Services" data-hi="प्रीमियम पार्लर सेवाएं">Premium Parlour Services</h3>
-                <div class="w-24 h-1.5 bg-gold-400 mx-auto rounded-full mt-4"></div>
-            </div>
-            
-            <div id="services-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                <!-- Javascript will inject services here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Packages Section -->
-    <section id="packages" class="py-24 bg-cream relative border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 relative z-10">
-            <div class="text-center mb-16 reveal-up">
-                <span class="text-wine-600 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Big Savings" data-hi="बड़ी बचत">Big Savings</span>
-                <h3 class="font-serif text-4xl lg:text-5xl text-wine-900 font-bold mb-4" data-en="Special Packages" data-hi="स्पेशल पैकेजेस">Special Packages</h3>
-                <div class="w-24 h-1.5 bg-gold-400 mx-auto rounded-full mt-4"></div>
-            </div>
-            
-            <div id="packages-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                <!-- Javascript will inject package cards here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- FULL RATE LIST MENU -->
-    <section id="ratelist-section" class="py-24 bg-darkmenu border-t-[8px] border-gold-500 relative">
-        <div class="max-w-7xl mx-auto px-2 sm:px-4 relative z-10">
-            <div class="text-center mb-16 reveal-up">
-                <span class="text-gold-400 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Complete Official Menu" data-hi="पूरा आधिकारिक मेनू">Complete Official Menu</span>
-                <h3 class="font-serif text-4xl lg:text-5xl text-white font-bold mb-4" data-en="Full Rate List" data-hi="पूरी रेट लिस्ट">Full Rate List</h3>
-                <div class="w-32 h-1.5 bg-gold-500 mx-auto rounded-full mt-4"></div>
-                <p class="text-gray-400 mt-6 max-w-xl mx-auto text-sm" data-en="Explore our extensive range of premium beauty services detailed exactly as in our official salon menu." data-hi="हमारे आधिकारिक सैलून मेनू में दिए गए सभी प्रीमियम ब्यूटी सेवाओं की विस्तृत सूची देखें।"></p>
-            </div>
-            
-            <div id="full-menu-container" class="columns-1 lg:columns-2 gap-6 space-y-6">
-                <!-- Javascript will inject Full Rate List exactly matching the 15 photos -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer & Bottom Book Appointment -->
-    <footer id="about" class="bg-wine-900 text-rose-50 pt-20 pb-10 border-t border-wine-700">
-        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 reveal-up">
-            
-            <div class="text-center md:text-left">
-                <h1 class="font-serif text-4xl font-bold text-white mb-6">Volume Salon</h1>
-                <p class="text-rose-200 mb-10 leading-relaxed text-lg" data-en="A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort." data-hi="विशेष रूप से महिलाओं के लिए एक सुरक्षित, स्वच्छ और प्रीमियम जगह। हम आपके आराम के लिए उच्च गुणवत्ता वाले ब्रांड और केवल महिला कर्मचारियों का उपयोग करते हैं।">
-                    A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort.
-                </p>
-                <div class="inline-block">
-                    <button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.4)] transition-all uppercase tracking-wide flex items-center justify-center gap-3 transform hover:scale-105 mx-auto md:mx-0">
-                        <span data-en="Book Appointment Now" data-hi="अभी अपॉइंटमेंट बुक करें">Book Appointment Now</span>
-                        <span class="text-2xl leading-none">→</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="bg-wine-800/50 p-8 rounded-3xl border border-wine-700/50 backdrop-blur-sm shadow-xl">
-                <h4 class="text-gold-400 font-bold text-2xl uppercase tracking-wider mb-8 border-b border-wine-700/60 pb-5 text-center md:text-left" data-en="Contact & Location" data-hi="संपर्क और स्थान">Contact & Location</h4>
-                
-                <div class="space-y-8">
-                    <div class="flex items-center gap-5 group">
-                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">📍</div>
-                        <div>
-                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Location" data-hi="स्थान">Location</h5>
-                            <p class="text-lg font-medium text-white leading-snug">Beside RR Building,<br>Mohaddipur, Gorakhpur, UP</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-5 group">
-                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">📞</div>
-                        <div>
-                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Call Us" data-hi="हमें कॉल करें">Call Us</h5>
-                            <a href="tel:7703067241" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">7703067241</a>
-                            <a href="tel:9044333399" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">9044333399</a>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-5 group">
-                        <div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">✉️</div>
-                        <div>
-                            <h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Email" data-hi="ईमेल">Email</h5>
-                            <a href="mailto:volumesalon4@gmail.com" class="block text-lg font-medium text-white hover:text-gold-300 break-all transition-colors">volumesalon4@gmail.com</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Developer Link -->
-                <div class="mt-8 pt-6 border-t border-wine-700/60">
-                    <div class="flex items-center gap-4 bg-wine-900/40 p-4 rounded-2xl border border-wine-600/30 hover:border-gold-400/50 transition-colors shadow-inner">
-                        <div class="w-12 h-12 rounded-full bg-wine-900 flex items-center justify-center text-gold-400 shrink-0">💻</div>
-                        <div>
-                            <span class="text-[10px] uppercase tracking-widest text-rose-200/70 block mb-0.5">Website Developer</span>
-                            <a href="https://www.rkyshree.in" target="_blank" class="text-gold-400 hover:text-white font-bold text-base transition-colors flex items-center gap-1 group">
-                                by Shraynex <span class="text-xs group-hover:translate-x-1 transition-transform">↗</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-    </footer>
-
-    <!-- Floating Mobile Bottom Bar -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-[0_-10px_20px_rgba(0,0,0,0.08)] z-40">
-        <button onclick="openBookingModal()" class="w-full bg-[#1ebd5c] hover:bg-[#189e4c] text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_5px_15px_rgba(30,189,92,0.3)] flex justify-center items-center gap-2 uppercase tracking-wide floating-cta">
-            <span data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</span>
-        </button>
-    </div>
-
-    </div> <!-- END OF MAIN CONTENT -->
-
-    <!-- SHARE NOTIFICATION MODAL (₹50 Discount Popup) -->
-    <div id="shareNotifyModal" class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay p-4">
-        <div class="absolute inset-0 bg-wine-900/80 backdrop-blur-sm" onclick="closeShareModal()"></div>
-        <div class="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden modal-content text-center p-8 relative">
-            <button onclick="closeShareModal()" class="absolute top-4 right-4 text-gray-400 hover:text-wine-900 text-xl font-bold">✕</button>
-            <div class="text-6xl mb-4 animate-bounce">🎁</div>
-            <h3 class="font-serif text-2xl font-bold text-wine-900 mb-2" data-en="Share & Earn ₹50!" data-hi="शेयर करें और ₹50 कमाएं!">Share & Earn ₹50!</h3>
-            <p class="text-gray-600 mb-8 text-sm" data-en="Share our website with your friends and family. You will get an extra ₹50 discount on your next visit automatically!" data-hi="हमारी वेबसाइट को अपने दोस्तों और रिश्तेदारों के साथ शेयर करें। अगली सर्विस पर आपको ₹50 का अतिरिक्त डिस्काउंट अपने आप मिल जाएगा!">
-                Share our website with your friends and family. You will get an extra ₹50 discount on your next visit automatically!
-            </p>
-            <button onclick="executeShare()" class="w-full bg-gradient-to-r from-gold-400 to-gold-500 text-wine-900 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl uppercase tracking-wider text-sm transition-transform hover:scale-105">
-                <span data-en="Share Now via WhatsApp" data-hi="अभी शेयर करें (WhatsApp)">Share Now via WhatsApp</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- SMART BOOKING MODAL -->
-    <div id="bookingModal" class="fixed inset-0 z-[50] flex items-center justify-center modal-overlay p-4">
-        <div class="absolute inset-0 bg-wine-900/80 backdrop-blur-sm" onclick="closeBookingModal()"></div>
-        <div class="relative bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
-            
-            <div class="bg-wine-700 p-6 text-white text-center relative shrink-0">
-                <button onclick="closeBookingModal()" class="absolute top-5 right-5 text-rose-200 hover:text-white bg-wine-900 rounded-full w-8 h-8 flex items-center justify-center transition-colors">✕</button>
-                <h3 class="font-serif text-2xl font-bold mb-1" data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</h3>
-                <p class="text-rose-200 text-xs uppercase tracking-widest" data-en="Fast & Easy Confirmation" data-hi="तेज़ और आसान बुकिंग">Fast & Easy Confirmation</p>
-            </div>
-
-            <!-- Discount Banner -->
-            <div id="modalDiscountBanner" class="hidden bg-gold-400 text-wine-900 text-center py-2 font-bold text-sm tracking-wide flex justify-center gap-2 items-center flex-wrap">
-                <span id="modalWheelDiscount"></span> 
-                <span id="modalShareBonus" class="text-green-900"></span>
-            </div>
-
-            <div class="p-8 overflow-y-auto">
-                <form id="bookingForm" onsubmit="submitBooking(event)" class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Full Name" data-hi="पूरा नाम">Full Name</label>
-                        <input type="text" id="b-name" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-5">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Date" data-hi="तारीख चुनें">Select Date</label>
-                            <input type="date" id="b-date" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Time" data-hi="समय चुनें">Select Time</label>
-                            <input type="time" id="b-time" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Service / Package" data-hi="सर्विस या पैकेज चुनें">Select Service / Package</label>
-                        <select id="b-service" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800 font-medium">
-                        </select>
-                    </div>
-
-                    <div class="pt-4">
-                        <button type="submit" class="w-full bg-[#1ebd5c] hover:bg-[#1a9e4d] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-3 text-lg uppercase tracking-wide">
-                            <span data-en="Confirm on WhatsApp" data-hi="WhatsApp पर बुक करें">Confirm on WhatsApp</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT: LOGIC & CONFIGURATION SETTINGS -->
-    <script>
-        // ---------------------------------------------------------
-        // ⚙️ CONFIGURATION SETTINGS (EXACT MATCH FOR ALL 15 IMAGES)
-        // ---------------------------------------------------------
-        const SALON_CONFIG = {
-            whatsappNumber: "917703067241", 
-            
-            heroImages: {
-                img1: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80", 
-                img2: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80"  
-            },
-
-            specialOffer: {
-                titleEN: "Daily Spin & Win!", 
-                titleHI: "डेली स्पिन एंड विन!",
-                descEN: "Spin the wheel to win exclusive discounts on your next appointment.",
-                descHI: "अपने अगले अपॉइंटमेंट पर विशेष छूट जीतने के लिए चकरी घुमाएं।",
-                prizes: [5, 10, 15, 15, 20, 25] // 6 slices
-            },
-
-            // MAIN SERVICES (Visual Cards)
-            services: [
-                {
-                    id: "s1", nameEN: "Instant Glow Facial with D-Ten", nameHI: "इंस्टेंट ग्लो फेशियल + डी-टैन",
-                    price: "1050", freeOfferEN: "N.D.A. Hair Cutting", freeOfferHI: "N.D.A. हेयर कटिंग",
-                    imgUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80", bgColor: "bg-rose-50"
-                },
-                {
-                    id: "s2", nameEN: "Aroma Facial with D-Ten", nameHI: "अरोमा फेशियल + डी-टैन",
-                    price: "1350", freeOfferEN: "Hand Waxing", freeOfferHI: "हैंड वैक्सिंग",
-                    imgUrl: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80", bgColor: "bg-blue-50"
-                },
-                {
-                    id: "s3", nameEN: "Lotus Facial with D-Ten", nameHI: "लोटस फेशियल + डी-टैन",
-                    price: "1750", freeOfferEN: "Back Treatment", freeOfferHI: "बैक ट्रीटमेंट",
-                    imgUrl: "https://images.unsplash.com/photo-1512496015851-a1cbf5c5509e?w=600&q=80", bgColor: "bg-orange-50"
-                },
-                {
-                    id: "s4", nameEN: "O3+ Power Brightening with D-Ten", nameHI: "O3+ पावर ब्राइटनिंग + डी-टैन",
-                    price: "2250", freeOfferEN: "Hand Polishing", freeOfferHI: "हैंड पॉलिशिंग",
-                    /* Changed image to premium glowing skin facial (No glasses) */
-                    imgUrl: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=600&q=80", bgColor: "bg-purple-50"
-                },
-                {
-                    id: "s5", nameEN: "Anti-Tan Body Polishing", nameHI: "एंटी-टैन बॉडी पॉलिशिंग",
-                    price: "2500", freeOfferEN: "Anti-Tan Clean-Up", freeOfferHI: "एंटी-टैन क्लीन-अप",
-                    imgUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80", bgColor: "bg-green-50"
-                },
-                {
-                    id: "s6", nameEN: "Anti-Tan with Instant Glow Body Polishing", nameHI: "एंटी-टैन + इंस्टेंट ग्लो बॉडी पॉलिशिंग",
-                    price: "3500", freeOfferEN: "Hair Spa", freeOfferHI: "हेयर स्पा",
-                    imgUrl: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80", bgColor: "bg-yellow-50"
-                },
-                {
-                    id: "s7", nameEN: "Global Fashion Colour", nameHI: "ग्लोबल फैशन कलर",
-                    price: "Starting ₹1700", freeOfferEN: "Instant Glow Clean-Up", freeOfferHI: "इंस्टेंट ग्लो क्लीन-अप",
-                    imgUrl: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80", bgColor: "bg-pink-50"
-                },
-                {
-                    id: "s8", nameEN: "Hair Straightening", nameHI: "हेयर स्ट्रेटनिंग",
-                    price: "Starting ₹3000", freeOfferEN: "Aroma Facial", freeOfferHI: "अरोमा फेशियल",
-                    imgUrl: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=600&q=80", bgColor: "bg-rose-50"
-                },
-                {
-                    id: "s9", nameEN: "Hydra Facial with O3+", nameHI: "हाइड्रा फेशियल + O3+",
-                    price: "Ask for Price", freeOfferEN: "Pedicure", freeOfferHI: "पेडीक्योर",
-                    imgUrl: "https://images.unsplash.com/photo-1600334089648-c446779452f5?w=600&q=80", bgColor: "bg-blue-50"
-                },
-                {
-                    id: "s10", nameEN: "Aroma Facial", nameHI: "अरोमा फेशियल",
-                    price: "Ask for Price", freeOfferEN: "Aroma Facial", freeOfferHI: "अरोमा फेशियल",
-                    imgUrl: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&q=80", bgColor: "bg-orange-50"
-                },
-                {
-                    id: "s11", nameEN: "Bridal Makeup (MAC)", nameHI: "ब्राइडल मेकअप (MAC)",
-                    price: "8000", freeOfferEN: "Party Makeup (1 Person)", freeOfferHI: "पार्टी मेकअप (1 व्यक्ति)",
-                    imgUrl: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80", bgColor: "bg-red-50"
-                },
-                {
-                    id: "s12", nameEN: "Advance Pedicure", nameHI: "एडवांस पेडीक्योर",
-                    price: "850", freeOfferEN: "Normal Manicure", freeOfferHI: "नॉर्मल मैनीक्योर",
-                    imgUrl: "https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=600&q=80", bgColor: "bg-green-50"
-                }
-            ],
-
-            // 🎁 MAIN PACKAGES LIST (With MRP & Offer Price)
-            packages: [
-                {
-                    id: "p1", nameEN: "Anti-Tan Cleanup + Rica Hand Waxing", nameHI: "एंटी-टैन क्लीनअप + रिका हैंड वैक्सिंग",
-                    itemsEN: ["Anti-Tan Cleanup", "Rica Hand Waxing (with Underarms)"],
-                    itemsHI: ["एंटी-टैन क्लीनअप", "रिका हैंड वैक्सिंग (अंडरआर्म्स के साथ)"],
-                    mrp: 950, offerPrice: 650, imgUrl: "https://images.unsplash.com/photo-1515377659621-125082260cf8?w=800&q=80"
-                },
-                {
-                    id: "p2", nameEN: "Face De-Tan + Aroma Facial + Spa", nameHI: "फेस डी-टैन + अरोमा फेशियल + हेयर स्पा",
-                    itemsEN: ["Face De-Tan", "Aroma Facial", "Hair Spa"],
-                    itemsHI: ["फेस डी-टैन", "अरोमा फेशियल", "हेयर स्पा"],
-                    mrp: 2450, offerPrice: 1550, imgUrl: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=800&q=80"
-                },
-                {
-                    id: "p3", nameEN: "Lotus Facial + Full Waxing Combo", nameHI: "लोटस फेशियल + फुल वैक्सिंग कॉम्बो",
-                    itemsEN: ["Face De-Tan", "Lotus Facial", "Rica Hand & Leg Waxing (with Underarms)"],
-                    itemsHI: ["फेस डी-टैन", "लोटस फेशियल", "रिका हैंड & लेग वैक्सिंग (अंडरआर्म्स के साथ)"],
-                    mrp: 2950, offerPrice: 1850, imgUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80"
-                },
-                {
-                    id: "p4", nameEN: "Insta Glow Facial Combo", nameHI: "इंस्टा ग्लो फेशियल कॉम्बो",
-                    itemsEN: ["Face De-Tan", "Insta Glow Facial", "Hand Waxing (with Underarms)", "Hair Spa + Hair Cut"],
-                    itemsHI: ["फेस डी-टैन", "इंस्टा ग्लो फेशियल", "हैंड वैक्सिंग (अंडरआर्म्स के साथ)", "हेयर स्पा + हेयर कट"],
-                    mrp: 2850, offerPrice: 1850, imgUrl: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80"
-                },
-                {
-                    id: "p5", nameEN: "O3+ Facial Brightening Grand Combo", nameHI: "O3+ फेशियल ब्राइटनिंग ग्रैंड कॉम्बो",
-                    itemsEN: ["Face De-Tan", "O3+ Facial (Powder Brightening)", "Hand & Leg Waxing (with Underarms)", "Hair Spa + Hair Cutting", "Pedicure + Manicure"],
-                    itemsHI: ["फेस डी-टैन", "O3+ फेशियल (पाउडर ब्राइटनिंग)", "हैंड & लेग वैक्सिंग (अंडरआर्म्स के साथ)", "हेयर स्पा + हेयर कटिंग", "पेडीक्योर + मैनीक्योर"],
-                    mrp: 5950, offerPrice: 3850, imgUrl: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80"
-                },
-                {
-                    id: "p6", nameEN: "O3+ Facial + Hydra Facial", nameHI: "O3+ फेशियल + हाइड्रा फेशियल",
-                    itemsEN: ["O3+ Facial", "Hydra Facial Treatment"],
-                    itemsHI: ["O3+ फेशियल", "हाइड्रा फेशियल ट्रीटमेंट"],
-                    mrp: 3550, offerPrice: 2550, imgUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80"
-                },
-                {
-                    id: "p7", nameEN: "Hydra Cleanup + De-Tan Pack", nameHI: "हाइड्रा क्लीनअप + डी-टैन पैक",
-                    itemsEN: ["Hydra Cleanup", "De-Tan Pack"],
-                    itemsHI: ["हाइड्रा क्लीनअप", "डी-टैन पैक"],
-                    mrp: 1550, offerPrice: 1050, imgUrl: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&q=80"
-                },
-                {
-                    id: "p8", nameEN: "Hydra Facial + De-Tan Pack", nameHI: "हाइड्रा फेशियल + डी-टैन पैक",
-                    itemsEN: ["Hydra Facial", "De-Tan Pack"],
-                    itemsHI: ["हाइड्रा फेशियल", "डी-टैन पैक"],
-                    mrp: 2550, offerPrice: 1750, imgUrl: "https://images.unsplash.com/photo-1512496015851-a1cbf5c5509e?w=800&q=80"
-                }
-            ],
-
-            // 📖 FULL RATE LIST (100% EXACT TRANSCRIBED FROM ALL 15 IMAGES)
-            fullMenu: [
-                // === SECTION 1: COURSES (FROM 1000720518.jpg) ===
-                {
-                    type: 'course', titleEN: "Beauty Parlor Course", titleHI: "ब्यूटी पार्लर कोर्स",
-                    headers: ["Course", "Fees", "Duration"],
-                    items: [
-                        ["Personal Grooming Basic Beauty Course", "7,000/-", "45 days"],
-                        ["Personal Grooming Style and Makeup", "7,000/-", "15 days"],
-                        ["Basic Hair and Beauty Course", "15,000/-", "3 Months"],
-                        ["Diploma Course in Hair, Skin & Makeup", "25,000/-", "6 Months"],
-                        ["Diploma in Skin Hairdressing Cut, Style Color & Advance Makeup", "35,000/-", "8 Months"],
-                        ["Diploma in Makeup", "20,000/-", "2 Months"],
-                        ["Basic Mehandi Course", "2,000/-", "2 Months"],
-                        ["Advance Mehandi Course", "4,000/-", "3 Months"]
-                    ]
-                },
-
-                // === SECTION 2: REGULAR SERVICES ===
-                {
-                    type: 'standard', titleEN: "Threading & Facial Waxing", titleHI: "थ्रेडिंग और फेशियल वैक्सिंग",
-                    headers: ["Service", "Threading", "Waxing"],
-                    items: [
-                        ["Eyebrow", "30/-", "50/-"], ["Forehead", "20/-", "60/-"],
-                        ["Upper Lips", "20/-", "40/-"], ["Chin", "20/-", "60/-"],
-                        ["Side Lock", "80/-", "100/-"], ["Full Face", "200/-", "-"],
-                        ["Full Face Flavored", "-", "300/-"], ["Full Face Rica/B", "-", "450/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Body Waxing", titleHI: "बॉडी वैक्सिंग",
-                    headers: ["Wax", "Flavored", "Rica/Anti-Tan"],
-                    items: [
-                        ["Full Arms", "300/-", "400/-"], ["Full Legs", "400/-", "600/-"],
-                        ["Half Leg", "300/-", "400/-"], ["Underarms", "80/-", "100/-"],
-                        ["Midriff / Half Back", "300/-", "400/-"], ["Front / Full Back", "400/-", "600/-"],
-                        ["Body Wax", "1500/-", "2150/-"], ["B Line waxing", "500/-", "-"],
-                        ["Full B Waxing", "800/-", "-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Only Face Makeup", titleHI: "ओनली फेस मेकअप",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Kryolon", "1200/-"], ["Mac", "1700/-"],
-                        ["Ultimate Airbrush Makeup", "3000/-"], ["Temptu Perfect Airbrush Makeup", "4000/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Party Makeup", titleHI: "पार्टी मेकअप",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Kryolon", "2000/-"], ["Mac", "2500/-"],
-                        ["Ultimate Airbrush Makeup", "4000/-"], ["Temptu Perfect Airbrush Makeup", "5000/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Special Ocassion Makeup", titleHI: "स्पेशल ऑकेशन मेकअप",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Kryolon", "4500/-"], ["Mac", "6000/-"],
-                        ["Ultimate Airbrush Makeup", "7000/-"], ["Temptu Perfect Airbrush Makeup", "9000/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Bridal Makeup", titleHI: "ब्राइडल मेकअप",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Kryolon", "6000/-"], ["Mac", "8000/-"],
-                        ["Ultimate Airbrush Makeup", "12000/-"], ["Temptu Perfect Airbrush Makeup", "15000/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Back Treatment & Body Care", titleHI: "बैक ट्रीटमेंट और बॉडी केयर",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Half Anti - Tan Back Treatment", "450/-"], ["Full Anti - Tan Back Treatment", "650/-"],
-                        ["Half Advance Back Treatment", "750/-"], ["Full Advance Back Treatment", "950/-"],
-                        ["Body Oil Massage", "1050/-"], ["Body Cream Massage", "1250/-"],
-                        ["Body Pack (Glow/Anti-Tan)", "1500/-"], ["Body Polishing", "2000/-"],
-                        ["Anti - Tan Body Polishing", "2500/-"], ["Anti - Tan with Instant Glow Polishing", "3500/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Hair Care & Cutting", titleHI: "हेयर केयर और कटिंग",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Oil Massage", "300/-"], ["Almond Oil", "450/-"],
-                        ["Organ Oil", "450/-"], ["Hair Spa Treatment Oil", "450/-"],
-                        ["Hair Wash with Conditioning", "250/-"], ["Hair Wash Treatment with Blow Dry", "400/-"],
-                        ["Dryer Hair Setting", "200/-"], ["Child Hair Cut", "100/-"],
-                        ["Hair Trimming", "100/-"], ["Advance Hair Trmming", "150/-"],
-                        ["Any Advance Cutting", "200/-"], ["Any Advance Cutting with Setting", "300/-"],
-                        ["Any Advance Cutting with Hair Wash", "400/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Skin Care Cleanup", titleHI: "स्किन केयर क्लीनअप",
-                    headers: ["Service", "Normal", "With De-tan"],
-                    items: [
-                        ["Anti Tan", "450/-", "650/-"], ["Instra Glow", "550/-", "750/-"],
-                        ["Fresh Fruit", "550/-", "750/-"], ["Gold/Silver/Diamond", "700/-", "900/-"],
-                        ["Lotus/Sara/Kaya/Pearl", "850/-", "1050/-"], ["Shahnaz", "850/-", "1050/-"],
-                        ["Sensitive Skin", "1000/-", "1200/-"], ["O3+ Anti Pigmentation", "1050/-", "1250/-"],
-                        ["O3+ Anti Rankle", "1050/-", "1250/-"], ["O3+ Whitening", "1050/-", "1250/-"],
-                        ["O3+ Seaweed", "1250/-", "1450/-"], ["O3+ Gold/Diamond", "1200/-", "1400/-"],
-                        ["Casmara Reaffirming", "1500/-", "1700/-"], ["Casmara Luxury", "1500/-", "1700/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Facial", titleHI: "फेशियल",
-                    headers: ["Service", "Normal", "With De-tan"],
-                    items: [
-                        ["Anti Tan", "550/-", "750/-"], ["Instra Glow", "750/-", "950/-"],
-                        ["Shahnaz Instra Glow", "1000/-", "1200/-"], ["Shahnaz Gold", "1500/-", "1700/-"],
-                        ["Shahnaz Diamond", "1500/-", "1700/-"], ["Aroma (Whitening/Gold/Diamond)", "1050/-", "1250/-"],
-                        ["Lotus/Kaya (Whitening/Gold/Diamond)", "1450/-", "1650/-"], ["Eminence Organic", "1500/-", "1700/-"],
-                        ["Sara (AHA/Green Apple/Lemon)", "1250/-", "-1450/-"], ["Sara (Gold/Silver/Diamond)", "1550/-", "1750/-"],
-                        ["Casmara Reaffirming", "1600/-", "1800/-"], ["Casmara Sensitive Skin", "1800/-", "2000/-"],
-                        ["Casmara Luxury", "2100/-", "2300/-"], ["O3+ Whitening", "1650/-", "1850/-"],
-                        ["O3+ Seaweed", "1650/-", "1850/-"], ["O3+ Youth Radiant", "1800/-", "2000/-"],
-                        ["O3+ Meladerm", "1800/-", "2000/-"], ["O3+ Power Brighting", "1950/-", "2150/-"],
-                        ["O3+ Gold", "2100/-", "2300/-"], ["O3+ Diamond", "2100/-", "2300/-"],
-                        ["O3+ Diamond Luxury", "3150/-", "3350/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Face Mask & Eye Treatment", titleHI: "फेस मास्क और आई ट्रीटमेंट",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Sara Skin Youth Enhancing Mould Mask", "300/-"], ["O3+ Power Mask (Developed by Dermatologist)", "500/-"],
-                        ["Casmora Face Mask (Dermocosmetic Laboratory)", "800/-"], ["Eye Rejuvination 1 Sitting", "350/-"],
-                        ["Eye Rejuvination 4 Sitting", "1200/-"], ["Advance Eye Treatment 1 Sitting", "550/-"],
-                        ["Advance Eye Treatment 4 Sitting", "1850/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Hair Spa (According to Length)", titleHI: "हेयर स्पा (लंबाई के अनुसार)",
-                    headers: ["Service", "Normal", "With Treatment"],
-                    items: [
-                        ["Smooth Hair Spa", "800/-", "1300/-"], ["Hair Loss Spa", "900/-", "1400/-"],
-                        ["Power Repair Spa", "1200/-", "1700/-"], ["Anti Dandruff Spa", "1000/-", "1500/-"],
-                        ["Treatment Spa", "800/-", "1300/-"], ["Maroccon Hair Spa", "1700/-", "-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Hair Color & Style", titleHI: "हेयर कलर और स्टाइल",
-                    headers: ["Service", "Price"],
-                    items: [
-                        ["Root Touch up Base Color", "700/-"], ["Root Touch up Fashion shade", "800/-"],
-                        ["Global Base Color", "1500/-"], ["Global Fashion Shade", "1700/-"],
-                        ["Highlight Pre Strip", "350/-"], ["Full Highlight", "3500/-"],
-                        ["Hair Smoothing", "3000/-"], ["Hair Rebounding", "4000/-"],
-                        ["Strait Therapy", "4500/-"], ["Keratin Treatment", "3000/-"],
-                        ["Hair Pressing", "300/-"], ["Tongs Hairstyle", "300/-"],
-                        ["Up Style", "400/-"], ["Advance Up Style", "600/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "De-Tan & Bleach", titleHI: "डी-टैन और ब्लीच",
-                    headers: ["Service", "De-Tan", "Bleach(Normal/Adv)"],
-                    items: [
-                        ["Face & Neck", "300/-", "250/- / 350/-"], ["Face Neck & Blouse Line", "400/-", "350/- / 450/-"],
-                        ["Full Arms", "400/-", "300/- / 400/-"], ["Full Leg", "600/-", "500/- / 600/-"],
-                        ["Underarms", "150/-", "100/- / 150/-"], ["Midriff / Half Back", "400/-", "300/- / 350/-"],
-                        ["Full Back / Front", "600/-", "500/- / 600/-"], ["Feat De-tan / Feat Bleach", "150/-", "150/- / 200/-"],
-                        ["Full Body De-tan / Bleach", "2250/-", "1800/- / 2300/-"]
-                    ]
-                },
-                {
-                    type: 'standard', titleEN: "Hand & Foot Spa Therapy", titleHI: "हैंड एंड फुट स्पा थेरेपी",
-                    headers: ["Service", "Manicure", "Pedicure"],
-                    items: [
-                        ["Normal", "450/-", "500/-"], ["VLCC / Aroma", "600/-", "700/-"],
-                        ["Advance (Lotus / Sara / French)", "750/-", "850/-"]
-                    ]
-                },
-
-                // === SECTION 3: EXACT PRE-BRIDAL PACKAGES (PROFESSIONAL ROUND BADGE LAYOUT) ===
-                {
-                    type: 'package', titleEN: 'Pre Bridal Packages (One Day Package)', titleHI: 'प्री ब्राइडल पैकेजेस (1 दिन)',
-                    items: [
-                        ["Eyebrow", "30/-"], ["Upper Lips", "20/-"], ["Forehead", "20/-"], ["Chin", "20/-"],
-                        ["Face & Neck Bleach / De-tan", "450/-"], ["O3+ Power Brightening Facial", "1950/-"],
-                        ["Advance Pedicure", "850/-"], ["Advance Manicure", "750/-"],
-                        ["Body Waxing Rica", "2150/-"], ["Full Back or Full Front Bleach", "1200/-"]
-                    ],
-                    total: "7440/-", offer: "5500"
-                },
-                {
-                    type: 'package', titleEN: 'Pre Bridal Packages (Three Days Package)', titleHI: 'प्री ब्राइडल पैकेजेस (3 दिन)',
-                    items: [
-                        ["Eyebrow", "30/-"], ["Forehead", "20/-"], ["Upper Lips", "20/-"], ["Chin", "20/-"],
-                        ["Face & Neck Bleach / De-tan", "450/-"], ["O3+ Whitening Cleanup", "1050/-"],
-                        ["O3+ Power Whitening Facial", "2150/-"], ["Front / Full Back Bleach", "1200/-"],
-                        ["Advance Pedicure", "850/-"], ["Advance Manicure", "750/-"],
-                        ["Body Waxing Rica", "2150/-"], ["Anti Tan with Instant Glow Polishing", "3500/-"],
-                        ["Smooth Hair Spa with Treatment", "1500/-"], ["Hair Cut", "300/-"]
-                    ],
-                    total: "13,990/-", offer: "10,500"
-                },
-                {
-                    type: 'package', titleEN: 'Pre Bridal Packages (Seven Days Package)', titleHI: 'प्री ब्राइडल पैकेजेस (7 दिन)',
-                    items: [
-                        ["Eyebrow", "30/-"], ["Forehead", "20/-"], ["Upper Lips", "20/-"], ["Chin", "20/-"],
-                        ["Face & Neck De-tan", "400/-"], ["Face & Neck Bleach / De-tan", "450/-"],
-                        ["O3+ Gold / Diamond Cleanup (2)", "2500/-"], ["O3+ Gold / Diamond Facial", "2100/-"],
-                        ["Full Body De-tan / Bleach", "2250/-"], ["Full Advance Back Treatment", "950/-"],
-                        ["Anti - Tan with Instant Glow Polishing", "3500/-"], ["Advance Pedicure", "850/-"],
-                        ["Advance Manicure", "750/-"], ["Body Glow Pack", "1500/-"],
-                        ["Body waxing Rica", "2150/-"], ["Power Repair Spa", "1700/-"], ["Hair Cut", "300/-"]
-                    ],
-                    total: "19,490/-", offer: "14,500"
-                },
-                {
-                    type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 1', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 1',
-                    items: [
-                        ["1- Body De-Tan", "2250/-"], ["&nbsp;&nbsp;&nbsp;Face De-Tan", "300/-"],
-                        ["2- -------------", ""], ["3- -------------", ""], ["4- -------------", ""],
-                        ["5- Face Cleanup (Kaya/Lotus)", "850/-"],
-                        ["6- -------------", ""], ["7- -------------", ""], ["8- -------------", ""],
-                        ["9- Aroma Pedicure", "700/-"], ["&nbsp;&nbsp;&nbsp;Aroma Manicure", "600/-"],
-                        ["10- -------------", ""], ["11- -------------", ""], ["12- -------------", ""],
-                        ["13- Face Polishing", "800/-"], ["&nbsp;&nbsp;&nbsp;Hand De-Tan", "400/-"], ["&nbsp;&nbsp;&nbsp;Full Back De-Tan", "600/-"],
-                        ["14- -------------", ""], ["15- -------------", ""], ["16- -------------", ""],
-                        ["17- Face Cleanup (Kaya/Lotus)", "850/-"],
-                        ["18- -------------", ""], ["19- -------------", ""], ["20- -------------", ""],
-                        ["21- Loreal Hair Spa", "1000/-"], ["&nbsp;&nbsp;&nbsp;Any Advance Hair Cut", "300/-"],
-                        ["22- -------------", ""], ["23- -------------", ""], ["24- -------------", ""],
-                        ["25- Face Cleanup (Kaya/Lotus)", "850/-"], ["&nbsp;&nbsp;&nbsp;Full Back Massage\\", "150/-"], ["&nbsp;&nbsp;&nbsp;Hand Massage", "150/-"],
-                        ["26- -------------", ""], ["27- -------------", ""],
-                        ["28- Instant Glow Body Polishing", "3500/-"],
-                        ["29- Face Bleach", "400/-"], ["&nbsp;&nbsp;&nbsp;Aroma Pedicure", "700/-"], ["&nbsp;&nbsp;&nbsp;Aroma Manicure", "600/-"],
-                        ["30- O3+ Gold/Diamond facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Anti-Tan Body Waxing", "2150/-"], ["&nbsp;&nbsp;&nbsp;Eyebrow+Forehead+Upperlips+Chin", "90/-"]
-                    ],
-                    total: "19,340/-", offer: "13,500"
-                },
-                {
-                    type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 2', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 2',
-                    items: [
-                        ["1- Body De-Tan", "2250/-"], ["&nbsp;&nbsp;&nbsp;Face De-Tan", "300/-"],
-                        ["2- -------------", ""], ["3- -------------", ""], ["4- -------------", ""],
-                        ["5- O3+ Face Cleanup", "1050/-"], ["&nbsp;&nbsp;&nbsp;O3+ Face Mask", "500/-"],
-                        ["6- -------------", ""], ["7- -------------", ""], ["8- -------------", ""],
-                        ["9- Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "500/-"],
-                        ["10- -------------", ""], ["11- -------------", ""], ["12- -------------", ""],
-                        ["13- Body Oil Massage", "1050/-"], ["&nbsp;&nbsp;&nbsp;Body Steam", "500/-"], ["&nbsp;&nbsp;&nbsp;Oil Head massage", "300/-"],
-                        ["14- -------------", ""], ["15- -------------", ""], ["16- -------------", ""],
-                        ["17- O3+ Gold /Diamond Facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Full Back Massage", "150/-"], ["&nbsp;&nbsp;&nbsp;Full Hand Massage", "150/-"],
-                        ["18- -------------", ""], ["19- -------------", ""], ["20- -------------", ""],
-                        ["21- Loreal Hair Spa", "1000/-"], ["&nbsp;&nbsp;&nbsp;any Advance Hair Cut", "300/-"],
-                        ["22- -------------", ""], ["23- -------------", ""], ["24- -------------", ""],
-                        ["25- O3+ Face Cleanup", "1050/-"], ["&nbsp;&nbsp;&nbsp;Full Back Massage", "150/-"], ["&nbsp;&nbsp;&nbsp;Full Hand Massage", "150/-"],
-                        ["26- -------------", ""], ["27- -------------", ""],
-                        ["28- Instant Glow Body Polishing", "3500/-"], ["&nbsp;&nbsp;&nbsp;Face Polishing", "800/-"],
-                        ["29- Face Bleach", "400/-"], ["&nbsp;&nbsp;&nbsp;Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"],
-                        ["30- O3+ Gold/Diamond Facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Anti Tan Body Waxing", "2150/-"], ["&nbsp;&nbsp;&nbsp;Eyebrow+Forehead+Upperlips+Chin", "90/-"]
-                    ],
-                    total: "23,240/-", offer: "16,250"
-                },
-                {
-                    type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 3', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 3',
-                    items: [
-                        ["1- Body De-Tan", "2250/-"], ["&nbsp;&nbsp;&nbsp;Face De-Tan", "300/-"],
-                        ["2- O3+ Face Cleanup", "1050/-"],
-                        ["3- -------------", ""], ["4- -------------", ""],
-                        ["5- Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"], ["&nbsp;&nbsp;&nbsp;O3+ Face Mask", "500/-"],
-                        ["6- -------------", ""], ["7- -------------", ""], ["8- -------------", ""],
-                        ["9- Instant Glow Body Polishing", "3500/-"], ["&nbsp;&nbsp;&nbsp;Face Polishing", "800/-"],
-                        ["10- -------------", ""], ["11- -------------", ""],
-                        ["12- O3+ Gold/Diamond Facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Full Back Advance Treatment", "950/-"],
-                        ["13- -------------", ""], ["14- -------------", ""], ["15- -------------", ""],
-                        ["16- Body Oil Massage", "1050/-"], ["&nbsp;&nbsp;&nbsp;Body Steam", "500/-"], ["&nbsp;&nbsp;&nbsp;Oil Head Massage", "300/-"],
-                        ["17- -------------", ""], ["18- -------------", ""], ["19- -------------", ""],
-                        ["20- Loreal Hair Spa", "1000/-"], ["&nbsp;&nbsp;&nbsp;Hair Cut", "300/-"],
-                        ["21- -------------", ""], ["22- -------------", ""],
-                        ["23- O3+ Face Cleanup", "1050/-"], ["&nbsp;&nbsp;&nbsp;Full Back Massage", "150/-"], ["&nbsp;&nbsp;&nbsp;Full Hand Massage", "150/-"],
-                        ["24- -------------", ""], ["25- -------------", ""],
-                        ["26- Instant Glow Body Polishing", "3500/-"], ["&nbsp;&nbsp;&nbsp;Face Polishing", "800/-"],
-                        ["27- -------------", ""], ["28- -------------", ""],
-                        ["29- Face Bleaching", "400/-"], ["&nbsp;&nbsp;&nbsp;Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"],
-                        ["30- O3+ Gold/Diamond Facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Anti-tan Body Waxing", "2150/-"], ["&nbsp;&nbsp;&nbsp;Eyebrow+Forehead+Upperlips+Chin", "90/-"]
-                    ],
-                    total: "28,190/-", offer: "19,550"
-                },
-                {
-                    type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 4', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 4',
-                    items: [
-                        ["1- Body De-Tan", "2250/-"], ["&nbsp;&nbsp;&nbsp;Face De-Tan", "300/-"],
-                        ["2- -------------", ""],
-                        ["3- O3+ Gold/Diamond Cleanup", "1250/-"],
-                        ["4- Full Back Treatment", "950/-"],
-                        ["5- Body Cream Massage", "1250/-"], ["&nbsp;&nbsp;&nbsp;Face Mask", "500/-"],
-                        ["6- -------------", ""],
-                        ["7- Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"],
-                        ["8- -------------", ""],
-                        ["9- Oil Head Massage", "300/-"],
-                        ["10- Oil Body Massage", "1050/-"], ["&nbsp;&nbsp;&nbsp;Body Steam", "500/-"],
-                        ["11- Loreal Hair Spa", "1000/-"],
-                        ["12- O3+ Gold/Diamond Cleanup", "1250/-"],
-                        ["13- Glow Body Pack", "1500/-"],
-                        ["14- Full Back & Hand Massage", "300/-"],
-                        ["15- Instant Glow Body Polishing", "3500/-"], ["&nbsp;&nbsp;&nbsp;Face Polishing", "800/-"],
-                        ["16- -------------", ""],
-                        ["17- O3+ Gold/ Diamond Facial", "2100/-"],
-                        ["18- -------------", ""],
-                        ["19- Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"],
-                        ["20- O3+ Gold/Diamond Cleanup", "1250/-"], ["&nbsp;&nbsp;&nbsp;O3+ Face Mask", "500/-"],
-                        ["21- Body Oil Massage", "1050/-"], ["&nbsp;&nbsp;&nbsp;Body Steam", "500/-"], ["&nbsp;&nbsp;&nbsp;Head Massage", "300/-"],
-                        ["22- -------------", ""],
-                        ["23- Instant Glow Body Pack", "1500/-"], ["&nbsp;&nbsp;&nbsp;Face De-tan", "300/-"],
-                        ["24- O3+ Gold/Diamond Cleanup", "1250/-"],
-                        ["25- Hand Polishing", "800/-"], ["&nbsp;&nbsp;&nbsp;Back Polishing", "1000/-"], ["&nbsp;&nbsp;&nbsp;O3+ Face Mask", "500/-"],
-                        ["26- -------------", ""],
-                        ["27- Loreal Hair Spa", "1000/-"], ["&nbsp;&nbsp;&nbsp;Hair Cut", "300/-"], ["&nbsp;&nbsp;&nbsp;Face Bleach", "400/-"],
-                        ["28- -------------", ""],
-                        ["29- Instant Glow Body Polishing", "3500/-"], ["&nbsp;&nbsp;&nbsp;Advance Pedicure", "850/-"], ["&nbsp;&nbsp;&nbsp;Advance Manicure", "750/-"],
-                        ["30- O3+ Gold/Diamond Facial", "2100/-"], ["&nbsp;&nbsp;&nbsp;Anti Tan Body Waxing", "2150/-"], ["&nbsp;&nbsp;&nbsp;Eyebrow + Forehead + Upperlips + Chin", "90/-"]
-                    ],
-                    total: "43,890/-", offer: "30,500"
-                }
-            ]
-        };
-
-        // ---------------------------------------------------------
-
-        let currentLang = 'en';
-        let wonDiscount = 0; 
-        let shareBonusActive = localStorage.getItem('salon_share_bonus') === 'true';
-
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('b-date').setAttribute('min', today);
-
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('hidden-splash');
-                document.body.classList.add('page-loaded'); 
-            }, 2000); 
-        });
-
-        // -- SEARCH & VOICE LOGIC --
-        function handleSearch(query) {
-            const q = query.toLowerCase();
-            
-            // Filter Main Service & Package Cards
-            document.querySelectorAll('.search-card').forEach(card => {
-                const text = card.innerText.toLowerCase();
-                card.style.display = text.includes(q) ? '' : 'none';
-            });
-            
-            // Filter Full Rate List Menu Rows
-            document.querySelectorAll('.menu-category').forEach(cat => {
-                let hasVisible = false;
-                cat.querySelectorAll('.menu-row').forEach(row => {
-                    const match = row.innerText.toLowerCase().includes(q);
-                    row.style.display = match ? '' : 'none';
-                    if(match) hasVisible = true;
-                });
-                cat.style.display = hasVisible ? '' : 'none';
-            });
-        }
-
-        function startVoiceSearch() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert(currentLang === 'en' ? "Voice search is not supported in this browser." : "इस ब्राउज़र में वॉइस सर्च सपोर्ट नहीं करता है।");
-                return;
-            }
-            const recognition = new SpeechRecognition();
-            recognition.lang = currentLang === 'en' ? 'en-IN' : 'hi-IN';
-            recognition.start();
-            
-            const micBtn = document.getElementById('micBtn');
-            micBtn.classList.add('bg-red-100', 'text-red-600', 'animate-pulse');
-            
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('searchInput').value = transcript;
-                handleSearch(transcript);
-                micBtn.classList.remove('bg-red-100', 'text-red-600', 'animate-pulse');
-            };
-            
-            recognition.onerror = function() {
-                micBtn.classList.remove('bg-red-100', 'text-red-600', 'animate-pulse');
-            };
-            recognition.onend = function() {
-                micBtn.classList.remove('bg-red-100', 'text-red-600', 'animate-pulse');
-            };
-        }
-
-        // -- SHARE NOTIFICATION SYSTEM --
-        function showShareNotification() {
-            document.getElementById('shareNotifyModal').classList.add('active');
-        }
-        function closeShareModal() {
-            document.getElementById('shareNotifyModal').classList.remove('active');
-        }
-
-        async function executeShare() {
-            closeShareModal();
-            const shareData = {
-                title: 'Volume Salon - Premium Ladies Beauty Studio',
-                text: 'Checkout Volume Salon for amazing beauty packages and exclusive offers! 🎀',
-                url: 'https://www.rkyshree.in/VolumeSalon'
-            };
-            
-            try {
-                if (navigator.share) {
-                    await navigator.share(shareData);
-                    grantShareBonus();
-                } else {
-                    navigator.clipboard.writeText(shareData.url);
-                    grantShareBonus();
-                }
-            } catch (err) {
-                console.log('Share error:', err);
-            }
-        }
-
-        function grantShareBonus() {
-            shareBonusActive = true; 
-            localStorage.setItem('salon_share_bonus', 'true');
-        }
-
-        // -- SCROLL ANIMATION --
-        function initScrollAnimations() {
-            const reveals = document.querySelectorAll('.reveal-up');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, { threshold: 0.1 });
-            reveals.forEach(el => observer.observe(el));
-        }
-
-        // -- INITIALIZATION --
-        function initOfferSection() {
-            document.getElementById('nav-offer-en')?.innerText ? document.getElementById('nav-offer-en').innerText = SALON_CONFIG.specialOffer.titleEN : '';
-            const wheel = document.getElementById('spinWheel');
-            wheel.innerHTML = '';
-            SALON_CONFIG.specialOffer.prizes.forEach((prize, idx) => {
-                let deg = 30 + (idx * 60);
-                wheel.innerHTML += `<div class="absolute w-full h-full flex justify-center items-start pt-6 font-bold text-wine-900 text-2xl" style="transform: rotate(${deg}deg)">${prize}%</div>`;
-            });
-        }
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            
-            const activeToggle = "px-3 py-1.5 rounded-full text-xs font-bold bg-white text-wine-700 shadow transition-all";
-            const inactiveToggle = "px-3 py-1.5 rounded-full text-xs font-bold text-gray-400 hover:text-wine-700 transition-all";
-
-            document.getElementById('btn-en').className = lang === 'en' ? activeToggle : inactiveToggle;
-            document.getElementById('btn-hi').className = lang === 'hi' ? activeToggle : inactiveToggle;
-
-            document.getElementById('offer-title').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.titleEN : SALON_CONFIG.specialOffer.titleHI;
-            document.getElementById('offer-desc').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.descEN : SALON_CONFIG.specialOffer.descHI;
-            
-            // Search Input Placeholder
-            document.getElementById('searchInput').placeholder = lang === 'en' ? "Search services..." : "सर्विस खोजें (सर्च करें)...";
-
-            const elements = document.querySelectorAll('[data-en][data-hi]');
-            elements.forEach(el => {
-                if (el.innerHTML.includes('<') && !el.hasAttribute('placeholder')) {
-                    el.innerHTML = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
-                } else if (el.hasAttribute('placeholder') && el.tagName === 'INPUT') {
-                    el.placeholder = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
-                } else {
-                    el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
-                }
-            });
-
-            renderServices();
-            renderPackages();
-            renderFullMenu();
-            populateBookingDropdown();
-            setTimeout(initScrollAnimations, 100); 
-        }
-
-        // -- DYNAMIC RENDERING --
-        function renderServices() {
-            const container = document.getElementById('services-container');
-            container.innerHTML = ''; 
-
-            SALON_CONFIG.services.forEach(srv => {
-                const name = currentLang === 'en' ? srv.nameEN : srv.nameHI;
-                const freeOfferText = currentLang === 'en' ? srv.freeOfferEN : srv.freeOfferHI;
-                const priceText = srv.price.includes('₹') ? srv.price : (srv.price.includes('Price') ? srv.price : `₹${srv.price}`);
-
-                const html = `
-                    <div class="search-card ${srv.bgColor} rounded-[2rem] overflow-hidden flex flex-col h-full shadow-lg hover:shadow-2xl transition-all duration-300 reveal-up hover:-translate-y-2 border border-gray-100 relative">
-                        ${srv.freeOfferEN ? `<div class="free-ribbon">🎁 FREE: ${freeOfferText}</div>` : ''}
-                        
-                        <div class="h-56 overflow-hidden relative">
-                            <img src="${srv.imgUrl}" alt="${name}" class="w-full h-full object-cover">
-                            <div class="absolute bottom-4 right-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl shadow-lg border border-gold-200 text-wine-900 font-bold text-lg">
-                                ${priceText}
-                            </div>
-                        </div>
-                        <div class="p-8 flex-grow flex flex-col">
-                            <h4 class="font-serif font-bold text-2xl text-wine-900 mb-6 flex-grow">${name}</h4>
-                            <button onclick="openBookingModal('${srv.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-3.5 rounded-xl font-bold shadow-[0_4px_12px_rgba(30,189,92,0.3)] transition-all uppercase tracking-wide text-xs">
-                                ${currentLang === 'en' ? 'Select Service' : 'सर्विस चुनें'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
-        }
-
-        function renderPackages() {
-            const container = document.getElementById('packages-container');
-            container.innerHTML = '';
-
-            SALON_CONFIG.packages.forEach((pkg) => {
-                const name = currentLang === 'en' ? pkg.nameEN : pkg.nameHI;
-                const items = currentLang === 'en' ? pkg.itemsEN : pkg.itemsHI;
-                
-                let listHtml = '';
-                items.forEach(item => {
-                    listHtml += `<li class="flex items-start gap-3 text-sm text-wine-900 mb-2.5 font-semibold">
-                        <span class="text-gold-500 text-base mt-0.5">✓</span> <span>${item}</span>
-                    </li>`;
-                });
-
-                const saveAmt = pkg.mrp - pkg.offerPrice;
-
-                const html = `
-                    <div class="search-card bg-white rounded-[2rem] flex flex-col h-full shadow-xl border border-gray-100 reveal-up hover:border-gold-400 transition-all overflow-hidden group">
-                        <div class="h-64 w-full relative overflow-hidden">
-                            <img src="${pkg.imgUrl}" alt="${name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-wine-900/90 via-wine-900/20 to-transparent"></div>
-                            
-                            <div class="absolute top-4 right-4 bg-red-600 text-white font-bold px-3 py-1 rounded-full shadow-lg text-sm z-10 animate-pulse">
-                                SAVE ₹${saveAmt}!
-                            </div>
-                            <div class="absolute bottom-4 right-4 flex items-end gap-2 bg-white/95 backdrop-blur px-4 py-2 rounded-2xl shadow-xl border border-gold-200">
-                                <div class="flex flex-col items-end">
-                                    <span class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-[-4px]">MRP</span>
-                                    <del class="text-red-500 font-bold text-sm">₹${pkg.mrp}</del>
-                                </div>
-                                <div class="flex flex-col items-end ml-2 border-l border-gray-200 pl-3">
-                                    <span class="text-[10px] text-wine-600 font-bold uppercase tracking-wider mb-[-4px]">Offer</span>
-                                    <span class="text-wine-900 font-black text-2xl">₹${pkg.offerPrice}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="p-8 lg:p-10 flex flex-col flex-grow">
-                            <h4 class="font-serif text-3xl font-bold text-wine-900 mb-6">${name}</h4>
-                            
-                            <div class="bg-rose-50/50 rounded-2xl p-6 mb-8 flex-grow border border-rose-100">
-                                <ul class="m-0 p-0 list-none">
-                                    ${listHtml}
-                                </ul>
-                            </div>
-                            
-                            <button onclick="openBookingModal('${pkg.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-4 rounded-xl font-bold shadow-[0_5px_15px_rgba(30,189,92,0.4)] mt-auto text-sm uppercase tracking-wide transition-all transform hover:-translate-y-1">
-                                ${currentLang === 'en' ? 'Book This Package' : 'यह पैकेज बुक करें'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
-        }
-
-        // FULL RATE LIST EXACT COPY RENDERING
-        function renderFullMenu() {
-            const container = document.getElementById('full-menu-container');
-            container.innerHTML = '';
-            
-            SALON_CONFIG.fullMenu.forEach(category => {
-                
-                // --- PACKAGE (NEW PROFESSIONAL ROUND BADGE) ---
-                if (category.type === 'package') {
-                    let rowsHtml = '';
-                    category.items.forEach(item => {
-                        const isDashed = item[0].includes('-----');
-                        const itemName = item[0];
-                        const itemPrice = item[1] || '';
-                        rowsHtml += `
-                            <div class="menu-row flex justify-between items-center py-1 md:py-1.5 ${isDashed ? 'opacity-50' : 'border-b border-wine-800/30'} text-[12px] md:text-[13.5px] hover:bg-wine-800/40 px-1 transition-colors">
-                                <div class="text-rose-100 font-medium tracking-wide">${itemName}</div>
-                                <div class="text-gold-400 font-bold">${itemPrice}</div>
-                            </div>
-                        `;
-                    });
-                    
-                    const offerBadge = category.offer ? `
-                        <div class="round-badge shadow-2xl ml-4">
-                            <span class="sm-text">only</span>
-                            <span class="lg-text">${category.offer}/-</span>
-                        </div>` : '';
-
-                    const html = `
-                        <div class="menu-category break-inside-avoid bg-wine-900 p-6 md:p-8 rounded-3xl border-2 border-gold-500/60 shadow-[0_10px_30px_rgba(0,0,0,0.5)] reveal-up mb-6 relative overflow-hidden group hover:border-gold-400 transition-colors">
-                            <div class="absolute top-0 right-0 w-24 h-24 bg-gold-500/10 rounded-bl-full pointer-events-none"></div>
-                            
-                            <h4 class="font-serif text-2xl md:text-3xl text-gold-400 mb-6 font-bold tracking-wide text-center border-b border-gold-500/30 pb-4">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4>
-                            
-                            <div class="flex flex-col mb-6">${rowsHtml}</div>
-                            
-                            <div class="border-t-2 border-gold-500/50 pt-5 flex justify-between items-end gap-2 mt-auto relative z-10">
-                                <div class="text-white text-lg font-bold uppercase tracking-widest leading-none">
-                                    <span class="text-rose-200 text-xs block mb-1">Total</span> 
-                                    <span class="text-2xl">${category.total}</span>
-                                </div>
-                                ${offerBadge}
-                            </div>
-                        </div>
-                    `;
-                    container.innerHTML += html;
-                } 
-                // --- COURSE (3 COLUMNS) ---
-                else if (category.type === 'course') {
-                    let rowsHtml = '';
-                    category.items.forEach(item => {
-                        rowsHtml += `
-                            <div class="menu-row grid grid-cols-12 gap-2 py-3 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 px-2 items-center">
-                                <div class="text-rose-100 font-medium col-span-6 pr-2 leading-snug">${item[0]}</div>
-                                <div class="text-gold-400 font-bold col-span-3 text-center">${item[1]}</div>
-                                <div class="text-gold-400 font-bold col-span-3 text-right">${item[2]}</div>
-                            </div>
-                        `;
-                    });
-                    
-                    const headersHtml = `<div class="grid grid-cols-12 gap-2 py-3 border-b-2 border-gold-500/50 mb-3 text-[11px] md:text-xs bg-gold-400 text-wine-900 rounded-t-lg px-2">
-                        <div class="font-bold uppercase col-span-6">${category.headers[0]}</div>
-                        <div class="font-bold uppercase col-span-3 text-center">${category.headers[1]}</div>
-                        <div class="font-bold uppercase col-span-3 text-right">${category.headers[2]}</div>
-                    </div>`;
-
-                    const html = `
-                        <div class="menu-category break-inside-avoid bg-wine-900/60 p-5 md:p-8 rounded-3xl border border-wine-700/50 shadow-2xl reveal-up mb-6 hover:border-gold-500/30 transition-colors">
-                            <h4 class="font-serif text-2xl text-rose-300 mb-5 font-bold tracking-wide">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4>
-                            ${headersHtml}
-                            <div class="flex flex-col">${rowsHtml}</div>
-                        </div>
-                    `;
-                    container.innerHTML += html;
-                }
-                // --- STANDARD (2 OR 3 COLUMNS) ---
-                else {
-                    let rowsHtml = '';
-                    category.items.forEach(item => {
-                        let colsHtml = '';
-                        const is3Col = item.length === 3;
-                        
-                        if (is3Col) {
-                            colsHtml += `<div class="text-rose-100 font-medium col-span-2">${item[0]}</div>`;
-                            colsHtml += `<div class="text-gold-400 font-bold text-center">${item[1]}</div>`;
-                            colsHtml += `<div class="text-gold-400 font-bold text-right">${item[2]}</div>`;
-                            rowsHtml += `<div class="menu-row grid grid-cols-4 gap-2 py-2.5 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 transition-colors px-1 items-center">${colsHtml}</div>`;
-                        } else {
-                            colsHtml += `<div class="text-rose-100 font-medium">${item[0]}</div>`;
-                            colsHtml += `<div class="text-gold-400 font-bold text-right">${item[1]}</div>`;
-                            rowsHtml += `<div class="menu-row flex justify-between items-center py-2.5 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 transition-colors px-1">${colsHtml}</div>`;
-                        }
-                    });
-                    
-                    let headersHtml = '';
-                    if (category.headers) {
-                        const is3ColHead = category.headers.length === 3;
-                        if (is3ColHead) {
-                            headersHtml = `<div class="grid grid-cols-4 gap-2 py-2 border-b-2 border-gold-500/50 mb-3 text-[10px] md:text-xs">
-                                <div class="text-gold-500 font-bold uppercase col-span-2">${category.headers[0]}</div>
-                                <div class="text-gold-500 font-bold uppercase text-center">${category.headers[1]}</div>
-                                <div class="text-gold-500 font-bold uppercase text-right">${category.headers[2]}</div>
-                            </div>`;
-                        } else {
-                            headersHtml = `<div class="flex justify-between items-center py-2 border-b-2 border-gold-500/50 mb-3 text-[10px] md:text-xs">
-                                <div class="text-gold-500 font-bold uppercase">${category.headers[0]}</div>
-                                <div class="text-gold-500 font-bold uppercase text-right">${category.headers[1]}</div>
-                            </div>`;
-                        }
-                    }
-
-                    const html = `
-                        <div class="menu-category break-inside-avoid bg-wine-900/60 p-5 md:p-8 rounded-3xl border border-wine-700/50 shadow-2xl reveal-up mb-6 hover:border-gold-500/30 transition-colors">
-                            <h4 class="font-serif text-2xl text-rose-300 mb-5 font-bold tracking-wide">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4>
-                            ${headersHtml}
-                            <div class="flex flex-col">${rowsHtml}</div>
-                        </div>
-                    `;
-                    container.innerHTML += html;
-                }
-            });
-        }
-
-        // -- SMART SPIN AND WIN LOGIC --
-        let isSpinning = false;
-
-        function startSpin() {
-            if(isSpinning) return;
-            isSpinning = true;
-
-            const wheel = document.getElementById('spinWheel');
-            const prizes = SALON_CONFIG.specialOffer.prizes;
-
-            let todayDate = new Date().toDateString();
-            let spinData = JSON.parse(localStorage.getItem('salonSpinData')) || { date: todayDate, count25: 0 };
-            
-            if (spinData.date !== todayDate) spinData = { date: todayDate, count25: 0 };
-
-            let winIndex = 4; // Default to 20%
-            if (Math.random() < 0.15 && spinData.count25 < 5) {
-                winIndex = 5; // 25%
-                spinData.count25++;
-                localStorage.setItem('salonSpinData', JSON.stringify(spinData));
-            }
-
-            const extraDegrees = 360 - (30 + (winIndex * 60));
-            const totalRotation = 1800 + extraDegrees; 
-
-            wheel.style.transform = `rotate(${totalRotation}deg)`;
-
-            setTimeout(() => {
-                isSpinning = false;
-                wonDiscount = prizes[winIndex]; 
-                
-                document.getElementById('spinActionArea').classList.add('hidden');
-                document.getElementById('winResultArea').classList.remove('hidden');
-                
-                if(currentLang === 'en') {
-                    document.getElementById('winTitle').innerText = "Congratulations!";
-                    document.getElementById('winDesc').innerText = `You won ${wonDiscount}% DISCOUNT!`;
-                } else {
-                    document.getElementById('winTitle').innerText = "बधाई हो!";
-                    document.getElementById('winDesc').innerText = `आपने ${wonDiscount}% की छूट जीती है!`;
-                }
-            }, 4000);
-        }
-
-        function claimOffer() {
-            openBookingModal();
-        }
-
-        // -- MODAL LOGIC --
-        const modal = document.getElementById('bookingModal');
-        const serviceSelect = document.getElementById('b-service');
-
-        function populateBookingDropdown() {
-            serviceSelect.innerHTML = '';
-            
-            const defaultOpt = document.createElement('option');
-            defaultOpt.value = "";
-            defaultOpt.text = currentLang === 'en' ? "-- Select a Service or Package --" : "-- कोई सर्विस या पैकेज चुनें --";
-            defaultOpt.disabled = true;
-            defaultOpt.selected = true;
-            serviceSelect.appendChild(defaultOpt);
-
-            const groupPack = document.createElement('optgroup');
-            groupPack.label = currentLang === 'en' ? "PACKAGES (OFFER PRICES)" : "पैकेज (ऑफर प्राइस)";
-            SALON_CONFIG.packages.forEach(pkg => {
-                const opt = document.createElement('option');
-                opt.value = currentLang === 'en' ? `${pkg.nameEN} (Rs. ${pkg.offerPrice})` : `${pkg.nameHI} (Rs. ${pkg.offerPrice})`;
-                opt.text = `${currentLang === 'en' ? pkg.nameEN : pkg.nameHI} - ₹${pkg.offerPrice}`;
-                opt.dataset.id = pkg.id;
-                groupPack.appendChild(opt);
-            });
-            serviceSelect.appendChild(groupPack);
-
-            const groupServ = document.createElement('optgroup');
-            groupServ.label = currentLang === 'en' ? "SERVICES & FREE OFFERS" : "सेवाएं और मुफ्त ऑफर्स";
-            SALON_CONFIG.services.forEach(srv => {
-                const opt = document.createElement('option');
-                let priceTxt = srv.price.includes('₹') ? srv.price : (srv.price.includes('Price') ? srv.price : `₹${srv.price}`);
-                let freeOfferTxt = currentLang === 'en' ? srv.freeOfferEN : srv.freeOfferHI;
-                opt.value = currentLang === 'en' ? `${srv.nameEN} (${priceTxt}) - Free: ${freeOfferTxt}` : `${srv.nameHI} (${priceTxt}) - मुफ्त: ${freeOfferTxt}`;
-                opt.text = `${currentLang === 'en' ? srv.nameEN : srv.nameHI} - ${priceTxt}`;
-                opt.dataset.id = srv.id;
-                groupServ.appendChild(opt);
-            });
-            serviceSelect.appendChild(groupServ);
-        }
-
-        function openBookingModal(preselectId = null) {
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; 
-            
-            const banner = document.getElementById('modalDiscountBanner');
-            let showBanner = false;
-            let bannerHtml = '';
-
-            if(wonDiscount > 0) {
-                bannerHtml += `<span>🎉 ${currentLang === 'en'?'Won:':'जीता:'} <strong>${wonDiscount}% OFF</strong></span>`;
-                showBanner = true;
-            }
-            if(shareBonusActive) {
-                bannerHtml += `<span class="bg-green-100 text-green-800 px-2 py-0.5 rounded ml-2">🎁 ${currentLang === 'en'?'+ Rs. 50 Bonus':'+ ₹50 बोनस'}</span>`;
-                showBanner = true;
-            }
-
-            if(showBanner) {
-                banner.innerHTML = bannerHtml;
-                banner.classList.remove('hidden');
-            } else {
-                banner.classList.add('hidden');
-            }
-
-            if (preselectId) {
-                const options = serviceSelect.options;
-                for(let i=0; i < options.length; i++) {
-                    if(options[i].dataset.id === preselectId) {
-                        serviceSelect.selectedIndex = i;
-                        break;
-                    }
-                }
-            }
-        }
-
-        function closeBookingModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        function submitBooking(e) {
-            e.preventDefault();
-
-            const name = document.getElementById('b-name').value;
-            const date = document.getElementById('b-date').value;
-            
-            const timeInput = document.getElementById('b-time').value;
-            let timeParts = timeInput.split(':');
-            let hours = parseInt(timeParts[0]);
-            let ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            const formattedTime = hours + ':' + timeParts[1] + ' ' + ampm;
-            
-            const dateParts = date.split('-');
-            const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-
-            const service = document.getElementById('b-service').value;
-
-            let msg = "";
-            
-            if(currentLang === 'en') {
-                msg += "*NEW APPOINTMENT REQUEST*\n";
-                msg += "--------------------------------------\n";
-                msg += `*Name:* ${name}\n`;
-                msg += `*Date:* ${formattedDate}\n`;
-                msg += `*Time:* ${formattedTime}\n`;
-                msg += `*Service:* ${service}\n`;
-                
-                if(wonDiscount > 0 || shareBonusActive) {
-                    msg += "--------------------------------------\n";
-                    msg += "*DISCOUNTS APPLIED:*\n";
-                    if(wonDiscount > 0) msg += `✅ Spin & Win: ${wonDiscount}% OFF\n`;
-                    if(shareBonusActive) msg += `✅ Share Bonus: Rs. 50 OFF\n`;
-                }
-                
-                msg += "--------------------------------------\n";
-                msg += "Please confirm my booking.";
-            } else {
-                msg += "*नई बुकिंग का अनुरोध*\n";
-                msg += "--------------------------------------\n";
-                msg += `*नाम:* ${name}\n`;
-                msg += `*तारीख:* ${formattedDate}\n`;
-                msg += `*समय:* ${formattedTime}\n`;
-                msg += `*सर्विस/पैकेज:* ${service}\n`;
-                
-                if(wonDiscount > 0 || shareBonusActive) {
-                    msg += "--------------------------------------\n";
-                    msg += "*लागू छूट (Discounts):*\n";
-                    if(wonDiscount > 0) msg += `✅ स्पिन एंड विन: ${wonDiscount}% की छूट\n`;
-                    if(shareBonusActive) msg += `✅ शेयर बोनस: ₹50 की छूट\n`;
-                }
-                
-                msg += "--------------------------------------\n";
-                msg += "कृपया मेरी बुकिंग कन्फर्म करें।";
-            }
-
-            const encodedMsg = encodeURIComponent(msg);
-            const waUrl = `https://wa.me/${SALON_CONFIG.whatsappNumber}?text=${encodedMsg}`;
-            
-            window.open(waUrl, '_blank');
-            closeBookingModal();
-            document.getElementById('bookingForm').reset();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('hero-img-1').src = SALON_CONFIG.heroImages.img1;
-            document.getElementById('hero-img-2').src = SALON_CONFIG.heroImages.img2;
-
-            initOfferSection();
-            setLanguage('en'); 
-        });
-
-    </script>
+​<!-- FLOATING BACKGROUND ELEMENTS CONTAINER (Visible & Magical) -->
+<div id="floating-bg" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+​<!-- SPLASH SCREEN -->
+<div id="splash-screen">
+<div class="splash-content text-center">
+<div class="splash-logo-wrapper mx-auto">
+<img src="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" alt="Volume Salon Logo" class="splash-logo">
+</div>
+</div>
+</div>
+​<!-- MAIN CONTENT WRAPPER -->
+<div id="main-content">
+​<!-- Top Info Bar -->
+<div class="bg-wine-900 text-gold-300 text-xs sm:text-sm py-2 px-4 text-center font-bold tracking-wide z-50 relative">
+<span data-en="PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR" data-hi="प्रीमियम लेडीज ब्यूटी स्टूडियो | गोरखपुर">PREMIUM LADIES BEAUTY STUDIO | GORAKHPUR</span>
+</div>
+​<!-- Clean Header (Left Brand Name, Center Language, Right Share) -->
+<header class="glass-nav sticky top-0 z-40 w-full transition-all shadow-sm">
+<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+​<!-- Left: Brand Name (Volume Ladies Salon) -->
+<a href="#" class="flex flex-col items-start leading-tight">
+<span class="font-serif text-2xl lg:text-3xl font-extrabold text-wine-900 tracking-tight animated-brand-title">Volume</span>
+<span class="text-[11px] lg:text-xs font-semibold italic text-wine-700 tracking-wider">Ladies Salon</span>
+</a>
+​<!-- Center: Language Toggle (Small & Clean) -->
+<div class="flex items-center bg-gray-100 rounded-full p-1 border border-gray-200 shadow-inner">
+<button onclick="setLanguage('en')" id="btn-en" class="px-3 py-1 rounded-full text-xs font-bold bg-white text-wine-700 shadow transition-all">EN</button>
+<button onclick="setLanguage('hi')" id="btn-hi" class="px-3 py-1 rounded-full text-xs font-bold text-gray-400 hover:text-wine-700 transition-all">HI</button>
+</div>
+​<!-- Right: Clean Share & Earn Button -->
+<button onclick="showShareNotification()" class="clean-blink bg-wine-700 hover:bg-wine-800 text-gold-300 border border-gold-400/50 px-3.5 py-2 rounded-full flex items-center gap-1.5 shadow-md text-xs font-bold uppercase transition-all shrink-0">
+<span>🎁</span> <span data-en="Share & Earn" data-hi="शेयर और अर्न">Share & Earn</span>
+</button>
+</div>
+</header>
+​<!-- Hero Section -->
+<section class="relative pt-12 pb-20 lg:pt-20 lg:pb-28 overflow-hidden bg-gradient-to-b from-rose-50 to-cream">
+<div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
+​<div class="text-center lg:text-left z-10 reveal-up">
+​<!-- View Full Rate List Button (Bounce Style) -->
+<div class="mb-6 flex justify-center lg:justify-start">
+<a href="#ratelist-section" class="bounce-anim inline-flex items-center gap-2 bg-wine-900 text-gold-300 hover:bg-wine-800 px-6 py-2.5 rounded-full border-2 border-gold-400 shadow-lg text-xs font-bold uppercase tracking-wider transition-all">
+<span>📜</span> <span data-en="View Full Rate List" data-hi="पूरी रेट लिस्ट देखें">View Full Rate List</span> <span>↓</span>
+</a>
+</div>
+​<span class="inline-block py-1.5 px-4 rounded-full bg-wine-50 text-wine-700 text-xs font-bold tracking-[0.2em] uppercase mb-4 border border-wine-100" data-en="Redefining Your Beauty" data-hi="आपकी सुंदरता को निखारें">Redefining Your Beauty</span>
+​<h2 class="font-serif text-4xl lg:text-6xl text-wine-900 leading-[1.1] mb-6 font-bold floating-anim">
+<span data-en="Elegance in" data-hi="हर पल में">Elegance in</span>
+
+<i class="text-gold-500 font-medium" data-en="Every Detail." data-hi="खूबसूरती।">Every Detail.</i>
+</h2>
+<p class="text-base lg:text-lg text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0" data-en="Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists." data-hi="विशेषज्ञ स्टाइलिस्टों द्वारा विशेष रूप से महिलाओं के लिए तैयार की गई प्रीमियम हेयर केयर, फेशियल और ग्रूमिंग सेवाओं का अनुभव लें।">
+Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists.
+</p>
+​<button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-base lg:text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.5)] flex items-center gap-3 mx-auto lg:mx-0 transform transition-all hover:-translate-y-1 uppercase tracking-wide border border-[#1a9e4d] group">
+<span data-en="Book Your Visit Today" data-hi="आज ही अपनी बुकिंग करें">Book Your Visit Today</span>
+<span class="group-hover:translate-x-1.5 transition-transform text-xl">→</span>
+</button>
+</div>
+​<div class="relative reveal-up" style="transition-delay: 0.2s;">
+<div class="grid grid-cols-2 gap-4 lg:gap-6">
+<img id="hero-img-1" src="" alt="Hair Styling" class="rounded-3xl rounded-tr-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full border-[6px] border-white">
+<img id="hero-img-2" src="" alt="Facial Makeup" class="rounded-3xl rounded-bl-[80px] shadow-2xl object-cover h-72 lg:h-96 w-full mt-12 border-[6px] border-white">
+</div>
+</div>
+</div>
+</section>
+​<!-- SPECIAL OFFER: DAILY SPIN AND WIN -->
+<section id="offer" class="py-20 bg-wine-900 relative overflow-hidden text-center border-y-[6px] border-gold-400">
+<div class="max-w-4xl mx-auto px-4 relative z-10 reveal-up">
+<h3 class="font-serif text-4xl md:text-5xl text-gold-400 font-bold mb-4" id="offer-title">Daily Spin & Win!</h3>
+<p class="text-white text-lg mb-10 max-w-xl mx-auto" id="offer-desc">
+Spin the wheel to win exclusive discounts on your next appointment.
+</p>
+​<div class="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-10">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 z-20 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[35px] border-t-gold-400 filter drop-shadow-lg"></div>
+​<div id="spinWheel" class="w-full h-full rounded-full border-[6px] border-gold-400 shadow-[0_0_40px_rgba(212,175,55,0.4)] relative spin-wheel-bg" style="transition: transform 4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+</div>
+</div>
+​<div id="spinActionArea">
+<button onclick="startSpin()" id="spinBtn" class="bg-gradient-to-r from-gold-400 to-gold-500 text-wine-900 px-12 py-4 rounded-full text-xl font-bold shadow-xl hover:scale-105 transition-transform uppercase tracking-wider">
+<span data-en="Spin & Win" data-hi="स्पिन करें और जीतें">Spin & Win</span>
+</button>
+</div>
+​<div id="winResultArea" class="hidden mt-6 bg-white/10 p-6 rounded-3xl border border-gold-400/30 backdrop-blur-sm max-w-md mx-auto">
+<h4 class="text-gold-400 text-2xl font-bold mb-2" id="winTitle">Congratulations!</h4>
+<p class="text-white text-lg mb-6" id="winDesc">You won X% discount.</p>
+<button onclick="claimOffer()" class="w-full bg-white text-wine-900 px-8 py-3 rounded-xl text-lg font-bold shadow-lg hover:bg-gold-50 transition-colors uppercase">
+<span data-en="Claim Offer & Book" data-hi="ऑफर क्लेम करें और बुक करें">Claim Offer & Book</span>
+</button>
+</div>
+</div>
+</section>
+​<!-- Services Section -->
+<section id="services" class="py-24 bg-white">
+<div class="max-w-7xl mx-auto px-4">
+<div class="text-center mb-16 reveal-up">
+<span class="text-wine-600 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Exclusive Services" data-hi="विशेष सेवाएं">Exclusive Services</span>
+<h3 class="font-serif text-4xl lg:text-5xl text-wine-900 font-bold mb-4" data-en="Premium Parlour Services" data-hi="प्रीमियम पार्लर सेवाएं">Premium Parlour Services</h3>
+<div class="w-24 h-1.5 bg-gold-400 mx-auto rounded-full mt-4"></div>
+</div>
+​<div id="services-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+<!-- Javascript will inject services here -->
+</div>
+</div>
+</section>
+​<!-- Packages Section -->
+<section id="packages" class="py-24 bg-cream relative border-t border-gray-200">
+<div class="max-w-7xl mx-auto px-4 relative z-10">
+<div class="text-center mb-16 reveal-up">
+<span class="text-wine-600 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Big Savings" data-hi="बड़ी बचत">Big Savings</span>
+<h3 class="font-serif text-4xl lg:text-5xl text-wine-900 font-bold mb-4" data-en="Special Packages" data-hi="स्पेशल पैकेजेस">Special Packages</h3>
+<div class="w-24 h-1.5 bg-gold-400 mx-auto rounded-full mt-4"></div>
+</div>
+​<div id="packages-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+<!-- Javascript will inject package cards here -->
+</div>
+</div>
+</section>
+​<!-- FULL RATE LIST MENU -->
+<section id="ratelist-section" class="py-24 bg-darkmenu border-t-[8px] border-gold-500 relative">
+<div class="max-w-7xl mx-auto px-2 sm:px-4 relative z-10">
+<div class="text-center mb-16 reveal-up">
+<span class="text-gold-400 font-bold uppercase tracking-widest text-sm mb-2 block" data-en="Complete Official Menu" data-hi="पूरा आधिकारिक मेनू">Complete Official Menu</span>
+<h3 class="font-serif text-4xl lg:text-5xl text-white font-bold mb-4" data-en="Full Rate List" data-hi="पूरी रेट लिस्ट">Full Rate List</h3>
+<div class="w-32 h-1.5 bg-gold-500 mx-auto rounded-full mt-4"></div>
+<p class="text-gray-400 mt-6 max-w-xl mx-auto text-sm" data-en="Explore our extensive range of premium beauty services detailed exactly as in our official salon menu." data-hi="हमारे आधिकारिक सैलून मेनू में दिए गए सभी प्रीमियम ब्यूटी सेवाओं की विस्तृत सूची देखें।"></p>
+</div>
+​<div id="full-menu-container" class="columns-1 lg:columns-2 gap-6 space-y-6">
+<!-- Javascript will inject Full Rate List -->
+</div>
+</div>
+</section>
+​<!-- Footer & Bottom Book Appointment -->
+<footer id="about" class="bg-wine-900 text-rose-50 pt-20 pb-10 border-t border-wine-700">
+<div class="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-16 reveal-up">
+​<div class="text-center md:text-left">
+<h1 class="font-serif text-4xl font-bold text-white mb-6">Volume Salon</h1>
+<p class="text-rose-200 mb-10 leading-relaxed text-lg" data-en="A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort." data-hi="विशेष रूप से महिलाओं के लिए एक सुरक्षित, स्वच्छ और प्रीमियम जगह। हम आपके आराम के लिए उच्च गुणवत्ता वाले ब्रांड और केवल महिला कर्मचारियों का उपयोग करते हैं।">
+A safe, hygienic, and premium space exclusively for women. We use top-tier brands and maintain strictly female staff for your comfort.
+</p>
+<div class="inline-block">
+<button onclick="openBookingModal()" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white px-10 py-4 rounded-full text-lg font-bold shadow-[0_10px_25px_-5px_rgba(30,189,92,0.4)] transition-all uppercase tracking-wide flex items-center justify-center gap-3 transform hover:scale-105 mx-auto md:mx-0">
+<span data-en="Book Appointment Now" data-hi="अभी अपॉइंटमेंट बुक करें">Book Appointment Now</span>
+<span class="text-2xl leading-none">→</span>
+</button>
+</div>
+</div>
+​<div class="bg-wine-800/50 p-8 rounded-3xl border border-wine-700/50 backdrop-blur-sm shadow-xl">
+<h4 class="text-gold-400 font-bold text-2xl uppercase tracking-wider mb-8 border-b border-wine-700/60 pb-5 text-center md:text-left" data-en="Contact & Location" data-hi="संपर्क और स्थान">Contact & Location</h4>
+​<div class="space-y-8">
+<div class="flex items-center gap-5 group">
+<div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">📍</div>
+<div>
+<h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Location" data-hi="स्थान">Location</h5>
+<p class="text-lg font-medium text-white leading-snug">Beside RR Building,
+Mohaddipur, Gorakhpur, UP</p>
+</div>
+</div>
+<div class="flex items-center gap-5 group">
+<div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">📞</div>
+<div>
+<h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Call Us" data-hi="हमें कॉल करें">Call Us</h5>
+<a href="tel:7703067241" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">7703067241</a>
+<a href="tel:9044333399" class="block text-xl font-bold text-white hover:text-gold-300 transition-colors">9044333399</a>
+</div>
+</div>
+<div class="flex items-center gap-5 group">
+<div class="w-16 h-16 rounded-full bg-wine-900 border border-gold-400/30 flex items-center justify-center text-gold-400 text-2xl group-hover:bg-gold-400 group-hover:text-wine-900 transition-colors shrink-0 shadow-inner">✉️</div>
+<div>
+<h5 class="text-gold-500 font-bold text-sm uppercase tracking-widest mb-1.5" data-en="Email" data-hi="ईमेल">Email</h5>
+<a href="mailto:volumesalon4@gmail.com" class="block text-lg font-medium text-white hover:text-gold-300 break-all transition-colors">volumesalon4@gmail.com</a>
+</div>
+</div>
+</div>
+​<!-- Developer Link -->
+<div class="mt-8 pt-6 border-t border-wine-700/60">
+<div class="flex items-center gap-4 bg-wine-900/40 p-4 rounded-2xl border border-wine-600/30 hover:border-gold-400/50 transition-colors shadow-inner">
+<div class="w-12 h-12 rounded-full bg-wine-900 flex items-center justify-center text-gold-400 shrink-0">💻</div>
+<div>
+<span class="text-[10px] uppercase tracking-widest text-rose-200/70 block mb-0.5">Website Developer</span>
+<a href="https://www.rkyshree.in" target="_blank" class="text-gold-400 hover:text-white font-bold text-base transition-colors flex items-center gap-1 group">
+by Shraynex <span class="text-xs group-hover:translate-x-1 transition-transform">↗</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+​</div>
+</footer>
+​<!-- Floating Mobile Bottom Bar -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 p-3 bg-white border-t border-gray-200 shadow-[0_-10px_20px_rgba(0,0,0,0.08)] z-40">
+<button onclick="openBookingModal()" class="w-full bg-[#1ebd5c] hover:bg-[#189e4c] text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_5px_15px_rgba(30,189,92,0.3)] flex justify-center items-center gap-2 uppercase tracking-wide floating-cta">
+<span data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</span>
+</button>
+</div>
+​</div> <!-- END OF MAIN CONTENT -->
+​<!-- SHARE NOTIFICATION MODAL (₹50 Discount Popup) -->
+<div id="shareNotifyModal" class="fixed inset-0 z-[60] flex items-center justify-center modal-overlay p-4">
+<div class="absolute inset-0 bg-wine-900/80 backdrop-blur-sm" onclick="closeShareModal()"></div>
+<div class="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden modal-content text-center p-8">
+<button onclick="closeShareModal()" class="absolute top-4 right-4 text-gray-400 hover:text-wine-900 text-xl font-bold">✕</button>
+<div class="text-6xl mb-4 animate-bounce">🎁</div>
+<h3 class="font-serif text-2xl font-bold text-wine-900 mb-2" data-en="Share & Earn ₹50!" data-hi="शेयर करें और ₹50 कमाएं!">Share & Earn ₹50!</h3>
+<p class="text-gray-600 mb-8 text-sm" data-en="Share our website with your friends and family. You will get an extra ₹50 discount on your next visit automatically!" data-hi="हमारी वेबसाइट को अपने दोस्तों और रिश्तेदारों के साथ शेयर करें। अगली सर्विस पर आपको ₹50 का अतिरिक्त डिस्काउंट अपने आप मिल जाएगा!">
+Share our website with your friends and family. You will get an extra ₹50 discount on your next visit automatically!
+</p>
+<button onclick="executeShare()" class="w-full bg-gradient-to-r from-gold-400 to-gold-500 text-wine-900 font-bold py-4 rounded-xl shadow-lg hover:shadow-xl uppercase tracking-wider text-sm transition-transform hover:scale-105">
+<span data-en="Share Now via WhatsApp" data-hi="अभी शेयर करें (WhatsApp)">Share Now via WhatsApp</span>
+</button>
+</div>
+</div>
+​<!-- SMART BOOKING MODAL -->
+<div id="bookingModal" class="fixed inset-0 z-[50] flex items-center justify-center modal-overlay p-4">
+<div class="absolute inset-0 bg-wine-900/80 backdrop-blur-sm" onclick="closeBookingModal()"></div>
+<div class="relative bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
+​<div class="bg-wine-700 p-6 text-white text-center relative shrink-0">
+<button onclick="closeBookingModal()" class="absolute top-5 right-5 text-rose-200 hover:text-white bg-wine-900 rounded-full w-8 h-8 flex items-center justify-center transition-colors">✕</button>
+<h3 class="font-serif text-2xl font-bold mb-1" data-en="Book Appointment" data-hi="अपॉइंटमेंट बुक करें">Book Appointment</h3>
+<p class="text-rose-200 text-xs uppercase tracking-widest" data-en="Fast & Easy Confirmation" data-hi="तेज़ और आसान बुकिंग">Fast & Easy Confirmation</p>
+</div>
+​<div id="modalDiscountBanner" class="hidden bg-gold-400 text-wine-900 text-center py-2 font-bold text-sm tracking-wide flex justify-center gap-2 items-center flex-wrap">
+<span id="modalWheelDiscount"></span>
+<span id="modalShareBonus" class="text-green-900"></span>
+</div>
+​<div class="p-8 overflow-y-auto">
+<form id="bookingForm" onsubmit="submitBooking(event)" class="space-y-6">
+<div>
+<label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Full Name" data-hi="पूरा नाम">Full Name</label>
+<input type="text" id="b-name" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
+</div>
+​<div class="grid grid-cols-2 gap-5">
+<div>
+<label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Date" data-hi="तारीख चुनें">Select Date</label>
+<input type="date" id="b-date" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
+</div>
+<div>
+<label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Time" data-hi="समय चुनें">Select Time</label>
+<input type="time" id="b-time" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800">
+</div>
+</div>
+​<div>
+<label class="block text-xs font-bold uppercase tracking-wide text-wine-900 mb-2" data-en="Select Service / Package" data-hi="सर्विस या पैकेज चुनें">Select Service / Package</label>
+<select id="b-service" required class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:border-wine-500 focus:ring-2 focus:ring-wine-100 outline-none transition-all bg-gray-50 text-gray-800 font-medium">
+</select>
+</div>
+​<div class="pt-4">
+<button type="submit" class="w-full bg-[#1ebd5c] hover:bg-[#1a9e4d] text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-3 text-lg uppercase tracking-wide">
+<span data-en="Confirm on WhatsApp" data-hi="WhatsApp पर बुक करें">Confirm on WhatsApp</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+​<!-- JAVASCRIPT: LOGIC & CONFIGURATION SETTINGS -->
+<script>
+// ---------------------------------------------------------
+// ⚙️ CONFIGURATION SETTINGS (CENTRALIZED)
+// ---------------------------------------------------------
+const SALON_CONFIG = {
+whatsappNumber: "917703067241",
+​heroImages: {
+img1: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80",
+img2: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80"
+},
+​specialOffer: {
+titleEN: "Daily Spin & Win!",
+titleHI: "डेली स्पिन एंड विन!",
+descEN: "Spin the wheel to win exclusive discounts on your next appointment.",
+descHI: "अपने अगले अपॉइंटमेंट पर विशेष छूट जीतने के लिए चकरी घुमाएं।",
+prizes: [5, 10, 15, 15, 20, 25]
+},
+​services: [
+{
+id: "s1", nameEN: "Instant Glow Facial with D-Ten", nameHI: "इंस्टेंट ग्लो फेशियल + डी-टैन",
+price: "1050", freeOfferEN: "N.D.A. Hair Cutting", freeOfferHI: "N.D.A. हेयर कटिंग",
+imgUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80", bgColor: "bg-rose-50"
+},
+{
+id: "s2", nameEN: "Aroma Facial with D-Ten", nameHI: "अरोमा फेशियल + डी-टैन",
+price: "1350", freeOfferEN: "Hand Waxing", freeOfferHI: "हैंड वैक्सिंग",
+imgUrl: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80", bgColor: "bg-blue-50"
+},
+{
+id: "s3", nameEN: "Lotus Facial with D-Ten", nameHI: "लोटस फेशियल + डी-टैन",
+price: "1750", freeOfferEN: "Back Treatment", freeOfferHI: "बैक ट्रीटमेंट",
+imgUrl: "https://images.unsplash.com/photo-1512496015851-a1cbf5c5509e?w=600&q=80", bgColor: "bg-orange-50"
+},
+{
+id: "s4", nameEN: "O3+ Power Brightening with D-Ten", nameHI: "O3+ पावर ब्राइटनिंग + डी-टैन",
+price: "2250", freeOfferEN: "Hand Polishing", freeOfferHI: "हैंड पॉलिशिंग",
+imgUrl: "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=600&q=80", bgColor: "bg-purple-50"
+},
+{
+id: "s5", nameEN: "Anti-Tan Body Polishing", nameHI: "एंटी-टैन बॉडी पॉलिशिंग",
+price: "2500", freeOfferEN: "Anti-Tan Clean-Up", freeOfferHI: "एंटी-टैन क्लीन-अप",
+imgUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80", bgColor: "bg-green-50"
+},
+{
+id: "s6", nameEN: "Anti-Tan with Instant Glow Body Polishing", nameHI: "एंटी-टैन + इंस्टेंट ग्लो बॉडी पॉलिशिंग",
+price: "3500", freeOfferEN: "Hair Spa", freeOfferHI: "हेयर स्पा",
+imgUrl: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=600&q=80", bgColor: "bg-yellow-50"
+},
+{
+id: "s7", nameEN: "Global Fashion Colour", nameHI: "ग्लोबल फैशन कलर",
+price: "Starting ₹1700", freeOfferEN: "Instant Glow Clean-Up", freeOfferHI: "इंस्टेंट ग्लो क्लीन-अप",
+imgUrl: "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600&q=80", bgColor: "bg-pink-50"
+},
+{
+id: "s8", nameEN: "Hair Straightening", nameHI: "हेयर स्ट्रेटनिंग",
+price: "Starting ₹3000", freeOfferEN: "Aroma Facial", freeOfferHI: "अरोमा फेशियल",
+imgUrl: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=600&q=80", bgColor: "bg-rose-50"
+},
+{
+id: "s9", nameEN: "Hydra Facial with O3+", nameHI: "हाइड्रा फेशियल + O3+",
+price: "Ask for Price", freeOfferEN: "Pedicure", freeOfferHI: "पेडीक्योर",
+imgUrl: "https://images.unsplash.com/photo-1600334089648-c446779452f5?w=600&q=80", bgColor: "bg-blue-50"
+},
+{
+id: "s10", nameEN: "Aroma Facial", nameHI: "अरोमा फेशियल",
+price: "Ask for Price", freeOfferEN: "Aroma Facial", freeOfferHI: "अरोमा फेशियल",
+imgUrl: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=600&q=80", bgColor: "bg-orange-50"
+},
+{
+id: "s11", nameEN: "Bridal Makeup (MAC)", nameHI: "ब्राइडल मेकअप (MAC)",
+price: "8000", freeOfferEN: "Party Makeup (1 Person)", freeOfferHI: "पार्टी मेकअप (1 व्यक्ति)",
+imgUrl: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80", bgColor: "bg-red-50"
+},
+{
+id: "s12", nameEN: "Advance Pedicure", nameHI: "एडवांस पेडीक्योर",
+price: "850", freeOfferEN: "Normal Manicure", freeOfferHI: "नॉर्मल मैनीक्योर",
+imgUrl: "https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=600&q=80", bgColor: "bg-green-50"
+}
+],
+​packages: [
+{
+id: "p1", nameEN: "Anti-Tan Cleanup + Rica Hand Waxing", nameHI: "एंटी-टैन क्लीनअप + रिका हैंड वैक्सिंग",
+itemsEN: ["Anti-Tan Cleanup", "Rica Hand Waxing (with Underarms)"],
+itemsHI: ["एंटी-टैन क्लीनअप", "रिका हैंड वैक्सिंग (अंडरआर्म्स के साथ)"],
+mrp: 950, offerPrice: 650, imgUrl: "https://images.unsplash.com/photo-1515377659621-125082260cf8?w=800&q=80"
+},
+{
+id: "p2", nameEN: "Face De-Tan + Aroma Facial + Spa", nameHI: "फेस डी-टैन + अरोमा फेशियल + हेयर स्पा",
+itemsEN: ["Face De-Tan", "Aroma Facial", "Hair Spa"],
+itemsHI: ["फेस डी-टैन", "अरोमा फेशियल", "हेयर स्पा"],
+mrp: 2450, offerPrice: 1550, imgUrl: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=800&q=80"
+},
+{
+id: "p3", nameEN: "Lotus Facial + Full Waxing Combo", nameHI: "लोटस फेशियल + फुल वैक्सिंग कॉम्बो",
+itemsEN: ["Face De-Tan", "Lotus Facial", "Rica Hand & Leg Waxing (with Underarms)"],
+itemsHI: ["फेस डी-टैन", "लोटस फेशियल", "रिका हैंड & लेग वैक्सिंग (अंडरआर्म्स के साथ)"],
+mrp: 2950, offerPrice: 1850, imgUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80"
+},
+{
+id: "p4", nameEN: "Insta Glow Facial Combo", nameHI: "इंस्टा ग्लो फेशियल कॉम्बो",
+itemsEN: ["Face De-Tan", "Insta Glow Facial", "Hand Waxing (with Underarms)", "Hair Spa + Hair Cut"],
+itemsHI: ["फेस डी-टैन", "इंस्टा ग्लो फेशियल", "हैंड वैक्सिंग (अंडरआर्म्स के साथ)", "हेयर स्पा + हेयर कट"],
+mrp: 2850, offerPrice: 1850, imgUrl: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80"
+},
+{
+id: "p5", nameEN: "O3+ Facial Brightening Grand Combo", nameHI: "O3+ फेशियल ब्राइटनिंग ग्रैंड कॉम्बो",
+itemsEN: ["Face De-Tan", "O3+ Facial (Powder Brightening)", "Hand & Leg Waxing (with Underarms)", "Hair Spa + Hair Cutting", "Pedicure + Manicure"],
+itemsHI: ["फेस डी-टैन", "O3+ फेशियल (पाउडर ब्राइटनिंग)", "हैंड & लेग वैक्सिंग (अंडरआर्म्स के साथ)", "हेयर स्पा + हेयर कटिंग", "पेडीक्योर + मैनीक्योर"],
+mrp: 5950, offerPrice: 3850, imgUrl: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80"
+},
+{
+id: "p6", nameEN: "O3+ Facial + Hydra Facial", nameHI: "O3+ फेशियल + हाइड्रा फेशियल",
+itemsEN: ["O3+ Facial", "Hydra Facial Treatment"],
+itemsHI: ["O3+ फेशियल", "हाइड्रा फेशियल ट्रीटमेंट"],
+mrp: 3550, offerPrice: 2550, imgUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80"
+},
+{
+id: "p7", nameEN: "Hydra Cleanup + De-Tan Pack", nameHI: "हाइड्रा क्लीनअप + डी-टैन पैक",
+itemsEN: ["Hydra Cleanup", "De-Tan Pack"],
+itemsHI: ["हाइड्रा क्लीनअप", "डी-टैन पैक"],
+mrp: 1550, offerPrice: 1050, imgUrl: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=800&q=80"
+},
+{
+id: "p8", nameEN: "Hydra Facial + De-Tan Pack", nameHI: "हाइड्रा फेशियल + डी-टैन पैक",
+itemsEN: ["Hydra Facial", "De-Tan Pack"],
+itemsHI: ["हाइड्रा फेशियल", "डी-टैन पैक"],
+mrp: 2550, offerPrice: 1750, imgUrl: "https://images.unsplash.com/photo-1512496015851-a1cbf5c5509e?w=800&q=80"
+}
+],
+​fullMenu: [
+{
+type: 'course', titleEN: "Beauty Parlor Course", titleHI: "ब्यूटी पार्लर कोर्स",
+headers: ["Course", "Fees", "Duration"],
+items: [
+["Personal Grooming Basic Beauty Course", "7,000/-", "45 days"],
+["Personal Grooming Style and Makeup", "7,000/-", "15 days"],
+["Basic Hair and Beauty Course", "15,000/-", "3 Months"],
+["Diploma Course in Hair, Skin & Makeup", "25,000/-", "6 Months"],
+["Diploma in Skin Hairdressing Cut, Style Color & Advance Makeup", "35,000/-", "8 Months"],
+["Diploma in Makeup", "20,000/-", "2 Months"],
+["Basic Mehandi Course", "2,000/-", "2 Months"],
+["Advance Mehandi Course", "4,000/-", "3 Months"]
+]
+},
+{
+type: 'standard', titleEN: "Threading & Facial Waxing", titleHI: "थ्रेडिंग और फेशियल वैक्सिंग",
+headers: ["Service", "Threading", "Waxing"],
+items: [
+["Eyebrow", "30/-", "50/-"], ["Forehead", "20/-", "60/-"],
+["Upper Lips", "20/-", "40/-"], ["Chin", "20/-", "60/-"],
+["Side Lock", "80/-", "100/-"], ["Full Face", "200/-", "-"],
+["Full Face Flavored", "-", "300/-"], ["Full Face Rica/B", "-", "450/-"]
+]
+},
+{
+type: 'standard', titleEN: "Body Waxing", titleHI: "बॉडी वैक्सिंग",
+headers: ["Wax", "Flavored", "Rica/Anti-Tan"],
+items: [
+["Full Arms", "300/-", "400/-"], ["Full Legs", "400/-", "600/-"],
+["Half Leg", "300/-", "400/-"], ["Underarms", "80/-", "100/-"],
+["Midriff / Half Back", "300/-", "400/-"], ["Front / Full Back", "400/-", "600/-"],
+["Body Wax", "1500/-", "2150/-"], ["B Line waxing", "500/-", "-"],
+["Full B Waxing", "800/-", "-"]
+]
+},
+{
+type: 'standard', titleEN: "Only Face Makeup", titleHI: "ओनली फेस मेकअप",
+headers: ["Service", "Price"],
+items: [
+["Kryolon", "1200/-"], ["Mac", "1700/-"],
+["Ultimate Airbrush Makeup", "3000/-"], ["Temptu Perfect Airbrush Makeup", "4000/-"]
+]
+},
+{
+type: 'standard', titleEN: "Party Makeup", titleHI: "पार्टी मेकअप",
+headers: ["Service", "Price"],
+items: [
+["Kryolon", "2000/-"], ["Mac", "2500/-"],
+["Ultimate Airbrush Makeup", "4000/-"], ["Temptu Perfect Airbrush Makeup", "5000/-"]
+]
+},
+{
+type: 'standard', titleEN: "Special Ocassion Makeup", titleHI: "स्पेशल ऑकेशन मेकअप",
+headers: ["Service", "Price"],
+items: [
+["Kryolon", "4500/-"], ["Mac", "6000/-"],
+["Ultimate Airbrush Makeup", "7000/-"], ["Temptu Perfect Airbrush Makeup", "9000/-"]
+]
+},
+{
+type: 'standard', titleEN: "Bridal Makeup", titleHI: "ब्राइडल मेकअप",
+headers: ["Service", "Price"],
+items: [
+["Kryolon", "6000/-"], ["Mac", "8000/-"],
+["Ultimate Airbrush Makeup", "12000/-"], ["Temptu Perfect Airbrush Makeup", "15000/-"]
+]
+},
+{
+type: 'standard', titleEN: "Back Treatment & Body Care", titleHI: "बैक ट्रीटमेंट और बॉडी केयर",
+headers: ["Service", "Price"],
+items: [
+["Half Anti - Tan Back Treatment", "450/-"], ["Full Anti - Tan Back Treatment", "650/-"],
+["Half Advance Back Treatment", "750/-"], ["Full Advance Back Treatment", "950/-"],
+["Body Oil Massage", "1050/-"], ["Body Cream Massage", "1250/-"],
+["Body Pack (Glow/Anti-Tan)", "1500/-"], ["Body Polishing", "2000/-"],
+["Anti - Tan Body Polishing", "2500/-"], ["Anti - Tan with Instant Glow Polishing", "3500/-"]
+]
+},
+{
+type: 'standard', titleEN: "Hair Care & Cutting", titleHI: "हेयर केयर और कटिंग",
+headers: ["Service", "Price"],
+items: [
+["Oil Massage", "300/-"], ["Almond Oil", "450/-"],
+["Organ Oil", "450/-"], ["Hair Spa Treatment Oil", "450/-"],
+["Hair Wash with Conditioning", "250/-"], ["Hair Wash Treatment with Blow Dry", "400/-"],
+["Dryer Hair Setting", "200/-"], ["Child Hair Cut", "100/-"],
+["Hair Trimming", "100/-"], ["Advance Hair Trmming", "150/-"],
+["Any Advance Cutting", "200/-"], ["Any Advance Cutting with Setting", "300/-"],
+["Any Advance Cutting with Hair Wash", "400/-"]
+]
+},
+{
+type: 'standard', titleEN: "Skin Care Cleanup", titleHI: "स्किन केयर क्लीनअप",
+headers: ["Service", "Normal", "With De-tan"],
+items: [
+["Anti Tan", "450/-", "650/-"], ["Instra Glow", "550/-", "750/-"],
+["Fresh Fruit", "550/-", "750/-"], ["Gold/Silver/Diamond", "700/-", "900/-"],
+["Lotus/Sara/Kaya/Pearl", "850/-", "1050/-"], ["Shahnaz", "850/-", "1050/-"],
+["Sensitive Skin", "1000/-", "1200/-"], ["O3+ Anti Pigmentation", "1050/-", "1250/-"],
+["O3+ Anti Rankle", "1050/-", "1250/-"], ["O3+ Whitening", "1050/-", "1250/-"],
+["O3+ Seaweed", "1250/-", "1450/-"], ["O3+ Gold/Diamond", "1200/-", "1400/-"],
+["Casmara Reaffirming", "1500/-", "1700/-"], ["Casmara Luxury", "1500/-", "1700/-"]
+]
+},
+{
+type: 'standard', titleEN: "Facial", titleHI: "फेशियल",
+headers: ["Service", "Normal", "With De-tan"],
+items: [
+["Anti Tan", "550/-", "750/-"], ["Instra Glow", "750/-", "950/-"],
+["Shahnaz Instra Glow", "1000/-", "1200/-"], ["Shahnaz Gold", "1500/-", "1700/-"],
+["Shahnaz Diamond", "1500/-", "1700/-"], ["Aroma (Whitening/Gold/Diamond)", "1050/-", "1250/-"],
+["Lotus/Kaya (Whitening/Gold/Diamond)", "1450/-", "1650/-"], ["Eminence Organic", "1500/-", "1700/-"],
+["Sara (AHA/Green Apple/Lemon)", "1250/-", "-1450/-"], ["Sara (Gold/Silver/Diamond)", "1550/-", "1750/-"],
+["Casmara Reaffirming", "1600/-", "1800/-"], ["Casmara Sensitive Skin", "1800/-", "2000/-"],
+["Casmara Luxury", "2100/-", "2300/-"], ["O3+ Whitening", "1650/-", "1850/-"],
+["O3+ Seaweed", "1650/-", "1850/-"], ["O3+ Youth Radiant", "1800/-", "2000/-"],
+["O3+ Meladerm", "1800/-", "2000/-"], ["O3+ Power Brighting", "1950/-", "2150/-"],
+["O3+ Gold", "2100/-", "2300/-"], ["O3+ Diamond", "2100/-", "2300/-"],
+["O3+ Diamond Luxury", "3150/-", "3350/-"]
+]
+},
+{
+type: 'standard', titleEN: "Face Mask & Eye Treatment", titleHI: "फेस मास्क और आई ट्रीटमेंट",
+headers: ["Service", "Price"],
+items: [
+["Sara Skin Youth Enhancing Mould Mask", "300/-"], ["O3+ Power Mask (Developed by Dermatologist)", "500/-"],
+["Casmora Face Mask (Dermocosmetic Laboratory)", "800/-"], ["Eye Rejuvination 1 Sitting", "350/-"],
+["Eye Rejuvination 4 Sitting", "1200/-"], ["Advance Eye Treatment 1 Sitting", "550/-"],
+["Advance Eye Treatment 4 Sitting", "1850/-"]
+]
+},
+{
+type: 'standard', titleEN: "Hair Spa (According to Length)", titleHI: "हेयर स्पा (लंबाई के अनुसार)",
+headers: ["Service", "Normal", "With Treatment"],
+items: [
+["Smooth Hair Spa", "800/-", "1300/-"], ["Hair Loss Spa", "900/-", "1400/-"],
+["Power Repair Spa", "1200/-", "1700/-"], ["Anti Dandruff Spa", "1000/-", "1500/-"],
+["Treatment Spa", "800/-", "1300/-"], ["Maroccon Hair Spa", "1700/-", "-"]
+]
+},
+{
+type: 'standard', titleEN: "Hair Color & Style", titleHI: "हेयर कलर और स्टाइल",
+headers: ["Service", "Price"],
+items: [
+["Root Touch up Base Color", "700/-"], ["Root Touch up Fashion shade", "800/-"],
+["Global Base Color", "1500/-"], ["Global Fashion Shade", "1700/-"],
+["Highlight Pre Strip", "350/-"], ["Full Highlight", "3500/-"],
+["Hair Smoothing", "3000/-"], ["Hair Rebounding", "4000/-"],
+["Strait Therapy", "4500/-"], ["Keratin Treatment", "3000/-"],
+["Hair Pressing", "300/-"], ["Tongs Hairstyle", "300/-"],
+["Up Style", "400/-"], ["Advance Up Style", "600/-"]
+]
+},
+{
+type: 'standard', titleEN: "De-Tan & Bleach", titleHI: "डी-टैन और ब्लीच",
+headers: ["Service", "De-Tan", "Bleach(Normal/Adv)"],
+items: [
+["Face & Neck", "300/-", "250/- / 350/-"], ["Face Neck & Blouse Line", "400/-", "350/- / 450/-"],
+["Full Arms", "400/-", "300/- / 400/-"], ["Full Leg", "600/-", "500/- / 600/-"],
+["Underarms", "150/-", "100/- / 150/-"], ["Midriff / Half Back", "400/-", "300/- / 350/-"],
+["Full Back / Front", "600/-", "500/- / 600/-"], ["Feat De-tan / Feat Bleach", "150/-", "150/- / 200/-"],
+["Full Body De-tan / Bleach", "2250/-", "1800/- / 2300/-"]
+]
+},
+{
+type: 'standard', titleEN: "Hand & Foot Spa Therapy", titleHI: "हैंड एंड फुट स्पा थेरेपी",
+headers: ["Service", "Manicure", "Pedicure"],
+items: [
+["Normal", "450/-", "500/-"], ["VLCC / Aroma", "600/-", "700/-"],
+["Advance (Lotus / Sara / French)", "750/-", "850/-"]
+]
+},
+{
+type: 'package', titleEN: 'Pre Bridal Packages (One Day Package)', titleHI: 'प्री ब्राइडल पैकेजेस (1 दिन)',
+items: [
+["Eyebrow", "30/-"], ["Upper Lips", "20/-"], ["Forehead", "20/-"], ["Chin", "20/-"],
+["Face & Neck Bleach / De-tan", "450/-"], ["O3+ Power Brightening Facial", "1950/-"],
+["Advance Pedicure", "850/-"], ["Advance Manicure", "750/-"],
+["Body Waxing Rica", "2150/-"], ["Full Back or Full Front Bleach", "1200/-"]
+],
+total: "7440/-", offer: "5500"
+},
+{
+type: 'package', titleEN: 'Pre Bridal Packages (Three Days Package)', titleHI: 'प्री ब्राइडल पैकेजेस (3 दिन)',
+items: [
+["Eyebrow", "30/-"], ["Forehead", "20/-"], ["Upper Lips", "20/-"], ["Chin", "20/-"],
+["Face & Neck Bleach / De-tan", "450/-"], ["O3+ Whitening Cleanup", "1050/-"],
+["O3+ Power Whitening Facial", "2150/-"], ["Front / Full Back Bleach", "1200/-"],
+["Advance Pedicure", "850/-"], ["Advance Manicure", "750/-"],
+["Body Waxing Rica", "2150/-"], ["Anti Tan with Instant Glow Polishing", "3500/-"],
+["Smooth Hair Spa with Treatment", "1500/-"], ["Hair Cut", "300/-"]
+],
+total: "13,990/-", offer: "10,500"
+},
+{
+type: 'package', titleEN: 'Pre Bridal Packages (Seven Days Package)', titleHI: 'प्री ब्राइडल पैकेजेस (7 दिन)',
+items: [
+["Eyebrow", "30/-"], ["Forehead", "20/-"], ["Upper Lips", "20/-"], ["Chin", "20/-"],
+["Face & Neck De-tan", "400/-"], ["Face & Neck Bleach / De-tan", "450/-"],
+["O3+ Gold / Diamond Cleanup (2)", "2500/-"], ["O3+ Gold / Diamond Facial", "2100/-"],
+["Full Body De-tan / Bleach", "2250/-"], ["Full Advance Back Treatment", "950/-"],
+["Anti - Tan with Instant Glow Polishing", "3500/-"], ["Advance Pedicure", "850/-"],
+["Advance Manicure", "750/-"], ["Body Glow Pack", "1500/-"],
+["Body waxing Rica", "2150/-"], ["Power Repair Spa", "1700/-"], ["Hair Cut", "300/-"]
+],
+total: "19,490/-", offer: "14,500"
+},
+{
+type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 1', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 1',
+items: [
+["1- Body De-Tan", "2250/-"], ["   Face De-Tan", "300/-"],
+["5- Face Cleanup (Kaya/Lotus)", "850/-"],
+["9- Aroma Pedicure", "700/-"], ["   Aroma Manicure", "600/-"],
+["13- Face Polishing", "800/-"], ["   Hand De-Tan", "400/-"], ["   Full Back De-Tan", "600/-"],
+["17- Face Cleanup (Kaya/Lotus)", "850/-"],
+["21- Loreal Hair Spa", "1000/-"], ["   Any Advance Hair Cut", "300/-"],
+["25- Face Cleanup (Kaya/Lotus)", "850/-"], ["   Full Back Massage", "150/-"], ["   Hand Massage", "150/-"],
+["28- Instant Glow Body Polishing", "3500/-"],
+["29- Face Bleach", "400/-"], ["   Aroma Pedicure", "700/-"], ["   Aroma Manicure", "600/-"],
+["30- O3+ Gold/Diamond facial", "2100/-"], ["   Anti-Tan Body Waxing", "2150/-"], ["   Eyebrow+Forehead+Upperlips+Chin", "90/-"]
+],
+total: "19,340/-", offer: "13,500"
+},
+{
+type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 2', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 2',
+items: [
+["1- Body De-Tan", "2250/-"], ["   Face De-Tan", "300/-"],
+["5- O3+ Face Cleanup", "1050/-"], ["   O3+ Face Mask", "500/-"],
+["9- Advance Pedicure", "850/-"], ["   Advance Manicure", "500/-"],
+["13- Body Oil Massage", "1050/-"], ["   Body Steam", "500/-"], ["   Oil Head massage", "300/-"],
+["17- O3+ Gold /Diamond Facial", "2100/-"], ["   Full Back Massage", "150/-"], ["   Full Hand Massage", "150/-"],
+["21- Loreal Hair Spa", "1000/-"], ["   any Advance Hair Cut", "300/-"],
+["25- O3+ Face Cleanup", "1050/-"], ["   Full Back Massage", "150/-"], ["   Full Hand Massage", "150/-"],
+["28- Instant Glow Body Polishing", "3500/-"], ["   Face Polishing", "800/-"],
+["29- Face Bleach", "400/-"], ["   Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"],
+["30- O3+ Gold/Diamond Facial", "2100/-"], ["   Anti Tan Body Waxing", "2150/-"], ["   Eyebrow+Forehead+Upperlips+Chin", "90/-"]
+],
+total: "23,240/-", offer: "16,250"
+},
+{
+type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 3', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 3',
+items: [
+["1- Body De-Tan", "2250/-"], ["   Face De-Tan", "300/-"],
+["2- O3+ Face Cleanup", "1050/-"],
+["5- Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"], ["   O3+ Face Mask", "500/-"],
+["9- Instant Glow Body Polishing", "3500/-"], ["   Face Polishing", "800/-"],
+["12- O3+ Gold/Diamond Facial", "2100/-"], ["   Full Back Advance Treatment", "950/-"],
+["16- Body Oil Massage", "1050/-"], ["   Body Steam", "500/-"], ["   Oil Head Massage", "300/-"],
+["20- Loreal Hair Spa", "1000/-"], ["   Hair Cut", "300/-"],
+["23- O3+ Face Cleanup", "1050/-"], ["   Full Back Massage", "150/-"], ["   Full Hand Massage", "150/-"],
+["26- Instant Glow Body Polishing", "3500/-"], ["   Face Polishing", "800/-"],
+["29- Face Bleaching", "400/-"], ["   Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"],
+["30- O3+ Gold/Diamond Facial", "2100/-"], ["   Anti-tan Body Waxing", "2150/-"], ["   Eyebrow+Forehead+Upperlips+Chin", "90/-"]
+],
+total: "28,190/-", offer: "19,550"
+},
+{
+type: 'package', titleEN: 'Special Pre-Bridal Package (One Month) - 4', titleHI: 'स्पेशल प्री-ब्राइडल पैकेज (1 महीना) - 4',
+items: [
+["1- Body De-Tan", "2250/-"], ["   Face De-Tan", "300/-"],
+["3- O3+ Gold/Diamond Cleanup", "1250/-"],
+["4- Full Back Treatment", "950/-"],
+["5- Body Cream Massage", "1250/-"], ["   Face Mask", "500/-"],
+["7- Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"],
+["9- Oil Head Massage", "300/-"],
+["10- Oil Body Massage", "1050/-"], ["   Body Steam", "500/-"],
+["11- Loreal Hair Spa", "1000/-"],
+["12- O3+ Gold/Diamond Cleanup", "1250/-"],
+["13- Glow Body Pack", "1500/-"],
+["14- Full Back & Hand Massage", "300/-"],
+["15- Instant Glow Body Polishing", "3500/-"], ["   Face Polishing", "800/-"],
+["17- O3+ Gold/ Diamond Facial", "2100/-"],
+["19- Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"],
+["20- O3+ Gold/Diamond Cleanup", "1250/-"], ["   O3+ Face Mask", "500/-"],
+["21- Body Oil Massage", "1050/-"], ["   Body Steam", "500/-"], ["   Head Massage", "300/-"],
+["23- Instant Glow Body Pack", "1500/-"], ["   Face De-tan", "300/-"],
+["24- O3+ Gold/Diamond Cleanup", "1250/-"],
+["25- Hand Polishing", "800/-"], ["   Back Polishing", "1000/-"], ["   O3+ Face Mask", "500/-"],
+["27- Loreal Hair Spa", "1000/-"], ["   Hair Cut", "300/-"], ["   Face Bleach", "400/-"],
+["29- Instant Glow Body Polishing", "3500/-"], ["   Advance Pedicure", "850/-"], ["   Advance Manicure", "750/-"],
+["30- O3+ Gold/Diamond Facial", "2100/-"], ["   Anti Tan Body Waxing", "2150/-"], ["   Eyebrow + Forehead + Upperlips + Chin", "90/-"]
+],
+total: "43,890/-", offer: "30,500"
+}
+]
+};
+​let currentLang = 'en';
+let wonDiscount = 0;
+let shareBonusActive = localStorage.getItem('salon_share_bonus') === 'true';
+​const today = new Date().toISOString().split('T')[0];
+document.getElementById('b-date').setAttribute('min', today);
+​window.addEventListener('load', () => {
+createFloatingBackground();
+setTimeout(() => {
+document.getElementById('splash-screen').classList.add('hidden-splash');
+document.body.classList.add('page-loaded');
+}, 1800);
+});
+​// Generate Glowing Floating Background Emojis
+function createFloatingBackground() {
+const bgContainer = document.getElementById('floating-bg');
+const emojis = ['✂️', '💄', '🪮', '✨', '🦋', '💅', '🌸'];
+for(let i=0; i < 28; i++) {
+let el = document.createElement('div');
+el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+el.className = 'bg-emoji';
+el.style.left = ${Math.random() * 96}vw;
+el.style.animationDuration = ${12 + Math.random() * 18}s;
+el.style.animationDelay = ${Math.random() * 12}s;
+el.style.fontSize = ${1.4 + Math.random() * 1.8}rem;
+bgContainer.appendChild(el);
+}
+}
+​function showShareNotification() {
+document.getElementById('shareNotifyModal').classList.add('active');
+}
+function closeShareModal() {
+document.getElementById('shareNotifyModal').classList.remove('active');
+}
+​async function executeShare() {
+closeShareModal();
+const shareData = {
+title: 'Volume Salon - Premium Ladies Beauty Studio',
+text: 'Checkout Volume Salon for amazing beauty packages and exclusive offers! 🎀',
+url: 'https://www.rkyshree.in/VolumeSalon'
+};
+try {
+if (navigator.share) {
+await navigator.share(shareData);
+grantShareBonus();
+} else {
+navigator.clipboard.writeText(shareData.url);
+grantShareBonus();
+}
+} catch (err) { console.log('Share error:', err); }
+}
+​function grantShareBonus() {
+shareBonusActive = true;
+localStorage.setItem('salon_share_bonus', 'true');
+}
+​function initScrollAnimations() {
+const reveals = document.querySelectorAll('.reveal-up');
+const observer = new IntersectionObserver((entries) => {
+entries.forEach(entry => {
+if (entry.isIntersecting) {
+entry.target.classList.add('active');
+}
+});
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+}
+​function initOfferSection() {
+const wheel = document.getElementById('spinWheel');
+wheel.innerHTML = '';
+SALON_CONFIG.specialOffer.prizes.forEach((prize, idx) => {
+let deg = 30 + (idx * 60);
+wheel.innerHTML += <div class="absolute w-full h-full flex justify-center items-start pt-6 font-bold text-wine-900 text-2xl" style="transform: rotate(${deg}deg)">${prize}%</div>;
+});
+}
+​function setLanguage(lang) {
+currentLang = lang;
+​const activeToggle = "px-3 py-1 rounded-full text-xs font-bold bg-white text-wine-700 shadow transition-all";
+const inactiveToggle = "px-3 py-1 rounded-full text-xs font-bold text-gray-400 hover:text-wine-700 transition-all";
+​document.getElementById('btn-en').className = lang === 'en' ? activeToggle : inactiveToggle;
+document.getElementById('btn-hi').className = lang === 'hi' ? activeToggle : inactiveToggle;
+​document.getElementById('offer-title').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.titleEN : SALON_CONFIG.specialOffer.titleHI;
+document.getElementById('offer-desc').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.descEN : SALON_CONFIG.specialOffer.descHI;
+​const elements = document.querySelectorAll('[data-en][data-hi]');
+elements.forEach(el => {
+if (el.innerHTML.includes('<') && !el.hasAttribute('placeholder')) {
+el.innerHTML = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
+} else {
+el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-hi');
+}
+});
+​renderServices();
+renderPackages();
+renderFullMenu();
+populateBookingDropdown();
+setTimeout(initScrollAnimations, 100);
+}
+​function renderServices() {
+const container = document.getElementById('services-container');
+container.innerHTML = '';
+​SALON_CONFIG.services.forEach(srv => {
+const name = currentLang === 'en' ? srv.nameEN : srv.nameHI;
+const freeOfferText = currentLang === 'en' ? srv.freeOfferEN : srv.freeOfferHI;
+const priceText = srv.price.includes('₹') ? srv.price : (srv.price.includes('Price') ? srv.price : ₹${srv.price});
+​const html = <div class="${srv.bgColor} rounded-[2rem] overflow-hidden flex flex-col h-full shadow-lg hover:shadow-2xl transition-all duration-300 reveal-up hover:-translate-y-2 border border-gray-100 relative"> ${srv.freeOfferEN ?<div class="free-ribbon">🎁 FREE: ${freeOfferText}</div>` : ''}
+​<div class="h-56 overflow-hidden relative">
+<img src="${srv.imgUrl}" alt="${name}" class="w-full h-full object-cover">
+<div class="absolute bottom-4 right-4 bg-white/95 backdrop-blur px-4 py-2 rounded-xl shadow-lg border border-gold-200 text-wine-900 font-bold text-lg">
+{priceText}
+</div>
+</div>
+<div class="p-8 flex-grow flex flex-col">
+<h4 class="font-serif font-bold text-2xl text-wine-900 mb-6 flex-grow">{name}</h4>
+<button onclick="openBookingModal('${srv.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-3.5 rounded-xl font-bold shadow-[0_4px_12px_rgba(30,189,92,0.3)] transition-all uppercase tracking-wide text-xs">
+${currentLang === 'en' ? 'Select Service' : 'सर्विस चुनें'}
+</button>
+</div>
+</div>
+`;
+container.innerHTML += html;
+});
+}
+​function renderPackages() {
+const container = document.getElementById('packages-container');
+container.innerHTML = '';
+​SALON_CONFIG.packages.forEach((pkg) => {
+const name = currentLang === 'en' ? pkg.nameEN : pkg.nameHI;
+const items = currentLang === 'en' ? pkg.itemsEN : pkg.itemsHI;
+​let listHtml = '';
+items.forEach(item => {
+listHtml += <li class="flex items-start gap-3 text-sm text-wine-900 mb-2.5 font-semibold"> <span class="text-gold-500 text-base mt-0.5">✓</span> <span>${item}</span> </li>;
+});
+​const saveAmt = pkg.mrp - pkg.offerPrice;
+​const html = `
+<div class="bg-white rounded-[2rem] flex flex-col h-full shadow-xl border border-gray-100 reveal-up hover:border-gold-400 transition-all overflow-hidden group">
+<div class="h-64 w-full relative overflow-hidden">
+<img src="${pkg.imgUrl}" alt="${name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+<div class="absolute inset-0 bg-gradient-to-t from-wine-900/90 via-wine-900/20 to-transparent"></div>
+​<div class="absolute top-4 right-4 bg-red-600 text-white font-bold px-3 py-1 rounded-full shadow-lg text-sm z-10 animate-pulse">
+SAVE ₹{saveAmt}!
+</div>
+<div class="absolute bottom-4 right-4 flex items-end gap-2 bg-white/95 backdrop-blur px-4 py-2 rounded-2xl shadow-xl border border-gold-200">
+<div class="flex flex-col items-end">
+<span class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-[-4px]">MRP</span>
+<del class="text-red-500 font-bold text-sm">₹{pkg.mrp}</del>
+</div>
+<div class="flex flex-col items-end ml-2 border-l border-gray-200 pl-3">
+<span class="text-[10px] text-wine-600 font-bold uppercase tracking-wider mb-[-4px]">Offer</span>
+<span class="text-wine-900 font-black text-2xl">₹${pkg.offerPrice}</span>
+</div>
+</div>
+</div>
+​<div class="p-8 lg:p-10 flex flex-col flex-grow">
+<h4 class="font-serif text-3xl font-bold text-wine-900 mb-6">${name}</h4>
+​<div class="bg-rose-50/50 rounded-2xl p-6 mb-8 flex-grow border border-rose-100">
+<ul class="m-0 p-0 list-none">
+${listHtml}
+</ul>
+</div>
+​<button onclick="openBookingModal('${pkg.id}')" class="bg-[#1ebd5c] hover:bg-[#189e4c] text-white w-full py-4 rounded-xl font-bold shadow-[0_5px_15px_rgba(30,189,92,0.4)] mt-auto text-sm uppercase tracking-wide transition-all transform hover:-translate-y-1">
+${currentLang === 'en' ? 'Book This Package' : 'यह पैकेज बुक करें'}
+</button>
+</div>
+</div>
+`;
+container.innerHTML += html;
+});
+}
+​function renderFullMenu() {
+const container = document.getElementById('full-menu-container');
+container.innerHTML = '';
+​SALON_CONFIG.fullMenu.forEach(category => {
+if (category.type === 'package') {
+let rowsHtml = '';
+category.items.forEach(item => {
+const isDashed = item[0].includes('-----');
+const itemName = item[0];
+const itemPrice = item[1] || '';
+rowsHtml += <div class="flex justify-between items-center py-1 md:py-1.5 ${isDashed ? 'opacity-50' : 'border-b border-wine-800/30'} text-[12px] md:text-[13.5px] hover:bg-wine-800/40 px-1 transition-colors"> <div class="text-rose-100 font-medium tracking-wide">${itemName}</div> <div class="text-gold-400 font-bold">${itemPrice}</div> </div>;
+});
+​const offerBadge = category.offer ?  <div class="round-badge shadow-2xl ml-4"> <span class="sm-text">only</span> <span class="lg-text">${category.offer}/-</span> </div> : '';
+​const html = `
+<div class="break-inside-avoid bg-wine-900 p-6 md:p-8 rounded-3xl border-2 border-gold-500/60 shadow-[0_10px_30px_rgba(0,0,0,0.5)] reveal-up mb-6 relative overflow-hidden group hover:border-gold-400 transition-colors">
+<div class="absolute top-0 right-0 w-24 h-24 bg-gold-500/10 rounded-bl-full pointer-events-none"></div>
+​<h4 class="font-serif text-2xl md:text-3xl text-gold-400 mb-6 font-bold tracking-wide text-center border-b border-gold-500/30 pb-4">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4>
+​<div class="flex flex-col mb-6">${rowsHtml}</div>
+​<div class="border-t-2 border-gold-500/50 pt-5 flex justify-between items-end gap-2 mt-auto relative z-10">
+<div class="text-white text-lg font-bold uppercase tracking-widest leading-none">
+<span class="text-rose-200 text-xs block mb-1">Total</span>
+<span class="text-2xl">{category.total}</span>
+</div>
+${offerBadge}
+</div>
+</div>
+`;
+container.innerHTML += html;
+} 
+else if (category.type === 'course') {
+let rowsHtml = '';
+category.items.forEach(item => {
+rowsHtml += `
+<div class="grid grid-cols-12 gap-2 py-3 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 px-2 items-center">
+<div class="text-rose-100 font-medium col-span-6 pr-2 leading-snug">${item[0]}</div>
+<div class="text-gold-400 font-bold col-span-3 text-center">{item[1]}</div>
+<div class="text-gold-400 font-bold col-span-3 text-right">${item[2]}</div>
+</div>
+`;
+});
+​const headersHtml = <div class="grid grid-cols-12 gap-2 py-3 border-b-2 border-gold-500/50 mb-3 text-[11px] md:text-xs bg-gold-400 text-wine-900 rounded-t-lg px-2"> <div class="font-bold uppercase col-span-6">${category.headers[0]}</div> <div class="font-bold uppercase col-span-3 text-center">${category.headers[1]}</div> <div class="font-bold uppercase col-span-3 text-right">${category.headers[2]}</div> </div>;
+​const html = <div class="break-inside-avoid bg-wine-900/60 p-5 md:p-8 rounded-3xl border border-wine-700/50 shadow-2xl reveal-up mb-6 hover:border-gold-500/30 transition-colors"> <h4 class="font-serif text-2xl text-rose-300 mb-5 font-bold tracking-wide">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4> ${headersHtml} <div class="flex flex-col">${rowsHtml}</div> </div>;
+container.innerHTML += html;
+}
+else {
+let rowsHtml = '';
+category.items.forEach(item => {
+let colsHtml = '';
+const is3Col = item.length === 3;
+if (is3Col) {
+colsHtml += <div class="text-rose-100 font-medium col-span-2">${item[0]}</div>;
+colsHtml += <div class="text-gold-400 font-bold text-center">${item[1]}</div>;
+colsHtml += <div class="text-gold-400 font-bold text-right">${item[2]}</div>;
+rowsHtml += <div class="grid grid-cols-4 gap-2 py-2.5 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 transition-colors px-1 items-center">${colsHtml}</div>;
+} else {
+colsHtml += <div class="text-rose-100 font-medium">${item[0]}</div>;
+colsHtml += <div class="text-gold-400 font-bold text-right">${item[1]}</div>;
+rowsHtml += <div class="flex justify-between items-center py-2.5 border-b border-wine-800/40 text-[13px] md:text-sm hover:bg-wine-800/30 transition-colors px-1">${colsHtml}</div>;
+}
+});
+​let headersHtml = '';
+if (category.headers) {
+const is3ColHead = category.headers.length === 3;
+if (is3ColHead) {
+headersHtml = <div class="grid grid-cols-4 gap-2 py-2 border-b-2 border-gold-500/50 mb-3 text-[10px] md:text-xs"> <div class="text-gold-500 font-bold uppercase col-span-2">${category.headers[0]}</div> <div class="text-gold-500 font-bold uppercase text-center">${category.headers[1]}</div> <div class="text-gold-500 font-bold uppercase text-right">${category.headers[2]}</div> </div>;
+} else {
+headersHtml = <div class="flex justify-between items-center py-2 border-b-2 border-gold-500/50 mb-3 text-[10px] md:text-xs"> <div class="text-gold-500 font-bold uppercase">${category.headers[0]}</div> <div class="text-gold-500 font-bold uppercase text-right">${category.headers[1]}</div> </div>;
+}
+}
+​const html = <div class="break-inside-avoid bg-wine-900/60 p-5 md:p-8 rounded-3xl border border-wine-700/50 shadow-2xl reveal-up mb-6 hover:border-gold-500/30 transition-colors"> <h4 class="font-serif text-2xl text-rose-300 mb-5 font-bold tracking-wide">${currentLang === 'en' ? category.titleEN : category.titleHI}</h4> ${headersHtml} <div class="flex flex-col">${rowsHtml}</div> </div>;
+container.innerHTML += html;
+}
+});
+}
+​let isSpinning = false;
+function startSpin() {
+if(isSpinning) return;
+isSpinning = true;
+​const wheel = document.getElementById('spinWheel');
+const prizes = SALON_CONFIG.specialOffer.prizes;
+​let todayDate = new Date().toDateString();
+let spinData = JSON.parse(localStorage.getItem('salonSpinData')) || { date: todayDate, count25: 0 };
+if (spinData.date !== todayDate) spinData = { date: todayDate, count25: 0 };
+​let winIndex = 4;
+if (Math.random() < 0.15 && spinData.count25 < 5) {
+winIndex = 5;
+spinData.count25++;
+localStorage.setItem('salonSpinData', JSON.stringify(spinData));
+}
+​let extraDegrees = 360 - (30 + (winIndex * 60));
+wheel.style.transform = rotate(${1800 + extraDegrees}deg);
+​setTimeout(() => {
+isSpinning = false;
+wonDiscount = prizes[winIndex];
+document.getElementById('spinActionArea').classList.add('hidden');
+document.getElementById('winResultArea').classList.remove('hidden');
+document.getElementById('winTitle').innerText = currentLang === 'en' ? "Congratulations!" : "बधाई हो!";
+document.getElementById('winDesc').innerText = currentLang === 'en' ? You won ${wonDiscount}% DISCOUNT! : आपने ${wonDiscount}% की छूट जीती है!;
+}, 4000);
+}
+​function claimOffer() { openBookingModal(); }
+​const modal = document.getElementById('bookingModal');
+const serviceSelect = document.getElementById('b-service');
+​function populateBookingDropdown() {
+serviceSelect.innerHTML = '';
+const defaultOpt = document.createElement('option');
+defaultOpt.value = "";
+defaultOpt.text = currentLang === 'en' ? "-- Select a Service or Package --" : "-- कोई सर्विस या पैकेज चुनें --";
+defaultOpt.disabled = true;
+defaultOpt.selected = true;
+serviceSelect.appendChild(defaultOpt);
+​const groupPack = document.createElement('optgroup');
+groupPack.label = currentLang === 'en' ? "PACKAGES (OFFER PRICES)" : "पैकेज (ऑफर प्राइस)";
+SALON_CONFIG.packages.forEach(pkg => {
+const opt = document.createElement('option');
+opt.value = currentLang === 'en' ? ${pkg.nameEN} (Rs. ${pkg.offerPrice}) : ${pkg.nameHI} (Rs. ${pkg.offerPrice});
+opt.text = ${currentLang === 'en' ? pkg.nameEN : pkg.nameHI} - ₹${pkg.offerPrice};
+opt.dataset.id = pkg.id;
+groupPack.appendChild(opt);
+});
+serviceSelect.appendChild(groupPack);
+​const groupServ = document.createElement('optgroup');
+groupServ.label = currentLang === 'en' ? "SERVICES & FREE OFFERS" : "सेवाएं और मुफ्त ऑफर्स";
+SALON_CONFIG.services.forEach(srv => {
+const opt = document.createElement('option');
+let priceTxt = srv.price.includes('₹') ? srv.price : (srv.price.includes('Price') ? srv.price : ₹${srv.price});
+let freeOfferTxt = currentLang === 'en' ? srv.freeOfferEN : srv.freeOfferHI;
+opt.value = currentLang === 'en' ? ${srv.nameEN} (${priceTxt}) - Free: ${freeOfferTxt} : ${srv.nameHI} (${priceTxt}) - मुफ्त: ${freeOfferTxt};
+opt.text = ${currentLang === 'en' ? srv.nameEN : srv.nameHI} - ${priceTxt};
+opt.dataset.id = srv.id;
+groupServ.appendChild(opt);
+});
+serviceSelect.appendChild(groupServ);
+}
+​function openBookingModal(preselectId = null) {
+modal.classList.add('active');
+document.body.style.overflow = 'hidden';
+​const banner = document.getElementById('modalDiscountBanner');
+let showBanner = false;
+let bannerHtml = '';
+​if(wonDiscount > 0) {
+bannerHtml += <span>🎉 ${currentLang === 'en'?'Won:':'जीता:'} <strong>${wonDiscount}% OFF</strong></span>;
+showBanner = true;
+}
+if(shareBonusActive) {
+bannerHtml += <span class="bg-green-100 text-green-800 px-2 py-0.5 rounded ml-2">🎁 ${currentLang === 'en'?'+ Rs. 50 Bonus':'+ ₹50 बोनस'}</span>;
+showBanner = true;
+}
+​if(showBanner) {
+banner.innerHTML = bannerHtml;
+banner.classList.remove('hidden');
+} else {
+banner.classList.add('hidden');
+}
+​if (preselectId) {
+const options = serviceSelect.options;
+for(let i=0; i < options.length; i++) {
+if(options[i].dataset.id === preselectId) {
+serviceSelect.selectedIndex = i;
+break;
+}
+}
+}
+}
+​function closeBookingModal() {
+modal.classList.remove('active');
+document.body.style.overflow = 'auto';
+}
+​function submitBooking(e) {
+e.preventDefault();
+const name = document.getElementById('b-name').value;
+const date = document.getElementById('b-date').value;
+const timeInput = document.getElementById('b-time').value;
+let timeParts = timeInput.split(':');
+let hours = parseInt(timeParts[0]);
+let ampm = hours >= 12 ? 'PM' : 'AM';
+hours = hours % 12;
+hours = hours ? hours : 12;
+const formattedTime = hours + ':' + timeParts[1] + ' ' + ampm;
+​const dateParts = date.split('-');
+const formattedDate = ${dateParts[2]}-${dateParts[1]}-${dateParts[0]};
+const service = document.getElementById('b-service').value;
+​let msg = "";
+if(currentLang === 'en') {
+msg += "NEW APPOINTMENT REQUEST\n";
+msg += "--------------------------------------\n";
+msg += *Name:* ${name}\n;
+msg += *Date:* ${formattedDate}\n;
+msg += *Time:* ${formattedTime}\n;
+msg += *Service:* ${service}\n;
+if(wonDiscount > 0 || shareBonusActive) {
+msg += "--------------------------------------\n";
+msg += "DISCOUNTS APPLIED:\n";
+if(wonDiscount > 0) msg += ✅ Spin & Win: ${wonDiscount}% OFF\n;
+if(shareBonusActive) msg += ✅ Share Bonus: Rs. 50 OFF\n;
+}
+msg += "--------------------------------------\n";
+msg += "Please confirm my booking.";
+} else {
+msg += "नई बुकिंग का अनुरोध\n";
+msg += "--------------------------------------\n";
+msg += *नाम:* ${name}\n;
+msg += *तारीख:* ${formattedDate}\n;
+msg += *समय:* ${formattedTime}\n;
+msg += *सर्विस/पैकेज:* ${service}\n;
+if(wonDiscount > 0 || shareBonusActive) {
+msg += "--------------------------------------\n";
+msg += "लागू छूट (Discounts):\n";
+if(wonDiscount > 0) msg += ✅ स्पिन एंड विन: ${wonDiscount}% की छूट\n;
+if(shareBonusActive) msg += ✅ शेयर बोनस: ₹50 की छूट\n;
+}
+msg += "--------------------------------------\n";
+msg += "कृपया मेरी बुकिंग कन्फर्म करें।";
+}
+​window.open(https://wa.me/${SALON_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}, '_blank');
+closeBookingModal();
+document.getElementById('bookingForm').reset();
+}
+​document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('hero-img-1').src = SALON_CONFIG.heroImages.img1;
+document.getElementById('hero-img-2').src = SALON_CONFIG.heroImages.img2;
+initOfferSection();
+setLanguage('en');
+});
+</script>
 </body>
 </html>
