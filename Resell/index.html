@@ -56,13 +56,11 @@
             }  
         }  
         
-        // Image Fallback System: Shows SHRAYNEX if any image fails to load
+        // Advanced Image Fallback System: Keeps layout intact and shows SHRAYNEX logo dynamically
         window.handleImageError = function(el) {
-            el.onerror = null;
-            const div = document.createElement('div');
-            div.className = (el.className || "") + " flex items-center justify-center bg-gray-100 text-primary font-black text-xs tracking-widest overflow-hidden text-center";
-            div.innerHTML = 'SHRAYNEX';
-            el.parentNode.replaceChild(div, el);
+            el.onerror = null; 
+            const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="100%" height="100%" fill="#f8f8f9"/><text x="50%" y="50%" font-family="Arial, sans-serif" font-size="52" font-weight="900" fill="#f43397" dominant-baseline="middle" text-anchor="middle">SHRAYNEX</text></svg>`);
+            el.src = `data:image/svg+xml;utf8,${svg}`;
         };
     </script>  
 
@@ -106,12 +104,6 @@
             100% { transform: translateY(0px) rotate(0deg); }
         }
         .bg-icon { animation: bgFloat 5s ease-in-out infinite; opacity: 0.15; }
-        
-        .poster-card { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s ease; border: 1px solid #f1f1f1; background: #fff; }
-        .poster-card:active { transform: scale(0.97); }
-        .poster-img { width: 100%; height: 100%; object-fit: cover; }
-        .poster-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); padding: 30px 10px 10px 10px; }
-        .poster-title { color: #fff; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
         .step-circle { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; z-index: 10; transition: all 0.3s; border: 2px solid #e5e7eb; background: #fff; }
         .step-circle.active { background: #22c55e; border-color: #22c55e; color: #fff; }
@@ -324,11 +316,6 @@
                 <div id="dynamicBrandsGrid" class="grid grid-cols-4 gap-y-5 gap-x-3"></div>
             </div>
 
-            <div id="feedCategoriesView" class="px-3 pb-6 border-t border-gray-100 pt-4">
-                <h3 class="font-black text-gray-900 text-lg mb-3 mt-2">Shop by Collection</h3>
-                <div id="dynamicCategoryGrid" class="grid grid-cols-3 gap-2"></div>
-            </div>
-
             <div id="feedProductsView" class="hidden pb-6">
                 <div class="bg-white px-3 py-3 flex items-center gap-3 border-b border-gray-200 mb-2 sticky top-[64px] z-10 shadow-sm">
                     <button onclick="closeCategoryViewManual()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 active:bg-gray-200"><i class="fa-solid fa-arrow-left"></i></button>
@@ -359,6 +346,13 @@
                 </div>
                 <button onclick="openModal('editProfileModal')" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600"><i class="fa-solid fa-pen text-xs"></i></button>
             </div>  
+            
+            <div id="profileCategoriesView" class="bg-white mb-2 shadow-sm p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-black text-gray-900 text-base">Shop by Collection</h4>
+                </div>
+                <div id="dynamicCategoryGrid" class="grid grid-cols-4 gap-4"></div>
+            </div>
 
             <div class="bg-white mb-2 shadow-sm p-4 border-l-4 border-l-blue-500 relative overflow-hidden">
                 <i class="fa-solid fa-gift absolute -right-3 -top-3 text-6xl text-blue-50 opacity-50 pointer-events-none"></i>
@@ -1385,14 +1379,13 @@
         if(grid) {  
             let html = window.allCategories.map((cat, index) => {
                 const safeCat = cat.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                const imgUrl = window.categoryImages[cat] || `https://placehold.co/600x800/fce7f3/f43397?text=${encodeURIComponent(cat)}`;
-                const cssClass = "col-span-1 aspect-[3/4]";
+                const imgUrl = window.categoryImages[cat] || '';
                 return `
-                <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
-                    <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy" decoding="async" onerror="handleImageError(this)">
-                    <div class="poster-overlay">
-                        <h3 class="poster-title text-[10px] sm:text-xs">${escapeHtml(cat)}</h3>
+                <div class="flex flex-col items-center gap-1.5 cursor-pointer group" onclick="openCategoryView('${safeCat}')">
+                    <div class="w-14 h-14 rounded-full bg-primary-light border border-primary/20 shadow-sm overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <img src="${escapeHtml(imgUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(cat)}" loading="lazy" decoding="async" onerror="handleImageError(this)">
                     </div>
+                    <span class="text-[10px] font-bold text-gray-700 text-center w-full truncate px-1">${escapeHtml(cat)}</span>
                 </div>`;
             }).join('');  
             grid.innerHTML = html;
@@ -1438,7 +1431,7 @@
 
             return `
             <div class="flex flex-col items-center gap-1.5 relative hover:scale-105 transition-transform duration-200">
-                <a href="${escapeHtml(b.link)}" target="_blank" class="relative w-full aspect-square rounded-[18px] bg-white shadow-sm border border-gray-200 flex items-center justify-center p-2.5 overflow-visible">
+                <a href="${escapeHtml(b.link)}" target="_blank" class="relative w-full aspect-square rounded-[18px] bg-white shadow-sm border border-gray-200 flex items-center justify-center p-2.5 overflow-hidden">
                    <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}" loading="lazy" decoding="async" onerror="handleImageError(this)">
                    ${b.badge ? `<div class="absolute -top-1.5 -left-1.5 bg-[#00e676] text-black text-[9px] font-bold px-1.5 py-[2px] rounded-md shadow-sm z-10 whitespace-nowrap">${escapeHtml(b.badge)}</div>` : ''}
                 </a>
@@ -1536,9 +1529,10 @@
     };
 
     window.openCategoryView = (cat) => { 
+        switchTab('Feed');
         currentFilter = cat; 
-        document.getElementById('feedCategoriesView').classList.add('hidden');
         document.getElementById('exploreBrandsView').classList.add('hidden');
+        document.getElementById('mainCarouselContainer').classList.add('hidden');
         document.getElementById('feedProductsView').classList.remove('hidden');
         document.getElementById('catViewTitle').innerText = cat === 'All' ? 'All Products' : cat + ' Collection';
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1554,7 +1548,7 @@
     window.closeCategoryView = (fromPopState = false) => {
         currentFilter = 'All';
         document.getElementById('feedProductsView').classList.add('hidden');
-        document.getElementById('feedCategoriesView').classList.remove('hidden');
+        if(window.siteBanners && window.siteBanners.length > 0) document.getElementById('mainCarouselContainer').classList.remove('hidden');
         if(window.exploreBrands && window.exploreBrands.length > 0) document.getElementById('exploreBrandsView').classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
@@ -1770,8 +1764,8 @@
         if(q) {
             f = f.filter(p => `${p.title||''} ${p.category||''}`.toLowerCase().includes(q));  
             if(document.getElementById('feedProductsView').classList.contains('hidden')) {
-                document.getElementById('feedCategoriesView').classList.add('hidden');
                 document.getElementById('exploreBrandsView').classList.add('hidden');
+                document.getElementById('mainCarouselContainer').classList.add('hidden');
                 document.getElementById('feedProductsView').classList.remove('hidden');
                 document.getElementById('catViewTitle').innerText = 'Search Results';
                 
@@ -2709,7 +2703,7 @@
         statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Compressing & Uploading...</span>`;
         let uploadedUrls = []; let limitReached = false;
         
-        // Super Fast Image Compression System
+        // Super Fast Image Compression System (HD Quality, Small Size)
         const compressImage = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader(); reader.readAsDataURL(file); 
             reader.onload = (event) => {
@@ -2732,7 +2726,7 @@
         for(let i=0; i<files.length; i++) {
             if(limitReached) break;
             try {
-                // 1. Compress Image
+                // 1. Compress Image Before Sending
                 const compressedBase64 = await compressImage(files[i]); 
                 
                 // 2. Upload to ImgBB
