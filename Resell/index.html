@@ -55,6 +55,15 @@
                 }  
             }  
         }  
+        
+        // Image Fallback System: Shows SHRAYNEX if any image fails to load
+        window.handleImageError = function(el) {
+            el.onerror = null;
+            const div = document.createElement('div');
+            div.className = (el.className || "") + " flex items-center justify-center bg-gray-100 text-primary font-black text-xs tracking-widest overflow-hidden text-center";
+            div.innerHTML = 'SHRAYNEX';
+            el.parentNode.replaceChild(div, el);
+        };
     </script>  
 
     <style>  
@@ -423,7 +432,7 @@
                 <button id="toggleSignupBtn" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-md text-gray-500 font-bold text-sm">Sign Up</button>  
             </div>  
             <button onclick="loginWithGoogle()" id="googleAuthBtn" class="w-full border border-gray-300 bg-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-3 mb-5 hover:bg-gray-50 text-gray-700 shadow-sm">  
-                <img src="https://www.google.com/favicon.ico" class="w-4 h-4"> Continue with Google  
+                <img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google  
             </button>  
             <div class="flex items-center gap-4 mb-5"><div class="h-px bg-gray-200 flex-1"></div><span class="text-[10px] font-semibold text-gray-400 uppercase">Or Email</span><div class="h-px bg-gray-200 flex-1"></div></div>  
             <form id="authForm" onsubmit="handleEmailAuth(event)" class="space-y-3">  
@@ -498,7 +507,7 @@
         </div>  
         <div class="p-4 overflow-y-auto">  
             <div class="flex gap-3 mb-5 p-3 bg-gray-50 rounded-lg border border-gray-200">  
-                <img id="shareProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async">  
+                <img id="shareProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async" onerror="handleImageError(this)">  
                 <div class="flex-1">  
                     <h4 id="shareProductTitle" class="font-medium text-sm text-gray-800 line-clamp-2">Product Name</h4>  
                     <p class="text-xs text-gray-500 mt-1">Base Price: <span id="shareBasePrice" class="font-bold text-gray-900">₹0</span></p>  
@@ -539,7 +548,7 @@
         
         <div class="p-4 overflow-y-auto pb-[100px]">  
             <div class="bg-white p-3 rounded-lg flex gap-3 mb-4 shadow-sm border border-gray-200">  
-                <img id="orderProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async">  
+                <img id="orderProductImg" src="" class="w-16 h-16 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async" onerror="handleImageError(this)">  
                 <div class="flex-1">  
                     <h4 id="orderProductTitle" class="font-medium text-sm text-gray-800 line-clamp-2">Title</h4>  
                     <p class="text-xs text-gray-500 mt-1">Price: <span id="orderBasePrice" class="font-bold text-gray-900">₹0</span></p>  
@@ -633,7 +642,7 @@
             <div class="bg-blue-50 border border-blue-100 p-3 rounded-lg text-center">
                 <p id="paymentInstructions" class="text-xs font-medium text-blue-900 mb-3 leading-relaxed"></p>
                 <div class="bg-white p-3 rounded-lg border border-blue-200 text-center shadow-sm">
-                    <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-40 h-40 mx-auto rounded-lg mb-3 object-contain border border-gray-100" loading="lazy" decoding="async">
+                    <img src="https://i.ibb.co/8Lrn2v88/Picsart-26-09-28-16-23-25-759.jpg" class="w-40 h-40 mx-auto rounded-lg mb-3 object-contain border border-gray-100" loading="lazy" decoding="async" onerror="handleImageError(this)">
                     <div class="flex items-center justify-center gap-2 mb-3">
                         <span class="text-sm font-black text-gray-800">UPI: 9451239239</span>
                         <button type="button" onclick="copyGenericText('9451239239', 'UPI ID Copied!')" class="text-primary text-xs font-bold bg-primary-light px-3 py-1.5 rounded border border-primary/20">Copy UPI</button>
@@ -754,7 +763,7 @@
             <button onclick="closeModal('iosInstallModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="p-6 flex flex-col items-center text-center">
-            <img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm" loading="lazy" decoding="async">
+            <img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm" loading="lazy" decoding="async" onerror="handleImageError(this)">
             <p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p>
             
             <div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3">
@@ -1009,7 +1018,7 @@
         container.innerHTML = `<div class="flex overflow-x-auto hide-scrollbar items-start w-full gap-4 snap-x">
             ${catalogHighlights.map(item => `
                 <a href="${item.link}" target="_blank" class="flex flex-col items-center gap-1.5 shrink-0 w-[65px] cursor-pointer group snap-start">
-                    <div class="w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-primary to-amber-400 group-hover:scale-105 transition transform shadow-sm"><img src="${item.image}" class="w-full h-full rounded-full border-[2px] border-white object-cover bg-gray-100" alt="${item.title}" loading="lazy" decoding="async"></div>
+                    <div class="w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-primary to-amber-400 group-hover:scale-105 transition transform shadow-sm"><img src="${item.image}" class="w-full h-full rounded-full border-[2px] border-white object-cover bg-gray-100" alt="${item.title}" loading="lazy" decoding="async" onerror="handleImageError(this)"></div>
                     <span class="text-[10px] font-bold text-gray-700 text-center w-full truncate px-1">${item.title}</span>
                 </a>
             `).join('')}
@@ -1335,7 +1344,7 @@
         
         carousel.innerHTML = window.siteBanners.map((b, i) => `
             <div class="min-w-full snap-start relative flex justify-center bg-gray-100 cursor-pointer aspect-video" onclick="${b.link ? `window.open('${escapeHtml(b.link)}', '_blank')` : ''}">
-                <img src="${escapeHtml(b.img)}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+                <img src="${escapeHtml(b.img)}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="handleImageError(this)">
             </div>
         `).join('');
         
@@ -1380,7 +1389,7 @@
                 const cssClass = "col-span-1 aspect-[3/4]";
                 return `
                 <div class="${cssClass} poster-card" onclick="openCategoryView('${safeCat}')">
-                    <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy" decoding="async">
+                    <img src="${escapeHtml(imgUrl)}" class="poster-img" alt="${escapeHtml(cat)}" loading="lazy" decoding="async" onerror="handleImageError(this)">
                     <div class="poster-overlay">
                         <h3 class="poster-title text-[10px] sm:text-xs">${escapeHtml(cat)}</h3>
                     </div>
@@ -1430,7 +1439,7 @@
             return `
             <div class="flex flex-col items-center gap-1.5 relative hover:scale-105 transition-transform duration-200">
                 <a href="${escapeHtml(b.link)}" target="_blank" class="relative w-full aspect-square rounded-[18px] bg-white shadow-sm border border-gray-200 flex items-center justify-center p-2.5 overflow-visible">
-                   <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}" loading="lazy" decoding="async">
+                   <img src="${escapeHtml(b.img)}" class="w-full h-full object-contain" alt="${escapeHtml(b.title)}" loading="lazy" decoding="async" onerror="handleImageError(this)">
                    ${b.badge ? `<div class="absolute -top-1.5 -left-1.5 bg-[#00e676] text-black text-[9px] font-bold px-1.5 py-[2px] rounded-md shadow-sm z-10 whitespace-nowrap">${escapeHtml(b.badge)}</div>` : ''}
                 </a>
                 <div class="flex flex-col items-center w-full gap-0.5 mt-0.5">
@@ -1590,7 +1599,7 @@
             const res = await signInWithPopup(auth, googleProvider);  
             if(res.user) await initUserDoc(res.user, { loginType: "google" });  
             closeModal('authModal'); showToast("Login Successful!");  
-        } catch(e) { showToast(e.message); } finally { btn.innerHTML = '<img src="https://www.google.com/favicon.ico" class="w-4 h-4"> Continue with Google'; }  
+        } catch(e) { showToast(e.message); } finally { btn.innerHTML = '<img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google'; }  
     };  
   
     window.handleEmailAuth = async (e) => {  
@@ -1781,7 +1790,7 @@
             return `
             <div class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200/60 flex flex-col cursor-pointer" onclick="openProductDetail('${p.id}')">
                 <div class="relative w-full aspect-[4/5] bg-white overflow-hidden">
-                    <img src="${escapeHtml(img)}" class="w-full h-full object-contain" loading="lazy" decoding="async">
+                    <img src="${escapeHtml(img)}" class="w-full h-full object-contain" loading="lazy" decoding="async" onerror="handleImageError(this)">
                     ${disc>0 ? `<div class="absolute top-0 left-0 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-br-lg shadow-sm">${disc}% OFF</div>`:''}
                     ${p.videoUrl ? `<div class="absolute top-2 right-2 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-play text-[10px]"></i></div>`:''}
                 </div>
@@ -1811,7 +1820,7 @@
         let dotCount = 0;
 
         if(images.length > 0) {
-            mediaHtml += images.map(img => `<div class="min-w-full snap-start relative flex justify-center bg-white"><img src="${escapeHtml(img)}" class="w-full aspect-[4/5] object-contain"></div>`).join('');
+            mediaHtml += images.map(img => `<div class="min-w-full snap-start relative flex justify-center bg-white"><img src="${escapeHtml(img)}" class="w-full aspect-[4/5] object-contain" onerror="handleImageError(this)"></div>`).join('');
             dotCount += images.length;
         }
 
@@ -1987,7 +1996,7 @@
         const variantContainer = document.getElementById('orderVariantOptions');
         if(images.length > 1) {
             variantWrapper.classList.remove('hidden');
-            variantContainer.innerHTML = images.map((img, i) => `<div onclick="selectOrderVariant(${i})" class="w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === actualImgIndex ? 'border-primary p-0.5' : 'border-transparent'} bg-white" id="variant-thumb-${i}"><img src="${img}" class="w-full h-full object-contain rounded-sm"></div>`).join('');
+            variantContainer.innerHTML = images.map((img, i) => `<div onclick="selectOrderVariant(${i})" class="w-12 h-12 shrink-0 rounded border-2 cursor-pointer transition-all ${i === actualImgIndex ? 'border-primary p-0.5' : 'border-transparent'} bg-white" id="variant-thumb-${i}"><img src="${img}" class="w-full h-full object-contain rounded-sm" onerror="handleImageError(this)"></div>`).join('');
         } else { variantWrapper.classList.add('hidden'); }
 
         document.getElementById('orderForm').reset(); 
@@ -2149,7 +2158,7 @@
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${prog.err ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-700'}">${escapeHtml(o.status||'pending')}</span>  
                     </div>  
                     <div class="flex gap-3 mb-3">
-                        <img src="${escapeHtml(o.productImage)}" class="w-14 h-14 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async">
+                        <img src="${escapeHtml(o.productImage)}" class="w-14 h-14 rounded object-contain bg-white border border-gray-100" loading="lazy" decoding="async" onerror="handleImageError(this)">
                         <div class="flex-1 min-w-0">
                             <h4 class="font-medium text-sm line-clamp-1 mb-1 text-gray-800">${escapeHtml(o.productName)}</h4>
                             <p class="text-xs text-gray-500">Qty: ${o.quantity||1}${o.size?' • Sz: '+o.size:''} • <span class="text-primary font-semibold">${escapeHtml(o.selectedVariant||'')}</span></p>
@@ -2396,7 +2405,7 @@
         const t = document.getElementById('adminBannersTable');
         t.innerHTML = window.siteBanners.length ? window.siteBanners.map((b, i) => `
             <tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
-                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-12 object-contain bg-[#222] rounded"></td>
+                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-12 object-contain bg-[#222] rounded" onerror="handleImageError(this)"></td>
                 <td class="py-3 px-4 text-xs text-gray-400 max-w-[200px] truncate">${escapeHtml(b.link || 'No Link')}</td>
                 <td class="py-3 px-4 text-center">
                     <button onclick="moveAdminBanner(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button>
@@ -2449,7 +2458,7 @@
         const t = document.getElementById('adminBrandsTable');
         t.innerHTML = window.exploreBrands.length ? window.exploreBrands.map((b, i) => `
             <tr class="border-b border-[#222] hover:bg-[#1a1a1a]">
-                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-10 w-10 object-contain bg-white rounded-lg"></td>
+                <td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-10 w-10 object-contain bg-white rounded-lg" onerror="handleImageError(this)"></td>
                 <td class="py-3 px-4 font-bold text-white">${escapeHtml(b.title)}</td>
                 <td class="py-3 px-4"><span class="bg-[#00e676] text-black px-2 py-0.5 rounded text-[10px] font-bold">${escapeHtml(b.badge || 'None')}</span></td>
                 <td class="py-3 px-4 text-xs text-gray-400 max-w-[150px] truncate">${escapeHtml(b.link || 'No Link')}</td>
@@ -2505,7 +2514,7 @@
         const t = document.getElementById('adminCategoriesTable');
         t.innerHTML = window.allCategories.length ? window.allCategories.map((cat, i) => {
             const imgUrl = window.categoryImages[cat] || 'https://placehold.co/100x100/222/555?text=No+Img';
-            return `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(imgUrl)}" class="w-12 h-12 rounded object-cover border border-[#333]"></td><td class="py-3 px-4 font-bold text-white">${escapeHtml(cat)}</td><td class="py-3 px-4 text-center"><button onclick="moveAdminCategory(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-1" ${i===0?'disabled style="opacity:0.5"':''}>⬆️</button><button onclick="moveAdminCategory(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===window.allCategories.length-1?'disabled style="opacity:0.5"':''}>⬇️</button></td><td class="py-3 px-4 text-right flex justify-end gap-2 flex-wrap"><button onclick="updateAdminCategoryPoster('${escapeHtml(cat.replace(/'/g, "\\'"))}')" class="bg-[#00e676]/20 border border-[#00e676]/50 text-[#00e676] px-3 py-1.5 rounded-lg text-xs font-bold">Poster</button><button onclick="editAdminCategory(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="deleteAdminCategory(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`;
+            return `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(imgUrl)}" class="w-12 h-12 rounded object-cover border border-[#333]" onerror="handleImageError(this)"></td><td class="py-3 px-4 font-bold text-white">${escapeHtml(cat)}</td><td class="py-3 px-4 text-center"><button onclick="moveAdminCategory(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-1" ${i===0?'disabled style="opacity:0.5"':''}>⬆️</button><button onclick="moveAdminCategory(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===window.allCategories.length-1?'disabled style="opacity:0.5"':''}>⬇️</button></td><td class="py-3 px-4 text-right flex justify-end gap-2 flex-wrap"><button onclick="updateAdminCategoryPoster('${escapeHtml(cat.replace(/'/g, "\\'"))}')" class="bg-[#00e676]/20 border border-[#00e676]/50 text-[#00e676] px-3 py-1.5 rounded-lg text-xs font-bold">Poster</button><button onclick="editAdminCategory(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">Edit</button><button onclick="deleteAdminCategory(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`;
         }).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No categories found.</td></tr>';
     };
 
@@ -2648,7 +2657,7 @@
     window.renderAdminProducts = () => {  
         const q = document.getElementById('adminProdSearch').value.toLowerCase();  
         const f = window.allProducts.filter(p => `${p.title} ${p.category}`.toLowerCase().includes(q));  
-        document.getElementById('adminProductsTable').innerHTML = f.length ? f.map((p, i) => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-contain bg-[#222]"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right flex items-center justify-end gap-1"><button onclick="moveAdminProduct(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button><button onclick="moveAdminProduct(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-2" ${i===f.length-1?'disabled style="opacity:0.3"':''}>⬇️</button><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-1">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
+        document.getElementById('adminProductsTable').innerHTML = f.length ? f.map((p, i) => `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(p.images?.[0]||p.image)}" class="w-12 h-12 rounded-xl object-contain bg-[#222]" onerror="handleImageError(this)"></td><td class="py-3 px-4"><div class="font-bold text-white mb-1">${escapeHtml(p.title)} ${p.videoUrl?'<i class="fa-brands fa-youtube text-red-500 ml-1"></i>':''}</div><div class="text-[10px] text-gray-500 uppercase tracking-wider">${escapeHtml(p.category)} | COD: ${p.codStatus==='not_available'?'NO':'YES'}</div></td><td class="py-3 px-4 font-black text-[#00e676]">₹${money(p.basePrice)}</td><td class="py-3 px-4 text-right flex items-center justify-end gap-1"><button onclick="moveAdminProduct(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button><button onclick="moveAdminProduct(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-2" ${i===f.length-1?'disabled style="opacity:0.3"':''}>⬇️</button><button onclick="editAdminProduct('${p.id}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-1">Edit</button><button onclick="deleteAdminProduct('${p.id}')" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join('') : '<tr><td colspan="4" class="p-8 text-center text-gray-500">No products found.</td></tr>';  
     };  
   
     window.renderAdminOrders = () => {  
@@ -2690,34 +2699,54 @@
         } catch(e) {}  
     };  
 
+    // ==== ADVANCED CLIENT-SIDE COMPRESSION & IMGBB INTEGRATION ====
     window.handleAdminImageUpload = async (e) => {
         const files = e.target.files; if(!files || files.length === 0) return;
         const statusEl = document.getElementById('uploadStatus'); const textarea = document.getElementById('pImgUrls');
         
-        let IMGBB_API_KEY = localStorage.getItem('shraynex_imgbb_key') || 'd11d14d5997195a424ed04fe0df1d864'; 
+        let IMGBB_API_KEY = 'd11d14d5997195a424ed04fe0df1d864'; 
         
-        statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Uploading ${files.length} photo(s)...</span>`;
+        statusEl.innerHTML = `<span class="text-amber-500"><i class="fa-solid fa-spinner fa-spin"></i> Compressing & Uploading...</span>`;
         let uploadedUrls = []; let limitReached = false;
         
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = error => reject(error);
+        // Super Fast Image Compression System
+        const compressImage = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader(); reader.readAsDataURL(file); 
+            reader.onload = (event) => {
+                const img = new Image(); img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width, height = img.height;
+                    const max_size = 800; // Resizing for fast loading 
+                    if (width > height && width > max_size) { height *= max_size / width; width = max_size; } 
+                    else if (height > max_size) { width *= max_size / height; height = max_size; }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8).split(',')[1]); // Compress to 80% JPEG
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
         });
         
         for(let i=0; i<files.length; i++) {
             if(limitReached) break;
             try {
-                const base64Image = await fileToBase64(files[i]); const formData = new FormData(); formData.append('image', base64Image);
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                // 1. Compress Image
+                const compressedBase64 = await compressImage(files[i]); 
+                
+                // 2. Upload to ImgBB
+                const formData = new FormData(); formData.append('image', compressedBase64);
+                const res = await fetch(`https://api.imgbb.com/1/upload?expiration=0&key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
                 const data = await res.json();
+                
                 if(data && data.success) { uploadedUrls.push(data.data.url); } 
                 else if (data.error && (data.error.message.toLowerCase().includes('limit') || data.error.message.toLowerCase().includes('invalid'))) { limitReached = true; }
             } catch(error) { console.error(error); }
         }
         
         if(limitReached) {
-            const newKey = prompt("⚠️ ImgBB API Limit Reached!\n\nGet FREE Key at https://api.imgbb.com/ and paste below:", "");
-            if(newKey && newKey.trim() !== "") { localStorage.setItem('shraynex_imgbb_key', newKey.trim()); statusEl.innerHTML = `<span class="text-blue-500">✅ Key Saved! Try uploading again.</span>`; } 
-            else { statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed. API Limit.</span>`; }
+            statusEl.innerHTML = `<span class="text-red-500">❌ Upload Failed. API Limit.</span>`;
             e.target.value = ''; return;
         }
         
