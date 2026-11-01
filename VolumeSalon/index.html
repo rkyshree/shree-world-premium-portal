@@ -56,16 +56,18 @@
             display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
 
-        /* Clean Share Button (Rose/Pink, Pulsing) */
-        .btn-share-clean {
+        /* Premium Share Button */
+        .btn-share-premium {
             background: linear-gradient(135deg, #f43f5e, #e11d48);
             color: white; border: 2px solid #fda4af;
-            animation: clean-pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
+            animation: premium-pulse 2s infinite;
+            transition: all 0.3s ease;
         }
-        @keyframes clean-pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.6); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(225, 29, 72, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+        @keyframes premium-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
         }
 
         /* Bouncing Button */
@@ -85,32 +87,17 @@
             50% { transform: translateY(-4px); filter: drop-shadow(0 6px 8px rgba(139,39,66,0.4)); opacity: 0.9; }
         }
 
-        /* Premium Share Button */
-        .btn-share-premium {
-            background: linear-gradient(135deg, #f43f5e, #e11d48);
-            color: white; border: 2px solid #fda4af;
-            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.4);
-            animation: premium-pulse 2s infinite;
-            transition: all 0.3s ease;
-        }
-        @keyframes premium-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
-            70% { box-shadow: 0 0 0 12px rgba(225, 29, 72, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
-        }
-
         /* Scroll Reveal Animation */
         .reveal-up { opacity: 0; transform: translateY(60px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal-up.active { opacity: 1; transform: translateY(0); }
 
-        /* --- CINEMATIC SPLASH SCREEN (SLOW MOTION - 5.5s) --- */
+        /* --- CINEMATIC SPLASH SCREEN --- */
         #splash-screen {
             position: fixed; inset: 0; z-index: 99999;
             display: flex; justify-content: center; align-items: center;
             pointer-events: none; overflow: hidden;
         }
         
-        /* Background Shutters (Doors) */
         .shutter {
             position: absolute; left: 0; width: 100%; height: 50vh;
             background-color: theme('colors.cream'); z-index: 1;
@@ -123,7 +110,6 @@
 
         .splash-content-cinematic { position: absolute; inset: 0; z-index: 10; display: flex; justify-content: center; align-items: center; }
 
-        /* Hanging "Volume" Text */
         .splash-text-vol {
             position: absolute; font-family: 'Playfair Display', serif; font-size: clamp(4rem, 14vw, 6.5rem); font-weight: 900; color: #350f19;
             text-shadow: 0 10px 20px rgba(0,0,0,0.15);
@@ -137,7 +123,6 @@
             95%, 100% { transform: translateY(-50vh) scale(1.3); opacity: 0; }
         }
 
-        /* Rising "Salon" Text */
         .splash-text-ladies {
             position: absolute; font-family: 'DM Sans', sans-serif; font-size: clamp(1.2rem, 4vw, 1.8rem); font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.3em;
             text-shadow: 0 5px 10px rgba(0,0,0,0.1);
@@ -151,14 +136,12 @@
             95%, 100% { transform: translateY(50vh) scale(1.3); opacity: 0; }
         }
 
-        /* Blurred Emojis Background container */
         .splash-emojis-bg {
             position: absolute; inset: 0; z-index: 5;
             animation: emojis-fade 5.5s ease forwards;
         }
         @keyframes emojis-fade { 0%, 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
 
-        /* Floating Blurred Emojis */
         .splash-emoji {
             position: absolute; font-size: 2.5rem; filter: blur(3px) drop-shadow(0 4px 6px rgba(0,0,0,0.1)); opacity: 0.5;
             animation: splash-float 4s ease-in-out infinite alternate;
@@ -216,17 +199,29 @@
                 #fecdd6 180deg 240deg, #fce7f3 240deg 300deg, #fbcfe8 300deg 360deg
             );
         }
+
+        /* --- RED BLINKING FREE BADGE --- */
+        .free-badge-blink {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: white;
+            font-weight: 800;
+            border: 2px solid #f87171;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+            animation: red-blink 1.5s infinite;
+        }
+        @keyframes red-blink {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
+            50% { opacity: 0.85; transform: scale(1.05); box-shadow: 0 0 25px rgba(239, 68, 68, 1); }
+        }
     </style>
 </head>
 <body class="text-gray-800 antialiased font-sans">
 
     <!-- SPLASH SCREEN -->
     <div id="splash-screen">
-        <!-- Background Shutters -->
         <div class="shutter shutter-top"></div>
         <div class="shutter shutter-bottom"></div>
 
-        <!-- Floating Blurred Emojis -->
         <div class="splash-emojis-bg">
             <span class="splash-emoji" style="top: 15%; left: 20%; animation-delay: 0s;">✂️</span>
             <span class="splash-emoji" style="top: 25%; right: 25%; animation-delay: 0.5s;">✨</span>
@@ -238,9 +233,7 @@
             <span class="splash-emoji" style="top: 50%; right: 15%; animation-delay: 1.2s;">🦋</span>
         </div>
 
-        <!-- Cinematic Central Content -->
         <div class="splash-content-cinematic">
-            <!-- Floating Text Only -->
             <h2 class="splash-text-vol" id="splash-main-text">Volume</h2>
             <p class="splash-text-ladies" id="splash-sub-text">SALON</p>
         </div>
@@ -257,8 +250,6 @@
     <!-- CLEAN & PREMIUM HEADER -->
     <header class="glass-nav sticky top-0 z-40 w-full transition-all">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-            
-            <!-- Left: Animated Brand Name -->
             <div class="brand-animate cursor-pointer">
                 <h1 class="font-serif text-3xl md:text-4xl font-black text-wine-900 tracking-tight leading-none mb-0.5" id="header-main-text">Volume</h1>
                 <div class="flex items-center gap-2">
@@ -268,23 +259,19 @@
                 </div>
             </div>
 
-            <!-- Right: Premium Share & Earn -->
             <button onclick="showShareNotification()" class="btn-share-premium px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1.5 uppercase tracking-wide shrink-0">
                 <span class="text-sm sm:text-base">🎁</span> 
                 <span data-en="Share & Earn" data-hi="शेयर और अर्न">Share & Earn</span>
             </button>
-
         </div>
     </header>
 
     <!-- Hero Section -->
     <section class="relative pt-10 pb-20 lg:pt-16 lg:pb-32 overflow-hidden bg-gradient-to-b from-rose-50 to-cream z-30">
         <div class="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative">
-            
             <div class="text-center lg:text-left reveal-up flex flex-col items-center lg:items-start">
                 <span class="inline-block py-1.5 px-4 rounded-full bg-wine-50 text-wine-700 text-xs font-bold tracking-[0.2em] uppercase mb-4 border border-wine-100" data-en="Redefining Your Beauty" data-hi="आपकी सुंदरता को निखारें">Redefining Your Beauty</span>
                 
-                <!-- Centered & Prominent Lang Toggle Switch -->
                 <div class="flex items-center bg-white rounded-full p-1.5 border-2 border-gold-300 shadow-md mb-8">
                     <button onclick="setLanguage('en')" id="btn-en" class="px-5 py-2 rounded-full text-sm font-bold bg-wine-700 text-white shadow-sm transition-all uppercase">English</button>
                     <button onclick="setLanguage('hi')" id="btn-hi" class="px-5 py-2 rounded-full text-sm font-bold text-gray-500 hover:text-wine-700 transition-all uppercase">हिंदी</button>
@@ -298,7 +285,6 @@
                     Experience premium hair care, facials, and grooming services crafted exclusively for women by expert stylists.
                 </p>
 
-                <!-- Bouncing View Rate List Button -->
                 <a href="#ratelist-section" class="bg-[#1d4ed8] hover:bg-blue-800 text-white px-10 py-4 rounded-full text-base lg:text-lg font-bold shadow-[0_10px_25px_-5px_rgba(29,78,216,0.5)] flex items-center gap-3 uppercase tracking-wide border border-blue-600 bounce-smooth">
                     <span class="text-xl">📜</span>
                     <span data-en="View Full Rate List" data-hi="पूरी रेट लिस्ट देखें">View Full Rate List</span> 
@@ -317,9 +303,12 @@
     <!-- SPECIAL OFFER: DAILY SPIN AND WIN -->
     <section id="offer" class="py-20 bg-wine-900 relative overflow-hidden text-center border-y-[6px] border-gold-400 z-30">
         <div class="max-w-4xl mx-auto px-4 relative z-10 reveal-up">
-            <h3 class="font-serif text-4xl md:text-5xl text-gold-400 font-bold mb-4" id="offer-title">Daily Spin & Win!</h3>
-            <p class="text-white text-lg mb-10 max-w-xl mx-auto" id="offer-desc">
+            <h3 class="font-serif text-4xl md:text-5xl text-gold-400 font-bold mb-3" id="offer-title">Daily Spin & Win!</h3>
+            <p class="text-white text-lg max-w-xl mx-auto" id="offer-desc">
                 Spin the wheel to win exclusive discounts on your next appointment.
+            </p>
+            <p class="text-gold-300 text-[11px] md:text-xs mt-2 mb-8 uppercase tracking-wider font-bold" id="offer-tc">
+                * T&C: Applicable on minimum service of ₹500.
             </p>
 
             <div class="relative w-72 h-72 md:w-80 md:h-80 mx-auto mb-10">
@@ -328,12 +317,21 @@
                 </div>
             </div>
 
+            <!-- Spin Button Area -->
             <div id="spinActionArea">
                 <button onclick="startSpin()" id="spinBtn" class="bg-gradient-to-r from-gold-400 to-gold-500 text-wine-900 px-12 py-4 rounded-full text-xl font-bold shadow-xl hover:scale-105 transition-transform uppercase tracking-wider">
                     <span data-en="Spin & Win" data-hi="स्पिन करें और जीतें">Spin & Win</span>
                 </button>
             </div>
+
+            <!-- Countdown Timer Area (Hidden by Default) -->
+            <div id="timerArea" class="hidden mt-4 bg-wine-800/80 p-6 rounded-3xl border border-gold-400/30 backdrop-blur-sm max-w-sm mx-auto shadow-2xl">
+                <h4 class="text-rose-200 text-sm font-bold uppercase tracking-widest mb-3" data-en="Next Spin In:" data-hi="अगला स्पिन मिलेगा:">Next Spin In:</h4>
+                <div id="spinTimer" class="text-4xl font-mono text-gold-400 font-bold mb-3 shadow-inner bg-wine-900 rounded-xl py-4 border border-wine-700 tracking-wider">00:00:00</div>
+                <p class="text-xs text-rose-300 uppercase tracking-wide font-medium" data-en="Limit reached. Max 2 spins per 24 hours." data-hi="लिमिट पूरी हुई। 24 घंटे में सिर्फ़ 2 स्पिन।">Limit reached. Max 2 spins per 24 hours.</p>
+            </div>
             
+            <!-- Result Area -->
             <div id="winResultArea" class="hidden mt-6 bg-white/10 p-6 rounded-3xl border border-gold-400/30 backdrop-blur-sm max-w-md mx-auto">
                 <h4 class="text-gold-400 text-2xl font-bold mb-2" id="winTitle">Congratulations!</h4>
                 <p class="text-white text-lg mb-6" id="winDesc">You won X% discount.</p>
@@ -507,14 +505,10 @@
     <script>
         // =========================================================
         // ⚙️ SALON_CONFIG: मास्टर सेटिंग्स (पूरा कण्ट्रोल यहाँ है)
-        // वेबसाइट में जो भी नाम, प्राइस या ऑफर बदलना हो, बस यहीं बदलें!
         // =========================================================
         const SALON_CONFIG = {
-            
-            // 1. आपका WhatsApp नंबर (बिना + के, देश के कोड 91 के साथ)
             whatsappNumber: "917703067241", 
 
-            // 2. ब्रांड और वेबसाइट के मुख्य नाम
             brandDetails: {
                 mainName: "Volume",
                 subName: "SALON",
@@ -522,22 +516,24 @@
                 topBarHI: "प्रीमियम ब्यूटी स्टूडियो | गोरखपुर"
             },
             
-            // 3. होम पेज की मुख्य फोटो (लिंक बदल सकते हैं)
             heroImages: {
                 img1: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600&q=80", 
                 img2: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80"  
             },
 
-            // 4. स्पिन व्हील (चकरी) ऑफर सेटिंग्स
+            // SPIN WHEEL CONFIGURATION
             specialOffer: {
                 titleEN: "Daily Spin & Win!", 
                 titleHI: "डेली स्पिन एंड विन!",
                 descEN: "Spin the wheel to win exclusive discounts on your next appointment.",
                 descHI: "अपने अगले अपॉइंटमेंट पर विशेष छूट जीतने के लिए चकरी घुमाएं।",
-                prizes: [5, 10, 15, 15, 20, 25] // छूट के प्रतिशत (%)
+                tcEN: "* T&C: Applicable only on minimum service of ₹500.",
+                tcHI: "* नियम व शर्तें: यह छूट केवल ₹500 या उससे अधिक की सर्विस पर लागू है।",
+                prizes: [5, 10, 15, 15, 20, 25], 
+                maxSpins: 2,         // 24 घंटे में अधिकतम स्पिन
+                cooldownHours: 24    // कितने घंटे बाद वापस मिलेगा
             },
 
-            // 5. मुख्य सेवाएं (फोटो वाली सर्विसेज जो सामने दिखती हैं)
             services: [
                 {
                     id: "s1", nameEN: "Instant Glow Facial with D-Ten", nameHI: "इंस्टेंट ग्लो फेशियल + डी-टैन",
@@ -596,7 +592,6 @@
                 }
             ],
 
-            // 6. मुख्य पैकेज (Packages List)
             packages: [
                 {
                     id: "p1", nameEN: "Anti-Tan Cleanup + Rica Hand Waxing", nameHI: "एंटी-टैन क्लीनअप + रिका हैंड वैक्सिंग",
@@ -648,7 +643,6 @@
                 }
             ],
 
-            // 7. पूरा रेट मेनू (Full Menu) 
             fullMenu: [
                 {
                     type: 'course', titleEN: "Beauty Parlor Course", titleHI: "ब्यूटी पार्लर कोर्स",
@@ -963,17 +957,16 @@
         };
         // =========================================================
 
-        
         let currentLang = 'en';
         let wonDiscount = 0; 
         let shareBonusActive = localStorage.getItem('salon_share_bonus') === 'true';
+        let isSpinning = false;
+        let timerInterval;
 
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('b-date').setAttribute('min', today);
 
         window.addEventListener('load', () => {
-            
-            // Set dynamic brand info from SALON_CONFIG
             document.title = `${SALON_CONFIG.brandDetails.mainName} ${SALON_CONFIG.brandDetails.subName} | Premium Beauty Studio`;
             document.getElementById('top-bar-text').setAttribute('data-en', SALON_CONFIG.brandDetails.topBarEN);
             document.getElementById('top-bar-text').setAttribute('data-hi', SALON_CONFIG.brandDetails.topBarHI);
@@ -986,24 +979,16 @@
             
             document.getElementById('footer-brand-name').innerText = `${SALON_CONFIG.brandDetails.mainName} ${SALON_CONFIG.brandDetails.subName}`;
 
-            // Start revealing (blooming) the website as the doors open
-            setTimeout(() => {
-                document.body.classList.add('page-loaded'); 
-            }, 4500); 
-
-            // Completely remove the splash screen elements from DOM after animation finishes
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-            }, 5600); 
+            setTimeout(() => { document.body.classList.add('page-loaded'); }, 4500); 
+            setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 5600); 
+            
+            checkSpinStatus();
         });
 
         // -- SHARE NOTIFICATION SYSTEM --
-        function showShareNotification() {
-            document.getElementById('shareNotifyModal').classList.add('active');
-        }
-        function closeShareModal() {
-            document.getElementById('shareNotifyModal').classList.remove('active');
-        }
+        function showShareNotification() { document.getElementById('shareNotifyModal').classList.add('active'); }
+        function closeShareModal() { document.getElementById('shareNotifyModal').classList.remove('active'); }
+        
         async function executeShare() {
             closeShareModal();
             const shareData = {
@@ -1019,10 +1004,9 @@
                     navigator.clipboard.writeText(shareData.url);
                     grantShareBonus();
                 }
-            } catch (err) {
-                console.log('Share error:', err);
-            }
+            } catch (err) { console.log('Share error:', err); }
         }
+        
         function grantShareBonus() {
             shareBonusActive = true; 
             localStorage.setItem('salon_share_bonus', 'true');
@@ -1032,18 +1016,13 @@
         function initScrollAnimations() {
             const reveals = document.querySelectorAll('.reveal-up');
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
             }, { threshold: 0.1 });
             reveals.forEach(el => observer.observe(el));
         }
 
         // -- INITIALIZATION --
         function initOfferSection() {
-            document.getElementById('nav-offer-en')?.innerText ? document.getElementById('nav-offer-en').innerText = SALON_CONFIG.specialOffer.titleEN : '';
             const wheel = document.getElementById('spinWheel');
             wheel.innerHTML = '';
             SALON_CONFIG.specialOffer.prizes.forEach((prize, idx) => {
@@ -1062,6 +1041,7 @@
 
             document.getElementById('offer-title').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.titleEN : SALON_CONFIG.specialOffer.titleHI;
             document.getElementById('offer-desc').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.descEN : SALON_CONFIG.specialOffer.descHI;
+            document.getElementById('offer-tc').innerText = lang === 'en' ? SALON_CONFIG.specialOffer.tcEN : SALON_CONFIG.specialOffer.tcHI;
             
             const elements = document.querySelectorAll('[data-en][data-hi]');
             elements.forEach(el => {
@@ -1093,7 +1073,7 @@
 
                 const html = `
                     <div class="search-card ${srv.bgColor} rounded-[2rem] overflow-hidden flex flex-col h-full shadow-lg hover:shadow-2xl transition-all duration-300 reveal-up hover:-translate-y-2 border border-gray-100 relative">
-                        ${srv.freeOfferEN ? `<div class="absolute top-3 left-[-8px] z-10 bg-gradient-to-r from-green-500 to-green-700 text-white px-4 py-1.5 font-bold text-xs shadow-md rounded-r-lg">🎁 FREE: ${freeOfferText}</div>` : ''}
+                        ${srv.freeOfferEN ? `<div class="absolute top-3 left-[-8px] z-10 free-badge-blink px-4 py-1.5 text-xs shadow-md rounded-r-lg">🎁 FREE: ${freeOfferText}</div>` : ''}
                         
                         <div class="h-56 overflow-hidden relative">
                             <img src="${srv.imgUrl}" alt="${name}" loading="lazy" class="w-full h-full object-cover">
@@ -1280,24 +1260,70 @@
             });
         }
 
-        // -- SMART SPIN AND WIN LOGIC --
-        let isSpinning = false;
+
+        // -- SMART SPIN LIMIT AND TIMER LOGIC --
+        function checkSpinStatus() {
+            let spinData = JSON.parse(localStorage.getItem('salonSpinData')) || { timestamps: [], count25: 0 };
+            const now = Date.now();
+            const cooldownMs = SALON_CONFIG.specialOffer.cooldownHours * 60 * 60 * 1000;
+
+            // Remove timestamps older than 24 hours
+            spinData.timestamps = spinData.timestamps.filter(ts => now - ts < cooldownMs);
+            localStorage.setItem('salonSpinData', JSON.stringify(spinData));
+
+            if (spinData.timestamps.length >= SALON_CONFIG.specialOffer.maxSpins) {
+                // Limit reached - Hide Spin Button, Show Timer
+                document.getElementById('spinActionArea').classList.add('hidden');
+                document.getElementById('timerArea').classList.remove('hidden');
+                document.getElementById('winResultArea').classList.add('hidden');
+                
+                const nextAvailableTime = spinData.timestamps[0] + cooldownMs;
+                startTimer(nextAvailableTime);
+                return false;
+            } else {
+                // Can spin
+                document.getElementById('spinActionArea').classList.remove('hidden');
+                document.getElementById('timerArea').classList.add('hidden');
+                return true;
+            }
+        }
+
+        function startTimer(targetTime) {
+            clearInterval(timerInterval);
+            const timerEl = document.getElementById('spinTimer');
+            
+            function update() {
+                const now = Date.now();
+                const diff = targetTime - now;
+                
+                if (diff <= 0) {
+                    clearInterval(timerInterval);
+                    checkSpinStatus(); // Refresh UI once timer ends
+                } else {
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    timerEl.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                }
+            }
+            update();
+            timerInterval = setInterval(update, 1000);
+        }
+
         function startSpin() {
             if(isSpinning) return;
+            if(!checkSpinStatus()) return; // Prevent spinning if limit reached
+
             isSpinning = true;
 
             const wheel = document.getElementById('spinWheel');
             const prizes = SALON_CONFIG.specialOffer.prizes;
 
-            let todayDate = new Date().toDateString();
-            let spinData = JSON.parse(localStorage.getItem('salonSpinData')) || { date: todayDate, count25: 0 };
-            if (spinData.date !== todayDate) spinData = { date: todayDate, count25: 0 };
+            let spinData = JSON.parse(localStorage.getItem('salonSpinData')) || { timestamps: [], count25: 0 };
 
             let winIndex = 4; // Mostly 20%
             if (Math.random() < 0.15 && spinData.count25 < 5) {
                 winIndex = 5; // Rare 25%
-                spinData.count25++;
-                localStorage.setItem('salonSpinData', JSON.stringify(spinData));
             }
 
             const extraDegrees = 360 - (30 + (winIndex * 60));
@@ -1308,6 +1334,12 @@
                 isSpinning = false;
                 wonDiscount = prizes[winIndex]; 
                 
+                // Save this spin timestamp
+                spinData.timestamps.push(Date.now());
+                if (winIndex === 5) spinData.count25++;
+                localStorage.setItem('salonSpinData', JSON.stringify(spinData));
+                
+                // Show result
                 document.getElementById('spinActionArea').classList.add('hidden');
                 document.getElementById('winResultArea').classList.remove('hidden');
                 
@@ -1320,6 +1352,7 @@
                 }
             }, 4000);
         }
+
         function claimOffer() { openBookingModal(); }
 
         // -- MODAL LOGIC --
@@ -1394,9 +1427,12 @@
                 }
             }
         }
+        
         function closeBookingModal() {
             modal.classList.remove('active');
             document.body.style.overflow = 'auto';
+            // Also refresh spin status UI when modal is closed just in case
+            checkSpinStatus();
         }
 
         function submitBooking(e) {
