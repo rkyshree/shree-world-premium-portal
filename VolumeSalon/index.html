@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#702035">
     <!-- PWA Manifest & Favicon -->
     <link rel="icon" href="https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png" type="image/png">
-    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Volume Salon","short_name":"Volume","start_url":".","display":"standalone","background_color":"%23fffaf5","theme_color":"%23702035","icons":[{"src":"https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png","sizes":"512x512","type":"image/png"}]}'>
+    <link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Volume Salon","short_name":"Volume","start_url":"https://www.rkyshree.in/VolumeSalon","display":"standalone","background_color":"%23fffaf5","theme_color":"%23702035","icons":[{"src":"https://i.ibb.co/KxDtVTrB/Picsart-26-10-28-22-53-08-774.png","sizes":"512x512","type":"image/png"}]}'>
     <title>Volume Salon | Premium Beauty Studio</title>
     <!-- Google Fonts for Elegant Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -259,10 +259,19 @@
                 </div>
             </div>
 
-            <button onclick="showShareNotification()" class="btn-share-premium px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1.5 uppercase tracking-wide shrink-0">
-                <span class="text-sm sm:text-base">🎁</span> 
-                <span data-en="Share & Earn" data-hi="शेयर और अर्न">Share & Earn</span>
-            </button>
+            <!-- BUTTONS CONTAINER: INSTALL APP & SHARE -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- INSTALL APP BUTTON (Hidden by default, shown via JS if PWA is compatible) -->
+                <button id="installAppBtn" class="hidden bg-[#1d4ed8] text-white border-2 border-[#60a5fa] px-3 sm:px-4 py-2 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1.5 uppercase tracking-wide shrink-0 shadow-lg hover:bg-blue-800 transition-all">
+                    <span class="text-sm sm:text-base">📱</span> 
+                    <span data-en="Install App" data-hi="ऐप इंस्टॉल">Install App</span>
+                </button>
+
+                <button onclick="showShareNotification()" class="btn-share-premium px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1.5 uppercase tracking-wide shrink-0">
+                    <span class="text-sm sm:text-base">🎁</span> 
+                    <span data-en="Share & Earn" data-hi="शेयर और अर्न">Share & Earn</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -997,6 +1006,43 @@
             setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; }, 5600); 
             
             checkSpinStatus();
+        });
+
+        // -- PWA APP INSTALL LOGIC --
+        let deferredPrompt;
+        const installAppBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI notify the user they can install the PWA
+            installAppBtn.classList.remove('hidden');
+        });
+
+        installAppBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+                // We've used the prompt, and can't use it again, throw it away
+                deferredPrompt = null;
+                // Hide the button once process finishes
+                installAppBtn.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            // Hide the app-provided install promotion after successful install
+            installAppBtn.classList.add('hidden');
+            deferredPrompt = null;
         });
 
         // -- SHARE NOTIFICATION SYSTEM --
