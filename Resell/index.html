@@ -224,7 +224,7 @@ window.triggerBrandRedirect = (title, img, link) => {
     screen.classList.add('flex');
     setTimeout(() => { screen.classList.remove('opacity-0'); screen.classList.add('opacity-100'); }, 10);
     
-    document.body.style.overflow = 'hidden'; // Stop background scrolling
+    document.body.style.overflow = 'hidden'; 
 
     setTimeout(() => {
         window.open(link, '_blank');
@@ -302,6 +302,22 @@ let authStateResolved=false;
 onAuthStateChanged(auth,async(u)=>{currentUser=u;authStateResolved=true;if(!window.isAdminMode){loadCategories();loadBanners();loadBrands();loadProducts();}if(u){if(!window.isAdminMode){try{await initUserDoc(u);if(unsubUser)unsubUser();unsubUser=onSnapshot(doc(db,USERS_COL,u.uid),(d)=>{if(d.exists()){userData=d.data();updateProfileUI();if(userData.status==='suspended'&&userData.role!=='admin'){signOut(auth);showToast("Account Suspended.");}}});loadOrders();loadUserWithdrawals();}catch(e){}}}else{if(unsubUser)unsubUser();if(unsubOrders)unsubOrders();userData=null;updateProfileUI();}
 if(typeof window.checkAndRoute === 'function') window.checkAndRoute();
 });
+
+// ADDED MISSING SPLASH SCREEN FUNCTION
+window.checkAndRoute = () => {
+    if(authStateResolved && window.splashFinished) {
+        const s = document.getElementById('splashScreen');
+        if(s && s.style.display !== 'none') {
+            s.classList.add('opacity-0');
+            setTimeout(() => { s.style.display = 'none'; }, 300); 
+        }
+        if(!window.isAdminMode) {
+            document.getElementById('landingPage').classList.remove('active');
+            document.getElementById('appPage').classList.add('active');
+            if(!document.querySelector('.tab-content:not(.hidden)')) switchTab('Feed');
+        }
+    }
+};
 
 window.switchTab=(t)=>{if((t==='Orders'||t==='Profile')&&!currentUser){openModal('authModal');return showToast("Please login to access this.");}['Feed','Orders','Profile'].forEach(x=>{document.getElementById(`tab${x}`).classList.add('hidden');document.getElementById(`navBtn${x}`).classList.replace('text-primary','text-gray-400');document.getElementById(`navBtn${x}`).classList.replace('text-gray-800','text-gray-400');});document.getElementById(`tab${t}`).classList.remove('hidden');document.getElementById(`navBtn${t}`).classList.replace('text-gray-400','text-primary');};
 function updateProfileUI(){const b=document.getElementById('headerLoginBtn');const sh=document.getElementById('headerShareApp');const bd=document.getElementById('headerLogoBadge');if(!currentUser){['headerUserName','profileName'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText=id==='profileName'?"Guest User":"Guest";});['userAvatarInitials','profileAvatarBig'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText="G";});if(document.getElementById('profilePhone'))document.getElementById('profilePhone').innerText="-";if(document.getElementById('walletBalance'))document.getElementById('walletBalance').innerText="₹0";if(document.getElementById('pendingEarnings'))document.getElementById('pendingEarnings').innerText="₹0";const p=document.getElementById('profileHasAddress');if(p){p.innerText="Add";p.className="text-[10px] font-bold text-red-500";}if(document.getElementById('profileStatusBadge'))document.getElementById('profileStatusBadge').className="hidden";if(document.getElementById('approvalBanner'))document.getElementById('approvalBanner').classList.add('hidden');if(b)b.classList.remove('hidden');if(sh){sh.classList.add('hidden');sh.classList.remove('flex');}if(bd){bd.classList.add('hidden');bd.classList.remove('flex');}return;}if(b)b.classList.add('hidden');if(sh){sh.classList.remove('hidden');sh.classList.add('flex');}if(bd){bd.classList.remove('hidden');bd.classList.add('flex');}if(!userData)return;const n=userData.name||"Reseller";document.getElementById('headerUserName').innerText=n.split(' ')[0];document.getElementById('profileName').innerText=n;document.getElementById('userAvatarInitials').innerText=n.charAt(0).toUpperCase();document.getElementById('profileAvatarBig').innerText=n.charAt(0).toUpperCase();document.getElementById('profilePhone').innerText=userData.phone||userData.email||"-";document.getElementById('walletBalance').innerText=`₹${money(userData.walletBalance)}`;const h=userData.address&&userData.address.trim()!=="";const pa=document.getElementById('profileHasAddress');pa.innerText=h?"Saved":"Add";pa.className=h?"text-[10px] font-bold text-green-500":"text-[10px] font-bold text-red-500";const s=document.getElementById('profileStatusBadge');s.innerText=userData.status;if(userData.status==='approved'){s.className="hidden";document.getElementById('approvalBanner').classList.add('hidden');}else{s.className="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700";document.getElementById('approvalBanner').classList.remove('hidden');}}
