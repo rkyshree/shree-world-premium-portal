@@ -36,6 +36,36 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0}.
 .step-circle.error { background: linear-gradient(135deg, #ef4444, #dc2626); border-color: transparent; color: #fff; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
 @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
 nav.fixed { max-width: 1200px; margin: 0 auto; }
+
+/* Enhanced Cashkaro style arrow animation */
+.arrow-line-container {
+    display: flex; align-items: center; justify-content: space-evenly; width: 100%; overflow: hidden;
+}
+.arrow-icon {
+    color: #3b82f6; font-size: 20px; opacity: 0; animation: arrowMove 1.5s linear infinite;
+}
+.arrow-icon:nth-child(1) { animation-delay: 0s; }
+.arrow-icon:nth-child(2) { animation-delay: 0.3s; }
+.arrow-icon:nth-child(3) { animation-delay: 0.6s; }
+.arrow-icon:nth-child(4) { animation-delay: 0.9s; }
+.arrow-icon:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes arrowMove {
+    0% { transform: translateX(-20px); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateX(20px); opacity: 0; }
+}
+
+/* Cashback button glowing animation */
+@keyframes glowButton {
+    0% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.05); }
+    50% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.8), 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: scale(1.1); }
+    100% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.05); }
+}
+.cashback-glow {
+    animation: glowButton 2s ease-in-out infinite;
+}
 </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -80,25 +110,29 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
 
 <!-- Affiliate Redirect Animation Screen -->
 <div id="affiliateRedirectScreen" class="fixed inset-0 z-[9999] bg-white hidden flex-col items-center justify-center w-full max-w-[1200px] mx-auto transition-opacity duration-300 opacity-0">
-    <div class="bg-[#0f52ba] rounded-full flex items-center px-5 py-2 mb-8 shadow-md transform scale-110">
-        <span class="text-white font-semibold text-[17px] tracking-wide mr-4">Cashback Activated</span>
-        <div class="w-9 h-9 bg-[#ffcc00] rounded-full flex items-center justify-center text-yellow-800 font-bold text-xl shadow-inner border-[3px] border-[#ffe066]">₹</div>
+    <div class="bg-[#0f52ba] rounded-full flex items-center px-6 py-2.5 mb-10 cashback-glow cursor-default select-none">
+        <span class="text-white font-bold text-lg tracking-wide mr-4">Cashback Activated</span>
+        <div class="w-10 h-10 bg-[#ffcc00] rounded-full flex items-center justify-center text-yellow-800 font-black text-2xl shadow-inner border-[3px] border-[#ffe066]">₹</div>
     </div>
-    <h2 id="redirectBrandText" class="text-[22px] font-bold text-gray-900 mb-14 text-center px-4 tracking-tight">Shop at Flipkart & Get Cashback</h2>
+    <h2 id="redirectBrandText" class="text-[22px] md:text-2xl font-bold text-gray-900 mb-14 text-center px-4 tracking-tight">Shop at Brand & Get Cashback</h2>
     
-    <div class="flex items-center justify-center gap-0 w-full max-w-[320px]">
-        <div class="w-[70px] h-[70px] bg-[#1a237e] rounded-2xl flex items-center justify-center shadow-lg z-10 shrink-0 border border-gray-100 relative">
-            <span class="text-white font-black text-[11px] tracking-tight text-center leading-tight mt-1">SHRAY<br><span class="text-[#f43397]">NEX</span></span>
+    <div class="flex items-center justify-center gap-2 w-full max-w-[400px] px-6">
+        <div class="w-[85px] h-[85px] bg-[#1a237e] rounded-2xl flex items-center justify-center shadow-lg z-10 shrink-0 border border-gray-100 relative">
+            <span class="text-white font-black text-sm md:text-base tracking-tight text-center">SHRAY<span class="text-[#f43397]">NEX</span></span>
         </div>
-        <div class="flex-1 h-1 bg-transparent border-t-[3px] border-dashed border-gray-300 relative overflow-hidden mx-1">
-            <div class="absolute inset-0 w-full h-full bg-blue-500/20 animate-pulse"></div>
+        <div class="flex-1 h-10 relative overflow-hidden mx-1 arrow-line-container">
+            <i class="fa-solid fa-angle-right arrow-icon"></i>
+            <i class="fa-solid fa-angle-right arrow-icon"></i>
+            <i class="fa-solid fa-angle-right arrow-icon"></i>
+            <i class="fa-solid fa-angle-right arrow-icon"></i>
+            <i class="fa-solid fa-angle-right arrow-icon"></i>
         </div>
-        <div class="w-[70px] h-[70px] bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-xl p-2 z-10 shrink-0 relative">
+        <div class="w-[85px] h-[85px] bg-white border border-gray-200 rounded-2xl flex items-center justify-center shadow-xl p-3 z-10 shrink-0 relative">
             <img id="redirectBrandImg" src="" class="w-full h-full object-contain mix-blend-multiply">
         </div>
     </div>
-    <p class="text-gray-400 text-sm font-medium mt-12 animate-pulse flex items-center gap-2">
-        <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i> Redirecting securely...
+    <p class="text-gray-500 text-sm font-medium mt-16 animate-pulse flex items-center gap-2">
+        <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i> Please wait, opening website...
     </p>
 </div>
 
@@ -185,7 +219,8 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
     let charIndex = 0;
     let loadingPct = 0;
     
-    const totalDuration = 4500; // Fast splash screen (~4.5s)
+    // Exact 3 Second Loading Timer
+    const totalDuration = 3000; 
     const pctIntervalTime = totalDuration / 100; 
     
     const pctInterval = setInterval(() => {
@@ -207,13 +242,13 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
         if (charIndex < text.length) {
             twElement.innerText = text.substring(0, charIndex + 1);
             charIndex++;
-            setTimeout(typeWriter, 50); 
+            setTimeout(typeWriter, 30); // Faster typing to fit 3s
         } else {
             twElement.innerText = text;
         }
     }
     
-    setTimeout(typeWriter, 300); 
+    setTimeout(typeWriter, 200); 
 })();
 
 window.triggerBrandRedirect = (title, img, link) => {
@@ -236,8 +271,8 @@ window.triggerBrandRedirect = (title, img, link) => {
                 screen.classList.add('hidden');
                 document.body.style.overflow = '';
             }, 300);
-        }, 800);
-    }, 2000); 
+        }, 1000); // 1 second after open as requested
+    }, 2500); // Animation runs for 2.5s before opening
 };
 
 const manifest={name:"SHRAYNEX",short_name:"SHRAYNEX",start_url:location.href,display:"standalone",background_color:"#ffffff",theme_color:"#f43397",icons:[{src:"https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
@@ -303,7 +338,6 @@ onAuthStateChanged(auth,async(u)=>{currentUser=u;authStateResolved=true;if(!wind
 if(typeof window.checkAndRoute === 'function') window.checkAndRoute();
 });
 
-// ADDED MISSING SPLASH SCREEN FUNCTION
 window.checkAndRoute = () => {
     if(authStateResolved && window.splashFinished) {
         const s = document.getElementById('splashScreen');
