@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rajkamal Studio - Professional Photography</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#D4AF37',
+                        dark: '#121212',
+                        darker: '#0a0a0a',
+                        card: '#1e1e1e'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles & Animations */
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .glass-nav {
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #BF953F 0%, #B38728 100%);
+            color: #121212;
+            transition: all 0.3s ease;
+        }
+
+        .btn-gold:hover {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Scroll Animation Classes */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Image Parallax */
+        .hero-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        /* Custom Toast */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #D4AF37;
+            color: #121212;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .gallery-img {
+            transition: transform 0.4s ease;
+        }
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0">
+                    <a href="#" class="font-serif text-2xl font-bold tracking-wider" id="nav-brand-name">
+                        <span class="gold-gradient-text">Rajkamal</span> Studio
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#about" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#services" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Services</a>
+                        <a href="#knowledge" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Tips</a>
+                        <a href="#contact" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors">
+                        <i class="fas fa-share-nodes text-xl"></i>
+                    </button>
+                    <a href="#book" class="ml-4 btn-gold px-6 py-2 rounded-full font-semibold text-sm inline-block">Book Now</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden items-center gap-4">
+                    <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors">
+                        <i class="fas fa-share-nodes text-xl"></i>
+                    </button>
+                    <button type="button" id="mobile-menu-btn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-darker border-t border-gray-800" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <a href="#home" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#about" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#services" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Services</a>
+                <a href="#knowledge" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Tips</a>
+                <a href="#book" class="block btn-gold mx-4 mt-4 px-3 py-2 rounded-full text-base font-medium">Book Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative h-screen flex items-center justify-center hero-bg" id="hero-section" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://placehold.co/1920x1080/1a1a1a/555555?text=Rajkamal+Studio+Photography');">
+        <div class="text-center px-4 fade-in-up mt-20">
+            <h2 class="text-gold tracking-widest uppercase text-sm md:text-lg mb-4 font-semibold">Capturing Beautiful Moments</h2>
+            <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6" id="hero-title">Rajkamal Studio</h1>
+            <p class="text-gray-300 max-w-2xl mx-auto mb-10 text-lg md:text-xl font-light">We freeze time so you can cherish the memories forever. Professional photography & videography services.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#book" class="btn-gold px-8 py-3 rounded-full font-bold text-lg">Book a Session</a>
+                <a href="#gallery" class="border border-gold text-gold hover:bg-gold hover:text-dark transition-colors px-8 py-3 rounded-full font-bold text-lg">View Portfolio</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / Contact Info Section -->
+    <section id="about" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2 fade-in-up">
+                    <img id="about-img" src="https://placehold.co/800x600/1e1e1e/d4af37?text=Studio+Setup" alt="Studio" class="rounded-2xl shadow-2xl border border-gray-800 w-full object-cover h-[400px]">
+                </div>
+                <div class="md:w-1/2 fade-in-up">
+                    <h3 class="text-gold font-serif text-3xl mb-2">About Us</h3>
+                    <h2 class="text-4xl font-bold mb-6" id="about-title">Rajkamal Studio</h2>
+                    <p class="text-gray-400 mb-8 leading-relaxed">Welcome to our creative space. We specialize in capturing the essence of your special moments with high-quality equipment and an artistic eye. Whether it's a wedding, a portrait session, or a commercial shoot, we deliver excellence.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-user"></i></div>
+                            <div>
+                                <p class="text-sm text-gray-500">Owner</p>
+                                <p class="font-semibold text-lg" id="owner-name">J.N. Prajapati</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-location-dot"></i></div>
+                            <div>
+                                <p class="text-sm text-gray-500">Location</p>
+                                <p class="font-semibold text-lg" id="studio-address">Rail Vihar Road, Wargawa, Gorakhpur</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-phone"></i></div>
+                            <div>
+                                <p class="text-sm text-gray-500">Contact</p>
+                                <p class="font-semibold text-lg" id="studio-phones">8874131356, 7905374448</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <h3 class="text-gold tracking-widest uppercase text-sm font-semibold mb-2">What We Do</h3>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold">Our Services</h2>
+                <div class="w-24 h-1 bg-gold mx-auto mt-6 rounded-full"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="services-container">
+                <!-- Services will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Preview -->
+    <section id="gallery" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-4xl md:text-5xl font-serif font-bold">Recent Work</h2>
+                <div class="w-24 h-1 bg-gold mx-auto mt-6 rounded-full"></div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="gallery-container">
+                <!-- Gallery images will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Photography Tips / Knowledge Base -->
+    <section id="knowledge" class="py-20 bg-darker">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <h3 class="text-gold tracking-widest uppercase text-sm font-semibold mb-2">Expert Advice</h3>
+                <h2 class="text-4xl font-serif font-bold">Photography Knowledge</h2>
+                <p class="text-gray-400 mt-4">Some quick tips for our clients to get the best out of their photoshoots.</p>
+            </div>
+            
+            <div class="space-y-6 fade-in-up" id="tips-container">
+                <!-- Tips will be injected here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form (Direct to WhatsApp) -->
+    <section id="book" class="py-20 bg-dark relative" style="background-image: linear-gradient(rgba(18,18,18,0.9), rgba(18,18,18,0.9)), url('https://placehold.co/1920x1080/222/555'); background-attachment: fixed;">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-card p-8 md:p-12 rounded-2xl shadow-2xl border border-gray-800 fade-in-up">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Book Your Shoot</h2>
+                    <p class="text-gray-400">Fill this form to send us a direct message on WhatsApp!</p>
+                </div>
+                
+                <form id="booking-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Your Name</label>
+                            <input type="text" id="wa-name" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Event Type</label>
+                            <select id="wa-event" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors">
+                                <option value="Wedding">Wedding</option>
+                                <option value="Pre-Wedding">Pre-Wedding</option>
+                                <option value="Portrait / Portfolio">Portrait / Portfolio</option>
+                                <option value="Birthday / Event">Birthday / Event</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Event Date</label>
+                            <input type="date" id="wa-date" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" style="color-scheme: dark;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Location/Address</label>
+                            <input type="text" id="wa-location" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="City or Venue">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Additional Message</label>
+                        <textarea id="wa-message" rows="4" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="Tell us more about your requirements..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full btn-gold py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2">
+                        <i class="fab fa-whatsapp text-2xl"></i> Send to WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-darker pt-16 pb-8 border-t border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 text-center md:text-left">
+                <div>
+                    <h3 class="font-serif text-2xl font-bold mb-6"><span class="gold-gradient-text">Rajkamal</span> Studio</h3>
+                    <p class="text-gray-400 mb-6">Creating timeless memories through our lenses. Serving with passion and creativity.</p>
+                    <div class="flex justify-center md:justify-start space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-white">Contact Info</h4>
+                    <ul class="space-y-4 text-gray-400">
+                        <li class="flex items-start justify-center md:justify-start gap-3">
+                            <i class="fas fa-map-marker-alt mt-1 text-gold"></i>
+                            <span id="footer-address">Rail Vihar Road, Wargawa, Gorakhpur</span>
+                        </li>
+                        <li class="flex items-center justify-center md:justify-start gap-3">
+                            <i class="fas fa-phone text-gold"></i>
+                            <span id="footer-phone">8874131356</span>
+                        </li>
+                        <li class="flex items-center justify-center md:justify-start gap-3">
+                            <i class="fas fa-envelope text-gold"></i>
+                            <span id="footer-email">jagannathgkp@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#home" class="hover:text-gold transition-colors">Home</a></li>
+                        <li><a href="#services" class="hover:text-gold transition-colors">Services</a></li>
+                        <li><a href="#gallery" class="hover:text-gold transition-colors">Gallery</a></li>
+                        <li><button onclick="shareWebsite()" class="hover:text-gold transition-colors">Share Website</button></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; <span id="current-year"></span> <span id="footer-brand">Rajkamal Studio</span>. All rights reserved.</p>
+                <p class="mt-4 md:mt-0">
+                    Website Developer by 
+                    <a href="https://www.rkyshree.in/Resell" target="_blank" class="text-gold hover:underline font-medium">Shraynex</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Toast Message (Replaces Alert) -->
+    <div id="toast">Message Copied/Action Successful</div>
+
+    <!-- ==========================================
+         CONFIGURATION SECTION (EDIT THIS)
+         ========================================== -->
+    <script>
+        // इस ऑब्जेक्ट में आप अपनी वेबसाइट की सारी जानकारी आसानी से बदल सकते हैं।
+        // बस इनवर्टेड कॉमा (" ") के अंदर की चीज़ें बदलें।
+        const siteConfig = {
+            // बेसिक जानकारी (पोस्टर के अनुसार)
+            studioName: "Rajkamal Studio",
+            ownerName: "J.N. Prajapati",
+            primaryPhone: "8874131356", // यही नंबर व्हाट्सएप के लिए इस्तेमाल होगा
+            secondaryPhone: "7905374448",
+            email: "jagannathgkp@gmail.com",
+            address: "रेलविहार रोड, वरगावा, गोरखपुर (Rail Vihar Road, Wargawa, Gorakhpur)",
+            
+            // शेयर लिंक सेटिंग्स
+            shareLink: "https://www.rkyshree.in/Rajkamal",
+            shareMessage: "✨ बेहतरीन फोटोग्राफी के लिए संपर्क करें Rajkamal Studio से! नीचे दिए गए लिंक पर क्लिक करके वेबसाइट देखें 👇",
+            
+            // मुख्य फोटो (अभी डमी लगे हैं, बाद में यहाँ अपने फोटो का लिंक डालें)
+            heroBgImage: "https://placehold.co/1920x1080/1a1a1a/555555?text=Rajkamal+Studio+Photography",
+            aboutImage: "https://placehold.co/800x600/1e1e1e/d4af37?text=Studio+Setup",
+            
+            // सर्विसेज लिस्ट (आप और जोड़ या हटा सकते हैं)
+            services: [
+                {
+                    title: "Wedding Photography",
+                    desc: "हम आपकी शादी के हर खास पल को संजो कर रखते हैं। सिनेमैटिक वीडियो और कैंडिड फोटोग्राफी।",
+                    icon: "fa-rings-wedding",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Wedding"
+                },
+                {
+                    title: "Pre-Wedding Shoots",
+                    desc: "शादी से पहले की रोमांटिक यादों को खूबसूरत लोकेशन्स पर कैमरे में कैद करें।",
+                    icon: "fa-camera-retro",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Pre-Wedding"
+                },
+                {
+                    title: "Drone Videography",
+                    desc: "आसमान से आपके इवेंट का शानदार नजारा 4K ड्रोन कैमरों के साथ।",
+                    icon: "fa-drone",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Drone+Shoot"
+                },
+                {
+                    title: "Candid Photography",
+                    desc: "नैचुरल इमोशन्स और बिना बताए ली गई खूबसूरत तस्वीरें जो कहानी बयां करती हैं।",
+                    icon: "fa-image",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Candid"
+                },
+                {
+                    title: "Birthday & Events",
+                    desc: "जन्मदिन, सालगिरह या किसी भी खास मौके की बेहतरीन कवरेज।",
+                    icon: "fa-cake-candles",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Events"
+                },
+                {
+                    title: "Photo Editing & Albums",
+                    desc: "प्रीमियम क्वालिटी की फोटो एडिटिंग और कस्टमाइज्ड हाई-क्वालिटी एल्बम डिज़ाइन।",
+                    icon: "fa-book-open",
+                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Albums"
+                }
+            ],
+
+            // गैलरी के फोटो (रैंडम)
+            gallery: [
+                "https://placehold.co/500x500/111/d4af37?text=Photo+1",
+                "https://placehold.co/500x500/222/d4af37?text=Photo+2",
+                "https://placehold.co/500x500/111/d4af37?text=Photo+3",
+                "https://placehold.co/500x500/222/d4af37?text=Photo+4",
+                "https://placehold.co/500x500/111/d4af37?text=Photo+5",
+                "https://placehold.co/500x500/222/d4af37?text=Photo+6",
+                "https://placehold.co/500x500/111/d4af37?text=Photo+7",
+                "https://placehold.co/500x500/222/d4af37?text=Photo+8",
+            ],
+
+            // फोटोग्राफी नॉलेज (टिप्स)
+            knowledgeBase: [
+                {
+                    title: "शूट के दिन कौन से कपड़े पहनें? (What to wear?)",
+                    content: "हमेशा ऐसे कपड़े चुनें जिनमें आप सहज हों। बहुत ज्यादा चमकीले या नियन कलर्स (Neon Colors) से बचें। सॉलिड कलर्स और पेस्टल शेड्स तस्वीरों में बहुत अच्छे आते हैं।"
+                },
+                {
+                    title: "गोल्डन ऑवर (Golden Hour) का महत्व",
+                    content: "फोटोग्राफी में सबसे अच्छी रोशनी सुबह सूर्योदय के तुरंत बाद और शाम को सूर्यास्त से ठीक पहले होती है। इसे 'गोल्डन ऑवर' कहते हैं। आउटडोर शूट हमेशा इसी समय प्लान करें।"
+                },
+                {
+                    title: "कैमरे के सामने नर्वस न हों (Be Natural)",
+                    content: "पोज देने की ज्यादा चिंता न करें। एक दूसरे से बात करें, हंसें और अपने नैचुरल अंदाज में रहें। सबसे अच्छी तस्वीरें वही होती हैं जिनमें असली इमोशन्स दिखते हैं (Candid Moments)।"
+                }
+            ]
+        };
+
+        // ==========================================
+        // WEBSITE LOGIC (नीचे कोड में बदलाव न करें)
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Populate Basic Info
+            document.title = `${siteConfig.studioName} - Professional Photography`;
+            document.getElementById('nav-brand-name').innerHTML = `<span class="gold-gradient-text">${siteConfig.studioName.split(' ')[0]}</span> ${siteConfig.studioName.split(' ').slice(1).join(' ')}`;
+            document.getElementById('hero-title').innerText = siteConfig.studioName;
+            document.getElementById('about-title').innerText = siteConfig.studioName;
+            document.getElementById('owner-name').innerText = siteConfig.ownerName;
+            document.getElementById('studio-address').innerText = siteConfig.address;
+            document.getElementById('footer-address').innerText = siteConfig.address;
+            document.getElementById('studio-phones').innerText = `${siteConfig.primaryPhone}, ${siteConfig.secondaryPhone}`;
+            document.getElementById('footer-phone').innerText = siteConfig.primaryPhone;
+            document.getElementById('footer-email').innerText = siteConfig.email;
+            document.getElementById('footer-brand').innerText = siteConfig.studioName;
+            
+            document.getElementById('current-year').innerText = new Date().getFullYear();
+
+            // Images update
+            // document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('${siteConfig.heroBgImage}')`;
+            document.getElementById('about-img').src = siteConfig.aboutImage;
+
+            // 2. Populate Services
+            const servicesContainer = document.getElementById('services-container');
+            siteConfig.services.forEach(service => {
+                const serviceHTML = `
+                    <div class="bg-card rounded-2xl overflow-hidden shadow-lg border border-gray-800 group hover:border-gold transition-colors duration-300 fade-in-up">
+                        <div class="h-48 overflow-hidden">
+                            <img src="${service.img}" alt="${service.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-3 text-gold">${service.title}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">${service.desc}</p>
+                        </div>
+                    </div>
+                `;
+                servicesContainer.innerHTML += serviceHTML;
+            });
+
+            // 3. Populate Gallery
+            const galleryContainer = document.getElementById('gallery-container');
+            siteConfig.gallery.forEach(imgUrl => {
+                const imgHTML = `
+                    <div class="overflow-hidden rounded-lg fade-in-up">
+                        <img src="${imgUrl}" alt="Gallery Work" class="w-full h-48 md:h-64 object-cover gallery-img cursor-pointer">
+                    </div>
+                `;
+                galleryContainer.innerHTML += imgHTML;
+            });
+
+            // 4. Populate Knowledge Base
+            const tipsContainer = document.getElementById('tips-container');
+            siteConfig.knowledgeBase.forEach(tip => {
+                const tipHTML = `
+                    <div class="bg-card p-6 rounded-xl border border-gray-800 border-l-4 border-l-gold">
+                        <h4 class="text-xl font-semibold mb-2 text-white">${tip.title}</h4>
+                        <p class="text-gray-400 text-sm md:text-base">${tip.content}</p>
+                    </div>
+                `;
+                tipsContainer.innerHTML += tipHTML;
+            });
+
+            // 5. Scroll Animations Setup using IntersectionObserver
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements with fade-in-up after a slight delay to allow DOM painting
+            setTimeout(() => {
+                document.querySelectorAll('.fade-in-up').forEach((el) => {
+                    observer.observe(el);
+                });
+            }, 100);
+
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            // Close mobile menu on link click
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        });
+
+        // 6. WhatsApp Booking Form Logic
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('wa-name').value;
+            const event = document.getElementById('wa-event').value;
+            const date = document.getElementById('wa-date').value;
+            const location = document.getElementById('wa-location').value;
+            const msg = document.getElementById('wa-message').value;
+            
+            // Format WhatsApp Message
+            const whatsappNumber = siteConfig.primaryPhone; 
+            const formattedMessage = `Hello *${siteConfig.studioName}*,%0A%0AI would like to book a shoot.%0A%0A*Name:* ${name}%0A*Event Type:* ${event}%0A*Date:* ${date}%0A*Location:* ${location}%0A*Additional Details:* ${msg ? msg : 'None'}%0A%0APlease let me know the availability and pricing.`;
+            
+            // URL Construction (wa.me link format, using standard country code 91 for India)
+            const waUrl = `https://wa.me/91${whatsappNumber}?text=${formattedMessage}`;
+            
+            // Open in new tab
+            window.open(waUrl, '_blank');
+        });
+
+        // 7. Share Functionality
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function shareWebsite() {
+            const shareData = {
+                title: siteConfig.studioName,
+                text: siteConfig.shareMessage,
+                url: siteConfig.shareLink
+            };
+
+            if (navigator.share) {
+                navigator.share(shareData)
+                    .then(() => console.log('Shared successfully'))
+                    .catch((error) => console.log('Error sharing', error));
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const textToCopy = `${siteConfig.shareMessage} ${siteConfig.shareLink}`;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showToast("Link Copied! You can now paste and share it.");
+                }).catch(err => {
+                    // Fallback to older execCommand
+                    const textArea = document.createElement("textarea");
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast("Link Copied! You can now paste and share it.");
+                    } catch (err) {
+                        showToast("Failed to copy link.");
+                    }
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
