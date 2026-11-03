@@ -251,84 +251,127 @@
         </div>
     </div>
 
+    <!-- PRO Unlock Modal -->
+    <div id="unlockModal" class="fixed inset-0 z-[150] hidden">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+            <div class="glass-panel border border-gold/30 rounded-2xl w-full max-w-md flex flex-col shadow-[0_0_50px_rgba(251,191,36,0.15)] relative text-center p-8 animate-float">
+                <div class="w-16 h-16 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-gold/20">
+                    🔒
+                </div>
+                <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-400">Unlock PRO Prompts</h3>
+                
+                <div id="unlockInitialUI">
+                    <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                        Ye ek premium <strong class="text-gold">PRO Prompt</strong> hai. Ise aur baaki sabhi 50,000+ PRO prompts ko humesha ke liye free mein unlock karne ke liye niche click karein, website par <strong>90 Seconds</strong> tak rukein aur apni ID banayein.
+                    </p>
+                    <button onclick="startUnlockProcess()" class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-400 hover:to-gold text-black font-black text-lg py-4 rounded-xl transition shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:scale-[1.02]">
+                        Visit Website & Unlock 🔓
+                    </button>
+                    <button onclick="closeUnlockModal()" class="mt-4 text-slate-400 text-sm hover:text-white transition underline">Cancel</button>
+                </div>
+
+                <div id="unlockProgressUI" class="hidden">
+                    <p class="text-slate-300 text-sm mb-4 leading-relaxed">
+                        <span class="text-green-400 font-bold">Verification in progress...</span><br>
+                        Kripya naye tab mein <strong class="text-white">rkyshree.in/Resell</strong> par ID banayein. Is page ko band na karein.
+                    </p>
+                    <div class="text-6xl font-black text-white mb-6 tabular-nums" id="unlockTimerText">90</div>
+                    <div class="w-full bg-white/10 rounded-full h-2 mb-2 overflow-hidden">
+                        <div id="unlockProgressBar" class="bg-gold h-2 rounded-full transition-all duration-1000 w-full"></div>
+                    </div>
+                    <p class="text-xs text-gold animate-pulse mt-2">Checking your visit status...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-black/60 py-10 mt-auto">
+        <div class="max-w-[1600px] mx-auto px-4 text-center flex flex-col items-center justify-center">
+            <p class="text-slate-400 text-sm mb-2">Developed by <strong class="text-white">SHRAYNEX</strong></p>
+            <a href="https://www.rkyshree.in/Resell" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 hover:border-primary/50 hover:text-primary text-slate-300 transition text-sm font-medium">
+                🌐 https://www.rkyshree.in/Resell
+            </a>
+        </div>
+    </footer>
+
     <!-- MAIN SCRIPT (DATA & LOGIC) -->
     <script>
         // --------------------------------------------------------
-        // 1. DATA DEFINITIONS (All 15 Categories & Subcategories)
+        // 1. DATA DEFINITIONS (Reordered & Updated)
         // --------------------------------------------------------
         const RAW_CATEGORIES = [
             {
-                id: 'cat1', name: '1. Website & Coding', icon: '💻', type: 'code',
-                subs: ['Website Development', 'HTML CSS', 'JavaScript', 'React JS', 'Next.js', 'WordPress', 'E-commerce Website', 'Portfolio Website', 'Business Website', 'Landing Page', 'Web App Development', 'Admin Dashboard', 'Login & Signup System', 'Database & Backend', 'API Integration', 'Bug Fixing', 'Code Optimization', 'Responsive Design', 'PWA Development', 'Android App Development', 'UI/UX Design']
-            },
-            {
-                id: 'cat2', name: '2. AI Photo Editing', icon: '📸', type: 'image',
+                id: 'cat2', name: '1. AI Photo Editing', icon: '📸', type: 'image',
                 subs: ['Professional Photo Editing', '4K Photo Enhancement', 'DSLR Photography', 'Face Retouching', 'Background Change', 'Background Removal', 'Passport Size Photo', 'Wedding Photo Editing', 'Cinematic Photo', 'Royal Look Editing', 'Traditional Look', 'Model Photoshoot', 'Business Profile Photo', 'Couple Photo Editing', 'Family Photo Editing', 'Baby Photo Editing', 'Birthday Photo Editing', 'Old Photo Restoration', 'Color Grading', 'AI Portrait Editing']
             },
             {
-                id: 'cat3', name: '3. Logo & Graphic Design', icon: '🎨', type: 'design',
+                id: 'cat3', name: '2. Logo & Graphic Design', icon: '🎨', type: 'design',
                 subs: ['3D Logo Design', 'Business Logo', 'Brand Identity', 'Minimal Logo', 'Luxury Logo', 'Gaming Logo', 'Political Logo', 'YouTube Logo', 'Instagram Logo', 'Signature Logo', 'Mascot Logo', 'Typography Logo', 'Visiting Card', 'Banner Design', 'Brochure Design']
             },
             {
-                id: 'cat4', name: '4. Social Media', icon: '📱', type: 'social',
+                id: 'cat4', name: '3. Social Media', icon: '📱', type: 'social',
                 subs: ['Instagram Bio', 'Instagram Captions', 'Instagram Reels', 'Viral Hashtags', 'Facebook Posts', 'Facebook Bio', 'YouTube Titles', 'YouTube Descriptions', 'YouTube Scripts', 'YouTube Shorts', 'WhatsApp Status', 'WhatsApp Business', 'Social Media Calendar', 'Viral Content Ideas', 'Social Media Growth', 'Influencer Marketing', 'Personal Branding', 'LinkedIn Profile', 'Twitter/X Posts', 'Social Media Management']
             },
             {
-                id: 'cat5', name: '5. Business & Marketing', icon: '📈', type: 'biz',
+                id: 'cat5', name: '4. Business & Marketing', icon: '📈', type: 'biz',
                 subs: ['Business Ideas', 'Startup Ideas', 'Digital Marketing', 'Affiliate Marketing', 'Reselling Business', 'Dropshipping', 'Online Earning', 'Freelancing', 'Client Acquisition', 'Sales Strategy', 'Marketing Strategy', 'Brand Promotion', 'Business Plan', 'Customer Support', 'WhatsApp Marketing', 'Email Marketing', 'SEO Strategy', 'Google Ads', 'Facebook Ads', 'Lead Generation']
             },
             {
-                id: 'cat6', name: '6. Education & Students', icon: '🎓', type: 'edu',
+                id: 'cat6', name: '5. Education & Students', icon: '🎓', type: 'edu',
                 subs: ['Study Notes', 'Exam Preparation', 'School Projects', 'College Assignments', 'Essay Writing', 'Speech Writing', 'Question Answers', 'Mathematics', 'Science', 'History', 'Geography', 'English Learning', 'Hindi Writing', 'Computer Learning', 'Competitive Exams', 'Interview Preparation', 'Resume Writing', 'Study Timetable', 'Quiz Generation', 'Lesson Planning']
             },
             {
-                id: 'cat7', name: '7. Professional & Office', icon: '👔', type: 'office',
+                id: 'cat7', name: '6. Professional & Office', icon: '👔', type: 'office',
                 subs: ['Professional Email', 'Application Writing', 'Resume/CV', 'Cover Letter', 'Job Interview', 'Office Reports', 'Business Proposal', 'Meeting Minutes', 'Project Management', 'Excel Formulas', 'PowerPoint Presentation', 'Data Analysis', 'HR Management', 'Customer Replies', 'Professional Messages']
             },
             {
-                id: 'cat8', name: '8. YouTube & Video', icon: '▶️', type: 'video',
+                id: 'cat8', name: '7. YouTube & Video Creation', icon: '▶️', type: 'video',
                 subs: ['YouTube Channel Ideas', 'Video Script', 'Documentary Script', 'Horror Story', 'Motivational Video', 'Educational Video', 'Facts Video', 'News Script', 'Podcast Script', 'Video Editing Ideas', 'Thumbnail Prompts', 'Cinematic Video', 'AI Video Generation', 'Voiceover Script', 'Reel Script']
             },
             {
-                id: 'cat9', name: '9. Political & PR', icon: '🚩', type: 'politics',
+                id: 'cat9', name: '8. Political & Public Relations', icon: '🚩', type: 'politics',
                 subs: ['Political Poster', 'Election Campaign', 'Gram Pradhan Poster', 'MLA Campaign', 'Political Speech', 'Public Meeting', 'Birthday Poster', 'Festival Greetings', 'जनसंपर्क संदेश', 'विकास कार्य योजना', 'जनता से संवाद', 'प्रचार सामग्री']
             },
             {
-                id: 'cat10', name: '10. Festival & Event', icon: '🎉', type: 'event',
+                id: 'cat10', name: '9. Festival & Event', icon: '🎉', type: 'event',
                 subs: ['Birthday Wishes', 'Wedding Invitation', 'Anniversary Wishes', 'Festival Posters', 'Holi Greetings', 'Diwali Greetings', 'Eid Greetings', 'Christmas Greetings', 'Independence Day', 'Republic Day', 'Janmashtami', 'Navratri', 'Invitation Cards', 'श्रद्धांजलि संदेश', 'ब्रह्मभोज कार्ड']
             },
             {
-                id: 'cat11', name: '11. Writing & Content', icon: '✍️', type: 'write',
+                id: 'cat11', name: '10. Writing & Content Creation', icon: '✍️', type: 'write',
                 subs: ['Article Writing', 'Blog Writing', 'Story Writing', 'Poetry Writing', 'Shayari', 'Motivational Quotes', 'Hindi Content', 'English Content', 'Product Description', 'Website About Us', 'Website Contact Us', 'Biography Writing', 'Professional Introduction', 'Book Writing', 'eBook Creation']
             },
             {
-                id: 'cat12', name: '12. AI Tools & Auto', icon: '🤖', type: 'ai',
+                id: 'cat12', name: '11. AI Tools & Automation', icon: '🤖', type: 'ai',
                 subs: ['ChatGPT Prompts', 'Gemini Prompts', 'Claude Prompts', 'NotebookLM Prompts', 'AI Automation', 'AI Agents', 'AI Image Generation', 'AI Video Generation', 'AI Voice Generation', 'AI Business Ideas', 'AI Workflow', 'No-Code Automation']
             },
             {
-                id: 'cat13', name: '13. Photo & Videoography', icon: '🎥', type: 'shoot',
+                id: 'cat13', name: '12. Photography & Videography', icon: '🎥', type: 'shoot',
                 subs: ['Wedding Photography', 'Pre-Wedding Shoot', 'Drone Photography', 'Product Photography', 'Fashion Photography', 'Portrait Photography', 'Nature Photography', 'Food Photography', 'Event Photography', 'Cinematic Videography']
             },
             {
-                id: 'cat14', name: '14. Lifestyle & Personal', icon: '🌟', type: 'life',
+                id: 'cat14', name: '13. Lifestyle & Personal Development', icon: '🌟', type: 'life',
                 subs: ['Daily Routine', 'Time Management', 'Goal Setting', 'Personality Development', 'Communication Skills', 'Motivation', 'Leadership Skills', 'Habit Building', 'Confidence Building', 'Productivity']
             },
             {
-                id: 'cat15', name: '15. Special Categories', icon: '🏢', type: 'special',
+                id: 'cat15', name: '14. Special Categories', icon: '🏢', type: 'special',
                 subs: ['Real Estate', 'Interior Design', 'Architecture', 'Restaurant Business', 'Salon & Beauty', 'Gym & Fitness', 'Travel & Tourism', 'Agriculture', 'Fashion & Clothing', 'Jewellery Business', 'Medical Awareness', 'Legal Drafting', 'Automobile Business', 'Local Shop Promotion', 'NGO & Social Work']
+            },
+            {
+                id: 'cat1', name: '15. Website & Coding Prompts', icon: '💻', type: 'code',
+                subs: ['Website Development', 'HTML CSS', 'JavaScript', 'React JS', 'Next.js', 'WordPress', 'E-commerce Website', 'Portfolio Website', 'Business Website', 'Landing Page', 'Web App Development', 'Admin Dashboard', 'Login & Signup System', 'Database & Backend', 'API Integration', 'Bug Fixing', 'Code Optimization', 'Responsive Design', 'PWA Development', 'Android App Development', 'UI/UX Design']
             }
         ];
 
-        // Advanced Styles / Tones to multiply the database to 50,000+
         const STYLES = ['Professional', 'Creative', 'Viral', 'Minimal', 'Luxury', 'Modern', 'Classic', 'Futuristic', 'Aesthetic', 'Cinematic'];
         const TONES = ['Engaging', 'Corporate', 'Friendly', 'Urgent', 'Informative', 'Humorous', 'Persuasive', 'Empathetic', 'Authoritative'];
         const FORMATS = ['Detailed', 'Bullet Points', 'Short & Crisp', 'Step-by-step', 'Storytelling Format'];
         
-        // --------------------------------------------------------
-        // 2. TEMPLATE GENERATOR (Tailored for ease of editing)
-        // --------------------------------------------------------
+        // Custom URL to append
+        const PROMO_URL = "https://www.rkyshree.in/Resell";
+
         function getTemplate(mainType, subName) {
-            // Generates the base text with highly visible placeholders [LIKE THIS]
             let t = "";
             switch(mainType) {
                 case 'politics':
@@ -367,45 +410,51 @@
             return t;
         }
 
-        // --------------------------------------------------------
-        // 3. DATABASE GENERATION
-        // --------------------------------------------------------
         let PROMPTS_DB = [];
         let filteredPrompts = [];
+        
+        // PRO Lock State
+        let isProUnlocked = localStorage.getItem('shraynex_pro_unlocked') === 'true';
+        let unlockInterval = null;
         
         function generateDatabase() {
             let idCount = 0;
             const db = [];
             
-            // Calculate variations needed per subcategory to hit 50,000+
             let totalSubs = 0;
             RAW_CATEGORIES.forEach(c => totalSubs += c.subs.length);
-            const variationsPerSub = Math.ceil(50000 / totalSubs); // Approximately 213 variations per subcategory
+            const variationsPerSub = Math.ceil(50000 / totalSubs); // ~213 per subcategory
             
             RAW_CATEGORIES.forEach(cat => {
                 cat.subs.forEach(sub => {
-                    // Generate unique combinations for each subcategory
                     for (let v = 0; v < variationsPerSub; v++) {
                         const style = STYLES[v % STYLES.length];
                         const tone = TONES[(v + Math.floor(v/STYLES.length)) % TONES.length];
                         const format = FORMATS[(v + Math.floor(v/TONES.length)) % FORMATS.length];
                         
-                        const variationName = `${style} • ${format}`;
-                        const promptText = getTemplate(cat.type, sub) + `\n\nAI Advanced Instructions:\n- Style Preference: ${style}\n- Tone of Voice: ${tone}\n- Output Format: ${format}\n- Uniqueness: 100% Original & Plagiarism-free`;
+                        // First item is Free, rest are PRO
+                        const isPro = v > 0;
+                        const variationName = isPro ? `${style} (PRO)` : `${style} (FREE)`;
                         
+                        let promptText = getTemplate(cat.type, sub) + `\n\nAI Advanced Instructions:\n- Style Preference: ${style}\n- Tone of Voice: ${tone}\n- Output Format: ${format}\n- Uniqueness: 100% Original & Plagiarism-free`;
+                        
+                        // Append mandatory promo URL to EVERY prompt
+                        promptText += `\n\nDeveloper & Updates:\n🌐 ${PROMO_URL}`;
+
                         db.push({
                             id: idCount++,
                             categoryId: cat.id,
                             categoryName: cat.name,
                             subCategory: sub,
-                            title: `${sub} (${variationName})`,
+                            title: `${sub} - ${variationName}`,
                             icon: cat.icon,
-                            prompt: promptText
+                            prompt: promptText,
+                            isPro: isPro
                         });
                     }
                 });
             });
-            return db; // Returns around 50,055 total unique prompts
+            return db;
         }
 
         // --------------------------------------------------------
@@ -431,7 +480,6 @@
             currentCategoryTitle: document.getElementById('currentCategoryTitle'),
             currentCategoryIcon: document.getElementById('currentCategoryIcon'),
             
-            // Modal
             editModal: document.getElementById('editModal'),
             closeModal: document.getElementById('closeModal'),
             modalTextarea: document.getElementById('modalTextarea'),
@@ -441,20 +489,21 @@
             modalGemBtn: document.getElementById('modalGemBtn'),
             
             toast: document.getElementById('toast'),
-            toastMsg: document.getElementById('toastMessage')
+            toastMsg: document.getElementById('toastMessage'),
+
+            // Unlock Modal DOM
+            unlockModal: document.getElementById('unlockModal'),
+            unlockInitialUI: document.getElementById('unlockInitialUI'),
+            unlockProgressUI: document.getElementById('unlockProgressUI'),
+            unlockTimerText: document.getElementById('unlockTimerText'),
+            unlockProgressBar: document.getElementById('unlockProgressBar')
         };
 
         function initApp() {
-            // Build Nav
             renderTopNav();
-            
-            // Generate DB
             PROMPTS_DB = generateDatabase();
             filteredPrompts = PROMPTS_DB;
-            
-            // Stats
-            DOM.headerCount.textContent = "50,000+ Combinations"; 
-            
+            DOM.headerCount.textContent = "50,000+ Prompts"; 
             updateView();
             setupEventListeners();
         }
@@ -506,66 +555,118 @@
         }
 
         function renderGrid(items) {
-            const html = items.map(item => `
-                <article class="glass-panel hover:bg-surfaceHover rounded-2xl p-5 flex flex-col transition duration-300 group border border-white/5 hover:border-primary/40 relative overflow-hidden">
-                    <!-- Glow Effect on hover -->
-                    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-                    
+            const html = items.map(item => {
+                const isLocked = item.isPro && !isProUnlocked;
+                
+                return `
+                <article class="glass-panel hover:bg-surfaceHover rounded-2xl p-5 flex flex-col transition duration-300 group border ${isLocked ? 'border-gold/20 hover:border-gold/50' : 'border-white/5 hover:border-primary/40'} relative overflow-hidden">
                     <div class="flex items-start gap-3 mb-4 relative z-10">
                         <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-xl border border-white/10 flex-shrink-0">
                             ${item.icon}
                         </div>
-                        <div>
-                            <h3 class="text-white font-bold text-base leading-tight mb-1">${escapeHTML(item.title)}</h3>
+                        <div class="flex-1">
+                            <h3 class="text-white font-bold text-base leading-tight mb-1 flex items-center gap-2">
+                                ${escapeHTML(item.title)}
+                                ${item.isPro ? `<span class="bg-gold/20 text-gold text-[10px] px-2 py-0.5 rounded border border-gold/40">PRO</span>` : `<span class="bg-green-500/20 text-green-400 text-[10px] px-2 py-0.5 rounded border border-green-500/40">FREE</span>`}
+                            </h3>
                             <p class="text-xs text-primary font-medium tracking-wide uppercase">${item.categoryName.split('. ')[1]}</p>
                         </div>
                     </div>
                     
-                    <div class="bg-black/40 rounded-xl p-4 mb-5 flex-1 border border-white/5 group-hover:border-white/10 transition relative z-10 overflow-hidden">
-                        <p class="text-slate-300 text-xs leading-relaxed line-clamp-4 whitespace-pre-wrap font-mono">${highlightBracketsInHTML(escapeHTML(item.prompt))}</p>
+                    <div class="bg-black/60 rounded-xl p-4 mb-5 flex-1 border border-white/5 group-hover:border-white/10 transition relative z-10 overflow-hidden">
+                        <p class="text-slate-300 text-xs leading-relaxed line-clamp-4 whitespace-pre-wrap font-mono ${isLocked ? 'blur-[4px] select-none opacity-40' : ''}">${highlightBracketsInHTML(escapeHTML(item.prompt))}</p>
+                        
+                        ${isLocked ? `
+                        <div class="absolute inset-0 flex flex-col items-center justify-center z-20">
+                            <span class="text-3xl mb-1 drop-shadow-lg">🔒</span>
+                            <span class="text-gold font-bold text-xs bg-black/80 px-3 py-1 rounded-full border border-gold/30">PRO LOCKED</span>
+                        </div>
+                        ` : ''}
                     </div>
                     
                     <div class="grid grid-cols-2 gap-2 mt-auto relative z-10">
+                        ${isLocked ? `
+                        <button onclick="openUnlockModal()" class="col-span-2 bg-gradient-to-r from-gold/10 to-yellow-600/10 hover:from-gold hover:to-yellow-500 text-gold hover:text-black border border-gold/40 text-sm font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                            🔒 Click to Unlock PRO
+                        </button>
+                        ` : `
                         <button onclick="openEditor(${item.id})" class="col-span-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white text-sm font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(99,102,241,0.3)]">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             Edit & Use Prompt
                         </button>
+                        `}
                     </div>
                 </article>
-            `).join('');
+                `;
+            }).join('');
+            
             DOM.promptGrid.innerHTML = html;
             window.scrollTo({ top: DOM.promptGrid.offsetTop - 150, behavior: 'smooth' });
         }
 
-        // Highlight brackets [ ] for display only
+        // Unlock System Logic
+        window.openUnlockModal = function() {
+            DOM.unlockModal.classList.remove('hidden');
+            DOM.unlockInitialUI.classList.remove('hidden');
+            DOM.unlockProgressUI.classList.add('hidden');
+        }
+
+        window.closeUnlockModal = function() {
+            DOM.unlockModal.classList.add('hidden');
+            if (unlockInterval) clearInterval(unlockInterval);
+        }
+
+        window.startUnlockProcess = function() {
+            // Open the sponsor URL in new tab
+            window.open(PROMO_URL, '_blank');
+            
+            // Switch UI to timer
+            DOM.unlockInitialUI.classList.add('hidden');
+            DOM.unlockProgressUI.classList.remove('hidden');
+            
+            let timeLeft = 90; // 90 seconds
+            DOM.unlockTimerText.textContent = timeLeft;
+            DOM.unlockProgressBar.style.width = '100%';
+
+            unlockInterval = setInterval(() => {
+                timeLeft--;
+                DOM.unlockTimerText.textContent = timeLeft;
+                DOM.unlockProgressBar.style.width = `${(timeLeft / 90) * 100}%`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(unlockInterval);
+                    localStorage.setItem('shraynex_pro_unlocked', 'true');
+                    isProUnlocked = true;
+                    closeUnlockModal();
+                    showToast("🎉 All PRO Prompts Unlocked!");
+                    updateView(); // Re-render grid without locks
+                }
+            }, 1000);
+        }
+
         function highlightBracketsInHTML(str) {
             return str.replace(/(\[.*?\])/g, '<span class="highlight-bracket">$1</span>');
         }
 
         function filterData(query = "") {
             query = query.toLowerCase().trim();
-            
             filteredPrompts = PROMPTS_DB.filter(item => {
                 const matchCategory = activeCategory === 'all' || item.categoryId === activeCategory;
                 const matchSearch = query === '' || 
                     item.title.toLowerCase().includes(query) || 
                     item.subCategory.toLowerCase().includes(query) ||
                     item.categoryName.toLowerCase().includes(query);
-                
                 return matchCategory && matchSearch;
             });
-            
             currentPage = 1;
             updateView();
         }
 
         function setupEventListeners() {
-            // Top Nav Clicks
             DOM.topNavCategories.addEventListener('click', (e) => {
                 const btn = e.target.closest('.cat-nav-btn');
                 if (!btn) return;
                 
-                // Update styling
                 document.querySelectorAll('.cat-nav-btn').forEach(b => {
                     b.classList.remove('bg-primary/20', 'border-primary/40', 'text-white', 'shadow-[0_0_10px_rgba(99,102,241,0.2)]');
                     b.classList.add('bg-white/5', 'border-white/10', 'text-slate-300');
@@ -582,27 +683,22 @@
                     DOM.currentCategoryTitle.innerHTML = `<span class="text-4xl" id="currentCategoryIcon">${btn.dataset.icon}</span> ${btn.dataset.name}`;
                 }
                 
-                // Clear search inputs
                 DOM.searchInput.value = "";
                 DOM.mobileSearchInput.value = "";
                 filterData("");
             });
 
-            // Search Handlers
             let timeout;
             const handleSearch = (e) => {
                 clearTimeout(timeout);
                 const q = e.target.value;
-                // Sync the other input
                 if(e.target.id === 'searchInput') DOM.mobileSearchInput.value = q;
                 if(e.target.id === 'mobileSearchInput') DOM.searchInput.value = q;
-                
                 timeout = setTimeout(() => filterData(q), 300);
             };
             DOM.searchInput.addEventListener('input', handleSearch);
             DOM.mobileSearchInput.addEventListener('input', handleSearch);
 
-            // Pagination
             DOM.prevBtn.addEventListener('click', () => {
                 if (currentPage > 1) { currentPage--; updateView(); }
             });
@@ -611,7 +707,6 @@
                 if (currentPage < max) { currentPage++; updateView(); }
             });
 
-            // Modal Controls
             DOM.closeModal.addEventListener('click', closeEditorModal);
             document.querySelector('.modal-backdrop').addEventListener('click', closeEditorModal);
             
@@ -624,9 +719,6 @@
             DOM.modalGemBtn.addEventListener('click', () => openExternal('gemini', DOM.modalTextarea.value));
         }
 
-        // --------------------------------------------------------
-        // 5. HELPER FUNCTIONS
-        // --------------------------------------------------------
         window.copyToClipboard = async function(text) {
             try {
                 await navigator.clipboard.writeText(text);
@@ -682,9 +774,7 @@
             }[tag]));
         }
 
-        // Initialize on load
         document.addEventListener('DOMContentLoaded', initApp);
-
     </script>
 </body>
 </html>
