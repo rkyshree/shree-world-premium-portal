@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,9 +43,9 @@
         }
 
         .glass-nav {
-            background: rgba(18, 18, 18, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
         }
 
         .gold-gradient-text {
@@ -62,7 +62,7 @@
         }
 
         .btn-gold:hover {
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
             transform: translateY(-2px);
         }
 
@@ -76,14 +76,6 @@
         .fade-in-up.visible {
             opacity: 1;
             transform: translateY(0);
-        }
-
-        /* Hero Image Parallax */
-        .hero-bg {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
         }
 
         /* Custom Toast */
@@ -110,14 +102,65 @@
         }
         
         .gallery-img {
-            transition: transform 0.4s ease;
+            transition: transform 0.5s ease;
         }
         .gallery-img:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
+        }
+
+        /* Booking Form Input Styles */
+        .floating-input:focus ~ label,
+        .floating-input:not(:placeholder-shown) ~ label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: #D4AF37;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased" style="overflow: hidden;"> <!-- Body is locked during intro -->
+
+    <!-- ==========================================
+         INTRO ANIMATION SCREEN
+         ========================================== -->
+    <div id="intro-wrap" class="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
+        <!-- Top and Bottom Shutters -->
+        <div id="shutter-top" class="absolute top-0 left-0 w-full h-1/2 bg-black transition-transform duration-[1.5s] ease-in-out z-40 border-b border-gray-900"></div>
+        <div id="shutter-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-black transition-transform duration-[1.5s] ease-in-out z-40 border-t border-gray-900"></div>
+        
+        <div id="intro-content" class="absolute inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-500">
+            
+            <!-- Background Lotus & Camera -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                <i class="fas fa-camera text-[15rem] md:text-[25rem] absolute text-gray-500"></i>
+                <i class="fab fa-pagelines text-[12rem] md:text-[20rem] absolute text-gold animate-pulse mix-blend-overlay"></i>
+            </div>
+            
+            <!-- Text Animation -->
+            <div class="flex text-5xl md:text-8xl font-serif font-black text-gold z-10 overflow-hidden px-4 drop-shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                <div id="raj-text" class="transform -translate-y-[150vh] transition-transform duration-[1.2s] ease-out">Raj</div>
+                <div id="kamal-text" class="transform translate-y-[150vh] transition-transform duration-[1.2s] ease-out">kamal</div>
+            </div>
+
+            <!-- Black Photographer Silhouette SVG -->
+            <div id="silhouette" class="mt-8 opacity-0 transition-opacity duration-700 z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
+                <svg viewBox="0 0 100 100" width="150" height="150" fill="#000000" class="stroke-gold stroke-[0.2]">
+                    <!-- Girl / Subject -->
+                    <path d="M 25 45 Q 30 35 35 45 Q 40 55 35 70 L 20 100 L 10 100 L 20 70 Q 15 55 25 45 Z" />
+                    <circle cx="28" cy="32" r="8" />
+                    <!-- Boy / Photographer -->
+                    <path d="M 75 45 Q 70 35 65 45 L 55 55 L 45 55 L 50 65 L 65 100 L 85 100 L 75 65 Z" />
+                    <circle cx="71" cy="32" r="9" />
+                    <!-- Camera Box & Lens -->
+                    <rect x="47" y="42" width="14" height="10" rx="2" fill="#D4AF37" />
+                    <circle cx="50" cy="47" r="3" fill="#000" />
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Camera Flash Effect -->
+        <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 z-[60] pointer-events-none transition-opacity duration-150"></div>
+    </div>
+    <!-- END INTRO -->
+
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-nav transition-all duration-300">
@@ -130,21 +173,26 @@
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#home" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Home</a>
-                        <a href="#about" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">About</a>
-                        <a href="#services" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Services</a>
-                        <a href="#knowledge" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Tips</a>
-                        <a href="#contact" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                        <a href="#home" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium" data-i18n="navHome">Home</a>
+                        <a href="#about" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium" data-i18n="navAbout">About</a>
+                        <a href="#services" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium" data-i18n="navServices">Services</a>
+                        <a href="#contact" class="hover:text-gold transition-colors px-3 py-2 rounded-md text-sm font-medium" data-i18n="navContact">Contact</a>
                     </div>
                 </div>
-                <div class="hidden md:block">
-                    <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors">
+                <div class="hidden md:flex items-center gap-4">
+                    <button onclick="toggleLanguage()" class="flex items-center gap-2 border border-gold/50 text-gold px-4 py-1.5 rounded-full text-xs font-bold hover:bg-gold hover:text-dark transition-all duration-300 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
+                        <i class="fas fa-language text-lg"></i> <span class="lang-text">A/अ</span>
+                    </button>
+                    <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors" title="Share Website">
                         <i class="fas fa-share-nodes text-xl"></i>
                     </button>
-                    <a href="#book" class="ml-4 btn-gold px-6 py-2 rounded-full font-semibold text-sm inline-block">Book Now</a>
+                    <a href="#book" class="btn-gold px-6 py-2.5 rounded-full font-semibold text-sm inline-block tracking-wide shadow-[0_0_15px_rgba(212,175,55,0.3)]" data-i18n="navBook">Book Now</a>
                 </div>
                 <!-- Mobile menu button -->
                 <div class="-mr-2 flex md:hidden items-center gap-4">
+                    <button onclick="toggleLanguage()" class="flex items-center border border-gold/50 text-gold px-2.5 py-1 rounded-full text-xs font-bold hover:bg-gold hover:text-dark transition-all">
+                        <i class="fas fa-language"></i> <span class="lang-text ml-1">A/अ</span>
+                    </button>
                     <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors">
                         <i class="fas fa-share-nodes text-xl"></i>
                     </button>
@@ -155,62 +203,65 @@
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div class="md:hidden hidden bg-darker border-t border-gray-800" id="mobile-menu">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
-                <a href="#home" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="#about" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">About</a>
-                <a href="#services" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Services</a>
-                <a href="#knowledge" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium">Tips</a>
-                <a href="#book" class="block btn-gold mx-4 mt-4 px-3 py-2 rounded-full text-base font-medium">Book Now</a>
+        <div class="md:hidden hidden bg-darker/95 backdrop-blur-md border-t border-gray-800 absolute w-full" id="mobile-menu">
+            <div class="px-2 pt-2 pb-6 space-y-1 sm:px-3 text-center">
+                <a href="#home" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium" data-i18n="navHome">Home</a>
+                <a href="#about" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium" data-i18n="navAbout">About</a>
+                <a href="#services" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium" data-i18n="navServices">Services</a>
+                <a href="#contact" class="block hover:text-gold px-3 py-2 rounded-md text-base font-medium" data-i18n="navContact">Contact</a>
+                <a href="#book" class="block btn-gold mx-4 mt-4 px-3 py-2.5 rounded-full text-base font-bold shadow-[0_0_15px_rgba(212,175,55,0.3)]" data-i18n="navBook">Book Now</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center hero-bg" id="hero-section" style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('https://placehold.co/1920x1080/1a1a1a/555555?text=Rajkamal+Studio+Photography');">
-        <div class="text-center px-4 fade-in-up mt-20">
-            <h2 class="text-gold tracking-widest uppercase text-sm md:text-lg mb-4 font-semibold">Capturing Beautiful Moments</h2>
-            <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6" id="hero-title">Rajkamal Studio</h1>
-            <p class="text-gray-300 max-w-2xl mx-auto mb-10 text-lg md:text-xl font-light">We freeze time so you can cherish the memories forever. Professional photography & videography services.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#book" class="btn-gold px-8 py-3 rounded-full font-bold text-lg">Book a Session</a>
-                <a href="#gallery" class="border border-gold text-gold hover:bg-gold hover:text-dark transition-colors px-8 py-3 rounded-full font-bold text-lg">View Portfolio</a>
+    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden" style="background-image: linear-gradient(to bottom, rgba(10,10,10,0.6), rgba(10,10,10,0.95)), url('https://i.ibb.co/Qj3PL0tT/file-0000000039c08211a8115e3eb4149c47.jpg'); background-attachment: fixed; background-size: cover; background-position: center;">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
+        <div class="text-center px-4 fade-in-up mt-20 relative z-10">
+            <h2 class="text-gold tracking-widest uppercase text-sm md:text-lg mb-4 font-semibold letter-spacing-2 backdrop-blur-sm inline-block px-4 py-1 rounded-full border border-gold/20"><i class="fas fa-camera-retro mr-2"></i> <span data-i18n="heroSub">Capturing Beautiful Moments</span></h2>
+            <h1 class="text-5xl md:text-8xl font-serif font-black mb-6 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]" id="hero-title">Rajkamal Studio</h1>
+            <p class="text-gray-200 max-w-2xl mx-auto mb-10 text-lg md:text-xl font-medium drop-shadow-md" data-i18n="heroDesc">We freeze time so you can cherish the memories forever. Premium photography, videography & custom studio services.</p>
+            <div class="flex flex-col sm:flex-row gap-5 justify-center items-center">
+                <a href="#book" class="btn-gold px-8 py-3.5 rounded-full font-bold text-lg shadow-[0_0_20px_rgba(212,175,55,0.4)] w-full sm:w-auto" data-i18n="heroBtnBook">Book a Session</a>
+                <a href="#gallery" class="border-2 border-gold text-gold hover:bg-gold hover:text-dark transition-all px-8 py-3.5 rounded-full font-bold text-lg bg-black/30 backdrop-blur-sm w-full sm:w-auto" data-i18n="heroBtnPort">View Portfolio</a>
             </div>
         </div>
     </section>
 
     <!-- About / Contact Info Section -->
-    <section id="about" class="py-20 bg-dark">
+    <section id="about" class="py-24 bg-gradient-to-b from-darker to-dark relative">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row gap-12 items-center">
-                <div class="md:w-1/2 fade-in-up">
-                    <img id="about-img" src="https://placehold.co/800x600/1e1e1e/d4af37?text=Studio+Setup" alt="Studio" class="rounded-2xl shadow-2xl border border-gray-800 w-full object-cover h-[400px]">
+            <div class="flex flex-col lg:flex-row gap-16 items-center">
+                <div class="lg:w-1/2 fade-in-up relative group">
+                    <div class="absolute -inset-4 border-2 border-gold/60 rounded-2xl transform translate-x-4 translate-y-4 transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
+                    <img id="about-img" src="https://i.ibb.co/Qj3PL0tT/file-0000000039c08211a8115e3eb4149c47.jpg" alt="Studio" class="rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] relative z-10 w-full object-cover h-[500px] border border-gray-800">
                 </div>
-                <div class="md:w-1/2 fade-in-up">
-                    <h3 class="text-gold font-serif text-3xl mb-2">About Us</h3>
-                    <h2 class="text-4xl font-bold mb-6" id="about-title">Rajkamal Studio</h2>
-                    <p class="text-gray-400 mb-8 leading-relaxed">Welcome to our creative space. We specialize in capturing the essence of your special moments with high-quality equipment and an artistic eye. Whether it's a wedding, a portrait session, or a commercial shoot, we deliver excellence.</p>
+                <div class="lg:w-1/2 fade-in-up">
+                    <h3 class="text-gold font-serif text-3xl mb-2 flex items-center gap-3"><span class="w-10 h-px bg-gold inline-block"></span> <span data-i18n="aboutTag">About Us</span></h3>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6" id="about-title">Rajkamal Studio</h2>
+                    <p class="text-gray-300 mb-8 leading-relaxed text-lg font-light" data-i18n="aboutDesc">Welcome to our creative space. We specialize in capturing the essence of your special moments with high-quality equipment and an artistic eye. Whether it's a wedding, a portrait session, or immediate studio needs like passport photos and framing, we deliver excellence.</p>
                     
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-4">
-                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-user"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="flex items-center gap-4 bg-card/50 p-4 rounded-xl border border-gray-800/50 hover:border-gold/30 transition-colors">
+                            <div class="bg-darker p-3.5 rounded-lg text-gold shadow-inner"><i class="fas fa-user-tie text-xl"></i></div>
                             <div>
-                                <p class="text-sm text-gray-500">Owner</p>
-                                <p class="font-semibold text-lg" id="owner-name">J.N. Prajapati</p>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold" data-i18n="ownerLabel">Owner</p>
+                                <p class="font-bold text-lg text-white" id="owner-name">J.N. Prajapati</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4">
-                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-location-dot"></i></div>
+                        <div class="flex items-center gap-4 bg-card/50 p-4 rounded-xl border border-gray-800/50 hover:border-gold/30 transition-colors">
+                            <div class="bg-darker p-3.5 rounded-lg text-gold shadow-inner"><i class="fas fa-phone-volume text-xl"></i></div>
                             <div>
-                                <p class="text-sm text-gray-500">Location</p>
-                                <p class="font-semibold text-lg" id="studio-address">Rail Vihar Road, Wargawa, Gorakhpur</p>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold" data-i18n="contactLabel">Contact</p>
+                                <p class="font-bold text-base text-white" id="studio-phones">8874131356</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4">
-                            <div class="bg-card p-3 rounded-full text-gold"><i class="fas fa-phone"></i></div>
+                        <div class="flex items-center gap-4 md:col-span-2 bg-card/50 p-4 rounded-xl border border-gray-800/50 hover:border-gold/30 transition-colors">
+                            <div class="bg-darker p-3.5 rounded-lg text-gold shadow-inner"><i class="fas fa-location-dot text-xl"></i></div>
                             <div>
-                                <p class="text-sm text-gray-500">Contact</p>
-                                <p class="font-semibold text-lg" id="studio-phones">8874131356, 7905374448</p>
+                                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold" data-i18n="locLabel">Location</p>
+                                <p class="font-bold text-lg text-white" id="studio-address">रेलविहार रोड, चरगावा, गोरखपुर</p>
                             </div>
                         </div>
                     </div>
@@ -220,25 +271,26 @@
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="py-20 bg-darker">
+    <section id="services" class="py-24 bg-[#0d0d0d]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in-up">
-                <h3 class="text-gold tracking-widest uppercase text-sm font-semibold mb-2">What We Do</h3>
-                <h2 class="text-4xl md:text-5xl font-serif font-bold">Our Services</h2>
-                <div class="w-24 h-1 bg-gold mx-auto mt-6 rounded-full"></div>
+                <h3 class="text-gold tracking-widest uppercase text-sm font-semibold mb-2" data-i18n="servTag">Our Expertise</h3>
+                <h2 class="text-4xl md:text-6xl font-serif font-bold text-white" data-i18n="servTitle">Services We Offer</h2>
+                <div class="w-24 h-1.5 bg-gold mx-auto mt-6 rounded-full shadow-[0_0_10px_rgba(212,175,55,0.5)]"></div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="services-container">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="services-container">
                 <!-- Services will be injected here by JS -->
             </div>
         </div>
     </section>
 
     <!-- Gallery Preview -->
-    <section id="gallery" class="py-20 bg-dark">
+    <section id="gallery" class="py-20 bg-dark relative border-t border-gray-900/50">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl md:text-5xl font-serif font-bold">Recent Work</h2>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold" data-i18n="galTitle">Recent Work</h2>
                 <div class="w-24 h-1 bg-gold mx-auto mt-6 rounded-full"></div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="gallery-container">
@@ -247,63 +299,55 @@
         </div>
     </section>
 
-    <!-- Photography Tips / Knowledge Base -->
-    <section id="knowledge" class="py-20 bg-darker">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 fade-in-up">
-                <h3 class="text-gold tracking-widest uppercase text-sm font-semibold mb-2">Expert Advice</h3>
-                <h2 class="text-4xl font-serif font-bold">Photography Knowledge</h2>
-                <p class="text-gray-400 mt-4">Some quick tips for our clients to get the best out of their photoshoots.</p>
-            </div>
-            
-            <div class="space-y-6 fade-in-up" id="tips-container">
-                <!-- Tips will be injected here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Booking Form (Direct to WhatsApp) -->
-    <section id="book" class="py-20 bg-dark relative" style="background-image: linear-gradient(rgba(18,18,18,0.9), rgba(18,18,18,0.9)), url('https://placehold.co/1920x1080/222/555'); background-attachment: fixed;">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-card p-8 md:p-12 rounded-2xl shadow-2xl border border-gray-800 fade-in-up">
-                <div class="text-center mb-10">
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">Book Your Shoot</h2>
-                    <p class="text-gray-400">Fill this form to send us a direct message on WhatsApp!</p>
+    <!-- Professional Booking Form (Direct to WhatsApp) -->
+    <section id="book" class="py-24 bg-dark relative overflow-hidden" style="background-image: linear-gradient(rgba(10,10,10,0.92), rgba(10,10,10,0.95)), url('https://i.ibb.co/Qj3PL0tT/file-0000000039c08211a8115e3eb4149c47.jpg'); background-attachment: fixed; background-size: cover; background-position: center;">
+        <!-- decorative blur -->
+        <div class="absolute top-0 left-0 w-96 h-96 bg-gold rounded-full mix-blend-multiply filter blur-[150px] opacity-20 animate-pulse"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-black/60 backdrop-blur-xl p-8 md:p-14 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] border border-gold/20 fade-in-up relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-5xl font-serif font-bold mb-4 text-white drop-shadow-md" data-i18n="bookTitle">Book Your Shoot</h2>
+                    <p class="text-gray-300 text-lg font-medium" data-i18n="bookDesc">Send us your details directly via WhatsApp for a quick response.</p>
                 </div>
                 
-                <form id="booking-form" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Your Name</label>
-                            <input type="text" id="wa-name" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="John Doe">
+                <form id="booking-form" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="relative z-0 w-full group">
+                            <input type="text" id="wa-name" class="floating-input block py-3.5 px-0 w-full text-base text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gold peer transition-colors" placeholder=" " required />
+                            <label class="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gold peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" data-i18n="lblWaName">Full Name</label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Event Type</label>
-                            <select id="wa-event" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors">
-                                <option value="Wedding">Wedding</option>
-                                <option value="Pre-Wedding">Pre-Wedding</option>
-                                <option value="Portrait / Portfolio">Portrait / Portfolio</option>
-                                <option value="Birthday / Event">Birthday / Event</option>
-                                <option value="Other">Other</option>
+                        <div class="relative z-0 w-full group">
+                            <select id="wa-event" class="block py-3.5 px-0 w-full text-base text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gold peer transition-colors" required>
+                                <option value="" disabled selected class="bg-dark text-gray-500" data-i18n="lblWaEvent">Select Event / Service</option>
+                                <option value="Wedding / Pre-Wedding" class="bg-dark">Wedding / Pre-Wedding</option>
+                                <option value="Studio Portrait" class="bg-dark">Studio Portrait</option>
+                                <option value="Passport Size Photo" class="bg-dark">Passport Size Photo</option>
+                                <option value="Photo Framing" class="bg-dark">Photo Framing</option>
+                                <option value="Birthday / Party" class="bg-dark">Birthday / Party</option>
+                                <option value="Maternity Shoot" class="bg-dark">Maternity Shoot</option>
+                                <option value="Product Photography" class="bg-dark">Product Photography</option>
+                                <option value="Other" class="bg-dark">Other</option>
                             </select>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Event Date</label>
-                            <input type="date" id="wa-date" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" style="color-scheme: dark;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="relative z-0 w-full group">
+                            <input type="date" id="wa-date" class="floating-input block py-3.5 px-0 w-full text-base text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gold peer transition-colors" placeholder=" " style="color-scheme: dark;" required />
+                            <label class="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gold peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" data-i18n="lblWaDate">Preferred Date</label>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-2">Location/Address</label>
-                            <input type="text" id="wa-location" required class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="City or Venue">
+                        <div class="relative z-0 w-full group">
+                            <input type="text" id="wa-location" class="floating-input block py-3.5 px-0 w-full text-base text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gold peer transition-colors" placeholder=" " required />
+                            <label class="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gold peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" data-i18n="lblWaLoc">Location / Address</label>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Additional Message</label>
-                        <textarea id="wa-message" rows="4" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold transition-colors" placeholder="Tell us more about your requirements..."></textarea>
+                    <div class="relative z-0 w-full group">
+                        <textarea id="wa-message" rows="3" class="floating-input block py-3.5 px-0 w-full text-base text-white bg-transparent border-0 border-b-2 border-gray-600 appearance-none focus:outline-none focus:ring-0 focus:border-gold peer transition-colors" placeholder=" "></textarea>
+                        <label class="peer-focus:font-medium absolute text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-gold peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6" data-i18n="lblWaMsg">Additional Requirements (Optional)</label>
                     </div>
-                    <button type="submit" class="w-full btn-gold py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2">
-                        <i class="fab fa-whatsapp text-2xl"></i> Send to WhatsApp
+                    <button type="submit" class="w-full btn-gold py-4 rounded-xl font-bold text-xl flex items-center justify-center gap-3 mt-8 shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:shadow-[0_0_30px_rgba(212,175,55,0.6)]">
+                        <i class="fab fa-whatsapp text-3xl"></i> <span data-i18n="btnWaSubmit">Send via WhatsApp</span>
                     </button>
                 </form>
             </div>
@@ -311,158 +355,224 @@
     </section>
 
     <!-- Footer -->
-    <footer id="contact" class="bg-darker pt-16 pb-8 border-t border-gray-900">
+    <footer id="contact" class="bg-black pt-16 pb-8 border-t border-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12 text-center md:text-left">
                 <div>
-                    <h3 class="font-serif text-2xl font-bold mb-6"><span class="gold-gradient-text">Rajkamal</span> Studio</h3>
-                    <p class="text-gray-400 mb-6">Creating timeless memories through our lenses. Serving with passion and creativity.</p>
-                    <div class="flex justify-center md:justify-start space-x-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-card flex items-center justify-center hover:bg-gold hover:text-dark transition-colors"><i class="fab fa-youtube"></i></a>
-                    </div>
+                    <h3 class="font-serif text-3xl font-bold mb-6"><span class="gold-gradient-text">Rajkamal</span> Studio</h3>
+                    <p class="text-gray-400 mb-6 max-w-md mx-auto md:mx-0 leading-relaxed" data-i18n="footDesc">Creating timeless memories through our lenses. From grand weddings to urgent studio needs, serving with passion and creativity.</p>
                 </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-white">Contact Info</h4>
-                    <ul class="space-y-4 text-gray-400">
-                        <li class="flex items-start justify-center md:justify-start gap-3">
-                            <i class="fas fa-map-marker-alt mt-1 text-gold"></i>
-                            <span id="footer-address">Rail Vihar Road, Wargawa, Gorakhpur</span>
+                <div class="flex flex-col md:items-end">
+                    <h4 class="text-xl font-semibold mb-6 text-white" data-i18n="footReach">Reach Out To Us</h4>
+                    <ul class="space-y-5 text-gray-300 text-left md:text-right">
+                        <li class="flex items-start justify-center md:justify-end gap-4 bg-gray-900/40 p-3 rounded-lg border border-gray-800 hover:border-gold/30 transition-colors w-full md:w-auto">
+                            <span id="footer-address" class="font-medium">रेलविहार रोड, चरगावा, गोरखपुर</span>
+                            <i class="fas fa-map-marker-alt mt-1.5 text-gold text-lg"></i>
                         </li>
-                        <li class="flex items-center justify-center md:justify-start gap-3">
-                            <i class="fas fa-phone text-gold"></i>
-                            <span id="footer-phone">8874131356</span>
+                        <li class="flex items-center justify-center md:justify-end gap-4 bg-gray-900/40 p-3 rounded-lg border border-gray-800 hover:border-gold/30 transition-colors w-full md:w-auto">
+                            <span id="footer-phone" class="font-medium">8874131356, 7905374448</span>
+                            <i class="fas fa-phone text-gold text-lg"></i>
                         </li>
-                        <li class="flex items-center justify-center md:justify-start gap-3">
-                            <i class="fas fa-envelope text-gold"></i>
-                            <span id="footer-email">jagannathgkp@gmail.com</span>
+                        <li class="flex items-center justify-center md:justify-end gap-4 bg-gray-900/40 p-3 rounded-lg border border-gray-800 hover:border-gold/30 transition-colors w-full md:w-auto">
+                            <span id="footer-email" class="font-medium">jagannathgkp@gmail.com</span>
+                            <i class="fas fa-envelope text-gold text-lg"></i>
                         </li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-white">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#home" class="hover:text-gold transition-colors">Home</a></li>
-                        <li><a href="#services" class="hover:text-gold transition-colors">Services</a></li>
-                        <li><a href="#gallery" class="hover:text-gold transition-colors">Gallery</a></li>
-                        <li><button onclick="shareWebsite()" class="hover:text-gold transition-colors">Share Website</button></li>
                     </ul>
                 </div>
             </div>
             
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
                 <p>&copy; <span id="current-year"></span> <span id="footer-brand">Rajkamal Studio</span>. All rights reserved.</p>
-                <p class="mt-4 md:mt-0">
+                <p class="mt-4 md:mt-0 font-medium">
                     Website Developer by 
-                    <a href="https://www.rkyshree.in/Resell" target="_blank" class="text-gold hover:underline font-medium">Shraynex</a>
+                    <a href="https://www.rkyshree.in/Resell" target="_blank" class="text-gold hover:text-white transition-colors ml-1 border-b border-gold/30 pb-0.5">Shraynex</a>
                 </p>
             </div>
         </div>
     </footer>
 
-    <!-- Custom Toast Message (Replaces Alert) -->
+    <!-- Custom Toast Message -->
     <div id="toast">Message Copied/Action Successful</div>
 
     <!-- ==========================================
          CONFIGURATION SECTION (EDIT THIS)
          ========================================== -->
     <script>
-        // इस ऑब्जेक्ट में आप अपनी वेबसाइट की सारी जानकारी आसानी से बदल सकते हैं।
-        // बस इनवर्टेड कॉमा (" ") के अंदर की चीज़ें बदलें।
+        // --- TRANSLATION DATA ---
+        const translations = {
+            en: {
+                navHome: "Home", navAbout: "About", navServices: "Services", navContact: "Contact", navBook: "Book Now",
+                heroSub: "Capturing Beautiful Moments", heroDesc: "We freeze time so you can cherish the memories forever. Premium photography, videography & custom studio services.", heroBtnBook: "Book a Session", heroBtnPort: "View Portfolio",
+                aboutTag: "About Us", aboutDesc: "Welcome to our creative space. We specialize in capturing the essence of your special moments with high-quality equipment and an artistic eye. Whether it's a wedding, a portrait session, or immediate studio needs like passport photos and framing, we deliver excellence.",
+                ownerLabel: "Owner", contactLabel: "Contact", locLabel: "Location",
+                servTag: "Our Expertise", servTitle: "Services We Offer",
+                galTitle: "Recent Work",
+                bookTitle: "Book Your Shoot", bookDesc: "Send us your details directly via WhatsApp for a quick response.",
+                lblWaName: "Full Name", lblWaEvent: "Select Event / Service", lblWaDate: "Preferred Date", lblWaLoc: "Location / Address", lblWaMsg: "Additional Requirements (Optional)", btnWaSubmit: "Send via WhatsApp",
+                footDesc: "Creating timeless memories through our lenses. From grand weddings to urgent studio needs, serving with passion and creativity.", footReach: "Reach Out To Us"
+            },
+            hi: {
+                navHome: "होम", navAbout: "हमारे बारे में", navServices: "सेवाएं", navContact: "संपर्क", navBook: "बुक करें",
+                heroSub: "खूबसूरत पलों को कैद करना", heroDesc: "हम समय को रोक देते हैं ताकि आप हमेशा के लिए यादों को संजो सकें। प्रीमियम फोटोग्राफी, वीडियोग्राफी और कस्टम स्टूडियो सेवाएं।", heroBtnBook: "सेशन बुक करें", heroBtnPort: "पोर्टफोलियो देखें",
+                aboutTag: "हमारे बारे में", aboutDesc: "हमारे रचनात्मक स्पेस में आपका स्वागत है। हम उच्च गुणवत्ता वाले उपकरणों और कलात्मक नज़र के साथ आपके खास पलों के सार को कैद करने में विशेषज्ञ हैं। चाहे शादी हो, पोर्ट्रेट सेशन हो, या तुरंत स्टूडियो की जरूरतें जैसे पासपोर्ट फोटो और फ्रेमिंग हो, हम बेहतरीन काम करते हैं।",
+                ownerLabel: "मालिक", contactLabel: "संपर्क", locLabel: "पता",
+                servTag: "हमारी विशेषज्ञता", servTitle: "हम क्या सेवाएं देते हैं",
+                galTitle: "हाल का काम",
+                bookTitle: "अपना शूट बुक करें", bookDesc: "त्वरित प्रतिक्रिया के लिए अपना विवरण सीधे व्हाट्सएप के माध्यम से हमें भेजें।",
+                lblWaName: "पूरा नाम", lblWaEvent: "इवेंट / सर्विस चुनें", lblWaDate: "पसंदीदा तारीख", lblWaLoc: "स्थान / पता", lblWaMsg: "अतिरिक्त आवश्यकताएं (वैकल्पिक)", btnWaSubmit: "व्हाट्सएप पर भेजें",
+                footDesc: "हमारे लेंस के माध्यम से हमेशा की यादें बनाना। भव्य शादियों से लेकर तत्काल स्टूडियो जरूरतों तक, जुनून और रचनात्मकता के साथ सेवा।", footReach: "हमसे संपर्क करें"
+            }
+        };
+
         const siteConfig = {
-            // बेसिक जानकारी (पोस्टर के अनुसार)
+            // बेसिक जानकारी 
             studioName: "Rajkamal Studio",
             ownerName: "J.N. Prajapati",
-            primaryPhone: "8874131356", // यही नंबर व्हाट्सएप के लिए इस्तेमाल होगा
+            primaryPhone: "8874131356", // व्हाट्सएप के लिए
             secondaryPhone: "7905374448",
             email: "jagannathgkp@gmail.com",
-            address: "रेलविहार रोड, वरगावा, गोरखपुर (Rail Vihar Road, Wargawa, Gorakhpur)",
+            address: "रेलविहार रोड, चरगावा, गोरखपुर",
             
             // शेयर लिंक सेटिंग्स
             shareLink: "https://www.rkyshree.in/Rajkamal",
             shareMessage: "✨ बेहतरीन फोटोग्राफी के लिए संपर्क करें Rajkamal Studio से! नीचे दिए गए लिंक पर क्लिक करके वेबसाइट देखें 👇",
             
-            // मुख्य फोटो (अभी डमी लगे हैं, बाद में यहाँ अपने फोटो का लिंक डालें)
-            heroBgImage: "https://placehold.co/1920x1080/1a1a1a/555555?text=Rajkamal+Studio+Photography",
-            aboutImage: "https://placehold.co/800x600/1e1e1e/d4af37?text=Studio+Setup",
-            
-            // सर्विसेज लिस्ट (आप और जोड़ या हटा सकते हैं)
+            // सर्विसेज लिस्ट (दोनों भाषाओं में)
             services: [
-                {
-                    title: "Wedding Photography",
-                    desc: "हम आपकी शादी के हर खास पल को संजो कर रखते हैं। सिनेमैटिक वीडियो और कैंडिड फोटोग्राफी।",
-                    icon: "fa-rings-wedding",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Wedding"
-                },
-                {
-                    title: "Pre-Wedding Shoots",
-                    desc: "शादी से पहले की रोमांटिक यादों को खूबसूरत लोकेशन्स पर कैमरे में कैद करें।",
-                    icon: "fa-camera-retro",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Pre-Wedding"
-                },
-                {
-                    title: "Drone Videography",
-                    desc: "आसमान से आपके इवेंट का शानदार नजारा 4K ड्रोन कैमरों के साथ।",
-                    icon: "fa-drone",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Drone+Shoot"
-                },
-                {
-                    title: "Candid Photography",
-                    desc: "नैचुरल इमोशन्स और बिना बताए ली गई खूबसूरत तस्वीरें जो कहानी बयां करती हैं।",
-                    icon: "fa-image",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Candid"
-                },
-                {
-                    title: "Birthday & Events",
-                    desc: "जन्मदिन, सालगिरह या किसी भी खास मौके की बेहतरीन कवरेज।",
-                    icon: "fa-cake-candles",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Events"
-                },
-                {
-                    title: "Photo Editing & Albums",
-                    desc: "प्रीमियम क्वालिटी की फोटो एडिटिंग और कस्टमाइज्ड हाई-क्वालिटी एल्बम डिज़ाइन।",
-                    icon: "fa-book-open",
-                    img: "https://placehold.co/600x400/2a2a2a/d4af37?text=Albums"
-                }
+                { titleEn: "Wedding Photography", titleHi: "वेडिंग फोटोग्राफी", descEn: "Candid and traditional wedding photography.", descHi: "कैंडिड और ट्रेडिशनल वेडिंग फोटोग्राफी।", img: "https://picsum.photos/id/1044/600/400" },
+                { titleEn: "Pre-Wedding Shoots", titleHi: "प्री-वेडिंग शूट", descEn: "Romantic and cinematic pre-wedding shoots.", descHi: "रोमांटिक और सिनेमैटिक प्री-वेडिंग शूट।", img: "https://picsum.photos/id/1027/600/400" },
+                { titleEn: "Passport Size Photo", titleHi: "पासपोर्ट साइज़ फोटो", descEn: "Urgent high-quality passport and visa photos.", descHi: "अर्जेंट हाई-क्वालिटी पासपोर्ट और वीज़ा फोटो।", img: "https://picsum.photos/id/1012/600/400" },
+                { titleEn: "Photo Framing", titleHi: "फोटो फ्रेमिंग", descEn: "Customized wooden and glass photo framing.", descHi: "कस्टमाइज्ड वुडन और ग्लास फोटो फ्रेमिंग।", img: "https://picsum.photos/id/1060/600/400" },
+                { titleEn: "Drone Videography", titleHi: "ड्रोन वीडियोग्राफी", descEn: "4K drone cinematic footage from the sky.", descHi: "आसमान से 4K ड्रोन सिनेमैटिक फुटेज।", img: "https://picsum.photos/id/1011/600/400" },
+                { titleEn: "Modeling Portfolio", titleHi: "मॉडलिंग पोर्टफोलियो", descEn: "Modeling portfolio with professional lighting.", descHi: "प्रोफेशनल लाइटिंग के साथ मॉडलिंग पोर्टफोलियो।", img: "https://picsum.photos/id/1025/600/400" },
+                { titleEn: "Birthday & Events", titleHi: "जन्मदिन और इवेंट्स", descEn: "Full coverage of parties and events.", descHi: "पार्टी और इवेंट्स की पूरी कवरेज।", img: "https://picsum.photos/id/1053/600/400" },
+                { titleEn: "Photo Editing & Albums", titleHi: "फोटो एडिटिंग और एल्बम", descEn: "Premium canvas and digital albums.", descHi: "प्रीमियम कैनवास और डिजिटल एल्बम।", img: "https://picsum.photos/id/1074/600/400" },
+                { titleEn: "Product Photography", titleHi: "प्रोडक्ट फोटोग्राफी", descEn: "Product shoots for e-commerce and business.", descHi: "ई-कॉमर्स और बिज़नेस के लिए प्रोडक्ट शूट।", img: "https://picsum.photos/id/1050/600/400" },
+                { titleEn: "Maternity Shoot", titleHi: "मैटरनिटी शूट", descEn: "Beautiful maternity and baby shower photography.", descHi: "खूबसूरत मैटरनिटी और बेबी शावर फोटोग्राफी।", img: "https://picsum.photos/id/1062/600/400" },
+                { titleEn: "Candid Photography", titleHi: "कैंडिड फोटोग्राफी", descEn: "Natural expressions and special moments.", descHi: "नैचुरल एक्सप्रेशंस और खास पल।", img: "https://picsum.photos/id/1013/600/400" },
+                { titleEn: "Corporate Video", titleHi: "कॉर्पोरेट वीडियो", descEn: "Office and business promotional videos.", descHi: "ऑफिस और बिज़नेस प्रमोशनल वीडियो।", img: "https://picsum.photos/id/1014/600/400" }
             ],
 
-            // गैलरी के फोटो (रैंडम)
+            // गैलरी के फोटो
             gallery: [
-                "https://placehold.co/500x500/111/d4af37?text=Photo+1",
-                "https://placehold.co/500x500/222/d4af37?text=Photo+2",
-                "https://placehold.co/500x500/111/d4af37?text=Photo+3",
-                "https://placehold.co/500x500/222/d4af37?text=Photo+4",
-                "https://placehold.co/500x500/111/d4af37?text=Photo+5",
-                "https://placehold.co/500x500/222/d4af37?text=Photo+6",
-                "https://placehold.co/500x500/111/d4af37?text=Photo+7",
-                "https://placehold.co/500x500/222/d4af37?text=Photo+8",
-            ],
-
-            // फोटोग्राफी नॉलेज (टिप्स)
-            knowledgeBase: [
-                {
-                    title: "शूट के दिन कौन से कपड़े पहनें? (What to wear?)",
-                    content: "हमेशा ऐसे कपड़े चुनें जिनमें आप सहज हों। बहुत ज्यादा चमकीले या नियन कलर्स (Neon Colors) से बचें। सॉलिड कलर्स और पेस्टल शेड्स तस्वीरों में बहुत अच्छे आते हैं।"
-                },
-                {
-                    title: "गोल्डन ऑवर (Golden Hour) का महत्व",
-                    content: "फोटोग्राफी में सबसे अच्छी रोशनी सुबह सूर्योदय के तुरंत बाद और शाम को सूर्यास्त से ठीक पहले होती है। इसे 'गोल्डन ऑवर' कहते हैं। आउटडोर शूट हमेशा इसी समय प्लान करें।"
-                },
-                {
-                    title: "कैमरे के सामने नर्वस न हों (Be Natural)",
-                    content: "पोज देने की ज्यादा चिंता न करें। एक दूसरे से बात करें, हंसें और अपने नैचुरल अंदाज में रहें। सबसे अच्छी तस्वीरें वही होती हैं जिनमें असली इमोशन्स दिखते हैं (Candid Moments)।"
-                }
+                "https://picsum.photos/id/1062/500/500",
+                "https://picsum.photos/id/1025/500/500",
+                "https://picsum.photos/id/1044/500/500",
+                "https://picsum.photos/id/1027/500/500",
+                "https://picsum.photos/id/1011/500/500",
+                "https://picsum.photos/id/1053/500/500",
+                "https://picsum.photos/id/1060/500/500",
+                "https://picsum.photos/id/1074/500/500",
             ]
         };
 
         // ==========================================
-        // WEBSITE LOGIC (नीचे कोड में बदलाव न करें)
+        // WEBSITE LOGIC (यहाँ बदलाव न करें)
         // ==========================================
+
+        let currentLang = 'hi'; // Default language
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'hi' ? 'en' : 'hi';
+            updateLanguageUI();
+        }
+
+        function updateLanguageUI() {
+            // Update all static text nodes
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    el.innerText = translations[currentLang][key];
+                }
+            });
+            
+            // Update select placeholder
+            const eventSelect = document.getElementById('wa-event');
+            if(eventSelect && eventSelect.options[0]) {
+                eventSelect.options[0].text = translations[currentLang]['lblWaEvent'];
+            }
+            
+            // Re-render services
+            renderServices();
+
+            // Update language toggle text indicator
+            document.querySelectorAll('.lang-text').forEach(el => {
+                el.innerText = currentLang === 'hi' ? 'EN' : 'हिन्दी';
+            });
+        }
+
+        function renderServices() {
+            const servicesContainer = document.getElementById('services-container');
+            servicesContainer.innerHTML = ''; // clear existing
+            
+            siteConfig.services.forEach(service => {
+                const title = currentLang === 'hi' ? service.titleHi : service.titleEn;
+                const desc = currentLang === 'hi' ? service.descHi : service.descEn;
+                
+                const serviceHTML = `
+                    <div class="bg-card/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg border border-gray-800/80 group hover:border-gold transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(0,0,0,0.6)] fade-in-up visible">
+                        <div class="h-56 overflow-hidden relative">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                            <img src="${service.img}" alt="${title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        </div>
+                        <div class="p-6 relative">
+                            <div class="absolute -top-6 right-6 w-12 h-12 bg-dark rounded-full flex items-center justify-center border border-gold z-20 shadow-lg text-gold">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3 text-gold">${title}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">${desc}</p>
+                        </div>
+                    </div>
+                `;
+                servicesContainer.innerHTML += serviceHTML;
+            });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // 1. Populate Basic Info
+            // --- INTRO ANIMATION LOGIC ---
+            // Scroll top initially
+            window.scrollTo(0,0);
+            
+            setTimeout(() => {
+                // 1. Drop and rise text
+                document.getElementById('raj-text').style.transform = 'translateY(0)';
+                document.getElementById('kamal-text').style.transform = 'translateY(0)';
+                
+                setTimeout(() => {
+                    // 2. Show Photographer Silhouette
+                    document.getElementById('silhouette').style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        // 3. Camera Flash
+                        const flash = document.getElementById('camera-flash');
+                        flash.style.opacity = '1';
+                        
+                        setTimeout(() => {
+                            flash.style.opacity = '0';
+                            
+                            // 4. Split Shutters Up and Down
+                            document.getElementById('intro-content').style.opacity = '0';
+                            document.getElementById('shutter-top').style.transform = 'translateY(-100%)';
+                            document.getElementById('shutter-bottom').style.transform = 'translateY(100%)';
+                            
+                            setTimeout(() => {
+                                // 5. Remove intro and allow scroll
+                                document.getElementById('intro-wrap').style.display = 'none';
+                                document.body.style.overflow = 'auto'; 
+                                
+                                // Initialize observers after intro completes
+                                initObservers();
+                                
+                            }, 1500); // Shutter animation time
+                            
+                        }, 150); // Flash duration
+                    }, 800); // Wait after showing silhouette
+                }, 1000); // Wait after text meets
+            }, 500); // Initial delay
+            
+            
+            // --- DATA POPULATION ---
             document.title = `${siteConfig.studioName} - Professional Photography`;
             document.getElementById('nav-brand-name').innerHTML = `<span class="gold-gradient-text">${siteConfig.studioName.split(' ')[0]}</span> ${siteConfig.studioName.split(' ').slice(1).join(' ')}`;
             document.getElementById('hero-title').innerText = siteConfig.studioName;
@@ -471,78 +581,42 @@
             document.getElementById('studio-address').innerText = siteConfig.address;
             document.getElementById('footer-address').innerText = siteConfig.address;
             document.getElementById('studio-phones').innerText = `${siteConfig.primaryPhone}, ${siteConfig.secondaryPhone}`;
-            document.getElementById('footer-phone').innerText = siteConfig.primaryPhone;
+            document.getElementById('footer-phone').innerText = `${siteConfig.primaryPhone}, ${siteConfig.secondaryPhone}`;
             document.getElementById('footer-email').innerText = siteConfig.email;
             document.getElementById('footer-brand').innerText = siteConfig.studioName;
-            
             document.getElementById('current-year').innerText = new Date().getFullYear();
 
-            // Images update
-            // document.getElementById('hero-section').style.backgroundImage = `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('${siteConfig.heroBgImage}')`;
-            document.getElementById('about-img').src = siteConfig.aboutImage;
-
-            // 2. Populate Services
-            const servicesContainer = document.getElementById('services-container');
-            siteConfig.services.forEach(service => {
-                const serviceHTML = `
-                    <div class="bg-card rounded-2xl overflow-hidden shadow-lg border border-gray-800 group hover:border-gold transition-colors duration-300 fade-in-up">
-                        <div class="h-48 overflow-hidden">
-                            <img src="${service.img}" alt="${service.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                        </div>
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-3 text-gold">${service.title}</h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">${service.desc}</p>
-                        </div>
-                    </div>
-                `;
-                servicesContainer.innerHTML += serviceHTML;
-            });
-
-            // 3. Populate Gallery
+            // Populate Gallery
             const galleryContainer = document.getElementById('gallery-container');
             siteConfig.gallery.forEach(imgUrl => {
                 const imgHTML = `
-                    <div class="overflow-hidden rounded-lg fade-in-up">
-                        <img src="${imgUrl}" alt="Gallery Work" class="w-full h-48 md:h-64 object-cover gallery-img cursor-pointer">
+                    <div class="overflow-hidden rounded-xl fade-in-up group relative">
+                        <div class="absolute inset-0 bg-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none"></div>
+                        <img src="${imgUrl}" alt="Gallery Work" class="w-full h-32 md:h-64 object-cover gallery-img cursor-pointer border border-gray-800">
                     </div>
                 `;
                 galleryContainer.innerHTML += imgHTML;
             });
 
-            // 4. Populate Knowledge Base
-            const tipsContainer = document.getElementById('tips-container');
-            siteConfig.knowledgeBase.forEach(tip => {
-                const tipHTML = `
-                    <div class="bg-card p-6 rounded-xl border border-gray-800 border-l-4 border-l-gold">
-                        <h4 class="text-xl font-semibold mb-2 text-white">${tip.title}</h4>
-                        <p class="text-gray-400 text-sm md:text-base">${tip.content}</p>
-                    </div>
-                `;
-                tipsContainer.innerHTML += tipHTML;
-            });
+            // Initialize Language and UI
+            updateLanguageUI();
 
-            // 5. Scroll Animations Setup using IntersectionObserver
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
+            // --- SCROLL ANIMATIONS ---
+            function initObservers() {
+                const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
 
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            // Observe all elements with fade-in-up after a slight delay to allow DOM painting
-            setTimeout(() => {
                 document.querySelectorAll('.fade-in-up').forEach((el) => {
                     observer.observe(el);
                 });
-            }, 100);
+            }
 
             // Mobile Menu Toggle
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -550,7 +624,6 @@
             mobileMenuBtn.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-            // Close mobile menu on link click
             mobileMenu.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
@@ -558,7 +631,7 @@
             });
         });
 
-        // 6. WhatsApp Booking Form Logic
+        // WhatsApp Booking Form Logic
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -568,18 +641,14 @@
             const location = document.getElementById('wa-location').value;
             const msg = document.getElementById('wa-message').value;
             
-            // Format WhatsApp Message
             const whatsappNumber = siteConfig.primaryPhone; 
-            const formattedMessage = `Hello *${siteConfig.studioName}*,%0A%0AI would like to book a shoot.%0A%0A*Name:* ${name}%0A*Event Type:* ${event}%0A*Date:* ${date}%0A*Location:* ${location}%0A*Additional Details:* ${msg ? msg : 'None'}%0A%0APlease let me know the availability and pricing.`;
+            const formattedMessage = `Hello *${siteConfig.studioName}*,%0A%0AI would like to book a service.%0A%0A*Name:* ${name}%0A*Service:* ${event}%0A*Date:* ${date}%0A*Location:* ${location}%0A*Additional Notes:* ${msg ? msg : 'None'}%0A%0AKindly confirm the details.`;
             
-            // URL Construction (wa.me link format, using standard country code 91 for India)
             const waUrl = `https://wa.me/91${whatsappNumber}?text=${formattedMessage}`;
-            
-            // Open in new tab
             window.open(waUrl, '_blank');
         });
 
-        // 7. Share Functionality
+        // Share Functionality
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.innerText = message;
@@ -599,19 +668,17 @@
                     .then(() => console.log('Shared successfully'))
                     .catch((error) => console.log('Error sharing', error));
             } else {
-                // Fallback for browsers that don't support Web Share API
                 const textToCopy = `${siteConfig.shareMessage} ${siteConfig.shareLink}`;
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    showToast("Link Copied! You can now paste and share it.");
+                    showToast(currentLang === 'hi' ? "लिंक कॉपी हो गया!" : "Link Copied!");
                 }).catch(err => {
-                    // Fallback to older execCommand
                     const textArea = document.createElement("textarea");
                     textArea.value = textToCopy;
                     document.body.appendChild(textArea);
                     textArea.select();
                     try {
                         document.execCommand('copy');
-                        showToast("Link Copied! You can now paste and share it.");
+                        showToast(currentLang === 'hi' ? "लिंक कॉपी हो गया!" : "Link Copied!");
                     } catch (err) {
                         showToast("Failed to copy link.");
                     }
