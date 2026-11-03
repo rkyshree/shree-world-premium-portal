@@ -42,6 +42,45 @@
             scroll-behavior: smooth;
         }
 
+        /* Cinematic Intro Styles */
+        #intro-wrap {
+            position: fixed; inset: 0; background: #050505; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+        }
+        .cinematic-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            text-align: center;
+            line-height: 1.1;
+            color: transparent;
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            opacity: 0;
+            filter: blur(20px);
+            animation: focusIn 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @media (min-width: 768px) { .cinematic-text { font-size: 7rem; } }
+        @keyframes focusIn {
+            0% { opacity: 0; filter: blur(20px); transform: scale(1.1); }
+            40% { opacity: 1; filter: blur(0px); transform: scale(1); }
+            80% { opacity: 1; filter: blur(0px); transform: scale(1); }
+            100% { opacity: 0; filter: blur(10px); transform: scale(1.1); }
+        }
+        .focus-ring {
+            position: absolute; width: 250px; height: 250px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            animation: ringPulse 2.5s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+            pointer-events: none;
+        }
+        @media (min-width: 768px) { .focus-ring { width: 400px; height: 400px; } }
+        @keyframes ringPulse {
+            0% { transform: scale(0.8); opacity: 1; border-width: 2px; }
+            100% { transform: scale(1.5); opacity: 0; border-width: 1px; }
+        }
+
         .glass-nav {
             background: rgba(10, 10, 10, 0.9);
             backdrop-filter: blur(12px);
@@ -115,41 +154,40 @@
             color: #D4AF37;
         }
     </style>
+    
+    <!-- PWA Web App Manifest (Simulated via code for installation prompt support) -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Rajkamal Studio","short_name":"Rajkamal","description":"Professional Photography Studio","start_url":"/","display":"standalone","background_color":"#0a0a0a","theme_color":"#D4AF37","icons":[{"src":"https://i.ibb.co/Qj3PL0tT/file-0000000039c08211a8115e3eb4149c47.jpg","sizes":"512x512","type":"image/jpeg"}]}'>
+
 </head>
 <body class="antialiased" style="overflow: hidden;"> <!-- Body is locked during intro -->
 
     <!-- ==========================================
-         INTRO ANIMATION SCREEN
+         CINEMATIC INTRO ANIMATION SCREEN
          ========================================== -->
-    <div id="intro-wrap" class="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none">
-        <!-- Top and Bottom Shutters -->
-        <div id="shutter-top" class="absolute top-0 left-0 w-full h-1/2 bg-black transition-transform duration-[1.5s] ease-in-out z-40 border-b border-gray-900"></div>
-        <div id="shutter-bottom" class="absolute bottom-0 left-0 w-full h-1/2 bg-black transition-transform duration-[1.5s] ease-in-out z-40 border-t border-gray-900"></div>
-        
-        <div id="intro-content" class="absolute inset-0 flex flex-col items-center justify-center z-50 transition-opacity duration-500">
-            
-            <!-- Phase 1: Name Animation -->
-            <div id="intro-name-phase" class="flex text-6xl md:text-9xl font-serif font-black text-gold overflow-hidden px-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.6)] absolute transition-opacity duration-500 z-20">
-                <div id="raj-text" class="transform -translate-y-[150vh] transition-transform duration-[1.2s] ease-out">Raj</div>
-                <div id="kamal-text" class="transform translate-y-[150vh] transition-transform duration-[1.2s] ease-out">kamal</div>
-            </div>
-
-            <!-- Phase 2: Smile & Camera Animation -->
-            <div id="intro-smile-phase" class="absolute flex flex-col items-center justify-center opacity-0 transition-all duration-700 scale-50 z-20">
-                <div class="flex items-center gap-4 text-5xl md:text-7xl text-white font-bold font-sans tracking-widest mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
-                    <span>SMILE</span>
-                    <i class="fas fa-face-smile-beam text-gold text-6xl md:text-8xl animate-bounce drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]"></i>
-                </div>
-                <div class="text-gray-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                    <i class="fas fa-camera text-[6rem] md:text-[9rem]"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Camera Flash Effect -->
-        <div id="camera-flash" class="absolute inset-0 bg-white opacity-0 z-[60] pointer-events-none transition-opacity duration-150"></div>
+    <div id="intro-wrap">
+        <div class="focus-ring"></div>
+        <div class="focus-ring" style="animation-delay: 0.5s; width: 300px; height: 300px;"></div>
+        <h1 class="cinematic-text tracking-wider font-black drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+            RAJKAMAL<br><span class="text-2xl md:text-5xl tracking-[0.3em] font-light">STUDIO</span>
+        </h1>
     </div>
     <!-- END INTRO -->
+
+    <!-- App Install Modal -->
+    <div id="install-modal" class="fixed inset-0 z-[10000] hidden items-center justify-center bg-black/80 backdrop-blur-md px-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-card border border-gold/30 rounded-3xl p-8 max-w-sm w-full text-center shadow-[0_0_50px_rgba(212,175,55,0.15)] transform scale-95 transition-transform duration-300" id="install-modal-content">
+            <div class="relative w-24 h-24 mx-auto mb-5">
+                <div class="absolute inset-0 bg-gold rounded-2xl blur-md opacity-50 animate-pulse"></div>
+                <img src="https://i.ibb.co/Qj3PL0tT/file-0000000039c08211a8115e3eb4149c47.jpg" class="relative w-full h-full rounded-2xl shadow-lg border-2 border-gold/50 object-cover">
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 font-serif tracking-wide">RAJKAMAL STUDIO</h3>
+            <p class="text-gray-400 text-sm mb-8" data-i18n="installDesc">Install our app on your home screen for quick and easy access!</p>
+            <button id="btn-install-confirm" class="w-full btn-gold py-3.5 rounded-xl font-bold text-lg mb-3 shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+                <i class="fas fa-download mr-2"></i> <span data-i18n="installBtn">Install App</span>
+            </button>
+            <button onclick="closeInstallModal()" class="w-full bg-transparent border border-gray-600 text-gray-300 py-3 rounded-xl font-bold text-base hover:bg-gray-800 transition-colors" data-i18n="installLater">Maybe Later</button>
+        </div>
+    </div>
 
 
     <!-- Navigation -->
@@ -173,6 +211,9 @@
                     <button onclick="toggleLanguage()" class="flex items-center gap-2 border border-gold/50 text-gold px-4 py-1.5 rounded-full text-xs font-bold hover:bg-gold hover:text-dark transition-all duration-300 shadow-[0_0_10px_rgba(212,175,55,0.2)]">
                         <i class="fas fa-language text-lg"></i> <span class="lang-text">A/अ</span>
                     </button>
+                    <button onclick="openInstallModal()" class="text-gold hover:text-white transition-colors" title="Install App">
+                        <i class="fas fa-download text-xl"></i>
+                    </button>
                     <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors" title="Share Website">
                         <i class="fas fa-share-nodes text-xl"></i>
                     </button>
@@ -182,6 +223,9 @@
                 <div class="-mr-2 flex md:hidden items-center gap-4">
                     <button onclick="toggleLanguage()" class="flex items-center border border-gold/50 text-gold px-2.5 py-1 rounded-full text-xs font-bold hover:bg-gold hover:text-dark transition-all">
                         <i class="fas fa-language"></i> <span class="lang-text ml-1">A/अ</span>
+                    </button>
+                    <button onclick="openInstallModal()" class="text-gold hover:text-white transition-colors" title="Install App">
+                        <i class="fas fa-download text-xl"></i>
                     </button>
                     <button onclick="shareWebsite()" class="text-white hover:text-gold transition-colors">
                         <i class="fas fa-share-nodes text-xl"></i>
@@ -393,24 +437,26 @@
             en: {
                 navHome: "Home", navAbout: "About", navServices: "Services", navContact: "Contact", navBook: "Book Now",
                 heroSub: "Capturing Beautiful Moments", heroDesc: "We freeze time so you can cherish the memories forever. Premium photography, videography & custom studio services.", heroBtnBook: "Book a Session", heroBtnPort: "View Portfolio",
-                aboutTag: "About Us", aboutDesc: "Welcome to Rajkamal Studio—where every smile tells a beautiful story. We don't just click pictures; we frame your precious moments, emotions, and joy for a lifetime. Whether it's the magical moments of your wedding, a special event, or a flawless portrait, our artistic vision and modern technology turn your fleeting moments into timeless memories. Let's create something beautiful together!",
+                aboutTag: "About Us", aboutDesc: "A story in every picture, a beautiful memory in every moment!<br><br>Welcome to Rajkamal Studio. Our goal is not just to click pictures, but to beautifully preserve the most precious moments, emotions, and memories of your life forever.<br><br>Through modern photography techniques, creative thinking, and premium editing, we give every picture a unique identity. Whether it's a wedding, pre-wedding shoot, birthday celebration, family photography, model portrait, or any special event—we are dedicated to making every occasion beautiful and memorable.<br><br><b class='text-gold text-xl'>Our Identity – Your Satisfaction</b><br><br>We value quality, creativity, and customer trust above all. We strive to give you memories that will make you smile for a lifetime.<br><br><i class='text-gray-400'>Rajkamal Studio – Capturing Moments, Creating Memories.</i><br><br><b class='text-gold text-lg'>Your memories, our responsibility!</b>",
                 ownerLabel: "Owner", contactLabel: "Contact", locLabel: "Location",
                 servTag: "Our Expertise", servTitle: "Services We Offer",
                 galTitle: "Recent Work",
                 bookTitle: "Book Your Shoot", bookDesc: "Send us your details directly via WhatsApp for a quick response.",
                 lblWaName: "Full Name", lblWaEvent: "Select Event / Service", lblWaDate: "Preferred Date", lblWaLoc: "Location / Address", lblWaMsg: "Additional Requirements (Optional)", btnWaSubmit: "Send via WhatsApp",
-                footDesc: "Creating timeless memories through our lenses. From grand weddings to urgent studio needs, serving with passion and creativity.", footReach: "Reach Out To Us"
+                footDesc: "Creating timeless memories through our lenses. From grand weddings to urgent studio needs, serving with passion and creativity.", footReach: "Reach Out To Us",
+                installDesc: "Install our app on your home screen for quick and easy access!", installBtn: "Install App", installLater: "Maybe Later"
             },
             hi: {
                 navHome: "होम", navAbout: "हमारे बारे में", navServices: "सेवाएं", navContact: "संपर्क", navBook: "बुक करें",
                 heroSub: "खूबसूरत पलों को कैद करना", heroDesc: "हम समय को रोक देते हैं ताकि आप हमेशा के लिए यादों को संजो सकें। प्रीमियम फोटोग्राफी, वीडियोग्राफी और कस्टम स्टूडियो सेवाएं।", heroBtnBook: "सेशन बुक करें", heroBtnPort: "पोर्टफोलियो देखें",
-                aboutTag: "हमारे बारे में", aboutDesc: "आपका राजकमल स्टूडियो में स्वागत है—जहाँ आपकी हर मुस्कान एक कहानी बन जाती है। हम सिर्फ तस्वीरें नहीं खींचते, बल्कि आपके अनमोल पलों, जज़्बातों और खुशियों को हमेशा के लिए फ्रेम में संजो देते हैं। चाहे आपकी शादी का जादुई पल हो, कोई खास इवेंट, या एक परफेक्ट पोर्ट्रेट, हमारी कलात्मक नज़र और आधुनिक तकनीक आपके हर लम्हे को यादगार बना देती है। आइए, अपनी यादों को हमारे साथ एक खूबसूरत रूप दें!",
+                aboutTag: "हमारे बारे में", aboutDesc: "हर तस्वीर में एक कहानी, हर पल में एक खूबसूरत याद!<br><br>राजकमल स्टूडियो में आपका हार्दिक स्वागत है। हमारा उद्देश्य सिर्फ तस्वीरें खींचना नहीं, बल्कि आपकी जिंदगी के सबसे खूबसूरत पलों, भावनाओं और यादों को शानदार अंदाज़ में हमेशा के लिए संजोना है।<br><br>हम आधुनिक फोटोग्राफी तकनीक, रचनात्मक सोच और बेहतरीन एडिटिंग के माध्यम से हर तस्वीर को एक खास पहचान देते हैं। चाहे शादी-विवाह हो, प्री-वेडिंग शूट, बर्थडे सेलिब्रेशन, फैमिली फोटोग्राफी, मॉडल पोर्ट्रेट या कोई खास समारोह—हम हर अवसर को खूबसूरत और यादगार बनाने के लिए समर्पित हैं।<br><br><b class='text-gold text-xl'>हमारी पहचान – आपकी संतुष्टि</b><br><br>हम गुणवत्ता, रचनात्मकता और ग्राहकों के विश्वास को सबसे अधिक महत्व देते हैं। हमारा प्रयास है कि आपको हर बार ऐसी यादें मिलें, जिन्हें आप जिंदगी भर मुस्कुराकर देख सकें।<br><br><i class='text-gray-400'>Rajkamal Studio – Capturing Moments, Creating Memories.</i><br><br><b class='text-gold text-lg'>आपकी यादें, हमारी जिम्मेदारी!</b>",
                 ownerLabel: "मालिक", contactLabel: "संपर्क", locLabel: "पता",
                 servTag: "हमारी विशेषज्ञता", servTitle: "हम क्या सेवाएं देते हैं",
                 galTitle: "हाल का काम",
                 bookTitle: "अपना शूट बुक करें", bookDesc: "त्वरित प्रतिक्रिया के लिए अपना विवरण सीधे व्हाट्सएप के माध्यम से हमें भेजें।",
                 lblWaName: "पूरा नाम", lblWaEvent: "इवेंट / सर्विस चुनें", lblWaDate: "पसंदीदा तारीख", lblWaLoc: "स्थान / पता", lblWaMsg: "अतिरिक्त आवश्यकताएं (वैकल्पिक)", btnWaSubmit: "व्हाट्सएप पर भेजें",
-                footDesc: "हमारे लेंस के माध्यम से हमेशा की यादें बनाना। भव्य शादियों से लेकर तत्काल स्टूडियो जरूरतों तक, जुनून और रचनात्मकता के साथ सेवा।", footReach: "हमसे संपर्क करें"
+                footDesc: "हमारे लेंस के माध्यम से हमेशा की यादें बनाना। भव्य शादियों से लेकर तत्काल स्टूडियो जरूरतों तक, जुनून और रचनात्मकता के साथ सेवा।", footReach: "हमसे संपर्क करें",
+                installDesc: "त्वरित और आसान पहुंच के लिए हमारे ऐप को अपनी होम स्क्रीन पर इंस्टॉल करें!", installBtn: "ऐप इंस्टॉल करें", installLater: "बाद में"
             }
         };
 
@@ -468,11 +514,11 @@
         }
 
         function updateLanguageUI() {
-            // Update all static text nodes
+            // Update all static text nodes with HTML support
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[currentLang] && translations[currentLang][key]) {
-                    el.innerText = translations[currentLang][key];
+                    el.innerHTML = translations[currentLang][key]; // Using innerHTML for line breaks & bold tags
                 }
             });
             
@@ -520,54 +566,20 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- INTRO ANIMATION LOGIC ---
-            // Scroll top initially
+            // --- CINEMATIC INTRO ANIMATION LOGIC ---
             window.scrollTo(0,0);
             
-            // Total timeline should be ~6-7 seconds
             setTimeout(() => {
-                // 1. Show Names (Rajkamal)
-                document.getElementById('raj-text').style.transform = 'translateY(0)';
-                document.getElementById('kamal-text').style.transform = 'translateY(0)';
+                const introWrap = document.getElementById('intro-wrap');
+                introWrap.style.opacity = '0';
+                introWrap.style.transform = 'scale(1.1)';
                 
                 setTimeout(() => {
-                    // 2. Hide Names
-                    document.getElementById('intro-name-phase').style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        // 3. Show "Smile" text, sticker, and camera
-                        const smilePhase = document.getElementById('intro-smile-phase');
-                        smilePhase.style.opacity = '1';
-                        smilePhase.style.transform = 'scale(1)'; // Pop-out effect
-                        
-                        setTimeout(() => {
-                            // 4. Camera Flash (Click effect)
-                            const flash = document.getElementById('camera-flash');
-                            flash.style.opacity = '1';
-                            
-                            setTimeout(() => {
-                                flash.style.opacity = '0'; // Flash off
-                                
-                                // 5. Split Shutters Up and Down to reveal website
-                                document.getElementById('intro-content').style.opacity = '0';
-                                document.getElementById('shutter-top').style.transform = 'translateY(-100%)';
-                                document.getElementById('shutter-bottom').style.transform = 'translateY(100%)';
-                                
-                                setTimeout(() => {
-                                    // 6. Remove intro container and enable scroll
-                                    document.getElementById('intro-wrap').style.display = 'none';
-                                    document.body.style.overflow = 'auto'; 
-                                    
-                                    // Initialize scroll animations
-                                    initObservers();
-                                    
-                                }, 1500); // Shutter transition duration
-                                
-                            }, 150); // Flash hold duration
-                        }, 1500); // Smile screen duration
-                    }, 500); // Wait for names to fade out
-                }, 2000); // Name screen hold duration
-            }, 500); // Initial delay
+                    introWrap.style.display = 'none';
+                    document.body.style.overflow = 'auto'; 
+                    initObservers();
+                }, 800); // Matches CSS transition duration
+            }, 2600); // Wait for the focus animation to complete
             
             
             // --- DATA POPULATION ---
@@ -684,6 +696,54 @@
                 });
             }
         }
+
+        // --- PWA / INSTALL APP LOGIC ---
+        let deferredPrompt;
+        const installModal = document.getElementById('install-modal');
+        const installModalContent = document.getElementById('install-modal-content');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+        });
+
+        function openInstallModal() {
+            installModal.classList.remove('hidden');
+            installModal.classList.add('flex');
+            // Small delay to allow display block to apply before animating opacity
+            setTimeout(() => {
+                installModal.classList.remove('opacity-0');
+                installModalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeInstallModal() {
+            installModal.classList.add('opacity-0');
+            installModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                installModal.classList.add('hidden');
+                installModal.classList.remove('flex');
+            }, 300);
+        }
+
+        document.getElementById('btn-install-confirm').addEventListener('click', async () => {
+            closeInstallModal();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+            } else {
+                // Fallback for iOS / Desktop without prompt support
+                const msg = currentLang === 'hi' 
+                    ? "कृपया ब्राउज़र मेनू (⋮ या Share) से 'Add to Home Screen' चुनें" 
+                    : "Please select 'Add to Home Screen' from your browser menu (⋮ or Share icon).";
+                showToast(msg);
+            }
+        });
+
     </script>
 </body>
 </html>
