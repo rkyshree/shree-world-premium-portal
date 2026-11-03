@@ -35,50 +35,105 @@
 
     <style>
         /* Custom Styles & Animations */
+        html, body {
+            max-width: 100vw !important;
+            overflow-x: hidden !important; /* Prevents left/right wobble */
+        }
         body {
             background-color: #0a0a0a;
             color: #ffffff;
-            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* Cinematic Intro Styles */
+        /* 3D Camera Lens Cinematic Intro Styles */
         #intro-wrap {
             position: fixed; inset: 0; background: #050505; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
         }
-        .cinematic-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            text-align: center;
-            line-height: 1.1;
-            color: transparent;
-            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7);
-            -webkit-background-clip: text;
-            background-clip: text;
-            opacity: 0;
-            filter: blur(20px);
-            animation: focusIn 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        
+        .lens-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 200px;
         }
-        @media (min-width: 768px) { .cinematic-text { font-size: 7rem; } }
-        @keyframes focusIn {
-            0% { opacity: 0; filter: blur(20px); transform: scale(1.1); }
-            40% { opacity: 1; filter: blur(0px); transform: scale(1); }
-            80% { opacity: 1; filter: blur(0px); transform: scale(1); }
-            100% { opacity: 0; filter: blur(10px); transform: scale(1.1); }
+        @media (min-width: 768px) {
+            .lens-container { width: 350px; height: 350px; }
         }
-        .focus-ring {
-            position: absolute; width: 250px; height: 250px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
+
+        .lens-ring {
+            position: absolute;
             border-radius: 50%;
-            animation: ringPulse 2.5s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-            pointer-events: none;
+            box-sizing: border-box;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
         }
-        @media (min-width: 768px) { .focus-ring { width: 400px; height: 400px; } }
-        @keyframes ringPulse {
-            0% { transform: scale(0.8); opacity: 1; border-width: 2px; }
-            100% { transform: scale(1.5); opacity: 0; border-width: 1px; }
+        
+        /* Outer Rotating Ring */
+        .lens-ring-1 {
+            inset: 0;
+            border: 2px solid transparent;
+            border-top-color: #D4AF37;
+            border-bottom-color: #D4AF37;
+            animation: spin 4s linear infinite;
+        }
+        
+        /* Inner Dashed Ring */
+        .lens-ring-2 {
+            inset: 15px;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            animation: spin-reverse 5s linear infinite;
+        }
+        
+        /* Deep Lens Core */
+        .lens-ring-3 {
+            inset: 35px;
+            background: radial-gradient(circle, #020202 40%, #1a1a1a 100%);
+            box-shadow: inset 0 0 30px #000;
+            border: 1px solid #333;
+        }
+
+        /* 3D Text popping out from the lens */
+        .text-3d {
+            position: absolute;
+            z-index: 10;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            color: #D4AF37;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 
+                1px 1px 0px #8b7324, 
+                2px 2px 0px #8b7324, 
+                3px 3px 0px #6e5c1d, 
+                4px 4px 10px rgba(0,0,0,0.9);
+            opacity: 0;
+            transform: scale(0.1);
+            animation: textPop3D 3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.3s;
+        }
+        @media (min-width: 768px) {
+            .text-3d {
+                font-size: 4.5rem;
+                text-shadow: 
+                    2px 2px 0px #8b7324, 
+                    4px 4px 0px #8b7324, 
+                    6px 6px 0px #6e5c1d, 
+                    8px 8px 20px rgba(0,0,0,0.9);
+            }
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+        
+        @keyframes textPop3D {
+            0% { opacity: 0; transform: scale(0.1); }
+            40% { opacity: 1; transform: scale(1.1); }
+            70% { opacity: 1; transform: scale(1); filter: blur(0px); }
+            100% { opacity: 0; transform: scale(1.8); filter: blur(10px); }
         }
 
         .glass-nav {
@@ -165,11 +220,12 @@
          CINEMATIC INTRO ANIMATION SCREEN
          ========================================== -->
     <div id="intro-wrap">
-        <div class="focus-ring"></div>
-        <div class="focus-ring" style="animation-delay: 0.5s; width: 300px; height: 300px;"></div>
-        <h1 class="cinematic-text tracking-wider font-black drop-shadow-[0_0_20px_rgba(212,175,55,0.4)]">
-            RAJKAMAL<br><span class="text-2xl md:text-5xl tracking-[0.3em] font-light">STUDIO</span>
-        </h1>
+        <div class="lens-container">
+            <div class="lens-ring lens-ring-1"></div>
+            <div class="lens-ring lens-ring-2"></div>
+            <div class="lens-ring lens-ring-3"></div>
+            <h1 class="text-3d text-center">Rajkamal</h1>
+        </div>
     </div>
     <!-- END INTRO -->
 
@@ -470,7 +526,7 @@
             address: "रेलविहार रोड, चरगावा, गोरखपुर",
             
             // शेयर लिंक सेटिंग्स
-            shareLink: "https://www.rkyshree.in/Rajkamal",
+            shareLink: "https://www.rkyshree.in/Rajkamal/",
             shareMessage: "✨ बेहतरीन फोटोग्राफी के लिए संपर्क करें Rajkamal Studio से! नीचे दिए गए लिंक पर क्लिक करके वेबसाइट देखें 👇",
             
             // सर्विसेज लिस्ट (दोनों भाषाओं में)
@@ -564,6 +620,14 @@
             });
         }
 
+        // --- SCROLL TO TOP ON REFRESH ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             
             // --- CINEMATIC INTRO ANIMATION LOGIC ---
@@ -572,14 +636,15 @@
             setTimeout(() => {
                 const introWrap = document.getElementById('intro-wrap');
                 introWrap.style.opacity = '0';
-                introWrap.style.transform = 'scale(1.1)';
+                introWrap.style.transform = 'scale(1.2)';
                 
                 setTimeout(() => {
                     introWrap.style.display = 'none';
                     document.body.style.overflow = 'auto'; 
+                    document.body.style.overflowX = 'hidden'; // Keep horizontal lock
                     initObservers();
                 }, 800); // Matches CSS transition duration
-            }, 2600); // Wait for the focus animation to complete
+            }, 3200); // Wait for the 3D lens animation to complete
             
             
             // --- DATA POPULATION ---
@@ -610,6 +675,20 @@
 
             // Initialize Language and UI
             updateLanguageUI();
+
+            // --- PREVENT URL HASH ON NAVIGATION CLICK ---
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
 
             // --- SCROLL ANIMATIONS ---
             function initObservers() {
