@@ -10,6 +10,7 @@
     <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     
+    <link id="manifest-link" rel="manifest" href="">
     <title>ApexTrade Pro - Global Share Market</title>
     
     <!-- Tailwind CSS -->
@@ -74,8 +75,8 @@
         /* Professional Fintech Splash Screen */
         #splash-screen { position: fixed; inset: 0; background: #ffffff; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         
-        .logo-wrapper { animation: popOut 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes popOut { 0% { transform: scale(0.9) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+        .logo-wrapper { animation: popOut 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popOut { 0% { transform: scale(0.3); opacity: 0; filter: blur(10px); } 70% { transform: scale(1.05); opacity: 1; filter: blur(0px); } 100% { transform: scale(1); opacity: 1; } }
         
         #trading-chart-canvas, #history-chart-canvas, #stock-detail-canvas { width: 100%; height: 100%; display: block; }
         
@@ -92,10 +93,6 @@
         
         .portfolio-click-card:active { transform: scale(0.98); }
         .user-select-none { user-select: none; -webkit-user-select: none; }
-        
-        /* Fixed & Horizontal Scrollable Ticker */
-        .ticker-scroll::-webkit-scrollbar { display: none; }
-        .ticker-scroll { -ms-overflow-style: none; scrollbar-width: none; overflow-x: auto; }
     </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
@@ -103,8 +100,8 @@
     <!-- Splash Screen: Minimalist Professional FinTech Look -->
     <div id="splash-screen">
         <div class="logo-wrapper flex flex-col items-center justify-center gap-3">
-            <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-app-blue to-indigo-600 flex items-center justify-center shadow-2xl">
-                <i class="ph-bold ph-chart-line-up text-white text-5xl"></i>
+            <div class="relative w-24 h-24 rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center border border-gray-100">
+                <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" alt="ApexTrade" class="w-full h-full object-cover">
             </div>
             <div class="flex flex-col items-center mt-2">
                 <h1 class="text-4xl font-extrabold text-app-text tracking-tight mb-0">ApexTrade <span class="text-app-blue">Pro</span></h1>
@@ -133,8 +130,8 @@
     <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-app-border px-3 py-3 sm:px-6 shadow-sm">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('portfolio')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-app-blue to-indigo-600 flex items-center justify-center shadow-md">
-                    <i class="ph-bold ph-chart-line-up text-white text-xl"></i>
+                <div class="w-10 h-10 rounded-xl overflow-hidden shadow-md border border-gray-100 flex-shrink-0">
+                    <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-full h-full object-cover" alt="Logo">
                 </div>
                 <div class="flex flex-col" ondblclick="editAppTitle(event)" title="Double tap to edit App Name & Badge">
                     <div class="flex items-center gap-2">
@@ -152,15 +149,13 @@
         </div>
     </nav>
 
-    <!-- LIVE NIFTY / SENSEX TICKER (Fixed Position, Manually Scrollable) -->
-    <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative ticker-scroll">
-        <div class="flex gap-10 px-4 w-max">
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">NIFTY 50</span> <span class="text-app-green font-bold" id="ticker-nifty">22,450.50</span> <i id="icon-nifty" class="ph-bold ph-caret-up text-app-green"></i></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">SENSEX</span> <span class="text-app-green font-bold" id="ticker-sensex">73,850.20</span> <i id="icon-sensex" class="ph-bold ph-caret-up text-app-green"></i></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">BANKNIFTY</span> <span class="text-app-red font-bold" id="ticker-banknifty">48,250.00</span> <i id="icon-banknifty" class="ph-bold ph-caret-down text-app-red"></i></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">FINNIFTY</span> <span class="text-app-green font-bold" id="ticker-finnifty">21,450.75</span> <i id="icon-finnifty" class="ph-bold ph-caret-up text-app-green"></i></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">INDIA VIX</span> <span class="text-app-red font-bold" id="ticker-vix">12.40</span> <i id="icon-vix" class="ph-bold ph-caret-down text-app-red"></i></div>
-            <div class="flex items-center gap-2"><span class="font-bold text-app-text">MIDCAP SELECT</span> <span class="text-app-green font-bold" id="ticker-midcap">10,850.20</span> <i id="icon-midcap" class="ph-bold ph-caret-up text-app-green"></i></div>
+    <!-- LIVE NIFTY / SENSEX TICKER (Fixed Position - Does Not Scroll) -->
+    <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative w-full overflow-hidden">
+        <div class="flex justify-between md:justify-around px-2 sm:px-4 w-full">
+            <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">NIFTY 50</span><span class="font-bold text-app-text sm:hidden">NIFTY</span> <span class="text-app-green font-bold" id="ticker-nifty">22,450.50</span> <i id="icon-nifty" class="ph-bold ph-caret-up text-app-green"></i></div>
+            <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text">SENSEX</span> <span class="text-app-green font-bold" id="ticker-sensex">73,850.20</span> <i id="icon-sensex" class="ph-bold ph-caret-up text-app-green"></i></div>
+            <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">BANKNIFTY</span><span class="font-bold text-app-text sm:hidden">BANK</span> <span class="text-app-red font-bold" id="ticker-banknifty">48,250.00</span> <i id="icon-banknifty" class="ph-bold ph-caret-down text-app-red"></i></div>
+            <div class="hidden lg:flex items-center gap-2"><span class="font-bold text-app-text">FINNIFTY</span> <span class="text-app-green font-bold" id="ticker-finnifty">21,450.75</span> <i id="icon-finnifty" class="ph-bold ph-caret-up text-app-green"></i></div>
         </div>
     </div>
 
@@ -377,6 +372,18 @@
 
             <!-- Professional App Menu (With Real Modals) -->
             <div class="bg-app-card border border-app-border rounded-xl shadow-sm overflow-hidden mt-6 mb-8">
+                <!-- App Install Button (Visible when supported) -->
+                <div id="install-app-btn" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-blue-100 transition hidden bg-blue-50/50">
+                    <div class="flex items-center gap-4">
+                        <div class="p-2.5 bg-app-blue text-white rounded-xl shadow-md"><i class="ph-bold ph-download-simple text-xl animate-bounce"></i></div>
+                        <div>
+                            <p class="text-sm font-extrabold text-app-blue">Install ApexTrade App</p>
+                            <p class="text-xs text-app-muted mt-0.5">Add to home screen for fast access</p>
+                        </div>
+                    </div>
+                    <i class="ph-bold ph-caret-right text-app-blue"></i>
+                </div>
+
                 <div onclick="openModal('modal-tc')" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-app-panel transition">
                     <div class="flex items-center gap-4">
                         <div class="p-2.5 bg-app-blue/10 text-app-blue rounded-xl"><i class="ph-fill ph-file-text text-xl"></i></div>
@@ -1238,7 +1245,10 @@
 
         function drawHistoryCanvas(period) {
             const cvs = document.getElementById('history-chart-canvas'); const cx = cvs.getContext('2d');
-            const rect = cvs.parentElement.getBoundingClientRect(); cvs.width = rect.width * 2; cvs.height = rect.height * 2;
+            const rect = cvs.parentElement.getBoundingClientRect(); 
+            if(rect.width === 0) return; // Prevent drawing if invisible
+            
+            cvs.width = rect.width * 2; cvs.height = rect.height * 2;
             cx.scale(2, 2); let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
 
             let points = period === '1D' ? 24 : period === '1W' ? 14 : period === '1M' ? 30 : period === '1Y' ? 52 : period === '3Y' ? 100 : period === '5Y' ? 150 : 200;
@@ -1323,7 +1333,9 @@
             const tfBtns = document.querySelectorAll('.detail-tf-btn');
             if(tfBtns.length > 0) window.setDetailTimeframe('1D', tfBtns[0]);
             
-            updateDetailValues(); setTimeout(drawDetailChart, 100); 
+            updateDetailValues(); 
+            // 350ms delay perfectly aligns with CSS transition so Desktop Canvas gets 100% correct width
+            setTimeout(drawDetailChart, 350); 
         }
 
         window.updateDetailValues = function() {
@@ -1347,6 +1359,8 @@
             const cvs = document.getElementById('stock-detail-canvas'); 
             const cx = cvs.getContext('2d');
             const rect = cvs.parentElement.getBoundingClientRect(); 
+            if(rect.width === 0) return; // Wait till visible
+
             cvs.width = rect.width * 2; cvs.height = rect.height * 2;
             cx.scale(2, 2); 
             
@@ -1433,18 +1447,25 @@
         }
 
         function initTradingChart() {
-            const tradeCanvas = document.getElementById('trading-chart-canvas'); const tradeCtx = tradeCanvas.getContext('2d');
-            const rect = tradeCanvas.parentElement.getBoundingClientRect(); tradeCanvas.width = rect.width * 2; tradeCanvas.height = 320 * 2;
-            tradeCtx.scale(2, 2); drawTradingChart();
+            setTimeout(drawTradingChart, 350); // Ensure proper size initialization
         }
         
         window.drawTradingChart = function() {
             const tradeCanvas = document.getElementById('trading-chart-canvas'); const tradeCtx = tradeCanvas.getContext('2d');
-            const w = tradeCanvas.width/2, h = tradeCanvas.height/2; tradeCtx.clearRect(0,0,w,h);
+            const rect = tradeCanvas.parentElement.getBoundingClientRect(); 
+            if(rect.width === 0) return; // Prevent drawing on invisible canvas
+            
+            tradeCanvas.width = rect.width * 2; tradeCanvas.height = rect.height * 2;
+            tradeCtx.scale(2, 2);
+            
+            const w = rect.width, h = rect.height; tradeCtx.clearRect(0,0,w,h);
             
             if(tradeChartHistory.length < 2) return;
             
-            let min = Math.min(...tradeChartHistory); let max = Math.max(...tradeChartHistory); let range = (max - min) || 1;
+            let min = Math.min(...tradeChartHistory); let max = Math.max(...tradeChartHistory); 
+            let padding = (max - min) * 0.1;
+            min -= padding; max += padding;
+            let range = (max - min) || 1;
             
             let isUp = tradeChartHistory[tradeChartHistory.length-1] >= tradeChartHistory[0];
             let lineColor = isUp ? '#059669' : '#dc2626';
@@ -1464,12 +1485,12 @@
             tradeCtx.beginPath();
             tradeCtx.moveTo(0, h);
             tradeChartHistory.forEach((price, i) => { 
-                let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.7) - (h*0.15); 
+                let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.75) - (h*0.1); 
                 tradeCtx.lineTo(x, y); 
             });
             tradeCtx.lineTo(w, h);
             let grad = tradeCtx.createLinearGradient(0, 0, 0, h);
-            grad.addColorStop(0, gradColor + '0.25)');
+            grad.addColorStop(0, gradColor + '0.35)');
             grad.addColorStop(1, gradColor + '0)');
             tradeCtx.fillStyle = grad;
             tradeCtx.fill();
@@ -1480,18 +1501,23 @@
             tradeCtx.strokeStyle = lineColor;
             
             tradeChartHistory.forEach((price, i) => { 
-                let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.7) - (h*0.15); 
+                let x = i * stepX; let y = h - ((price - min) / range) * (h * 0.75) - (h*0.1); 
                 if(i===0) tradeCtx.moveTo(x,y); else tradeCtx.lineTo(x,y); 
             });
             tradeCtx.stroke();
             
             // Draw Interactive Pulse Dot at current price
             let currentX = (tradeChartHistory.length - 1) * stepX;
-            let currentY = h - ((tradeChartHistory[tradeChartHistory.length-1] - min) / range) * (h * 0.7) - (h*0.15);
+            let currentY = h - ((tradeChartHistory[tradeChartHistory.length-1] - min) / range) * (h * 0.75) - (h*0.1);
+            
+            tradeCtx.shadowBlur = 10;
+            tradeCtx.shadowColor = lineColor;
             tradeCtx.beginPath();
-            tradeCtx.arc(currentX, currentY, 5, 0, Math.PI * 2);
+            tradeCtx.arc(currentX, currentY, 6, 0, Math.PI * 2);
             tradeCtx.fillStyle = lineColor;
             tradeCtx.fill();
+            tradeCtx.shadowBlur = 0;
+            
             tradeCtx.lineWidth = 2;
             tradeCtx.strokeStyle = '#ffffff';
             tradeCtx.stroke();
@@ -1499,21 +1525,9 @@
 
         // Global Resize Listener for Desktop Fluid Responsiveness
         window.addEventListener('resize', () => {
-            if (document.getElementById('stock-detail-view').classList.contains('active')) {
-                const cvs = document.getElementById('stock-detail-canvas');
-                if(cvs.parentElement) {
-                    const rect = cvs.parentElement.getBoundingClientRect();
-                    cvs.width = rect.width * 2; cvs.height = rect.height * 2;
-                    cvs.getContext('2d').scale(2, 2);
-                    drawDetailChart();
-                }
-            }
-            if (document.getElementById('history-chart-view').classList.contains('active')) {
-                drawHistoryCanvas(window.currentHistoryPeriod);
-            }
-            if (document.getElementById('view-trading').classList.contains('active')) {
-                initTradingChart();
-            }
+            if (document.getElementById('stock-detail-view').classList.contains('active')) drawDetailChart();
+            if (document.getElementById('history-chart-view').classList.contains('active')) drawHistoryCanvas(window.currentHistoryPeriod);
+            if (document.getElementById('view-trading').classList.contains('active')) drawTradingChart();
         });
 
         window.switchTab = function(tabName) {
@@ -1533,6 +1547,40 @@
             window.scrollTo(0,0);
         }
         
+        // PWA & App Install Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); deferredPrompt = e;
+            const installBtn = document.getElementById('install-app-btn');
+            if(installBtn) {
+                installBtn.classList.remove('hidden');
+                installBtn.onclick = async () => {
+                    installBtn.classList.add('hidden');
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') { showToast('App Installation Started', 'success'); }
+                    deferredPrompt = null;
+                };
+            }
+        });
+
+        function setupPWA() {
+            const manifest = { 
+                name: "ApexTrade Pro", short_name: "ApexTrade", start_url: window.location.href, display: "standalone", 
+                background_color: "#ffffff", theme_color: "#2563eb", 
+                icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" }] 
+            };
+            const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(blob));
+            
+            if ('serviceWorker' in navigator) {
+                const swCode = `self.addEventListener('fetch', (e) => {});`;
+                const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>console.log('SW Setup Skipped'));
+            }
+        }
+        setupPWA();
+
         window.onload = bootApp;
     </script>
 </body>
