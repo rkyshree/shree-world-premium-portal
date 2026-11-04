@@ -22,18 +22,18 @@
             theme: {
                 extend: {
                     colors: {
-                        'app-bg': '#f3f4f6',      /* Light gray background */
-                        'app-card': '#ffffff',    /* White cards */
-                        'app-panel': '#f8fafc',   /* Slightly off-white for inner panels */
-                        'app-text': '#0f172a',    /* Dark slate for primary text */
-                        'app-muted': '#64748b',   /* Muted gray for secondary text */
-                        'app-green': '#059669',   /* Professional sharp green */
+                        'app-bg': '#f3f4f6',      
+                        'app-card': '#ffffff',    
+                        'app-panel': '#f8fafc',   
+                        'app-text': '#0f172a',    
+                        'app-muted': '#64748b',   
+                        'app-green': '#059669',   
                         'app-green-glow': '#10b981',
-                        'app-red': '#dc2626',     /* Professional crisp red */
+                        'app-red': '#dc2626',     
                         'app-red-glow': '#ef4444',
-                        'app-blue': '#2563eb',    /* Primary brand blue */
+                        'app-blue': '#2563eb',    
                         'app-gold': '#d97706',
-                        'app-border': '#e2e8f0'   /* Light border color */
+                        'app-border': '#e2e8f0'   
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Georgia', 'serif'] },
                     fontSize: { 'xxs': '0.65rem' }
@@ -86,10 +86,6 @@
         .modal-content { background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-radius: 20px; width: 90%; max-width: 450px; transform: scale(0.95); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         .modal.active .modal-content { transform: scale(1); }
         
-        /* Specific bottom modal for Chrome-like Install Prompt */
-        .modal-install-content { background: #ffffff; padding: 20px; border-radius: 16px 16px 0 0; width: 100%; max-width: 500px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); margin-top: auto; }
-        .modal.active .modal-install-content { transform: translateY(0); }
-
         /* Certificate Styling */
         .cert-container { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 2px solid #d97706; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .cert-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 5rem; font-weight: 900; color: rgba(0,0,0,0.03); pointer-events: none; white-space: nowrap; font-family: 'Georgia', serif; }
@@ -97,11 +93,19 @@
         
         .portfolio-click-card:active { transform: scale(0.98); }
         .user-select-none { user-select: none; -webkit-user-select: none; }
+
+        /* Fake Chrome Android Install Bottom Sheet Animation */
+        @keyframes indeterminate {
+            0% { left: -35%; width: 35%; }
+            100% { left: 100%; width: 35%; }
+        }
+        .slide-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 
-    <!-- Splash Screen: Minimalist Professional FinTech Look -->
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="logo-wrapper flex flex-col items-center justify-center gap-3">
             <div class="relative w-24 h-24 rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center border border-gray-100">
@@ -113,7 +117,6 @@
             </div>
         </div>
         
-        <!-- Professional Round Loading Circle -->
         <div class="mt-12 flex flex-col items-center gap-3">
             <div class="relative w-12 h-12">
                 <div class="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
@@ -145,7 +148,6 @@
                     <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
                 </div>
             </div>
-            <!-- Secret Admin Panel for Trading Balance -->
             <div onclick="editTradingBalance(event)" class="flex flex-col items-end justify-center bg-app-panel border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-sm group">
                 <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Trading Balance</span>
                 <span class="text-sm font-extrabold text-app-text group-hover:text-app-green transition-colors" id="header-trading-balance">₹15,85,400.00</span>
@@ -153,7 +155,7 @@
         </div>
     </nav>
 
-    <!-- App Install Top Banner (Instantly Visible for Quick Installation) -->
+    <!-- App Install Top Banner -->
     <div id="install-banner" class="hidden bg-app-blue text-white px-4 py-3 flex justify-between items-center shadow-md z-40 relative transition-all">
         <div class="flex items-center gap-3">
             <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-10 h-10 rounded-lg shadow-sm border border-blue-400">
@@ -165,7 +167,7 @@
         <button onclick="installApp()" class="bg-white text-app-blue px-5 py-1.5 rounded-full text-xs font-extrabold shadow-lg hover:bg-gray-100 transition active:scale-95 flex items-center gap-1"><i class="ph-bold ph-download-simple"></i> INSTALL</button>
     </div>
 
-    <!-- LIVE NIFTY / SENSEX TICKER (Fixed Position - Does Not Scroll) -->
+    <!-- LIVE NIFTY / SENSEX TICKER -->
     <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative w-full overflow-hidden">
         <div class="flex justify-between md:justify-around px-2 sm:px-4 w-full">
             <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">NIFTY 50</span><span class="font-bold text-app-text sm:hidden">NIFTY</span> <span class="text-app-green font-bold" id="ticker-nifty">22,450.50</span> <i id="icon-nifty" class="ph-bold ph-caret-up text-app-green"></i></div>
@@ -210,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- Global Search Feature for 1000+ Companies -->
             <div class="relative w-full">
                 <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-app-muted text-lg"></i>
                 <input type="text" id="stock-search" onkeyup="handleSearch()" placeholder="Search from 1000+ Stocks & Global Assets..." class="w-full bg-white border border-gray-300 text-app-text text-sm font-bold rounded-xl py-3 pl-11 pr-4 focus:border-app-blue outline-none transition-colors shadow-sm">
@@ -299,12 +300,9 @@
         <!-- View 3: ACCOUNT & PROFILE -->
         <div id="view-account" class="view-section space-y-4">
             
-            <!-- Pro Profile Header Banner -->
             <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-app-border p-5 shadow-lg relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-48 h-48 bg-app-blue/5 rounded-full blur-3xl pointer-events-none group-hover:bg-app-blue/10 transition duration-700"></div>
                 <div class="flex items-center gap-5 relative z-10">
-                    
-                    <!-- Editable Profile Image Container -->
                     <div class="relative w-20 h-20 rounded-2xl group/avatar cursor-pointer shadow-md" onclick="document.getElementById('profile-upload').click()" title="Change Profile Picture">
                         <img id="profile-img-preview" src="" class="absolute inset-0 w-full h-full object-cover rounded-2xl hidden ring-2 ring-white z-10">
                         <div id="profile-initials" class="absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-tr from-app-blue via-indigo-500 to-purple-600 flex items-center justify-center text-white font-extrabold text-2xl ring-2 ring-white z-0">RY</div>
@@ -340,9 +338,8 @@
                 <div id="nominee-list" class="space-y-3"></div>
             </div>
 
-            <!-- Pro Funds Module (Add / Withdraw - Genuine Look) -->
+            <!-- Pro Funds Module -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Deposit Card -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-lg relative overflow-hidden group">
                     <div class="absolute -right-6 -top-6 text-app-green/5 group-hover:text-app-green/10 transition-colors duration-500 pointer-events-none">
                         <i class="ph-fill ph-arrow-down-left text-9xl"></i>
@@ -364,7 +361,6 @@
                     </div>
                 </div>
 
-                <!-- Withdraw Card -->
                 <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-lg relative overflow-hidden group">
                     <div class="absolute -right-6 -top-6 text-app-red/5 group-hover:text-app-red/10 transition-colors duration-500 pointer-events-none">
                         <i class="ph-fill ph-arrow-up-right text-9xl"></i>
@@ -386,9 +382,7 @@
                 </div>
             </div>
 
-            <!-- Professional App Menu (With Real Modals) -->
             <div class="bg-app-card border border-app-border rounded-xl shadow-sm overflow-hidden mt-6 mb-8">
-                <!-- App Install Button (Always available in Menu as fallback) -->
                 <div id="install-app-btn" onclick="installApp()" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-blue-100 transition hidden bg-blue-50/50">
                     <div class="flex items-center gap-4">
                         <div class="p-2.5 bg-app-blue text-white rounded-xl shadow-md"><i class="ph-bold ph-download-simple text-xl animate-bounce"></i></div>
@@ -453,44 +447,38 @@
         </div>
     </div>
 
-    <!-- Modal: Simulated Chrome Install Prompt (Fallback) -->
-    <div id="modal-install-fallback" class="modal" style="align-items: flex-end; sm:align-items: center;">
-        <div class="modal-install-content flex flex-col gap-4">
-            <div class="flex items-center gap-4 pb-4 border-b border-gray-200">
-                <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-xl shadow-md border border-gray-100">
-                <div>
-                    <h3 class="text-lg font-bold text-app-text leading-tight">ApexTrade Pro App</h3>
-                    <p class="text-xs text-app-green font-semibold">Verified Secure App</p>
-                </div>
-            </div>
+    <!-- PERFECT FAKE CHROME NATIVE INSTALL BOTTOM SHEET -->
+    <div id="native-fake-install" class="fixed inset-0 bg-black/60 z-[100000] hidden flex-col justify-end transition-opacity">
+        <div class="bg-white w-full rounded-t-3xl pt-5 pb-6 px-6 transform translate-y-full transition-transform duration-300" id="fake-install-sheet">
             
-            <div id="install-step-1">
-                <p class="text-sm text-app-muted mb-4">Install the official app for a faster and seamless trading experience.</p>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button onclick="closeModal('modal-install-fallback')" class="px-5 py-2.5 rounded-lg text-app-muted font-bold hover:bg-gray-100 transition">Cancel</button>
-                    <button onclick="startSimulatedDownload()" class="px-6 py-2.5 rounded-lg bg-app-blue text-white font-bold hover:bg-blue-700 transition flex items-center justify-center min-w-[100px]">Download</button>
+            <!-- Step 1: Prompt -->
+            <div id="fake-step-1">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-lg shadow-sm border border-gray-100">
+                    <div>
+                        <h2 class="text-[17px] font-medium text-[#202124] leading-tight">ApexTrade Pro</h2>
+                        <p class="text-[13px] text-[#5f6368]">app.apextradepro.com</p>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 mt-2">
+                    <button onclick="closeFakeInstall()" class="px-4 py-2 text-[#1a73e8] text-sm font-medium rounded-full hover:bg-blue-50 transition">Cancel</button>
+                    <button onclick="startFakeInstall()" class="px-6 py-2 bg-[#1a73e8] text-white text-sm font-medium rounded-full hover:bg-blue-700 transition shadow-sm">Install</button>
                 </div>
             </div>
 
-            <div id="install-step-2" class="hidden">
-                <p class="text-sm font-bold text-app-text mb-2 flex justify-between"><span>Downloading...</span> <span id="download-pct">0%</span></p>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
-                    <div id="download-bar" class="bg-app-blue h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+            <!-- Step 2: Installing Progress -->
+            <div id="fake-step-2" class="hidden flex-col items-center justify-center py-4">
+                <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-lg shadow-sm mb-4 animate-pulse">
+                <p class="text-[#202124] text-sm font-medium mb-4">Installing ApexTrade Pro...</p>
+                <div class="w-full bg-gray-200 rounded-full h-1 overflow-hidden relative">
+                    <div class="bg-[#1a73e8] h-1 absolute left-0 top-0 w-1/3 animate-[indeterminate_1.5s_infinite_linear] rounded-full"></div>
                 </div>
             </div>
 
-            <div id="install-step-3" class="hidden">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                    <i class="ph-fill ph-check-circle text-app-green text-3xl mb-2"></i>
-                    <h4 class="font-bold text-app-text mb-1">Download Complete</h4>
-                    <p class="text-xs text-app-muted font-semibold mt-2">Final Step: Tap the <i class="ph-bold ph-dots-three-vertical inline text-app-text text-base"></i> browser menu in the top right corner and select <strong class="text-app-blue">"Add to Home screen"</strong> to place the app on your phone.</p>
-                </div>
-                <button onclick="closeModal('modal-install-fallback')" class="w-full mt-4 py-2.5 rounded-lg bg-gray-100 text-app-text font-bold hover:bg-gray-200 transition">Close</button>
-            </div>
         </div>
     </div>
 
-    <!-- Modal: Terms & Conditions -->
+    <!-- Modals -->
     <div id="modal-tc" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
@@ -507,7 +495,6 @@
         </div>
     </div>
 
-    <!-- Modal: Privacy & Security -->
     <div id="modal-privacy" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
@@ -528,7 +515,6 @@
         </div>
     </div>
 
-    <!-- Modal: Help & Support -->
     <div id="modal-support" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
@@ -555,7 +541,6 @@
         </div>
     </div>
 
-    <!-- Modal: Add New Nominee (Simplified UI) -->
     <div id="modal-add-nominee" class="modal">
         <div class="modal-content">
             <h2 class="text-xl font-bold text-app-text mb-4">Add Official Nominee</h2>
@@ -576,7 +561,6 @@
         </div>
     </div>
 
-    <!-- Modal: Edit / Delete Existing Nominee -->
     <div id="modal-edit-nominee" class="modal">
         <div class="modal-content">
             <h2 class="text-xl font-bold text-app-text mb-4">Edit Nominee</h2>
@@ -601,7 +585,6 @@
         </div>
     </div>
 
-    <!-- Modal: Official Nominee Certificate -->
     <div id="modal-certificate" class="modal">
         <div class="modal-content !p-0 !bg-white" style="max-width: 500px;">
             <div id="certificate-wrapper" class="cert-container text-app-text m-2">
@@ -702,11 +685,9 @@
             </div>
         </div>
         
-        <!-- Candlestick Trading Terminal Canvas Area (Light Theme) -->
         <div class="flex-1 bg-gray-50 p-2 relative terminal-grid">
             <canvas id="stock-detail-canvas" class="w-full h-full block rounded-lg border border-gray-200 shadow-inner bg-white"></canvas>
             
-            <!-- Floating Data overlay (Like TradingView) -->
             <div class="absolute top-4 left-4 bg-white/90 backdrop-blur shadow-sm border border-gray-200 p-2 rounded-lg pointer-events-none hidden sm:block">
                 <div class="flex gap-3 text-xs font-mono font-bold">
                     <span class="text-gray-500">O: <span class="text-app-text" id="term-o">0.00</span></span>
@@ -746,7 +727,6 @@
             }
         }
 
-        // Expanded 110 Real Companies
         const LARGE_CAPS = [
             { id: 'RELIANCE', name: 'Reliance Ind.', basePrice: 2950 }, { id: 'TCS', name: 'Tata Consultancy Services', basePrice: 4050 },
             { id: 'HDFCBANK', name: 'HDFC Bank', basePrice: 1550 }, { id: 'ICICIBANK', name: 'ICICI Bank', basePrice: 1100 },
@@ -838,7 +818,7 @@
             renderPortfolio();
         }
 
-        // --- PROFILE EDITING (Image & Name) ---
+        // --- PROFILE EDITING ---
         document.getElementById('profile-upload').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(file) {
@@ -871,19 +851,18 @@
             }
         }
         
-        // Mobile Double Tap for Profile Name
         window.handleProfileNameClick = function() {
             if(tapTimers['prof_name']) {
                 clearTimeout(tapTimers['prof_name']); tapTimers['prof_name'] = null;
-                editProfileName(); // Double Tap
+                editProfileName(); 
             } else {
-                tapTimers['prof_name'] = setTimeout(() => { tapTimers['prof_name'] = null; }, 300); // Single Tap
+                tapTimers['prof_name'] = setTimeout(() => { tapTimers['prof_name'] = null; }, 300);
             }
         };
 
         function loadDataFromStorage() {
             try {
-                const dataStr = localStorage.getItem('apexTradeState_v13_light');
+                const dataStr = localStorage.getItem('apexTradeState_v14_light');
                 if (dataStr) {
                     const data = JSON.parse(dataStr);
                     window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
@@ -916,7 +895,7 @@
                 const holdingsToSave = window.portfolioData.map(s => ({
                     id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, baseP: s.baseP, lastLtp: s.ltp, prevClose: s.prevClose
                 }));
-                localStorage.setItem('apexTradeState_v13_light', JSON.stringify({
+                localStorage.setItem('apexTradeState_v14_light', JSON.stringify({
                     tradingBalance: window.tradingBalance, holdings: holdingsToSave,
                     tradeHistory: window.appTradeHistory.slice(0, 150), nominees: window.nominees, 
                     profileImage: window.profileImageStr, profileName: window.profileNameStr,
@@ -995,7 +974,6 @@
         window.globalTick = function() {
             if(!isAppReady) return;
             
-            // TICKER LOGIC (Top Bar)
             Object.keys(window.indices).forEach(key => {
                 let el = document.getElementById(`ticker-${key}`);
                 if(el) {
@@ -1010,7 +988,6 @@
                 }
             });
 
-            // PORTFOLIO LOGIC
             let tCurTotal = 0; portfolioData.forEach(s => tCurTotal += s.qty * s.ltp);
             if (tCurTotal > 7800000) window.marketTrend = -1; 
             if (tCurTotal < 3200000) window.marketTrend = 1;  
@@ -1076,9 +1053,9 @@
         window.handleStockClick = function(id) {
             if(tapTimers['stk_' + id]) {
                 clearTimeout(tapTimers['stk_' + id]); tapTimers['stk_' + id] = null;
-                secretEditStock(id); // Double Tap -> Edit Stock Price/Qty
+                secretEditStock(id);
             } else {
-                tapTimers['stk_' + id] = setTimeout(() => { tapTimers['stk_' + id] = null; openStockDetail(id); }, 300); // Single Tap -> Open Detail
+                tapTimers['stk_' + id] = setTimeout(() => { tapTimers['stk_' + id] = null; openStockDetail(id); }, 300);
             }
         };
 
@@ -1102,7 +1079,6 @@
                 return true;
             });
 
-            // Display top 100 to prevent browser lag for massive array
             filteredData.slice(0, 100).forEach(s => {
                 let inv = s.qty * s.avgPrice; let cur = s.qty * s.ltp; let pl = cur - inv; let plPct = (inv > 0) ? (pl/inv)*100 : 0;
                 const isPos = pl >= 0; const row = document.createElement('div');
@@ -1130,14 +1106,13 @@
             updateTotalPortfolioHeaders();
         }
 
-        // --- NOMINEE SYSTEM (DOUBLE CLICK/TAP TO ADD) ---
         window.handleNomineeHeaderClick = function() {
             if(tapTimers['nom_header']) {
                 clearTimeout(tapTimers['nom_header']); 
                 tapTimers['nom_header'] = null;
-                openNomineeModal(); // Double Tap -> Add Nominee
+                openNomineeModal();
             } else {
-                tapTimers['nom_header'] = setTimeout(() => { tapTimers['nom_header'] = null; }, 300); // Do nothing on single tap
+                tapTimers['nom_header'] = setTimeout(() => { tapTimers['nom_header'] = null; }, 300);
             }
         };
 
@@ -1226,7 +1201,6 @@
             });
         }
 
-        // Live Trading Logic
         const WIN_LOSS_PATTERN = ['L', 'L', 'W', 'L', 'W', 'L', 'L', 'W', 'L', 'W']; 
         let tradeCount = 0; window.isTradeActive = false; window.activeTradeAsset = 'NIFTY'; window.liveTradePrice = 22450.50; window.tradeChartHistory = Array(50).fill(liveTradePrice).map((p, i) => p + (Math.random()-0.5)*20);
         
@@ -1282,7 +1256,6 @@
             });
         }
 
-        // --- REALISTIC HISTORY CHART VIEW (3Y, 5Y, All) ---
         window.openHistoryChart = function() {
             document.getElementById('history-chart-view').classList.add('active'); document.body.style.overflow = 'hidden';
             let tCur=0, tInv=0; portfolioData.forEach(s => { tCur += s.qty * s.ltp; tInv += s.qty * s.avgPrice; }); const ret = tCur - tInv;
@@ -1302,7 +1275,7 @@
         function drawHistoryCanvas(period) {
             const cvs = document.getElementById('history-chart-canvas'); const cx = cvs.getContext('2d');
             const rect = cvs.parentElement.getBoundingClientRect(); 
-            if(rect.width === 0) return; // Prevent drawing if invisible
+            if(rect.width === 0) return; 
             
             cvs.width = rect.width * 2; cvs.height = rect.height * 2;
             cx.scale(2, 2); let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
@@ -1385,12 +1358,10 @@
             document.getElementById('detail-title').innerText = detailActiveStock.name;
             document.body.style.overflow = 'hidden'; 
             
-            // Reset to 1D timeframe by default on open
             const tfBtns = document.querySelectorAll('.detail-tf-btn');
             if(tfBtns.length > 0) window.setDetailTimeframe('1D', tfBtns[0]);
             
             updateDetailValues(); 
-            // 350ms delay perfectly aligns with CSS transition so Desktop Canvas gets 100% correct width
             setTimeout(drawDetailChart, 350); 
         }
 
@@ -1409,13 +1380,12 @@
             document.getElementById('term-c').innerText = window.fmtNum(lastCandle.c);
         }
 
-        // --- LIGHT THEME PROFESSIONAL CANDLESTICK CHART ---
         window.drawDetailChart = function() {
             if(!detailActiveStock) return; 
             const cvs = document.getElementById('stock-detail-canvas'); 
             const cx = cvs.getContext('2d');
             const rect = cvs.parentElement.getBoundingClientRect(); 
-            if(rect.width === 0) return; // Wait till visible
+            if(rect.width === 0) return; 
 
             cvs.width = rect.width * 2; cvs.height = rect.height * 2;
             cx.scale(2, 2); 
@@ -1441,7 +1411,6 @@
             let stepX = chartW / hist.length;
             let candleWidth = Math.max(stepX * 0.7, 1.5);
 
-            // Light Grid Lines & Right Price Axis
             cx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
             cx.fillStyle = '#64748b';
             cx.font = "10px Inter";
@@ -1455,7 +1424,6 @@
                 cx.fillText(priceVal.toFixed(2), w - 5, y + 4);
             }
 
-            // Candlesticks (Solid professional style)
             hist.forEach((d, i) => {
                 let x = i * stepX + (stepX/2); 
                 let yO = getY(d.o); let yC = getY(d.c);
@@ -1494,7 +1462,6 @@
             cx.fill();
             cx.shadowBlur = 0; 
 
-            // Price Label
             cx.fillStyle = liveColor;
             cx.fillRect(chartW + 2, liveY - 12, rightAxisWidth, 24);
             cx.fillStyle = '#ffffff';
@@ -1503,13 +1470,13 @@
         }
 
         function initTradingChart() {
-            setTimeout(drawTradingChart, 350); // Ensure proper size initialization
+            setTimeout(drawTradingChart, 350); 
         }
         
         window.drawTradingChart = function() {
             const tradeCanvas = document.getElementById('trading-chart-canvas'); const tradeCtx = tradeCanvas.getContext('2d');
             const rect = tradeCanvas.parentElement.getBoundingClientRect(); 
-            if(rect.width === 0) return; // Prevent drawing on invisible canvas
+            if(rect.width === 0) return; 
             
             tradeCanvas.width = rect.width * 2; tradeCanvas.height = rect.height * 2;
             tradeCtx.scale(2, 2);
@@ -1527,7 +1494,6 @@
             let lineColor = isUp ? '#059669' : '#dc2626';
             let gradColor = isUp ? 'rgba(5, 150, 105, ' : 'rgba(220, 38, 38, ';
 
-            // Draw Professional Grid
             tradeCtx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
             tradeCtx.lineWidth = 1;
             for(let i=1; i<=4; i++) {
@@ -1537,7 +1503,6 @@
 
             let stepX = w / (tradeChartHistory.length - 1);
             
-            // Fill Gradient Area
             tradeCtx.beginPath();
             tradeCtx.moveTo(0, h);
             tradeChartHistory.forEach((price, i) => { 
@@ -1551,7 +1516,6 @@
             tradeCtx.fillStyle = grad;
             tradeCtx.fill();
 
-            // Draw Precision Line
             tradeCtx.beginPath(); 
             tradeCtx.lineWidth = 3; 
             tradeCtx.strokeStyle = lineColor;
@@ -1562,7 +1526,6 @@
             });
             tradeCtx.stroke();
             
-            // Draw Interactive Pulse Dot at current price
             let currentX = (tradeChartHistory.length - 1) * stepX;
             let currentY = h - ((tradeChartHistory[tradeChartHistory.length-1] - min) / range) * (h * 0.75) - (h*0.1);
             
@@ -1579,7 +1542,6 @@
             tradeCtx.stroke();
         }
 
-        // Global Resize Listener for Desktop Fluid Responsiveness
         window.addEventListener('resize', () => {
             if (document.getElementById('stock-detail-view').classList.contains('active')) drawDetailChart();
             if (document.getElementById('history-chart-view').classList.contains('active')) drawHistoryCanvas(window.currentHistoryPeriod);
@@ -1616,15 +1578,12 @@
         function checkAndShowInstallBanner() {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
             if (!isStandalone) {
-                // Show banner after a slight delay if not installed
                 setTimeout(showInstallBanner, 2000); 
             }
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault(); 
-            // Stash the event so it can be triggered later.
             deferredPrompt = e; 
             showInstallBanner(); 
         });
@@ -1634,58 +1593,66 @@
             const menuInstallBtn = document.getElementById('install-app-btn');
             
             if (deferredPrompt) {
-                // Show the REAL Native Chrome Install Prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
                 deferredPrompt = null;
-                // Hide banners
                 if (installBanner) installBanner.classList.add('hidden');
                 if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
             } else {
-                // Fallback for iOS or if already installed/prompt unavailable
-                document.getElementById('install-step-1').classList.remove('hidden');
-                document.getElementById('install-step-2').classList.add('hidden');
-                document.getElementById('install-step-3').classList.add('hidden');
-                document.getElementById('download-bar').style.width = '0%';
+                // If native prompt is blocked (e.g., due to missing HTTPS server), show the PERFECT FAKE.
+                document.getElementById('native-fake-install').classList.remove('hidden');
+                document.getElementById('native-fake-install').classList.add('flex');
                 
+                setTimeout(() => {
+                    document.getElementById('fake-install-sheet').classList.add('slide-up');
+                }, 10);
+
                 if (installBanner) installBanner.classList.add('hidden');
                 if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
-                
-                openModal('modal-install-fallback');
             }
         };
 
-        window.startSimulatedDownload = function() {
-            document.getElementById('install-step-1').classList.add('hidden');
-            document.getElementById('install-step-2').classList.remove('hidden');
+        window.closeFakeInstall = function() {
+            document.getElementById('fake-install-sheet').classList.remove('slide-up');
+            setTimeout(() => {
+                document.getElementById('native-fake-install').classList.add('hidden');
+                document.getElementById('native-fake-install').classList.remove('flex');
+            }, 300);
+        }
+
+        window.startFakeInstall = function() {
+            document.getElementById('fake-step-1').classList.add('hidden');
+            document.getElementById('fake-step-2').classList.remove('hidden');
+            document.getElementById('fake-step-2').classList.add('flex');
             
-            let progress = 0;
-            const bar = document.getElementById('download-bar');
-            const pct = document.getElementById('download-pct');
-            
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 20) + 10;
-                if(progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('install-step-2').classList.add('hidden');
-                        document.getElementById('install-step-3').classList.remove('hidden');
-                        showToast('App Downloaded! Please Add to Home Screen', 'success');
-                    }, 500);
-                }
-                bar.style.width = progress + '%';
-                pct.innerText = progress + '%';
-            }, 400);
+            setTimeout(() => {
+                // Hide the sheet
+                closeFakeInstall();
+                
+                // Show Native Android-style Toast
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#323232] text-white px-4 py-3 rounded-md text-sm shadow-lg z-[100000] flex items-center gap-3 transition-opacity duration-300';
+                toast.innerHTML = '<img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-6 h-6 rounded border border-gray-600"> ApexTrade Pro installed.';
+                document.body.appendChild(toast);
+                
+                // Show manual pointer to actually add to home screen if the browser blocked the real prompt
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                    
+                    const pointer = document.createElement('div');
+                    pointer.className = 'fixed top-12 right-2 bg-blue-600 text-white p-3 rounded-lg shadow-xl z-[100000] text-xs font-bold animate-bounce';
+                    pointer.innerHTML = 'Tap ⋮ and select <br>"Add to Home screen"';
+                    document.body.appendChild(pointer);
+                    setTimeout(() => pointer.remove(), 6000);
+                    
+                }, 3000);
+                
+            }, 2500);
         }
 
         function setupPWA() {
             try {
-                // 1. Setup Manifest
                 const manifest = { 
                     name: "ApexTrade Pro", 
                     short_name: "ApexTrade", 
@@ -1707,13 +1674,11 @@
                     link.setAttribute('href', manifestUrl);
                 }
 
-                // 2. Setup Dummy Service Worker (Required for Native Chrome Install Prompt)
                 if ('serviceWorker' in navigator) {
                     const swCode = `
                         self.addEventListener('install', (e) => self.skipWaiting());
                         self.addEventListener('activate', (e) => self.clients.claim());
                         self.addEventListener('fetch', (e) => {
-                            // Minimal fetch handler to pass PWA criteria
                             e.respondWith(fetch(e.request).catch(() => new Response('Offline')));
                         });
                     `;
@@ -1721,7 +1686,7 @@
                     const swUrl = URL.createObjectURL(swBlob);
                     navigator.serviceWorker.register(swUrl).then(reg => {
                         console.log('Service Worker Registered for PWA Installability');
-                    }).catch(err => console.log('SW Registration Failed', err));
+                    });
                 }
 
             } catch(e) {
@@ -1729,7 +1694,6 @@
             }
         }
 
-        // Safely start the app without waiting for heavy external images to load
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 setupPWA();
