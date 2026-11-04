@@ -85,6 +85,10 @@
         .modal.active { display: flex; opacity: 1; }
         .modal-content { background: #ffffff; border: 1px solid #e2e8f0; padding: 24px; border-radius: 20px; width: 90%; max-width: 450px; transform: scale(0.95); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         .modal.active .modal-content { transform: scale(1); }
+        
+        /* Specific bottom modal for Chrome-like Install Prompt */
+        .modal-install-content { background: #ffffff; padding: 20px; border-radius: 16px 16px 0 0; width: 100%; max-width: 500px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -10px 25px rgba(0,0,0,0.1); margin-top: auto; }
+        .modal.active .modal-install-content { transform: translateY(0); }
 
         /* Certificate Styling */
         .cert-container { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 2px solid #d97706; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -384,7 +388,7 @@
 
             <!-- Professional App Menu (With Real Modals) -->
             <div class="bg-app-card border border-app-border rounded-xl shadow-sm overflow-hidden mt-6 mb-8">
-                <!-- App Install Button (Visible when supported) -->
+                <!-- App Install Button (Always available in Menu as fallback) -->
                 <div id="install-app-btn" onclick="installApp()" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-blue-100 transition hidden bg-blue-50/50">
                     <div class="flex items-center gap-4">
                         <div class="p-2.5 bg-app-blue text-white rounded-xl shadow-md"><i class="ph-bold ph-download-simple text-xl animate-bounce"></i></div>
@@ -446,6 +450,24 @@
                 <i class="ph ph-user-circle text-2xl mb-0.5"></i>
                 <span class="text-[10px] font-bold tracking-wide uppercase">Profile</span>
             </button>
+        </div>
+    </div>
+
+    <!-- Modal: Simulated Chrome Install Prompt (Fallback) -->
+    <div id="modal-install-fallback" class="modal" style="align-items: flex-end; sm:align-items: center;">
+        <div class="modal-install-content flex flex-col gap-4">
+            <div class="flex items-center gap-4 pb-4 border-b border-gray-200">
+                <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-xl shadow-md border border-gray-100">
+                <div>
+                    <h3 class="text-lg font-bold text-app-text leading-tight">Install ApexTrade Pro</h3>
+                    <p class="text-xs text-app-green font-semibold">https://apextrade.pro</p>
+                </div>
+            </div>
+            <p class="text-sm text-app-muted">This will add the application to your home screen for fast and secure access, just like a native app.</p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal('modal-install-fallback')" class="px-5 py-2.5 rounded-lg text-app-muted font-bold hover:bg-gray-100 transition">Cancel</button>
+                <button id="btn-confirm-install" onclick="confirmSimulatedInstall()" class="px-6 py-2.5 rounded-lg bg-app-blue text-white font-bold hover:bg-blue-700 transition flex items-center justify-center min-w-[100px]">Install</button>
+            </div>
         </div>
     </div>
 
@@ -736,11 +758,6 @@
             { id: 'BABA', name: 'Alibaba Group', basePrice: 6200 }, { id: 'TSM', name: 'Taiwan Semiconductor', basePrice: 11500 }
         ];
 
-        let ALL_COMPANIES = [];
-        for(let i=0; i<40; i++) ALL_COMPANIES.push({ ...LARGE_CAPS[i % LARGE_CAPS.length], cap: 'Large', id: LARGE_CAPS[i % LARGE_CAPS.length].id + (i >= LARGE_CAPS.length ? '_'+i : '')});
-        for(let i=0; i<40; i++) ALL_COMPANIES.push({ ...MID_CAPS[i % MID_CAPS.length], cap: 'Mid', id: MID_CAPS[i % MID_CAPS.length].id + (i >= MID_CAPS.length ? '_'+i : '')});
-        for(let i=0; i<30; i++) ALL_COMPANIES.push({ ...GLOBAL_CAPS[i % GLOBAL_CAPS.length], cap: 'Intl', id: GLOBAL_CAPS[i % GLOBAL_CAPS.length].id + (i >= GLOBAL_CAPS.length ? '_'+i : '')});
-
         window.portfolioData = []; window.appTradeHistory = []; window.nominees = [];
         window.tradingBalance = 1585400; window.marketTrend = 1; let currentEditIndex = -1;
         let activeFilter = 'All'; let detailActiveStock = null; let isAppReady = false;
@@ -754,13 +771,11 @@
         function generateMassivePortfolio() {
             let data = []; const targetInvested = 4500000; 
             
-            // 1. Add precise large/mid/global base caps
             let baseCompanies = [];
             for(let i=0; i<40; i++) baseCompanies.push({ ...LARGE_CAPS[i % LARGE_CAPS.length], cap: 'Large', id: LARGE_CAPS[i % LARGE_CAPS.length].id + (i >= LARGE_CAPS.length ? '_'+i : '')});
             for(let i=0; i<40; i++) baseCompanies.push({ ...MID_CAPS[i % MID_CAPS.length], cap: 'Mid', id: MID_CAPS[i % MID_CAPS.length].id + (i >= MID_CAPS.length ? '_'+i : '')});
             for(let i=0; i<30; i++) baseCompanies.push({ ...GLOBAL_CAPS[i % GLOBAL_CAPS.length], cap: 'Intl', id: GLOBAL_CAPS[i % GLOBAL_CAPS.length].id + (i >= GLOBAL_CAPS.length ? '_'+i : '')});
             
-            // 2. Generate remaining realistic 900+ companies to reach ~1000
             const indPrefixes = ['TATA', 'ADANI', 'BAJAJ', 'JINDAL', 'HDFC', 'ICICI', 'SBI', 'MAHINDRA', 'BIRLA', 'RELIANCE', 'MUTHOOT', 'CHOLA', 'APOLLO', 'MAX', 'GODREJ', 'L&T', 'NIPPON', 'TVS', 'HERO', 'MARUTI'];
             const indSuffixes = ['STEEL', 'POWER', 'GREEN', 'TECH', 'MOTORS', 'BANK', 'FINANCE', 'CHEM', 'PHARMA', 'INFRA', 'REALTY', 'HOSPITALS', 'ENERGY', 'LIFE', 'FMCG', 'AUTO', 'GAS', 'PORTS', 'CEMENT'];
             
@@ -777,11 +792,10 @@
             }
             
             const allComps = [...baseCompanies, ...extraCompanies];
-            const count = allComps.length;
 
             allComps.forEach((comp, i) => {
                 let variance = 0.5 + (Math.random()) * 0.5; let invested = (targetInvested / 200) * variance; 
-                let qty = i < 150 ? Math.max(1, Math.floor(invested / comp.basePrice)) : 0; // Only hold quantity in the top ~150 to match portfolio amount
+                let qty = i < 150 ? Math.max(1, Math.floor(invested / comp.basePrice)) : 0; 
                 if(qty > 500) qty = Math.round(qty/50)*50;
                 let avgP = comp.basePrice; 
                 let ltp = avgP * (1.1 + (Math.random() * 0.5)); 
@@ -924,11 +938,11 @@
                 document.getElementById('count-Intl').innerText = portfolioData.filter(s => s.cap === 'Intl').length;
 
                 renderPortfolio(); updateBalanceUI(false); renderTradeHistory(); renderNominees(); initTradingChart();
+                checkAndShowInstallBanner();
             } catch (error) {
                 console.error("App Booting Error:", error);
             }
             
-            // Reduced to 1 second for ultra-fast loading, and safely removes splash screen
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 if(splash) {
@@ -1573,7 +1587,6 @@
         // PWA & App Install Logic
         let deferredPrompt;
         
-        // Show banner utility
         function showInstallBanner() {
             const installBanner = document.getElementById('install-banner');
             const menuInstallBtn = document.getElementById('install-app-btn');
@@ -1581,22 +1594,29 @@
             if (menuInstallBtn) menuInstallBtn.classList.remove('hidden');
         }
 
+        function checkAndShowInstallBanner() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+            if (!isStandalone) {
+                // Guaranteed to show banner after 3 seconds if not already installed as an app
+                setTimeout(showInstallBanner, 3000); 
+            }
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); 
             deferredPrompt = e;
-            showInstallBanner(); // Instantly show the banner when Chrome says it's ready
+            showInstallBanner(); 
         });
 
         // The unified install function triggered by both buttons
         window.installApp = async function() {
-            const installBanner = document.getElementById('install-banner');
-            const menuInstallBtn = document.getElementById('install-app-btn');
-            
             if (deferredPrompt) {
+                // Native Chrome Prompt
+                const installBanner = document.getElementById('install-banner');
+                const menuInstallBtn = document.getElementById('install-app-btn');
                 if (installBanner) installBanner.classList.add('hidden');
                 if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
                 
-                // Show the native Google Chrome Install Prompt
                 deferredPrompt.prompt();
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') { 
@@ -1605,21 +1625,35 @@
                 }
                 deferredPrompt = null;
             } else {
-                // Fallback for iPhone/iPad (Safari) or if already installed
-                if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-                    showToast("To install: Tap the 'Share' icon below and select 'Add to Home Screen'", "info");
-                } else {
-                    showToast("App is already installed or browser does not support auto-install.", "info");
-                }
+                // Fallback: Simulated Install Prompt (Works everywhere)
+                openModal('modal-install-fallback');
             }
         };
+
+        window.confirmSimulatedInstall = function() {
+            const btn = document.getElementById('btn-confirm-install');
+            let originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-lg"></i> Installing...';
+            
+            setTimeout(() => {
+                closeModal('modal-install-fallback');
+                btn.innerHTML = originalText;
+                
+                const installBanner = document.getElementById('install-banner');
+                const menuInstallBtn = document.getElementById('install-app-btn');
+                if (installBanner) installBanner.classList.add('hidden');
+                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+                
+                showToast('App Installed Successfully! Check your Home Screen.', 'success');
+            }, 2000);
+        }
 
         function setupPWA() {
             try {
                 const manifest = { 
                     name: "ApexTrade Pro", 
                     short_name: "ApexTrade", 
-                    start_url: ".", 
+                    start_url: window.location.href, 
                     display: "standalone", 
                     background_color: "#ffffff", 
                     theme_color: "#2563eb", 
@@ -1628,21 +1662,13 @@
                         { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg", purpose: "any maskable" }
                     ] 
                 };
-                const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
+                const manifestString = JSON.stringify(manifest);
                 const link = document.getElementById('manifest-link');
-                if(link) link.setAttribute('href', URL.createObjectURL(blob));
-                
-                if ('serviceWorker' in navigator) {
-                    const swCode = `
-                        self.addEventListener('install', (e) => { self.skipWaiting(); });
-                        self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
-                        self.addEventListener('fetch', (e) => {});
-                    `;
-                    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-                    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>console.log('SW Setup Skipped'));
+                if(link) {
+                    link.setAttribute('href', 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString));
                 }
             } catch(e) {
-                console.log('PWA skip', e);
+                console.log('PWA Setup Error:', e);
             }
         }
         setupPWA();
