@@ -48,8 +48,8 @@
         body { font-family: 'Inter', sans-serif; background-color: #000000; color: #FFFFFF; margin: 0; padding: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
         ::-webkit-scrollbar { width: 0px; height: 0px; display: none; }
         
-        .flash-green { animation: flashGreen 0.6s ease-out; }
-        .flash-red { animation: flashRed 0.6s ease-out; }
+        .flash-green { animation: flashGreen 0.4s ease-out; }
+        .flash-red { animation: flashRed 0.4s ease-out; }
         @keyframes flashGreen { 0% { background-color: rgba(0, 230, 118, 0.25); color: #00E676; } 100% { background-color: transparent; } }
         @keyframes flashRed { 0% { background-color: rgba(255, 61, 0, 0.25); color: #FF3D00; } 100% { background-color: transparent; } }
         
@@ -728,9 +728,9 @@
                 splash.style.visibility = 'hidden';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); 
-                }, 600);
-            }, 1800);
+                    isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 10000); 
+                }, 400);
+            }, 800);
         }
 
         // --- GLOBAL SEARCH FUNCTIONALITY ---
@@ -814,14 +814,12 @@
 
                 if (s.qty > 0) {
                     let cur = s.qty * s.ltp; let pl = cur - (s.qty * s.avgPrice); let plPct = (pl/(s.qty * s.avgPrice))*100;
-                    const ltpEl = document.getElementById(`pl-ltp-${s.id}`);
-                    const retEl = document.getElementById(`pl-ret-${s.id}`);
-                    if(ltpEl && retEl) {
-                        ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
-                        retEl.innerText = `${pl>=0?'+':''}${window.fmtCurDec(pl)} (${pl>=0?'+':''}${plPct.toFixed(2)}%)`;
-                        retEl.className = `text-[10px] font-bold mt-0.5 ${pl>=0?'text-app-green':'text-app-red'}`;
-                        ltpEl.classList.remove('flash-green', 'flash-red'); void ltpEl.offsetWidth;
-                        ltpEl.classList.add(move > 0 ? 'flash-green' : 'flash-red');
+                    if(s.ltpEl && s.retEl) {
+                        s.ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
+                        s.retEl.innerText = `${pl>=0?'+':''}${window.fmtCurDec(pl)} (${pl>=0?'+':''}${plPct.toFixed(2)}%)`;
+                        s.retEl.className = `text-[10px] font-bold mt-0.5 ${pl>=0?'text-app-green':'text-app-red'}`;
+                        s.ltpEl.classList.remove('flash-green', 'flash-red'); void s.ltpEl.offsetWidth;
+                        s.ltpEl.classList.add(move > 0 ? 'flash-green' : 'flash-red');
                     }
                 }
 
@@ -943,6 +941,10 @@
                     </div>
                 `;
                 list.appendChild(row);
+                
+                // Cache DOM elements for blazing fast 0-latency updates
+                s.ltpEl = row.querySelector(`#pl-ltp-${s.id}`);
+                s.retEl = row.querySelector(`#pl-ret-${s.id}`);
             });
             updateTotalPortfolioHeaders();
         }
@@ -1304,4 +1306,3 @@
     </script>
 </body>
 </html>
-            
