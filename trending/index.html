@@ -892,32 +892,43 @@
         }
 
         async function bootApp() {
-            if (!loadDataFromStorage()) {
-                window.portfolioData = generateMassivePortfolio();
-                window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
-                window.appTradeHistory = generatePreloadedTrades();
-                window.nominees = [
-                    { name: "Shanti Yadav", share: 80, date: new Date().toLocaleDateString() },
-                    { name: "Krishna Yadav", share: 10, date: new Date().toLocaleDateString() }
-                ];
-                window.tradingBalance = 1585400.00; 
-                document.getElementById('profile-name').innerText = window.profileNameStr;
-                saveDataToStorage();
-            }
-            document.getElementById('count-All').innerText = portfolioData.length;
-            document.getElementById('count-Large').innerText = portfolioData.filter(s => s.cap === 'Large').length;
-            document.getElementById('count-Mid').innerText = portfolioData.filter(s => s.cap === 'Mid').length;
-            document.getElementById('count-Intl').innerText = portfolioData.filter(s => s.cap === 'Intl').length;
+            try {
+                if (!loadDataFromStorage() || !window.portfolioData || window.portfolioData.length === 0) {
+                    window.portfolioData = generateMassivePortfolio();
+                    window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
+                    window.appTradeHistory = generatePreloadedTrades();
+                    window.nominees = [
+                        { name: "Shanti Yadav", share: 80, date: new Date().toLocaleDateString() },
+                        { name: "Krishna Yadav", share: 10, date: new Date().toLocaleDateString() }
+                    ];
+                    window.tradingBalance = 1585400.00; 
+                    document.getElementById('profile-name').innerText = window.profileNameStr;
+                    saveDataToStorage();
+                }
+                
+                document.getElementById('count-All').innerText = portfolioData.length;
+                document.getElementById('count-Large').innerText = portfolioData.filter(s => s.cap === 'Large').length;
+                document.getElementById('count-Mid').innerText = portfolioData.filter(s => s.cap === 'Mid').length;
+                document.getElementById('count-Intl').innerText = portfolioData.filter(s => s.cap === 'Intl').length;
 
-            renderPortfolio(); updateBalanceUI(false); renderTradeHistory(); renderNominees(); initTradingChart();
+                renderPortfolio(); updateBalanceUI(false); renderTradeHistory(); renderNominees(); initTradingChart();
+            } catch (error) {
+                console.error("App Booting Error:", error);
+            }
             
+            // Reduced to 1 second for ultra-fast loading, and safely removes splash screen
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
-                    isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); 
-                }, 500);
-            }, 3000); 
+                const splash = document.getElementById('splash-screen');
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        isAppReady = true; 
+                        setInterval(globalTick, 1000); 
+                        setInterval(saveDataToStorage, 5000); 
+                    }, 500);
+                }
+            }, 1000); 
         }
 
         let lastBalance = 0;
@@ -1042,7 +1053,7 @@
             
             let filteredData = portfolioData.filter(s => {
                 if (activeFilter !== 'All' && s.cap !== activeFilter) return false;
-                if (window.searchQuery && !s.name.toLowerCase().includes(window.searchQuery) && !s.id.toLowerCase().includes(window.searchQuery)) return false;
+                if (window.searchQuery && (!s.name || !s.id || (!s.name.toLowerCase().includes(window.searchQuery) && !s.id.toLowerCase().includes(window.searchQuery)))) return false;
                 return true;
             });
 
@@ -1565,23 +1576,33 @@
         });
 
         function setupPWA() {
-            const manifest = { 
-                name: "ApexTrade Pro", short_name: "ApexTrade", start_url: window.location.href, display: "standalone", 
-                background_color: "#ffffff", theme_color: "#2563eb", 
-                icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" }] 
-            };
-            const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-            document.getElementById('manifest-link').setAttribute('href', URL.createObjectURL(blob));
-            
-            if ('serviceWorker' in navigator) {
-                const swCode = `self.addEventListener('fetch', (e) => {});`;
-                const swBlob = new Blob([swCode], {type: 'application/javascript'});
-                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>console.log('SW Setup Skipped'));
+            try {
+                const manifest = { 
+                    name: "ApexTrade Pro", short_name: "ApexTrade", start_url: window.location.href, display: "standalone", 
+                    background_color: "#ffffff", theme_color: "#2563eb", 
+                    icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" }] 
+                };
+                const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                const link = document.getElementById('manifest-link');
+                if(link) link.setAttribute('href', URL.createObjectURL(blob));
+                
+                if ('serviceWorker' in navigator) {
+                    const swCode = `self.addEventListener('fetch', (e) => {});`;
+                    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>console.log('SW Setup Skipped'));
+                }
+            } catch(e) {
+                console.log('PWA skip', e);
             }
         }
         setupPWA();
 
-        window.onload = bootApp;
+        // Safely start the app without waiting for heavy external images to load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bootApp);
+        } else {
+            bootApp();
+        }
     </script>
 </body>
 </html>
