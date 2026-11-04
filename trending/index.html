@@ -99,9 +99,49 @@
             0% { left: -35%; width: 35%; }
             100% { left: 100%; width: 35%; }
         }
-        .slide-up { animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    </style>
+        to { transform: translateY(0); } }
+
+        /* Mobile-first layout safeguards: keep the page inside the device viewport. */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { width: 100%; max-width: 100%; overflow-x: clip; -webkit-text-size-adjust: 100%; }
+        body { width: 100%; max-width: 100%; overflow-x: clip; }
+        img, canvas, video, iframe { max-width: 100%; }
+        button, input, select, textarea { max-width: 100%; }
+        table { max-width: 100%; }
+        /* Keep the page scrollable but remove the narrow distracting scrollbar strip. */
+        body::-webkit-scrollbar { width: 0; height: 0; }
+        body { scrollbar-width: none; }
+        @media (max-width: 640px) {
+            nav.sticky > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+            nav.sticky > div > div:first-child { flex: 1 1 0; min-width: 0; gap: 8px; }
+            nav.sticky #brand-title { font-size: clamp(15px, 4.4vw, 19px); }
+            nav.sticky > div > div:first-child img { width: 36px; height: 36px; }
+            nav.sticky > div > div[onclick*="editTradingBalance"] { flex: 1 0 100%; width: 100%; min-width: 0; flex-direction: row; justify-content: space-between; align-items: center; gap: 8px; padding: 7px 10px; }
+            nav.sticky > div > div[onclick*="editTradingBalance"] > span:first-child { font-size: 9px; }
+            nav.sticky > div > div[onclick*="editTradingBalance"] #header-trading-balance { font-size: 13px; text-align: right; overflow-wrap: anywhere; }
+            main { min-width: 0; padding-left: 8px !important; padding-right: 8px !important; }
+            .view-section, .view-section > *, .grid, .flex { min-width: 0; }
+            .overflow-x-auto { max-width: 100%; }
+            /* Tables and chart areas may scroll within their own panel, never off the screen. */
+            .table-scroll, .overflow-x-auto { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .modal-content { width: calc(100vw - 24px); max-width: calc(100vw - 24px); max-height: 88dvh; overflow-y: auto; }
+            #toast-container { max-width: calc(100vw - 24px); left: 12px; right: 12px; }
+        }
+        @media (max-width: 360px) {
+            nav.sticky > div > div:first-child .text-\[9px\] { letter-spacing: .08em; }
+        }
+
+    
+        /* Final mobile viewport safeguards */
+        @media (max-width: 640px) {
+            body { overflow-x: hidden; }
+            .view-section, .view-section > *, main, nav, nav > div { min-width: 0; max-width: 100%; }
+            img, canvas, svg, video { max-width: 100%; }
+            input, select, textarea { min-width: 0; }
+            .modal { padding-left: 8px; padding-right: 8px; }
+        }
+        /* Final mobile viewport safeguards */
+        </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 
@@ -148,9 +188,6 @@
                     <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
                 </div>
             </div>
-            <button id="top-install-button" onclick="installApp()" class="ml-2 flex items-center gap-1.5 bg-app-blue text-white px-3 py-2 rounded-xl text-xs font-extrabold shadow-md active:scale-95 whitespace-nowrap" aria-label="Install ApexTrade app">
-                <i class="ph-bold ph-download-simple text-base"></i><span>APP INSTALL</span>
-            </button>
             <div onclick="editTradingBalance(event)" class="flex flex-col items-end justify-center bg-app-panel border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-sm group">
                 <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Trading Balance</span>
                 <span class="text-sm font-extrabold text-app-text group-hover:text-app-green transition-colors" id="header-trading-balance">₹15,85,400.00</span>
@@ -158,17 +195,6 @@
         </div>
     </nav>
 
-    <!-- App Install Top Banner -->
-    <div id="install-banner" class="hidden bg-app-blue text-white px-4 py-3 flex justify-between items-center shadow-md z-40 relative transition-all">
-        <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-10 h-10 rounded-lg shadow-sm border border-blue-400">
-            <div>
-                <p class="text-sm font-bold">ApexTrade Pro App</p>
-                <p class="text-[10px] text-blue-100 font-semibold tracking-wider">Fast, Secure & Seamless</p>
-            </div>
-        </div>
-        <button onclick="installApp()" class="bg-white text-app-blue px-5 py-1.5 rounded-full text-xs font-extrabold shadow-lg hover:bg-gray-100 transition active:scale-95 flex items-center gap-1"><i class="ph-bold ph-download-simple"></i> INSTALL</button>
-    </div>
 
     <!-- LIVE NIFTY / SENSEX TICKER -->
     <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative w-full overflow-hidden">
@@ -447,37 +473,6 @@
                 <i class="ph ph-user-circle text-2xl mb-0.5"></i>
                 <span class="text-[10px] font-bold tracking-wide uppercase">Profile</span>
             </button>
-        </div>
-    </div>
-
-    <!-- PERFECT FAKE CHROME NATIVE INSTALL BOTTOM SHEET -->
-    <div id="native-fake-install" class="fixed inset-0 bg-black/60 z-[100000] hidden flex-col justify-end transition-opacity">
-        <div class="bg-white w-full rounded-t-3xl pt-5 pb-6 px-6 transform translate-y-full transition-transform duration-300" id="fake-install-sheet">
-            
-            <!-- Step 1: Prompt -->
-            <div id="fake-step-1">
-                <div class="flex items-center gap-4 mb-6">
-                    <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-lg shadow-sm border border-gray-100">
-                    <div>
-                        <h2 class="text-[17px] font-medium text-[#202124] leading-tight">ApexTrade Pro</h2>
-                        <p class="text-[13px] text-[#5f6368]">app.apextradepro.com</p>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-4 mt-2">
-                    <button onclick="closeFakeInstall()" class="px-4 py-2 text-[#1a73e8] text-sm font-medium rounded-full hover:bg-blue-50 transition">Cancel</button>
-                    <button onclick="startFakeInstall()" class="px-6 py-2 bg-[#1a73e8] text-white text-sm font-medium rounded-full hover:bg-blue-700 transition shadow-sm">Install</button>
-                </div>
-            </div>
-
-            <!-- Step 2: Installing Progress -->
-            <div id="fake-step-2" class="hidden flex-col items-center justify-center py-4">
-                <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-lg shadow-sm mb-4 animate-pulse">
-                <p class="text-[#202124] text-sm font-medium mb-4">Installing ApexTrade Pro...</p>
-                <div class="w-full bg-gray-200 rounded-full h-1 overflow-hidden relative">
-                    <div class="bg-[#1a73e8] h-1 absolute left-0 top-0 w-1/3 animate-[indeterminate_1.5s_infinite_linear] rounded-full"></div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -1568,37 +1563,29 @@
             window.scrollTo(0,0);
         }
         
-        // PWA install logic: real browser prompt where supported, honest browser instructions otherwise.
+        // PWA install: the only install entry is the existing "Add to home screen" row.
         let deferredPrompt = null;
 
-        function showInstallBanner() {
-            const banner = document.getElementById('install-banner');
-            const menuButton = document.getElementById('install-app-btn');
-            const topButton = document.getElementById('top-install-button');
-            const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-            if (!installed) {
-                if (banner) banner.classList.remove('hidden');
-                if (menuButton) menuButton.classList.remove('hidden');
-                if (topButton) topButton.classList.remove('hidden');
-            } else {
-                if (banner) banner.classList.add('hidden');
-                if (menuButton) menuButton.classList.add('hidden');
-                if (topButton) topButton.classList.add('hidden');
-            }
+        function appIsInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        }
+
+        function updateInstallEntry() {
+            const entry = document.getElementById('install-app-btn');
+            if (!entry) return;
+            // Never show a separate top banner/button. Show this single settings row only.
+            entry.classList.toggle('hidden', appIsInstalled());
         }
 
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredPrompt = event;
-            showInstallBanner();
+            updateInstallEntry();
         });
 
         window.addEventListener('appinstalled', () => {
             deferredPrompt = null;
-            ['install-banner', 'install-app-btn', 'top-install-button'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
+            updateInstallEntry();
             if (typeof window.showToast === 'function') window.showToast('App successfully installed');
         });
 
@@ -1606,41 +1593,44 @@
             const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
             const isAndroid = /android/i.test(navigator.userAgent);
             let instructions = message || '';
+
             if (!instructions) {
                 if (isIOS) {
-                    instructions = 'iPhone/iPad: Safari में Share बटन दबाएँ, फिर “Add to Home Screen” चुनें।';
+                    instructions = 'Safari में Share बटन दबाएँ, फिर “Add to Home Screen” चुनें और Add दबाएँ।';
                 } else if (isAndroid) {
-                    instructions = 'Chrome में ऊपर ⋮ मेनू खोलें और “Install app” या “Add to Home screen” चुनें। अगर विकल्प न दिखे, तो साइट HTTPS पर खोलें और पेज refresh करें।';
+                    instructions = 'Chrome के ऊपर ⋮ मेनू में “Install app” या “Add to Home screen” चुनें। अगर विकल्प नहीं दिखता, तो वेबसाइट HTTPS पर खोलें और पेज Refresh करें।';
                 } else {
                     instructions = 'अपने ब्राउज़र के मेनू में “Install app” या “Create shortcut” चुनें।';
                 }
             }
-            const existing = document.getElementById('install-help-dialog');
-            if (existing) existing.remove();
+
+            const oldDialog = document.getElementById('install-help-dialog');
+            if (oldDialog) oldDialog.remove();
+
             const dialog = document.createElement('div');
             dialog.id = 'install-help-dialog';
             dialog.className = 'fixed inset-0 z-[100001] flex items-end sm:items-center justify-center bg-black/60 p-3';
             dialog.innerHTML = `
-                <div class="bg-white text-slate-900 w-full max-w-md rounded-2xl p-5 shadow-2xl">
+                <div role="dialog" aria-modal="true" aria-labelledby="install-help-title" class="bg-white text-slate-900 w-full max-w-md rounded-2xl p-5 shadow-2xl">
                     <div class="flex items-center justify-between gap-3 mb-3">
-                        <h2 class="text-lg font-extrabold">Install ApexTrade Pro</h2>
+                        <h2 id="install-help-title" class="text-lg font-extrabold">Install ApexTrade Pro</h2>
                         <button type="button" id="close-install-help" class="text-2xl leading-none px-2" aria-label="Close">&times;</button>
                     </div>
                     <p class="text-sm leading-6">${instructions}</p>
-                    <p class="text-xs text-slate-500 mt-3">नोट: वेबसाइट से ऐप इंस्टॉल होने के लिए साइट HTTPS पर होनी चाहिए और manifest/service worker सही तरह से उपलब्ध होने चाहिए। यह बटन अपने-आप इंस्टॉल होने का झूठा संदेश नहीं दिखाएगा।</p>
+                    <p class="text-xs text-slate-500 mt-3">इंस्टॉल विकल्प ब्राउज़र और डिवाइस पर निर्भर करता है। वेबसाइट HTTPS पर होनी चाहिए और manifest/service worker सही पाथ पर उपलब्ध होने चाहिए।</p>
                     <button type="button" id="install-help-ok" class="mt-4 w-full rounded-xl bg-blue-600 text-white font-bold py-3">समझ गया</button>
                 </div>`;
             document.body.appendChild(dialog);
+
             const close = () => dialog.remove();
             document.getElementById('close-install-help').addEventListener('click', close);
             document.getElementById('install-help-ok').addEventListener('click', close);
-            dialog.addEventListener('click', e => { if (e.target === dialog) close(); });
+            dialog.addEventListener('click', event => { if (event.target === dialog) close(); });
         }
 
         window.installApp = async function() {
-            const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-            if (installed) {
-                showInstallHelp('ApexTrade Pro पहले से ही ऐप मोड में खुला है।');
+            if (appIsInstalled()) {
+                showInstallHelp('ApexTrade Pro पहले से ऐप मोड में खुला है।');
                 return;
             }
 
@@ -1650,12 +1640,9 @@
                     const result = await deferredPrompt.userChoice;
                     deferredPrompt = null;
                     if (result && result.outcome === 'accepted') {
-                        ['install-banner', 'install-app-btn', 'top-install-button'].forEach(id => {
-                            const el = document.getElementById(id);
-                            if (el) el.classList.add('hidden');
-                        });
+                        updateInstallEntry();
                     } else {
-                        showInstallHelp('इंस्टॉलेशन रद्द हुआ। जब चाहें APP INSTALL बटन से दोबारा कोशिश करें।');
+                        showInstallHelp('इंस्टॉलेशन पूरा नहीं हुआ। आप ब्राउज़र मेनू से फिर कोशिश कर सकते हैं।');
                     }
                 } catch (error) {
                     deferredPrompt = null;
@@ -1664,15 +1651,18 @@
                 return;
             }
 
+            // On browsers without a native prompt, explain the real browser action.
             showInstallHelp();
         };
 
-        // Hide install controls only after the browser confirms that the app is installed.
         function checkAndShowInstallBanner() {
-            showInstallBanner();
+            // Legacy function name retained for compatibility; no banner is shown.
+            updateInstallEntry();
         }
         window.addEventListener('load', checkAndShowInstallBanner);
-        window.matchMedia('(display-mode: standalone)').addEventListener?.('change', checkAndShowInstallBanner);
+        try {
+            window.matchMedia('(display-mode: standalone)').addEventListener?.('change', checkAndShowInstallBanner);
+        } catch (_) {}
 
         function setupPWA() {
             const manifestLink = document.getElementById('manifest-link');
