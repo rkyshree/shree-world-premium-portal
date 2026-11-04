@@ -149,6 +149,18 @@
         </div>
     </nav>
 
+    <!-- App Install Top Banner (Instantly Visible for Quick Installation) -->
+    <div id="install-banner" class="hidden bg-app-blue text-white px-4 py-3 flex justify-between items-center shadow-md z-40 relative transition-all">
+        <div class="flex items-center gap-3">
+            <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-10 h-10 rounded-lg shadow-sm border border-blue-400">
+            <div>
+                <p class="text-sm font-bold">ApexTrade Pro App</p>
+                <p class="text-[10px] text-blue-100 font-semibold tracking-wider">Fast, Secure & Seamless</p>
+            </div>
+        </div>
+        <button onclick="installApp()" class="bg-white text-app-blue px-5 py-1.5 rounded-full text-xs font-extrabold shadow-lg hover:bg-gray-100 transition active:scale-95 flex items-center gap-1"><i class="ph-bold ph-download-simple"></i> INSTALL</button>
+    </div>
+
     <!-- LIVE NIFTY / SENSEX TICKER (Fixed Position - Does Not Scroll) -->
     <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative w-full overflow-hidden">
         <div class="flex justify-between md:justify-around px-2 sm:px-4 w-full">
@@ -373,7 +385,7 @@
             <!-- Professional App Menu (With Real Modals) -->
             <div class="bg-app-card border border-app-border rounded-xl shadow-sm overflow-hidden mt-6 mb-8">
                 <!-- App Install Button (Visible when supported) -->
-                <div id="install-app-btn" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-blue-100 transition hidden bg-blue-50/50">
+                <div id="install-app-btn" onclick="installApp()" class="p-4 border-b border-app-border flex items-center justify-between cursor-pointer hover:bg-blue-100 transition hidden bg-blue-50/50">
                     <div class="flex items-center gap-4">
                         <div class="p-2.5 bg-app-blue text-white rounded-xl shadow-md"><i class="ph-bold ph-download-simple text-xl animate-bounce"></i></div>
                         <div>
@@ -1560,34 +1572,72 @@
         
         // PWA & App Install Logic
         let deferredPrompt;
+        
+        // Show banner utility
+        function showInstallBanner() {
+            const installBanner = document.getElementById('install-banner');
+            const menuInstallBtn = document.getElementById('install-app-btn');
+            if (installBanner) installBanner.classList.remove('hidden');
+            if (menuInstallBtn) menuInstallBtn.classList.remove('hidden');
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
-            const installBtn = document.getElementById('install-app-btn');
-            if(installBtn) {
-                installBtn.classList.remove('hidden');
-                installBtn.onclick = async () => {
-                    installBtn.classList.add('hidden');
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') { showToast('App Installation Started', 'success'); }
-                    deferredPrompt = null;
-                };
-            }
+            e.preventDefault(); 
+            deferredPrompt = e;
+            showInstallBanner(); // Instantly show the banner when Chrome says it's ready
         });
+
+        // The unified install function triggered by both buttons
+        window.installApp = async function() {
+            const installBanner = document.getElementById('install-banner');
+            const menuInstallBtn = document.getElementById('install-app-btn');
+            
+            if (deferredPrompt) {
+                if (installBanner) installBanner.classList.add('hidden');
+                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+                
+                // Show the native Google Chrome Install Prompt
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') { 
+                    showToast('Downloading ApexTrade Pro...', 'info');
+                    setTimeout(() => showToast('App Installed Successfully! Check your Home Screen.', 'success'), 2500);
+                }
+                deferredPrompt = null;
+            } else {
+                // Fallback for iPhone/iPad (Safari) or if already installed
+                if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                    showToast("To install: Tap the 'Share' icon below and select 'Add to Home Screen'", "info");
+                } else {
+                    showToast("App is already installed or browser does not support auto-install.", "info");
+                }
+            }
+        };
 
         function setupPWA() {
             try {
                 const manifest = { 
-                    name: "ApexTrade Pro", short_name: "ApexTrade", start_url: window.location.href, display: "standalone", 
-                    background_color: "#ffffff", theme_color: "#2563eb", 
-                    icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" }] 
+                    name: "ApexTrade Pro", 
+                    short_name: "ApexTrade", 
+                    start_url: ".", 
+                    display: "standalone", 
+                    background_color: "#ffffff", 
+                    theme_color: "#2563eb", 
+                    icons: [
+                        { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg", purpose: "any maskable" },
+                        { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg", purpose: "any maskable" }
+                    ] 
                 };
-                const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                const blob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
                 const link = document.getElementById('manifest-link');
                 if(link) link.setAttribute('href', URL.createObjectURL(blob));
                 
                 if ('serviceWorker' in navigator) {
-                    const swCode = `self.addEventListener('fetch', (e) => {});`;
+                    const swCode = `
+                        self.addEventListener('install', (e) => { self.skipWaiting(); });
+                        self.addEventListener('activate', (e) => { e.waitUntil(clients.claim()); });
+                        self.addEventListener('fetch', (e) => {});
+                    `;
                     const swBlob = new Blob([swCode], {type: 'application/javascript'});
                     navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>console.log('SW Setup Skipped'));
                 }
