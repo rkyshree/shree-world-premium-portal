@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#ffffff">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <link id="manifest-link" rel="manifest" href="">
+    <link id="manifest-link" rel="manifest" href="./manifest.json">
     <title>ApexTrade Pro - Global Share Market</title>
     
     <!-- Tailwind CSS -->
@@ -148,6 +148,9 @@
                     <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
                 </div>
             </div>
+            <button id="top-install-button" onclick="installApp()" class="ml-2 flex items-center gap-1.5 bg-app-blue text-white px-3 py-2 rounded-xl text-xs font-extrabold shadow-md active:scale-95 whitespace-nowrap" aria-label="Install ApexTrade app">
+                <i class="ph-bold ph-download-simple text-base"></i><span>APP INSTALL</span>
+            </button>
             <div onclick="editTradingBalance(event)" class="flex flex-col items-end justify-center bg-app-panel border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-sm group">
                 <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Trading Balance</span>
                 <span class="text-sm font-extrabold text-app-text group-hover:text-app-green transition-colors" id="header-trading-balance">₹15,85,400.00</span>
@@ -1565,132 +1568,120 @@
             window.scrollTo(0,0);
         }
         
-        // PWA & App Install Logic
-        let deferredPrompt;
-        
-        function showInstallBanner() {
-            const installBanner = document.getElementById('install-banner');
-            const menuInstallBtn = document.getElementById('install-app-btn');
-            if (installBanner) installBanner.classList.remove('hidden');
-            if (menuInstallBtn) menuInstallBtn.classList.remove('hidden');
-        }
+        // PWA install logic: real browser prompt where supported, honest browser instructions otherwise.
+        let deferredPrompt = null;
 
-        function checkAndShowInstallBanner() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-            if (!isStandalone) {
-                setTimeout(showInstallBanner, 2000); 
+        function showInstallBanner() {
+            const banner = document.getElementById('install-banner');
+            const menuButton = document.getElementById('install-app-btn');
+            const topButton = document.getElementById('top-install-button');
+            const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+            if (!installed) {
+                if (banner) banner.classList.remove('hidden');
+                if (menuButton) menuButton.classList.remove('hidden');
+                if (topButton) topButton.classList.remove('hidden');
+            } else {
+                if (banner) banner.classList.add('hidden');
+                if (menuButton) menuButton.classList.add('hidden');
+                if (topButton) topButton.classList.add('hidden');
             }
         }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); 
-            deferredPrompt = e; 
-            showInstallBanner(); 
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            showInstallBanner();
         });
 
-        window.installApp = async function() {
-            const installBanner = document.getElementById('install-banner');
-            const menuInstallBtn = document.getElementById('install-app-btn');
-            
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                if (installBanner) installBanner.classList.add('hidden');
-                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
-            } else {
-                // If native prompt is blocked (e.g., due to missing HTTPS server), show the PERFECT FAKE.
-                document.getElementById('native-fake-install').classList.remove('hidden');
-                document.getElementById('native-fake-install').classList.add('flex');
-                
-                setTimeout(() => {
-                    document.getElementById('fake-install-sheet').classList.add('slide-up');
-                }, 10);
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            ['install-banner', 'install-app-btn', 'top-install-button'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            if (typeof window.showToast === 'function') window.showToast('App successfully installed');
+        });
 
-                if (installBanner) installBanner.classList.add('hidden');
-                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+        function showInstallHelp(message) {
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+            const isAndroid = /android/i.test(navigator.userAgent);
+            let instructions = message || '';
+            if (!instructions) {
+                if (isIOS) {
+                    instructions = 'iPhone/iPad: Safari में Share बटन दबाएँ, फिर “Add to Home Screen” चुनें।';
+                } else if (isAndroid) {
+                    instructions = 'Chrome में ऊपर ⋮ मेनू खोलें और “Install app” या “Add to Home screen” चुनें। अगर विकल्प न दिखे, तो साइट HTTPS पर खोलें और पेज refresh करें।';
+                } else {
+                    instructions = 'अपने ब्राउज़र के मेनू में “Install app” या “Create shortcut” चुनें।';
+                }
             }
+            const existing = document.getElementById('install-help-dialog');
+            if (existing) existing.remove();
+            const dialog = document.createElement('div');
+            dialog.id = 'install-help-dialog';
+            dialog.className = 'fixed inset-0 z-[100001] flex items-end sm:items-center justify-center bg-black/60 p-3';
+            dialog.innerHTML = `
+                <div class="bg-white text-slate-900 w-full max-w-md rounded-2xl p-5 shadow-2xl">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <h2 class="text-lg font-extrabold">Install ApexTrade Pro</h2>
+                        <button type="button" id="close-install-help" class="text-2xl leading-none px-2" aria-label="Close">&times;</button>
+                    </div>
+                    <p class="text-sm leading-6">${instructions}</p>
+                    <p class="text-xs text-slate-500 mt-3">नोट: वेबसाइट से ऐप इंस्टॉल होने के लिए साइट HTTPS पर होनी चाहिए और manifest/service worker सही तरह से उपलब्ध होने चाहिए। यह बटन अपने-आप इंस्टॉल होने का झूठा संदेश नहीं दिखाएगा।</p>
+                    <button type="button" id="install-help-ok" class="mt-4 w-full rounded-xl bg-blue-600 text-white font-bold py-3">समझ गया</button>
+                </div>`;
+            document.body.appendChild(dialog);
+            const close = () => dialog.remove();
+            document.getElementById('close-install-help').addEventListener('click', close);
+            document.getElementById('install-help-ok').addEventListener('click', close);
+            dialog.addEventListener('click', e => { if (e.target === dialog) close(); });
+        }
+
+        window.installApp = async function() {
+            const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+            if (installed) {
+                showInstallHelp('ApexTrade Pro पहले से ही ऐप मोड में खुला है।');
+                return;
+            }
+
+            if (deferredPrompt) {
+                try {
+                    deferredPrompt.prompt();
+                    const result = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    if (result && result.outcome === 'accepted') {
+                        ['install-banner', 'install-app-btn', 'top-install-button'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) el.classList.add('hidden');
+                        });
+                    } else {
+                        showInstallHelp('इंस्टॉलेशन रद्द हुआ। जब चाहें APP INSTALL बटन से दोबारा कोशिश करें।');
+                    }
+                } catch (error) {
+                    deferredPrompt = null;
+                    showInstallHelp();
+                }
+                return;
+            }
+
+            showInstallHelp();
         };
 
-        window.closeFakeInstall = function() {
-            document.getElementById('fake-install-sheet').classList.remove('slide-up');
-            setTimeout(() => {
-                document.getElementById('native-fake-install').classList.add('hidden');
-                document.getElementById('native-fake-install').classList.remove('flex');
-            }, 300);
+        // Hide install controls only after the browser confirms that the app is installed.
+        function checkAndShowInstallBanner() {
+            showInstallBanner();
         }
-
-        window.startFakeInstall = function() {
-            document.getElementById('fake-step-1').classList.add('hidden');
-            document.getElementById('fake-step-2').classList.remove('hidden');
-            document.getElementById('fake-step-2').classList.add('flex');
-            
-            setTimeout(() => {
-                // Hide the sheet
-                closeFakeInstall();
-                
-                // Show Native Android-style Toast
-                const toast = document.createElement('div');
-                toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#323232] text-white px-4 py-3 rounded-md text-sm shadow-lg z-[100000] flex items-center gap-3 transition-opacity duration-300';
-                toast.innerHTML = '<img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-6 h-6 rounded border border-gray-600"> ApexTrade Pro installed.';
-                document.body.appendChild(toast);
-                
-                // Show manual pointer to actually add to home screen if the browser blocked the real prompt
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    setTimeout(() => toast.remove(), 300);
-                    
-                    const pointer = document.createElement('div');
-                    pointer.className = 'fixed top-12 right-2 bg-blue-600 text-white p-3 rounded-lg shadow-xl z-[100000] text-xs font-bold animate-bounce';
-                    pointer.innerHTML = 'Tap ⋮ and select <br>"Add to Home screen"';
-                    document.body.appendChild(pointer);
-                    setTimeout(() => pointer.remove(), 6000);
-                    
-                }, 3000);
-                
-            }, 2500);
-        }
+        window.addEventListener('load', checkAndShowInstallBanner);
+        window.matchMedia('(display-mode: standalone)').addEventListener?.('change', checkAndShowInstallBanner);
 
         function setupPWA() {
-            try {
-                const manifest = { 
-                    name: "ApexTrade Pro", 
-                    short_name: "ApexTrade", 
-                    start_url: window.location.href, 
-                    display: "standalone", 
-                    background_color: "#ffffff", 
-                    theme_color: "#2563eb", 
-                    icons: [
-                        { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg", purpose: "any maskable" },
-                        { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg", purpose: "any maskable" }
-                    ] 
-                };
-                const manifestString = JSON.stringify(manifest);
-                const manifestBlob = new Blob([manifestString], {type: 'application/manifest+json'});
-                const manifestUrl = URL.createObjectURL(manifestBlob);
-                
-                const link = document.getElementById('manifest-link');
-                if(link) {
-                    link.setAttribute('href', manifestUrl);
-                }
+            const manifestLink = document.getElementById('manifest-link');
+            if (manifestLink) manifestLink.href = './manifest.json';
 
-                if ('serviceWorker' in navigator) {
-                    const swCode = `
-                        self.addEventListener('install', (e) => self.skipWaiting());
-                        self.addEventListener('activate', (e) => self.clients.claim());
-                        self.addEventListener('fetch', (e) => {
-                            e.respondWith(fetch(e.request).catch(() => new Response('Offline')));
-                        });
-                    `;
-                    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-                    const swUrl = URL.createObjectURL(swBlob);
-                    navigator.serviceWorker.register(swUrl).then(reg => {
-                        console.log('Service Worker Registered for PWA Installability');
-                    });
-                }
-
-            } catch(e) {
-                console.log('PWA Setup Error:', e);
+            if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+                navigator.serviceWorker.register('./sw.js', { scope: './' })
+                    .then(() => console.log('PWA service worker registered'))
+                    .catch(error => console.warn('PWA service worker registration failed:', error));
             }
         }
 
