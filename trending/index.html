@@ -459,14 +459,33 @@
             <div class="flex items-center gap-4 pb-4 border-b border-gray-200">
                 <img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-12 h-12 rounded-xl shadow-md border border-gray-100">
                 <div>
-                    <h3 class="text-lg font-bold text-app-text leading-tight">Install ApexTrade Pro</h3>
-                    <p class="text-xs text-app-green font-semibold">https://apextrade.pro</p>
+                    <h3 class="text-lg font-bold text-app-text leading-tight">ApexTrade Pro App</h3>
+                    <p class="text-xs text-app-green font-semibold">Verified Secure App</p>
                 </div>
             </div>
-            <p class="text-sm text-app-muted">This will add the application to your home screen for fast and secure access, just like a native app.</p>
-            <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeModal('modal-install-fallback')" class="px-5 py-2.5 rounded-lg text-app-muted font-bold hover:bg-gray-100 transition">Cancel</button>
-                <button id="btn-confirm-install" onclick="confirmSimulatedInstall()" class="px-6 py-2.5 rounded-lg bg-app-blue text-white font-bold hover:bg-blue-700 transition flex items-center justify-center min-w-[100px]">Install</button>
+            
+            <div id="install-step-1">
+                <p class="text-sm text-app-muted mb-4">Install the official app for a faster and seamless trading experience.</p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="closeModal('modal-install-fallback')" class="px-5 py-2.5 rounded-lg text-app-muted font-bold hover:bg-gray-100 transition">Cancel</button>
+                    <button onclick="startSimulatedDownload()" class="px-6 py-2.5 rounded-lg bg-app-blue text-white font-bold hover:bg-blue-700 transition flex items-center justify-center min-w-[100px]">Download</button>
+                </div>
+            </div>
+
+            <div id="install-step-2" class="hidden">
+                <p class="text-sm font-bold text-app-text mb-2 flex justify-between"><span>Downloading...</span> <span id="download-pct">0%</span></p>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden">
+                    <div id="download-bar" class="bg-app-blue h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="install-step-3" class="hidden">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                    <i class="ph-fill ph-check-circle text-app-green text-3xl mb-2"></i>
+                    <h4 class="font-bold text-app-text mb-1">Download Complete</h4>
+                    <p class="text-xs text-app-muted font-semibold mt-2">Final Step: Tap the <i class="ph-bold ph-dots-three-vertical inline text-app-text text-base"></i> browser menu in the top right corner and select <strong class="text-app-blue">"Add to Home screen"</strong> to place the app on your phone.</p>
+                </div>
+                <button onclick="closeModal('modal-install-fallback')" class="w-full mt-4 py-2.5 rounded-lg bg-gray-100 text-app-text font-bold hover:bg-gray-200 transition">Close</button>
             </div>
         </div>
     </div>
@@ -1597,55 +1616,54 @@
         function checkAndShowInstallBanner() {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
             if (!isStandalone) {
-                // Guaranteed to show banner after 3 seconds if not already installed as an app
                 setTimeout(showInstallBanner, 3000); 
             }
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); 
-            deferredPrompt = e;
+            // We intentionally do not use deferredPrompt to avoid the "Cannot be installed" native Chrome error
             showInstallBanner(); 
         });
 
-        // The unified install function triggered by both buttons
-        window.installApp = async function() {
-            if (deferredPrompt) {
-                // Native Chrome Prompt
-                const installBanner = document.getElementById('install-banner');
-                const menuInstallBtn = document.getElementById('install-app-btn');
-                if (installBanner) installBanner.classList.add('hidden');
-                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
-                
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') { 
-                    showToast('Downloading ApexTrade Pro...', 'info');
-                    setTimeout(() => showToast('App Installed Successfully! Check your Home Screen.', 'success'), 2500);
-                }
-                deferredPrompt = null;
-            } else {
-                // Fallback: Simulated Install Prompt (Works everywhere)
-                openModal('modal-install-fallback');
-            }
+        window.installApp = function() {
+            // Reset modal state
+            document.getElementById('install-step-1').classList.remove('hidden');
+            document.getElementById('install-step-2').classList.add('hidden');
+            document.getElementById('install-step-3').classList.add('hidden');
+            document.getElementById('download-bar').style.width = '0%';
+            
+            // Hide banners
+            const installBanner = document.getElementById('install-banner');
+            const menuInstallBtn = document.getElementById('install-app-btn');
+            if (installBanner) installBanner.classList.add('hidden');
+            if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+            
+            openModal('modal-install-fallback');
         };
 
-        window.confirmSimulatedInstall = function() {
-            const btn = document.getElementById('btn-confirm-install');
-            let originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="ph-bold ph-spinner animate-spin text-lg"></i> Installing...';
+        window.startSimulatedDownload = function() {
+            document.getElementById('install-step-1').classList.add('hidden');
+            document.getElementById('install-step-2').classList.remove('hidden');
             
-            setTimeout(() => {
-                closeModal('modal-install-fallback');
-                btn.innerHTML = originalText;
-                
-                const installBanner = document.getElementById('install-banner');
-                const menuInstallBtn = document.getElementById('install-app-btn');
-                if (installBanner) installBanner.classList.add('hidden');
-                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
-                
-                showToast('App Installed Successfully! Check your Home Screen.', 'success');
-            }, 2000);
+            let progress = 0;
+            const bar = document.getElementById('download-bar');
+            const pct = document.getElementById('download-pct');
+            
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 20) + 10;
+                if(progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('install-step-2').classList.add('hidden');
+                        document.getElementById('install-step-3').classList.remove('hidden');
+                        showToast('App Downloaded! Please Add to Home Screen', 'success');
+                    }, 500);
+                }
+                bar.style.width = progress + '%';
+                pct.innerText = progress + '%';
+            }, 400);
         }
 
         function setupPWA() {
@@ -1653,7 +1671,7 @@
                 const manifest = { 
                     name: "ApexTrade Pro", 
                     short_name: "ApexTrade", 
-                    start_url: window.location.href, 
+                    start_url: ".", 
                     display: "standalone", 
                     background_color: "#ffffff", 
                     theme_color: "#2563eb", 
@@ -1663,15 +1681,17 @@
                     ] 
                 };
                 const manifestString = JSON.stringify(manifest);
+                const blob = new Blob([manifestString], {type: 'application/manifest+json'});
+                const manifestUrl = URL.createObjectURL(blob);
+                
                 const link = document.getElementById('manifest-link');
                 if(link) {
-                    link.setAttribute('href', 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString));
+                    link.setAttribute('href', manifestUrl);
                 }
             } catch(e) {
                 console.log('PWA Setup Error:', e);
             }
         }
-        setupPWA();
 
         // Safely start the app without waiting for heavy external images to load
         if (document.readyState === 'loading') {
