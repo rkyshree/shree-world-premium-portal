@@ -72,19 +72,9 @@
         /* Sleek Professional Splash Screen */
         #splash-screen { position: fixed; inset: 0; background: #000000; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.6s cubic-bezier(0.8, 0, 0.2, 1), visibility 0.6s; }
         
-        .brand-logo-container { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: logoReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        .brand-icon { width: 72px; height: 72px; background: linear-gradient(135deg, #2979FF, #18FF8D); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(41, 121, 255, 0.25); margin-bottom: 20px; animation: iconFloat 4s ease-in-out infinite; }
-        
-        .brand-text { font-size: 2.8rem; font-weight: 900; color: #FFFFFF; letter-spacing: -0.05em; display: flex; align-items: center; }
-        .brand-text span { color: #2979FF; }
-        
-        /* Sleek progress bar */
         .splash-progress-wrapper { position: absolute; bottom: 12%; width: 140px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
         .splash-progress-bar { width: 100%; height: 100%; background: #2979FF; border-radius: 4px; animation: progressSweep 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; transform-origin: left; }
         
-        @keyframes logoReveal { 0% { transform: scale(0.85) translateY(20px); opacity: 0; filter: blur(10px); } 100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); } }
-        @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
         @keyframes progressSweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
         /* Modals */
@@ -105,18 +95,13 @@
         .depth-row > div:first-child { text-align: left; }
     </style>
 </head>
-    <style>
-</head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 
-    <!-- Splash Screen -->
+    <!-- Splash Screen (Now with pure animation and 3 seconds delay) -->
     <div id="splash-screen">
-        <div class="brand-logo-container">
-            <div class="brand-icon">
-                <i class="ph-bold ph-chart-line-up text-black text-4xl"></i>
-            </div>
-            <h1 class="brand-text">ApexTrade<span>.</span></h1>
-        </div>
+        <!-- Pure Loading Animation -->
+        <div class="w-20 h-20 border-4 border-app-border border-t-app-blue rounded-full animate-spin mb-4 shadow-[0_0_20px_rgba(41,121,255,0.4)]"></div>
+        <h2 class="text-white text-lg font-black tracking-[0.2em] uppercase mt-2 pulse-live">Connecting...</h2>
         <div class="splash-progress-wrapper">
             <div class="splash-progress-bar"></div>
         </div>
@@ -207,7 +192,7 @@
             </div>
         </div>
 
-        <!-- View 2: TRADING / F&O (Kept functionality, upgraded UI) -->
+        <!-- View 2: TRADING / F&O -->
         <div id="view-trading" class="view-section space-y-4">
             <div class="flex justify-between items-end mb-2">
                 <h1 class="text-3xl font-black text-white tracking-tight flex items-center gap-2"><i class="ph-fill ph-lightning text-app-gold"></i> Fast Execution</h1>
@@ -722,6 +707,7 @@
 
             renderPortfolio(); updateBalanceUI(false); renderTradeHistory(); renderNominees(); initTradingChart();
             
+            // 3 seconds animation wait time
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
@@ -729,8 +715,8 @@
                 setTimeout(() => {
                     splash.style.display = 'none';
                     isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 10000); 
-                }, 400);
-            }, 800);
+                }, 600); // Wait for fade out animation to finish
+            }, 3000); // 3000ms = 3 Seconds exactly
         }
 
         // --- GLOBAL SEARCH FUNCTIONALITY ---
