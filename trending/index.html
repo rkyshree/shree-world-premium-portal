@@ -1616,30 +1616,47 @@
         function checkAndShowInstallBanner() {
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
             if (!isStandalone) {
-                setTimeout(showInstallBanner, 3000); 
+                // Show banner after a slight delay if not installed
+                setTimeout(showInstallBanner, 2000); 
             }
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault(); 
-            // We intentionally do not use deferredPrompt to avoid the "Cannot be installed" native Chrome error
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e; 
             showInstallBanner(); 
         });
 
-        window.installApp = function() {
-            // Reset modal state
-            document.getElementById('install-step-1').classList.remove('hidden');
-            document.getElementById('install-step-2').classList.add('hidden');
-            document.getElementById('install-step-3').classList.add('hidden');
-            document.getElementById('download-bar').style.width = '0%';
-            
-            // Hide banners
+        window.installApp = async function() {
             const installBanner = document.getElementById('install-banner');
             const menuInstallBtn = document.getElementById('install-app-btn');
-            if (installBanner) installBanner.classList.add('hidden');
-            if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
             
-            openModal('modal-install-fallback');
+            if (deferredPrompt) {
+                // Show the REAL Native Chrome Install Prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                }
+                deferredPrompt = null;
+                // Hide banners
+                if (installBanner) installBanner.classList.add('hidden');
+                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+            } else {
+                // Fallback for iOS or if already installed/prompt unavailable
+                document.getElementById('install-step-1').classList.remove('hidden');
+                document.getElementById('install-step-2').classList.add('hidden');
+                document.getElementById('install-step-3').classList.add('hidden');
+                document.getElementById('download-bar').style.width = '0%';
+                
+                if (installBanner) installBanner.classList.add('hidden');
+                if (menuInstallBtn) menuInstallBtn.classList.add('hidden');
+                
+                openModal('modal-install-fallback');
+            }
         };
 
         window.startSimulatedDownload = function() {
@@ -1668,10 +1685,11 @@
 
         function setupPWA() {
             try {
+                // 1. Setup Manifest
                 const manifest = { 
                     name: "ApexTrade Pro", 
                     short_name: "ApexTrade", 
-                    start_url: ".", 
+                    start_url: window.location.href, 
                     display: "standalone", 
                     background_color: "#ffffff", 
                     theme_color: "#2563eb", 
@@ -1681,13 +1699,31 @@
                     ] 
                 };
                 const manifestString = JSON.stringify(manifest);
-                const blob = new Blob([manifestString], {type: 'application/manifest+json'});
-                const manifestUrl = URL.createObjectURL(blob);
+                const manifestBlob = new Blob([manifestString], {type: 'application/manifest+json'});
+                const manifestUrl = URL.createObjectURL(manifestBlob);
                 
                 const link = document.getElementById('manifest-link');
                 if(link) {
                     link.setAttribute('href', manifestUrl);
                 }
+
+                // 2. Setup Dummy Service Worker (Required for Native Chrome Install Prompt)
+                if ('serviceWorker' in navigator) {
+                    const swCode = `
+                        self.addEventListener('install', (e) => self.skipWaiting());
+                        self.addEventListener('activate', (e) => self.clients.claim());
+                        self.addEventListener('fetch', (e) => {
+                            // Minimal fetch handler to pass PWA criteria
+                            e.respondWith(fetch(e.request).catch(() => new Response('Offline')));
+                        });
+                    `;
+                    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+                    const swUrl = URL.createObjectURL(swBlob);
+                    navigator.serviceWorker.register(swUrl).then(reg => {
+                        console.log('Service Worker Registered for PWA Installability');
+                    }).catch(err => console.log('SW Registration Failed', err));
+                }
+
             } catch(e) {
                 console.log('PWA Setup Error:', e);
             }
@@ -1695,8 +1731,12 @@
 
         // Safely start the app without waiting for heavy external images to load
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', bootApp);
+            document.addEventListener('DOMContentLoaded', () => {
+                setupPWA();
+                bootApp();
+            });
         } else {
+            setupPWA();
             bootApp();
         }
     </script>
