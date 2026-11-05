@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<!-- Native PWA Installation Tags -->
+<!-- PWA Installation Tags -->
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#2563eb">
 <meta name="mobile-web-app-capable" content="yes">
-<!-- Base64 Encoded Manifest for Single-File PWA Support -->
 <link id="manifest-link" rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiQXBleFRyYWRlIFBybyIsInNob3J0X25hbWUiOiJBcGV4VHJhZGUiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzI1NjNlYiIsImljb25zIjpbeyJzcmMiOiJodHRwczovL2kuaWJiLmNvL0xkYzhqa3E5L2ZpbGUtMDAwMDAwMDBlNTc4ODIxMTgxYWM5ZmU4YzNhZTQzOTcuanBnIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL2pwZWciLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn0seyJzcmMiOiJodHRwczovL2kuaWJiLmNvL0xkYzhqa3E5L2ZpbGUtMDAwMDAwMDBlNTc4ODIxMTgxYWM5ZmU4YzNhZTQzOTcuanBnIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL2pwZWciLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn1dfQ==">
 <title>ApexTrade Pro - Global Share Market</title>
 <!-- Tailwind CSS -->
@@ -49,8 +48,9 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 .terminal-grid { background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 20px 20px; }
 .fullscreen-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f3f4f6; z-index: 80000; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
 .fullscreen-view.active { transform: translateY(0); }
+.chart-toggle-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
 #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-.toast { background: #ffffff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; border-left-width: 4px; animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1), fadeOut 0.5s 2.5s forwards; display: flex; align-items: center; justify-content: space-between; min-width: 300px; }
+.toast { background: #ffffff; border-left: 4px solid #2563eb; padding: 12px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; border-left-width: 4px; animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1), fadeOut 0.5s 2.5s forwards; display: flex; align-items: center; justify-content: space-between; min-width: 300px; }
 @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes fadeOut { to { opacity: 0; visibility: hidden; margin-top: -50px; } }
 #splash-screen { position: fixed; inset: 0; background: #ffffff; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
@@ -97,6 +97,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     <p class="text-[10px] font-bold text-app-muted tracking-widest uppercase">100% Secure & Encrypted</p>
   </div>
 </div>
+
 <div id="toast-container"></div>
 
 <!-- Top Navigation -->
@@ -178,10 +179,12 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
         <button onclick="event.stopPropagation(); switchTab('account');" class="px-4 py-1.5 bg-app-blue/10 text-app-blue border border-app-blue/30 rounded-lg text-xs font-bold hover:bg-app-blue hover:text-white transition z-10 relative">Deposit / Withdraw</button>
       </div>
     </div>
+    
     <div class="relative w-full">
       <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-app-muted text-lg"></i>
       <input type="text" id="stock-search" onkeyup="handleSearch()" placeholder="Search from 1000+ SEBI approved stocks..." class="w-full bg-white border border-gray-300 text-app-text text-sm font-bold rounded-xl py-3 pl-11 pr-4 focus:border-app-blue outline-none transition-colors shadow-sm">
     </div>
+    
     <!-- Filters -->
     <div class="flex gap-2 overflow-x-auto hide-scroll pb-1">
       <button onclick="setFilter('All')" id="btn-filter-All" class="filter-btn px-4 py-2 bg-app-blue text-white text-sm font-bold rounded-xl shadow-md whitespace-nowrap">All Holdings (<span id="count-All">0</span>)</button>
@@ -189,6 +192,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
       <button onclick="setFilter('Mid')" id="btn-filter-Mid" class="filter-btn px-4 py-2 bg-app-card text-app-muted border border-app-border hover:text-app-text text-sm font-bold rounded-xl whitespace-nowrap transition-colors shadow-sm">Mid Cap (<span id="count-Mid">0</span>)</button>
       <button onclick="setFilter('Intl')" id="btn-filter-Intl" class="filter-btn px-4 py-2 bg-app-card text-app-muted border border-app-border hover:text-app-text text-sm font-bold rounded-xl whitespace-nowrap transition-colors shadow-sm">Global (<span id="count-Intl">0</span>)</button>
     </div>
+    
     <div class="bg-app-card border border-app-border rounded-xl overflow-hidden shadow-lg">
       <div class="grid grid-cols-12 gap-2 p-3 border-b border-app-border text-xxs font-bold text-app-muted uppercase bg-app-panel tracking-wider">
         <div class="col-span-5">Stock</div>
@@ -345,7 +349,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
   </div>
 </div>
 
-<!-- HIGHLY REALISTIC NATIVE INSTALL SHEET MODAL -->
+<!-- REALISTIC NATIVE INSTALL SHEET MODAL -->
 <div id="native-fake-install" class="fixed inset-0 bg-black/60 z-[100000] hidden flex-col justify-end transition-opacity backdrop-blur-sm">
   <div class="bg-white w-full bottom-sheet pt-3 pb-8 px-6 transform translate-y-full transition-transform duration-300" id="fake-install-sheet">
     <div class="sheet-handle"></div>
@@ -422,7 +426,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 </div>
 
 <script>
-// --- Core Utils ---
+// --- Core Utils & Formats ---
 window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
 window.fmtCurDec = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amt);
 window.fmtNum = (num) => new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
@@ -434,17 +438,37 @@ window.showToast = function(message, type = 'info') {
   if(type === 'success') toast.style.borderLeftColor = '#059669';
   if(type === 'error') toast.style.borderLeftColor = '#dc2626';
   
-  let icon = '<i class="ph-fill ph-info text-app-blue text-2xl"></i>';
-  if(type === 'success') icon = '<i class="ph-fill ph-check-circle text-app-green text-2xl"></i>';
-  if(type === 'error') icon = '<i class="ph-fill ph-x-circle text-app-red text-2xl"></i>';
+  let icon = `<i class="ph-fill ph-info text-app-blue text-2xl"></i>`;
+  if(type === 'success') icon = `<i class="ph-fill ph-check-circle text-app-green text-2xl"></i>`;
+  if(type === 'error') icon = `<i class="ph-fill ph-x-circle text-app-red text-2xl"></i>`;
   
   toast.innerHTML = `<div class="flex items-center gap-3">${icon}<span class="text-sm font-bold text-app-text">${message}</span></div>`;
   container.appendChild(toast); 
   setTimeout(() => { if(toast.parentElement) toast.remove(); }, 3000);
 }
 
-// Fixed template literals in Data Generation
-const LARGE_CAPS = [{ id: 'RELIANCE', name: 'Reliance Ind.', basePrice: 2950 }, { id: 'TCS', name: 'Tata Consultancy', basePrice: 4050 }];
+// Data Arrays for Portfolio
+const LARGE_CAPS = [
+  { id: 'RELIANCE', name: 'Reliance Ind.', basePrice: 2950 }, { id: 'TCS', name: 'Tata Consultancy Services', basePrice: 4050 },
+  { id: 'HDFCBANK', name: 'HDFC Bank', basePrice: 1550 }, { id: 'ICICIBANK', name: 'ICICI Bank', basePrice: 1100 },
+  { id: 'INFY', name: 'Infosys', basePrice: 1650 }, { id: 'SBI', name: 'State Bank of India', basePrice: 750 },
+  { id: 'BHARTIARTL', name: 'Bharti Airtel', basePrice: 1250 }, { id: 'ITC', name: 'ITC Limited', basePrice: 420 },
+  { id: 'L&T', name: 'Larsen & Toubro', basePrice: 3650 }, { id: 'BAJFINANCE', name: 'Bajaj Finance', basePrice: 6800 }
+];
+
+const MID_CAPS = [
+  { id: 'ZOMATO', name: 'Zomato', basePrice: 180 }, { id: 'RVNL', name: 'Rail Vikas Nigam', basePrice: 285 },
+  { id: 'IREDA', name: 'IREDA', basePrice: 190 }, { id: 'SUZLON', name: 'Suzlon Energy', basePrice: 42 },
+  { id: 'TATAPOWER', name: 'Tata Power', basePrice: 420 }, { id: 'JINDALSTEL', name: 'Jindal Steel', basePrice: 920 },
+  { id: 'TVSMOTOR', name: 'TVS Motor', basePrice: 2150 }, { id: 'IDFCFIRSTB', name: 'IDFC First Bank', basePrice: 85 }
+];
+
+const GLOBAL_CAPS = [
+  { id: 'AAPL', name: 'Apple Inc.', basePrice: 14500 }, { id: 'MSFT', name: 'Microsoft Corp.', basePrice: 32000 },
+  { id: 'TSLA', name: 'Tesla Inc.', basePrice: 15000 }, { id: 'GOOGL', name: 'Alphabet Inc.', basePrice: 13500 },
+  { id: 'AMZN', name: 'Amazon.com Inc.', basePrice: 14800 }, { id: 'NVDA', name: 'Nvidia Corp.', basePrice: 75000 }
+];
+
 window.portfolioData = []; window.appTradeHistory = []; window.nominees = [];
 window.tradingBalance = 1585400; window.marketTrend = 1; let currentEditIndex = -1;
 let activeFilter = 'All'; let detailActiveStock = null; let isAppReady = false;
@@ -452,14 +476,61 @@ window.profileImageStr = null; window.profileNameStr = "RAJAN YADAV";
 window.indices = { nifty: 22450.50, sensex: 73850.20, banknifty: 48250.00, finnifty: 21450.75, vix: 12.40, midcap: 10850.20 };
 window.searchQuery = ''; window.currentHistoryPeriod = 'All';
 
+// Storage Functions (Safe for file:// protocol)
+function loadDataFromStorage() {
+  try {
+    const dataStr = localStorage.getItem('apexTradeState_v16_light');
+    if (dataStr) {
+      const data = JSON.parse(dataStr);
+      window.tradingBalance = data.tradingBalance !== undefined ? data.tradingBalance : 1585400;
+      window.appTradeHistory = data.tradeHistory || [];
+      window.profileImageStr = data.profileImage || null;
+      window.profileNameStr = data.profileName || "RAJAN YADAV";
+      return true;
+    }
+  } catch (e) { console.warn("Storage warning: Running locally", e); }
+  return false;
+}
+
+function saveDataToStorage() {
+  try {
+    const holdingsToSave = window.portfolioData.slice(0,100).map(s => ({
+      id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp
+    }));
+    localStorage.setItem('apexTradeState_v16_light', JSON.stringify({
+      tradingBalance: window.tradingBalance,
+      profileName: window.profileNameStr,
+      tradeHistory: window.appTradeHistory
+    }));
+  } catch (e) {}
+}
+
 function generateMassivePortfolio() {
   let data = []; const targetInvested = 4500000;
-  let baseCompanies = [];
-  for(let i=0; i<15; i++) baseCompanies.push({ ...LARGE_CAPS[i % LARGE_CAPS.length], cap: 'Large', id: LARGE_CAPS[i % LARGE_CAPS.length].id + i });
+  let allComps = [];
   
-  baseCompanies.forEach((comp, i) => {
-    let variance = 0.5 + (Math.random()) * 0.5; let invested = (targetInvested / 20) * variance;
-    let qty = Math.max(1, Math.floor(invested / comp.basePrice));
+  for(let i=0; i<15; i++) allComps.push({ ...LARGE_CAPS[i % LARGE_CAPS.length], cap: 'Large', id: `${LARGE_CAPS[i % LARGE_CAPS.length].id}_${i}` });
+  for(let i=0; i<15; i++) allComps.push({ ...MID_CAPS[i % MID_CAPS.length], cap: 'Mid', id: `${MID_CAPS[i % MID_CAPS.length].id}_${i}` });
+  for(let i=0; i<10; i++) allComps.push({ ...GLOBAL_CAPS[i % GLOBAL_CAPS.length], cap: 'Intl', id: `${GLOBAL_CAPS[i % GLOBAL_CAPS.length].id}_${i}` });
+  
+  // Generating generic extra stocks
+  const indPrefixes = ['TATA', 'ADANI', 'BAJAJ', 'HDFC', 'ICICI'];
+  const indSuffixes = ['STEEL', 'POWER', 'GREEN', 'TECH', 'MOTORS'];
+  for(let i = 0; i < 200; i++) {
+    let p = indPrefixes[i % indPrefixes.length];
+    let s = indSuffixes[Math.floor(Math.random() * indSuffixes.length)];
+    let isGlobal = (i % 10 === 0);
+    let cap = isGlobal ? 'Intl' : (i % 2 === 0 ? 'Large' : 'Mid');
+    let id = isGlobal ? `GLB_${i}_${Math.floor(Math.random()*9999)}` : `${p}_${s}_${i}`;
+    let name = isGlobal ? `Global Brand ${i} Inc.` : `${p} ${s} ${i > 500 ? 'Corp' : 'Ltd'}.`;
+    let basePrice = Math.floor(Math.random() * 4500) + 40;
+    allComps.push({ id, name, cap, basePrice });
+  }
+
+  allComps.forEach((comp, i) => {
+    let variance = 0.5 + (Math.random()) * 0.5; let invested = (targetInvested / 200) * variance;
+    let qty = i < 50 ? Math.max(1, Math.floor(invested / comp.basePrice)) : 0;
+    if(qty > 500) qty = Math.round(qty/50)*50;
     let avgP = comp.basePrice;
     let ltp = avgP * (1.1 + (Math.random() * 0.5));
     let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
@@ -480,15 +551,22 @@ function generatePriceHistory(start, end, points) {
 }
 
 async function bootApp() {
+  loadDataFromStorage();
   window.portfolioData = generateMassivePortfolio();
   window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
-  renderPortfolio(); updateBalanceUI(); initTradingChart();
+  
+  document.getElementById('count-All').innerText = portfolioData.length;
+  document.getElementById('count-Large').innerText = portfolioData.filter(s => s.cap === 'Large').length;
+  document.getElementById('count-Mid').innerText = portfolioData.filter(s => s.cap === 'Mid').length;
+  document.getElementById('count-Intl').innerText = portfolioData.filter(s => s.cap === 'Intl').length;
+  
+  renderPortfolio(); updateBalanceUI();
   
   setTimeout(() => {
     const splash = document.getElementById('splash-screen');
     if(splash) {
       splash.style.opacity = '0';
-      setTimeout(() => { splash.style.display = 'none'; isAppReady = true; setInterval(globalTick, 1000); }, 500);
+      setTimeout(() => { splash.style.display = 'none'; isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); }, 500);
     }
   }, 1000);
 }
@@ -516,13 +594,13 @@ window.globalTick = function() {
     }
   });
 
-  const numUpdates = 3;
+  const numUpdates = Math.floor(Math.random() * 5) + 2;
   for(let i=0; i<numUpdates; i++) {
     const s = portfolioData[Math.floor(Math.random() * portfolioData.length)];
     const move = (Math.random() - 0.5) * (s.ltp * 0.008);
     s.ltp = Math.max(0.1, s.ltp + move);
     
-    let cur = s.qty * s.ltp; let pl = cur - (s.qty * s.avgPrice); let plPct = (pl/(s.qty * s.avgPrice))*100;
+    let cur = s.qty * s.ltp; let pl = cur - (s.qty * s.avgPrice); let plPct = (s.qty>0) ? (pl/(s.qty * s.avgPrice))*100 : 0;
     
     const ltpEl = document.getElementById(`pl-ltp-${s.id}`);
     const retEl = document.getElementById(`pl-ret-${s.id}`);
@@ -553,7 +631,14 @@ window.updateTotalPortfolioHeaders = function() {
 
 window.renderPortfolio = function() {
   const list = document.getElementById('holdingsList'); list.innerHTML = '';
-  portfolioData.slice(0, 50).forEach(s => {
+  
+  let filteredData = portfolioData.filter(s => {
+    if (activeFilter !== 'All' && s.cap !== activeFilter) return false;
+    if (window.searchQuery && (!s.name.toLowerCase().includes(window.searchQuery) && !s.id.toLowerCase().includes(window.searchQuery))) return false;
+    return true;
+  });
+  
+  filteredData.slice(0, 100).forEach(s => {
     let inv = s.qty * s.avgPrice; let cur = s.qty * s.ltp; let pl = cur - inv; let plPct = (inv > 0) ? (pl/inv)*100 : 0;
     const isPos = pl >= 0; const row = document.createElement('div');
     row.className = 'p-4 hover:bg-app-panel transition-colors cursor-pointer block grid grid-cols-12 gap-2 items-center border-l-2 border-transparent hover:border-app-blue';
@@ -561,22 +646,29 @@ window.renderPortfolio = function() {
     row.innerHTML = `
       <div class="col-span-5 min-w-0"> 
         <h3 class="font-extrabold text-app-text text-sm sm:text-base truncate tracking-tight">${s.name}</h3> 
-        <p class="text-xxs text-app-muted font-bold mt-1 tracking-wider bg-gray-100 inline-block px-1.5 py-0.5 rounded border border-gray-200">${s.id}</p> 
+        <p class="text-xxs text-app-muted font-bold mt-1 tracking-wider bg-gray-100 inline-block px-1.5 py-0.5 rounded border border-gray-200">${s.id.split('_')[0]}</p> 
       </div> 
       <div class="col-span-3 text-right"> 
-        <p class="text-sm text-app-text font-extrabold">${window.fmtQty(s.qty)}</p> 
-        <p class="text-xs text-app-muted font-bold mt-0.5">@ ₹${window.fmtNum(s.avgPrice)}</p> 
+        <p class="text-sm text-app-text font-extrabold">${s.qty > 0 ? window.fmtQty(s.qty) : '-'}</p> 
+        <p class="text-xs text-app-muted font-bold mt-0.5">${s.qty > 0 ? '@ ₹'+window.fmtNum(s.avgPrice) : 'Tracking'}</p> 
       </div> 
       <div class="col-span-4 text-right"> 
         <p class="text-sm font-extrabold text-app-text transition-colors" id="pl-ltp-${s.id}">₹${window.fmtNum(s.ltp)}</p> 
-        <p class="text-xs font-bold ${isPos?'text-app-green':'text-app-red'} mt-0.5" id="pl-ret-${s.id}">
+        ${s.qty > 0 ? `<p class="text-xs font-bold ${isPos?'text-app-green':'text-app-red'} mt-0.5" id="pl-ret-${s.id}">
           ${isPos?'+':''}${window.fmtCurDec(pl)} (${isPos?'+':''}${plPct.toFixed(2)}%)
-        </p>
+        </p>` : `<p class="text-xs font-bold text-app-muted mt-0.5">Prev: ₹${window.fmtNum(s.prevClose)}</p>`}
       </div>`;
     list.appendChild(row);
   });
   updateTotalPortfolioHeaders();
 }
+
+window.handleSearch = function() {
+  window.searchQuery = document.getElementById('stock-search').value.toLowerCase();
+  renderPortfolio();
+}
+
+window.setFilter = function(capType) { activeFilter = capType; renderPortfolio(); }
 
 window.switchTab = function(tabName) {
   document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -606,12 +698,10 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 window.triggerAppInstall = async function() {
   if (deferredPrompt) {
-    // Show Real Browser Native Prompt if available
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
   } else {
-    // Show our Ultra-Realistic Custom Sheet (For iOS or missing criteria)
     const sheet = document.getElementById('native-fake-install');
     sheet.classList.remove('hidden');
     sheet.classList.add('flex');
@@ -637,13 +727,11 @@ window.startFakeInstall = function() {
   
   setTimeout(() => {
     closeFakeInstall();
-    // Native looking success toast
     const toast = document.createElement('div');
     toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#323232] text-white px-4 py-3 rounded-xl text-[14px] shadow-2xl z-[100000] flex items-center gap-3 transition-opacity duration-300 min-w-[300px] font-medium';
     toast.innerHTML = '<img src="https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg" class="w-7 h-7 rounded-md border border-gray-600 object-cover"> ApexTrade Pro added to home screen.';
     document.body.appendChild(toast);
     
-    // Hide the sticky banner after install
     const banner = document.getElementById('sticky-install-banner');
     if(banner) banner.style.display = 'none';
 
