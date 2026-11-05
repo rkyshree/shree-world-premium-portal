@@ -120,9 +120,9 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
     
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- DYNAMIC APP INSTALL BUTTON -->
-      <button id="install-app-btn" class="hidden hidden-if-standalone items-center gap-1 bg-gradient-to-r from-app-blue to-indigo-600 text-white px-2.5 py-1.5 rounded-lg shadow font-extrabold text-[10px] uppercase tracking-wider animate-pulse hover:animate-none active:scale-95 transition-transform">
-          <i class="ph-bold ph-download-simple text-sm"></i> App
+      <!-- DYNAMIC APP INSTALL BUTTON (Always visible at top until installed) -->
+      <button id="install-app-btn" onclick="triggerAppInstall()" class="hidden-if-standalone items-center gap-1.5 bg-gradient-to-r from-app-blue to-indigo-600 text-white px-3 py-1.5 rounded-xl shadow-md font-extrabold text-xs uppercase tracking-wider animate-pulse hover:animate-none active:scale-95 transition-transform cursor-pointer">
+          <i class="ph-bold ph-download-simple text-sm"></i> Install App
       </button>
       
       <div onclick="editTradingBalance(event)" class="flex flex-col items-end justify-center bg-app-panel border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-sm group">
@@ -507,6 +507,25 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
 </div>
 
+<!-- Custom Install Modal (Fallback for instant one-click install guidance) -->
+<div id="modal-install-guide" class="modal">
+    <div class="modal-content text-center">
+      <div class="w-16 h-16 bg-blue-100 text-app-blue rounded-2xl mx-auto flex items-center justify-center text-3xl mb-3 shadow-inner">
+        <i class="ph-bold ph-device-mobile"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-app-text mb-1">Install ApexTrade Pro</h2>
+      <p class="text-xs text-app-muted mb-4">App ko apne phone ki home screen par add karne ke liye niche diye gaye steps follow karein:</p>
+      
+      <div class="bg-gray-50 p-4 rounded-xl text-left space-y-2 mb-5 border border-gray-200 text-xs font-medium text-gray-700">
+        <p class="flex items-center gap-2"><strong class="text-app-blue">1.</strong> Browser ke menu (<span class="font-bold text-lg">⋮</span> ya <span class="font-bold text-lg">share</span> icon) par click karein.</p>
+        <p class="flex items-center gap-2"><strong class="text-app-blue">2.</strong> <strong>"Install app"</strong> ya <strong>"Add to Home Screen"</strong> option ko select karein.</p>
+        <p class="flex items-center gap-2"><strong class="text-app-blue">3.</strong> Confirm karein aur app aapke phone par install ho jayegi!</p>
+      </div>
+
+      <button onclick="document.getElementById('modal-install-guide').classList.remove('active')" class="w-full py-3 rounded-xl bg-app-blue text-white font-extrabold shadow-lg">Samajh Gaya (Close)</button>
+    </div>
+</div>
+
 <!-- Nominee Modals -->
 <div id="modal-add-nominee" class="modal">
   <div class="modal-content">
@@ -631,73 +650,59 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 </div>
 
 <script>
-// --- Safe PWA Service Worker & Manifest Injection ---
+// --- Direct External Manifest & Service Worker Setup for Native App Installation ---
 try {
   const manifest = {
-    name: "ApexTrade Pro", short_name: "ApexTrade",
-    display: "standalone", start_url: ".", // Required for prompt
-    background_color: "#f3f4f6", theme_color: "#ffffff",
+    name: "ApexTrade Pro",
+    short_name: "ApexTrade",
+    start_url: window.location.href.split('?')[0],
+    display: "standalone",
+    background_color: "#f3f4f6",
+    theme_color: "#ffffff",
     icons: [
       { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg" },
-      { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" } // Required for prompt
+      { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" }
     ]
   };
   const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
   const manifestURL = URL.createObjectURL(manifestBlob);
   document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
 
-  const swCode = `
-    self.addEventListener('install', e => self.skipWaiting());
-    self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-    self.addEventListener('fetch', e => {}); // Fetch event is required for PWA install prompt
-  `;
+  const swCode = `self.addEventListener('fetch', function(e) {});`;
   const swBlob = new Blob([swCode], {type: 'application/javascript'});
   const swUrl = URL.createObjectURL(swBlob);
   if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Reg Blocked:", err));
+      navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Reg:", err));
   }
-} catch(e) { console.warn("PWA setup skipped."); }
+} catch(e) { console.warn("PWA setup warning", e); }
 
-// --- PWA Installation Logic ---
+// --- App Installation Logic ---
 let deferredPrompt;
-const installBtn = document.getElementById('install-app-btn');
-
-// iOS check since Apple doesn't support the native prompt automatically
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-if(isIOS && !window.navigator.standalone && installBtn) {
-    installBtn.classList.remove('hidden');
-    installBtn.classList.add('flex');
-    installBtn.addEventListener('click', () => {
-        showToast("Tap 'Share' icon and select 'Add to Home Screen' to install.", "info");
-    });
-}
-
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if(installBtn) {
-        installBtn.classList.remove('hidden');
-        installBtn.classList.add('flex');
-    }
 });
 
-if(installBtn && !isIOS) {
-    installBtn.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBtn.style.display = 'none';
-            }
-            deferredPrompt = null;
-        } else {
-            showToast("App is already installed or browser getting ready.", "info");
+window.triggerAppInstall = async function() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            const btn = document.getElementById('install-app-btn');
+            if(btn) btn.style.display = 'none';
         }
-    });
-}
+        deferredPrompt = null;
+    } else {
+        // Fallback: Open helpful installation guide modal if browser blocks direct prompt
+        const modal = document.getElementById('modal-install-guide');
+        if(modal) modal.classList.add('active');
+    }
+};
 
 window.addEventListener('appinstalled', () => {
+    const installBtn = document.getElementById('install-app-btn');
     if(installBtn) installBtn.style.display = 'none';
+    showToast("ApexTrade Pro Successfully Installed!", "success");
 });
 
 // --- Utils ---
@@ -853,7 +858,6 @@ function generatePriceHistory(start, end, points) {
   hist[hist.length-1].c = end; return hist;
 }
 
-// Safely hide Splash Screen on load
 window.addEventListener('load', () => {
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -1094,7 +1098,6 @@ window.submitEmailDispatch = function() {
     let email = document.getElementById('cert-email-input').value;
     if(!email || !email.includes('@')) return showToast("Enter a valid receiver email", "error");
     
-    // Construct real mailto link
     let principal = window.profileNameStr;
     let nomName = document.getElementById('cert-name').innerText;
     let share = document.getElementById('cert-share').innerText;
@@ -1104,8 +1107,6 @@ window.submitEmailDispatch = function() {
     let bodyText = `Dear Investor,\n\nPlease find the details of the official registered Nominee Certificate below.\n\n--- CERTIFICATE DETAILS ---\nPrincipal Investor: ${principal}\nAuthorized Nominee: ${nomName}\nRegistered Share Allocation: ${share}\nDate of Registration: ${date}\n---------------------------\n\nThis is a legally binding dispatch generated by ApexTrade Pro Registry.\n\nRegards,\nApexTrade Pro Administrator\nofficialapextradepro@gmail.com`;
     
     let mailtoLink = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-    
-    // Open default mail client directly
     window.location.href = mailtoLink;
     
     closeEmailModal();
@@ -1119,7 +1120,6 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   const cx = cvs.getContext('2d'); 
   const rect = cvs.parentElement.getBoundingClientRect(); if(rect.width === 0) return;
   
-  // FIX: Make sure internal resolution matches CSS resolution perfectly
   cvs.width = rect.width; 
   cvs.height = rect.height; 
   
@@ -1131,7 +1131,6 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   let min = Math.min(...data.map(d=>d.l)); let max = Math.max(...data.map(d=>d.h));
   if(tradeData) { if(tradeData.entry < min) min = tradeData.entry; if(tradeData.entry > max) max = tradeData.entry; }
   
-  // FIX: Vertical padding ensures candles stay in the center 
   let padding = (max - min) * 0.35;
   if(padding === 0) padding = min * 0.01; 
   min -= padding; max += padding; let range = max - min;
@@ -1209,8 +1208,7 @@ window.updateDetailValues = function() {
 }
 window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleChart('stock-detail-canvas', detailActiveStock.history, detailActiveStock.ltp, true, null); }
 
-// --- LIVE TRADE LOGIC (100% REAL WITH AUTO-BOT) ---
-
+// --- LIVE TRADE LOGIC ---
 window.toggleAutoTrade = function() {
     window.autoTradeEnabled = document.getElementById('auto-trade-toggle').checked;
     if(window.autoTradeEnabled) {
@@ -1322,7 +1320,6 @@ window.resolveTrade = function(direction, entryPrice, amt) {
         window.autoTradeTimer = setTimeout(initiateAutoTrade, 1000); 
     }
 }
-
 
 // --- PROFESSIONAL FUNDS FORMS ---
 window.openDepositModal = function() { document.getElementById('modal-deposit').classList.add('active'); document.getElementById('deposit-amount').value = ''; document.getElementById('deposit-utr').value = ''; }
