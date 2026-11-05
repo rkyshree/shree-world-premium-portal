@@ -202,7 +202,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div class="lg:col-span-2 bg-app-card border border-app-border rounded-xl shadow-lg overflow-hidden flex flex-col">
-        <div class="p-3 bg-app-panel border-b border-app-border flex items-center justify-between">
+        <div class="p-3 bg-app-panel border-b border-app-border flex items-center justify-between z-10">
           <select id="trade-asset" class="bg-white text-app-text text-sm font-bold border border-app-border rounded-lg px-3 py-2 outline-none focus:border-app-blue shadow-sm">
             <option value="NIFTY">NIFTY 50 (Index)</option>
             <option value="BANKNIFTY">BANKNIFTY (Index)</option>
@@ -216,32 +216,32 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
             <option value="60">60 Sec Expiry</option>
           </select>
         </div>
-        <div class="relative w-full h-[320px] bg-app-card terminal-grid p-2 border-b border-app-border">
-          <div class="absolute top-4 left-4 z-10 text-app-text">
+        <div class="relative w-full h-[320px] bg-app-card terminal-grid border-b border-app-border overflow-hidden">
+          <div class="absolute top-4 left-4 z-10 text-app-text pointer-events-none">
             <h2 class="text-4xl font-extrabold tracking-tighter drop-shadow-sm text-app-green" id="trade-live-price">0.00</h2>
             <p class="text-xs text-app-green font-bold flex items-center gap-1 mt-1 bg-white/90 border border-gray-100 px-2 py-1 rounded w-fit shadow-sm"><i class="ph-bold ph-caret-up"></i> Live Market</p>
           </div>
           
           <!-- Sleek Non-Blocking Live Trade Timer -->
-          <div id="trade-active-overlay" class="hidden absolute top-4 right-16 bg-white/95 backdrop-blur border border-app-border rounded-lg p-2 z-20 shadow-xl flex items-center gap-3">
-              <div class="w-6 h-6 border-2 border-gray-200 border-t-app-blue rounded-full animate-spin"></div>
+          <div id="trade-active-overlay" class="hidden absolute top-4 right-2 sm:right-4 z-20 bg-white/95 backdrop-blur border border-app-border rounded-lg p-2 shadow-xl flex items-center gap-2 sm:gap-3">
+              <div class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-200 border-t-app-blue rounded-full animate-spin"></div>
               <div class="flex flex-col">
-                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Time Left</span>
-                  <span class="text-sm font-extrabold text-app-blue leading-none" id="trade-countdown">15s</span>
+                  <span class="text-[8px] sm:text-[9px] text-app-muted font-bold uppercase tracking-wider">Time Left</span>
+                  <span class="text-xs sm:text-sm font-extrabold text-app-blue leading-none" id="trade-countdown">15s</span>
               </div>
               <div class="border-l border-gray-200 pl-2 ml-1 flex flex-col">
-                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Entry</span>
-                  <span id="trade-entry-price" class="text-sm font-extrabold text-app-text leading-none">0.00</span>
+                  <span class="text-[8px] sm:text-[9px] text-app-muted font-bold uppercase tracking-wider">Entry</span>
+                  <span id="trade-entry-price" class="text-xs sm:text-sm font-extrabold text-app-text leading-none">0.00</span>
               </div>
           </div>
 
-          <!-- Canvas for real Candlesticks -->
-          <canvas id="trading-chart-canvas"></canvas>
+          <!-- Canvas for real Candlesticks (Fixed Size to fill parent 100%) -->
+          <canvas id="trading-chart-canvas" class="w-full h-full block relative z-0"></canvas>
           
         </div>
         
         <!-- Enhanced Trading Controls -->
-        <div class="p-4 bg-app-panel">
+        <div class="p-4 bg-app-panel z-10">
           <div class="flex justify-between items-center mb-2">
             <label class="text-xs text-app-muted font-bold uppercase tracking-widest block">Investment Amount (₹)</label>
             <span class="text-xs font-bold text-app-blue cursor-pointer bg-white px-2 py-0.5 rounded border border-gray-200 shadow-sm" onclick="setTradeAmount(10000)">+ 10K</span>
@@ -673,7 +673,7 @@ window.renderLimit = 50; window.isFiltered = false;
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v25'); // Incremented to clear previous bad state causing white screen
+    const dataStr = localStorage.getItem('apexTradeState_v25'); 
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
@@ -824,7 +824,6 @@ async function bootApp() {
       setInterval(saveDataToStorage, 5000);
   } catch(e) {
       console.error("Critical Boot Error:", e);
-      // Failsafe to unblock screen
       const splash = document.getElementById('splash-screen');
       if(splash) { splash.style.display = 'none'; }
   }
@@ -1051,9 +1050,15 @@ window.submitEmailDispatch = function() {
 // --- VISIBLE THICK CANDLESTICK CHART ---
 window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = false, tradeData = null) {
   const cvs = document.getElementById(canvasId); if(!cvs) return;
-  const cx = cvs.getContext('2d'); const rect = cvs.parentElement.getBoundingClientRect(); if(rect.width === 0) return;
+  const cx = cvs.getContext('2d'); 
+  const rect = cvs.parentElement.getBoundingClientRect(); if(rect.width === 0) return;
   
-  cvs.width = rect.width * 2; cvs.height = rect.height * 2; cx.scale(2, 2);
+  // FIX: Make sure internal resolution matches device screen for perfect sharpness
+  const dpr = window.devicePixelRatio || 1;
+  cvs.width = rect.width * dpr; 
+  cvs.height = rect.height * dpr; 
+  cx.scale(dpr, dpr);
+  
   let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
   
   if(!data || data.length < 2) return;
@@ -1062,7 +1067,8 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   let min = Math.min(...data.map(d=>d.l)); let max = Math.max(...data.map(d=>d.h));
   if(tradeData) { if(tradeData.entry < min) min = tradeData.entry; if(tradeData.entry > max) max = tradeData.entry; }
   
-  let padding = (max - min) * 0.1;
+  // FIX: Increased padding to 35% so candles are perfectly centered vertically
+  let padding = (max - min) * 0.35;
   if(padding === 0) padding = min * 0.01; 
   min -= padding; max += padding; let range = max - min;
   
