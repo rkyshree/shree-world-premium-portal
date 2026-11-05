@@ -30,6 +30,8 @@ tailwind.config = {
 </script>
 <script src="https://unpkg.com/@phosphor-icons/web"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Georgia:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Barcode font for the certificate -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
 <style>
 body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f172a; margin: 0; padding: 0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
 ::-webkit-scrollbar { width: 3px; height: 3px; }
@@ -75,8 +77,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 .toggle-checkbox:checked { right: 0; border-color: #2563eb; }
 .toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
 </style>
-<!-- Adding a Barcode font for the certificate -->
-<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 <!-- Splash Screen -->
@@ -622,19 +622,17 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 </div>
 
 <script>
-// --- PWA Injection ---
-const manifest = {
-  name: "ApexTrade Pro", short_name: "ApexTrade", display: "standalone",
-  background_color: "#f3f4f6", theme_color: "#ffffff",
-  icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg" }]
-};
-const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-const manifestURL = URL.createObjectURL(manifestBlob);
-document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
-const swCode = `self.addEventListener('fetch', function(e) {});`;
-const swBlob = new Blob([swCode], {type: 'application/javascript'});
-const swUrl = URL.createObjectURL(swBlob);
-if ('serviceWorker' in navigator) navigator.serviceWorker.register(swUrl);
+// --- Safe PWA Injection to prevent Mobile Browser Crash ---
+try {
+  const manifest = {
+    name: "ApexTrade Pro", short_name: "ApexTrade", display: "standalone",
+    background_color: "#f3f4f6", theme_color: "#ffffff",
+    icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg" }]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
+} catch(e) { console.warn("PWA setup skipped due to security constraints on mobile."); }
 
 // --- Utils ---
 window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
@@ -667,16 +665,15 @@ let tapTimers = {}; let activeFilter = 'All'; let detailActiveStock = null;
 
 // Trade State Tracking
 window.isTradeActive = false;
-window.currentTrade = null; // { dir: 'UP'|'DOWN', entry: 0.00 }
+window.currentTrade = null; 
 window.autoTradeEnabled = false;
 window.autoTradeTimer = null;
-
 window.renderLimit = 50; window.isFiltered = false;
 
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v24');
+    const dataStr = localStorage.getItem('apexTradeState_v25'); // Incremented to clear previous bad state causing white screen
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
@@ -694,13 +691,15 @@ function loadDataFromStorage() {
 function saveDataToStorage() {
   try {
     const holdingsToSave = window.portfolioData.slice(0, 150).map(s => ({ id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp, prevClose: s.prevClose }));
-    localStorage.setItem('apexTradeState_v24', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
+    localStorage.setItem('apexTradeState_v25', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
   } catch (e) { console.error("Save Error", e); }
 }
 
 // --- Dynamic Profit Update ---
 window.updateExpectedProfit = function() {
-    let amt = parseFloat(document.getElementById('trade-amount').value);
+    let amtEl = document.getElementById('trade-amount');
+    if(!amtEl) return;
+    let amt = parseFloat(amtEl.value);
     if(isNaN(amt) || amt <= 0) {
         document.getElementById('expected-profit').innerText = "₹0";
     } else {
@@ -708,8 +707,39 @@ window.updateExpectedProfit = function() {
     }
 }
 window.setTradeAmount = function(val) {
-    document.getElementById('trade-amount').value = val;
-    window.updateExpectedProfit();
+    let amtEl = document.getElementById('trade-amount');
+    if(amtEl) {
+        amtEl.value = val;
+        window.updateExpectedProfit();
+    }
+}
+
+// --- Profile Photo ---
+document.getElementById('profile-upload').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if(file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      window.profileImageStr = event.target.result;
+      saveDataToStorage(); loadProfileImageUI(); showToast('Profile Picture Updated', 'success');
+    };
+    reader.readAsDataURL(file);
+  }
+});
+function loadProfileImageUI() {
+  if(window.profileImageStr) {
+    document.getElementById('profile-img-preview').src = window.profileImageStr;
+    document.getElementById('profile-img-preview').classList.remove('hidden');
+    document.getElementById('profile-initials').classList.add('hidden');
+  }
+}
+window.handleProfileNameClick = function() {
+    let newName = prompt("Enter your Full Name for Professional Documents:", window.profileNameStr);
+    if(newName && newName.trim() !== "") {
+        window.profileNameStr = newName.toUpperCase();
+        document.getElementById('profile-name').innerText = window.profileNameStr;
+        saveDataToStorage(); showToast('Profile Name Updated', 'success');
+    }
 }
 
 // --- Generate Stocks ---
@@ -757,33 +787,47 @@ function generatePriceHistory(start, end, points) {
   hist[hist.length-1].c = end; return hist;
 }
 
+// Safely hide Splash Screen on load to prevent White Screen issues
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if(splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 500);
+        }
+    }, 800);
+});
+
 async function bootApp() {
-  if(!loadDataFromStorage()) {
-    window.portfolioData = generateMassivePortfolio();
-    window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
-  }
-  window.tradeChartHistory = generatePriceHistory(22400, 22450.50, 40); window.liveTradePrice = 22450.50;
-  
-  document.getElementById('profile-name').innerText = window.profileNameStr;
-  loadProfileImageUI(); renderPortfolio(); updateBalanceUI(); renderNominees();
-  window.updateExpectedProfit();
-  
-  const scrollContainer = document.getElementById('holdingsList');
-  scrollContainer.addEventListener('scroll', () => {
-      if(scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 50) {
-          if(window.renderLimit < window.portfolioData.length && !window.isFiltered) {
-              window.renderLimit += 50; renderPortfolio(true);
-          }
+  try {
+      if(!loadDataFromStorage()) {
+        window.portfolioData = generateMassivePortfolio();
+        window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
       }
-  });
-  
-  setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    if(splash) {
-      splash.style.opacity = '0';
-      setTimeout(() => { splash.style.display = 'none'; isAppReady = true; setInterval(globalTick, 1000); setInterval(saveDataToStorage, 5000); }, 500);
-    }
-  }, 1000);
+      window.tradeChartHistory = generatePriceHistory(22400, 22450.50, 40); window.liveTradePrice = 22450.50;
+      
+      document.getElementById('profile-name').innerText = window.profileNameStr;
+      loadProfileImageUI(); renderPortfolio(); updateBalanceUI(); renderNominees();
+      window.updateExpectedProfit();
+      
+      const scrollContainer = document.getElementById('holdingsList');
+      scrollContainer.addEventListener('scroll', () => {
+          if(scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 50) {
+              if(window.renderLimit < window.portfolioData.length && !window.isFiltered) {
+                  window.renderLimit += 50; renderPortfolio(true);
+              }
+          }
+      });
+      
+      isAppReady = true; 
+      setInterval(globalTick, 1000); 
+      setInterval(saveDataToStorage, 5000);
+  } catch(e) {
+      console.error("Critical Boot Error:", e);
+      // Failsafe to unblock screen
+      const splash = document.getElementById('splash-screen');
+      if(splash) { splash.style.display = 'none'; }
+  }
 }
 
 // --- Dynamic Market Tick ---
@@ -818,22 +862,30 @@ window.globalTick = function() {
     let lastC = tradeChartHistory[tradeChartHistory.length-1];
     window.liveTradePrice += (Math.random() - 0.45) * 5; 
     lastC.c = window.liveTradePrice; if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice; if(window.liveTradePrice < lastC.l) lastC.l = window.liveTradePrice;
-    document.getElementById('trade-live-price').innerText = window.fmtNum(window.liveTradePrice); drawTradingChart();
+    let liveEl = document.getElementById('trade-live-price');
+    if(liveEl) { liveEl.innerText = window.fmtNum(window.liveTradePrice); drawTradingChart(); }
   }
   updateTotalPortfolioHeaders();
 }
 
-window.updateBalanceUI = function() { document.getElementById('header-trading-balance').innerText = window.fmtCurDec(window.tradingBalance); }
+window.updateBalanceUI = function() { 
+    let el = document.getElementById('header-trading-balance');
+    if(el) el.innerText = window.fmtCurDec(window.tradingBalance); 
+}
+
 window.updateTotalPortfolioHeaders = function() {
   let tInv=0, tCur=0, tDay=0;
   portfolioData.forEach(s => { tInv += s.qty * s.avgPrice; tCur += s.qty * s.ltp; tDay += s.qty * (s.ltp - s.prevClose); });
   const trAmt = tCur - tInv;
   
-  document.getElementById('totalCurrentValue').innerText = window.fmtCur(tCur);
-  document.getElementById('totalReturns').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(trAmt)} (+${((trAmt/tInv)*100).toFixed(2)}%)`;
-  document.getElementById('dayChangeValue').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(tDay)} (+${((tDay/(tCur-tDay))*100).toFixed(2)}%)`;
-  document.getElementById('totalInvested').innerText = window.fmtCur(tInv);
-  window.nominees.forEach((nom, i) => { let el = document.getElementById(`nominee-val-${i}`); if(el) el.innerText = window.fmtCur(tCur * (nom.share / 100)); });
+  let valEl = document.getElementById('totalCurrentValue');
+  if(valEl) {
+      valEl.innerText = window.fmtCur(tCur);
+      document.getElementById('totalReturns').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(trAmt)} (+${((trAmt/tInv)*100).toFixed(2)}%)`;
+      document.getElementById('dayChangeValue').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(tDay)} (+${((tDay/(tCur-tDay))*100).toFixed(2)}%)`;
+      document.getElementById('totalInvested').innerText = window.fmtCur(tInv);
+      window.nominees.forEach((nom, i) => { let el = document.getElementById(`nominee-val-${i}`); if(el) el.innerText = window.fmtCur(tCur * (nom.share / 100)); });
+  }
 }
 
 // --- Search and Filters ---
@@ -851,7 +903,7 @@ window.setFilter = function(filter) {
         btn.classList.remove('bg-app-blue', 'text-white'); btn.classList.add('bg-app-card', 'text-app-muted');
     });
     const btn = document.getElementById(`btn-filter-${filter}`);
-    btn.classList.remove('bg-app-card', 'text-app-muted'); btn.classList.add('bg-app-blue', 'text-white');
+    if(btn) { btn.classList.remove('bg-app-card', 'text-app-muted'); btn.classList.add('bg-app-blue', 'text-white'); }
     window.isFiltered = filter !== 'All';
     if(window.isFiltered) { renderPortfolioList(portfolioData.filter(s => s.cap === filter).slice(0, 100)); } else { renderPortfolio(false); }
 }
@@ -871,7 +923,9 @@ window.secretEditStock = function(id) {
 }
 
 window.renderPortfolioList = function(dataArr, append = false) {
-  const list = document.getElementById('holdingsList'); if(!append) list.innerHTML = '';
+  const list = document.getElementById('holdingsList'); 
+  if(!list) return;
+  if(!append) list.innerHTML = '';
   dataArr.forEach(s => {
     let inv = s.qty * s.avgPrice; let cur = s.qty * s.ltp; let pl = cur - inv; let plPct = (inv > 0) ? (pl/inv)*100 : 0;
     const isPos = pl >= 0; const row = document.createElement('div');
@@ -899,10 +953,12 @@ window.renderPortfolio = function(append = false) {
   let toRender = portfolioData; if(activeFilter !== 'All') toRender = portfolioData.filter(s => s.cap === activeFilter);
   renderPortfolioList(toRender.slice(append ? window.renderLimit - 50 : 0, window.renderLimit), append);
   if(!append) {
-      document.getElementById('count-All').innerText = portfolioData.length;
-      document.getElementById('count-Large').innerText = portfolioData.filter(s=>s.cap==='Large').length;
-      document.getElementById('count-Mid').innerText = portfolioData.filter(s=>s.cap==='Mid').length;
-      document.getElementById('count-Global').innerText = portfolioData.filter(s=>s.cap==='Global').length;
+      if(document.getElementById('count-All')) {
+          document.getElementById('count-All').innerText = portfolioData.length;
+          document.getElementById('count-Large').innerText = portfolioData.filter(s=>s.cap==='Large').length;
+          document.getElementById('count-Mid').innerText = portfolioData.filter(s=>s.cap==='Mid').length;
+          document.getElementById('count-Global').innerText = portfolioData.filter(s=>s.cap==='Global').length;
+      }
       updateTotalPortfolioHeaders();
   }
 }
@@ -917,7 +973,9 @@ window.handleNomineeClick = function(index) {
   else { tapTimers['nom_' + index] = setTimeout(() => { tapTimers['nom_' + index] = null; viewCertificate(index); }, 300); }
 };
 window.renderNominees = function() {
-  const container = document.getElementById('nominee-list'); container.innerHTML = '';
+  const container = document.getElementById('nominee-list'); 
+  if(!container) return;
+  container.innerHTML = '';
   window.nominees.forEach((nom, index) => {
     container.innerHTML += `<div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center relative overflow-hidden group cursor-pointer" onclick="handleNomineeClick(${index})"> 
       <div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-app-blue/10 to-transparent pointer-events-none"></div> 
@@ -982,7 +1040,7 @@ window.submitEmailDispatch = function() {
     
     let mailtoLink = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
     
-    // Open default mail client
+    // Open default mail client directly
     window.location.href = mailtoLink;
     
     closeEmailModal();
@@ -1086,7 +1144,7 @@ window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleC
 window.toggleAutoTrade = function() {
     window.autoTradeEnabled = document.getElementById('auto-trade-toggle').checked;
     if(window.autoTradeEnabled) {
-        showToast("Auto-Trade 60s Bot Activated", "success");
+        showToast("Auto-Trade Bot Activated", "success");
         if(!window.isTradeActive) initiateAutoTrade();
     } else {
         showToast("Auto-Trade Bot Deactivated", "info");
@@ -1096,17 +1154,15 @@ window.toggleAutoTrade = function() {
 
 window.initiateAutoTrade = function() {
     if(!window.autoTradeEnabled) return;
-    
-    // Choose direction based on simple random trend logic
     let dir = Math.random() > 0.5 ? 'UP' : 'DOWN';
-    
-    // Simulate clicking the button
     executeTrade(dir);
 }
 
 window.executeTrade = function(direction) {
     if(window.isTradeActive) return;
-    const amt = parseFloat(document.getElementById('trade-amount').value);
+    const amtEl = document.getElementById('trade-amount');
+    if(!amtEl) return;
+    const amt = parseFloat(amtEl.value);
     if(isNaN(amt) || amt <= 0) return showToast('Enter valid amount', 'error');
     if(amt > window.tradingBalance) {
         if(window.autoTradeEnabled) {
@@ -1116,7 +1172,6 @@ window.executeTrade = function(direction) {
         return showToast('Insufficient balance!', 'error');
     }
     
-    // Get expiry time
     const expirySelect = document.getElementById('trade-time');
     const totalSeconds = parseInt(expirySelect.value) || 15;
     
@@ -1128,10 +1183,10 @@ window.executeTrade = function(direction) {
     window.currentTrade = { dir: direction, entry: entryPrice };
     
     const overlay = document.getElementById('trade-active-overlay');
-    overlay.classList.remove('hidden');
+    if(overlay) overlay.classList.remove('hidden');
     document.getElementById('trade-entry-price').innerText = window.fmtNum(entryPrice);
     
-    let ticks = totalSeconds * 2; // 2 ticks per second for smoothness
+    let ticks = totalSeconds * 2; 
     document.getElementById('trade-countdown').innerText = totalSeconds + 's';
     
     let timer = setInterval(() => {
@@ -1159,7 +1214,8 @@ window.executeTrade = function(direction) {
 window.resolveTrade = function(direction, entryPrice, amt) {
     window.isTradeActive = false;
     window.currentTrade = null;
-    document.getElementById('trade-active-overlay').classList.add('hidden');
+    const overlay = document.getElementById('trade-active-overlay');
+    if(overlay) overlay.classList.add('hidden');
     
     let exitPrice = window.liveTradePrice;
     let won = (direction === 'UP' && exitPrice > entryPrice) || (direction === 'DOWN' && exitPrice < entryPrice);
@@ -1177,22 +1233,23 @@ window.resolveTrade = function(direction, entryPrice, amt) {
     drawTradingChart(); 
     
     const histList = document.getElementById('trade-history-list');
-    histList.innerHTML = `
-        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
-            <div>
-                <span class="text-xs font-bold ${won?'text-app-green':'text-app-red'}">${direction} CALL</span>
-                <p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(entryPrice)}</p>
+    if(histList) {
+        histList.innerHTML = `
+            <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
+                <div>
+                    <span class="text-xs font-bold ${won?'text-app-green':'text-app-red'}">${direction} CALL</span>
+                    <p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(entryPrice)}</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-sm font-bold ${won?'text-app-green':'text-app-red'}">${won?'+':'-'}₹${window.fmtNum(won ? amt*0.85 : amt)}</span>
+                    <p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(exitPrice)}</p>
+                </div>
             </div>
-            <div class="text-right">
-                <span class="text-sm font-bold ${won?'text-app-green':'text-app-red'}">${won?'+':'-'}₹${window.fmtNum(won ? amt*0.85 : amt)}</span>
-                <p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(exitPrice)}</p>
-            </div>
-        </div>
-    ` + histList.innerHTML;
+        ` + histList.innerHTML;
+    }
     
-    // Check if auto trade is still on
     if(window.autoTradeEnabled) {
-        window.autoTradeTimer = setTimeout(initiateAutoTrade, 1000); // Wait 1 second before next trade
+        window.autoTradeTimer = setTimeout(initiateAutoTrade, 1000); 
     }
 }
 
