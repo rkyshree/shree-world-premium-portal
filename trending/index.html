@@ -59,17 +59,24 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 .modal.active .modal-content { transform: scale(1); }
 .user-select-none { user-select: none; -webkit-user-select: none; }
 
-/* Ultra Realistic Certificate Style - PERFECT 16:9 RATIO */
-.cert-container { position: relative; background: #fffdf8; border: 10px solid #d97706; padding: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; }
-.cert-inner-border { border: 2px dashed #b45309; padding: 15px; position: relative; z-index: 10; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-.cert-bg-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.03; font-size: 25rem; z-index: 0; pointer-events: none; }
-.seal-badge { width: 70px; height: 70px; background: linear-gradient(135deg, #d97706, #b45309); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.5rem; font-weight: bold; text-align: center; border: 4px double #fff; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.4); position: relative; flex-shrink: 0;}
-.seal-badge::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px dashed #d97706; }
+/* Enhanced Ultra Realistic Certificate Style */
+.cert-container { position: relative; background: #fffdf8; border: 12px solid #1a202c; padding: 25px; box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 0 15px 40px rgba(0,0,0,0.15); overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; }
+.cert-inner-border { border: 4px double #d97706; outline: 1px solid #b45309; outline-offset: 4px; padding: 20px; position: relative; z-index: 10; flex: 1; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,253,248,0.9)); }
+.cert-bg-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.04; font-size: 30rem; z-index: 0; pointer-events: none; color: #d97706; }
+.seal-badge { width: 75px; height: 75px; background: radial-gradient(circle, #fbbf24 0%, #d97706 70%, #b45309 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fffdf8; font-size: 0.55rem; font-weight: 900; text-align: center; border: 3px dashed #fff; box-shadow: 0 5px 15px rgba(217, 119, 6, 0.6); position: relative; flex-shrink: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+.seal-badge::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid #d97706; }
+.cert-barcode { font-family: 'Libre Barcode 39', cursive, monospace; font-size: 2rem; color: #333; letter-spacing: 2px; }
 
 /* Enhanced Faux Loading Overlays for Forms */
 .processing-overlay { display: none; position: absolute; inset: 0; background: rgba(255,255,255,0.9); z-index: 50; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px; backdrop-filter: blur(5px); }
 .processing-overlay.active { display: flex; }
+
+/* Toggle Switch */
+.toggle-checkbox:checked { right: 0; border-color: #2563eb; }
+.toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
 </style>
+<!-- Adding a Barcode font for the certificate -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
 <!-- Splash Screen -->
@@ -180,10 +187,18 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
   </div>
 
-  <!-- View 2: TRADING (100% Real Candlestick) -->
+  <!-- View 2: TRADING (Hyper-Realistic Pro UI) -->
   <div id="view-trading" class="view-section space-y-4">
     <div class="flex justify-between items-end mb-2">
-      <h1 class="text-3xl font-extrabold text-app-text tracking-tight flex items-center gap-2"><i class="ph-fill ph-lightning text-app-blue"></i> Live Options</h1>
+      <h1 class="text-3xl font-extrabold text-app-text tracking-tight flex items-center gap-2"><i class="ph-fill ph-lightning text-app-blue"></i> Pro Trading</h1>
+      <!-- AUTO TRADE TOGGLE -->
+      <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
+          <span class="text-xs font-bold text-app-text tracking-wider uppercase">Auto-Bot (60s)</span>
+          <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+              <input type="checkbox" name="toggle" id="auto-trade-toggle" onchange="toggleAutoTrade()" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer border-gray-300 z-10 transition-transform duration-200 ease-in-out"/>
+              <label for="auto-trade-toggle" class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer transition-colors duration-200 ease-in-out"></label>
+          </div>
+      </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div class="lg:col-span-2 bg-app-card border border-app-border rounded-xl shadow-lg overflow-hidden flex flex-col">
@@ -194,7 +209,12 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
             <option value="RELIANCE">RELIANCE (Eq)</option>
             <option value="BTCUSD">BITCOIN (Crypto)</option>
           </select>
-          <span class="bg-app-green/10 text-app-green px-3 py-1.5 rounded-lg border border-app-green/30 text-xs font-bold flex items-center gap-1"><i class="ph-bold ph-trend-up"></i> PAYOUT: 85%</span>
+          
+          <select id="trade-time" class="bg-white text-app-text text-sm font-bold border border-app-border rounded-lg px-3 py-2 outline-none focus:border-app-blue shadow-sm">
+            <option value="15">15 Sec Expiry</option>
+            <option value="30">30 Sec Expiry</option>
+            <option value="60">60 Sec Expiry</option>
+          </select>
         </div>
         <div class="relative w-full h-[320px] bg-app-card terminal-grid p-2 border-b border-app-border">
           <div class="absolute top-4 left-4 z-10 text-app-text">
@@ -210,7 +230,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
                   <span class="text-sm font-extrabold text-app-blue leading-none" id="trade-countdown">15s</span>
               </div>
               <div class="border-l border-gray-200 pl-2 ml-1 flex flex-col">
-                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Entry Price</span>
+                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Entry</span>
                   <span id="trade-entry-price" class="text-sm font-extrabold text-app-text leading-none">0.00</span>
               </div>
           </div>
@@ -219,18 +239,33 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
           <canvas id="trading-chart-canvas"></canvas>
           
         </div>
+        
+        <!-- Enhanced Trading Controls -->
         <div class="p-4 bg-app-panel">
           <div class="flex justify-between items-center mb-2">
             <label class="text-xs text-app-muted font-bold uppercase tracking-widest block">Investment Amount (₹)</label>
-            <span class="text-xs font-bold text-app-blue cursor-pointer bg-white px-2 py-0.5 rounded border border-gray-200 shadow-sm" onclick="document.getElementById('trade-amount').value=10000">+ 10K</span>
+            <span class="text-xs font-bold text-app-blue cursor-pointer bg-white px-2 py-0.5 rounded border border-gray-200 shadow-sm" onclick="setTradeAmount(10000)">+ 10K</span>
           </div>
-          <div class="flex gap-3">
+          <div class="flex gap-3 items-stretch">
             <div class="relative flex-1">
               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-app-text font-bold text-lg">₹</span>
-              <input type="number" id="trade-amount" value="5000" step="1000" class="w-full bg-white border border-app-border text-app-text text-xl font-bold rounded-xl py-3 pl-9 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
+              <input type="number" id="trade-amount" value="5000" step="1000" oninput="updateExpectedProfit()" class="w-full h-full bg-white border border-app-border text-app-text text-xl font-bold rounded-xl py-3 pl-9 pr-4 focus:border-app-blue outline-none transition-colors shadow-inner">
             </div>
-            <button onclick="executeTrade('UP')" class="flex-[0.8] bg-app-green hover:bg-app-green-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(8,153,129,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight"><i class="ph-bold ph-trend-up text-xl mb-0.5"></i> CALL</button>
-            <button onclick="executeTrade('DOWN')" class="flex-[0.8] bg-app-red hover:bg-app-red-glow text-white font-extrabold text-lg py-3 rounded-xl shadow-[0_5px_15px_rgba(242,54,69,0.3)] transition-all active:scale-95 flex flex-col items-center justify-center leading-tight"><i class="ph-bold ph-trend-down text-xl mb-0.5"></i> PUT</button>
+            
+            <button onclick="executeTrade('UP')" class="flex-[0.85] bg-app-green hover:bg-app-green-glow text-white rounded-xl shadow-[0_8px_20px_rgba(8,153,129,0.35)] transition-all active:scale-95 flex flex-col items-center justify-center py-2 px-1 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-white/20 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="flex items-center gap-1 font-extrabold text-lg leading-none"><i class="ph-bold ph-trend-up text-2xl"></i> UP</div>
+                <div class="text-[10px] font-bold bg-black/20 px-2 py-0.5 rounded mt-1">85% Payout</div>
+            </button>
+            
+            <button onclick="executeTrade('DOWN')" class="flex-[0.85] bg-app-red hover:bg-app-red-glow text-white rounded-xl shadow-[0_8px_20px_rgba(242,54,69,0.35)] transition-all active:scale-95 flex flex-col items-center justify-center py-2 px-1 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div class="flex items-center gap-1 font-extrabold text-lg leading-none"><i class="ph-bold ph-trend-down text-2xl"></i> DOWN</div>
+                <div class="text-[10px] font-bold bg-black/20 px-2 py-0.5 rounded mt-1">85% Payout</div>
+            </button>
+          </div>
+          <div class="text-center mt-3">
+              <span class="text-xs font-bold text-app-muted uppercase tracking-wider">Expected Profit: <span id="expected-profit" class="text-app-green">+₹4,250</span></span>
           </div>
         </div>
       </div>
@@ -284,7 +319,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
       <div id="nominee-list" class="space-y-3"></div>
     </div>
 
-    <!-- Pro Funds Module (Now opens professional forms) -->
+    <!-- Pro Funds Module -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="bg-app-card border border-app-border rounded-xl p-5 shadow-lg relative overflow-hidden group cursor-pointer" onclick="openDepositModal()">
         <div class="absolute -right-6 -top-6 text-app-green/5 group-hover:text-app-green/10 transition-colors duration-500 pointer-events-none">
@@ -356,7 +391,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
   </div>
   
-  <!-- Dummy Toolbar to make it look like a Pro Desktop Platform -->
+  <!-- Dummy Toolbar -->
   <div class="flex items-center gap-2 px-4 py-1.5 bg-tv-panel border-b border-tv-border overflow-x-auto hide-scroll">
       <button class="text-xs font-bold text-blue-500 bg-blue-500/10 px-3 py-1 rounded">1M</button>
       <button class="text-xs font-bold text-tv-text hover:text-white px-3 py-1">5M</button>
@@ -369,7 +404,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
   </div>
 
   <div class="flex-1 bg-tv-dark relative tv-grid overflow-hidden">
-    <!-- Overlay texts for extra realism -->
     <div class="absolute top-2 left-2 z-10 text-[10px] font-mono text-tv-text space-y-1 pointer-events-none">
         <p>Vol <span class="text-gray-300">2.4M</span></p>
         <p>MA(9, close, 0, SMA, 5) <span class="text-app-blue">2240.50</span></p>
@@ -377,8 +411,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     <canvas id="stock-detail-canvas" class="w-full h-full block"></canvas>
   </div>
 </div>
-
-<!-- MODALS -->
 
 <!-- Deposit Modal -->
 <div id="modal-deposit" class="modal">
@@ -410,7 +442,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
         <button onclick="submitProfessionalDeposit()" class="w-full mt-2 py-3 rounded-lg bg-app-green hover:bg-app-green-glow text-white font-extrabold shadow-lg flex justify-center items-center gap-2">Submit Verification <i class="ph-bold ph-shield-check"></i></button>
       </div>
 
-      <!-- Processing Overlay -->
       <div id="deposit-processing" class="processing-overlay">
           <div class="w-16 h-16 border-4 border-gray-200 border-t-app-green rounded-full animate-spin mb-4"></div>
           <h3 class="text-lg font-bold text-app-text">Verifying Payment</h3>
@@ -459,7 +490,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
         <button onclick="submitProfessionalWithdraw()" class="w-full mt-2 py-3 rounded-lg bg-app-red hover:bg-app-red-glow text-white font-extrabold shadow-lg flex justify-center items-center gap-2">Initiate Transfer <i class="ph-bold ph-paper-plane-right"></i></button>
       </div>
 
-      <!-- Processing Overlay -->
       <div id="withdraw-processing" class="processing-overlay">
           <div class="w-16 h-16 border-4 border-gray-200 border-t-app-red rounded-full animate-spin mb-4"></div>
           <h3 class="text-lg font-bold text-app-text">Processing Request</h3>
@@ -468,7 +498,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     </div>
 </div>
 
-<!-- 1. Add Nominee -->
+<!-- Nominee Modals -->
 <div id="modal-add-nominee" class="modal">
   <div class="modal-content">
     <h2 class="text-xl font-bold text-app-text mb-4">Add Official Nominee</h2>
@@ -489,7 +519,6 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
   </div>
 </div>
 
-<!-- 2. Edit Nominee -->
 <div id="modal-edit-nominee" class="modal">
   <div class="modal-content">
     <h2 class="text-xl font-bold text-app-text mb-4">Edit Nominee</h2>
@@ -513,20 +542,20 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
   </div>
 </div>
 
-<!-- 3. Ultra-Realistic 16:9 Certificate Modal -->
+<!-- Ultra-Realistic 16:9 Certificate Modal -->
 <div id="modal-certificate" class="modal">
   <div class="modal-content !p-0 !bg-transparent !border-none !shadow-none" style="width: 100%; max-width: 850px; display: flex; flex-direction: column; align-items: center;">
     
     <div id="certificate-wrapper" class="cert-container text-app-text">
       <div class="cert-inner-border">
         <!-- Background Watermark -->
-        <i class="ph-fill ph-globe-hemisphere-west cert-bg-logo text-gray-200"></i>
+        <i class="ph-fill ph-globe-hemisphere-west cert-bg-logo"></i>
         
         <!-- Header -->
         <div class="flex justify-between items-start border-b-2 border-app-gold pb-2 sm:pb-4 relative z-10">
           <div>
-            <h2 class="text-xl sm:text-3xl font-serif font-black text-app-gold tracking-widest uppercase">ApexTrade Pro</h2>
-            <p class="text-[8px] sm:text-[10px] text-gray-600 font-bold tracking-widest uppercase mt-0.5 sm:mt-1">Global Share Market Registry</p>
+            <h2 class="text-xl sm:text-3xl font-serif font-black text-app-gold tracking-widest uppercase" style="text-shadow: 1px 1px 0px rgba(0,0,0,0.1);">ApexTrade Pro</h2>
+            <p class="text-[8px] sm:text-[10px] text-gray-800 font-extrabold tracking-widest uppercase mt-0.5 sm:mt-1">Global Share Market Registry</p>
           </div>
           <!-- Stamp / Seal -->
           <div class="seal-badge">OFFICIAL<br>SEAL</div>
@@ -534,23 +563,27 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
         
         <!-- Body -->
         <div class="py-2 sm:py-6 relative z-10 text-center flex-1 flex flex-col justify-center">
-          <h1 class="text-lg sm:text-3xl font-serif font-bold text-gray-800 mb-2 sm:mb-4 uppercase tracking-wider">Certificate of Nomination</h1>
-          <p class="text-[10px] sm:text-sm text-gray-600 mb-2 sm:mb-4 font-serif italic">This officially certifies that the principal investor</p>
-          <h2 class="text-lg sm:text-2xl font-bold text-app-blue mb-2 sm:mb-4 border-b border-gray-300 inline-block px-4 pb-1 mx-auto w-fit" id="cert-principal-name">NAME</h2>
-          <p class="text-[10px] sm:text-sm text-gray-600 mb-2 sm:mb-4 font-serif italic">has legally appointed and authorized</p>
-          <h2 class="text-xl sm:text-4xl font-extrabold text-app-green mb-2 sm:mb-4" id="cert-name">NOMINEE</h2>
-          <p class="text-[10px] sm:text-sm text-gray-600 font-serif">as the official nominee with a registered <strong class="text-sm sm:text-lg text-app-text" id="cert-share">%</strong> profit share allocation.</p>
+          <h1 class="text-lg sm:text-3xl font-serif font-bold text-gray-900 mb-2 sm:mb-4 uppercase tracking-wider" style="letter-spacing: 2px;">Certificate of Nomination</h1>
+          <p class="text-[10px] sm:text-sm text-gray-800 mb-2 sm:mb-4 font-serif italic">This non-transferable certificate legally binds the principal investor</p>
+          <h2 class="text-lg sm:text-2xl font-bold text-app-blue mb-2 sm:mb-4 border-b-2 border-gray-400 inline-block px-4 pb-1 mx-auto w-fit" id="cert-principal-name">NAME</h2>
+          <p class="text-[10px] sm:text-sm text-gray-800 mb-2 sm:mb-4 font-serif italic">to officially appoint and authorize</p>
+          <h2 class="text-xl sm:text-4xl font-black text-app-green mb-2 sm:mb-4" id="cert-name" style="text-shadow: 1px 1px 0px rgba(0,0,0,0.1);">NOMINEE</h2>
+          <p class="text-[10px] sm:text-sm text-gray-800 font-serif font-bold">as the legal nominee with a registered <strong class="text-sm sm:text-xl text-app-gold" id="cert-share">%</strong> profit share allocation.</p>
         </div>
         
         <!-- Footer / Signatures -->
         <div class="flex justify-between items-end pt-2 sm:pt-4 relative z-10">
           <div class="text-center w-1/3">
-            <p class="font-serif text-sm sm:text-xl text-gray-800 border-b border-gray-400 pb-1 italic" style="font-family: 'Brush Script MT', cursive;">Admin Authority</p>
-            <p class="text-[7px] sm:text-[9px] text-gray-500 font-bold uppercase mt-1">Authorized Signature</p>
+            <p class="font-serif text-sm sm:text-xl text-gray-900 border-b border-gray-500 pb-1 italic font-bold" style="font-family: 'Brush Script MT', cursive;">Admin Authority</p>
+            <p class="text-[7px] sm:text-[9px] text-gray-600 font-bold uppercase mt-1">Authorized Signature</p>
+          </div>
+          <div class="text-center w-1/3 flex flex-col items-center">
+             <div class="cert-barcode" id="cert-barcode">*APX99281*</div>
+             <p class="text-[7px] sm:text-[9px] text-gray-500 font-bold uppercase mt-1">Verifiable Registry Code</p>
           </div>
           <div class="text-center w-1/3">
-            <p class="font-bold text-gray-800 border-b border-gray-400 pb-1 text-xs sm:text-sm" id="cert-date">Date</p>
-            <p class="text-[7px] sm:text-[9px] text-gray-500 font-bold uppercase mt-1">Date of Issue</p>
+            <p class="font-bold text-gray-900 border-b border-gray-500 pb-1 text-xs sm:text-sm" id="cert-date">Date</p>
+            <p class="text-[7px] sm:text-[9px] text-gray-600 font-bold uppercase mt-1">Date of Issue</p>
           </div>
         </div>
       </div>
@@ -559,7 +592,7 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
     <div class="mt-4 flex flex-wrap justify-center gap-3 w-full max-w-[800px] px-2">
       <button onclick="closeCertificate()" class="flex-1 min-w-[120px] py-3 rounded-xl bg-white text-app-text font-bold shadow-lg border border-gray-200">Close</button>
       <button onclick="openEmailModal()" class="flex-[1.5] min-w-[150px] py-3 rounded-xl bg-app-blue text-white font-extrabold shadow-lg flex items-center justify-center gap-2">
-        <i class="ph-bold ph-envelope-simple text-lg"></i> Email Certificate
+        <i class="ph-bold ph-envelope-simple text-lg"></i> Direct Email
       </button>
       <button onclick="downloadCertificate()" class="flex-[1.5] min-w-[150px] py-3 rounded-xl bg-app-gold text-white font-extrabold shadow-lg flex items-center justify-center gap-2">
         <i class="ph-bold ph-download-simple text-lg"></i> Download PDF
@@ -568,12 +601,12 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
   </div>
 </div>
 
-<!-- 4. Email Sending Modal -->
+<!-- Email Sending Modal -->
 <div id="modal-email" class="modal">
     <div class="modal-content relative overflow-hidden">
       <button onclick="closeEmailModal()" class="absolute top-4 right-4 text-gray-400 hover:text-app-text"><i class="ph-bold ph-x text-xl"></i></button>
-      <h2 class="text-xl font-extrabold text-app-text mb-1 flex items-center gap-2"><i class="ph-fill ph-envelope-open text-app-blue"></i> Dispatch Certificate</h2>
-      <p class="text-xs text-app-muted mb-4 font-bold tracking-wide uppercase">Via Official Secure Mail Server</p>
+      <h2 class="text-xl font-extrabold text-app-text mb-1 flex items-center gap-2"><i class="ph-fill ph-envelope-open text-app-blue"></i> Share Certificate</h2>
+      <p class="text-xs text-app-muted mb-4 font-bold tracking-wide uppercase">Open device mail client</p>
       
       <div class="space-y-4">
         <div class="bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 text-xs font-mono text-gray-500">
@@ -583,20 +616,13 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
             <label class="text-xs text-app-muted font-bold uppercase mb-1 block">To: Receiver Email Address</label>
             <input type="email" id="cert-email-input" placeholder="e.g. user@gmail.com" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 outline-none focus:border-app-blue font-mono text-sm">
         </div>
-        <button onclick="submitEmailDispatch()" class="w-full mt-2 py-3 rounded-lg bg-app-blue hover:bg-blue-700 text-white font-extrabold shadow-lg flex justify-center items-center gap-2">Send Secure Mail <i class="ph-bold ph-paper-plane-tilt"></i></button>
-      </div>
-
-      <!-- Processing Overlay for Email -->
-      <div id="email-processing" class="processing-overlay">
-          <div class="w-16 h-16 border-4 border-gray-200 border-t-app-blue rounded-full animate-spin mb-4"></div>
-          <h3 class="text-lg font-bold text-app-text" id="email-status-text">Connecting to Server</h3>
-          <p class="text-xs text-app-muted mt-1 text-center px-4">officialapextradepro@gmail.com<br>Encrypting attachment...</p>
+        <button onclick="submitEmailDispatch()" class="w-full mt-2 py-3 rounded-lg bg-app-blue hover:bg-blue-700 text-white font-extrabold shadow-lg flex justify-center items-center gap-2">Compose Mail <i class="ph-bold ph-paper-plane-tilt"></i></button>
       </div>
     </div>
 </div>
 
 <script>
-// --- PWA & Service Worker Injection ---
+// --- PWA Injection ---
 const manifest = {
   name: "ApexTrade Pro", short_name: "ApexTrade", display: "standalone",
   background_color: "#f3f4f6", theme_color: "#ffffff",
@@ -642,13 +668,15 @@ let tapTimers = {}; let activeFilter = 'All'; let detailActiveStock = null;
 // Trade State Tracking
 window.isTradeActive = false;
 window.currentTrade = null; // { dir: 'UP'|'DOWN', entry: 0.00 }
+window.autoTradeEnabled = false;
+window.autoTradeTimer = null;
 
 window.renderLimit = 50; window.isFiltered = false;
 
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v23'); // Updated version to clear old cache
+    const dataStr = localStorage.getItem('apexTradeState_v24');
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
@@ -666,36 +694,22 @@ function loadDataFromStorage() {
 function saveDataToStorage() {
   try {
     const holdingsToSave = window.portfolioData.slice(0, 150).map(s => ({ id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp, prevClose: s.prevClose }));
-    localStorage.setItem('apexTradeState_v23', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
+    localStorage.setItem('apexTradeState_v24', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
   } catch (e) { console.error("Save Error", e); }
 }
 
-// --- Profile Photo ---
-document.getElementById('profile-upload').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if(file) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      window.profileImageStr = event.target.result;
-      saveDataToStorage(); loadProfileImageUI(); showToast('Profile Picture Updated', 'success');
-    };
-    reader.readAsDataURL(file);
-  }
-});
-function loadProfileImageUI() {
-  if(window.profileImageStr) {
-    document.getElementById('profile-img-preview').src = window.profileImageStr;
-    document.getElementById('profile-img-preview').classList.remove('hidden');
-    document.getElementById('profile-initials').classList.add('hidden');
-  }
-}
-window.handleProfileNameClick = function() {
-    let newName = prompt("Enter your Full Name for Professional Documents:", window.profileNameStr);
-    if(newName && newName.trim() !== "") {
-        window.profileNameStr = newName.toUpperCase();
-        document.getElementById('profile-name').innerText = window.profileNameStr;
-        saveDataToStorage(); showToast('Profile Name Updated', 'success');
+// --- Dynamic Profit Update ---
+window.updateExpectedProfit = function() {
+    let amt = parseFloat(document.getElementById('trade-amount').value);
+    if(isNaN(amt) || amt <= 0) {
+        document.getElementById('expected-profit').innerText = "₹0";
+    } else {
+        document.getElementById('expected-profit').innerText = "+₹" + window.fmtNum(amt * 0.85);
     }
+}
+window.setTradeAmount = function(val) {
+    document.getElementById('trade-amount').value = val;
+    window.updateExpectedProfit();
 }
 
 // --- Generate Stocks ---
@@ -709,7 +723,6 @@ function generateMassivePortfolio() {
   let data = []; const targetInvested = 4500000; let allComps = [];
   
   for(let i=0; i<15; i++) allComps.push({ ...LARGE_CAPS[i % LARGE_CAPS.length], cap: i>10 ? 'Global':'Large', id: `${LARGE_CAPS[i % LARGE_CAPS.length].id}_${i}` });
-  
   const prefixes = ['TATA', 'ADANI', 'BAJAJ', 'HDFC', 'ICICI', 'WIPRO', 'INFY', 'RELIANCE', 'JINDAL', 'AMBANI'];
   const suffixes = ['STEEL', 'POWER', 'GREEN', 'TECH', 'MOTORS', 'BANK', 'CAPITAL', 'INFRA', 'GLOBAL', 'CHEM'];
   
@@ -719,7 +732,7 @@ function generateMassivePortfolio() {
     
     let capType = 'Mid';
     if(i % 3 === 0) capType = 'Large';
-    if(i % 7 === 0) capType = 'Global'; // Proper categorization
+    if(i % 7 === 0) capType = 'Global';
     allComps.push({ id, name, cap: capType, basePrice });
   }
 
@@ -753,6 +766,7 @@ async function bootApp() {
   
   document.getElementById('profile-name').innerText = window.profileNameStr;
   loadProfileImageUI(); renderPortfolio(); updateBalanceUI(); renderNominees();
+  window.updateExpectedProfit();
   
   const scrollContainer = document.getElementById('holdingsList');
   scrollContainer.addEventListener('scroll', () => {
@@ -800,10 +814,9 @@ window.globalTick = function() {
     if(detailActiveStock && s.id === detailActiveStock.id) { updateDetailValues(); drawDetailChart(); }
   }
   
-  // NOTE: If trade is NOT active, globalTick updates the chart. If it IS active, the trade interval updates the chart faster.
   if(!window.isTradeActive) {
     let lastC = tradeChartHistory[tradeChartHistory.length-1];
-    window.liveTradePrice += (Math.random() - 0.45) * 5; // Natural market movement
+    window.liveTradePrice += (Math.random() - 0.45) * 5; 
     lastC.c = window.liveTradePrice; if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice; if(window.liveTradePrice < lastC.l) lastC.l = window.liveTradePrice;
     document.getElementById('trade-live-price').innerText = window.fmtNum(window.liveTradePrice); drawTradingChart();
   }
@@ -847,7 +860,6 @@ window.handleStockClick = function(id) {
   if(tapTimers['stk_' + id]) { clearTimeout(tapTimers['stk_' + id]); tapTimers['stk_' + id] = null; secretEditStock(id); } 
   else { tapTimers['stk_' + id] = setTimeout(() => { tapTimers['stk_' + id] = null; openStockDetail(id); }, 300); }
 };
-
 window.secretEditStock = function(id) {
   let s = portfolioData.find(x => x.id === id); if(!s) return;
   let nName = prompt(`Edit Name for ${s.name}`, s.name); if(nName !== null && nName.trim()!=='') s.name = nName;
@@ -883,7 +895,6 @@ window.renderPortfolioList = function(dataArr, append = false) {
     list.appendChild(row);
   });
 }
-
 window.renderPortfolio = function(append = false) {
   let toRender = portfolioData; if(activeFilter !== 'All') toRender = portfolioData.filter(s => s.cap === activeFilter);
   renderPortfolioList(toRender.slice(append ? window.renderLimit - 50 : 0, window.renderLimit), append);
@@ -934,13 +945,15 @@ window.updateNominee = function() {
 }
 window.deleteNominee = function() { if (currentEditIndex !== -1 && confirm("Permanently remove this nominee?")) { window.nominees.splice(currentEditIndex, 1); renderNominees(); closeEditNomineeModal(); saveDataToStorage(); showToast('Nominee Removed', 'success'); } }
 
-// --- Professional Certificate & Email ---
+// --- Professional Certificate & Direct Mail ---
 window.viewCertificate = function(index) { showCertificate(window.nominees[index]); }
 window.showCertificate = function(nominee) {
   document.getElementById('cert-principal-name').innerText = window.profileNameStr;
   document.getElementById('cert-name').innerText = nominee.name;
   document.getElementById('cert-share').innerText = nominee.share + '%';
   document.getElementById('cert-date').innerText = nominee.date || new Date().toLocaleDateString();
+  let barcodeStr = "*" + nominee.name.substring(0,4).toUpperCase() + Date.now().toString().slice(-4) + "*";
+  document.getElementById('cert-barcode').innerText = barcodeStr;
   document.getElementById('modal-certificate').classList.add('active');
 }
 window.closeCertificate = function() { document.getElementById('modal-certificate').classList.remove('active'); }
@@ -958,19 +971,23 @@ window.submitEmailDispatch = function() {
     let email = document.getElementById('cert-email-input').value;
     if(!email || !email.includes('@')) return showToast("Enter a valid receiver email", "error");
     
-    let overlay = document.getElementById('email-processing');
-    overlay.classList.add('active');
+    // Construct real mailto link
+    let principal = window.profileNameStr;
+    let nomName = document.getElementById('cert-name').innerText;
+    let share = document.getElementById('cert-share').innerText;
+    let date = document.getElementById('cert-date').innerText;
     
-    setTimeout(() => {
-        document.getElementById('email-status-text').innerText = "Generating PDF Attachment";
-        setTimeout(() => {
-            overlay.classList.remove('active');
-            closeEmailModal();
-            showToast(`Official Certificate sent to ${email}`, 'success');
-            document.getElementById('email-status-text').innerText = "Connecting to Server"; // reset
-            document.getElementById('cert-email-input').value = "";
-        }, 1500);
-    }, 1500);
+    let subject = encodeURIComponent(`Official Nominee Certificate - ApexTrade Pro`);
+    let bodyText = `Dear Investor,\n\nPlease find the details of the official registered Nominee Certificate below.\n\n--- CERTIFICATE DETAILS ---\nPrincipal Investor: ${principal}\nAuthorized Nominee: ${nomName}\nRegistered Share Allocation: ${share}\nDate of Registration: ${date}\n---------------------------\n\nThis is a legally binding dispatch generated by ApexTrade Pro Registry.\n\nRegards,\nApexTrade Pro Administrator\nofficialapextradepro@gmail.com`;
+    
+    let mailtoLink = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+    
+    // Open default mail client
+    window.location.href = mailtoLink;
+    
+    closeEmailModal();
+    showToast(`Opening device mail client...`, 'success');
+    document.getElementById('cert-email-input').value = "";
 }
 
 // --- VISIBLE THICK CANDLESTICK CHART ---
@@ -985,15 +1002,10 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   let rightAxisWidth = 55; let chartW = w - rightAxisWidth;
   
   let min = Math.min(...data.map(d=>d.l)); let max = Math.max(...data.map(d=>d.h));
-  
-  // Also consider the entry price line if a trade is active so it's always in view
-  if(tradeData) {
-      if(tradeData.entry < min) min = tradeData.entry;
-      if(tradeData.entry > max) max = tradeData.entry;
-  }
+  if(tradeData) { if(tradeData.entry < min) min = tradeData.entry; if(tradeData.entry > max) max = tradeData.entry; }
   
   let padding = (max - min) * 0.1;
-  if(padding === 0) padding = min * 0.01; // fix flat charts
+  if(padding === 0) padding = min * 0.01; 
   min -= padding; max += padding; let range = max - min;
   
   const getY = (val) => h - ((val - min) / range) * h;
@@ -1001,12 +1013,11 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   const gridColor = isDarkMode ? '#2a2e39' : '#e2e8f0';
   const textColor = isDarkMode ? '#787b86' : '#64748b';
   
-  // Grid
   cx.strokeStyle = gridColor; cx.lineWidth = 1; cx.font = '10px JetBrains Mono, monospace'; cx.fillStyle = textColor; cx.textAlign = 'left';
   for(let i=1; i<=5; i++) { let y = (h/6)*i; let priceL = max - (range * (i/6)); cx.beginPath(); cx.moveTo(0, y); cx.lineTo(chartW, y); cx.stroke(); cx.fillText(priceL.toFixed(2), chartW + 5, y + 4); }
   
   let stepX = chartW / Math.max(data.length, 20);
-  let candleWidth = Math.max(stepX * 0.75, 3); // Thicker candle body
+  let candleWidth = Math.max(stepX * 0.75, 3); 
   
   let maxVolHeight = h * 0.15; 
   data.forEach((d, i) => {
@@ -1023,38 +1034,29 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
       let yO = getY(d.o), yC = getY(d.c), yH = getY(d.h), yL = getY(d.l);
       let isUp = d.c >= d.o; let color = isUp ? upColor : downColor;
       
-      cx.strokeStyle = color; cx.lineWidth = 2; // Thicker wick
+      cx.strokeStyle = color; cx.lineWidth = 2;
       cx.beginPath(); cx.moveTo(x, yH); cx.lineTo(x, yL); cx.stroke();
       
-      let bodyTop = Math.min(yO, yC); let bodyHeight = Math.max(Math.abs(yO - yC), 3); // minimum 3px thick body
+      let bodyTop = Math.min(yO, yC); let bodyHeight = Math.max(Math.abs(yO - yC), 3);
       cx.fillStyle = color; cx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
   });
   
-  // --- REAL ENTRY LINE LOGIC ---
   if(tradeData) {
-      let entryY = getY(tradeData.entry);
-      let tradeColor = tradeData.dir === 'UP' ? upColor : downColor;
-      
-      cx.strokeStyle = tradeColor; 
-      cx.setLineDash([5, 5]); cx.lineWidth = 2;
+      let entryY = getY(tradeData.entry); let tradeColor = tradeData.dir === 'UP' ? upColor : downColor;
+      cx.strokeStyle = tradeColor; cx.setLineDash([5, 5]); cx.lineWidth = 2;
       cx.beginPath(); cx.moveTo(0, entryY); cx.lineTo(chartW, entryY); cx.stroke(); cx.setLineDash([]);
-      
       cx.fillStyle = tradeColor; cx.fillRect(0, entryY - 10, 45, 20);
       cx.fillStyle = '#ffffff'; cx.font = 'bold 10px JetBrains Mono, monospace'; cx.textAlign = 'center';
       cx.fillText("ENTRY", 22, entryY + 3);
   }
 
-  // Live Price Line
   if(currentPrice !== undefined) {
-      let liveY = getY(currentPrice); let liveColor = currentPrice >= data[data.length-2].c ? '#10b981' : '#ef4444'; // brighter color for live line
-      
-      cx.strokeStyle = liveColor; cx.setLineDash([4, 4]); cx.lineWidth = 2; // Thicker live line
+      let liveY = getY(currentPrice); let liveColor = currentPrice >= data[data.length-2].c ? '#10b981' : '#ef4444';
+      cx.strokeStyle = liveColor; cx.setLineDash([4, 4]); cx.lineWidth = 2; 
       cx.beginPath(); cx.moveTo(0, liveY); cx.lineTo(chartW, liveY); cx.stroke(); cx.setLineDash([]);
       
-      // Glow effect for live line
       cx.shadowColor = liveColor; cx.shadowBlur = 10;
-      cx.beginPath(); cx.moveTo(chartW-10, liveY); cx.lineTo(chartW, liveY); cx.stroke();
-      cx.shadowBlur = 0;
+      cx.beginPath(); cx.moveTo(chartW-10, liveY); cx.lineTo(chartW, liveY); cx.stroke(); cx.shadowBlur = 0;
       
       cx.fillStyle = liveColor; cx.fillRect(chartW, liveY - 12, rightAxisWidth, 24);
       cx.fillStyle = '#ffffff'; cx.font = 'bold 12px JetBrains Mono, monospace'; cx.textAlign = 'center';
@@ -1069,25 +1071,54 @@ window.closeStockDetail = function() { document.getElementById('stock-detail-vie
 window.updateDetailValues = function() {
   if(!detailActiveStock) return; let s = detailActiveStock;
   let dayChgAmt = s.ltp - s.prevClose; let dayChgPct = (dayChgAmt / s.prevClose) * 100; let isPos = dayChgAmt >= 0;
-  
   const ltpEl = document.getElementById('detail-ltp'); ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
   ltpEl.className = `text-3xl font-mono font-bold tracking-tight transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
-  
   const chgEl = document.getElementById('detail-change'); chgEl.innerHTML = `<i class="ph-bold ph-trend-${isPos?'up':'down'}"></i> ${Math.abs(dayChgAmt).toFixed(2)} (${Math.abs(dayChgPct).toFixed(2)}%)`;
   chgEl.className = `text-sm font-bold flex items-center gap-1 pb-1 transition-colors ${isPos ? 'text-app-green' : 'text-app-red'}`;
-
   let lastC = s.history[s.history.length-1]; let colorClass = isPos ? 'text-app-green' : 'text-app-red';
   document.getElementById('det-o').innerText = lastC.o.toFixed(2); document.getElementById('det-h').innerText = lastC.h.toFixed(2); document.getElementById('det-l').innerText = lastC.l.toFixed(2);
   let detC = document.getElementById('det-c'); detC.innerText = lastC.c.toFixed(2); detC.className = colorClass;
 }
 window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleChart('stock-detail-canvas', detailActiveStock.history, detailActiveStock.ltp, true, null); }
 
-// --- LIVE TRADE LOGIC (NOW 100% REAL AND ANIMATED) ---
+// --- LIVE TRADE LOGIC (100% REAL WITH AUTO-BOT) ---
+
+window.toggleAutoTrade = function() {
+    window.autoTradeEnabled = document.getElementById('auto-trade-toggle').checked;
+    if(window.autoTradeEnabled) {
+        showToast("Auto-Trade 60s Bot Activated", "success");
+        if(!window.isTradeActive) initiateAutoTrade();
+    } else {
+        showToast("Auto-Trade Bot Deactivated", "info");
+        if(window.autoTradeTimer) clearTimeout(window.autoTradeTimer);
+    }
+}
+
+window.initiateAutoTrade = function() {
+    if(!window.autoTradeEnabled) return;
+    
+    // Choose direction based on simple random trend logic
+    let dir = Math.random() > 0.5 ? 'UP' : 'DOWN';
+    
+    // Simulate clicking the button
+    executeTrade(dir);
+}
+
 window.executeTrade = function(direction) {
     if(window.isTradeActive) return;
     const amt = parseFloat(document.getElementById('trade-amount').value);
     if(isNaN(amt) || amt <= 0) return showToast('Enter valid amount', 'error');
-    if(amt > window.tradingBalance) return showToast('Insufficient balance!', 'error');
+    if(amt > window.tradingBalance) {
+        if(window.autoTradeEnabled) {
+            document.getElementById('auto-trade-toggle').checked = false;
+            window.toggleAutoTrade();
+        }
+        return showToast('Insufficient balance!', 'error');
+    }
+    
+    // Get expiry time
+    const expirySelect = document.getElementById('trade-time');
+    const totalSeconds = parseInt(expirySelect.value) || 15;
     
     window.isTradeActive = true;
     window.tradingBalance -= amt;
@@ -1096,30 +1127,27 @@ window.executeTrade = function(direction) {
     let entryPrice = window.liveTradePrice;
     window.currentTrade = { dir: direction, entry: entryPrice };
     
-    // Show sleek overlay
     const overlay = document.getElementById('trade-active-overlay');
     overlay.classList.remove('hidden');
     document.getElementById('trade-entry-price').innerText = window.fmtNum(entryPrice);
     
-    let ticks = 30; // 15 seconds * 2 ticks per second (updates every 500ms for smoothness)
-    document.getElementById('trade-countdown').innerText = '15s';
+    let ticks = totalSeconds * 2; // 2 ticks per second for smoothness
+    document.getElementById('trade-countdown').innerText = totalSeconds + 's';
     
     let timer = setInterval(() => {
         ticks--;
         document.getElementById('trade-countdown').innerText = Math.ceil(ticks/2) + 's';
         
-        // Manipulate market naturally in real-time
-        let move = (Math.random() - 0.48) * 6; // High volatility for visual excitement
+        let move = (Math.random() - 0.48) * 6; 
         window.liveTradePrice += move;
         
-        // Visually update the final candle LIVE!
         let lastC = tradeChartHistory[tradeChartHistory.length-1];
         lastC.c = window.liveTradePrice;
         if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice;
         if(window.liveTradePrice < lastC.l) lastC.l = window.liveTradePrice;
         
         document.getElementById('trade-live-price').innerText = window.fmtNum(window.liveTradePrice);
-        drawTradingChart(); // Force chart re-render every 500ms!
+        drawTradingChart(); 
         
         if(ticks <= 0) {
             clearInterval(timer);
@@ -1137,7 +1165,7 @@ window.resolveTrade = function(direction, entryPrice, amt) {
     let won = (direction === 'UP' && exitPrice > entryPrice) || (direction === 'DOWN' && exitPrice < entryPrice);
     
     if(won) {
-        let profit = amt * 1.85; // 85% payout
+        let profit = amt * 1.85; 
         window.tradingBalance += profit;
         showToast(`Trade Won! +₹${window.fmtNum(profit)}`, 'success');
     } else {
@@ -1146,9 +1174,8 @@ window.resolveTrade = function(direction, entryPrice, amt) {
     
     updateBalanceUI();
     saveDataToStorage();
-    drawTradingChart(); // Final wipe of entry line
+    drawTradingChart(); 
     
-    // Add to history
     const histList = document.getElementById('trade-history-list');
     histList.innerHTML = `
         <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
@@ -1162,6 +1189,11 @@ window.resolveTrade = function(direction, entryPrice, amt) {
             </div>
         </div>
     ` + histList.innerHTML;
+    
+    // Check if auto trade is still on
+    if(window.autoTradeEnabled) {
+        window.autoTradeTimer = setTimeout(initiateAutoTrade, 1000); // Wait 1 second before next trade
+    }
 }
 
 
