@@ -76,6 +76,9 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 /* Toggle Switch */
 .toggle-checkbox:checked { right: 0; border-color: #2563eb; }
 .toggle-checkbox:checked + .toggle-label { background-color: #2563eb; }
+
+/* PWA Auto Hide */
+@media all and (display-mode: standalone) { .hidden-if-standalone { display: none !important; } }
 </style>
 </head>
 <body class="bg-app-bg text-app-text min-h-screen flex flex-col antialiased">
@@ -115,7 +118,13 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
         <span class="text-[9px] font-bold text-app-blue tracking-widest uppercase mt-0.5">Global Market</span>
       </div>
     </div>
-    <div class="flex items-center gap-3">
+    
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- DYNAMIC APP INSTALL BUTTON -->
+      <button id="install-app-btn" class="hidden hidden-if-standalone items-center gap-1 bg-gradient-to-r from-app-blue to-indigo-600 text-white px-2.5 py-1.5 rounded-lg shadow font-extrabold text-[10px] uppercase tracking-wider animate-pulse hover:animate-none active:scale-95 transition-transform">
+          <i class="ph-bold ph-download-simple text-sm"></i> App
+      </button>
+      
       <div onclick="editTradingBalance(event)" class="flex flex-col items-end justify-center bg-app-panel border border-app-border px-3 py-1 rounded-xl cursor-pointer hover:border-app-blue transition-colors shadow-sm group">
         <span class="text-[9px] text-app-muted font-bold tracking-widest uppercase flex items-center gap-1"><i class="ph-fill ph-wallet text-app-blue"></i> Balance</span>
         <span class="text-sm font-extrabold text-app-text group-hover:text-app-green transition-colors" id="header-trading-balance">₹15,85,400.00</span>
@@ -622,7 +631,42 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 </div>
 
 <script>
-// --- Safe PWA Injection to prevent Mobile Browser Crash ---
+// --- PWA Installation Logic ---
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // Prevent standard infobar
+    deferredPrompt = e;
+    
+    // Show the custom install button
+    const installBtn = document.getElementById('install-app-btn');
+    if(installBtn) {
+        installBtn.classList.remove('hidden');
+        installBtn.classList.add('flex');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const installBtn = document.getElementById('install-app-btn');
+    if(installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.style.display = 'none'; // Hide permanently on accept
+                }
+                deferredPrompt = null;
+            }
+        });
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    const installBtn = document.getElementById('install-app-btn');
+    if(installBtn) installBtn.style.display = 'none';
+});
+
+// --- Safe PWA Service Worker Injection ---
 try {
   const manifest = {
     name: "ApexTrade Pro", short_name: "ApexTrade", display: "standalone",
@@ -632,7 +676,14 @@ try {
   const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
   const manifestURL = URL.createObjectURL(manifestBlob);
   document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
-} catch(e) { console.warn("PWA setup skipped due to security constraints on mobile."); }
+  
+  const swCode = `self.addEventListener('fetch', function(e) {});`;
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Reg Blocked:", err));
+  }
+} catch(e) { console.warn("PWA blob setup skipped."); }
 
 // --- Utils ---
 window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
@@ -673,7 +724,7 @@ window.renderLimit = 50; window.isFiltered = false;
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v25'); 
+    const dataStr = localStorage.getItem('apexTradeState_v26'); 
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
@@ -691,7 +742,7 @@ function loadDataFromStorage() {
 function saveDataToStorage() {
   try {
     const holdingsToSave = window.portfolioData.slice(0, 150).map(s => ({ id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp, prevClose: s.prevClose }));
-    localStorage.setItem('apexTradeState_v25', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
+    localStorage.setItem('apexTradeState_v26', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
   } catch (e) { console.error("Save Error", e); }
 }
 
@@ -787,7 +838,7 @@ function generatePriceHistory(start, end, points) {
   hist[hist.length-1].c = end; return hist;
 }
 
-// Safely hide Splash Screen on load to prevent White Screen issues
+// Safely hide Splash Screen on load
 window.addEventListener('load', () => {
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
@@ -1053,11 +1104,9 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   const cx = cvs.getContext('2d'); 
   const rect = cvs.parentElement.getBoundingClientRect(); if(rect.width === 0) return;
   
-  // FIX: Make sure internal resolution matches device screen for perfect sharpness
-  const dpr = window.devicePixelRatio || 1;
-  cvs.width = rect.width * dpr; 
-  cvs.height = rect.height * dpr; 
-  cx.scale(dpr, dpr);
+  // FIX: Make sure internal resolution matches CSS resolution perfectly
+  cvs.width = rect.width; 
+  cvs.height = rect.height; 
   
   let w = rect.width, h = rect.height; cx.clearRect(0,0,w,h);
   
@@ -1067,7 +1116,7 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   let min = Math.min(...data.map(d=>d.l)); let max = Math.max(...data.map(d=>d.h));
   if(tradeData) { if(tradeData.entry < min) min = tradeData.entry; if(tradeData.entry > max) max = tradeData.entry; }
   
-  // FIX: Increased padding to 35% so candles are perfectly centered vertically
+  // FIX: Vertical padding ensures candles stay in the center 
   let padding = (max - min) * 0.35;
   if(padding === 0) padding = min * 0.01; 
   min -= padding; max += padding; let range = max - min;
