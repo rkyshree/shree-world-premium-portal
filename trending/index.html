@@ -201,18 +201,23 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
             <h2 class="text-4xl font-extrabold tracking-tighter drop-shadow-sm text-app-green" id="trade-live-price">0.00</h2>
             <p class="text-xs text-app-green font-bold flex items-center gap-1 mt-1 bg-white/90 border border-gray-100 px-2 py-1 rounded w-fit shadow-sm"><i class="ph-bold ph-caret-up"></i> Live Market</p>
           </div>
+          
+          <!-- Sleek Non-Blocking Live Trade Timer -->
+          <div id="trade-active-overlay" class="hidden absolute top-4 right-16 bg-white/95 backdrop-blur border border-app-border rounded-lg p-2 z-20 shadow-xl flex items-center gap-3">
+              <div class="w-6 h-6 border-2 border-gray-200 border-t-app-blue rounded-full animate-spin"></div>
+              <div class="flex flex-col">
+                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Time Left</span>
+                  <span class="text-sm font-extrabold text-app-blue leading-none" id="trade-countdown">15s</span>
+              </div>
+              <div class="border-l border-gray-200 pl-2 ml-1 flex flex-col">
+                  <span class="text-[9px] text-app-muted font-bold uppercase tracking-wider">Entry Price</span>
+                  <span id="trade-entry-price" class="text-sm font-extrabold text-app-text leading-none">0.00</span>
+              </div>
+          </div>
+
           <!-- Canvas for real Candlesticks -->
           <canvas id="trading-chart-canvas"></canvas>
           
-          <div id="trade-active-overlay" class="hidden absolute inset-0 bg-white/85 backdrop-blur-md z-20 flex flex-col items-center justify-center border-2 border-app-blue/50 m-2 rounded-xl">
-            <div class="w-16 h-16 border-4 border-app-border border-t-app-blue rounded-full animate-spin mb-4"></div>
-            <h3 class="text-3xl font-extrabold text-app-text mb-1" id="trade-countdown">15s</h3>
-            <p class="text-sm font-bold text-app-muted tracking-widest uppercase">Executing Block Trade...</p>
-            <div class="mt-4 bg-app-panel px-4 py-2 rounded-lg border border-app-border text-center shadow-sm">
-              <p class="text-xs text-app-muted uppercase font-bold">Entry Price</p>
-              <p id="trade-entry-price" class="font-bold text-app-blue text-lg">0.00</p>
-            </div>
-          </div>
         </div>
         <div class="p-4 bg-app-panel">
           <div class="flex justify-between items-center mb-2">
@@ -633,14 +638,17 @@ window.profileImageStr = null; window.profileNameStr = "RAJAN YADAV";
 window.indices = { nifty: 22450.50, sensex: 73850.20, banknifty: 48250.00, finnifty: 21450.75 };
 window.tradeChartHistory = []; 
 let tapTimers = {}; let activeFilter = 'All'; let detailActiveStock = null;
+
+// Trade State Tracking
 window.isTradeActive = false;
+window.currentTrade = null; // { dir: 'UP'|'DOWN', entry: 0.00 }
 
 window.renderLimit = 50; window.isFiltered = false;
 
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v22');
+    const dataStr = localStorage.getItem('apexTradeState_v23'); // Updated version to clear old cache
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
@@ -658,7 +666,7 @@ function loadDataFromStorage() {
 function saveDataToStorage() {
   try {
     const holdingsToSave = window.portfolioData.slice(0, 150).map(s => ({ id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp, prevClose: s.prevClose }));
-    localStorage.setItem('apexTradeState_v22', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
+    localStorage.setItem('apexTradeState_v23', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
   } catch (e) { console.error("Save Error", e); }
 }
 
@@ -792,10 +800,11 @@ window.globalTick = function() {
     if(detailActiveStock && s.id === detailActiveStock.id) { updateDetailValues(); drawDetailChart(); }
   }
   
+  // NOTE: If trade is NOT active, globalTick updates the chart. If it IS active, the trade interval updates the chart faster.
   if(!window.isTradeActive) {
     let lastC = tradeChartHistory[tradeChartHistory.length-1];
-    window.liveTradePrice += window.liveTradePrice * (Math.random() * 0.002 + 0.0005);
-    lastC.c = window.liveTradePrice; if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice;
+    window.liveTradePrice += (Math.random() - 0.45) * 5; // Natural market movement
+    lastC.c = window.liveTradePrice; if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice; if(window.liveTradePrice < lastC.l) lastC.l = window.liveTradePrice;
     document.getElementById('trade-live-price').innerText = window.fmtNum(window.liveTradePrice); drawTradingChart();
   }
   updateTotalPortfolioHeaders();
@@ -965,7 +974,7 @@ window.submitEmailDispatch = function() {
 }
 
 // --- VISIBLE THICK CANDLESTICK CHART ---
-window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = false) {
+window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = false, tradeData = null) {
   const cvs = document.getElementById(canvasId); if(!cvs) return;
   const cx = cvs.getContext('2d'); const rect = cvs.parentElement.getBoundingClientRect(); if(rect.width === 0) return;
   
@@ -976,6 +985,13 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   let rightAxisWidth = 55; let chartW = w - rightAxisWidth;
   
   let min = Math.min(...data.map(d=>d.l)); let max = Math.max(...data.map(d=>d.h));
+  
+  // Also consider the entry price line if a trade is active so it's always in view
+  if(tradeData) {
+      if(tradeData.entry < min) min = tradeData.entry;
+      if(tradeData.entry > max) max = tradeData.entry;
+  }
+  
   let padding = (max - min) * 0.1;
   if(padding === 0) padding = min * 0.01; // fix flat charts
   min -= padding; max += padding; let range = max - min;
@@ -1014,6 +1030,21 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
       cx.fillStyle = color; cx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
   });
   
+  // --- REAL ENTRY LINE LOGIC ---
+  if(tradeData) {
+      let entryY = getY(tradeData.entry);
+      let tradeColor = tradeData.dir === 'UP' ? upColor : downColor;
+      
+      cx.strokeStyle = tradeColor; 
+      cx.setLineDash([5, 5]); cx.lineWidth = 2;
+      cx.beginPath(); cx.moveTo(0, entryY); cx.lineTo(chartW, entryY); cx.stroke(); cx.setLineDash([]);
+      
+      cx.fillStyle = tradeColor; cx.fillRect(0, entryY - 10, 45, 20);
+      cx.fillStyle = '#ffffff'; cx.font = 'bold 10px JetBrains Mono, monospace'; cx.textAlign = 'center';
+      cx.fillText("ENTRY", 22, entryY + 3);
+  }
+
+  // Live Price Line
   if(currentPrice !== undefined) {
       let liveY = getY(currentPrice); let liveColor = currentPrice >= data[data.length-2].c ? '#10b981' : '#ef4444'; // brighter color for live line
       
@@ -1031,7 +1062,8 @@ window.drawCandleChart = function(canvasId, data, currentPrice, isDarkMode = fal
   }
 }
 
-window.drawTradingChart = function() { drawCandleChart('trading-chart-canvas', window.tradeChartHistory, window.liveTradePrice, false); }
+window.drawTradingChart = function() { drawCandleChart('trading-chart-canvas', window.tradeChartHistory, window.liveTradePrice, false, window.currentTrade); }
+
 window.openStockDetail = function(id) { detailActiveStock = portfolioData.find(s => s.id === id); if(!detailActiveStock) return; document.getElementById('stock-detail-view').classList.add('active'); document.getElementById('detail-title').innerText = detailActiveStock.name; document.body.style.overflow = 'hidden'; updateDetailValues(); setTimeout(drawDetailChart, 200); }
 window.closeStockDetail = function() { document.getElementById('stock-detail-view').classList.remove('active'); document.body.style.overflow = 'auto'; detailActiveStock = null;}
 window.updateDetailValues = function() {
@@ -1048,35 +1080,90 @@ window.updateDetailValues = function() {
   document.getElementById('det-o').innerText = lastC.o.toFixed(2); document.getElementById('det-h').innerText = lastC.h.toFixed(2); document.getElementById('det-l').innerText = lastC.l.toFixed(2);
   let detC = document.getElementById('det-c'); detC.innerText = lastC.c.toFixed(2); detC.className = colorClass;
 }
-window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleChart('stock-detail-canvas', detailActiveStock.history, detailActiveStock.ltp, true); }
+window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleChart('stock-detail-canvas', detailActiveStock.history, detailActiveStock.ltp, true, null); }
 
-// --- LIVE TRADE LOGIC ---
+// --- LIVE TRADE LOGIC (NOW 100% REAL AND ANIMATED) ---
 window.executeTrade = function(direction) {
-    if(window.isTradeActive) return; const amt = parseFloat(document.getElementById('trade-amount').value);
-    if(isNaN(amt) || amt <= 0) return showToast('Enter valid amount', 'error'); if(amt > window.tradingBalance) return showToast('Insufficient balance!', 'error');
+    if(window.isTradeActive) return;
+    const amt = parseFloat(document.getElementById('trade-amount').value);
+    if(isNaN(amt) || amt <= 0) return showToast('Enter valid amount', 'error');
+    if(amt > window.tradingBalance) return showToast('Insufficient balance!', 'error');
     
-    window.isTradeActive = true; window.tradingBalance -= amt; updateBalanceUI();
-    const overlay = document.getElementById('trade-active-overlay'); overlay.classList.remove('hidden');
-    let entryPrice = window.liveTradePrice; document.getElementById('trade-entry-price').innerText = window.fmtNum(entryPrice);
+    window.isTradeActive = true;
+    window.tradingBalance -= amt;
+    updateBalanceUI();
     
-    let timeLeft = 15; document.getElementById('trade-countdown').innerText = timeLeft + 's';
+    let entryPrice = window.liveTradePrice;
+    window.currentTrade = { dir: direction, entry: entryPrice };
+    
+    // Show sleek overlay
+    const overlay = document.getElementById('trade-active-overlay');
+    overlay.classList.remove('hidden');
+    document.getElementById('trade-entry-price').innerText = window.fmtNum(entryPrice);
+    
+    let ticks = 30; // 15 seconds * 2 ticks per second (updates every 500ms for smoothness)
+    document.getElementById('trade-countdown').innerText = '15s';
+    
     let timer = setInterval(() => {
-        timeLeft--; document.getElementById('trade-countdown').innerText = timeLeft + 's';
-        window.liveTradePrice += (Math.random() - 0.45) * 5; 
-        if(timeLeft <= 0) { clearInterval(timer); resolveTrade(direction, entryPrice, amt); }
-    }, 1000);
+        ticks--;
+        document.getElementById('trade-countdown').innerText = Math.ceil(ticks/2) + 's';
+        
+        // Manipulate market naturally in real-time
+        let move = (Math.random() - 0.48) * 6; // High volatility for visual excitement
+        window.liveTradePrice += move;
+        
+        // Visually update the final candle LIVE!
+        let lastC = tradeChartHistory[tradeChartHistory.length-1];
+        lastC.c = window.liveTradePrice;
+        if(window.liveTradePrice > lastC.h) lastC.h = window.liveTradePrice;
+        if(window.liveTradePrice < lastC.l) lastC.l = window.liveTradePrice;
+        
+        document.getElementById('trade-live-price').innerText = window.fmtNum(window.liveTradePrice);
+        drawTradingChart(); // Force chart re-render every 500ms!
+        
+        if(ticks <= 0) {
+            clearInterval(timer);
+            resolveTrade(direction, entryPrice, amt);
+        }
+    }, 500);
 }
+
 window.resolveTrade = function(direction, entryPrice, amt) {
-    window.isTradeActive = false; document.getElementById('trade-active-overlay').classList.add('hidden');
-    let exitPrice = window.liveTradePrice; let won = (direction === 'UP' && exitPrice > entryPrice) || (direction === 'DOWN' && exitPrice < entryPrice);
+    window.isTradeActive = false;
+    window.currentTrade = null;
+    document.getElementById('trade-active-overlay').classList.add('hidden');
     
-    if(won) { let profit = amt * 1.85; window.tradingBalance += profit; showToast(`Trade Won! +₹${window.fmtNum(profit)}`, 'success'); } 
-    else { showToast(`Trade Lost. -₹${window.fmtNum(amt)}`, 'error'); }
-    updateBalanceUI(); saveDataToStorage();
+    let exitPrice = window.liveTradePrice;
+    let won = (direction === 'UP' && exitPrice > entryPrice) || (direction === 'DOWN' && exitPrice < entryPrice);
     
+    if(won) {
+        let profit = amt * 1.85; // 85% payout
+        window.tradingBalance += profit;
+        showToast(`Trade Won! +₹${window.fmtNum(profit)}`, 'success');
+    } else {
+        showToast(`Trade Lost. -₹${window.fmtNum(amt)}`, 'error');
+    }
+    
+    updateBalanceUI();
+    saveDataToStorage();
+    drawTradingChart(); // Final wipe of entry line
+    
+    // Add to history
     const histList = document.getElementById('trade-history-list');
-    histList.innerHTML = `<div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2"><div><span class="text-xs font-bold ${won?'text-app-green':'text-app-red'}">${direction} CALL</span><p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(entryPrice)}</p></div><div class="text-right"><span class="text-sm font-bold ${won?'text-app-green':'text-app-red'}">${won?'+':'-'}₹${window.fmtNum(won ? amt*0.85 : amt)}</span><p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(exitPrice)}</p></div></div>` + histList.innerHTML;
+    histList.innerHTML = `
+        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
+            <div>
+                <span class="text-xs font-bold ${won?'text-app-green':'text-app-red'}">${direction} CALL</span>
+                <p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(entryPrice)}</p>
+            </div>
+            <div class="text-right">
+                <span class="text-sm font-bold ${won?'text-app-green':'text-app-red'}">${won?'+':'-'}₹${window.fmtNum(won ? amt*0.85 : amt)}</span>
+                <p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(exitPrice)}</p>
+            </div>
+        </div>
+    ` + histList.innerHTML;
 }
+
 
 // --- PROFESSIONAL FUNDS FORMS ---
 window.openDepositModal = function() { document.getElementById('modal-deposit').classList.add('active'); document.getElementById('deposit-amount').value = ''; document.getElementById('deposit-utr').value = ''; }
