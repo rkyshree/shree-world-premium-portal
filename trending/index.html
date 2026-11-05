@@ -631,59 +631,74 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 </div>
 
 <script>
+// --- Safe PWA Service Worker & Manifest Injection ---
+try {
+  const manifest = {
+    name: "ApexTrade Pro", short_name: "ApexTrade",
+    display: "standalone", start_url: ".", // Required for prompt
+    background_color: "#f3f4f6", theme_color: "#ffffff",
+    icons: [
+      { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg" },
+      { src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "512x512", type: "image/jpeg" } // Required for prompt
+    ]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
+
+  const swCode = `
+    self.addEventListener('install', e => self.skipWaiting());
+    self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+    self.addEventListener('fetch', e => {}); // Fetch event is required for PWA install prompt
+  `;
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Reg Blocked:", err));
+  }
+} catch(e) { console.warn("PWA setup skipped."); }
+
 // --- PWA Installation Logic ---
 let deferredPrompt;
+const installBtn = document.getElementById('install-app-btn');
+
+// iOS check since Apple doesn't support the native prompt automatically
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if(isIOS && !window.navigator.standalone && installBtn) {
+    installBtn.classList.remove('hidden');
+    installBtn.classList.add('flex');
+    installBtn.addEventListener('click', () => {
+        showToast("Tap 'Share' icon and select 'Add to Home Screen' to install.", "info");
+    });
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // Prevent standard infobar
+    e.preventDefault();
     deferredPrompt = e;
-    
-    // Show the custom install button
-    const installBtn = document.getElementById('install-app-btn');
     if(installBtn) {
         installBtn.classList.remove('hidden');
         installBtn.classList.add('flex');
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const installBtn = document.getElementById('install-app-btn');
-    if(installBtn) {
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    installBtn.style.display = 'none'; // Hide permanently on accept
-                }
-                deferredPrompt = null;
+if(installBtn && !isIOS) {
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBtn.style.display = 'none';
             }
-        });
-    }
-});
+            deferredPrompt = null;
+        } else {
+            showToast("App is already installed or browser getting ready.", "info");
+        }
+    });
+}
 
 window.addEventListener('appinstalled', () => {
-    const installBtn = document.getElementById('install-app-btn');
     if(installBtn) installBtn.style.display = 'none';
 });
-
-// --- Safe PWA Service Worker Injection ---
-try {
-  const manifest = {
-    name: "ApexTrade Pro", short_name: "ApexTrade", display: "standalone",
-    background_color: "#f3f4f6", theme_color: "#ffffff",
-    icons: [{ src: "https://i.ibb.co/Ldc8jkq9/file-00000000e578821181ac9fe8c3ae4397.jpg", sizes: "192x192", type: "image/jpeg" }]
-  };
-  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-  const manifestURL = URL.createObjectURL(manifestBlob);
-  document.querySelector('head').insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestURL}">`);
-  
-  const swCode = `self.addEventListener('fetch', function(e) {});`;
-  const swBlob = new Blob([swCode], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(swBlob);
-  if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register(swUrl).catch(err => console.log("SW Reg Blocked:", err));
-  }
-} catch(e) { console.warn("PWA blob setup skipped."); }
 
 // --- Utils ---
 window.fmtCur = (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amt);
