@@ -44,7 +44,18 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
 @keyframes arrowMove { 0% { transform: translateX(-20px); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateX(20px); opacity: 0; } }
 @keyframes glowButton { 0% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.05); } 50% { box-shadow: 0 0 20px rgba(255, 204, 0, 0.8), 0 10px 15px -3px rgba(0, 0, 0, 0.1); transform: scale(1.1); } 100% { box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.05); } }
 .cashback-glow { animation: glowButton 2s ease-in-out infinite; }
-@keyframes float-logo { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-10px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+
+/* Splash Screen Animations */
+@keyframes float-wallet { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-15px) scale(1.05); } 100% { transform: translateY(0px) scale(1); } }
+@keyframes drop-coin { 0% { transform: translateY(-50px) scale(0.5); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(10px) scale(1); opacity: 0; } }
+.animate-wallet { animation: float-wallet 3s ease-in-out infinite; }
+.animate-coin { animation: drop-coin 1.5s ease-in-out infinite; position: absolute; z-index: 10; }
+
+/* Success Center Popup Animations */
+@keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+.animate-pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes spin-coin { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
+.animate-spin-coin { animation: spin-coin 2s linear infinite; }
 </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -53,22 +64,29 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
     window.APP_FESTIVAL_THEME = 'diwali'; 
 </script>
 
-<!-- Upgraded Professional Fast Splash Screen -->
-<div id="splashScreen" class="fixed inset-0 z-[9000] bg-white flex flex-col items-center justify-center transition-all duration-300 w-full max-w-[1200px] mx-auto overflow-hidden px-6">
-    <div class="animate-[float-logo_3s_ease-in-out_infinite]">
-        <div class="w-24 h-24 bg-gradient-to-br from-primary to-purple-600 rounded-[2rem] shadow-2xl flex items-center justify-center mb-6 mx-auto">
-            <span class="text-white font-black text-6xl drop-shadow-md">S</span>
+<!-- Upgraded Professional Fast Splash Screen for Cashback/Affiliate -->
+<div id="splashScreen" class="fixed inset-0 z-[9000] bg-gradient-to-br from-white to-gray-50 flex flex-col items-center justify-center transition-all duration-500 w-full max-w-[1200px] mx-auto overflow-hidden px-6">
+    <div class="relative mb-8 animate-wallet">
+        <!-- Coin dropping animation -->
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 text-yellow-400 text-4xl animate-coin">
+            <i class="fa-solid fa-coins drop-shadow-lg"></i>
+        </div>
+        <!-- Wallet Icon -->
+        <div class="w-28 h-28 bg-gradient-to-tr from-primary to-purple-600 rounded-[2.5rem] shadow-[0_20px_50px_rgba(244,51,151,0.3)] flex items-center justify-center relative z-20 border-4 border-white">
+            <i class="fa-solid fa-wallet text-white text-5xl drop-shadow-md"></i>
         </div>
     </div>
-    <h1 class="text-[42px] font-black tracking-tight text-gray-900 mb-10 drop-shadow-sm flex items-center justify-center">
+    <h1 class="text-[40px] font-black tracking-tight text-gray-900 mb-2 drop-shadow-sm flex items-center justify-center">
         SHRAY<span class="text-primary">NEX</span>
     </h1>
+    <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-10">Cashback & Rewards</p>
+    
     <div class="w-full max-w-[240px] flex flex-col items-center justify-center gap-3">
         <div class="w-full flex justify-between items-center text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
             <span id="splashTypewriter" class="typewriter-cursor"></span>
             <span id="splashPercentage" class="text-primary tabular-nums">0%</span>
         </div>
-        <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200">
+        <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden shadow-inner">
             <div id="splashProgressBar" class="h-full bg-gradient-to-r from-primary to-purple-500 w-0 transition-all duration-75 rounded-full relative">
                 <div class="absolute inset-0 bg-white/30 animate-[pulse_1s_ease-in-out_infinite]"></div>
             </div>
@@ -76,6 +94,19 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
     </div>
 </div>
 
+<!-- Center Animated Success Popup -->
+<div id="successCenterPopup" class="fixed inset-0 z-[9999] bg-black/60 hidden flex-col items-center justify-center px-4 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-[320px] flex flex-col items-center text-center shadow-2xl transform scale-50 transition-transform duration-300" id="successPopupContent">
+        <div id="successPopupIcon" class="w-24 h-24 rounded-full flex items-center justify-center mb-5 shadow-inner">
+            <!-- Icon injected via JS -->
+        </div>
+        <h2 id="successPopupTitle" class="text-2xl font-black text-gray-900 mb-2">Success!</h2>
+        <p id="successPopupDesc" class="text-sm font-medium text-gray-500 leading-relaxed mb-6">Action completed successfully.</p>
+        <button onclick="closeSuccessPopup()" class="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold text-sm shadow-md hover:bg-black transition-colors active:scale-95">Awesome!</button>
+    </div>
+</div>
+
+<!-- Small Toast fallback just in case -->
 <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-[300] hidden transition-all duration-300 w-[90%] max-w-[400px]"><div id="toastMsg" class="bg-gray-800 text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-3 w-full"></div></div>
 
 <!-- Affiliate Redirect Animation Screen -->
@@ -109,7 +140,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
 <div class="app-container">
 <section id="landingPage" class="page bg-white"><header class="px-5 py-4 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-30 shadow-sm border-b border-gray-100"><div class="flex items-center gap-2"><div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"><span class="text-white font-black text-lg">S</span></div><h1 class="text-xl font-black text-gray-900 tracking-tight">SHRAY<span class="text-primary">NEX</span></h1></div><div class="flex items-center gap-2"><button class="install-app-btn hidden bg-gray-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1.5 animate-pulse"><i class="fa-solid fa-download"></i> Install App</button><button onclick="openModal('authModal')" class="bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-primary/20 transition">Login</button></div></header><main class="flex-1 overflow-y-auto pb-10"><div class="px-6 py-12 bg-primary-light/40 text-center relative overflow-hidden"><div class="absolute -top-10 -right-10 w-40 h-40 bg-primary rounded-full opacity-10 blur-3xl"></div><div class="absolute bottom-0 -left-10 w-32 h-32 bg-purple-500 rounded-full opacity-10 blur-2xl"></div><div class="inline-flex items-center gap-1.5 bg-white px-3 py-1 rounded-full text-[10px] font-bold text-primary mb-4 shadow-sm border border-primary-light"><i class="fa-solid fa-bolt text-yellow-500"></i> No Investment Required</div><h2 class="text-3xl md:text-4xl font-black leading-tight text-gray-900 mb-4 relative z-10">Start Earning Cashback & <span class="text-primary">Rewards</span></h2><p class="text-sm text-gray-600 font-medium mb-8 relative z-10 leading-relaxed max-w-2xl mx-auto">Join SHRAYNEX today. Shop via our partner links, claim your order, and earn real money directly in your bank account.</p><button onclick="openModal('authModal')" class="w-full max-w-sm mx-auto bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/30 transform active:scale-95 transition relative z-10 flex justify-center items-center gap-2">Sign Up & Start Earning <i class="fa-solid fa-arrow-right"></i></button></div><div class="p-6 bg-white border-t border-gray-100 max-w-4xl mx-auto"><h3 class="text-xl font-black text-gray-900 mb-6 text-center">How it Works?</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 text-lg"><i class="fa-solid fa-store"></i></div><h4 class="font-bold text-gray-900 text-sm mb-1">Choose Brand</h4><p class="text-[10px] text-gray-500 leading-relaxed">Select from top brands like Amazon, Flipkart & Myntra.</p></div><div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 text-lg"><i class="fa-solid fa-cart-shopping"></i></div><h4 class="font-bold text-gray-900 text-sm mb-1">Shop Normally</h4><p class="text-[10px] text-gray-500 leading-relaxed">Complete your purchase directly on the brand's website.</p></div><div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 text-lg"><i class="fa-solid fa-receipt"></i></div><h4 class="font-bold text-gray-900 text-sm mb-1">Track Order</h4><p class="text-[10px] text-gray-500 leading-relaxed">Enter your Order ID in our app to track your purchase.</p></div><div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center"><div class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-3 text-lg"><i class="fa-solid fa-money-bill-wave"></i></div><h4 class="font-bold text-gray-900 text-sm mb-1">Get Paid</h4><p class="text-[10px] text-gray-500 leading-relaxed">Cashback added to wallet upon successful delivery!</p></div></div></div><footer class="bg-gray-900 text-white p-6 rounded-t-3xl mt-4"><div class="max-w-4xl mx-auto"><h2 class="font-black text-2xl mb-2">SHRAY<span class="text-primary">NEX</span></h2><p class="text-xs text-gray-400 mb-6 leading-relaxed">India's premium cashback and affiliate platform. Empowering thousands to save and earn.</p><div class="border-t border-gray-800 pt-5 mb-6"><h4 class="font-bold text-sm text-gray-200 mb-3 uppercase tracking-wider">Contact & Support</h4><div class="space-y-3"><p class="text-sm text-gray-300 flex items-center gap-3"><i class="fa-solid fa-phone text-primary"></i> <b>9451239239</b></p><p class="text-sm text-gray-300 flex items-center gap-3"><i class="fa-solid fa-envelope text-primary"></i> <b>shraynexofficial@gmail.com</b></p><p class="text-sm text-gray-300 flex items-center gap-3"><i class="fa-brands fa-whatsapp text-[#25D366] text-lg"></i> <a href="https://wa.me/919451239239" class="underline underline-offset-2">Message on WhatsApp</a></p></div></div><div class="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-gray-800"><div class="flex flex-col items-start gap-2"><button onclick="openPolicy('about')" class="text-xs text-gray-400 font-medium hover:text-white transition">About Us</button><button onclick="openPolicy('terms')" class="text-xs text-gray-400 font-medium hover:text-white transition">Terms & Conditions</button></div><div class="flex flex-col items-start gap-2"><button onclick="openPolicy('privacy')" class="text-xs text-gray-400 font-medium hover:text-white transition">Privacy Policy</button></div></div><div class="text-center pt-4 border-t border-gray-800"><p class="text-[10px] text-gray-500 mt-2">© 2026 SHRAYNEX. All Rights Reserved.</p></div></div></footer></main></section>  
 
-<section id="appPage" class="page active bg-meesho-gray"><header class="px-4 py-3 flex items-center justify-between sticky top-0 bg-white z-20 shadow-sm"><div class="flex items-center gap-3 cursor-pointer select-none" ondblclick="openAdminLogin()" title="Double click for Admin Access"><div id="userAvatarInitials" class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">G</div><div><h2 id="headerUserName" class="font-bold text-gray-900 text-sm">Guest</h2><p class="text-[10px] font-medium text-gray-500">Welcome to SHRAYNEX!</p></div></div><div class="flex items-center gap-2">
+<section id="appPage" class="page active bg-meesho-gray"><header class="px-4 py-3 flex items-center justify-between sticky top-0 bg-white z-20 shadow-sm"><div class="flex items-center gap-3 cursor-pointer select-none" ondblclick="openAdminLogin()" title="Double click for Admin Access"><div id="userAvatarInitials" class="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-purple-600 text-white flex items-center justify-center font-black text-lg shadow-sm border border-white">G</div><div><h2 id="headerUserName" class="font-bold text-gray-900 text-sm">Guest</h2><p class="text-[10px] font-medium text-gray-500">Welcome to SHRAYNEX!</p></div></div><div class="flex items-center gap-2">
 <button class="install-app-btn hidden bg-white border border-gray-200 text-gray-700 px-3 py-1.5 rounded-md text-xs font-bold shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-download"></i> App</button>
 <button id="headerLoginBtn" onclick="openModal('authModal')" class="bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 rounded-md text-xs font-bold shadow-sm">Login</button>
 <div id="headerLogoBadge" class="hidden items-center gap-1 bg-white border border-gray-200 px-2 py-1.5 rounded-lg shadow-sm select-none">
@@ -164,44 +195,62 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
         <div class="flex justify-between items-start relative z-10">
             <div class="flex items-center gap-4 w-full">
                 <div class="relative shrink-0">
-                    <div id="profileAvatarBig" class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white flex items-center justify-center font-black text-2xl shadow-lg border-2 border-white">G</div>
-                    <button onclick="openModal('editProfileModal')" class="absolute bottom-0 -right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center text-gray-600 shadow-md border border-gray-200 hover:text-primary transition-colors"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                    <!-- Professional Emoji/PNG style Avatar -->
+                    <div id="profileAvatarBig" class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-primary flex items-center justify-center text-white shadow-xl border-4 border-white overflow-hidden relative">
+                        <i class="fa-solid fa-user-astronaut text-4xl mt-2 drop-shadow-md"></i>
+                    </div>
+                    <button onclick="openModal('editProfileModal')" class="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-700 shadow-lg border border-gray-200 hover:text-primary transition-colors"><i class="fa-solid fa-pen text-xs"></i></button>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <h3 id="profileName" class="font-black text-xl text-gray-900 tracking-tight line-clamp-1">Guest User</h3>
-                    <p id="profilePhone" class="text-gray-500 text-[11px] font-medium mt-0.5">-</p>
-                    <span id="profileStatusBadge" class="hidden mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wide">Pending</span>
+                <div class="flex-1 min-w-0 pt-1">
+                    <h3 id="profileName" class="font-black text-2xl text-gray-900 tracking-tight line-clamp-1">Guest User</h3>
+                    <p id="profilePhone" class="text-gray-500 text-xs font-semibold mt-1">-</p>
+                    <p id="profileEmail" class="text-gray-400 text-[10px] font-medium mt-0.5 truncate">-</p>
+                    <span id="profileStatusBadge" class="hidden mt-2 px-2.5 py-1 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 uppercase tracking-widest border border-amber-200 shadow-sm">Pending Approval</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Financial Cards overlapping header -->
-    <div class="px-4 -mt-14 relative z-10 max-w-lg mx-auto">
-        <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-gray-100 p-5 mb-5">
-            <div class="flex justify-between items-center mb-4">
-                <h4 class="font-black text-gray-800 text-sm flex items-center gap-2"><i class="fa-solid fa-wallet text-primary"></i> Wallet & Earnings</h4>
-                <button onclick="openPaymentHistory()" class="text-primary bg-primary-light px-3 py-1.5 rounded-full text-[10px] font-bold border border-primary/20 hover:bg-primary hover:text-white transition-colors flex items-center gap-1">History <i class="fa-solid fa-chevron-right text-[8px]"></i></button>
-            </div>
+    <!-- Financial Cards & History List overlapping header -->
+    <div class="px-4 -mt-12 relative z-10 max-w-lg mx-auto">
+        <!-- Wallet Card -->
+        <div class="bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.06)] border border-gray-100 p-5 mb-5">
+            <h4 class="font-black text-gray-800 text-sm mb-4 flex items-center gap-2"><i class="fa-solid fa-wallet text-primary"></i> Wallet Dashboard</h4>
             <div class="flex gap-3 mb-5">
-                <div class="flex-1 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 p-3.5 rounded-[1rem] relative overflow-hidden shadow-sm">
+                <div class="flex-1 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 p-4 rounded-[1rem] relative overflow-hidden shadow-sm">
                     <i class="fa-solid fa-money-bill-wave absolute right-1 bottom-1 text-4xl text-green-500 opacity-[0.07] -rotate-12"></i>
                     <p class="text-[9px] text-green-800 font-bold mb-1 opacity-80 uppercase tracking-widest">Available Balance</p>
-                    <p id="walletBalance" class="text-[22px] font-black text-green-600 tracking-tight">₹0</p>
+                    <p id="walletBalance" class="text-3xl font-black text-green-600 tracking-tight">₹0</p>
                 </div>
-                <div class="flex-1 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 p-3.5 rounded-[1rem] relative overflow-hidden shadow-sm">
+                <div class="flex-1 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 p-4 rounded-[1rem] relative overflow-hidden shadow-sm">
                     <i class="fa-solid fa-clock-rotate-left absolute right-1 bottom-1 text-4xl text-amber-500 opacity-[0.07]"></i>
                     <p class="text-[9px] text-amber-800 font-bold mb-1 opacity-80 uppercase tracking-widest">Pending Earning</p>
-                    <p id="pendingEarnings" class="text-[18px] font-black text-amber-600 mt-1 tracking-tight">₹0</p>
+                    <p id="pendingEarnings" class="text-2xl font-black text-amber-600 mt-1 tracking-tight">₹0</p>
                 </div>
             </div>
-            <button onclick="openWithdrawModal()" class="w-full bg-gray-900 hover:bg-black text-white py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-gray-900/20 transition-all flex justify-center items-center gap-2 active:scale-[0.98]"><i class="fa-solid fa-building-columns text-gray-300"></i> Withdraw to Bank</button>
+            <button onclick="openWithdrawModal()" class="w-full bg-gray-900 hover:bg-black text-white py-4 rounded-xl text-sm font-black shadow-lg shadow-gray-900/20 transition-all flex justify-center items-center gap-2 active:scale-[0.98]"><i class="fa-solid fa-building-columns text-gray-300"></i> Withdraw to Bank / UPI</button>
         </div>
 
-        <!-- Settings List -->
+        <!-- Integrated History Section directly below Withdrawal -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+            <h4 class="font-black text-gray-800 text-sm mb-4 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-blue-500"></i> Transaction History</h4>
+            <div class="flex bg-gray-100 p-1 rounded-xl mb-4">
+                <button id="btnPhEarnings" onclick="switchPHTab('earnings')" class="flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-xs text-gray-900 transition-all">Earnings</button>
+                <button id="btnPhPayouts" onclick="switchPHTab('payouts')" class="flex-1 py-2 rounded-lg text-gray-500 font-bold text-xs hover:text-gray-800 transition-all">Withdrawals</button>
+            </div>
+            
+            <div id="phEarningsTab" class="space-y-3 max-h-[300px] overflow-y-auto pr-1 hide-scrollbar">
+                <div id="phEarningsList" class="space-y-3"></div>
+            </div>
+            <div id="phPayoutsTab" class="hidden space-y-3 max-h-[300px] overflow-y-auto pr-1 hide-scrollbar">
+                <div id="phPayoutsList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- Settings List at the very bottom -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
             <button onclick="window.open('https://wa.me/919451239239', '_blank')" class="w-full text-left p-4 border-b border-gray-50 flex justify-between items-center hover:bg-gray-50 transition-colors">
-                <div class="flex items-center gap-3.5">
+                <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-[#25D366] shadow-inner border border-green-100"><i class="fa-brands fa-whatsapp text-lg"></i></div>
                     <div>
                         <span class="font-bold text-sm text-gray-800 block">Help & Support</span>
@@ -211,7 +260,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
                 <div class="w-7 h-7 rounded-full bg-gray-50 flex items-center justify-center"><i class="fa-solid fa-chevron-right text-gray-400 text-[10px]"></i></div>
             </button>
             <button onclick="handleLogout()" class="w-full text-left p-4 flex justify-between items-center hover:bg-gray-50 transition-colors group">
-                <div class="flex items-center gap-3.5">
+                <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-500 shadow-inner border border-red-100 group-hover:bg-red-100 transition-colors"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
                     <span class="font-bold text-sm text-red-500">Logout</span>
                 </div>
@@ -219,7 +268,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
         </div>
         
         <div class="text-center mt-6 mb-2">
-            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest border border-gray-200 px-3 py-1 rounded-full bg-white shadow-sm">SHRAYNEX v2.1</span>
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest border border-gray-200 px-3 py-1 rounded-full bg-white shadow-sm">SHRAYNEX v2.2 Premium</span>
         </div>
     </div>
 </div>
@@ -227,24 +276,66 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
 
 <div id="authModal" class="bottom-sheet no-easy-close z-[900]"><div class="bottom-sheet-content"><div class="drag-handle"></div><div class="px-5 pb-3 pt-1 border-b border-gray-100 flex justify-between items-center"><div><h3 class="text-lg font-bold text-gray-900">Welcome to SHRAYNEX</h3></div><button onclick="closeModal('authModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-5 overflow-y-auto"><div class="flex bg-gray-100 p-1 rounded-lg mb-5"><button id="toggleLoginBtn" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-md bg-white shadow-sm font-bold text-sm text-gray-900">Login</button><button id="toggleSignupBtn" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-md text-gray-500 font-bold text-sm">Sign Up</button></div><button onclick="loginWithGoogle()" id="googleAuthBtn" class="w-full border border-gray-300 bg-white py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-3 mb-5 hover:bg-gray-50 text-gray-700 shadow-sm"><img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google</button><div class="flex items-center gap-4 mb-5"><div class="h-px bg-gray-200 flex-1"></div><span class="text-[10px] font-semibold text-gray-400 uppercase">Or Email</span><div class="h-px bg-gray-200 flex-1"></div></div><form id="authForm" onsubmit="handleEmailAuth(event)" class="space-y-3"><div id="signupFieldsGroup" class="hidden space-y-3"><input type="text" id="authName" placeholder="Full Name" class="input-field"><input type="tel" id="authPhone" placeholder="Mobile Number" maxlength="10" pattern="[0-9]{10}" class="input-field"></div><input type="email" id="authEmail" placeholder="Email Address" required class="input-field"><input type="password" id="authPassword" placeholder="Password (min 6 chars)" minlength="6" required class="input-field"><button type="submit" id="submitAuthBtn" class="w-full bg-primary text-white py-3.5 rounded-lg font-bold text-sm shadow-md mt-2">Login</button></form><p class="text-center text-[10px] text-gray-400 mt-5 pb-2">By continuing, you agree to our Terms & Policy.</p></div></div></div>
 
-<div id="paymentHistoryModal" class="bottom-sheet"><div class="bottom-sheet-content h-[85vh] bg-gray-50"><div class="px-4 py-3 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100"><h3 class="font-bold text-gray-900">Earnings & History</h3><button onclick="closeModal('paymentHistoryModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="flex border-b border-gray-200 bg-white sticky top-[49px] z-10"><button id="btnPhEarnings" onclick="switchPHTab('earnings')" class="flex-1 py-3 text-sm font-bold border-b-2 border-primary text-primary">Earnings</button><button id="btnPhPayouts" onclick="switchPHTab('payouts')" class="flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500">Withdrawals</button></div><div class="p-3 overflow-y-auto pb-8"><div id="phEarningsTab" class="space-y-2"><div id="phEarningsList"></div></div><div id="phPayoutsTab" class="hidden space-y-2"><div id="phPayoutsList"></div></div></div></div></div>
-<div id="editProfileModal" class="bottom-sheet"><div class="bottom-sheet-content"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Edit Details</h3><button onclick="closeModal('editProfileModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-4 overflow-y-auto"><form id="editProfileForm" onsubmit="submitEditProfile(event)" class="space-y-4"><div><label class="block text-xs font-medium text-gray-600 mb-1">Full Name</label><input type="text" id="epName" required class="input-field"></div><div><label class="block text-xs font-medium text-gray-600 mb-1">Mobile Number</label><input type="tel" id="epPhone" required pattern="[0-9]{10}" maxlength="10" class="input-field"></div><button type="submit" id="submitEditProfileBtn" class="w-full bg-gray-900 text-white py-3 rounded-lg font-bold text-sm shadow-md mt-4">Save Changes</button></form></div></div></div>
-<div id="withdrawModal" class="bottom-sheet"><div class="bottom-sheet-content"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Withdraw Money</h3><button onclick="closeModal('withdrawModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-4 overflow-y-auto"><div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-4 flex justify-between items-center"><span class="text-sm font-semibold text-gray-700">Available Balance</span><span class="text-xl font-bold text-green-600" id="withdrawAvailable">₹0</span></div><form onsubmit="submitWithdrawal(event)" class="space-y-4"><div><label class="block text-xs font-medium text-gray-600 mb-1">Amount (₹)</label><input type="number" id="withdrawAmount" min="100" required class="input-field font-bold text-lg"></div><div><label class="block text-xs font-medium text-gray-600 mb-1">UPI ID or Bank Account details</label><textarea id="withdrawDetails" rows="2" placeholder="e.g. 9876543210@ybl" required class="input-field resize-none"></textarea></div><button type="submit" id="submitWithdrawBtn" class="w-full bg-primary text-white py-3.5 rounded-lg font-bold text-sm shadow-md mt-2">Submit Request</button>
+<div id="editProfileModal" class="bottom-sheet"><div class="bottom-sheet-content"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Edit Details</h3><button onclick="closeModal('editProfileModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-5 overflow-y-auto"><form id="editProfileForm" onsubmit="submitEditProfile(event)" class="space-y-4"><div><label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Full Name</label><input type="text" id="epName" required class="input-field font-semibold"></div><div><label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Mobile Number</label><input type="tel" id="epPhone" required pattern="[0-9]{10}" maxlength="10" class="input-field font-semibold"></div><div><label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email Address</label><input type="email" id="epEmail" class="input-field font-semibold bg-gray-50 text-gray-500" readonly title="Email cannot be changed directly"></div><button type="submit" id="submitEditProfileBtn" class="w-full bg-gray-900 text-white py-4 rounded-xl font-black text-sm shadow-lg mt-4 active:scale-95 transition-transform">Save Changes</button></form></div></div></div>
 
-<div class="bg-blue-50/50 border border-blue-200 rounded-xl p-4 mt-5 shadow-sm">
-    <h4 class="font-bold text-blue-900 text-xs mb-3 flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-blue-600"></i> Withdrawal Guidelines</h4>
-    <ul class="text-[11px] text-blue-800 font-medium leading-relaxed space-y-2.5">
-        <li class="flex items-start gap-2">
-            <i class="fa-solid fa-check text-blue-500 mt-1 text-[9px]"></i>
-            <span><b>Minimum Limit:</b> You can withdraw earnings once your wallet reaches <b>₹100</b>.</span>
-        </li>
-        <li class="flex items-start gap-2">
-            <i class="fa-solid fa-check text-blue-500 mt-1 text-[9px]"></i>
-            <span><b>Approval Process:</b> Cashback commissions are verified and paid in <b>30-90 days</b> upon successful delivery completion.</span>
-        </li>
+<div id="withdrawModal" class="bottom-sheet"><div class="bottom-sheet-content h-[90vh] bg-gray-50"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-200 bg-white"><h3 class="font-black text-xl text-gray-900">Withdraw Funds</h3><button onclick="closeModal('withdrawModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-4 overflow-y-auto pb-[100px]"><div class="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-2xl mb-5 flex justify-between items-center shadow-lg text-white"><span class="text-sm font-semibold opacity-90">Available Balance</span><span class="text-2xl font-black" id="withdrawAvailable">₹0</span></div><form onsubmit="submitWithdrawal(event)" class="space-y-5">
+    
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-2">Withdrawal Amount (₹)</label>
+        <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400 text-lg">₹</span>
+            <input type="number" id="withdrawAmount" min="300" required placeholder="Min. ₹300" class="w-full bg-gray-50 border border-gray-200 text-gray-900 font-black rounded-xl py-3.5 pl-9 pr-4 text-lg outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm">
+        </div>
+        <p class="text-[10px] text-red-500 font-bold mt-1.5 ml-1"><i class="fa-solid fa-circle-exclamation mr-0.5"></i> Minimum withdrawal is ₹300.</p>
+    </div>
+
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+        <label class="block text-[10px] font-black text-gray-500 uppercase tracking-wider mb-3">Select Payout Method</label>
+        <div class="flex gap-2 mb-4 bg-gray-100 p-1 rounded-xl">
+            <label class="flex-1 cursor-pointer relative">
+                <input type="radio" name="payoutMethod" value="bank" checked class="peer sr-only" onchange="togglePayoutFields()">
+                <div class="w-full py-2.5 rounded-lg text-center text-xs font-bold text-gray-500 peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-building-columns"></i> Bank Transfer
+                </div>
+            </label>
+            <label class="flex-1 cursor-pointer relative">
+                <input type="radio" name="payoutMethod" value="upi" class="peer sr-only" onchange="togglePayoutFields()">
+                <div class="w-full py-2.5 rounded-lg text-center text-xs font-bold text-gray-500 peer-checked:bg-white peer-checked:text-purple-600 peer-checked:shadow-sm transition-all flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-google-pay"></i> UPI App
+                </div>
+            </label>
+        </div>
+
+        <div id="bankFields" class="space-y-3">
+            <input type="text" id="wdBankName" placeholder="Bank Name (e.g. State Bank of India)" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-blue-500">
+            <input type="text" id="wdAccName" placeholder="Account Holder Name" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-blue-500">
+            <input type="text" id="wdAccNo" placeholder="Account Number" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-blue-500">
+            <input type="text" id="wdIfsc" placeholder="IFSC Code" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-blue-500 uppercase">
+        </div>
+
+        <div id="upiFields" class="hidden space-y-3">
+            <select id="wdUpiApp" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-purple-500 cursor-pointer appearance-none">
+                <option value="PhonePe">PhonePe</option>
+                <option value="Google Pay">Google Pay (GPay)</option>
+                <option value="Paytm">Paytm</option>
+                <option value="Other UPI">Other UPI ID</option>
+            </select>
+            <input type="text" id="wdUpiId" placeholder="UPI ID or Mobile Number" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm font-semibold outline-none focus:border-purple-500">
+        </div>
+    </div>
+
+<div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 shadow-sm">
+    <h4 class="font-black text-blue-900 text-xs mb-3 flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced text-blue-600 text-sm"></i> Share & Earn Withdrawal Rules</h4>
+    <ul class="text-[10px] text-blue-800 font-semibold leading-relaxed space-y-2">
+        <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-blue-500 mt-0.5 text-[8px]"></i> <span><b>Tier 1:</b> 1st ₹100 earned from Shares unlocks <b>10%</b> withdrawal.</span></li>
+        <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-blue-500 mt-0.5 text-[8px]"></i> <span><b>Tier 2:</b> 2nd ₹100 earned unlocks <b>30%</b> withdrawal.</span></li>
+        <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-blue-500 mt-0.5 text-[8px]"></i> <span><b>Tier 3:</b> 3rd ₹100 earned unlocks <b>50%</b> withdrawal.</span></li>
+        <li class="flex items-start gap-1.5"><i class="fa-solid fa-circle-check text-blue-500 mt-0.5 text-[8px]"></i> <span><b>Tier 4:</b> 4th ₹100 earned unlocks <b>80%</b> withdrawal.</span></li>
+        <li class="flex items-start gap-1.5"><i class="fa-solid fa-star text-amber-500 mt-0.5 text-[9px]"></i> <span><b>Tier 5:</b> 5th ₹100 earned unlocks <b>100%</b> withdrawal capability.</span></li>
     </ul>
+    <p class="text-[9px] font-bold text-red-500 mt-3 pt-2 border-t border-blue-200/50">Note: All payout requests are manually verified for authenticity. Invalid or fake claims will lead to account suspension.</p>
 </div>
-
+<button type="submit" id="submitWithdrawBtn" class="w-full bg-gray-900 text-white py-4 rounded-xl font-black text-sm shadow-xl mt-2 active:scale-95 transition-transform flex items-center justify-center gap-2">Submit Request <i class="fa-solid fa-arrow-right"></i></button>
 </form></div></div></div>
 <div id="policyModal" class="bottom-sheet"><div class="bottom-sheet-content h-[85vh]"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 id="policyTitle" class="font-bold text-gray-900">Policy</h3><button onclick="closeModal('policyModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div id="policyContent" class="p-5 text-sm text-gray-600 leading-relaxed overflow-y-auto pb-10"></div></div></div>
 <div id="iosInstallModal" class="bottom-sheet z-[9999]"><div class="bottom-sheet-content bg-white pb-8"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Install App</h3><button onclick="closeModal('iosInstallModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-6 flex flex-col items-center text-center"><img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm" loading="lazy" decoding="async" onerror="handleImageError(this)"><p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p><div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3"><p class="text-sm text-gray-700">1. Tap <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1"></i> in browser menu.</p><p class="text-sm text-gray-700">2. Select <b>Add to Home Screen</b> <i class="fa-regular fa-square-plus mx-1"></i></p><p class="text-sm text-gray-700">3. Tap <b>Add / Install</b>.</p></div></div></div></div>
@@ -255,7 +346,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
 <div id="adminBannersSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">📢 Ads & Banners Management (16:9)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Banner Image URL</label><input id="newBannerImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Link URL (Optional)</label><input id="newBannerLink" type="text" placeholder="https://wa.me/..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBanner()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Banner</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBannersTable" class="text-sm"></tbody></table></div></div></div>
 <div id="adminBrandsSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">🌟 Explore Brands Management</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Name</label><input id="newBrandTitle" type="text" placeholder="e.g. Amazon" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Logo URL</label><input id="newBrandImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Affiliate Link URL</label><input id="newBrandLink" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Top Badge Text</label><input id="newBrandBadge" type="text" placeholder="e.g. 0.5% or 50% OFF" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBrand()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Explore Brand</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-20">Logo</th><th class="pb-3 px-4">Title</th><th class="pb-3 px-4">Badge Text</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBrandsTable" class="text-sm"></tbody></table></div></div></div>
 <div id="adminUsersSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Reseller Management</h2><input id="adminUserSearch" oninput="renderAdminUsers()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search users..."></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Contact</th><th class="pb-3 px-4">Wallet</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminUsersTable" class="text-sm"></tbody></table></div></div></div>
-<div id="adminWithdrawalsSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-lg mb-6">Payout Requests</h2><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[800px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Amount</th><th class="pb-3 px-4">Payment Info</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Action</th></tr></thead><tbody id="adminWithdrawalsTable" class="text-sm"></tbody></table></div></div></div></main></div></div>
+<div id="adminWithdrawalsSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-lg mb-6">Payout Requests</h2><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[1000px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller</th><th class="pb-3 px-4">Amount</th><th class="pb-3 px-4">Payment Info</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Action</th></tr></thead><tbody id="adminWithdrawalsTable" class="text-sm"></tbody></table></div></div></div></main></div></div>
 
 <script>
 (function() {
@@ -269,8 +360,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
     let charIndex = 0;
     let loadingPct = 0;
     
-    // Exact 1.2 Second Loading Timer for fast open
-    const totalDuration = 1200; 
+    const totalDuration = 1800; 
     const pctIntervalTime = totalDuration / 100; 
     
     const pctInterval = setInterval(() => {
@@ -292,7 +382,7 @@ nav.fixed { max-width: 1200px; margin: 0 auto; }
         if (charIndex < text.length) {
             twElement.innerText = text.substring(0, charIndex + 1);
             charIndex++;
-            setTimeout(typeWriter, 15); // Faster typing to fit shorter duration
+            setTimeout(typeWriter, 15); 
         } else {
             twElement.innerText = text;
         }
@@ -335,7 +425,7 @@ window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredP
 </script>
 
 <script type="module">  
-const policies={about:{title:"About SHRAYNEX",content:`<b>Welcome to SHRAYNEX</b>\n\nSHRAYNEX is India's premium digital affiliate and cashback platform designed to help individuals start their own online business with absolutely Zero Investment.\n\n<b>Our Mission:</b>\nTo empower housewives, students, and aspiring entrepreneurs to achieve financial independence by providing a seamless platform for product discovery, sharing, and claiming cashback.\n\n<b>Contact Information:</b>\nCompany Name: SHRAYNEX\nEmail: shraynexofficial@gmail.com\nHelpline / WhatsApp: +91 9451239239\nLocation: Uttar Pradesh, India`},privacy:{title:"Privacy Policy",content:`<b>Privacy Policy – SHRAYNEX</b>\n\nYour privacy is incredibly important to us. This policy explains how we collect and manage your data.\n\n<b>Data Collection:</b>\nWe collect your Name, Phone Number, Email, and Address solely for the purpose of account creation, order tracking, and margin payments.\n\n<b>Data Usage:</b>\nYour data is used strictly for processing your claims, providing customer support, and notifying you about important updates. We do not sell your personal data to third parties.\n\nFor privacy concerns, contact: <b>shraynexofficial@gmail.com</b>`},terms:{title:"Terms of Service",content:`<b>Terms & Conditions</b>\n\nBy joining SHRAYNEX, you agree to the following terms:\n\n1. <b>Account Approval:</b> All new reseller accounts must be verified and approved by the admin before placing orders.\n2. <b>Fair Practices:</b> Resellers must not engage in fraudulent activities or place fake claims. Doing so will lead to permanent account suspension and freezing of margins.\n3. <b>Margin Payments:</b> Your profit margin will reflect as 'Available Balance' after successful verification of delivery.\n4. <b>Minimum Withdrawal:</b> The minimum withdrawal limit is ₹100.\n\nHelpline: +91 9451239239`}};
+const policies={about:{title:"About SHRAYNEX",content:`<b>Welcome to SHRAYNEX</b>\n\nSHRAYNEX is India's premium digital affiliate and cashback platform designed to help individuals start their own online business with absolutely Zero Investment.\n\n<b>Our Mission:</b>\nTo empower housewives, students, and aspiring entrepreneurs to achieve financial independence by providing a seamless platform for product discovery, sharing, and claiming cashback.\n\n<b>Contact Information:</b>\nCompany Name: SHRAYNEX\nEmail: shraynexofficial@gmail.com\nHelpline / WhatsApp: +91 9451239239\nLocation: Uttar Pradesh, India`},privacy:{title:"Privacy Policy",content:`<b>Privacy Policy – SHRAYNEX</b>\n\nYour privacy is incredibly important to us. This policy explains how we collect and manage your data.\n\n<b>Data Collection:</b>\nWe collect your Name, Phone Number, Email, and Address solely for the purpose of account creation, order tracking, and margin payments.\n\n<b>Data Usage:</b>\nYour data is used strictly for processing your claims, providing customer support, and notifying you about important updates. We do not sell your personal data to third parties.\n\nFor privacy concerns, contact: <b>shraynexofficial@gmail.com</b>`},terms:{title:"Terms of Service",content:`<b>Terms & Conditions</b>\n\nBy joining SHRAYNEX, you agree to the following terms:\n\n1. <b>Account Approval:</b> All new reseller accounts must be verified and approved by the admin before placing orders.\n2. <b>Fair Practices:</b> Resellers must not engage in fraudulent activities or place fake claims. Doing so will lead to permanent account suspension and freezing of margins.\n3. <b>Margin Payments:</b> Your profit margin will reflect as 'Available Balance' after successful verification of delivery.\n4. <b>Minimum Withdrawal:</b> The minimum withdrawal limit is ₹300.\n\nHelpline: +91 9451239239`}};
 window.openPolicy=(t)=>{const p=policies[t];if(!p)return;document.getElementById("policyTitle").innerText=p.title;document.getElementById("policyContent").innerHTML=p.content.replace(/\n/g,'<br>');openModal("policyModal");};
 window.shareAppPromo=async(e)=>{if(e)e.stopPropagation();const text="🚀 Start your zero-investment online business today!\n\nJoin SHRAYNEX and earn up to ₹25,000/month by sharing brand links and claiming cashback.\n\n👉 Join Now: https://www.rkyshree.in/Resell";if(navigator.share){try{await navigator.share({title:'SHRAYNEX | Premium Cashback App',text:text});}catch(err){}}else{window.copyGenericText(text,"Promo Link Copied!");}};
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";import{getFirestore,collection,doc,getDoc,getDocs,updateDoc,setDoc,addDoc,deleteDoc,onSnapshot,query,where,serverTimestamp,runTransaction,increment,writeBatch}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -346,6 +436,44 @@ window.siteBanners=[];
 window.exploreBrands=[{title:"Amazon",img:"https://logo.clearbit.com/amazon.in",link:"#",badge:"0.5%"},{title:"Flipkart",img:"https://logo.clearbit.com/flipkart.com",link:"#",badge:""},{title:"Myntra",img:"https://logo.clearbit.com/myntra.com",link:"#",badge:""},{title:"Domino's Pizza",img:"https://logo.clearbit.com/dominos.co.in",link:"#",badge:"16.8%"},{title:"PVR Cinemas",img:"https://logo.clearbit.com/pvrcinemas.com",link:"#",badge:"21.0%"},{title:"Blinkit",img:"https://logo.clearbit.com/blinkit.com",link:"#",badge:"1.4%"},{title:"Zepto",img:"https://logo.clearbit.com/zeptonow.com",link:"#",badge:"0.6%"},{title:"Instamart",img:"https://logo.clearbit.com/swiggy.com",link:"#",badge:""},{title:"Ajio",img:"https://logo.clearbit.com/ajio.com",link:"#",badge:""},{title:"BookMyShow",img:"https://logo.clearbit.com/in.bookmyshow.com",link:"#",badge:"5.4%"},{title:"Bigbasket",img:"https://logo.clearbit.com/bigbasket.com",link:"#",badge:"2.6%"},{title:"Meesho",img:"https://logo.clearbit.com/meesho.com",link:"#",badge:""}];
 window.adminUsers=[];window.adminOrders=[];window.adminWithdraws=[];window.isAdminMode=false;
 let currentUser=null,userData=null,userOrdersList=[],userWithdrawalsList=[],unsubUser=null,unsubOrders=null,isSignupMode=false,carouselInterval=null,brandTimerInterval=null;
+
+// Center Popup Logic
+window.showSuccessPopup = (title, desc, iconType) => {
+    const p = document.getElementById('successCenterPopup');
+    const c = document.getElementById('successPopupContent');
+    const ic = document.getElementById('successPopupIcon');
+    document.getElementById('successPopupTitle').innerText = title;
+    document.getElementById('successPopupDesc').innerText = desc;
+    
+    if(iconType === 'coin') {
+        ic.className = "w-24 h-24 rounded-full flex items-center justify-center mb-5 shadow-inner bg-yellow-100 border-4 border-yellow-300";
+        ic.innerHTML = `<i class="fa-solid fa-coins text-5xl text-yellow-500 animate-spin-coin drop-shadow-md"></i>`;
+    } else {
+        ic.className = "w-24 h-24 rounded-full flex items-center justify-center mb-5 shadow-inner bg-green-100 border-4 border-green-300";
+        ic.innerHTML = `<i class="fa-solid fa-check text-5xl text-green-500 drop-shadow-md"></i>`;
+    }
+    
+    p.classList.remove('hidden');
+    p.classList.add('flex');
+    setTimeout(() => { 
+        p.classList.remove('opacity-0'); 
+        p.classList.add('opacity-100'); 
+        c.classList.add('animate-pop-in');
+    }, 10);
+};
+
+window.closeSuccessPopup = () => {
+    const p = document.getElementById('successCenterPopup');
+    const c = document.getElementById('successPopupContent');
+    p.classList.remove('opacity-100');
+    p.classList.add('opacity-0');
+    c.classList.remove('animate-pop-in');
+    setTimeout(() => {
+        p.classList.remove('flex');
+        p.classList.add('hidden');
+    }, 300);
+};
+
 window.startLiveTimers=()=>{if(brandTimerInterval)clearInterval(brandTimerInterval);const u=()=>{let d=true,n=Date.now();document.querySelectorAll('.brand-timer').forEach(e=>{let t=parseInt(e.getAttribute('data-target')),f=t-n;if(f>0){d=false;let h=Math.floor((f/(1000*60*60))%24).toString().padStart(2,'0'),m=Math.floor((f/1000/60)%60).toString().padStart(2,'0'),s=Math.floor((f/1000)%60).toString().padStart(2,'0');e.innerHTML=`${h}<span class="text-[7px] font-bold text-red-400 ml-[1px]">h</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${m}<span class="text-[7px] font-bold text-red-400 ml-[1px]">m</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${s}<span class="text-[7px] font-bold text-red-400 ml-[1px]">s</span>`;}else if(e.innerText!=="Ready!"){e.innerText="Ready!";setTimeout(renderExploreBrandsUI,1000);}});if(d&&document.querySelectorAll('.brand-timer').length>0)clearInterval(brandTimerInterval);};u();brandTimerInterval=setInterval(u,1000);};
 window.escapeHtml=(u)=>String(u||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");window.money=(v)=>Number(v||0).toLocaleString('en-IN');
 window.showToast=(m)=>{const t=document.getElementById('toast'),tm=document.getElementById('toastMsg');tm.innerHTML=`<i class="fa-solid fa-circle-check text-[#4ade80] shrink-0 text-lg"></i><span class="flex-1">${m}</span>`;t.classList.remove('hidden');t.style.top='20px';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>{t.classList.add('hidden');},3000);};
@@ -361,8 +489,11 @@ function updateCarouselDots(x){if(window.siteBanners.length>1){for(let i=0;i<win
 window.updateCarouselDotsOnScroll=()=>{const c=document.getElementById('mainCarousel');if(c)updateCarouselDots(Math.round(c.scrollLeft/c.offsetWidth));};
 function renderExploreBrandsUI(){const g=document.getElementById("dynamicBrandsGrid"),c=document.getElementById("exploreBrandsView"),cs=document.getElementById("claimBrandSelect");if(cs&&window.exploreBrands){cs.innerHTML=window.exploreBrands.map(b=>`<option value="${escapeHtml(b.title)}">${escapeHtml(b.title)}</option>`).join('')+`<option value="Other">Other Brand</option>`;}if(!window.exploreBrands||!window.exploreBrands.length){c.classList.add('hidden');return;}c.classList.remove('hidden');const n=Date.now();let sd=JSON.parse(localStorage.getItem('shraynex_share_timer')||'{}');let cc="bg-white border border-gray-200",rh=`<div class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[7px] font-black px-2 py-[2px] rounded-full shadow-md z-20 border border-white uppercase tracking-widest whitespace-nowrap">SHRAYNEX</div>`;if(window.APP_FESTIVAL_THEME==='diwali'){cc="bg-orange-50 ring-[1.5px] ring-orange-400 shadow-[0_0_15px_rgba(251,146,60,0.8)]";}else if(window.APP_FESTIVAL_THEME==='chhath'){cc="bg-yellow-50 ring-[1.5px] ring-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.8)]";}else if(window.APP_FESTIVAL_THEME==='navratri'){cc="bg-red-50 ring-[1.5px] ring-red-400 shadow-[0_0_15px_rgba(248,113,113,0.8)]";}else if(window.APP_FESTIVAL_THEME==='janmashtami'){cc="bg-blue-50 ring-[1.5px] ring-blue-400 shadow-[0_0_15px_rgba(96,165,250,0.8)]";}else if(window.APP_FESTIVAL_THEME==='newyear'){cc="bg-purple-50 ring-[1.5px] ring-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.8)]";}g.innerHTML=window.exploreBrands.map((b,i)=>{let btn='',t=sd[b.title]||0,tt=t+86400000,tl=tt-n;if(tl>0)btn=`<button disabled class="text-red-600 bg-red-50 py-1.5 px-1 rounded w-full flex items-center justify-center gap-1 cursor-not-allowed border border-red-200 mt-2 shadow-sm"><i class="fa-regular fa-clock fa-spin-pulse text-[10px]"></i><span class="brand-timer text-[10px] font-bold font-mono tracking-tight" data-target="${tt}">--:--:--</span></button>`;else btn=`<button onclick="shareExploreBrand('${i}')" class="text-green-700 bg-green-100 px-1 py-1.5 rounded w-full hover:bg-green-200 transition shadow-sm border border-green-300 flex items-center justify-center gap-1 mt-2"><i class="fa-solid fa-share-nodes text-[10px]"></i> <span class="text-[10px] font-bold">Share & Earn</span></button>`;return `<div class="flex flex-col items-center gap-1.5 relative hover:scale-105 transition-transform duration-200 mt-2"><a href="javascript:void(0)" onclick="triggerBrandRedirect('${escapeHtml(b.title)}', '${escapeHtml(b.img)}', '${escapeHtml(b.link)}')" class="relative w-full aspect-square rounded-[18px] flex items-center justify-center p-1.5 overflow-visible ${cc}"><div class="w-full h-full rounded-[14px] overflow-hidden flex items-center justify-center bg-white"><img src="${escapeHtml(b.img)}" loading="lazy" decoding="async" class="w-full h-full object-contain mix-blend-multiply" onerror="handleImageError(this)"></div>${b.badge?`<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md z-10 whitespace-nowrap border border-white/50">${escapeHtml(b.badge)}</div>`:''}${rh}</a><div class="flex flex-col items-center w-full mt-2"><span class="text-[10.5px] font-bold text-gray-800 truncate w-full text-center">${escapeHtml(b.title)}</span>${btn}</div></div>`;}).join('');startLiveTimers();}
 window.shareExploreBrand=async(i)=>{const b=window.exploreBrands[i];if(!b)return;const t=`🛍️ Shop from ${b.title} and get amazing discounts!\n👉 Click here: ${b.link}\n\n*Via SHRAYNEX App*`;try{if(navigator.share){await navigator.share({title:b.title,text:t});processShareCommission(b.title);}else{window.copyGenericText(t,"Link Copied!");processShareCommission(b.title);}}catch(e){}};
-window.processShareCommission=async(t)=>{if(!currentUser||!userData||userData.status!=='approved')return;const n=Date.now();let s=JSON.parse(localStorage.getItem('shraynex_share_timer')||'{}');if(n-(s[t]||0)<86400000)return showToast("Please wait 24 hours to share this brand again!");s[t]=n;localStorage.setItem('shraynex_share_timer',JSON.stringify(s));renderExploreBrandsUI();const id="SH"+Math.floor(100000+Math.random()*900000);try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:"Share Bonus: "+t,profit:1,status:"pending",resellerId:currentUser.uid,resellerName:userData.name||"",createdAt:serverTimestamp(),isShareBonus:true,paidToWallet:false});showToast("₹1 Share Bonus Processing!");}catch(e){}};
-window.submitBrandClaimFirebase=async()=>{if(!currentUser){openModal('authModal');return showToast("Please login first.");}if(userData?.status!=='approved')return showToast("Profile approval required for Claims.");const b=document.getElementById('claimBrandSelect').value,oid=document.getElementById('claimBrandOrderId').value.trim();if(!oid)return showToast("Please enter the Order ID.");const id="BC"+Math.floor(100000+Math.random()*900000),btn=document.getElementById('claimSubmitBtn'),o=btn.innerText;btn.innerText='Submitting...';btn.disabled=true;try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:`Claim: ${b} (Order: ${oid})`,profit:0,status:"pending",resellerId:currentUser.uid,resellerName:userData?.name||"",createdAt:serverTimestamp(),isBrandClaim:true,brandName:b,brandOrderId:oid,paidToWallet:false});showToast("Claim Submitted Successfully!");document.getElementById('claimBrandOrderId').value='';}catch(e){showToast("Failed to submit claim.");}finally{btn.innerText=o;btn.disabled=false;}};
+
+window.processShareCommission=async(t)=>{if(!currentUser||!userData||userData.status!=='approved')return;const n=Date.now();let s=JSON.parse(localStorage.getItem('shraynex_share_timer')||'{}');if(n-(s[t]||0)<86400000)return showToast("Please wait 24 hours to share this brand again!");s[t]=n;localStorage.setItem('shraynex_share_timer',JSON.stringify(s));renderExploreBrandsUI();const id="SH"+Math.floor(100000+Math.random()*900000);try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:"Share Bonus: "+t,profit:1,status:"pending",resellerId:currentUser.uid,resellerName:userData.name||"",createdAt:serverTimestamp(),isShareBonus:true,paidToWallet:false}); window.showSuccessPopup("₹1 Earned!", `You earned ₹1 by sharing ${t}. It is added to your pending wallet.`, "coin");}catch(e){}};
+
+window.submitBrandClaimFirebase=async()=>{if(!currentUser){openModal('authModal');return showToast("Please login first.");}if(userData?.status!=='approved')return showToast("Profile approval required for Claims.");const b=document.getElementById('claimBrandSelect').value,oid=document.getElementById('claimBrandOrderId').value.trim();if(!oid)return showToast("Please enter the Order ID.");const id="BC"+Math.floor(100000+Math.random()*900000),btn=document.getElementById('claimSubmitBtn'),o=btn.innerText;btn.innerText='Submitting...';btn.disabled=true;try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:`Claim: ${b} (Order: ${oid})`,profit:0,status:"pending",resellerId:currentUser.uid,resellerName:userData?.name||"",createdAt:serverTimestamp(),isBrandClaim:true,brandName:b,brandOrderId:oid,paidToWallet:false}); document.getElementById('claimBrandOrderId').value=''; window.showSuccessPopup("Claim Submitted!", "Your claim will be verified soon and commission will be added.", "check");}catch(e){showToast("Failed to submit claim.");}finally{btn.innerText=o;btn.disabled=false;}};
+
 window.handleHomeNavClick=()=>{switchTab('Feed');};
 window.toggleAuthMode=(m)=>{isSignupMode=m==='signup';document.getElementById('signupFieldsGroup').classList.toggle('hidden',!isSignupMode);document.getElementById('submitAuthBtn').innerText=isSignupMode?'Sign Up':'Login';document.getElementById('authName').required=isSignupMode;document.getElementById('authPhone').required=isSignupMode;document.getElementById('toggleSignupBtn').className=isSignupMode?"flex-1 py-2 rounded-md bg-white shadow-sm font-bold text-sm text-gray-900":"flex-1 py-2 rounded-md text-gray-500 font-bold text-sm";document.getElementById('toggleLoginBtn').className=isSignupMode?"flex-1 py-2 rounded-md text-gray-500 font-bold text-sm":"flex-1 py-2 rounded-md bg-white shadow-sm font-bold text-sm text-gray-900";};
 window.loginWithGoogle=async()=>{const b=document.getElementById('googleAuthBtn');b.innerHTML='<div class="spinner"></div>';try{const r=await signInWithPopup(auth,googleProvider);if(r.user)await initUserDoc(r.user,{loginType:"google"});closeModal('authModal');showToast("Login Successful!");}catch(e){showToast(e.message);}finally{b.innerHTML='<img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google';}};
@@ -380,7 +511,7 @@ window.checkAndRoute = () => {
         const s = document.getElementById('splashScreen');
         if(s && s.style.display !== 'none') {
             s.classList.add('opacity-0');
-            setTimeout(() => { s.style.display = 'none'; }, 300); 
+            setTimeout(() => { s.style.display = 'none'; }, 500); 
         }
         if(!window.isAdminMode) {
             document.getElementById('landingPage').classList.remove('active');
@@ -391,7 +522,8 @@ window.checkAndRoute = () => {
 };
 
 window.switchTab=(t)=>{if((t==='Claims'||t==='Profile')&&!currentUser){openModal('authModal');return showToast("Please login to access this.");}['Feed','Claims','Profile'].forEach(x=>{document.getElementById(`tab${x}`).classList.add('hidden');document.getElementById(`navBtn${x}`).classList.replace('text-primary','text-gray-400');document.getElementById(`navBtn${x}`).classList.replace('text-gray-800','text-gray-400');});document.getElementById(`tab${t}`).classList.remove('hidden');document.getElementById(`navBtn${t}`).classList.replace('text-gray-400','text-primary');};
-function updateProfileUI(){const b=document.getElementById('headerLoginBtn');const sh=document.getElementById('headerShareApp');const bd=document.getElementById('headerLogoBadge');if(!currentUser){['headerUserName','profileName'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText=id==='profileName'?"Guest User":"Guest";});['userAvatarInitials','profileAvatarBig'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText="G";});if(document.getElementById('profilePhone'))document.getElementById('profilePhone').innerText="-";if(document.getElementById('walletBalance'))document.getElementById('walletBalance').innerText="₹0";if(document.getElementById('pendingEarnings'))document.getElementById('pendingEarnings').innerText="₹0";const p=document.getElementById('profileHasAddress');if(p){p.innerText="Add Delivery Address";p.className="text-[10px] font-bold text-red-500 mt-0.5 block";}if(document.getElementById('profileStatusBadge'))document.getElementById('profileStatusBadge').className="hidden";if(document.getElementById('approvalBanner'))document.getElementById('approvalBanner').classList.add('hidden');if(b)b.classList.remove('hidden');if(sh){sh.classList.add('hidden');sh.classList.remove('flex');}if(bd){bd.classList.add('hidden');bd.classList.remove('flex');}return;}if(b)b.classList.add('hidden');if(sh){sh.classList.remove('hidden');sh.classList.add('flex');}if(bd){bd.classList.remove('hidden');bd.classList.add('flex');}if(!userData)return;const n=userData.name||"Reseller";document.getElementById('headerUserName').innerText=n.split(' ')[0];document.getElementById('profileName').innerText=n;document.getElementById('userAvatarInitials').innerText=n.charAt(0).toUpperCase();document.getElementById('profileAvatarBig').innerText=n.charAt(0).toUpperCase();document.getElementById('profilePhone').innerText=userData.phone||userData.email||"-";document.getElementById('walletBalance').innerText=`₹${money(userData.walletBalance)}`;const h=userData.address&&userData.address.trim()!=="";const pa=document.getElementById('profileHasAddress');pa.innerText=h?"Saved Address":"Add Delivery Address";pa.className=h?"text-[10px] font-bold text-green-500 mt-0.5 block":"text-[10px] font-bold text-red-500 mt-0.5 block";const s=document.getElementById('profileStatusBadge');s.innerText=userData.status;if(userData.status==='approved'){s.className="hidden";document.getElementById('approvalBanner').classList.add('hidden');}else{s.className="inline-block mt-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700 tracking-wide";document.getElementById('approvalBanner').classList.remove('hidden');}}
+
+function updateProfileUI(){const b=document.getElementById('headerLoginBtn');const sh=document.getElementById('headerShareApp');const bd=document.getElementById('headerLogoBadge');if(!currentUser){['headerUserName','profileName'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText=id==='profileName'?"Guest User":"Guest";});if(document.getElementById('profilePhone'))document.getElementById('profilePhone').innerText="-";if(document.getElementById('profileEmail'))document.getElementById('profileEmail').innerText="-";if(document.getElementById('walletBalance'))document.getElementById('walletBalance').innerText="₹0";if(document.getElementById('pendingEarnings'))document.getElementById('pendingEarnings').innerText="₹0";if(document.getElementById('profileStatusBadge'))document.getElementById('profileStatusBadge').className="hidden";if(document.getElementById('approvalBanner'))document.getElementById('approvalBanner').classList.add('hidden');if(b)b.classList.remove('hidden');if(sh){sh.classList.add('hidden');sh.classList.remove('flex');}if(bd){bd.classList.add('hidden');bd.classList.remove('flex');}return;}if(b)b.classList.add('hidden');if(sh){sh.classList.remove('hidden');sh.classList.add('flex');}if(bd){bd.classList.remove('hidden');bd.classList.add('flex');}if(!userData)return;const n=userData.name||"Reseller";document.getElementById('headerUserName').innerText=n.split(' ')[0];document.getElementById('profileName').innerText=n;document.getElementById('epName').value=n;document.getElementById('profilePhone').innerText=userData.phone||"-";document.getElementById('epPhone').value=userData.phone||"";document.getElementById('profileEmail').innerText=userData.email||"-";document.getElementById('epEmail').value=userData.email||"";document.getElementById('walletBalance').innerText=`₹${money(userData.walletBalance)}`;const s=document.getElementById('profileStatusBadge');s.innerText=userData.status;if(userData.status==='approved'){s.className="hidden";document.getElementById('approvalBanner').classList.add('hidden');}else{s.className="inline-block mt-2 px-2.5 py-1 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 uppercase tracking-widest border border-amber-200 shadow-sm";document.getElementById('approvalBanner').classList.remove('hidden');}}
 
 function loadOrders(){
     if(!currentUser)return;
@@ -409,27 +541,83 @@ function loadOrders(){
         });
         const pe=document.getElementById('pendingEarnings');
         if(pe)pe.innerText=`₹${money(pa)}`;
+        renderPaymentHistory();
     });
 }
-function loadUserWithdrawals(){if(!currentUser)return;onSnapshot(query(collection(db,WITHDRAW_COL),where("userId","==",currentUser.uid)),(s)=>{userWithdrawalsList=[];s.forEach(d=>userWithdrawalsList.push({id:d.id,...d.data()}));userWithdrawalsList.sort((a,b)=>(b.createdAt?.toMillis()||0)-(a.createdAt?.toMillis()||0));if(document.getElementById('paymentHistoryModal').classList.contains('active'))renderPaymentHistory();});}
-window.openPaymentHistory=()=>{renderPaymentHistory();openModal('paymentHistoryModal');};
-window.switchPHTab=(t)=>{document.getElementById('phEarningsTab').classList.toggle('hidden',t!=='earnings');document.getElementById('phPayoutsTab').classList.toggle('hidden',t!=='payouts');document.getElementById('btnPhEarnings').className=t==='earnings'?'flex-1 py-3 text-sm font-bold border-b-2 border-primary text-primary':'flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500';document.getElementById('btnPhPayouts').className=t==='payouts'?'flex-1 py-3 text-sm font-bold border-b-2 border-primary text-primary':'flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500';};
+function loadUserWithdrawals(){if(!currentUser)return;onSnapshot(query(collection(db,WITHDRAW_COL),where("userId","==",currentUser.uid)),(s)=>{userWithdrawalsList=[];s.forEach(d=>userWithdrawalsList.push({id:d.id,...d.data()}));userWithdrawalsList.sort((a,b)=>(b.createdAt?.toMillis()||0)-(a.createdAt?.toMillis()||0)); renderPaymentHistory(); });}
+
+window.switchPHTab=(t)=>{document.getElementById('phEarningsTab').classList.toggle('hidden',t!=='earnings');document.getElementById('phPayoutsTab').classList.toggle('hidden',t!=='payouts');document.getElementById('btnPhEarnings').className=t==='earnings'?'flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-xs text-gray-900 transition-all':'flex-1 py-2 rounded-lg text-gray-500 font-bold text-xs hover:text-gray-800 transition-all';document.getElementById('btnPhPayouts').className=t==='payouts'?'flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-xs text-gray-900 transition-all':'flex-1 py-2 rounded-lg text-gray-500 font-bold text-xs hover:text-gray-800 transition-all';};
+
 window.renderPaymentHistory=()=>{
     const e=document.getElementById('phEarningsList');
-    e.innerHTML=userOrdersList.map(o=>{
-        let sc='text-amber-500',si='⏳',st='Pending';
-        if(o.status==='delivered'){sc='text-green-500';si='✅';st='Approved';}
-        else if(o.status==='cancelled'||o.status==='returned'){sc='text-red-500';si='❌';st='Rejected';}
-        let tl= o.isBrandClaim ? '🎯 Brand Claim' : (o.isShareBonus ? '🔗 Share Bonus' : '🎁 Reward / Cashback');
-        return `<div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mb-2"><div class="flex justify-between items-start mb-1"><div><p class="font-bold text-sm text-gray-800 line-clamp-1">${tl}</p><p class="text-[10px] text-gray-500 font-medium mt-0.5">${escapeHtml(o.productName)}</p></div><div class="text-right"><p class="font-black text-base ${sc}">₹${money(o.profit)}</p></div></div><div class="pt-2 mt-2 border-t border-gray-100 flex justify-between items-center"><p class="text-[9px] text-gray-400 font-mono">${escapeHtml(o.orderId||'')}</p><p class="text-[10px] font-bold ${sc}">${si} ${st}</p></div></div>`;
-    }).join('')||'<div class="text-center py-8 text-gray-400 text-sm">No earnings found.</div>';
+    if(e){
+        e.innerHTML=userOrdersList.map(o=>{
+            let sc='text-amber-500',si='⏳',st='Pending';
+            if(o.status==='delivered'){sc='text-green-500';si='✅';st='Approved';}
+            else if(o.status==='cancelled'||o.status==='returned'){sc='text-red-500';si='❌';st='Rejected';}
+            let tl= o.isBrandClaim ? '🎯 Brand Claim' : (o.isShareBonus ? '🔗 Share Bonus' : '🎁 Reward / Cashback');
+            return `<div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><div class="flex justify-between items-start mb-1"><div><p class="font-bold text-sm text-gray-800 line-clamp-1">${tl}</p><p class="text-[10px] text-gray-500 font-medium mt-0.5">${escapeHtml(o.productName)}</p></div><div class="text-right"><p class="font-black text-base ${sc}">₹${money(o.profit)}</p></div></div><div class="pt-2 mt-2 border-t border-gray-200 flex justify-between items-center"><p class="text-[9px] text-gray-400 font-mono">${escapeHtml(o.orderId||'')}</p><p class="text-[10px] font-bold ${sc}">${si} ${st}</p></div></div>`;
+        }).join('')||'<div class="text-center py-8 text-gray-400 text-sm font-medium">No earnings found.</div>';
+    }
     
     const p=document.getElementById('phPayoutsList');
-    p.innerHTML=userWithdrawalsList.map(w=>{let sc='text-amber-500',st='Processing';if(w.status==='approved'){sc='text-green-500';st='Paid';}else if(w.status==='rejected'){sc='text-red-500';st='Rejected';}return `<div class="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mb-2"><div class="flex justify-between items-start mb-2"><div><p class="font-medium text-sm text-gray-800">Withdrawal</p><p class="text-[10px] text-gray-500 mt-1 max-w-[180px] truncate">${escapeHtml(w.details)}</p></div><div class="text-right"><p class="font-bold text-base ${sc}">₹${money(w.amount)}</p><p class="text-[10px] font-bold ${sc} mt-0.5">${st}</p></div></div></div>`;}).join('')||'<div class="text-center py-8 text-gray-400 text-sm">No payouts found.</div>';
+    if(p){
+        p.innerHTML=userWithdrawalsList.map(w=>{let sc='text-amber-500',st='Processing';if(w.status==='approved'){sc='text-green-500';st='Paid';}else if(w.status==='rejected'){sc='text-red-500';st='Rejected';}return `<div class="bg-gray-50 p-3 rounded-xl border border-gray-100"><div class="flex justify-between items-start mb-2"><div><p class="font-bold text-sm text-gray-800">Withdrawal</p><p class="text-[10px] text-gray-500 mt-1 max-w-[180px] truncate leading-tight font-mono">${escapeHtml(w.details)}</p></div><div class="text-right"><p class="font-black text-base ${sc}">₹${money(w.amount)}</p><p class="text-[10px] font-bold ${sc} mt-0.5">${st}</p></div></div></div>`;}).join('')||'<div class="text-center py-8 text-gray-400 text-sm font-medium">No payouts found.</div>';
+    }
 };
+
 window.submitEditProfile=async(e)=>{e.preventDefault();const b=document.getElementById('submitEditProfileBtn');b.innerText="Saving...";b.disabled=true;try{await updateDoc(doc(db,USERS_COL,currentUser.uid),{name:document.getElementById('epName').value.trim(),phone:document.getElementById('epPhone').value.trim(),updatedAt:serverTimestamp()});showToast("Profile saved.");closeModal('editProfileModal');}catch(x){showToast("Error saving.");}finally{b.innerText="Save Changes";b.disabled=false;}};
-window.openWithdrawModal=()=>{document.getElementById('withdrawAvailable').innerText=`₹${money(userData?.walletBalance)}`;document.getElementById('withdrawAmount').value='';document.getElementById('withdrawDetails').value='';openModal('withdrawModal');};
-window.submitWithdrawal=async(e)=>{e.preventDefault();const a=Number(document.getElementById('withdrawAmount').value),d=document.getElementById('withdrawDetails').value.trim();if(a<100||a>(userData?.walletBalance||0))return showToast("Invalid amount.");const b=document.getElementById('submitWithdrawBtn');b.innerText="Processing...";b.disabled=true;try{await runTransaction(db,async(tx)=>{const r=doc(db,USERS_COL,currentUser.uid),s=await tx.get(r);if(s.data().walletBalance<a)throw new Error("Insufficient funds.");tx.update(r,{walletBalance:increment(-a),updatedAt:serverTimestamp()});tx.set(doc(collection(db,WITHDRAW_COL)),{userId:currentUser.uid,userName:userData.name,userEmail:userData.email,amount:a,details:d,status:'pending',createdAt:serverTimestamp()});});showToast("Withdrawal requested.");closeModal('withdrawModal');}catch(x){showToast(x.message);}finally{b.innerText="Submit Request";b.disabled=false;}};
+
+window.openWithdrawModal=()=>{
+    document.getElementById('withdrawAvailable').innerText=`₹${money(userData?.walletBalance)}`;
+    document.getElementById('withdrawAmount').value='';
+    document.getElementById('wdBankName').value='';
+    document.getElementById('wdAccName').value='';
+    document.getElementById('wdAccNo').value='';
+    document.getElementById('wdIfsc').value='';
+    document.getElementById('wdUpiId').value='';
+    document.querySelector('input[name="payoutMethod"][value="bank"]').checked = true;
+    togglePayoutFields();
+    openModal('withdrawModal');
+};
+
+window.togglePayoutFields = () => {
+    const val = document.querySelector('input[name="payoutMethod"]:checked').value;
+    document.getElementById('bankFields').classList.toggle('hidden', val !== 'bank');
+    document.getElementById('upiFields').classList.toggle('hidden', val !== 'upi');
+    
+    // Toggle required fields
+    ['wdBankName','wdAccName','wdAccNo','wdIfsc'].forEach(id => document.getElementById(id).required = (val === 'bank'));
+    document.getElementById('wdUpiId').required = (val === 'upi');
+};
+
+window.submitWithdrawal=async(e)=>{
+    e.preventDefault();
+    const a=Number(document.getElementById('withdrawAmount').value);
+    if(a<300) return showToast("Minimum withdrawal is ₹300.");
+    if(a>(userData?.walletBalance||0)) return showToast("Insufficient wallet balance.");
+    
+    let d = "";
+    const method = document.querySelector('input[name="payoutMethod"]:checked').value;
+    if(method === 'bank') {
+        d = `Bank: ${document.getElementById('wdBankName').value.trim()} | Acc Name: ${document.getElementById('wdAccName').value.trim()} | Acc No: ${document.getElementById('wdAccNo').value.trim()} | IFSC: ${document.getElementById('wdIfsc').value.trim()}`;
+    } else {
+        d = `UPI: ${document.getElementById('wdUpiApp').value} - ${document.getElementById('wdUpiId').value.trim()}`;
+    }
+
+    const b=document.getElementById('submitWithdrawBtn');b.innerHTML='Processing...';b.disabled=true;
+    try{
+        await runTransaction(db,async(tx)=>{
+            const r=doc(db,USERS_COL,currentUser.uid),s=await tx.get(r);
+            if(s.data().walletBalance<a)throw new Error("Insufficient funds.");
+            tx.update(r,{walletBalance:increment(-a),updatedAt:serverTimestamp()});
+            tx.set(doc(collection(db,WITHDRAW_COL)),{userId:currentUser.uid,userName:userData.name,userEmail:userData.email,amount:a,details:d,method:method,status:'pending',createdAt:serverTimestamp()});
+        });
+        closeModal('withdrawModal');
+        window.showSuccessPopup("Request Submitted!", `Your withdrawal of ₹${a} is pending verification.`, "check");
+    }catch(x){showToast(x.message);}finally{b.innerHTML='Submit Request <i class="fa-solid fa-arrow-right"></i>';b.disabled=false;}
+};
+
 window.openAdminLogin=()=>{document.getElementById('adminEmail').value=currentUser?.email||'';openModal('adminLoginModal');};
 window.handleAdminLogin=async(e)=>{e.preventDefault();const em=document.getElementById('adminEmail').value,pw=document.getElementById('adminPassword').value,b=document.getElementById('adminLoginBtn');b.disabled=true;b.innerText="Verifying...";try{let u=auth.currentUser;if(!u||u.email!==em){u=(await signInWithEmailAndPassword(auth,em,pw)).user;}const s=await getDoc(doc(db,USERS_COL,u.uid));if(!s.exists()||s.data().role!=='admin')throw new Error("Unauthorized Access.");window.isAdminMode=true;currentUser=u;userData=s.data();closeModal('adminLoginModal');document.getElementById('adminEmailDisplay').innerText=u.email;document.getElementById('adminPanelModal').classList.remove('hidden');document.getElementById('adminPanelModal').classList.add('flex');loadBanners();loadBrands();window.refreshAdmin();}catch(x){showToast("Access Denied.");}finally{b.disabled=false;b.innerText="Access Control Panel";}};
 window.closeAdminPanel=()=>{document.getElementById('adminPanelModal').classList.remove('flex');document.getElementById('adminPanelModal').classList.add('hidden');window.isAdminMode=false;};window.toggleAdminMenu=()=>{document.getElementById('adminSidebar').classList.toggle('hidden');};
@@ -497,6 +685,6 @@ window.editAdminUserWallet = async (id, curr) => {
 };
 window.sendAdminCashback=async(id)=>{const u=window.adminUsers.find(x=>x.id===id);if(!u)return;const a=prompt(`Enter Reward/Cashback Amount (in ₹) for ${u.name}:`);if(!a||isNaN(a)||Number(a)<=0)return;const r=prompt("Note (Description):","Gift/Reward Bonus");if(!r)return;try{const b=writeBatch(db),ur=doc(db,USERS_COL,id);b.update(ur,{walletBalance:increment(Number(a)),totalEarnings:increment(Number(a)),lifetimeEarnings:increment(Number(a)),updatedAt:serverTimestamp()});const bid="CB"+Math.floor(100000+Math.random()*900000),or=doc(db,ORDERS_COL,bid);b.set(or,{orderId:bid,productName:r,profit:Number(a),status:"delivered",paidToWallet:true,resellerId:id,resellerName:u.name||"",selectedVariant:"Cashback",createdAt:serverTimestamp(),isBonus:true});await b.commit();showToast("✅ Cashback Sent!");window.refreshAdmin();}catch(e){showToast("Error processing.");}};
 window.setAdminUserStatus=async(id,st)=>{const u=window.adminUsers.find(x=>x.id===id);if(!u)return;try{if(st==='approved'&&!u.joiningBonusPaid){const b=writeBatch(db),ur=doc(db,USERS_COL,id);b.update(ur,{status:st,walletBalance:increment(50),totalEarnings:increment(50),lifetimeEarnings:increment(50),joiningBonusPaid:true,updatedAt:serverTimestamp()});const bid="BONUS"+Math.floor(100000+Math.random()*900000),or=doc(db,ORDERS_COL,bid);b.set(or,{orderId:bid,productName:"Joining Gift 🎁",profit:50,status:"delivered",paidToWallet:true,resellerId:id,resellerName:u.name||"",selectedVariant:"Bonus",createdAt:serverTimestamp(),isBonus:true});await b.commit();showToast("Approved & ₹50 Bonus Added!");}else{await updateDoc(doc(db,USERS_COL,id),{status:st,updatedAt:serverTimestamp()});showToast("Status Updated");}window.refreshAdmin();}catch(e){}};
-window.renderAdminWithdrawals=()=>{document.getElementById('adminWithdrawalsTable').innerHTML=window.adminWithdraws.length?window.adminWithdraws.map(w=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[200px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span><br>${w.txnId?`<span class="text-[9px] text-green-500 mt-1 block">Txn: ${escapeHtml(w.txnId)}</span>`:''}</td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';};
+window.renderAdminWithdrawals=()=>{document.getElementById('adminWithdrawalsTable').innerHTML=window.adminWithdraws.length?window.adminWithdraws.map(w=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4"><div class="font-bold text-white">${escapeHtml(w.userName)}</div><div class="text-[10px] text-gray-500 tracking-wider">${escapeHtml(w.userEmail)}</div></td><td class="py-4 px-4 font-black text-[#00e676] text-lg">₹${money(w.amount)}</td><td class="py-4 px-4 text-xs text-gray-300 font-medium max-w-[250px] break-words">${escapeHtml(w.details)}</td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${w.status==='approved'?'bg-green-900/30 text-green-400':w.status==='rejected'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(w.status)}</span><br>${w.txnId?`<span class="text-[9px] text-green-500 mt-1 block">Txn: ${escapeHtml(w.txnId)}</span>`:''}</td><td class="py-4 px-4 text-right">${w.status==='pending'?`<div class="flex gap-2 justify-end"><button onclick="handleAdminWithdrawal('${w.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button><button onclick="handleAdminWithdrawal('${w.id}','rejected')" class="bg-[#222] border border-[#333] text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold">Reject</button></div>`:'-'}</td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No payout requests.</td></tr>';};
 window.handleAdminWithdrawal=async(id,a)=>{const w=window.adminWithdraws.find(x=>x.id===id);if(!w)return;let t=null;if(a==='approved'){t=prompt("Enter Transaction ID / UTR:");if(t===null)return;}try{if(a==='rejected')await updateDoc(doc(db,USERS_COL,w.userId),{walletBalance:increment(w.amount)});const u={status:a,processedAt:serverTimestamp()};if(t)u.txnId=t;await updateDoc(doc(db,WITHDRAW_COL,id),u);showToast(`Withdrawal ${a}`);window.refreshAdmin();}catch(e){}};
 </script></body></html>
