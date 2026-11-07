@@ -136,9 +136,9 @@ body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #0f17
 <!-- LIVE NIFTY / SENSEX TICKER -->
 <div class="bg-app-panel border-b border-app-border text-xs py-2 shadow-sm z-40 relative w-full overflow-hidden">
   <div class="flex justify-between md:justify-around px-2 sm:px-4 w-full">
-    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">NIFTY 50</span><span class="font-bold text-app-text sm:hidden">NIFTY</span> <span class="text-app-green font-bold" id="ticker-nifty">22,450.50</span> <i id="icon-nifty" class="ph-bold ph-caret-up text-app-green"></i></div>
-    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text">SENSEX</span> <span class="text-app-green font-bold" id="ticker-sensex">73,850.20</span> <i id="icon-sensex" class="ph-bold ph-caret-up text-app-green"></i></div>
-    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">BANKNIFTY</span><span class="font-bold text-app-text sm:hidden">BANK</span> <span class="text-app-green font-bold" id="ticker-banknifty">48,250.00</span> <i id="icon-banknifty" class="ph-bold ph-caret-up text-app-green"></i></div>
+    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">NIFTY 50</span><span class="font-bold text-app-text sm:hidden">NIFTY</span> <span class="text-app-green font-bold" id="ticker-nifty">23,014.83</span> <i id="icon-nifty" class="ph-bold ph-caret-up text-app-green"></i></div>
+    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text">SENSEX</span> <span class="text-app-green font-bold" id="ticker-sensex">74,443.93</span> <i id="icon-sensex" class="ph-bold ph-caret-up text-app-green"></i></div>
+    <div class="flex items-center gap-1 sm:gap-2"><span class="font-bold text-app-text hidden sm:inline">BANKNIFTY</span><span class="font-bold text-app-text sm:hidden">BANK</span> <span class="text-app-green font-bold" id="ticker-banknifty">49,250.00</span> <i id="icon-banknifty" class="ph-bold ph-caret-up text-app-green"></i></div>
     <div class="hidden lg:flex items-center gap-2"><span class="font-bold text-app-text">FINNIFTY</span> <span class="text-app-green font-bold" id="ticker-finnifty">21,450.75</span> <i id="icon-finnifty" class="ph-bold ph-caret-up text-app-green"></i></div>
   </div>
 </div>
@@ -725,8 +725,8 @@ window.showToast = function(message, type = 'info') {
 window.portfolioData = []; window.nominees = [];
 window.tradingBalance = 1585400; let isAppReady = false;
 window.profileImageStr = null; window.profileNameStr = "RAJAN YADAV";
-window.indices = { nifty: 22450.50, sensex: 73850.20, banknifty: 48250.00, finnifty: 21450.75 };
-window.tradeChartHistory = []; 
+window.indices = { nifty: 23014.83, sensex: 74443.93, banknifty: 49250.00, finnifty: 21850.75 };
+window.tradeChartHistory = []; window.tradeHistory = [];
 let tapTimers = {}; let activeFilter = 'All'; let detailActiveStock = null;
 
 // Trade State Tracking
@@ -734,18 +734,21 @@ window.isTradeActive = false;
 window.currentTrade = null; 
 window.autoTradeEnabled = false;
 window.autoTradeTimer = null;
+window.currentTradeOutcome = 'LOSS'; // Determines win/loss for the new trades
 window.renderLimit = 50; window.isFiltered = false;
 
 // --- Persistence ---
 function loadDataFromStorage() {
   try {
-    const dataStr = localStorage.getItem('apexTradeState_v26'); 
+    // Changed to v27 to avoid cache issues with previous version logic
+    const dataStr = localStorage.getItem('apexTradeState_v27'); 
     if (dataStr) {
       const data = JSON.parse(dataStr);
       window.tradingBalance = data.balance !== undefined ? data.balance : 1585400;
       window.profileImageStr = data.profileImage || null;
       window.profileNameStr = data.profileName || "RAJAN YADAV";
       window.nominees = data.nominees || [];
+      window.tradeHistory = data.tradeHistory || [];
       if(data.holdings && data.holdings.length > 0) {
         window.portfolioData = data.holdings.map(s => { s.history = generatePriceHistory(s.prevClose, s.ltp, 40); return s; });
         return true;
@@ -757,7 +760,7 @@ function loadDataFromStorage() {
 function saveDataToStorage() {
   try {
     const holdingsToSave = window.portfolioData.slice(0, 150).map(s => ({ id: s.id, name: s.name, cap: s.cap, qty: s.qty, avgPrice: s.avgPrice, ltp: s.ltp, prevClose: s.prevClose }));
-    localStorage.setItem('apexTradeState_v26', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave }));
+    localStorage.setItem('apexTradeState_v27', JSON.stringify({ balance: window.tradingBalance, profileName: window.profileNameStr, profileImage: window.profileImageStr, nominees: window.nominees, holdings: holdingsToSave, tradeHistory: window.tradeHistory }));
   } catch (e) { console.error("Save Error", e); }
 }
 
@@ -808,6 +811,41 @@ window.handleProfileNameClick = function() {
     }
 }
 
+// --- Generate Past Trades (>500 items, 25% wins, 75% losses) ---
+function generatePastTrades() {
+    let history = [];
+    for(let i=0; i<525; i++) {
+        let isWin = Math.random() < 0.25; // 25% Win probability
+        let dir = Math.random() < 0.5 ? 'UP' : 'DOWN';
+        let amt = [1000, 2000, 5000, 10000][Math.floor(Math.random()*4)];
+        let entry = 22000 + Math.random()*1500;
+        let exit = isWin ? (dir === 'UP' ? entry + (Math.random()*15+2) : entry - (Math.random()*15+2)) : (dir === 'UP' ? entry - (Math.random()*15+2) : entry + (Math.random()*15+2));
+        history.push({ dir, entry, exit, amt, won: isWin });
+    }
+    return history;
+}
+
+window.renderTradeHistory = function() {
+    const histList = document.getElementById('trade-history-list');
+    if(!histList) return;
+    let html = '';
+    // Show top 100 to keep the device fast
+    window.tradeHistory.slice().reverse().slice(0, 100).forEach(t => {
+        html += `
+        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
+            <div>
+                <span class="text-xs font-bold ${t.won?'text-app-green':'text-app-red'}">${t.dir} CALL</span>
+                <p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(t.entry)}</p>
+            </div>
+            <div class="text-right">
+                <span class="text-sm font-bold ${t.won?'text-app-green':'text-app-red'}">${t.won?'+':'-'}₹${window.fmtNum(t.won ? t.amt*0.85 : t.amt)}</span>
+                <p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(t.exit)}</p>
+            </div>
+        </div>`;
+    });
+    histList.innerHTML = html;
+}
+
 // --- Generate Stocks ---
 function generateMassivePortfolio() {
   const LARGE_CAPS = [
@@ -835,8 +873,12 @@ function generateMassivePortfolio() {
   allComps.forEach((comp, i) => {
     let variance = 0.5 + (Math.random()) * 0.5; let invested = (targetInvested / 90) * variance;
     let qty = i < 40 ? Math.max(1, Math.floor(invested / comp.basePrice)) : 0;
-    let avgP = comp.basePrice; let ltp = avgP * (1.1 + (Math.random() * 0.5));
-    let prevC = ltp / (1 + ((Math.random()*2 - 0.5)/100));
+    let avgP = comp.basePrice; 
+    
+    // Mix of profit and loss for realistic feeling (range: ~15% Loss to 25% Profit)
+    let ltp = avgP * (0.85 + (Math.random() * 0.40));
+    
+    let prevC = ltp / (1 + ((Math.random()*2 - 1)/100)); // Fluctuates up and down
     data.push({ id: comp.id, name: comp.name, cap: comp.cap, qty: qty, avgPrice: avgP, ltp: ltp, prevClose: prevC });
   });
   return data;
@@ -845,7 +887,7 @@ function generateMassivePortfolio() {
 function generatePriceHistory(start, end, points) {
   let hist = []; let p = start;
   for(let j=0; j<points; j++) {
-    let open = p; let close = p + (Math.random()-0.4) * (p*0.02);
+    let open = p; let close = p + (Math.random()-0.5) * (p*0.02);
     let high = Math.max(open, close) + (Math.random() * p * 0.01);
     let low = Math.min(open, close) - (Math.random() * p * 0.01);
     hist.push({ o: open, h: high, l: low, c: close }); p = close;
@@ -869,11 +911,12 @@ async function bootApp() {
       if(!loadDataFromStorage()) {
         window.portfolioData = generateMassivePortfolio();
         window.portfolioData.forEach(s => s.history = generatePriceHistory(s.prevClose, s.ltp, 40));
+        window.tradeHistory = generatePastTrades();
       }
       window.tradeChartHistory = generatePriceHistory(22400, 22450.50, 40); window.liveTradePrice = 22450.50;
       
       document.getElementById('profile-name').innerText = window.profileNameStr;
-      loadProfileImageUI(); renderPortfolio(); updateBalanceUI(); renderNominees();
+      loadProfileImageUI(); renderPortfolio(); updateBalanceUI(); renderNominees(); renderTradeHistory();
       window.updateExpectedProfit();
       
       const scrollContainer = document.getElementById('holdingsList');
@@ -895,18 +938,24 @@ async function bootApp() {
   }
 }
 
-// --- Dynamic Market Tick ---
+// --- Dynamic Market Tick (Fluctuates UP and DOWN) ---
 window.globalTick = function() {
   if(!isAppReady) return;
   Object.keys(window.indices).forEach(key => {
     let el = document.getElementById(`ticker-${key}`);
-    if(el) { window.indices[key] += Math.random() * 8 + 1; el.innerText = window.fmtNum(window.indices[key]); }
+    if(el) { 
+        // Realistic Up/Down Index Fluctuation
+        window.indices[key] += (Math.random() - 0.5) * 10; 
+        el.innerText = window.fmtNum(window.indices[key]); 
+    }
   });
 
   const numUpdates = Math.floor(Math.random() * 8) + 3;
   for(let i=0; i<numUpdates; i++) {
     const s = portfolioData[Math.floor(Math.random() * Math.min(100, portfolioData.length))];
-    s.ltp += s.ltp * (Math.random() * 0.005 + 0.0005); 
+    
+    // Realistic Up/Down Stock Fluctuation
+    s.ltp += s.ltp * ((Math.random() - 0.5) * 0.005); 
     
     let lastCandle = s.history[s.history.length-1];
     lastCandle.c = s.ltp;
@@ -917,7 +966,10 @@ window.globalTick = function() {
     const ltpEl = document.getElementById(`pl-ltp-${s.id}`); const retEl = document.getElementById(`pl-ret-${s.id}`);
     if(ltpEl && retEl) {
       ltpEl.innerText = `₹${window.fmtNum(s.ltp)}`;
+      retEl.className = `text-sm font-extrabold transition-colors ${pl >= 0 ? 'text-app-text' : 'text-app-red'}`;
       retEl.innerText = `${pl>=0?'+':''}${window.fmtCurDec(pl)} (${pl>=0?'+':''}${plPct.toFixed(2)}%)`;
+      retEl.className = `text-xs font-bold mt-0.5 ${pl >= 0 ? 'text-app-green' : 'text-app-red'}`;
+      
       ltpEl.classList.remove('flash-green'); void ltpEl.offsetWidth; ltpEl.classList.add('flash-green');
     }
     if(detailActiveStock && s.id === detailActiveStock.id) { updateDetailValues(); drawDetailChart(); }
@@ -946,8 +998,15 @@ window.updateTotalPortfolioHeaders = function() {
   let valEl = document.getElementById('totalCurrentValue');
   if(valEl) {
       valEl.innerText = window.fmtCur(tCur);
-      document.getElementById('totalReturns').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(trAmt)} (+${((trAmt/tInv)*100).toFixed(2)}%)`;
-      document.getElementById('dayChangeValue').innerHTML = `<i class="ph-bold ph-trend-up"></i> +${window.fmtCur(tDay)} (+${((tDay/(tCur-tDay))*100).toFixed(2)}%)`;
+      
+      let tRetEl = document.getElementById('totalReturns');
+      tRetEl.innerHTML = `<i class="ph-bold ${trAmt>=0?'ph-trend-up':'ph-trend-down'}"></i> ${trAmt>=0?'+':''}${window.fmtCur(trAmt)} (${trAmt>=0?'+':''}${((trAmt/tInv)*100).toFixed(2)}%)`;
+      tRetEl.className = `text-sm font-bold flex items-center gap-1 ${trAmt >= 0 ? 'text-app-green' : 'text-app-red'}`;
+      
+      let dRetEl = document.getElementById('dayChangeValue');
+      dRetEl.innerHTML = `<i class="ph-bold ${tDay>=0?'ph-trend-up':'ph-trend-down'}"></i> ${tDay>=0?'+':''}${window.fmtCur(tDay)} (${tDay>=0?'+':''}${((tDay/(tCur-tDay))*100).toFixed(2)}%)`;
+      dRetEl.className = `text-sm font-bold flex items-center gap-1 ${tDay >= 0 ? 'text-app-green' : 'text-app-red'}`;
+      
       document.getElementById('totalInvested').innerText = window.fmtCur(tInv);
       window.nominees.forEach((nom, i) => { let el = document.getElementById(`nominee-val-${i}`); if(el) el.innerText = window.fmtCur(tCur * (nom.share / 100)); });
   }
@@ -1209,7 +1268,7 @@ window.updateDetailValues = function() {
 }
 window.drawDetailChart = function() { if(!detailActiveStock) return; drawCandleChart('stock-detail-canvas', detailActiveStock.history, detailActiveStock.ltp, true, null); }
 
-// --- LIVE TRADE LOGIC (100% REAL WITH AUTO-BOT) ---
+// --- LIVE TRADE LOGIC (100% REAL WITH AUTO-BOT & FORCED 50/50 WIN/LOSS) ---
 
 window.toggleAutoTrade = function() {
     window.autoTradeEnabled = document.getElementById('auto-trade-toggle').checked;
@@ -1241,6 +1300,9 @@ window.executeTrade = function(direction) {
         }
         return showToast('Insufficient balance!', 'error');
     }
+    
+    // NEW LOGIC: Pre-determine if this trade is a win or a loss (45% Win / 55% Loss) 
+    window.currentTradeOutcome = Math.random() < 0.45 ? 'WIN' : 'LOSS';
     
     const expirySelect = document.getElementById('trade-time');
     const totalSeconds = parseInt(expirySelect.value) || 15;
@@ -1276,6 +1338,19 @@ window.executeTrade = function(direction) {
         
         if(ticks <= 0) {
             clearInterval(timer);
+            
+            // FORCED RESULT: Right before closing, jump to winning or losing side
+            let isWin = window.currentTradeOutcome === 'WIN';
+            let jumpAmount = Math.random() * 5 + 1; // 1 to 6 points jump
+            
+            if(direction === 'UP') {
+                window.liveTradePrice = isWin ? entryPrice + jumpAmount : entryPrice - jumpAmount;
+            } else {
+                window.liveTradePrice = isWin ? entryPrice - jumpAmount : entryPrice + jumpAmount;
+            }
+            
+            lastC.c = window.liveTradePrice; // update candle graph for last tick jump
+            
             resolveTrade(direction, entryPrice, amt);
         }
     }, 500);
@@ -1298,25 +1373,15 @@ window.resolveTrade = function(direction, entryPrice, amt) {
         showToast(`Trade Lost. -₹${window.fmtNum(amt)}`, 'error');
     }
     
+    // Save trade to history array
+    window.tradeHistory.push({ dir: direction, entry: entryPrice, exit: exitPrice, amt: amt, won: won });
+    
     updateBalanceUI();
     saveDataToStorage();
     drawTradingChart(); 
     
-    const histList = document.getElementById('trade-history-list');
-    if(histList) {
-        histList.innerHTML = `
-            <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-200 shadow-sm mb-2">
-                <div>
-                    <span class="text-xs font-bold ${won?'text-app-green':'text-app-red'}">${direction} CALL</span>
-                    <p class="text-[10px] text-gray-500 font-bold mt-1">Entry: ${window.fmtNum(entryPrice)}</p>
-                </div>
-                <div class="text-right">
-                    <span class="text-sm font-bold ${won?'text-app-green':'text-app-red'}">${won?'+':'-'}₹${window.fmtNum(won ? amt*0.85 : amt)}</span>
-                    <p class="text-[10px] text-gray-500 font-bold mt-1">Exit: ${window.fmtNum(exitPrice)}</p>
-                </div>
-            </div>
-        ` + histList.innerHTML;
-    }
+    // Update Trade History Visuals
+    renderTradeHistory();
     
     if(window.autoTradeEnabled) {
         window.autoTradeTimer = setTimeout(initiateAutoTrade, 1000); 
