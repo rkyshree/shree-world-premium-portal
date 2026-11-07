@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prince Yadav MBBS | Medical Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        medical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Animations & Styles */
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 1s ease-in-out; }
+        .slide-up { animation: slideUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Language Toggle Button Styles */
+        .lang-active { background-color: #0284c7; color: white; font-weight: bold; }
+        .lang-inactive { background-color: transparent; color: #475569; }
+        
+        /* Glassmorphism for Navbar */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-medical-500 selection:text-white overflow-x-hidden">
+
+    <!-- Preloader Animation -->
+    <div id="preloader" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-24 h-24 mb-4">
+            <div class="absolute inset-0 rounded-full border-4 border-medical-100"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-medical-600 border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-medical-600 text-3xl">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+        </div>
+        <h2 class="text-2xl font-bold text-medical-900 tracking-widest animate-pulse">PRINCE YADAV</h2>
+        <p class="text-medical-500 text-sm mt-2 tracking-widest">MEDICAL PORTFOLIO</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full z-50 transition-all duration-300 shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <img id="cfg-nav-logo" src="" alt="Prince Yadav" class="w-10 h-10 rounded-full object-cover shadow-lg border border-medical-200">
+                    <span class="font-bold text-xl md:text-2xl text-medical-900 tracking-tight">PRINCE YADAV <span class="text-medical-500 text-sm align-top ml-1">MBBS</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-1 xl:space-x-4">
+                    <a href="#home" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_home">Home</a>
+                    <a href="#about" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_about">About Me</a>
+                    <a href="#journey" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_journey">Medical Journey</a>
+                    <a href="#library" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_library">Library</a>
+                    <a href="#education" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_education">Health Edu</a>
+                    <a href="#blog" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:text-medical-600 transition-colors" data-i18n="nav_blog">Blog</a>
+                    <a href="#contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium bg-medical-600 text-white hover:bg-medical-800 hover:text-white transition-colors" data-i18n="nav_contact">Contact</a>
+                    
+                    <!-- Language Toggle Desktop -->
+                    <div class="ml-4 flex items-center bg-slate-200 rounded-full p-1 border border-slate-300">
+                        <button onclick="setLang('en')" id="btn-en-desktop" class="px-3 py-1 rounded-full text-xs transition-all lang-active">EN</button>
+                        <button onclick="setLang('hi')" id="btn-hi-desktop" class="px-3 py-1 rounded-full text-xs transition-all lang-inactive">HI</button>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="lg:hidden flex items-center gap-4">
+                    <!-- Language Toggle Mobile -->
+                    <div class="flex items-center bg-slate-200 rounded-full p-1 border border-slate-300">
+                        <button onclick="setLang('en')" id="btn-en-mobile" class="px-2 py-1 rounded-full text-xs transition-all lang-active">EN</button>
+                        <button onclick="setLang('hi')" id="btn-hi-mobile" class="px-2 py-1 rounded-full text-xs transition-all lang-inactive">HI</button>
+                    </div>
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-medical-600 focus:outline-none p-2">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 shadow-xl absolute w-full">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#home" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_home">Home</a>
+                <a href="#about" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_about">About Me</a>
+                <a href="#journey" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_journey">Medical Journey</a>
+                <a href="#library" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_library">Medical Library</a>
+                <a href="#education" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_education">Health Education</a>
+                <a href="#blog" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_blog">Articles & Blog</a>
+                <a href="#certificates" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_certs">Certificates</a>
+                <a href="#gallery" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:bg-medical-50 hover:text-medical-600" data-i18n="nav_gallery">Gallery</a>
+                <a href="#contact" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-medical-600 bg-medical-50" data-i18n="nav_contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 01. Home Section -->
+    <section id="home" class="pt-28 pb-20 md:pt-36 md:pb-28 px-4 overflow-hidden relative">
+        <!-- Background decorative elements -->
+        <div class="absolute top-20 right-0 w-64 h-64 bg-medical-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -z-10"></div>
+        <div class="absolute top-40 left-10 w-72 h-72 bg-teal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -z-10"></div>
+        
+        <div class="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+            <div class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left slide-up">
+                <span class="inline-block py-1 px-3 rounded-full bg-medical-100 text-medical-800 text-sm font-semibold mb-4 border border-medical-200 shadow-sm" data-i18n="hero_badge">MBBS Student & Medical Enthusiast</span>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-4">
+                    <span data-i18n="hero_hello">Hello, I am</span> <br>
+                    <span class="text-medical-600" id="cfg-name-display">Prince Yadav</span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-600 mb-8 max-w-lg" data-i18n="hero_desc">
+                    Dedicated to mastering the science of medicine and committed to compassionate healthcare and continuous learning.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                    <a href="#about" class="px-8 py-3 bg-medical-600 text-white rounded-lg font-medium hover:bg-medical-700 shadow-lg shadow-medical-500/30 transition-all hover:-translate-y-0.5" data-i18n="btn_know_more">Know More</a>
+                    <a href="#contact" class="px-8 py-3 bg-white text-medical-700 border border-medical-200 rounded-lg font-medium hover:bg-medical-50 transition-all" data-i18n="btn_contact">Get in Touch</a>
+                </div>
+            </div>
+            
+            <div class="w-full md:w-1/2 flex justify-center slide-up delay-100 relative">
+                <!-- Profile Image Container -->
+                <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-full p-2 bg-white shadow-2xl z-10 border-4 border-medical-50">
+                    <img id="cfg-profile-img" src="" alt="Prince Yadav" class="w-full h-full object-cover rounded-full">
+                </div>
+                <!-- Floating Icons -->
+                <div class="absolute top-10 -left-6 bg-white p-3 rounded-full shadow-lg text-medical-500 animate-bounce">
+                    <i class="fas fa-stethoscope text-2xl"></i>
+                </div>
+                <div class="absolute bottom-10 -right-4 bg-white p-3 rounded-full shadow-lg text-teal-500 animate-bounce" style="animation-delay: 1s;">
+                    <i class="fas fa-heartbeat text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02. About Me Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_about_title">02. About Me</h2>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <div class="w-full lg:w-5/12 slide-up">
+                    <img id="cfg-about-img" src="" alt="Prince Yadav Medical Study" class="rounded-2xl shadow-xl w-full h-[400px] object-cover border-4 border-white">
+                </div>
+                <div class="w-full lg:w-7/12 slide-up delay-100 space-y-6">
+                    <h3 class="text-2xl font-bold text-medical-800" data-i18n="about_heading">Introduction, Journey & Goals</h3>
+                    <p class="text-slate-600 text-lg leading-relaxed" data-i18n="about_p1">
+                        Welcome to my professional portfolio! I am Prince Yadav, currently navigating the rigorous and fascinating world of an MBBS degree. My journey into medicine was fueled by a deep-seated desire to understand human biology and a commitment to serve the community through healthcare.
+                    </p>
+                    <p class="text-slate-600 text-lg leading-relaxed" data-i18n="about_p2">
+                        Over the course of my studies, I have developed a strong foundation in medical sciences. My goal is not just to acquire knowledge, but to apply it meaningfully to improve patient outcomes, promote health awareness, and contribute to medical research.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6 pt-6">
+                        <div class="bg-medical-50 p-4 rounded-xl border border-medical-100 flex items-start gap-4">
+                            <i class="fas fa-bullseye text-medical-600 text-2xl mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-900" data-i18n="about_vision_title">Vision</h4>
+                                <p class="text-sm text-slate-600 mt-1" data-i18n="about_vision_desc">To become a compassionate and skilled physician.</p>
+                            </div>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-xl border border-teal-100 flex items-start gap-4">
+                            <i class="fas fa-book-medical text-teal-600 text-2xl mt-1"></i>
+                            <div>
+                                <h4 class="font-bold text-slate-900" data-i18n="about_mission_title">Mission</h4>
+                                <p class="text-sm text-slate-600 mt-1" data-i18n="about_mission_desc">Continuous learning and spreading health education.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03. Medical Journey Section -->
+    <section id="journey" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_journey_title">03. Medical Journey</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_journey_subtitle">Three years of intense study, practical experiences, and setting future milestones.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="relative wrap overflow-hidden p-4 h-full" id="journey-timeline">
+                <!-- Journey cards injected via JS config to keep it clean -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 04. Medical Library Section -->
+    <section id="library" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_library_title">04. Medical Library</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_library_subtitle">Subject-wise notes, study materials, and core medical topics.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="library-grid">
+                <!-- Library Cards injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 05. Health Education Section -->
+    <section id="education" class="py-20 bg-medical-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4" data-i18n="sec_edu_title">05. Health Education</h2>
+                <p class="text-medical-200 max-w-2xl mx-auto" data-i18n="sec_edu_subtitle">Spreading awareness about common diseases and healthy living.</p>
+                <div class="w-20 h-1 bg-medical-400 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="edu-grid">
+                 <!-- Education Cards injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 06. Articles & Blog Section -->
+    <section id="blog" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_blog_title">06. Articles & Blog</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_blog_subtitle">My academic writing, medical articles, and research insights.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="blog-grid">
+                 <!-- Blog Cards injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 07. Certificates Section -->
+    <section id="certificates" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_cert_title">07. Certificates & Achievements</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_cert_subtitle">Courses, seminars, and academic milestones achieved during the journey.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-6" id="cert-grid">
+                <!-- Certs injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 08. Gallery Section -->
+    <section id="gallery" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_gallery_title">08. Gallery</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_gallery_subtitle">Glimpses of medical education, lab work, and academic activities.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="gallery-grid">
+                 <!-- Gallery images injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 09. Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 slide-up">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4" data-i18n="sec_contact_title">09. Contact Me</h2>
+                <p class="text-slate-600 max-w-2xl mx-auto" data-i18n="sec_contact_subtitle">Let's connect for academic discussions, networking, or queries.</p>
+                <div class="w-20 h-1 bg-medical-500 mx-auto rounded-full mt-6"></div>
+            </div>
+
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+                <!-- Contact Info -->
+                <div class="bg-medical-600 text-white w-full md:w-2/5 p-10 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-6" data-i18n="contact_info_title">Contact Information</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <i class="fas fa-envelope mt-1 text-xl text-medical-200"></i>
+                                <div>
+                                    <p class="text-sm text-medical-200" data-i18n="contact_email">Email</p>
+                                    <p class="font-medium" id="cfg-email">prince.mbbs@example.com</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fab fa-linkedin mt-1 text-xl text-medical-200"></i>
+                                <div>
+                                    <p class="text-sm text-medical-200">LinkedIn</p>
+                                    <a href="#" id="cfg-linkedin" class="font-medium hover:underline break-all">linkedin.com/in/princeyadav</a>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fab fa-instagram mt-1 text-xl text-medical-200"></i>
+                                <div>
+                                    <p class="text-sm text-medical-200">Instagram</p>
+                                    <a href="#" id="cfg-instagram" class="font-medium hover:underline">@prince.medico</a>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <i class="fab fa-whatsapp mt-1 text-xl text-medical-200"></i>
+                                <div>
+                                    <p class="text-sm text-medical-200" data-i18n="contact_whatsapp">WhatsApp</p>
+                                    <a href="#" id="cfg-whatsapp" class="font-medium hover:underline block" target="_blank">+91 63861 76991</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-12">
+                        <p class="text-sm text-medical-200 mb-4" data-i18n="contact_social">Social Connections</p>
+                        <div class="flex gap-4">
+                            <a href="#" class="w-10 h-10 rounded-full bg-medical-500 flex items-center justify-center hover:bg-white hover:text-medical-600 transition-colors"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-medical-500 flex items-center justify-center hover:bg-white hover:text-medical-600 transition-colors"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="w-10 h-10 rounded-full bg-medical-500 flex items-center justify-center hover:bg-white hover:text-medical-600 transition-colors"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form (UI Demo) -->
+                <div class="w-full md:w-3/5 p-10">
+                    <h3 class="text-2xl font-bold mb-6 text-slate-800" data-i18n="contact_form_title">Send a Message</h3>
+                    <form onsubmit="event.preventDefault(); alert(currentLang === 'hi' ? 'संदेश सफलतापूर्पवक भेजा गया! (डेमो)' : 'Message sent successfully! (Demo)');" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="form_name">Your Name</label>
+                                <input type="text" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-medical-500 focus:border-medical-500 outline-none transition-all" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="form_email">Your Email</label>
+                                <input type="email" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-medical-500 focus:border-medical-500 outline-none transition-all" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="form_subject">Subject</label>
+                            <input type="text" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-medical-500 focus:border-medical-500 outline-none transition-all" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1" data-i18n="form_msg">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-medical-500 focus:border-medical-500 outline-none transition-all resize-none" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-medical-600 text-white font-medium py-3 rounded-lg hover:bg-medical-700 transition-colors shadow-md" data-i18n="form_btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; 2026 Prince Yadav MBBS. <span data-i18n="footer_rights">All Rights Reserved.</span></p>
+            <p class="text-sm mt-2 text-slate-500">Medical Portfolio Website</p>
+        </div>
+    </footer>
+
+    <!-- ========================================== -->
+    <!--  JAVASCRIPT & CONFIGURATION SECTION        -->
+    <!-- ========================================== -->
+    <script>
+        // ========================================================================= //
+        // 🛠️ EASY CONFIGURATION (यहाँ आसानी से अपनी वेबसाइट की जानकारी बदलें) 🛠️
+        // ========================================================================= //
+        
+        const SITE_CONFIG = {
+            // Profile & Basic Info
+            name: "Prince Yadav",
+            profileImage: "https://i.ibb.co/sJH7hqnC/Picsart-26-11-07-07-28-27-932.jpg",
+            
+            // Contact Links
+            email: "prince.mbbs@example.com",
+            linkedin: "https://linkedin.com/in/princeyadav",
+            instagram: "https://www.instagram.com/prince___yadav_01",
+            whatsapp: "+91 63861 76991",
+            whatsappLink: "https://wa.me/916386176991",
+            
+            // 03. Medical Journey Data
+            journey: [
+                {
+                    year: "Year 1", 
+                    icon: "fa-book-open",
+                    en: { title: "Foundation & Basics", desc: "Started the MBBS journey with a deep dive into Anatomy, Physiology, and Biochemistry. First cadaver experience." },
+                    hi: { title: "बुनियाद और मूल बातें", desc: "एनाटॉमी, फिजियोलॉजी और बायोकेमिस्ट्री के गहन अध्ययन के साथ एमबीबीएस यात्रा शुरू की। पहला शव विच्छेदन (cadaver) अनुभव।" }
+                },
+                {
+                    year: "Year 2", 
+                    icon: "fa-microscope",
+                    en: { title: "Patho & Pharma Phase", desc: "Understanding disease mechanisms (Pathology) and drug actions (Pharmacology). Extensive lab work." },
+                    hi: { title: "पैथो और फार्मा चरण", desc: "रोग तंत्र (पैथोलॉजी) और दवाओं के कार्यों (फार्माकोलॉजी) को समझना। व्यापक प्रयोगशाला (lab) कार्य।" }
+                },
+                {
+                    year: "Year 3 & Beyond", 
+                    icon: "fa-user-md",
+                    en: { title: "Clinical Exposures", desc: "Moving to wards, interacting with patients, and studying Community Medicine. Goal: Clinical Excellence." },
+                    hi: { title: "क्लिनिकल अनुभव", desc: "वार्ड में जाना, मरीजों के साथ बातचीत करना, और कम्युनिटी मेडिसिन का अध्ययन। लक्ष्य: क्लिनिकल उत्कृष्टता।" }
+                }
+            ],
+
+            // 04. Medical Library Subjects (Now with Images and more details)
+            library: [
+                { id: 'anatomy', icon: 'fa-bone', img: 'https://images.unsplash.com/photo-1530213786676-41516cad9400?auto=format&fit=crop&w=600&q=80', en: { title: 'Anatomy', desc: 'Detailed study of human body structure, organs, and bones.' }, hi: { title: 'एनाटॉमी', desc: 'मानव शरीर की संरचना, अंगों और हड्डियों का विस्तृत अध्ययन।' } },
+                { id: 'physiology', icon: 'fa-heartbeat', img: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80', en: { title: 'Physiology', desc: 'Understanding normal body functions and mechanical processes.' }, hi: { title: 'फिजियोलॉजी', desc: 'सामान्य शारीरिक कार्यों और यांत्रिक प्रक्रियाओं को समझना।' } },
+                { id: 'biochem', icon: 'fa-dna', img: 'https://images.unsplash.com/photo-1532187863486-abf9db5c2b1b?auto=format&fit=crop&w=600&q=80', en: { title: 'Biochemistry', desc: 'Chemical processes and molecules related to living organisms.' }, hi: { title: 'बायोकेमिस्ट्री', desc: 'जीवित जीवों से संबंधित रासायनिक प्रक्रियाएं और अणु।' } },
+                { id: 'pathology', icon: 'fa-virus', img: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=600&q=80', en: { title: 'Pathology', desc: 'Study of disease mechanisms, causes, and effects on health.' }, hi: { title: 'पैथोलॉजी', desc: 'रोग तंत्र, कारणों और स्वास्थ्य पर प्रभावों का अध्ययन।' } },
+                { id: 'pharma', icon: 'fa-pills', img: 'https://images.unsplash.com/photo-1584308666744-24d5e4a86f79?auto=format&fit=crop&w=600&q=80', en: { title: 'Pharmacology', desc: 'Science of medicines, their uses, and actions on the body.' }, hi: { title: 'फार्माकोलॉजी', desc: 'दवाओं का विज्ञान, उनके उपयोग, और शरीर पर उनके कार्य।' } },
+                { id: 'microbio', icon: 'fa-bacteria', img: 'https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=600&q=80', en: { title: 'Microbiology', desc: 'Study of microscopic organisms like viruses and bacteria.' }, hi: { title: 'माइक्रोबायोलॉजी', desc: 'वायरस और बैक्टीरिया जैसे सूक्ष्म जीवों का अध्ययन।' } },
+                { id: 'forensic', icon: 'fa-balance-scale', img: 'https://images.unsplash.com/photo-1606206591513-adbbedd0e704?auto=format&fit=crop&w=600&q=80', en: { title: 'Forensic Medicine', desc: 'Application of medical knowledge to legal jurisprudence.' }, hi: { title: 'फॉरेंसिक मेडिसिन', desc: 'कानूनी न्यायशास्त्र में चिकित्सा ज्ञान का अनुप्रयोग।' } },
+                { id: 'community', icon: 'fa-users', img: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=600&q=80', en: { title: 'Community Medicine', desc: 'Promoting public health, hygiene, and disease prevention.' }, hi: { title: 'कम्युनिटी मेडिसिन', desc: 'जन स्वास्थ्य, स्वच्छता और रोग निवारण को बढ़ावा देना।' } }
+            ],
+
+            // 05. Health Education Topics (Updated with relevant Doctor/Human Body photos)
+            education: [
+                { img: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?auto=format&fit=crop&w=800&q=80', en: { title: "Clinical Care & Checkups", desc: "Importance of regular full-body checkups and early diagnosis for maintaining long-term health." }, hi: { title: "क्लिनिकल देखभाल और चेकअप", desc: "दीर्घकालिक स्वास्थ्य बनाए रखने के लिए नियमित फुल-बॉडी चेकअप और प्रारंभिक निदान का महत्व।" } },
+                { img: 'https://images.unsplash.com/photo-1576091160550-2173ff9e5ee5?auto=format&fit=crop&w=800&q=80', en: { title: "Human Body Anatomy", desc: "Understanding how our vital organs function together to keep us alive and healthy." }, hi: { title: "मानव शरीर रचना विज्ञान", desc: "यह समझना कि कैसे हमारे महत्वपूर्ण अंग हमें जीवित और स्वस्थ रखने के लिए एक साथ कार्य करते हैं।" } },
+                { img: 'https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=800&q=80', en: { title: "Hygiene & Prevention", desc: "Basic sanitation practices, hand washing, and lifestyle changes to prevent infectious diseases." }, hi: { title: "स्वच्छता और रोकथाम", desc: "संक्रामक रोगों को रोकने के लिए बुनियादी स्वच्छता प्रथाएं, हाथ धोना और जीवनशैली में बदलाव।" } }
+            ],
+
+            // 06. Articles & Blog
+            blogs: [
+                { date: "Oct 2026", en: { title: "The Future of AI in Diagnostics", desc: "How artificial intelligence is assisting doctors in early disease detection." }, hi: { title: "डायग्नोस्टिक्स में एआई का भविष्य", desc: "कैसे आर्टिफिशियल इंटेलिजेंस शुरुआती बीमारी का पता लगाने में डॉक्टरों की सहायता कर रहा है।" } },
+                { date: "Sep 2026", en: { title: "Medical Ethics in Modern Practice", desc: "A review of ethical dilemmas faced by medical students and professionals." }, hi: { title: "आधुनिक अभ्यास में चिकित्सा नैतिकता", desc: "मेडिकल छात्रों और पेशेवरों द्वारा सामना की जाने वाली नैतिक दुविधाओं की समीक्षा।" } }
+            ],
+
+            // 07. Certificates
+            certificates: [
+                { en: "Basic Life Support (BLS) Certification", hi: "बेसिक लाइफ सपोर्ट (BLS) प्रमाणन" },
+                { en: "National Seminar on Public Health", hi: "सार्वजनिक स्वास्थ्य पर राष्ट्रीय संगोष्ठी" },
+                { en: "Medical Research Methodology Course", hi: "चिकित्सा अनुसंधान पद्धति पाठ्यक्रम" }
+            ],
+
+            // 08. Gallery (Now with actual images and captions)
+            galleryImages: [
+                { img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=600&q=80", en: "Hospital Rounds", hi: "अस्पताल राउंड" },
+                { img: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80", en: "Lab Diagnosis", hi: "लैब निदान" },
+                { img: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80", en: "Medical Library", hi: "मेडिकल लाइब्रेरी" },
+                { img: "https://images.unsplash.com/photo-1551076805-e1869043e560?auto=format&fit=crop&w=600&q=80", en: "Seminar & Study", hi: "सेमिनार और अध्ययन" }
+            ]
+        };
+
+        // ========================================================================= //
+        // 🌍 TRANSLATION DICTIONARY (सभी स्थिर टेक्स्ट का अनुवाद)
+        // ========================================================================= //
+        const TRANSLATIONS = {
+            en: {
+                nav_home: "Home", nav_about: "About Me", nav_journey: "Journey", nav_library: "Library", nav_education: "Health Edu", nav_blog: "Blog", nav_certs: "Certificates", nav_gallery: "Gallery", nav_contact: "Contact",
+                hero_badge: "MBBS Student & Medical Enthusiast", hero_hello: "Hello, I am", hero_desc: "Dedicated to mastering the science of medicine and committed to compassionate healthcare and continuous learning.",
+                btn_know_more: "Know More", btn_contact: "Get in Touch",
+                sec_about_title: "02. About Me", about_heading: "Introduction, Journey & Goals",
+                about_p1: "Welcome to my professional portfolio! I am Prince Yadav, currently navigating the rigorous and fascinating world of an MBBS degree. My journey into medicine was fueled by a deep-seated desire to understand human biology and a commitment to serve the community through healthcare.",
+                about_p2: "Over the course of my studies, I have developed a strong foundation in medical sciences. My goal is not just to acquire knowledge, but to apply it meaningfully to improve patient outcomes, promote health awareness, and contribute to medical research.",
+                about_vision_title: "Vision", about_vision_desc: "To become a compassionate and skilled physician.",
+                about_mission_title: "Mission", about_mission_desc: "Continuous learning and spreading health education.",
+                sec_journey_title: "03. Medical Journey", sec_journey_subtitle: "Three years of intense study, practical experiences, and setting future milestones.",
+                sec_library_title: "04. Medical Library", sec_library_subtitle: "Subject-wise notes, study materials, and core medical topics.",
+                sec_edu_title: "05. Health Education", sec_edu_subtitle: "Spreading awareness about common diseases and healthy living.",
+                sec_blog_title: "06. Articles & Blog", sec_blog_subtitle: "My academic writing, medical articles, and research insights.", read_more: "Read Article",
+                sec_cert_title: "07. Certificates", sec_cert_subtitle: "Courses, seminars, and academic milestones achieved.",
+                sec_gallery_title: "08. Gallery", sec_gallery_subtitle: "Glimpses of medical education, lab work, and academic activities.",
+                sec_contact_title: "09. Contact Me", sec_contact_subtitle: "Let's connect for academic discussions, networking, or queries.",
+                contact_info_title: "Contact Information", contact_email: "Email", contact_whatsapp: "WhatsApp", contact_social: "Social Connections",
+                contact_form_title: "Send a Message", form_name: "Your Name", form_email: "Your Email", form_subject: "Subject", form_msg: "Message", form_btn: "Send Message",
+                footer_rights: "All Rights Reserved."
+            },
+            hi: {
+                nav_home: "होम", nav_about: "मेरे बारे में", nav_journey: "मेडिकल यात्रा", nav_library: "लाइब्रेरी", nav_education: "स्वास्थ्य शिक्षा", nav_blog: "ब्लॉग", nav_certs: "प्रमाण पत्र", nav_gallery: "गैलरी", nav_contact: "संपर्क",
+                hero_badge: "एमबीबीएस छात्र और चिकित्सा उत्साही", hero_hello: "नमस्ते, मैं हूँ", hero_desc: "चिकित्सा विज्ञान में महारत हासिल करने के लिए समर्पित और दयालु स्वास्थ्य देखभाल एवं निरंतर सीखने के लिए प्रतिबद्ध।",
+                btn_know_more: "अधिक जानें", btn_contact: "संपर्क करें",
+                sec_about_title: "02. मेरे बारे में", about_heading: "परिचय, यात्रा और लक्ष्य",
+                about_p1: "मेरे प्रोफेशनल पोर्टफोलियो में आपका स्वागत है! मैं प्रिंस यादव हूँ, वर्तमान में एमबीबीएस की कठिन और आकर्षक दुनिया में अध्ययनरत हूँ। चिकित्सा में मेरी यात्रा मानव जीव विज्ञान को समझने की गहरी इच्छा और स्वास्थ्य देखभाल के माध्यम से समाज की सेवा करने की प्रतिबद्धता से प्रेरित है।",
+                about_p2: "अपनी पढ़ाई के दौरान, मैंने चिकित्सा विज्ञान में एक मजबूत नींव विकसित की है। मेरा लक्ष्य सिर्फ ज्ञान प्राप्त करना नहीं है, बल्कि मरीजों के परिणामों को बेहतर बनाने, स्वास्थ्य जागरूकता को बढ़ावा देने और चिकित्सा अनुसंधान में योगदान करने के लिए इसका सार्थक उपयोग करना है।",
+                about_vision_title: "दृष्टिकोण (Vision)", about_vision_desc: "एक दयालु और कुशल चिकित्सक बनना।",
+                about_mission_title: "मिशन (Mission)", about_mission_desc: "निरंतर सीखना और स्वास्थ्य शिक्षा फैलाना।",
+                sec_journey_title: "03. मेडिकल यात्रा", sec_journey_subtitle: "तीन साल की गहन पढ़ाई, व्यावहारिक अनुभव और भविष्य के लक्ष्य।",
+                sec_library_title: "04. मेडिकल लाइब्रेरी", sec_library_subtitle: "विषयवार नोट्स, अध्ययन सामग्री और मुख्य चिकित्सा विषय।",
+                sec_edu_title: "05. स्वास्थ्य शिक्षा", sec_edu_subtitle: "सामान्य बीमारियों और स्वस्थ जीवन के बारे में जागरूकता फैलाना।",
+                sec_blog_title: "06. लेख और ब्लॉग", sec_blog_subtitle: "मेरे शैक्षणिक लेखन, मेडिकल लेख और शोध विचार।", read_more: "लेख पढ़ें",
+                sec_cert_title: "07. प्रमाण पत्र", sec_cert_subtitle: "पूरे किए गए पाठ्यक्रम, सेमिनार और शैक्षणिक उपलब्धियां।",
+                sec_gallery_title: "08. गैलरी", sec_gallery_subtitle: "मेडिकल शिक्षा, लैब वर्क और अकादमिक गतिविधियों की झलकियां।",
+                sec_contact_title: "09. मुझसे संपर्क करें", sec_contact_subtitle: "अकादमिक चर्चा, नेटवर्किंग या प्रश्नों के लिए जुड़ें।",
+                contact_info_title: "संपर्क जानकारी", contact_email: "ईमेल", contact_whatsapp: "व्हाट्सएप", contact_social: "सोशल कनेक्शन",
+                contact_form_title: "संदेश भेजें", form_name: "आपका नाम", form_email: "आपका ईमेल", form_subject: "विषय", form_msg: "संदेश", form_btn: "संदेश भेजें",
+                footer_rights: "सभी अधिकार सुरक्षित।"
+            }
+        };
+
+        // ========================================================================= //
+        // ⚙️ SYSTEM LOGIC (वेबसाइट को चलाने वाले फंक्शन्स) 
+        // ========================================================================= //
+        
+        let currentLang = 'en';
+
+        // 1. Initialize Website with Config Data
+        function initSite() {
+            // Apply basic config
+            document.getElementById('cfg-name-display').innerText = SITE_CONFIG.name;
+            document.getElementById('cfg-profile-img').src = SITE_CONFIG.profileImage;
+            document.getElementById('cfg-about-img').src = SITE_CONFIG.profileImage;
+            document.getElementById('cfg-nav-logo').src = SITE_CONFIG.profileImage;
+            document.getElementById('cfg-email').innerText = SITE_CONFIG.email;
+            
+            let lnkObj = document.getElementById('cfg-linkedin');
+            lnkObj.href = SITE_CONFIG.linkedin;
+            lnkObj.innerText = SITE_CONFIG.linkedin.replace('https://', '');
+            
+            let instObj = document.getElementById('cfg-instagram');
+            instObj.href = SITE_CONFIG.instagram;
+            instObj.innerText = SITE_CONFIG.instagram.replace('https://', '@');
+
+            let waObj = document.getElementById('cfg-whatsapp');
+            waObj.href = SITE_CONFIG.whatsappLink;
+            waObj.innerText = SITE_CONFIG.whatsapp;
+
+            // Render Dynamic Sections
+            renderDynamicContent();
+            
+            // Set Initial Language
+            setLang('en');
+        }
+
+        // 2. Language Toggle Function
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // Update Toggle Buttons Styling
+            const btnEnD = document.getElementById('btn-en-desktop');
+            const btnHiD = document.getElementById('btn-hi-desktop');
+            const btnEnM = document.getElementById('btn-en-mobile');
+            const btnHiM = document.getElementById('btn-hi-mobile');
+
+            if(lang === 'en') {
+                btnEnD.className = "px-3 py-1 rounded-full text-xs transition-all lang-active";
+                btnHiD.className = "px-3 py-1 rounded-full text-xs transition-all lang-inactive";
+                btnEnM.className = "px-2 py-1 rounded-full text-xs transition-all lang-active";
+                btnHiM.className = "px-2 py-1 rounded-full text-xs transition-all lang-inactive";
+            } else {
+                btnHiD.className = "px-3 py-1 rounded-full text-xs transition-all lang-active";
+                btnEnD.className = "px-3 py-1 rounded-full text-xs transition-all lang-inactive";
+                btnHiM.className = "px-2 py-1 rounded-full text-xs transition-all lang-active";
+                btnEnM.className = "px-2 py-1 rounded-full text-xs transition-all lang-inactive";
+            }
+
+            // Update Static Texts
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (TRANSLATIONS[lang][key]) {
+                    elem.innerHTML = TRANSLATIONS[lang][key];
+                }
+            });
+
+            // Re-render dynamic content in new language
+            renderDynamicContent();
+        }
+
+        // 3. Render Dynamic Content (Journey, Library, etc.)
+        function renderDynamicContent() {
+            // -- Journey --
+            const journeyHtml = SITE_CONFIG.journey.map((item, index) => {
+                const isLeft = index % 2 === 0;
+                return `
+                <div class="mb-8 flex justify-between items-center w-full ${isLeft ? 'flex-row-reverse' : ''} slide-up" style="animation-delay: ${index * 0.1}s">
+                    <div class="hidden md:block w-5/12"></div>
+                    <div class="z-20">
+                        <div class="flex items-center justify-center bg-medical-500 shadow-xl w-12 h-12 rounded-full border-4 border-white">
+                            <i class="fas ${item.icon} text-white"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 w-full md:w-5/12 border border-gray-100 hover:shadow-lg transition-shadow">
+                        <span class="text-sm font-bold text-medical-500 mb-1 block">${item.year}</span>
+                        <h3 class="font-bold text-lg text-slate-800 mb-2">${item[currentLang].title}</h3>
+                        <p class="text-sm leading-snug tracking-wide text-slate-600 text-opacity-100">${item[currentLang].desc}</p>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            
+            // Add vertical line
+            document.getElementById('journey-timeline').innerHTML = `
+                <div class="absolute border-opacity-20 border-gray-400 h-full border hidden md:block" style="left: 50%"></div>
+                ${journeyHtml}
+            `;
+
+            // -- Library (Now with photos) --
+            document.getElementById('library-grid').innerHTML = SITE_CONFIG.library.map(sub => `
+                <div class="bg-white rounded-2xl border border-slate-200 hover:border-medical-300 hover:shadow-xl transition-all group cursor-pointer overflow-hidden flex flex-col h-full">
+                    <div class="h-44 overflow-hidden relative">
+                        <img src="${sub.img}" alt="${sub[currentLang].title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 w-12 h-12 bg-white/95 backdrop-blur rounded-full flex items-center justify-center text-medical-600 shadow-lg">
+                            <i class="fas ${sub.icon} text-xl"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">${sub[currentLang].title}</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">${sub[currentLang].desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // -- Education --
+            document.getElementById('edu-grid').innerHTML = SITE_CONFIG.education.map(edu => `
+                <div class="bg-medical-800 rounded-2xl overflow-hidden shadow-lg border border-medical-700 hover:-translate-y-2 transition-transform">
+                    <img src="${edu.img}" alt="${edu[currentLang].title}" class="w-full h-48 object-cover opacity-80 hover:opacity-100 transition-opacity">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">${edu[currentLang].title}</h3>
+                        <p class="text-medical-200 text-sm">${edu[currentLang].desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // -- Blogs --
+            document.getElementById('blog-grid').innerHTML = SITE_CONFIG.blogs.map(blog => `
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                    <span class="text-sm text-medical-500 font-semibold mb-2 block"><i class="far fa-calendar-alt mr-2"></i>${blog.date}</span>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">${blog[currentLang].title}</h3>
+                    <p class="text-slate-600 mb-6">${blog[currentLang].desc}</p>
+                    <a href="#" class="text-medical-600 font-medium hover:text-medical-800 flex items-center gap-2">
+                        ${TRANSLATIONS[currentLang].read_more} <i class="fas fa-arrow-right text-sm"></i>
+                    </a>
+                </div>
+            `).join('');
+
+            // -- Certificates --
+            document.getElementById('cert-grid').innerHTML = SITE_CONFIG.certificates.map(cert => `
+                <div class="bg-slate-50 border border-slate-200 px-6 py-4 rounded-full flex items-center gap-3 shadow-sm hover:bg-medical-50 transition-colors cursor-default">
+                    <i class="fas fa-certificate text-medical-500 text-xl"></i>
+                    <span class="font-medium text-slate-700">${cert[currentLang]}</span>
+                </div>
+            `).join('');
+
+            // -- Gallery (Now dynamic with titles) --
+            document.getElementById('gallery-grid').innerHTML = SITE_CONFIG.galleryImages.map(item => `
+                <div class="aspect-square rounded-xl overflow-hidden shadow-sm group relative cursor-pointer">
+                    <img src="${item.img}" alt="Gallery" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-medical-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                        <p class="text-white font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform">${item[currentLang]}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mobile Menu Logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on click
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('shadow-md');
+                nav.classList.remove('shadow-sm');
+            } else {
+                nav.classList.add('shadow-sm');
+                nav.classList.remove('shadow-md');
+            }
+        });
+
+        // Start everything when page loads
+        window.addEventListener('load', () => {
+            initSite();
+            
+            // Remove Preloader fast
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                    document.body.classList.remove('overflow-hidden');
+                }, 500);
+            }, 400); // 400ms loading delay for that fast professional feel
+        });
+
+    </script>
+</body>
+</html>
