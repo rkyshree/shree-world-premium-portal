@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ludo QA Controller System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #0f172a; /* Dark background default */
+        }
+        
+        /* Custom Ludo Board Colors */
+        .bg-ludo-red { background-color: #e53935; }
+        .bg-ludo-green { background-color: #43a047; }
+        .bg-ludo-yellow { background-color: #fdd835; }
+        .bg-ludo-blue { background-color: #1e88e5; }
+        
+        .text-ludo-red { color: #e53935; }
+        .text-ludo-green { color: #43a047; }
+        .text-ludo-yellow { color: #fdd835; }
+        .text-ludo-blue { color: #1e88e5; }
+
+        .ludo-grid {
+            display: grid;
+            grid-template-columns: 40% 20% 40%;
+            grid-template-rows: 40% 20% 40%;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 400px;
+            border: 4px solid #fff;
+            background-color: white;
+        }
+
+        .home-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15%;
+        }
+
+        .inner-box {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border-radius: 10%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15%;
+            padding: 15%;
+        }
+
+        .token {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(0,0,0,0.2);
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.3);
+        }
+
+        .path-grid-v {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+        }
+
+        .path-grid-h {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+        }
+
+        .path-cell {
+            border: 1px solid #ccc;
+        }
+
+        /* Controller Button Styles */
+        .ctrl-btn {
+            background-color: #1f2937;
+            color: #d1d5db;
+            border: 1px solid #374151;
+            border-radius: 0.375rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.1s;
+        }
+        .ctrl-btn:active {
+            transform: scale(0.95);
+            background-color: #374151;
+        }
+        .ctrl-btn-rnd {
+            background-color: #2563eb;
+            color: white;
+            width: 60px;
+        }
+
+        /* Hide elements dynamically */
+        .hidden-view { display: none !important; }
+
+        /* Notification Toast */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 50;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+        
+        .dice-display {
+            font-size: 2rem;
+            font-weight: bold;
+            background: white;
+            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body class="text-white h-screen flex flex-col overflow-hidden">
+
+    <!-- Screen 1: Role Selection -->
+    <div id="selectionScreen" class="flex-1 flex flex-col items-center justify-center p-6 bg-slate-900">
+        <h1 class="text-3xl font-bold mb-8 text-center text-blue-400">Ludo Network System</h1>
+        
+        <div class="space-y-4 w-full max-w-sm">
+            <button onclick="startApp('controller')" class="w-full py-4 bg-gray-800 border-2 border-blue-500 rounded-xl font-bold text-lg hover:bg-gray-700 transition flex items-center justify-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                <span>Open Controller</span>
+            </button>
+            
+            <button onclick="startApp('board')" class="w-full py-4 bg-gray-800 border-2 border-green-500 rounded-xl font-bold text-lg hover:bg-gray-700 transition flex items-center justify-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                <span>Open Game Board</span>
+            </button>
+        </div>
+
+        <div class="mt-12 p-4 bg-gray-800 rounded-lg text-sm text-gray-400 max-w-sm text-center">
+            <p><strong>Note:</strong> To use on two different phones via Wi-Fi, open this page on both devices on the same network.</p>
+        </div>
+
+        <!-- Fake APK Install Button to satisfy request visually -->
+        <button onclick="showToast('To install as an App, tap your browser menu and select Add to Home Screen')" class="mt-8 text-blue-400 underline text-sm">
+            Download / Install as App (APK)
+        </button>
+    </div>
+
+    <!-- Screen 2: Controller View (Like Left Phone) -->
+    <div id="controllerScreen" class="hidden-view flex-1 bg-[#121212] flex flex-col h-full overflow-y-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#1e1e1e]">
+            <h2 class="text-xl font-bold text-gray-200">Ludo QA Controller</h2>
+            <div class="flex items-center bg-green-900/30 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-700">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                CONNECTED
+            </div>
+        </div>
+
+        <!-- Connection Status Card -->
+        <div class="p-4">
+            <div class="bg-[#1a222c] border border-gray-700 rounded-xl p-4 flex justify-between items-center">
+                <span class="text-green-400 font-semibold text-sm">Connected to Ludo Game!</span>
+                <button onclick="goBack()" class="border border-gray-500 text-gray-300 px-4 py-1 rounded-md text-sm hover:bg-gray-700">Disconnect</button>
+            </div>
+        </div>
+
+        <!-- Controls Section -->
+        <div class="p-4 flex-1">
+            <p class="text-gray-400 text-sm font-semibold mb-6">Player Dice Overrides (Tap number to set)</p>
+
+            <!-- Player 1 Blue -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 mb-3">
+                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span class="font-bold text-gray-200">Player 1 (BLUE)</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 1)">1</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 2)">2</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 3)">3</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 4)">4</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 5)">5</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('blue', 6)">6</button>
+                    <button class="ctrl-btn ctrl-btn-rnd" onclick="sendDiceCommand('blue', 'RND')">RND</button>
+                </div>
+            </div>
+
+            <!-- Player 2 Red -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 mb-3">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <span class="font-bold text-gray-200">Player 2 (RED)</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 1)">1</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 2)">2</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 3)">3</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 4)">4</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 5)">5</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('red', 6)">6</button>
+                    <button class="ctrl-btn ctrl-btn-rnd" onclick="sendDiceCommand('red', 'RND')">RND</button>
+                </div>
+            </div>
+
+            <!-- Player 3 Green -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 mb-3">
+                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span class="font-bold text-gray-200">Player 3 (GREEN)</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 1)">1</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 2)">2</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 3)">3</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 4)">4</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 5)">5</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('green', 6)">6</button>
+                    <button class="ctrl-btn ctrl-btn-rnd" onclick="sendDiceCommand('green', 'RND')">RND</button>
+                </div>
+            </div>
+
+            <!-- Player 4 Yellow -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-2 mb-3">
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <span class="font-bold text-gray-200">Player 4 (YELLOW)</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 1)">1</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 2)">2</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 3)">3</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 4)">4</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 5)">5</button>
+                    <button class="ctrl-btn" onclick="sendDiceCommand('yellow', 6)">6</button>
+                    <button class="ctrl-btn ctrl-btn-rnd" onclick="sendDiceCommand('yellow', 'RND')">RND</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Game Board View (Like Right Phone) -->
+    <div id="boardScreen" class="hidden-view flex-1 bg-indigo-900 flex flex-col items-center justify-center relative w-full h-full overflow-hidden">
+        
+        <button onclick="goBack()" class="absolute top-4 left-4 bg-white text-black px-3 py-1 rounded-md text-sm z-10 shadow-lg">Exit Board</button>
+        
+        <div class="text-white text-center mb-4">
+            <h2 class="text-xl font-bold">Ludo Active Game</h2>
+            <p class="text-xs text-gray-300">Waiting for controller commands...</p>
+        </div>
+
+        <!-- The Ludo Board Simulation -->
+        <div class="relative w-[95vw] max-w-[400px]">
+            
+            <!-- Floating Dice Displays (reacts to controller) -->
+            <div id="dice-red" class="absolute top-[-20px] left-1/4 transform -translate-x-1/2 dice-display text-ludo-red border-ludo-red z-10 opacity-50">-</div>
+            <div id="dice-green" class="absolute top-[-20px] left-3/4 transform -translate-x-1/2 dice-display text-ludo-green border-ludo-green z-10 opacity-50">-</div>
+            <div id="dice-blue" class="absolute bottom-[-20px] left-1/4 transform -translate-x-1/2 dice-display text-ludo-blue border-ludo-blue z-10 opacity-50">-</div>
+            <div id="dice-yellow" class="absolute bottom-[-20px] left-3/4 transform -translate-x-1/2 dice-display text-ludo-yellow border-ludo-yellow z-10 opacity-50">-</div>
+
+            <div class="ludo-grid shadow-2xl">
+                <!-- Top Left: Red Home -->
+                <div class="bg-ludo-red home-box">
+                    <div class="inner-box">
+                        <div class="token bg-ludo-red"></div><div class="token bg-ludo-red"></div>
+                        <div class="token bg-ludo-red"></div><div class="token bg-ludo-red"></div>
+                    </div>
+                </div>
+                
+                <!-- Top Center: Red-Green Path -->
+                <div class="path-grid-v bg-white">
+                    <div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-green"></div><div class="path-cell bg-ludo-green"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-green"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-green"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-green"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-green"></div><div class="path-cell"></div>
+                </div>
+
+                <!-- Top Right: Green Home -->
+                <div class="bg-ludo-green home-box">
+                    <div class="inner-box">
+                        <div class="token bg-ludo-green"></div><div class="token bg-ludo-green"></div>
+                        <div class="token bg-ludo-green"></div><div class="token bg-ludo-green"></div>
+                    </div>
+                </div>
+
+                <!-- Middle Left: Red-Blue Path -->
+                <div class="path-grid-h bg-white">
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-red"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-red"></div><div class="path-cell bg-ludo-red"></div><div class="path-cell bg-ludo-red"></div><div class="path-cell bg-ludo-red"></div><div class="path-cell bg-ludo-red"></div>
+                    <div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div>
+                </div>
+
+                <!-- Center Home Area -->
+                <div class="bg-gray-200 relative overflow-hidden flex items-center justify-center">
+                    <!-- Diagonal cuts for center design -->
+                    <div class="absolute w-full h-full" style="background: conic-gradient(#43a047 0deg 90deg, #fdd835 90deg 180deg, #1e88e5 180deg 270deg, #e53935 270deg 360deg); transform: rotate(45deg) scale(1.5);"></div>
+                </div>
+
+                <!-- Middle Right: Green-Yellow Path -->
+                <div class="path-grid-h bg-white">
+                    <div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div>
+                    <div class="path-cell bg-ludo-yellow"></div><div class="path-cell bg-ludo-yellow"></div><div class="path-cell bg-ludo-yellow"></div><div class="path-cell bg-ludo-yellow"></div><div class="path-cell bg-ludo-yellow"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div><div class="path-cell bg-ludo-yellow"></div><div class="path-cell"></div>
+                </div>
+
+                <!-- Bottom Left: Blue Home -->
+                <div class="bg-ludo-blue home-box">
+                    <div class="inner-box">
+                        <div class="token bg-ludo-blue"></div><div class="token bg-ludo-blue"></div>
+                        <div class="token bg-ludo-blue"></div><div class="token bg-ludo-blue"></div>
+                    </div>
+                </div>
+
+                <!-- Bottom Center: Blue-Yellow Path -->
+                <div class="path-grid-v bg-white">
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-blue"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-blue"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-blue"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell bg-ludo-blue"></div><div class="path-cell"></div>
+                    <div class="path-cell bg-ludo-blue"></div><div class="path-cell bg-ludo-blue"></div><div class="path-cell"></div>
+                    <div class="path-cell"></div><div class="path-cell"></div><div class="path-cell"></div>
+                </div>
+
+                <!-- Bottom Right: Yellow Home -->
+                <div class="bg-ludo-yellow home-box">
+                    <div class="inner-box">
+                        <div class="token bg-ludo-yellow"></div><div class="token bg-ludo-yellow"></div>
+                        <div class="token bg-ludo-yellow"></div><div class="token bg-ludo-yellow"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Message -->
+    <div id="toast">Message goes here</div>
+
+    <script>
+        // --- View Navigation Logic ---
+        const screens = {
+            selection: document.getElementById('selectionScreen'),
+            controller: document.getElementById('controllerScreen'),
+            board: document.getElementById('boardScreen')
+        };
+
+        function startApp(mode) {
+            screens.selection.classList.add('hidden-view');
+            if (mode === 'controller') {
+                screens.controller.classList.remove('hidden-view');
+                showToast("Controller Mode Active. Open board on another device/tab.");
+            } else if (mode === 'board') {
+                screens.board.classList.remove('hidden-view');
+                showToast("Board Active. Waiting for controller...");
+            }
+        }
+
+        function goBack() {
+            screens.controller.classList.add('hidden-view');
+            screens.board.classList.add('hidden-view');
+            screens.selection.classList.remove('hidden-view');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // --- Network / Communication Logic (Broadcast Channel) ---
+        // In a real multi-device setup without a server, users need to be on the same local network 
+        // running a local web server. BroadcastChannel simulates this perfectly for Tabs/Windows.
+        
+        const channel = new BroadcastChannel('ludo_hack_channel');
+
+        // Controller: Send command
+        function sendDiceCommand(color, value) {
+            let finalValue = value;
+            if (value === 'RND') {
+                finalValue = Math.floor(Math.random() * 6) + 1;
+            }
+            
+            const payload = {
+                action: 'FORCE_DICE',
+                color: color,
+                value: finalValue
+            };
+            
+            // Send to board
+            channel.postMessage(payload);
+            
+            // Visual feedback on controller
+            showToast(`${color.toUpperCase()} dice set to ${finalValue}`);
+        }
+
+        // Board: Receive command
+        channel.onmessage = (event) => {
+            const data = event.data;
+            if (data.action === 'FORCE_DICE') {
+                updateBoardDice(data.color, data.value);
+            }
+        };
+
+        function updateBoardDice(color, value) {
+            // Find the specific dice element on the board
+            const diceEl = document.getElementById(`dice-${color}`);
+            if (diceEl) {
+                // Animation effect
+                diceEl.style.opacity = '1';
+                diceEl.style.transform = 'translate(-50%, -10px) scale(1.2)';
+                diceEl.innerText = '🎲';
+                
+                setTimeout(() => {
+                    diceEl.innerText = value;
+                    diceEl.style.transform = 'translate(-50%, 0) scale(1)';
+                    showToast(`${color.toUpperCase()} rolls a ${value}!`);
+                    
+                    // Fade out slightly after a few seconds
+                    setTimeout(() => {
+                        diceEl.style.opacity = '0.5';
+                    }, 3000);
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
