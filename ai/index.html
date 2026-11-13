@@ -122,14 +122,14 @@
                 </div>
             </div>
 
-            <!-- Horizontal Category Navigation (CRITICAL REQUEST) -->
+            <!-- Horizontal Category Navigation -->
             <div class="px-2 sm:px-4 py-3 bg-black/20">
                 <div class="nav-hide-scroll flex overflow-x-auto gap-2 items-center pb-1" id="topNavCategories">
                     <!-- Nav items injected via JS -->
                 </div>
             </div>
             
-            <!-- Mobile Search Bar (Visible only on small screens) -->
+            <!-- Mobile Search Bar -->
             <div class="md:hidden px-4 pb-3 pt-1 border-t border-white/5 bg-black/20">
                 <div class="relative">
                     <input type="text" id="mobileSearchInput" placeholder="Search prompts..." class="w-full bg-white/5 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-primary transition">
@@ -248,41 +248,6 @@
                 <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
             </div>
             <span id="toastMessage">Copied to clipboard!</span>
-        </div>
-    </div>
-
-    <!-- PRO Unlock Modal -->
-    <div id="unlockModal" class="fixed inset-0 z-[150] hidden">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
-            <div class="glass-panel border border-gold/30 rounded-2xl w-full max-w-md flex flex-col shadow-[0_0_50px_rgba(251,191,36,0.15)] relative text-center p-8 animate-float">
-                <div class="w-16 h-16 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg shadow-gold/20">
-                    🔒
-                </div>
-                <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-gold to-yellow-400">Unlock PRO Prompts</h3>
-                
-                <div id="unlockInitialUI">
-                    <p class="text-slate-300 text-sm mb-6 leading-relaxed">
-                        Ye ek premium <strong class="text-gold">PRO Prompt</strong> hai. Ise aur baaki sabhi 50,000+ PRO prompts ko humesha ke liye free mein unlock karne ke liye niche click karein, website par <strong>90 Seconds</strong> tak rukein aur apni ID banayein.
-                    </p>
-                    <button onclick="startUnlockProcess()" class="w-full bg-gradient-to-r from-gold to-yellow-600 hover:from-yellow-400 hover:to-gold text-black font-black text-lg py-4 rounded-xl transition shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:scale-[1.02]">
-                        Visit Website & Unlock 🔓
-                    </button>
-                    <button onclick="closeUnlockModal()" class="mt-4 text-slate-400 text-sm hover:text-white transition underline">Cancel</button>
-                </div>
-
-                <div id="unlockProgressUI" class="hidden">
-                    <p class="text-slate-300 text-sm mb-4 leading-relaxed">
-                        <span class="text-green-400 font-bold">Verification in progress...</span><br>
-                        Kripya naye tab mein <strong class="text-white">rkyshree.in/Resell</strong> par ID banayein. Is page ko band na karein.
-                    </p>
-                    <div class="text-6xl font-black text-white mb-6 tabular-nums" id="unlockTimerText">90</div>
-                    <div class="w-full bg-white/10 rounded-full h-2 mb-2 overflow-hidden">
-                        <div id="unlockProgressBar" class="bg-gold h-2 rounded-full transition-all duration-1000 w-full"></div>
-                    </div>
-                    <p class="text-xs text-gold animate-pulse mt-2">Checking your visit status...</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -413,17 +378,13 @@
         let PROMPTS_DB = [];
         let filteredPrompts = [];
         
-        // PRO Lock State
-        let isProUnlocked = localStorage.getItem('shraynex_pro_unlocked') === 'true';
-        let unlockInterval = null;
-        
         function generateDatabase() {
             let idCount = 0;
             const db = [];
             
             let totalSubs = 0;
             RAW_CATEGORIES.forEach(c => totalSubs += c.subs.length);
-            const variationsPerSub = Math.ceil(50000 / totalSubs); // ~213 per subcategory
+            const variationsPerSub = Math.ceil(50000 / totalSubs);
             
             RAW_CATEGORIES.forEach(cat => {
                 cat.subs.forEach(sub => {
@@ -432,13 +393,12 @@
                         const tone = TONES[(v + Math.floor(v/STYLES.length)) % TONES.length];
                         const format = FORMATS[(v + Math.floor(v/TONES.length)) % FORMATS.length];
                         
-                        // First item is Free, rest are PRO
+                        // Keeps PRO label logic without locking access
                         const isPro = v > 0;
                         const variationName = isPro ? `${style} (PRO)` : `${style} (FREE)`;
                         
                         let promptText = getTemplate(cat.type, sub) + `\n\nAI Advanced Instructions:\n- Style Preference: ${style}\n- Tone of Voice: ${tone}\n- Output Format: ${format}\n- Uniqueness: 100% Original & Plagiarism-free`;
                         
-                        // Append mandatory promo URL to EVERY prompt
                         promptText += `\n\nDeveloper & Updates:\n🌐 ${PROMO_URL}`;
 
                         db.push({
@@ -489,14 +449,7 @@
             modalGemBtn: document.getElementById('modalGemBtn'),
             
             toast: document.getElementById('toast'),
-            toastMsg: document.getElementById('toastMessage'),
-
-            // Unlock Modal DOM
-            unlockModal: document.getElementById('unlockModal'),
-            unlockInitialUI: document.getElementById('unlockInitialUI'),
-            unlockProgressUI: document.getElementById('unlockProgressUI'),
-            unlockTimerText: document.getElementById('unlockTimerText'),
-            unlockProgressBar: document.getElementById('unlockProgressBar')
+            toastMsg: document.getElementById('toastMessage')
         };
 
         function initApp() {
@@ -556,10 +509,8 @@
 
         function renderGrid(items) {
             const html = items.map(item => {
-                const isLocked = item.isPro && !isProUnlocked;
-                
                 return `
-                <article class="glass-panel hover:bg-surfaceHover rounded-2xl p-5 flex flex-col transition duration-300 group border ${isLocked ? 'border-gold/20 hover:border-gold/50' : 'border-white/5 hover:border-primary/40'} relative overflow-hidden">
+                <article class="glass-panel hover:bg-surfaceHover rounded-2xl p-5 flex flex-col transition duration-300 group border border-white/5 hover:border-primary/40 relative overflow-hidden">
                     <div class="flex items-start gap-3 mb-4 relative z-10">
                         <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-xl border border-white/10 flex-shrink-0">
                             ${item.icon}
@@ -574,27 +525,14 @@
                     </div>
                     
                     <div class="bg-black/60 rounded-xl p-4 mb-5 flex-1 border border-white/5 group-hover:border-white/10 transition relative z-10 overflow-hidden">
-                        <p class="text-slate-300 text-xs leading-relaxed line-clamp-4 whitespace-pre-wrap font-mono ${isLocked ? 'blur-[4px] select-none opacity-40' : ''}">${highlightBracketsInHTML(escapeHTML(item.prompt))}</p>
-                        
-                        ${isLocked ? `
-                        <div class="absolute inset-0 flex flex-col items-center justify-center z-20">
-                            <span class="text-3xl mb-1 drop-shadow-lg">🔒</span>
-                            <span class="text-gold font-bold text-xs bg-black/80 px-3 py-1 rounded-full border border-gold/30">PRO LOCKED</span>
-                        </div>
-                        ` : ''}
+                        <p class="text-slate-300 text-xs leading-relaxed line-clamp-4 whitespace-pre-wrap font-mono">${highlightBracketsInHTML(escapeHTML(item.prompt))}</p>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-2 mt-auto relative z-10">
-                        ${isLocked ? `
-                        <button onclick="openUnlockModal()" class="col-span-2 bg-gradient-to-r from-gold/10 to-yellow-600/10 hover:from-gold hover:to-yellow-500 text-gold hover:text-black border border-gold/40 text-sm font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                            🔒 Click to Unlock PRO
-                        </button>
-                        ` : `
                         <button onclick="openEditor(${item.id})" class="col-span-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white text-sm font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(99,102,241,0.3)]">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             Edit & Use Prompt
                         </button>
-                        `}
                     </div>
                 </article>
                 `;
@@ -602,46 +540,6 @@
             
             DOM.promptGrid.innerHTML = html;
             window.scrollTo({ top: DOM.promptGrid.offsetTop - 150, behavior: 'smooth' });
-        }
-
-        // Unlock System Logic
-        window.openUnlockModal = function() {
-            DOM.unlockModal.classList.remove('hidden');
-            DOM.unlockInitialUI.classList.remove('hidden');
-            DOM.unlockProgressUI.classList.add('hidden');
-        }
-
-        window.closeUnlockModal = function() {
-            DOM.unlockModal.classList.add('hidden');
-            if (unlockInterval) clearInterval(unlockInterval);
-        }
-
-        window.startUnlockProcess = function() {
-            // Open the sponsor URL in new tab
-            window.open(PROMO_URL, '_blank');
-            
-            // Switch UI to timer
-            DOM.unlockInitialUI.classList.add('hidden');
-            DOM.unlockProgressUI.classList.remove('hidden');
-            
-            let timeLeft = 90; // 90 seconds
-            DOM.unlockTimerText.textContent = timeLeft;
-            DOM.unlockProgressBar.style.width = '100%';
-
-            unlockInterval = setInterval(() => {
-                timeLeft--;
-                DOM.unlockTimerText.textContent = timeLeft;
-                DOM.unlockProgressBar.style.width = `${(timeLeft / 90) * 100}%`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(unlockInterval);
-                    localStorage.setItem('shraynex_pro_unlocked', 'true');
-                    isProUnlocked = true;
-                    closeUnlockModal();
-                    showToast("🎉 All PRO Prompts Unlocked!");
-                    updateView(); // Re-render grid without locks
-                }
-            }, 1000);
         }
 
         function highlightBracketsInHTML(str) {
