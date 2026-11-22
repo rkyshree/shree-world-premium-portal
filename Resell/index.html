@@ -56,20 +56,45 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0}.
   </div>
 </div>
 
-<!-- Instant Product Link Converter Bar (Powered by EarnKaro API) -->
+<!-- Instant SHRAYNEX Profit Link Converter Tool -->
 <div class="px-3 pt-2.5 max-w-5xl mx-auto">
-  <div class="bg-white rounded-2xl p-3 border border-gray-200/80 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-    <div class="flex items-center gap-2 flex-1 min-w-0 bg-gray-50 border border-gray-200 focus-within:border-primary rounded-xl px-3 py-2 transition-all">
-      <i class="fa-solid fa-link text-primary text-xs shrink-0"></i>
-      <input type="url" id="userProductLinkInput" placeholder="Paste any Amazon, Flipkart, Myntra product link to earn cashback..." class="w-full bg-transparent text-xs font-semibold text-gray-800 placeholder-gray-400 outline-none">
+  <div class="bg-white rounded-2xl p-3 border border-gray-200/80 shadow-sm space-y-2.5">
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+      <div class="flex items-center gap-2 flex-1 min-w-0 bg-gray-50 border border-gray-200 focus-within:border-primary rounded-xl px-3 py-2 transition-all">
+        <i class="fa-solid fa-link text-primary text-xs shrink-0"></i>
+        <input type="text" id="userProductLinkInput" oninput="autoConvertTypedLink(this.value)" placeholder="Paste any Flipkart, Myntra, Ajio, Amazon link to auto-create Profit Link..." class="w-full bg-transparent text-xs font-semibold text-gray-800 placeholder-gray-400 outline-none">
+        <button type="button" id="btnClearUserLink" onclick="clearUserLinkConverter()" class="hidden text-gray-400 hover:text-gray-600 text-xs shrink-0"><i class="fa-solid fa-circle-xmark"></i></button>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" id="btnConvertShop" onclick="convertAndActionUserLink('shop')" class="flex-1 sm:flex-initial bg-primary hover:bg-primary-dark text-white px-3.5 py-2 rounded-xl text-[11px] font-black shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-bag-shopping"></i> Shop & Earn
+        </button>
+        <button type="button" id="btnConvertShare" onclick="convertAndActionUserLink('share')" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-[11px] font-black shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-share-nodes"></i> Share Profit Link
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-2 shrink-0">
-      <button type="button" id="btnConvertShop" onclick="convertAndActionUserLink('shop')" class="flex-1 sm:flex-initial bg-primary hover:bg-primary-dark text-white px-3.5 py-2 rounded-xl text-[11px] font-black shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5">
-        <i class="fa-solid fa-bag-shopping"></i> Shop & Earn
-      </button>
-      <button type="button" id="btnConvertShare" onclick="convertAndActionUserLink('share')" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-[11px] font-black shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5">
-        <i class="fa-solid fa-share-nodes"></i> Make Link
-      </button>
+
+    <!-- Auto-Generated Profit Link Status & Ready-to-Share Box -->
+    <div id="autoProfitLinkStatus" class="hidden text-[11px] font-bold text-primary flex items-center gap-2 px-1">
+      <i class="fa-solid fa-circle-notch fa-spin"></i> <span>Creating your SHRAYNEX Profit Link automatically...</span>
+    </div>
+
+    <div id="autoProfitLinkReadyBox" class="hidden bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="min-w-0 flex-1">
+        <span class="inline-flex items-center gap-1 text-[9.5px] font-black uppercase tracking-wider text-emerald-700">
+          <i class="fa-solid fa-circle-check"></i> SHRAYNEX Profit Link Ready!
+        </span>
+        <p id="autoProfitLinkPreviewText" class="text-xs font-bold text-gray-900 truncate font-mono mt-0.5"></p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="copyReadyProfitLink()" class="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition active:scale-95 flex items-center gap-1">
+          <i class="fa-regular fa-copy"></i> Copy
+        </button>
+        <button type="button" onclick="shareReadyProfitLink()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-[11px] font-black shadow-sm transition active:scale-95 flex items-center gap-1">
+          <i class="fa-solid fa-share-nodes"></i> Share Now
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -299,33 +324,33 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0}.
 <div id="androidInstallModal" class="bottom-sheet z-[9999]"><div class="bottom-sheet-content bg-white pb-8"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Install App</h3><button onclick="closeModal('androidInstallModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-6 flex flex-col items-center text-center"><img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm" loading="lazy" decoding="async" onerror="handleImageError(this)"><p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p><div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3"><p class="text-sm text-gray-700">1. Tap the <b>3-dots menu</b> <i class="fa-solid fa-ellipsis-vertical mx-1"></i> in top right corner of browser.</p><p class="text-sm text-gray-700">2. Select <b>Add to Home Screen</b> <i class="fa-solid fa-mobile-screen mx-1"></i> or <b>Install App</b>.</p><p class="text-sm text-gray-700">3. Tap <b>Install</b> to confirm.</p></div></div></div></div>
 <div id="iosInstallModal" class="bottom-sheet z-[9999]"><div class="bottom-sheet-content bg-white pb-8"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Install App</h3><button onclick="closeModal('iosInstallModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><div class="p-6 flex flex-col items-center text-center"><img src="https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png" class="w-16 h-16 mb-4 rounded-xl border border-gray-100 shadow-sm" loading="lazy" decoding="async" onerror="handleImageError(this)"><p class="text-sm text-gray-700 font-medium mb-6">Install SHRAYNEX on your home screen for quick access.</p><div class="bg-gray-50 w-full p-4 rounded-lg border border-gray-200 text-left space-y-3"><p class="text-sm text-gray-700">1. Tap <i class="fa-solid fa-arrow-up-from-bracket text-blue-500 mx-1"></i> in browser menu.</p><p class="text-sm text-gray-700">2. Select <b>Add to Home Screen</b> <i class="fa-regular fa-square-plus mx-1"></i></p><p class="text-sm text-gray-700">3. Tap <b>Add / Install</b>.</p></div></div></div></div>
 <div id="adminLoginModal" class="bottom-sheet z-[400] no-easy-close"><div class="bottom-sheet-content"><div class="drag-handle"></div><div class="px-4 pb-3 flex justify-between items-center border-b border-gray-100"><h3 class="font-bold text-gray-900">Admin Gateway</h3><button onclick="closeModal('adminLoginModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button></div><form onsubmit="handleAdminLogin(event)" class="p-5 space-y-4"><input id="adminEmail" type="email" class="input-field bg-gray-50" placeholder="Admin Email" required><input id="adminPassword" type="password" minlength="6" class="input-field bg-gray-50" placeholder="Password" required><button id="adminLoginBtn" type="submit" class="w-full bg-blue-600 text-white py-3.5 rounded-lg font-bold text-sm mt-2 shadow-lg shadow-blue-600/30">Access Control Panel</button></form></div></div>
-<div id="adminPanelModal" class="fixed inset-0 z-[350] bg-[#0a0a0a] text-white hidden flex-col md:flex-row overflow-hidden"><aside id="adminSidebar" class="w-full md:w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex z-20 overflow-y-auto"><div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p><button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button><button onclick="switchAdminTab('claims')" id="adminTabClaims" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🎫 Claims</button><button onclick="switchAdminTab('shares')" id="adminTabShares" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🔗 Shares</button><button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button><button onclick="switchAdminTab('brands')" id="adminTabBrands" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🌟 Explore Brands</button><button onclick="switchAdminTab('api')" id="adminTabApi" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🔌 EarnKaro API</button><button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button><button onclick="switchAdminTab('withdrawals')" id="adminTabWithdrawals" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">💰 Withdrawals</button><div class="mt-auto pt-8"><button onclick="closeAdminPanel()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-white transition">🚪 Exit Admin</button></div></aside><main class="flex-1 p-4 md:p-8 min-w-0 overflow-y-auto relative"><header class="flex justify-between items-center mb-8 pb-4 border-b border-[#222]"><div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl">☰</button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Overview</h1></div><div class="flex gap-3"><button onclick="refreshAdmin()" class="bg-[#222] border border-[#333] px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#333] transition hidden sm:block">↻ Refresh</button><div id="adminEmailDisplay" class="text-xs text-gray-500 font-medium py-2.5">Admin</div></div></header><div id="adminDashboardSection" class="admin-section block space-y-6"><div class="grid grid-cols-2 md:grid-cols-3 gap-4"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Resellers</p><p id="statResellers" class="text-3xl font-black mt-2">0</p></div><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Total Claims</p><p id="statOrders" class="text-3xl font-black mt-2">0</p></div><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pending Payouts</p><p id="statWithdrawals" class="text-3xl font-black mt-2 text-amber-500">0</p></div></div></div><div id="adminClaimsSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Brand Cashback Claims</h2><input id="adminClaimSearch" oninput="renderAdminClaims()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search reseller, brand..."></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller Info</th><th class="pb-3 px-4">Claim Details</th><th class="pb-3 px-4">Comm. Amount</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminClaimsTable" class="text-sm"></tbody></table></div></div></div><div id="adminSharesSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Share & Earn Approvals</h2><input id="adminShareSearch" oninput="renderAdminShares()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search reseller, brand..."></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller Info</th><th class="pb-3 px-4">Share Details</th><th class="pb-3 px-4">Comm. Amount</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminSharesTable" class="text-sm"></tbody></table></div></div></div><div id="adminBannersSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">📢 Ads & Banners Management (16:9)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Banner Image URL</label><input id="newBannerImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Link URL (Optional)</label><input id="newBannerLink" type="text" placeholder="https://wa.me/..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBanner()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Banner</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBannersTable" class="text-sm"></tbody></table></div></div></div><div id="adminBrandsSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">🌟 Explore Brands Management</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Name</label><input id="newBrandTitle" type="text" placeholder="e.g. Amazon" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Logo URL</label><input id="newBrandImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Affiliate / Store Link URL</label><input id="newBrandLink" type="text" placeholder="https://www.amazon.in" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Top Badge Text</label><input id="newBrandBadge" type="text" placeholder="e.g. 0.5% or 50% OFF" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBrand()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Explore Brand</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-20">Logo</th><th class="pb-3 px-4">Title</th><th class="pb-3 px-4">Badge Text</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBrandsTable" class="text-sm"></tbody></table></div></div></div>
+<div id="adminPanelModal" class="fixed inset-0 z-[350] bg-[#0a0a0a] text-white hidden flex-col md:flex-row overflow-hidden"><aside id="adminSidebar" class="w-full md:w-[260px] bg-[#141414] border-r border-[#222] p-5 flex flex-col shrink-0 md:h-screen md:sticky top-0 transition-transform hidden md:flex z-20 overflow-y-auto"><div class="flex justify-between items-center mb-8"><div class="text-2xl font-black tracking-tight">SHRAY<span class="text-[#00e676]">NEX</span></div><button onclick="toggleAdminMenu()" class="md:hidden text-gray-400 text-2xl">✕</button></div><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Workspace</p><button onclick="switchAdminTab('dashboard')" id="adminTabDashboard" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-[#00e676] bg-[#00e676]/10 transition">📊 Dashboard</button><button onclick="switchAdminTab('claims')" id="adminTabClaims" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🎫 Claims</button><button onclick="switchAdminTab('shares')" id="adminTabShares" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🔗 Shares</button><button onclick="switchAdminTab('banners')" id="adminTabBanners" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">📢 Ads & Banners</button><button onclick="switchAdminTab('brands')" id="adminTabBrands" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🌟 Explore Brands</button><button onclick="switchAdminTab('api')" id="adminTabApi" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">🔌 Profit Link API</button><button onclick="switchAdminTab('users')" id="adminTabUsers" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">👥 Resellers</button><button onclick="switchAdminTab('withdrawals')" id="adminTabWithdrawals" class="w-full text-left py-3.5 px-4 rounded-xl font-bold text-sm mb-2 text-gray-400 hover:bg-[#222] hover:text-white transition">💰 Withdrawals</button><div class="mt-auto pt-8"><button onclick="closeAdminPanel()" class="w-full bg-red-500/10 border border-red-500/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-50 hover:text-white transition">🚪 Exit Admin</button></div></aside><main class="flex-1 p-4 md:p-8 min-w-0 overflow-y-auto relative"><header class="flex justify-between items-center mb-8 pb-4 border-b border-[#222]"><div class="flex items-center gap-4"><button onclick="toggleAdminMenu()" class="md:hidden text-white text-2xl">☰</button><h1 id="adminPageTitle" class="text-2xl md:text-3xl font-black">Overview</h1></div><div class="flex gap-3"><button onclick="refreshAdmin()" class="bg-[#222] border border-[#333] px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#333] transition hidden sm:block">↻ Refresh</button><div id="adminEmailDisplay" class="text-xs text-gray-500 font-medium py-2.5">Admin</div></div></header><div id="adminDashboardSection" class="admin-section block space-y-6"><div class="grid grid-cols-2 md:grid-cols-3 gap-4"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Resellers</p><p id="statResellers" class="text-3xl font-black mt-2">0</p></div><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Total Claims</p><p id="statOrders" class="text-3xl font-black mt-2">0</p></div><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Pending Payouts</p><p id="statWithdrawals" class="text-3xl font-black mt-2 text-amber-500">0</p></div></div></div><div id="adminClaimsSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Brand Cashback Claims</h2><input id="adminClaimSearch" oninput="renderAdminClaims()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search reseller, brand..."></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller Info</th><th class="pb-3 px-4">Claim Details</th><th class="pb-3 px-4">Comm. Amount</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminClaimsTable" class="text-sm"></tbody></table></div></div></div><div id="adminSharesSection" class="admin-section hidden"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><h2 class="font-black text-lg">Share & Earn Approvals</h2><input id="adminShareSearch" oninput="renderAdminShares()" class="bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676] text-sm md:w-80" placeholder="Search reseller, brand..."></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[900px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4">Reseller Info</th><th class="pb-3 px-4">Share Details</th><th class="pb-3 px-4">Comm. Amount</th><th class="pb-3 px-4">Status</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminSharesTable" class="text-sm"></tbody></table></div></div></div><div id="adminBannersSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">📢 Ads & Banners Management (16:9)</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Banner Image URL</label><input id="newBannerImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Link URL (Optional)</label><input id="newBannerLink" type="text" placeholder="https://wa.me/..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBanner()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Banner</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-32">Image</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBannersTable" class="text-sm"></tbody></table></div></div></div><div id="adminBrandsSection" class="admin-section hidden space-y-6"><div class="bg-[#141414] border border-[#222] p-6 rounded-2xl"><h2 class="font-black text-xl mb-6">🌟 Explore Brands Management</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Name</label><input id="newBrandTitle" type="text" placeholder="e.g. Amazon" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Brand Logo URL</label><input id="newBrandImg" type="text" placeholder="https://..." class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Affiliate / Store Link URL</label><input id="newBrandLink" type="text" placeholder="https://www.amazon.in" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><div><label class="text-[10px] font-black text-gray-500 uppercase block mb-1">Top Badge Text</label><input id="newBrandBadge" type="text" placeholder="e.g. 0.5% or 50% OFF" class="w-full bg-[#0a0a0a] border border-[#333] text-white px-4 py-3 rounded-xl outline-none focus:border-[#00e676]"></div><button onclick="addNewAdminBrand()" class="md:col-span-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-[#00c853] transition">Add Explore Brand</button></div><div class="overflow-x-auto"><table class="w-full text-left border-collapse min-w-[600px]"><thead><tr class="text-[10px] font-black text-gray-500 uppercase tracking-wider border-b border-[#222]"><th class="pb-3 px-4 w-20">Logo</th><th class="pb-3 px-4">Title</th><th class="pb-3 px-4">Badge Text</th><th class="pb-3 px-4">Link URL</th><th class="pb-3 px-4 text-center">Reorder</th><th class="pb-3 px-4 text-right">Actions</th></tr></thead><tbody id="adminBrandsTable" class="text-sm"></tbody></table></div></div></div>
 
-<!-- EarnKaro API Management Section in Admin Panel -->
+<!-- SHRAYNEX Profit Link API Management Section in Admin Panel -->
 <div id="adminApiSection" class="admin-section hidden space-y-6">
   <div class="bg-[#141414] border border-[#222] p-6 rounded-2xl space-y-5">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#222] pb-4">
       <div>
-        <h2 class="font-black text-xl text-white flex items-center gap-2">🔌 EarnKaro Affiliate API Config</h2>
-        <p class="text-xs text-gray-400 mt-1">Auto-converts brand redirects, user product links, and Share & Earn links via <span class="text-[#00e676] font-mono">ekaro-api.affiliaters.in</span></p>
+        <h2 class="font-black text-xl text-white flex items-center gap-2">🔌 SHRAYNEX Profit Link API Config</h2>
+        <p class="text-xs text-gray-400 mt-1">Auto-converts brand redirects, user product links, and Share & Earn links into SHRAYNEX Profit Links.</p>
       </div>
-      <span class="inline-flex items-center gap-1.5 bg-[#00e676]/15 border border-[#00e676]/30 text-[#00e676] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider self-start">● Connected (ID: 841229)</span>
+      <span class="inline-flex items-center gap-1.5 bg-[#00e676]/15 border border-[#00e676]/30 text-[#00e676] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider self-start">● SHRAYNEX API Active</span>
     </div>
 
     <div class="space-y-3">
-      <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">EarnKaro Bearer API Token</label>
-      <textarea id="adminEarnKaroTokenInput" rows="3" class="w-full bg-[#0a0a0a] border border-[#333] text-[#00e676] font-mono text-xs p-3.5 rounded-xl outline-none focus:border-[#00e676]" placeholder="Paste EarnKaro JWT Bearer Token..."></textarea>
+      <label class="text-[10px] font-black text-gray-400 uppercase tracking-wider block">SHRAYNEX Affiliate API Bearer Token</label>
+      <textarea id="adminShraynexTokenInput" rows="3" class="w-full bg-[#0a0a0a] border border-[#333] text-[#00e676] font-mono text-xs p-3.5 rounded-xl outline-none focus:border-[#00e676]" placeholder="Paste SHRAYNEX API Bearer Token..."></textarea>
       <div class="flex flex-wrap items-center gap-3">
-        <button onclick="saveAdminEarnKaroToken()" class="bg-[#00e676] text-black px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:bg-[#00c853] transition">Save API Token</button>
-        <button id="btnBulkConvertBrands" onclick="bulkConvertAllBrandsWithEarnKaro()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:bg-blue-500 transition">⚡ Auto-Convert All Explore Brands</button>
+        <button onclick="saveAdminShraynexToken()" class="bg-[#00e676] text-black px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:bg-[#00c853] transition">Save API Token</button>
+        <button id="btnBulkConvertBrands" onclick="bulkConvertAllBrandsWithApi()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:bg-blue-500 transition">⚡ Auto-Convert All Explore Brands</button>
       </div>
     </div>
 
     <div class="border-t border-[#222] pt-5 space-y-3">
-      <h3 class="font-black text-sm text-white">🧪 Live Deal / Link Converter Tool</h3>
-      <textarea id="adminTestDealInput" rows="3" placeholder="Paste any Amazon, Flipkart, Myntra deal text or product URL here..." class="w-full bg-[#0a0a0a] border border-[#333] text-white text-xs p-3.5 rounded-xl outline-none focus:border-[#00e676]"></textarea>
+      <h3 class="font-black text-sm text-white">🧪 Live SHRAYNEX Profit Link Converter Tool</h3>
+      <textarea id="adminTestDealInput" rows="3" placeholder="Paste any Flipkart, Myntra, Ajio, Amazon deal text or product URL here..." class="w-full bg-[#0a0a0a] border border-[#333] text-white text-xs p-3.5 rounded-xl outline-none focus:border-[#00e676]"></textarea>
       <div class="flex flex-wrap gap-3">
-        <button id="btnAdminTestConvert" onclick="adminConvertDealText()" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl font-black text-xs transition">Convert to Affiliate Link</button>
+        <button id="btnAdminTestConvert" onclick="adminConvertDealText()" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl font-black text-xs transition">Create SHRAYNEX Profit Link</button>
         <button onclick="copyAdminConvertedResult()" class="bg-[#222] border border-[#333] hover:bg-[#333] text-gray-200 px-4 py-2.5 rounded-xl font-bold text-xs transition">📋 Copy Result</button>
       </div>
       <div id="adminTestDealResultBox" class="hidden bg-[#0a0a0a] border border-[#00e676]/40 rounded-xl p-4 text-xs text-gray-200 whitespace-pre-wrap break-all font-mono"></div>
@@ -337,9 +362,9 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0}.
 </div>
 
 <script>
-// EarnKaro Official Converter API Configuration
-window.EARNKARO_API_ENDPOINT = "https://ekaro-api.affiliaters.in/api/converter/public";
-window.EARNKARO_API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2UzNGUyN2NkMWUyODJlMmY5NTRiYjAiLCJlYXJua2FybyI6Ijg0MTIyOSIsImlhdCI6MTc5NTM1NjkzNn0.B5BwnW25dD-24-zKpN0lhY5njZggS8rIJ63RZLz4ZCI";
+// SHRAYNEX Affiliate Link Converter Configuration
+window.SHRAYNEX_CONVERTER_ENDPOINT = "https://ekaro-api.affiliaters.in/api/converter/public";
+window.SHRAYNEX_CONVERTER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2UzNGUyN2NkMWUyODJlMmY5NTRiYjAiLCJlYXJua2FybyI6Ijg0MTIyOSIsImlhdCI6MTc5NTM1NjkzNn0.B5BwnW25dD-24-zKpN0lhY5njZggS8rIJ63RZLz4ZCI";
 
 window.DEFAULT_BRAND_URLS = {
   "amazon": "https://www.amazon.in",
@@ -367,78 +392,296 @@ window.resolveBrandTargetUrl = (brandObj) => {
   return window.DEFAULT_BRAND_URLS[key] || "https://www.amazon.in";
 };
 
-window.isAlreadyEarnKaroLink = (url) => {
-  return /https?:\/\/(www\.)?(ekaro\.in|bitli\.in|topdeal\.app\.link|earnkaro\.com)/i.test(String(url || ""));
+window.isAlreadyProfitLink = (url) => {
+  return /https?:\/\/(www\.)?(ekaro\.in|bitli\.in|topdeal\.app\.link)/i.test(String(url || ""));
 };
 
-window.extractConvertedTextFromEarnKaroResponse = (json, fallbackText) => {
-  if (!json) return fallbackText;
-  if (typeof json === "string") return json.trim() || fallbackText;
-  if (typeof json.data === "string" && json.data.trim()) return json.data.trim();
+// Extract the first valid URL from any text (even if user pastes full share message or lacks https://)
+window.extractUrlFromText = (rawInput) => {
+  const txt = String(rawInput || "").trim();
+  if (!txt) return "";
+  const fullMatch = txt.match(/https?:\/\/[^\s"'<>]+/i);
+  if (fullMatch) return fullMatch[0].replace(/[),.;!?]+$/, "");
+  const domainMatch = txt.match(/(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+(?:\/[^\s"'<>]*)?/i);
+  if (domainMatch && /\.(com|in|co\.in|org|net|it|cc|me|io|app)/i.test(domainMatch[0])) {
+    return "https://" + domainMatch[0].replace(/[),.;!?]+$/, "");
+  }
+  return "";
+};
+
+// Unshorten mobile app share links (dl.flipkart.com, fkrt.it, myntr.it, ajio.page.link, amzn.in, etc.)
+window.expandShortProductUrl = async (urlStr) => {
+  try {
+    const u = new URL(urlStr);
+    const host = u.hostname.toLowerCase();
+    const isShortOrAppShare =
+      host === "dl.flipkart.com" ||
+      host.endsWith("fkrt.it") ||
+      host.endsWith("fkrt.cc") ||
+      host === "amzn.in" ||
+      host === "amzn.to" ||
+      host.endsWith("myntr.it") ||
+      host.endsWith("ajio.page.link") ||
+      host === "bit.ly" ||
+      host === "tinyurl.com" ||
+      host === "rb.gy" ||
+      host === "cutt.ly" ||
+      (host.includes("meesho.com") && u.pathname.startsWith("/s/"));
+
+    if (!isShortOrAppShare) return urlStr;
+
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(`https://unshorten.me/json/${encodeURIComponent(urlStr)}`, {
+      signal: controller.signal
+    });
+    clearTimeout(tid);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.resolved_url && /^https?:\/\//i.test(data.resolved_url)) {
+        return data.resolved_url;
+      }
+    }
+  } catch (e) {}
+  return urlStr;
+};
+
+// Normalize mobile subdomains & remove conflicting affiliate/tracking parameters
+window.normalizeStoreProductUrl = (urlStr) => {
+  try {
+    const u = new URL(urlStr);
+    let host = u.hostname.toLowerCase();
+
+    if (host === "m.flipkart.com" || host === "dl.flipkart.com") {
+      if (u.pathname.startsWith("/p/") || u.pathname.includes("/itm")) {
+        u.hostname = "www.flipkart.com";
+      }
+    } else if (host === "m.myntra.com") {
+      u.hostname = "www.myntra.com";
+    } else if (host === "m.ajio.com") {
+      u.hostname = "www.ajio.com";
+    } else if (host === "m.snapdeal.com") {
+      u.hostname = "www.snapdeal.com";
+    }
+
+    const stripKeys = [
+      "affid", "affextparam1", "affextparam2", "tag", "ascsubtag",
+      "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
+      "cmpid", "sclid", "gclid", "fbclid", "shareid", "smid"
+    ];
+    for (const k of Array.from(u.searchParams.keys())) {
+      if (stripKeys.includes(k.toLowerCase())) {
+        u.searchParams.delete(k);
+      }
+    }
+    return u.toString();
+  } catch (e) {
+    return urlStr;
+  }
+};
+
+// Detect Store Base Homepage if a deep sub-link isn't directly supported
+window.getStoreBaseUrlFromProductUrl = (urlStr) => {
+  try {
+    const host = new URL(urlStr).hostname.toLowerCase();
+    if (host.includes("flipkart") || host.includes("fkrt")) return "https://www.flipkart.com";
+    if (host.includes("amazon") || host.includes("amzn")) return "https://www.amazon.in";
+    if (host.includes("myntra") || host.includes("myntr")) return "https://www.myntra.com";
+    if (host.includes("ajio")) return "https://www.ajio.com";
+    if (host.includes("nykaa")) return "https://www.nykaa.com";
+    if (host.includes("meesho")) return "https://www.meesho.com";
+    if (host.includes("adidas")) return "https://www.adidas.co.in";
+    if (host.includes("dominos")) return "https://pizzaonline.dominos.co.in";
+    if (host.includes("pvrcinemas")) return "https://www.pvrcinemas.com";
+    if (host.includes("blinkit")) return "https://blinkit.com";
+    if (host.includes("zepto")) return "https://www.zeptonow.com";
+    if (host.includes("swiggy")) return "https://www.swiggy.com/instamart";
+    if (host.includes("bookmyshow")) return "https://in.bookmyshow.com";
+    if (host.includes("bigbasket")) return "https://www.bigbasket.com";
+  } catch (e) {}
+  return "";
+};
+
+// Strictly extract ONLY a valid converted HTTP/HTTPS URL (never error text!)
+window.extractValidProfitUrlFromApi = (json) => {
+  if (!json) return "";
+  if (typeof json === "object" && (json.status === 0 || json.success === false)) {
+    return "";
+  }
+  const candidates = [];
+  if (typeof json === "string") candidates.push(json);
+  if (typeof json.data === "string") candidates.push(json.data);
   if (json.data && typeof json.data === "object") {
-    if (json.data.converted_text) return String(json.data.converted_text).trim();
-    if (json.data.url) return String(json.data.url).trim();
-    if (json.data.link) return String(json.data.link).trim();
+    if (json.data.converted_text) candidates.push(String(json.data.converted_text));
+    if (json.data.url) candidates.push(String(json.data.url));
+    if (json.data.link) candidates.push(String(json.data.link));
   }
-  if (typeof json.converted_text === "string" && json.converted_text.trim()) return json.converted_text.trim();
-  if (typeof json.result === "string" && json.result.trim()) return json.result.trim();
-  if (typeof json.url === "string" && json.url.trim()) return json.url.trim();
-  return fallbackText;
+  if (typeof json.converted_text === "string") candidates.push(json.converted_text);
+  if (typeof json.result === "string") candidates.push(json.result);
+  if (typeof json.url === "string") candidates.push(json.url);
+
+  for (const raw of candidates) {
+    const str = String(raw || "").trim();
+    if (!str) continue;
+    // Reject any API error sentence
+    if (/could not locate|verify if the seller|not available|invalid|error|failed/i.test(str)) {
+      continue;
+    }
+    const urlMatch = str.match(/https?:\/\/[^\s"'<>]+/i);
+    if (urlMatch) {
+      return urlMatch[0].replace(/[),.;!?]+$/, "");
+    }
+  }
+  return "";
 };
 
-// Core EarnKaro Link Converter with Cache & Resilience
-window.convertDealViaEarnKaro = async (dealText, forceFresh = false) => {
-  const cleanDeal = String(dealText || "").trim();
-  if (!cleanDeal) return cleanDeal;
-  if (!forceFresh && window.isAlreadyEarnKaroLink(cleanDeal) && !/\s/.test(cleanDeal)) {
-    return cleanDeal;
-  }
-
-  // Check 24-hour local cache
-  const cacheKey = "shraynex_ekaro_cache_v1";
-  let cache = {};
-  try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) {}
-  if (!forceFresh && cache[cleanDeal] && (Date.now() - cache[cleanDeal].ts < 86400000)) {
-    return cache[cleanDeal].converted;
-  }
-
-  const token = (window.EARNKARO_API_TOKEN || "").trim();
-  if (!token) return cleanDeal;
-
-  const payload = JSON.stringify({
-    deal: cleanDeal,
-    convert_option: "convert_only"
-  });
-
-  const headers = {
-    "Authorization": `Bearer ${token}`,
-    "Content-Type": "application/json"
-  };
-
+window.requestSingleConversionFromApi = async (targetUrl, token) => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch(window.EARNKARO_API_ENDPOINT, {
+    const res = await fetch(window.SHRAYNEX_CONVERTER_ENDPOINT, {
       method: "POST",
-      headers: headers,
-      body: payload,
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        deal: targetUrl,
+        convert_option: "convert_only"
+      }),
       signal: controller.signal
     });
     clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const json = await res.json();
-      const converted = window.extractConvertedTextFromEarnKaroResponse(json, cleanDeal);
-      if (converted && converted !== cleanDeal) {
-        cache[cleanDeal] = { converted, ts: Date.now() };
-        try { localStorage.setItem(cacheKey, JSON.stringify(cache)); } catch (e) {}
-        return converted;
-      }
-    }
-  } catch (err) {
-    // Fallback gracefully to original target URL if browser CORS or network blocks direct call
+    if (!res.ok) return "";
+    const json = await res.json();
+    return window.extractValidProfitUrlFromApi(json);
+  } catch (e) {
+    return "";
   }
-  return cleanDeal;
+};
+
+// Core SHRAYNEX Profit Link Converter (Multi-stage: Expand -> Clean -> Convert -> Fallback)
+window.convertDealViaShraynex = async (rawInput, forceFresh = false) => {
+  const extractedUrl = window.extractUrlFromText(rawInput);
+  if (!extractedUrl) return String(rawInput || "").trim();
+
+  if (!forceFresh && window.isAlreadyProfitLink(extractedUrl)) {
+    return extractedUrl;
+  }
+
+  const cacheKey = "shraynex_profit_link_cache_v2";
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) {}
+  if (!forceFresh && cache[extractedUrl] && (Date.now() - cache[extractedUrl].ts < 86400000)) {
+    return cache[extractedUrl].converted;
+  }
+
+  const token = (window.SHRAYNEX_CONVERTER_TOKEN || "").trim();
+  if (!token) return extractedUrl;
+
+  // Step 1: Unshorten app links (dl.flipkart.com, myntr.it, amzn.in, etc.)
+  const expandedUrl = await window.expandShortProductUrl(extractedUrl);
+  // Step 2: Normalize mobile domain & strip conflicting query params
+  const normalizedUrl = window.normalizeStoreProductUrl(expandedUrl);
+
+  // Step 3: Primary API conversion
+  let converted = await window.requestSingleConversionFromApi(normalizedUrl, token);
+
+  // Step 4: Retry without any query params (e.g. clean product slug URL)
+  if (!converted) {
+    try {
+      const u = new URL(normalizedUrl);
+      const cleanPathOnly = `${u.origin}${u.pathname}`;
+      if (cleanPathOnly !== normalizedUrl) {
+        converted = await window.requestSingleConversionFromApi(cleanPathOnly, token);
+      }
+    } catch (e) {}
+  }
+
+  // Step 5: Fallback to Store Base Profit Link if specific seller/sub-page is restricted
+  if (!converted) {
+    const storeBase = window.getStoreBaseUrlFromProductUrl(normalizedUrl);
+    if (storeBase && storeBase !== normalizedUrl) {
+      converted = await window.requestSingleConversionFromApi(storeBase, token);
+    }
+  }
+
+  const finalSafeUrl = converted || normalizedUrl || extractedUrl;
+  if (converted) {
+    cache[extractedUrl] = { converted: finalSafeUrl, ts: Date.now() };
+    try { localStorage.setItem(cacheKey, JSON.stringify(cache)); } catch (e) {}
+  }
+  return finalSafeUrl;
+};
+
+// Auto-convert as soon as user pastes or types any link in the Home converter box
+window.readyProfitLinkValue = "";
+window.autoConvertDebounceTimer = null;
+
+window.autoConvertTypedLink = (val) => {
+  const clearBtn = document.getElementById("btnClearUserLink");
+  const statusEl = document.getElementById("autoProfitLinkStatus");
+  const readyBox = document.getElementById("autoProfitLinkReadyBox");
+  const previewText = document.getElementById("autoProfitLinkPreviewText");
+
+  const trimmed = String(val || "").trim();
+  if (clearBtn) clearBtn.classList.toggle("hidden", !trimmed);
+
+  clearTimeout(window.autoConvertDebounceTimer);
+  window.readyProfitLinkValue = "";
+
+  const detectedUrl = window.extractUrlFromText(trimmed);
+  if (!detectedUrl) {
+    if (statusEl) statusEl.classList.add("hidden");
+    if (readyBox) readyBox.classList.add("hidden");
+    return;
+  }
+
+  if (statusEl) statusEl.classList.remove("hidden");
+  if (readyBox) readyBox.classList.add("hidden");
+
+  window.autoConvertDebounceTimer = setTimeout(async () => {
+    const profitUrl = await window.convertDealViaShraynex(detectedUrl);
+    // Ensure input hasn't been cleared while waiting
+    const currentInputUrl = window.extractUrlFromText(document.getElementById("userProductLinkInput")?.value || "");
+    if (!currentInputUrl) return;
+
+    window.readyProfitLinkValue = profitUrl;
+    if (statusEl) statusEl.classList.add("hidden");
+    if (previewText) previewText.innerText = profitUrl;
+    if (readyBox) readyBox.classList.remove("hidden");
+  }, 450);
+};
+
+window.clearUserLinkConverter = () => {
+  const inp = document.getElementById("userProductLinkInput");
+  if (inp) {
+    inp.value = "";
+    inp.focus();
+  }
+  window.readyProfitLinkValue = "";
+  document.getElementById("btnClearUserLink")?.classList.add("hidden");
+  document.getElementById("autoProfitLinkStatus")?.classList.add("hidden");
+  document.getElementById("autoProfitLinkReadyBox")?.classList.add("hidden");
+};
+
+window.copyReadyProfitLink = () => {
+  if (!window.readyProfitLinkValue) return;
+  window.copyGenericText(window.readyProfitLinkValue, "✅ SHRAYNEX Profit Link Copied!");
+};
+
+window.shareReadyProfitLink = async () => {
+  if (!window.readyProfitLinkValue) return;
+  const shareMsg = `🔥 Best Deal via SHRAYNEX!\n👉 Buy here & save: ${window.readyProfitLinkValue}`;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "SHRAYNEX Best Deal", text: shareMsg });
+    } catch (err) {
+      window.copyGenericText(shareMsg, "✅ Deal Message Copied!");
+    }
+  } else {
+    window.copyGenericText(shareMsg, "✅ Deal Message Copied!");
+  }
 };
 
 (function(){window.splashFinished=false;setTimeout(()=>{document.getElementById('splashBg').classList.add('animate-expand-circle');},100);setTimeout(()=>{document.getElementById('splashContent').classList.add('animate-fade-up');},450);setTimeout(()=>{document.getElementById('splashSubtitle').style.opacity='1';document.getElementById('splashSubtitle').style.transition='opacity 0.6s ease';},900);setTimeout(()=>{const s=document.getElementById('splashScreen');s.classList.add('opacity-0');setTimeout(()=>{s.style.display='none';window.splashFinished=true;if(typeof window.checkAndRoute==='function')window.checkAndRoute();},500);},2800);})();
@@ -463,7 +706,7 @@ window.triggerBrandRedirect = async (title, img, link) => {
   document.body.style.overflow = 'hidden';
 
   const startTime = Date.now();
-  const convertedUrl = await window.convertDealViaEarnKaro(link);
+  const convertedUrl = await window.convertDealViaShraynex(link);
   const elapsed = Date.now() - startTime;
   const remainingDelay = Math.max(200, 1200 - elapsed);
 
@@ -522,36 +765,36 @@ window.adminUsers=[];window.adminOrders=[];window.adminWithdraws=[];window.isAdm
 window.brandSearchQuery="";
 let currentUser=null,userData=null,userOrdersList=[],userWithdrawalsList=[],unsubUser=null,unsubOrders=null,isSignupMode=false,carouselInterval=null,brandTimerInterval=null;
 
-// Load & Sync EarnKaro API Token from Firestore (with default fallback to user's provided key)
-async function loadEarnKaroConfig() {
+// Load & Sync SHRAYNEX Affiliate API Token from Firestore
+async function loadShraynexApiConfig() {
   try {
     const s = await getDoc(doc(db, SETTINGS_COL, "earnkaro_api"));
     if (s.exists() && s.data().token) {
-      window.EARNKARO_API_TOKEN = s.data().token;
+      window.SHRAYNEX_CONVERTER_TOKEN = s.data().token;
     } else {
       await setDoc(doc(db, SETTINGS_COL, "earnkaro_api"), {
-        token: window.EARNKARO_API_TOKEN,
-        endpoint: window.EARNKARO_API_ENDPOINT,
+        token: window.SHRAYNEX_CONVERTER_TOKEN,
+        endpoint: window.SHRAYNEX_CONVERTER_ENDPOINT,
         updatedAt: serverTimestamp()
       }, { merge: true });
     }
-    const tokenEl = document.getElementById("adminEarnKaroTokenInput");
-    if (tokenEl) tokenEl.value = window.EARNKARO_API_TOKEN;
+    const tokenEl = document.getElementById("adminShraynexTokenInput");
+    if (tokenEl) tokenEl.value = window.SHRAYNEX_CONVERTER_TOKEN;
   } catch (e) {}
 }
 
-window.saveAdminEarnKaroToken = async () => {
-  const val = document.getElementById("adminEarnKaroTokenInput")?.value.trim();
-  if (!val) return showToast("Please enter a valid EarnKaro API token.");
-  window.EARNKARO_API_TOKEN = val;
+window.saveAdminShraynexToken = async () => {
+  const val = document.getElementById("adminShraynexTokenInput")?.value.trim();
+  if (!val) return showToast("Please enter a valid SHRAYNEX API token.");
+  window.SHRAYNEX_CONVERTER_TOKEN = val;
   try {
     await setDoc(doc(db, SETTINGS_COL, "earnkaro_api"), {
       token: val,
-      endpoint: window.EARNKARO_API_ENDPOINT,
+      endpoint: window.SHRAYNEX_CONVERTER_ENDPOINT,
       updatedAt: serverTimestamp()
     }, { merge: true });
-    try { localStorage.removeItem("shraynex_ekaro_cache_v1"); } catch (e) {}
-    showToast("✅ EarnKaro API Token Saved!");
+    try { localStorage.removeItem("shraynex_profit_link_cache_v2"); } catch (e) {}
+    showToast("✅ SHRAYNEX API Token Saved!");
   } catch (e) {
     showToast("Error saving token.");
   }
@@ -562,14 +805,18 @@ window.adminConvertDealText = async () => {
   if (!input) return showToast("Paste a deal or product URL first.");
   const btn = document.getElementById("btnAdminTestConvert");
   const orig = btn.innerText;
-  btn.innerText = "Converting...";
+  btn.innerText = "Creating Profit Link...";
   btn.disabled = true;
   try {
-    const converted = await window.convertDealViaEarnKaro(input, true);
+    const urlInText = window.extractUrlFromText(input);
+    const convertedUrl = await window.convertDealViaShraynex(input, true);
+    const finalOutput = urlInText && input !== urlInText
+      ? input.replace(urlInText, convertedUrl)
+      : convertedUrl;
     const box = document.getElementById("adminTestDealResultBox");
-    box.innerText = converted;
+    box.innerText = finalOutput;
     box.classList.remove("hidden");
-    showToast("✅ Link Converted Successfully!");
+    showToast("✅ SHRAYNEX Profit Link Created!");
   } catch (e) {
     showToast("Conversion failed.");
   } finally {
@@ -581,10 +828,10 @@ window.adminConvertDealText = async () => {
 window.copyAdminConvertedResult = () => {
   const txt = document.getElementById("adminTestDealResultBox")?.innerText.trim();
   if (!txt) return showToast("Nothing to copy yet.");
-  window.copyGenericText(txt, "Converted Deal Copied!");
+  window.copyGenericText(txt, "Profit Link Copied!");
 };
 
-window.bulkConvertAllBrandsWithEarnKaro = async () => {
+window.bulkConvertAllBrandsWithApi = async () => {
   if (!window.exploreBrands || !window.exploreBrands.length) return;
   const btn = document.getElementById("btnBulkConvertBrands");
   const orig = btn.innerText;
@@ -594,7 +841,7 @@ window.bulkConvertAllBrandsWithEarnKaro = async () => {
     let updatedCount = 0;
     for (let i = 0; i < window.exploreBrands.length; i++) {
       const targetUrl = window.resolveBrandTargetUrl(window.exploreBrands[i]);
-      const converted = await window.convertDealViaEarnKaro(targetUrl, true);
+      const converted = await window.convertDealViaShraynex(targetUrl, true);
       if (converted && converted !== window.exploreBrands[i].link) {
         window.exploreBrands[i].link = converted;
         updatedCount++;
@@ -612,13 +859,16 @@ window.bulkConvertAllBrandsWithEarnKaro = async () => {
   }
 };
 
-// User Instant Product Link Converter Action (Shop & Earn / Make Link)
+// User Instant Product Link Converter Action (Shop & Earn / Share Profit Link)
 window.convertAndActionUserLink = async (mode) => {
   const inputEl = document.getElementById("userProductLinkInput");
-  const rawUrl = (inputEl?.value || "").trim();
-  if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) {
-    return showToast("Please paste a valid product link (https://...)");
+  const rawInput = (inputEl?.value || "").trim();
+  const detectedUrl = window.extractUrlFromText(rawInput);
+
+  if (!detectedUrl) {
+    return showToast("Please paste a valid Flipkart, Myntra, Ajio or Amazon link!");
   }
+
   const btnShop = document.getElementById("btnConvertShop");
   const btnShare = document.getElementById("btnConvertShare");
   btnShop.disabled = true;
@@ -626,21 +876,29 @@ window.convertAndActionUserLink = async (mode) => {
 
   try {
     if (mode === "shop") {
-      window.triggerBrandRedirect("Partner Store", "https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png", rawUrl);
+      window.triggerBrandRedirect("Partner Store", "https://i.ibb.co/0V98r6Q6/file-0000000076ec81fab1803a4485e01619.png", detectedUrl);
     } else {
       const origHtml = btnShare.innerHTML;
-      btnShare.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Converting...`;
-      const affiliateLink = await window.convertDealViaEarnKaro(rawUrl);
+      btnShare.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Creating...`;
+      const profitLink = window.readyProfitLinkValue || await window.convertDealViaShraynex(detectedUrl);
+      window.readyProfitLinkValue = profitLink;
       btnShare.innerHTML = origHtml;
-      const shareMsg = `🔥 Best Deal via SHRAYNEX!\n👉 Buy here & save: ${affiliateLink}`;
+
+      const previewText = document.getElementById("autoProfitLinkPreviewText");
+      const readyBox = document.getElementById("autoProfitLinkReadyBox");
+      document.getElementById("autoProfitLinkStatus")?.classList.add("hidden");
+      if (previewText) previewText.innerText = profitLink;
+      if (readyBox) readyBox.classList.remove("hidden");
+
+      const shareMsg = `🔥 Best Deal via SHRAYNEX!\n👉 Buy here & save: ${profitLink}`;
       if (navigator.share) {
         try {
-          await navigator.share({ title: "SHRAYNEX Deal Link", text: shareMsg });
+          await navigator.share({ title: "SHRAYNEX Best Deal", text: shareMsg });
         } catch (err) {
-          window.copyGenericText(affiliateLink, "✅ Cashback Link Copied!");
+          window.copyGenericText(shareMsg, "✅ Profit Link Copied!");
         }
       } else {
-        window.copyGenericText(affiliateLink, "✅ Cashback Link Copied!");
+        window.copyGenericText(shareMsg, "✅ Profit Link Copied!");
       }
     }
   } finally {
@@ -773,20 +1031,20 @@ function renderExploreBrandsUI(){
   startLiveTimers();
 }
 
-// Auto-converts Brand URL via EarnKaro API before sharing!
+// Auto-converts Brand URL into SHRAYNEX Profit Link before sharing
 window.shareExploreBrand = async (i) => {
   const b = window.exploreBrands[i];
   if (!b) return;
-  showToast("Generating your cashback link...");
+  showToast("Generating your SHRAYNEX Profit Link...");
   const baseUrl = window.resolveBrandTargetUrl(b);
-  const affiliateUrl = await window.convertDealViaEarnKaro(baseUrl);
-  const t = `🛍️ Shop from ${b.title} and get amazing discounts!\n👉 Click here: ${affiliateUrl}\n\n*Via SHRAYNEX App*`;
+  const affiliateUrl = await window.convertDealViaShraynex(baseUrl);
+  const t = `🔥 Best Deal via SHRAYNEX!\n🛍️ Shop from ${b.title} & save:\n👉 Buy here & save: ${affiliateUrl}`;
   try {
     if (navigator.share) {
-      await navigator.share({ title: b.title, text: t });
+      await navigator.share({ title: `${b.title} - SHRAYNEX`, text: t });
       processShareCommission(b.title);
     } else {
-      window.copyGenericText(t, "Affiliate Link Copied!");
+      window.copyGenericText(t, "✅ SHRAYNEX Profit Link Copied!");
       processShareCommission(b.title);
     }
   } catch (e) {}
@@ -801,7 +1059,7 @@ window.handleEmailAuth=async(e)=>{e.preventDefault();const em=document.getElemen
 async function initUserDoc(u,e={}){const r=doc(db,USERS_COL,u.uid),s=await getDoc(r);if(!s.exists()){const d={uid:u.uid,name:e.name||u.displayName||"Reseller",email:u.email||"",phone:e.phone||"",role:"reseller",status:"pending",walletBalance:0,totalEarnings:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(r,d);userData=d;}else{const up={updatedAt:serverTimestamp()};if(e.name)up.name=e.name;if(e.phone)up.phone=e.phone;await setDoc(r,up,{merge:true});userData={...s.data(),...up};}}
 window.handleLogout=async()=>{await signOut(auth);window.showSuccessPopup("Logged Out","You have successfully logged out.","check");switchTab('Feed');};
 let authStateResolved=false;
-onAuthStateChanged(auth,async(u)=>{currentUser=u;authStateResolved=true;if(!window.isAdminMode){loadEarnKaroConfig();loadBanners();loadBrands();}if(u){if(!window.isAdminMode){try{await initUserDoc(u);if(unsubUser)unsubUser();unsubUser=onSnapshot(doc(db,USERS_COL,u.uid),(d)=>{if(d.exists()){userData=d.data();updateProfileUI();if(userData.status==='suspended'&&userData.role!=='admin'){signOut(auth);showToast("Account Suspended.");}}});loadOrders();loadUserWithdrawals();}catch(e){}}}else{if(unsubUser)unsubUser();if(unsubOrders)unsubOrders();userData=null;updateProfileUI();}if(typeof window.checkAndRoute==='function')window.checkAndRoute();});
+onAuthStateChanged(auth,async(u)=>{currentUser=u;authStateResolved=true;if(!window.isAdminMode){loadShraynexApiConfig();loadBanners();loadBrands();}if(u){if(!window.isAdminMode){try{await initUserDoc(u);if(unsubUser)unsubUser();unsubUser=onSnapshot(doc(db,USERS_COL,u.uid),(d)=>{if(d.exists()){userData=d.data();updateProfileUI();if(userData.status==='suspended'&&userData.role!=='admin'){signOut(auth);showToast("Account Suspended.");}}});loadOrders();loadUserWithdrawals();}catch(e){}}}else{if(unsubUser)unsubUser();if(unsubOrders)unsubOrders();userData=null;updateProfileUI();}if(typeof window.checkAndRoute==='function')window.checkAndRoute();});
 window.checkAndRoute=()=>{if(authStateResolved&&window.splashFinished){const s=document.getElementById('splashScreen');if(s&&s.style.display!=='none'){s.classList.add('opacity-0');setTimeout(()=>{s.style.display='none';},300);}if(!window.isAdminMode){document.getElementById('landingPage').classList.remove('active');document.getElementById('appPage').classList.add('active');if(!document.querySelector('.tab-content:not(.hidden)'))switchTab('Feed');}}};
 window.switchTab=(t)=>{if((t==='Claims'||t==='Profile')&&!currentUser){openModal('authModal');return showToast("Please login to access this.");}['Feed','Claims','Profile'].forEach(x=>{document.getElementById(`tab${x}`).classList.add('hidden');document.getElementById(`navBtn${x}`).classList.replace('text-primary','text-gray-400');document.getElementById(`navBtn${x}`).classList.replace('text-gray-800','text-gray-400');});document.getElementById(`tab${t}`).classList.remove('hidden');document.getElementById(`navBtn${t}`).classList.replace('text-gray-400','text-primary');if(t==='Claims')updateClaimProfitPreview();};
 function updateProfileUI(){const b=document.getElementById('headerLoginBtn'),sh=document.getElementById('headerShareApp');if(!currentUser){['headerUserName','profileName'].forEach(id=>{if(document.getElementById(id))document.getElementById(id).innerText=id==='profileName'?"Guest User":"Guest";});if(document.getElementById('profilePhone'))document.getElementById('profilePhone').innerText="-";if(document.getElementById('profileEmail'))document.getElementById('profileEmail').innerText="-";if(document.getElementById('walletBalance'))document.getElementById('walletBalance').innerText="₹0";if(document.getElementById('pendingEarnings'))document.getElementById('pendingEarnings').innerText="₹0";if(document.getElementById('profileStatusBadge'))document.getElementById('profileStatusBadge').className="hidden";if(document.getElementById('approvalBanner'))document.getElementById('approvalBanner').classList.add('hidden');if(b)b.classList.remove('hidden');if(sh){sh.classList.add('hidden');sh.classList.remove('flex');}return;}if(b)b.classList.add('hidden');if(sh){sh.classList.remove('hidden');sh.classList.add('flex');}if(!userData)return;const n=userData.name||"Reseller";document.getElementById('headerUserName').innerText=n.split(' ')[0];document.getElementById('profileName').innerText=n;document.getElementById('epName').value=n;document.getElementById('profilePhone').innerText=userData.phone||"-";document.getElementById('epPhone').value=userData.phone||"";document.getElementById('profileEmail').innerText=userData.email||"-";document.getElementById('epEmail').value=userData.email||"";document.getElementById('walletBalance').innerText=`₹${money(userData.walletBalance)}`;const s=document.getElementById('profileStatusBadge');s.innerText=userData.status;if(userData.status==='approved'){s.className="hidden";document.getElementById('approvalBanner').classList.add('hidden');}else{s.className="inline-block mt-2 px-2.5 py-1 rounded-md text-[10px] font-black bg-amber-100 text-amber-700 uppercase tracking-widest border border-amber-200 shadow-sm";document.getElementById('approvalBanner').classList.remove('hidden');}}
@@ -815,9 +1073,9 @@ window.openWithdrawModal=()=>{document.getElementById('withdrawAvailable').inner
 window.togglePayoutFields=()=>{const val=document.querySelector('input[name="payoutMethod"]:checked').value;document.getElementById('bankFields').classList.toggle('hidden',val!=='bank');document.getElementById('upiFields').classList.toggle('hidden',val!=='upi');['wdBankName','wdAccName','wdAccNo','wdIfsc'].forEach(id=>document.getElementById(id).required=(val==='bank'));document.getElementById('wdUpiId').required=(val==='upi');};
 window.submitWithdrawal=async(e)=>{e.preventDefault();const a=Number(document.getElementById('withdrawAmount').value);if(a<300)return showToast("Minimum withdrawal is ₹300.");if(a>(userData?.walletBalance||0))return showToast("Insufficient wallet balance.");let d="";const method=document.querySelector('input[name="payoutMethod"]:checked').value;if(method==='bank'){d=`Bank: ${document.getElementById('wdBankName').value.trim()} | Acc Name: ${document.getElementById('wdAccName').value.trim()} | Acc No: ${document.getElementById('wdAccNo').value.trim()} | IFSC: ${document.getElementById('wdIfsc').value.trim()}`;}else{d=`UPI: ${document.getElementById('wdUpiAppSelected').value} - ${document.getElementById('wdUpiId').value.trim()}`;}const b=document.getElementById('submitWithdrawBtn');b.innerHTML='Processing...';b.disabled=true;try{await runTransaction(db,async(tx)=>{const r=doc(db,USERS_COL,currentUser.uid),s=await tx.get(r);if(s.data().walletBalance<a)throw new Error("Insufficient funds.");tx.update(r,{walletBalance:increment(-a),updatedAt:serverTimestamp()});tx.set(doc(collection(db,WITHDRAW_COL)),{userId:currentUser.uid,userName:userData.name,userEmail:userData.email,amount:a,details:d,method:method,status:'pending',createdAt:serverTimestamp()});});closeModal('withdrawModal');window.showSuccessPopup("Request Submitted!",`Your withdrawal of ₹${a} is pending verification.`,"check");}catch(x){showToast(x.message);}finally{b.innerHTML='Submit Request <i class="fa-solid fa-arrow-right"></i>';b.disabled=false;}};
 window.openAdminLogin=()=>{document.getElementById('adminEmail').value=currentUser?.email||'';openModal('adminLoginModal');};
-window.handleAdminLogin=async(e)=>{e.preventDefault();const em=document.getElementById('adminEmail').value,pw=document.getElementById('adminPassword').value,b=document.getElementById('adminLoginBtn');b.disabled=true;b.innerText="Verifying...";try{let u=auth.currentUser;if(!u||u.email!==em){u=(await signInWithEmailAndPassword(auth,em,pw)).user;}const s=await getDoc(doc(db,USERS_COL,u.uid));if(!s.exists()||s.data().role!=='admin')throw new Error("Unauthorized Access.");window.isAdminMode=true;currentUser=u;userData=s.data();closeModal('adminLoginModal');document.getElementById('adminEmailDisplay').innerText=u.email;document.getElementById('adminPanelModal').classList.remove('hidden');document.getElementById('adminPanelModal').classList.add('flex');loadEarnKaroConfig();loadBanners();loadBrands();window.refreshAdmin();}catch(x){showToast("Access Denied.");}finally{b.disabled=false;b.innerText="Access Control Panel";}};
+window.handleAdminLogin=async(e)=>{e.preventDefault();const em=document.getElementById('adminEmail').value,pw=document.getElementById('adminPassword').value,b=document.getElementById('adminLoginBtn');b.disabled=true;b.innerText="Verifying...";try{let u=auth.currentUser;if(!u||u.email!==em){u=(await signInWithEmailAndPassword(auth,em,pw)).user;}const s=await getDoc(doc(db,USERS_COL,u.uid));if(!s.exists()||s.data().role!=='admin')throw new Error("Unauthorized Access.");window.isAdminMode=true;currentUser=u;userData=s.data();closeModal('adminLoginModal');document.getElementById('adminEmailDisplay').innerText=u.email;document.getElementById('adminPanelModal').classList.remove('hidden');document.getElementById('adminPanelModal').classList.add('flex');loadShraynexApiConfig();loadBanners();loadBrands();window.refreshAdmin();}catch(x){showToast("Access Denied.");}finally{b.disabled=false;b.innerText="Access Control Panel";}};
 window.closeAdminPanel=()=>{document.getElementById('adminPanelModal').classList.remove('flex');document.getElementById('adminPanelModal').classList.add('hidden');window.isAdminMode=false;};window.toggleAdminMenu=()=>{document.getElementById('adminSidebar').classList.toggle('hidden');};
-window.switchAdminTab=(t)=>{["dashboard","claims","shares","banners","brands","api","users","withdrawals"].forEach(x=>{document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden",x!==t);const b=document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));if(b){b.classList.toggle("text-[#00e676]",x===t);b.classList.toggle("bg-[#00e676]/10",x===t);if(x!==t){b.classList.remove("text-[#00e676]","bg-[#00e676]/10");b.classList.add("text-gray-400");}}});document.getElementById('adminPageTitle').innerText=document.getElementById("adminTab"+t.charAt(0).toUpperCase()+t.slice(1)).innerText.split(' ').slice(1).join(' ');if(t==='api'){const tokenEl=document.getElementById("adminEarnKaroTokenInput");if(tokenEl)tokenEl.value=window.EARNKARO_API_TOKEN;}if(window.innerWidth<768)toggleAdminMenu();};
+window.switchAdminTab=(t)=>{["dashboard","claims","shares","banners","brands","api","users","withdrawals"].forEach(x=>{document.getElementById("admin"+x.charAt(0).toUpperCase()+x.slice(1)+"Section").classList.toggle("hidden",x!==t);const b=document.getElementById("adminTab"+x.charAt(0).toUpperCase()+x.slice(1));if(b){b.classList.toggle("text-[#00e676]",x===t);b.classList.toggle("bg-[#00e676]/10",x===t);if(x!==t){b.classList.remove("text-[#00e676]","bg-[#00e676]/10");b.classList.add("text-gray-400");}}});document.getElementById('adminPageTitle').innerText=document.getElementById("adminTab"+t.charAt(0).toUpperCase()+t.slice(1)).innerText.split(' ').slice(1).join(' ');if(t==='api'){const tokenEl=document.getElementById("adminShraynexTokenInput");if(tokenEl)tokenEl.value=window.SHRAYNEX_CONVERTER_TOKEN;}if(window.innerWidth<768)toggleAdminMenu();};
 window.refreshAdmin=async()=>{if(!window.isAdminMode)return;const uS=await getDocs(collection(db,USERS_COL));window.adminUsers=[];uS.forEach(d=>window.adminUsers.push({id:d.id,...d.data()}));const oS=await getDocs(collection(db,ORDERS_COL));window.adminOrders=[];oS.forEach(d=>window.adminOrders.push({id:d.id,...d.data()}));window.adminOrders.sort((a,b)=>(b.createdAt?.toMillis()||0)-(a.createdAt?.toMillis()||0));const wS=await getDocs(collection(db,WITHDRAW_COL));window.adminWithdraws=[];wS.forEach(d=>window.adminWithdraws.push({id:d.id,...d.data()}));window.adminWithdraws.sort((a,b)=>(b.createdAt?.toMillis()||0)-(a.createdAt?.toMillis()||0));document.getElementById('statResellers').innerText=window.adminUsers.filter(u=>u.role!=='admin').length;document.getElementById('statOrders').innerText=window.adminOrders.length;document.getElementById('statWithdrawals').innerText=window.adminWithdraws.filter(w=>w.status==='pending').length;window.renderAdminUsers();window.renderAdminWithdrawals();window.renderAdminBanners();window.renderAdminBrands();window.renderAdminClaims();window.renderAdminShares();};
 window.renderAdminClaims=()=>{const q=document.getElementById('adminClaimSearch')?.value.toLowerCase()||'',f=window.adminOrders.filter(o=>(o.isBrandClaim||o.isBonus)&&`${o.productName} ${o.resellerName} ${o.orderId} ${o.brandOrderId||''}`.toLowerCase().includes(q)),t=document.getElementById('adminClaimsTable');t.innerHTML=f.length?f.map(c=>{const copyVal=String(c.brandOrderId||c.productName||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");const amtMeta=c.orderAmount?`<div class="text-[10px] text-emerald-400 font-semibold mt-0.5">Order: ₹${money(c.orderAmount)}${c.commissionRate?` (${c.commissionRate}%)`:''}${c.grossProfit?` | Gross: ₹${money(c.grossProfit)} (-20% Charge)`:''}</div>`:'';return `<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><div class="font-bold text-white text-sm">${escapeHtml(c.resellerName)}</div><div class="text-[10px] text-gray-500 mt-0.5">${escapeHtml(c.orderId)}</div></td><td class="py-3 px-4"><div class="flex items-center gap-2"><span class="text-xs ${c.isBrandClaim?'text-blue-400':'text-yellow-400'} font-bold">${c.isBrandClaim?'🎯 Brand Cashback':'🎁 Reward Bonus'}</span>${c.isBrandClaim?`<button type="button" onclick="copyGenericText('${copyVal}', 'Brand Order ID Copied')" class="bg-[#222] hover:bg-[#333] border border-[#333] text-gray-300 hover:text-[#00e676] px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1 transition" title="Copy Order ID"><i class="fa-regular fa-copy"></i> Copy</button>`:''}</div><div class="text-[10px] text-gray-400 mt-1 max-w-[240px] truncate" title="${escapeHtml(c.productName)}">${escapeHtml(c.productName)}</div>${amtMeta}</td><td class="py-3 px-4"><input type="number" step="any" id="claim_amt_${c.id}" placeholder="Set Amt (₹)" value="${c.profit||0}" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-1.5 rounded-lg text-sm w-24 outline-none focus:border-[#00e676]"></td><td class="py-3 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${c.status==='delivered'?'bg-green-900/30 text-green-400':c.status==='cancelled'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${c.status==='delivered'?'Approved':c.status==='cancelled'?'Rejected':c.status}</span></td><td class="py-3 px-4 text-right flex gap-1 justify-end items-center flex-wrap">${c.status==='pending'?`<button onclick="processAdminClaim('${c.id}', 'approve')" class="bg-[#00e676] text-black px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#00c853]">Approve</button><button onclick="processAdminClaim('${c.id}', 'reject')" class="bg-[#222] border border-red-500/50 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition">Reject</button>`:c.status==='delivered'?`<button onclick="processAdminClaim('${c.id}', 'update')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-500 transition">Update</button><button onclick="processAdminClaim('${c.id}', 'reject')" class="bg-[#222] border border-red-500/50 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition">Reject</button>`:`<span class="text-[10px] font-bold text-red-500 mr-1">Rejected</span><button onclick="processAdminClaim('${c.id}', 'approve')" class="bg-[#222] border border-[#00e676]/50 text-[#00e676] px-2 py-1 rounded text-[10px] font-bold hover:bg-[#00e676] hover:text-black transition">Re-Approve</button>`}</td></tr>`;}).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500 font-medium">No Brand Claims or Rewards found.</td></tr>';};
 window.renderAdminShares=()=>{const q=document.getElementById('adminShareSearch')?.value.toLowerCase()||'',f=window.adminOrders.filter(o=>o.isShareBonus&&`${o.productName} ${o.resellerName} ${o.orderId}`.toLowerCase().includes(q)),t=document.getElementById('adminSharesTable');t.innerHTML=f.length?f.map(c=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><div class="font-bold text-white text-sm">${escapeHtml(c.resellerName)}</div><div class="text-[10px] text-gray-500 flex items-center gap-1 mt-0.5">${escapeHtml(c.orderId)} <i class="fa-regular fa-copy cursor-pointer hover:text-white" onclick="copyGenericText('${c.orderId}', 'Order ID Copied')"></i></div></td><td class="py-3 px-4"><div class="text-xs text-purple-400 font-bold">🔗 Share Bonus</div><div class="text-[10px] text-gray-400 mt-1 max-w-[200px] truncate" title="${escapeHtml(c.productName)}">${escapeHtml(c.productName)}</div></td><td class="py-3 px-4"><input type="number" step="any" id="claim_amt_${c.id}" placeholder="Set Amt (₹)" value="${c.profit||0}" class="bg-[#0a0a0a] border border-[#333] text-white px-3 py-1.5 rounded-lg text-sm w-24 outline-none focus:border-[#00e676]"></td><td class="py-3 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${c.status==='delivered'?'bg-green-900/30 text-green-400':c.status==='cancelled'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${c.status==='delivered'?'Approved':c.status==='cancelled'?'Rejected':c.status}</span></td><td class="py-3 px-4 text-right flex gap-1 justify-end items-center flex-wrap">${c.status==='pending'?`<button onclick="processAdminClaim('${c.id}', 'approve')" class="bg-[#00e676] text-black px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#00c853]">Approve</button><button onclick="processAdminClaim('${c.id}', 'reject')" class="bg-[#222] border border-red-500/50 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition">Reject</button>`:c.status==='delivered'?`<button onclick="processAdminClaim('${c.id}', 'update')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-500 transition">Update</button><button onclick="processAdminClaim('${c.id}', 'reject')" class="bg-[#222] border border-red-500/50 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition">Reject</button>`:`<span class="text-[10px] font-bold text-red-500 mr-1">Rejected</span><button onclick="processAdminClaim('${c.id}', 'approve')" class="bg-[#222] border border-[#00e676]/50 text-[#00e676] px-2 py-1 rounded text-[10px] font-bold hover:bg-[#00e676] hover:text-black transition">Re-Approve</button>`}</td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500 font-medium">No Share Bonuses found.</td></tr>';};
@@ -829,8 +1087,8 @@ window.editAdminBanner=async(i)=>{const b=window.siteBanners[i],ni=prompt("Edit 
 window.deleteAdminBanner=async(i)=>{if(!confirm("Delete this banner?"))return;window.siteBanners.splice(i,1);try{await setDoc(doc(db,SETTINGS_COL,"banners"),{list:window.siteBanners},{merge:true});renderCarousel();if(window.isAdminMode)window.renderAdminBanners();}catch(e){}};
 window.renderAdminBrands=()=>{const t=document.getElementById('adminBrandsTable');t.innerHTML=window.exploreBrands.length?window.exploreBrands.map((b,i)=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-3 px-4"><img src="${escapeHtml(b.img)}" class="h-10 w-10 object-contain bg-white rounded-lg" onerror="handleImageError(this)"></td><td class="py-3 px-4 font-bold text-white">${escapeHtml(b.title)}</td><td class="py-3 px-4"><span class="bg-[#00e676] text-black px-2 py-0.5 rounded text-[10px] font-bold">${escapeHtml(b.badge||'None')}</span></td><td class="py-3 px-4 text-xs text-gray-400 max-w-[150px] truncate">${escapeHtml(b.link||'No Link')}</td><td class="py-3 px-4 text-center"><button onclick="moveAdminBrand(${i}, -1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs" ${i===0?'disabled style="opacity:0.3"':''}>⬆️</button><button onclick="moveAdminBrand(${i}, 1)" class="bg-[#222] border border-[#333] text-white px-2 py-1 rounded-lg text-xs mr-2" ${i===window.exploreBrands.length-1?'disabled style="opacity:0.3"':''}>⬇️</button></td><td class="py-3 px-4 text-right"><button onclick="editAdminBrand(${i})" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold mr-2">Edit</button><button onclick="deleteAdminBrand(${i})" class="bg-red-900/30 text-red-500 border border-red-900/50 px-3 py-1.5 rounded-lg text-xs font-bold">Del</button></td></tr>`).join(''):'<tr><td colspan="6" class="p-8 text-center text-gray-500">No brands found.</td></tr>';};
 window.moveAdminBrand=async(i,d)=>{if(i+d<0||i+d>=window.exploreBrands.length)return;const t=window.exploreBrands[i];window.exploreBrands[i]=window.exploreBrands[i+d];window.exploreBrands[i+d]=t;try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();}catch(e){}};
-window.addNewAdminBrand=async()=>{const t=document.getElementById('newBrandTitle').value.trim(),img=document.getElementById('newBrandImg').value.trim(),l=document.getElementById('newBrandLink').value.trim(),b=document.getElementById('newBrandBadge').value.trim();if(!t||!img||!l)return showToast("Required fields missing!");const convertedLink=await window.convertDealViaEarnKaro(l);window.exploreBrands.push({title:t,img,link:convertedLink,badge:b});['newBrandTitle','newBrandImg','newBrandLink','newBrandBadge'].forEach(id=>document.getElementById(id).value='');try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();showToast("Brand Added with EarnKaro Link!");}catch(e){}};
-window.editAdminBrand=async(i)=>{const b=window.exploreBrands[i],nt=prompt("Edit Title:",b.title);if(!nt)return;const ni=prompt("Edit Image URL:",b.img);if(!ni)return;const nl=prompt("Edit Link URL:",b.link||"");if(!nl)return;const nb=prompt("Edit Badge Text:",b.badge||"");if(nb===null)return;const convertedLink=await window.convertDealViaEarnKaro(nl.trim());window.exploreBrands[i]={title:nt.trim(),img:ni.trim(),link:convertedLink,badge:nb.trim()};try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();showToast("Brand Updated!");}catch(e){}};
+window.addNewAdminBrand=async()=>{const t=document.getElementById('newBrandTitle').value.trim(),img=document.getElementById('newBrandImg').value.trim(),l=document.getElementById('newBrandLink').value.trim(),b=document.getElementById('newBrandBadge').value.trim();if(!t||!img||!l)return showToast("Required fields missing!");const convertedLink=await window.convertDealViaShraynex(l);window.exploreBrands.push({title:t,img,link:convertedLink,badge:b});['newBrandTitle','newBrandImg','newBrandLink','newBrandBadge'].forEach(id=>document.getElementById(id).value='');try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();showToast("Brand Added with SHRAYNEX Profit Link!");}catch(e){}};
+window.editAdminBrand=async(i)=>{const b=window.exploreBrands[i],nt=prompt("Edit Title:",b.title);if(!nt)return;const ni=prompt("Edit Image URL:",b.img);if(!ni)return;const nl=prompt("Edit Link URL:",b.link||"");if(!nl)return;const nb=prompt("Edit Badge Text:",b.badge||"");if(nb===null)return;const convertedLink=await window.convertDealViaShraynex(nl.trim());window.exploreBrands[i]={title:nt.trim(),img:ni.trim(),link:convertedLink,badge:nb.trim()};try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();showToast("Brand Updated!");}catch(e){}};
 window.deleteAdminBrand=async(i)=>{if(!confirm("Delete brand?"))return;window.exploreBrands.splice(i,1);try{await setDoc(doc(db,SETTINGS_COL,"brands"),{list:window.exploreBrands},{merge:true});renderExploreBrandsUI();if(window.isAdminMode)window.renderAdminBrands();}catch(e){}};
 window.renderAdminUsers=()=>{const q=document.getElementById('adminUserSearch').value.toLowerCase(),f=window.adminUsers.filter(u=>u.role!=='admin'&&`${u.name} ${u.phone} ${u.email}`.toLowerCase().includes(q));document.getElementById('adminUsersTable').innerHTML=f.length?f.map(u=>`<tr class="border-b border-[#222] hover:bg-[#1a1a1a]"><td class="py-4 px-4 font-bold text-white">${escapeHtml(u.name)}</td><td class="py-4 px-4"><div class="text-xs text-gray-400">${escapeHtml(u.phone)}<br>${escapeHtml(u.email)}</div></td><td class="py-4 px-4"><div class="flex items-center gap-2"><span class="font-black text-[#00e676]">₹${money(u.walletBalance)}</span><i class="fa-solid fa-pen text-gray-400 cursor-pointer text-[10px] hover:text-white bg-[#222] p-1.5 rounded-full" onclick="editAdminUserWallet('${u.id}', ${u.walletBalance})"></i></div></td><td class="py-4 px-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.status==='approved'?'bg-green-900/30 text-green-400':u.status==='suspended'?'bg-red-900/30 text-red-400':'bg-amber-900/30 text-amber-400'}">${escapeHtml(u.status||'pending')}</span></td><td class="py-4 px-4 text-right flex gap-2 justify-end items-center"><button onclick="sendAdminCashback('${u.id}')" class="bg-blue-600/20 border border-blue-600/50 text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold mr-2 hover:bg-blue-600 hover:text-white transition">🎁 Reward</button>${u.status!=='approved'?`<button onclick="setAdminUserStatus('${u.id}','approved')" class="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Approve</button>`:''}<button onclick="setAdminUserStatus('${u.id}','${u.status==='suspended'?'approved':'suspended'}')" class="bg-[#222] border border-[#333] text-white px-3 py-1.5 rounded-lg text-xs font-bold">${u.status==='suspended'?'Restore':'Suspend'}</button></td></tr>`).join(''):'<tr><td colspan="5" class="p-8 text-center text-gray-500">No users found.</td></tr>';};
 window.editAdminUserWallet=async(id,curr)=>{const nb=prompt("Edit Wallet Balance (₹):",curr);if(nb===null||nb.trim()===""||isNaN(nb))return;try{await updateDoc(doc(db,USERS_COL,id),{walletBalance:Number(nb),updatedAt:serverTimestamp()});showToast("Wallet updated successfully!");window.refreshAdmin();}catch(e){showToast("Error updating wallet");}};
