@@ -214,7 +214,7 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0;f
         </div>
       </div>
 
-      <!-- Make Your Profit Link Card (Professional Reference Design + Connected Partners Only) -->
+      <!-- Make Your Profit Link Card (Supports ALL 150+ Connected Partner Apps & Websites) -->
       <div class="px-3 pt-3 max-w-4xl mx-auto">
         <div class="bg-white rounded-3xl px-4 py-5 sm:px-8 sm:py-6 border border-gray-200/80 shadow-[0_6px_24px_rgba(15,23,42,0.04)]">
           <div class="flex items-center justify-center gap-2 mb-3.5">
@@ -473,7 +473,7 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0;f
           </button>
         </div>
 
-        <div class="text-center mt-6 mb-2"><span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest border border-gray-200 px-3 py-1 rounded-full bg-white shadow-2xs">SHRAYNEX v3.0 Pro</span></div>
+        <div class="text-center mt-6 mb-2"><span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest border border-gray-200 px-3 py-1 rounded-full bg-white shadow-2xs">SHRAYNEX v3.1 Pro</span></div>
       </div>
     </div>
   </main>
@@ -865,7 +865,7 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0;f
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#222] pb-4">
           <div>
             <h2 class="font-black text-xl text-white flex items-center gap-2">🔌 SHRAYNEX Profit Link API Config</h2>
-            <p class="text-xs text-gray-400 mt-1">Auto-converts connected partner deals & links (Rate Limit: 60 req/min protected).</p>
+            <p class="text-xs text-gray-400 mt-1">Auto-converts all 150+ connected partner apps & websites (Rate Limit: 60 req/min protected).</p>
           </div>
           <span class="inline-flex items-center gap-1.5 bg-[#00e676]/15 border border-[#00e676]/30 text-[#00e676] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider self-start">● SHRAYNEX API Active</span>
         </div>
@@ -936,30 +936,42 @@ window.SHRAYNEX_CONVERTER_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQi
 
 window.PARTNER_UNAVAILABLE_MSG = "Sorry, this partner site will be back soon! Meanwhile, promote similar sites from Our Partners section.";
 
-// Explicitly Non-Partner / Paused Domains
+// Explicitly Non-Partner / Paused / Social Domains (Never generate Profit Link for these)
 window.NON_PARTNER_DOMAINS = [
   "meesho.com",
-  "meesho.in"
+  "meesho.in",
+  "instagram.com",
+  "facebook.com",
+  "fb.com",
+  "youtube.com",
+  "youtu.be",
+  "whatsapp.com",
+  "wa.me",
+  "t.me",
+  "telegram.org",
+  "twitter.com",
+  "x.com",
+  "rkyshree.in"
 ];
 
-// Active Connected Partner Domains
-window.PARTNER_BRAND_DOMAINS = {
-  "amazon": ["amazon.in", "amazon.com", "amzn.in", "amzn.to"],
-  "flipkart": ["flipkart.com", "dl.flipkart.com", "fkrt.it", "fkrt.cc", "shopsy.in"],
-  "myntra": ["myntra.com", "myntr.it"],
-  "ajio": ["ajio.com", "ajio.page.link"],
-  "nykaa": ["nykaa.com", "nykaafashion.com", "nykaaman.com"],
-  "adidas": ["adidas.co.in", "adidas.com"],
-  "domino's pizza": ["dominos.co.in", "pizzaonline.dominos.co.in"],
-  "dominos": ["dominos.co.in", "pizzaonline.dominos.co.in"],
-  "pvr cinemas": ["pvrcinemas.com", "pvrinox.com"],
-  "blinkit": ["blinkit.com"],
-  "zepto": ["zeptonow.com"],
-  "instamart": ["swiggy.com"],
-  "swiggy": ["swiggy.com"],
-  "bookmyshow": ["bookmyshow.com", "in.bookmyshow.com"],
-  "bigbasket": ["bigbasket.com"]
-};
+// All Official Affiliate Shortener Domains returned by the Converter API
+window.AFFILIATE_SHORT_DOMAINS = [
+  "ekaro.in",
+  "bitli.in",
+  "fktr.in",
+  "myntr.it",
+  "amzn.to",
+  "ajiio.in",
+  "nykaa.in",
+  "clnk.in",
+  "topdeal.app.link",
+  "extp.in",
+  "inr.deals",
+  "bit.ly",
+  "tinyurl.com",
+  "go.skimresources.com",
+  "track.vcommission.com"
+];
 
 window.DEFAULT_BRAND_URLS = {
   "amazon": "https://www.amazon.in",
@@ -987,7 +999,22 @@ window.resolveBrandTargetUrl = (brandObj) => {
 };
 
 window.isAlreadyProfitLink = (url) => {
-  return /https?:\/\/(www\.)?(ekaro\.in|bitli\.in|topdeal\.app\.link)/i.test(String(url || ""));
+  try {
+    const host = new URL(String(url || "").trim()).hostname.toLowerCase().replace(/^www\./, "");
+    return window.AFFILIATE_SHORT_DOMAINS.some(d => host === d || host.endsWith("." + d));
+  } catch (e) {
+    return false;
+  }
+};
+
+window.isBlockedNonPartnerUrl = (urlStr) => {
+  try {
+    const host = new URL(String(urlStr || "").trim()).hostname.toLowerCase().replace(/^www\./, "");
+    if (!host) return true;
+    return window.NON_PARTNER_DOMAINS.some(d => host === d || host.endsWith("." + d));
+  } catch (e) {
+    return false;
+  }
 };
 
 // Extract all URLs from a post/deal text
@@ -1017,7 +1044,7 @@ window.brandSanitizeText = (txt) => {
     .replace(/\bEarnKaro\b/gi, "SHRAYNEX");
 };
 
-// Expand mobile app short URLs (dl.flipkart.com, fkrt.it, myntr.it, ajio.page.link, amzn.in, etc.)
+// Expand mobile app short URLs (dl.flipkart.com, fkrt.it, myntr.it, ajio.page.link, *.page.link, *.onelink.me, *.app.link, amzn.in, etc.)
 window.expandShortProductUrl = async (urlStr) => {
   try {
     const u = new URL(urlStr);
@@ -1029,11 +1056,14 @@ window.expandShortProductUrl = async (urlStr) => {
       host === "amzn.in" ||
       host === "amzn.to" ||
       host.endsWith("myntr.it") ||
-      host.endsWith("ajio.page.link") ||
+      host.endsWith(".page.link") ||
+      host.endsWith(".app.link") ||
+      host.endsWith(".onelink.me") ||
       host === "bit.ly" ||
       host === "tinyurl.com" ||
       host === "rb.gy" ||
       host === "cutt.ly" ||
+      host === "clnk.in" ||
       (host.includes("meesho.com") && u.pathname.startsWith("/s/"));
 
     if (!isShortOrAppShare) return urlStr;
@@ -1054,51 +1084,7 @@ window.expandShortProductUrl = async (urlStr) => {
   return urlStr;
 };
 
-// Strictly verify if URL belongs to a connected partner in "Our Partners"
-window.isConnectedPartnerUrl = (urlStr) => {
-  try {
-    if (window.isAlreadyProfitLink(urlStr)) return true;
-    const host = new URL(urlStr).hostname.toLowerCase().replace(/^www\./, "");
-    if (!host) return false;
-
-    for (const blocked of window.NON_PARTNER_DOMAINS) {
-      if (host === blocked || host.endsWith("." + blocked)) {
-        return false;
-      }
-    }
-
-    const allowedDomains = new Set();
-    const activeBrands = Array.isArray(window.exploreBrands) ? window.exploreBrands : [];
-
-    for (const b of activeBrands) {
-      const titleKey = String(b.title || "").trim().toLowerCase();
-      if (titleKey === "meesho") continue;
-
-      if (window.PARTNER_BRAND_DOMAINS[titleKey]) {
-        window.PARTNER_BRAND_DOMAINS[titleKey].forEach(d => allowedDomains.add(d));
-      }
-
-      const bLink = String(b.link || "").trim();
-      if (bLink && bLink !== "#" && /^https?:\/\//i.test(bLink) && !window.isAlreadyProfitLink(bLink)) {
-        try {
-          const bHost = new URL(bLink).hostname.toLowerCase().replace(/^www\./, "");
-          if (bHost && !window.NON_PARTNER_DOMAINS.includes(bHost)) {
-            allowedDomains.add(bHost);
-          }
-        } catch (e) {}
-      }
-    }
-
-    for (const domain of allowedDomains) {
-      if (host === domain || host.endsWith("." + domain)) {
-        return true;
-      }
-    }
-  } catch (e) {}
-  return false;
-};
-
-// Normalize mobile subdomains & remove old affiliate/UTM tracking params
+// Normalize mobile subdomains & remove conflicting affiliate/UTM tracking params
 window.normalizeStoreProductUrl = (urlStr) => {
   try {
     const u = new URL(urlStr);
@@ -1112,14 +1098,20 @@ window.normalizeStoreProductUrl = (urlStr) => {
       u.hostname = "www.myntra.com";
     } else if (host === "m.ajio.com") {
       u.hostname = "www.ajio.com";
+    } else if (host === "m.nykaa.com") {
+      u.hostname = "www.nykaa.com";
+    } else if (host === "m.tatacliq.com") {
+      u.hostname = "www.tatacliq.com";
     } else if (host === "m.snapdeal.com") {
       u.hostname = "www.snapdeal.com";
+    } else if (host === "m.1mg.com") {
+      u.hostname = "www.1mg.com";
     }
 
     const stripKeys = [
       "affid", "affextparam1", "affextparam2", "tag", "ascsubtag",
       "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content",
-      "cmpid", "sclid", "gclid", "fbclid", "shareid", "smid"
+      "cmpid", "sclid", "gclid", "fbclid", "shareid", "smid", "pid", "af_sub1"
     ];
     for (const k of Array.from(u.searchParams.keys())) {
       if (stripKeys.includes(k.toLowerCase())) {
@@ -1132,27 +1124,24 @@ window.normalizeStoreProductUrl = (urlStr) => {
   }
 };
 
-window.getStoreBaseUrlFromProductUrl = (urlStr) => {
+// Get Store Root Homepage for ANY domain (works for all 150+ partner websites!)
+window.getStoreRootHomepage = (urlStr) => {
   try {
-    const host = new URL(urlStr).hostname.toLowerCase();
-    if (host.includes("flipkart") || host.includes("fkrt") || host.includes("shopsy")) return "https://www.flipkart.com";
+    const u = new URL(urlStr);
+    const host = u.hostname.toLowerCase();
+    if (host.includes("flipkart") || host.includes("fkrt")) return "https://www.flipkart.com";
     if (host.includes("amazon") || host.includes("amzn")) return "https://www.amazon.in";
     if (host.includes("myntra") || host.includes("myntr")) return "https://www.myntra.com";
     if (host.includes("ajio")) return "https://www.ajio.com";
-    if (host.includes("nykaa")) return "https://www.nykaa.com";
-    if (host.includes("adidas")) return "https://www.adidas.co.in";
-    if (host.includes("dominos")) return "https://pizzaonline.dominos.co.in";
-    if (host.includes("pvrcinemas") || host.includes("pvrinox")) return "https://www.pvrcinemas.com";
-    if (host.includes("blinkit")) return "https://blinkit.com";
-    if (host.includes("zepto")) return "https://www.zeptonow.com";
     if (host.includes("swiggy")) return "https://www.swiggy.com/instamart";
-    if (host.includes("bookmyshow")) return "https://in.bookmyshow.com";
-    if (host.includes("bigbasket")) return "https://www.bigbasket.com";
-  } catch (e) {}
-  return "";
+    if (host.includes("dominos")) return "https://pizzaonline.dominos.co.in";
+    return `${u.protocol}//${u.hostname}`;
+  } catch (e) {
+    return "";
+  }
 };
 
-// Official API Request Engine matching:
+// Official API Request Engine:
 // POST https://ekaro-api.affiliaters.in/api/converter/public
 // Body: { "deal": "...", "convert_option": "convert_only" | "convert_share" }
 // Success: { "success": 1, "data": "{Your Converted Deal}", "randomPostID": "..." }
@@ -1201,8 +1190,8 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
         // Explicit Success Case: { "success": 1, "data": "...", "randomPostID": "..." }
         if (json.success === 1 && typeof json.data === "string" && json.data.trim()) {
           const cleanData = window.brandSanitizeText(json.data.trim());
-          // Verify that response actually contains a valid converted URL and not a masked error
-          if (/https?:\/\/[^\s"'<>]+/i.test(cleanData)) {
+          // Verify response contains a valid converted HTTP/HTTPS URL and is not an error sentence
+          if (/https?:\/\/[^\s"'<>]+/i.test(cleanData) && !/could not locate|verify if the seller/i.test(cleanData)) {
             return {
               ok: true,
               data: cleanData,
@@ -1227,7 +1216,6 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
             lastErrorMsg = window.PARTNER_UNAVAILABLE_MSG;
             lastErrorCode = 400;
           }
-          // If server explicitly replied with a structured JSON error, no need to retry CORS proxies
           return { ok: false, code: lastErrorCode, message: lastErrorMsg };
         }
       }
@@ -1239,7 +1227,7 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
   return { ok: false, code: lastErrorCode, message: lastErrorMsg };
 };
 
-// High-Level Partner-Only Deal / Link Converter
+// High-Level Partner Deal / Link Converter (Supports ALL 150+ Partner Apps & Websites!)
 window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only", forceFresh = false) => {
   const inputStr = String(rawInput || "").trim();
   const urls = window.extractAllUrlsFromText(inputStr);
@@ -1248,13 +1236,14 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
     return { ok: false, reason: "invalid_url", message: "Please paste a valid homepage or product link!", data: "" };
   }
 
-  // Expand short URLs & verify every URL in the deal belongs to an active partner
+  // Step 1: Expand short app links & block explicitly non-partner sites (e.g. Meesho)
   let processedDeal = inputStr;
+  const originalUrls = [...urls];
   const expandedUrls = [];
+  const normalizedUrls = [];
 
   for (const origUrl of urls) {
-    const expanded = await window.expandShortProductUrl(origUrl);
-    if (!window.isConnectedPartnerUrl(expanded)) {
+    if (window.isBlockedNonPartnerUrl(origUrl)) {
       return {
         ok: false,
         reason: "not_partner",
@@ -1262,8 +1251,21 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
         data: ""
       };
     }
+
+    const expanded = await window.expandShortProductUrl(origUrl);
+    if (window.isBlockedNonPartnerUrl(expanded)) {
+      return {
+        ok: false,
+        reason: "not_partner",
+        message: window.PARTNER_UNAVAILABLE_MSG,
+        data: ""
+      };
+    }
+
     const normalized = window.normalizeStoreProductUrl(expanded);
-    expandedUrls.push(normalized);
+    expandedUrls.push(expanded);
+    normalizedUrls.push(normalized);
+
     if (processedDeal.includes(origUrl)) {
       processedDeal = processedDeal.replace(origUrl, normalized);
     } else {
@@ -1273,11 +1275,11 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
 
   const isSingleUrlOnly = (urls.length === 1 && inputStr.replace(/\s+/g, "") === urls[0]);
 
-  if (!forceFresh && isSingleUrlOnly && window.isAlreadyProfitLink(expandedUrls[0])) {
-    return { ok: true, data: expandedUrls[0], isMultiDeal: false };
+  if (!forceFresh && isSingleUrlOnly && window.isAlreadyProfitLink(normalizedUrls[0])) {
+    return { ok: true, data: normalizedUrls[0], isMultiDeal: false };
   }
 
-  const cacheKey = "shraynex_profit_cache_v5";
+  const cacheKey = "shraynex_profit_cache_v6";
   let cache = {};
   try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) {}
   const cacheLookupKey = `${convertOption}::${processedDeal}`;
@@ -1291,24 +1293,46 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
     };
   }
 
-  // Primary API Call (supports single URL or multi-URL deal text)
+  // Step 2: Primary API Call (sends normalized deal/link to Converter API)
   let apiRes = await window.callShraynexConverterApi(processedDeal, convertOption);
 
-  // If single URL failed because deep product slug isn't supported, retry clean path then store base URL
+  // Step 3: Smart Retry Ladder for single URLs (handles app deep links, query params & sub-pages)
   if (!apiRes.ok && isSingleUrlOnly && apiRes.code !== 401 && apiRes.code !== 429) {
+    const triedSet = new Set([processedDeal]);
+    const retryCandidates = [];
+
+    // 3a. Clean URL without query params (fixes Flipkart/Myntra/Ajio/Amazon product URLs with extra params)
     try {
-      const u = new URL(expandedUrls[0]);
+      const u = new URL(normalizedUrls[0]);
       const cleanPath = `${u.origin}${u.pathname}`;
-      if (cleanPath !== expandedUrls[0]) {
-        apiRes = await window.callShraynexConverterApi(cleanPath, convertOption);
+      if (!triedSet.has(cleanPath)) {
+        triedSet.add(cleanPath);
+        retryCandidates.push(cleanPath);
       }
     } catch (e) {}
 
-    if (!apiRes.ok) {
-      const storeBase = window.getStoreBaseUrlFromProductUrl(expandedUrls[0]);
-      if (storeBase && storeBase !== expandedUrls[0]) {
-        apiRes = await window.callShraynexConverterApi(storeBase, convertOption);
-      }
+    // 3b. Original raw URL (in case dl.flipkart.com / fkrt.it / amzn.in converts natively on server)
+    if (!triedSet.has(originalUrls[0])) {
+      triedSet.add(originalUrls[0]);
+      retryCandidates.push(originalUrls[0]);
+    }
+
+    // 3c. Expanded URL before normalization
+    if (!triedSet.has(expandedUrls[0])) {
+      triedSet.add(expandedUrls[0]);
+      retryCandidates.push(expandedUrls[0]);
+    }
+
+    // 3d. Store Root Homepage (e.g. https://www.flipkart.com or https://www.mamaearth.in)
+    const storeRoot = window.getStoreRootHomepage(normalizedUrls[0]);
+    if (storeRoot && !triedSet.has(storeRoot)) {
+      triedSet.add(storeRoot);
+      retryCandidates.push(storeRoot);
+    }
+
+    for (const candidateUrl of retryCandidates) {
+      apiRes = await window.callShraynexConverterApi(candidateUrl, convertOption);
+      if (apiRes.ok || apiRes.code === 401 || apiRes.code === 429) break;
     }
   }
 
@@ -1562,7 +1586,7 @@ window.saveAdminShraynexToken = async () => {
       endpoint: window.SHRAYNEX_CONVERTER_ENDPOINT,
       updatedAt: serverTimestamp()
     }, { merge: true });
-    try { localStorage.removeItem("shraynex_profit_cache_v5"); } catch (e) {}
+    try { localStorage.removeItem("shraynex_profit_cache_v6"); } catch (e) {}
     showToast("✅ SHRAYNEX API Token Saved!");
   } catch (e) {
     showToast("Error saving token.");
