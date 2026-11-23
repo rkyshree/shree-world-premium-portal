@@ -497,36 +497,73 @@ body{background-color:#e5e7eb;-webkit-tap-highlight-color:transparent;margin:0;f
   </nav>
 </section>
 
-<!-- Auth Modal -->
+<!-- Auth Modal (with Login, Sign Up & Reset/Forgot Password) -->
 <div id="authModal" class="bottom-sheet no-easy-close z-[900]">
   <div class="bottom-sheet-content">
     <div class="drag-handle"></div>
     <div class="px-5 pb-3 pt-1 border-b border-gray-100 flex justify-between items-center">
-      <div><h3 class="text-lg font-bold text-gray-900">Welcome to SHRAYNEX</h3></div>
+      <div><h3 id="authModalTitle" class="text-lg font-bold text-gray-900">Welcome to SHRAYNEX</h3></div>
       <button onclick="closeModal('authModal')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div class="p-5 overflow-y-auto">
-      <div class="flex bg-gray-100 p-1 rounded-xl mb-5">
-        <button id="toggleLoginBtn" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900">Login</button>
-        <button id="toggleSignupBtn" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm">Sign Up</button>
-      </div>
-      <button onclick="loginWithGoogle()" id="googleAuthBtn" class="w-full border border-gray-300 bg-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 mb-5 hover:bg-gray-50 text-gray-700 shadow-2xs">
-        <img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google
-      </button>
-      <div class="flex items-center gap-4 mb-5">
-        <div class="h-px bg-gray-200 flex-1"></div>
-        <span class="text-[10px] font-semibold text-gray-400 uppercase">Or Email</span>
-        <div class="h-px bg-gray-200 flex-1"></div>
-      </div>
-      <form id="authForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
-        <div id="signupFieldsGroup" class="hidden space-y-3">
-          <input type="text" id="authName" placeholder="Full Name" class="input-field">
-          <input type="tel" id="authPhone" placeholder="Mobile Number" maxlength="10" pattern="[0-9]{10}" class="input-field">
+      <!-- Login & Sign Up View -->
+      <div id="mainAuthSection">
+        <div class="flex bg-gray-100 p-1 rounded-xl mb-5">
+          <button id="toggleLoginBtn" onclick="toggleAuthMode('login')" class="flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900">Login</button>
+          <button id="toggleSignupBtn" onclick="toggleAuthMode('signup')" class="flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm">Sign Up</button>
         </div>
-        <input type="email" id="authEmail" placeholder="Email Address" required class="input-field">
-        <input type="password" id="authPassword" placeholder="Password (min 6 chars)" minlength="6" required class="input-field">
-        <button type="submit" id="submitAuthBtn" class="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm shadow-md mt-2">Login</button>
-      </form>
+        <button onclick="loginWithGoogle()" id="googleAuthBtn" class="w-full border border-gray-300 bg-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 mb-5 hover:bg-gray-50 text-gray-700 shadow-2xs">
+          <img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google
+        </button>
+        <div class="flex items-center gap-4 mb-5">
+          <div class="h-px bg-gray-200 flex-1"></div>
+          <span class="text-[10px] font-semibold text-gray-400 uppercase">Or Email</span>
+          <div class="h-px bg-gray-200 flex-1"></div>
+        </div>
+        <form id="authForm" onsubmit="handleEmailAuth(event)" class="space-y-3">
+          <div id="signupFieldsGroup" class="hidden space-y-3">
+            <input type="text" id="authName" placeholder="Full Name" class="input-field">
+            <input type="tel" id="authPhone" placeholder="Mobile Number" maxlength="10" pattern="[0-9]{10}" class="input-field">
+          </div>
+          <input type="email" id="authEmail" placeholder="Email Address" required class="input-field">
+          <div class="relative">
+            <input type="password" id="authPassword" placeholder="Password (min 6 chars)" minlength="6" required class="input-field pr-10">
+            <button type="button" onclick="togglePasswordVisibility('authPassword', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm p-1" aria-label="Show or hide password">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div id="forgotPasswordRow" class="flex justify-end">
+            <button type="button" onclick="openForgotPasswordView()" class="text-xs font-bold text-primary hover:text-primary-dark transition">Forgot Password?</button>
+          </div>
+          <button type="submit" id="submitAuthBtn" class="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm shadow-md mt-2 flex items-center justify-center gap-2">Login</button>
+        </form>
+      </div>
+
+      <!-- Forgot / Reset Password View -->
+      <div id="resetPasswordSection" class="hidden space-y-4">
+        <button type="button" onclick="closeForgotPasswordView()" class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition">
+          <i class="fa-solid fa-arrow-left"></i> Back to Login
+        </button>
+        <div class="bg-primary-light/60 border border-primary/15 rounded-2xl p-4 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+            <i class="fa-solid fa-key text-sm"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-gray-900">Forgot your password?</h4>
+            <p class="text-xs text-gray-600 mt-1 leading-relaxed">Enter your registered email address below. We will send you a secure password reset link to set a new password.</p>
+          </div>
+        </div>
+        <form id="resetPasswordForm" onsubmit="handlePasswordReset(event)" class="space-y-3">
+          <div>
+            <label for="resetEmail" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Registered Email Address</label>
+            <input type="email" id="resetEmail" placeholder="Enter your email address" required class="input-field">
+          </div>
+          <button type="submit" id="sendResetBtn" class="w-full bg-primary text-white py-3.5 rounded-xl font-bold text-sm shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-paper-plane text-xs"></i> Send Reset Link
+          </button>
+        </form>
+      </div>
+
       <p class="text-center text-[10px] text-gray-400 mt-5 pb-2">By continuing, you agree to our Terms & Policy.</p>
     </div>
   </div>
@@ -1141,11 +1178,7 @@ window.getStoreRootHomepage = (urlStr) => {
   }
 };
 
-// Official API Request Engine:
-// POST https://ekaro-api.affiliaters.in/api/converter/public
-// Body: { "deal": "...", "convert_option": "convert_only" | "convert_share" }
-// Success: { "success": 1, "data": "{Your Converted Deal}", "randomPostID": "..." }
-// Error:   { "error": 1, "message": "..." }
+// Official API Request Engine
 window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_only") => {
   const token = (window.SHRAYNEX_CONVERTER_TOKEN || "").trim();
   if (!token) {
@@ -1187,10 +1220,8 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
       try { json = JSON.parse(rawText); } catch (e) {}
 
       if (json && typeof json === "object") {
-        // Explicit Success Case: { "success": 1, "data": "...", "randomPostID": "..." }
         if (json.success === 1 && typeof json.data === "string" && json.data.trim()) {
           const cleanData = window.brandSanitizeText(json.data.trim());
-          // Verify response contains a valid converted HTTP/HTTPS URL and is not an error sentence
           if (/https?:\/\/[^\s"'<>]+/i.test(cleanData) && !/could not locate|verify if the seller/i.test(cleanData)) {
             return {
               ok: true,
@@ -1200,7 +1231,6 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
           }
         }
 
-        // Explicit Error Case: { "error": 1, "message": "..." }
         if (json.error === 1 || res.status >= 400) {
           const errMsg = String(json.message || "");
           if (/authenticate/i.test(errMsg) || res.status === 401) {
@@ -1219,15 +1249,13 @@ window.callShraynexConverterApi = async (dealPayload, convertOption = "convert_o
           return { ok: false, code: lastErrorCode, message: lastErrorMsg };
         }
       }
-    } catch (e) {
-      // Network/CORS failure on this transport; try next transport
-    }
+    } catch (e) {}
   }
 
   return { ok: false, code: lastErrorCode, message: lastErrorMsg };
 };
 
-// High-Level Partner Deal / Link Converter (Supports ALL 150+ Partner Apps & Websites!)
+// High-Level Partner Deal / Link Converter
 window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only", forceFresh = false) => {
   const inputStr = String(rawInput || "").trim();
   const urls = window.extractAllUrlsFromText(inputStr);
@@ -1236,7 +1264,6 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
     return { ok: false, reason: "invalid_url", message: "Please paste a valid homepage or product link!", data: "" };
   }
 
-  // Step 1: Expand short app links & block explicitly non-partner sites (e.g. Meesho)
   let processedDeal = inputStr;
   const originalUrls = [...urls];
   const expandedUrls = [];
@@ -1293,15 +1320,12 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
     };
   }
 
-  // Step 2: Primary API Call (sends normalized deal/link to Converter API)
   let apiRes = await window.callShraynexConverterApi(processedDeal, convertOption);
 
-  // Step 3: Smart Retry Ladder for single URLs (handles app deep links, query params & sub-pages)
   if (!apiRes.ok && isSingleUrlOnly && apiRes.code !== 401 && apiRes.code !== 429) {
     const triedSet = new Set([processedDeal]);
     const retryCandidates = [];
 
-    // 3a. Clean URL without query params (fixes Flipkart/Myntra/Ajio/Amazon product URLs with extra params)
     try {
       const u = new URL(normalizedUrls[0]);
       const cleanPath = `${u.origin}${u.pathname}`;
@@ -1311,19 +1335,16 @@ window.convertStrictPartnerDeal = async (rawInput, convertOption = "convert_only
       }
     } catch (e) {}
 
-    // 3b. Original raw URL (in case dl.flipkart.com / fkrt.it / amzn.in converts natively on server)
     if (!triedSet.has(originalUrls[0])) {
       triedSet.add(originalUrls[0]);
       retryCandidates.push(originalUrls[0]);
     }
 
-    // 3c. Expanded URL before normalization
     if (!triedSet.has(expandedUrls[0])) {
       triedSet.add(expandedUrls[0]);
       retryCandidates.push(expandedUrls[0]);
     }
 
-    // 3d. Store Root Homepage (e.g. https://www.flipkart.com or https://www.mamaearth.in)
     const storeRoot = window.getStoreRootHomepage(normalizedUrls[0]);
     if (storeRoot && !triedSet.has(storeRoot)) {
       triedSet.add(storeRoot);
@@ -1528,6 +1549,31 @@ const isStandalone=window.matchMedia('(display-mode: standalone)').matches||wind
 window.addEventListener('load',()=>{const btns=document.querySelectorAll('.install-app-btn');if(isStandalone){btns.forEach(b=>b.classList.add('hidden'));}else{btns.forEach(b=>b.classList.remove('hidden'));}document.querySelectorAll('.bottom-sheet').forEach(s=>{s.addEventListener('click',function(e){if(e.target===this&&!this.classList.contains('no-easy-close'))closeModal(this.id);});});});
 window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;document.querySelectorAll('.install-app-btn').forEach(b=>b.classList.remove('hidden'));});
 window.handleInstallClick=async()=>{if(isIOS){document.getElementById('iosInstallModal').classList.add('active');}else if(deferredPrompt){deferredPrompt.prompt();const{outcome}=await deferredPrompt.userChoice;if(outcome==='accepted'){document.querySelectorAll('.install-app-btn').forEach(b=>b.classList.add('hidden'));}deferredPrompt=null;}else{document.getElementById('androidInstallModal').classList.add('active');}};
+
+// Password Show/Hide & Reset Password View Helpers
+window.togglePasswordVisibility=(inputId,btn)=>{
+  const inp=document.getElementById(inputId);
+  if(!inp)return;
+  const isPwd=inp.type==='password';
+  inp.type=isPwd?'text':'password';
+  const icon=btn?.querySelector('i');
+  if(icon)icon.className=isPwd?'fa-regular fa-eye-slash':'fa-regular fa-eye';
+};
+window.openForgotPasswordView=()=>{
+  const loginEmail=(document.getElementById('authEmail')?.value||'').trim();
+  const resetInput=document.getElementById('resetEmail');
+  if(resetInput && loginEmail)resetInput.value=loginEmail;
+  document.getElementById('mainAuthSection')?.classList.add('hidden');
+  document.getElementById('resetPasswordSection')?.classList.remove('hidden');
+  const titleEl=document.getElementById('authModalTitle');
+  if(titleEl)titleEl.innerText='Reset Password';
+};
+window.closeForgotPasswordView=()=>{
+  document.getElementById('resetPasswordSection')?.classList.add('hidden');
+  document.getElementById('mainAuthSection')?.classList.remove('hidden');
+  const titleEl=document.getElementById('authModalTitle');
+  if(titleEl)titleEl.innerText='Welcome to SHRAYNEX';
+};
 </script>
 
 <script type="module">
@@ -1548,7 +1594,7 @@ window.openPolicy=(t)=>{
   openModal('policyModal');
 };
 window.shareAppPromo=async(e)=>{if(e)e.stopPropagation();const text="🚀 Start your zero-investment online business today!\n\nJoin SHRAYNEX and earn up to ₹25,000/month by sharing partner links and claiming cashback.\n\n👉 Join Now: https://www.rkyshree.in/Resell";if(navigator.share){try{await navigator.share({title:'SHRAYNEX | Premium Cashback App',text:text});}catch(err){}}else{window.copyGenericText(text,"Promo Link Copied!");}};
-import{initializeApp}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";import{getFirestore,collection,doc,getDoc,getDocs,updateDoc,setDoc,addDoc,deleteDoc,onSnapshot,query,where,serverTimestamp,runTransaction,increment,writeBatch}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";import{getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword,sendPasswordResetEmail,signOut}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";import{getFirestore,collection,doc,getDoc,getDocs,updateDoc,setDoc,addDoc,deleteDoc,onSnapshot,query,where,serverTimestamp,runTransaction,increment,writeBatch}from"https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 const fc=typeof __firebase_config!=='undefined'?JSON.parse(__firebase_config):{apiKey:"AIzaSyCOMp4Z4XncCXCLiKb3OwsqkAMe2oFSd2I",authDomain:"rkyshree-2f74b.firebaseapp.com",projectId:"rkyshree-2f74b",storageBucket:"rkyshree-2f74b.firebasestorage.app",messagingSenderId:"354823113610",appId:"1:354823113610:web:1249f2952249ac1a9c9673"};
 const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app),googleProvider=new GoogleAuthProvider();
 const USERS_COL="shraynex_users",ORDERS_COL="shraynex_orders",WITHDRAW_COL="shraynex_withdrawals",SETTINGS_COL="shraynex_settings";
@@ -1626,7 +1672,7 @@ window.copyAdminConvertedResult = () => {
   window.copyGenericText(txt, "Profit Link Copied!");
 };
 
-// Rate-limit safe bulk converter (respects 60 requests/min API limit)
+// Rate-limit safe bulk converter
 window.bulkConvertAllBrandsWithApi = async () => {
   if (!window.exploreBrands || !window.exploreBrands.length) return;
   const btn = document.getElementById("btnBulkConvertBrands");
@@ -1745,7 +1791,7 @@ window.closeSuccessPopup=()=>{const p=document.getElementById('successCenterPopu
 window.startLiveTimers=()=>{if(brandTimerInterval)clearInterval(brandTimerInterval);const u=()=>{let d=true,n=Date.now();document.querySelectorAll('.brand-timer').forEach(e=>{let t=parseInt(e.getAttribute('data-target')),f=t-n;if(f>0){d=false;let h=Math.floor((f/(1000*60*60))%24).toString().padStart(2,'0'),m=Math.floor((f/1000/60)%60).toString().padStart(2,'0'),s=Math.floor((f/1000)%60).toString().padStart(2,'0');e.innerHTML=`${h}<span class="text-[7px] font-bold text-red-400 ml-[1px]">h</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${m}<span class="text-[7px] font-bold text-red-400 ml-[1px]">m</span><span class="mx-[2px] text-red-300 opacity-70">:</span>${s}<span class="text-[7px] font-bold text-red-400 ml-[1px]">s</span>`;}else if(e.innerText!=="Ready!"){e.innerText="Ready!";setTimeout(renderExploreBrandsUI,1000);}});if(d&&document.querySelectorAll('.brand-timer').length>0)clearInterval(brandTimerInterval);};u();brandTimerInterval=setInterval(u,1000);};
 window.escapeHtml=(u)=>String(u||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");window.money=(v)=>Number(v||0).toLocaleString('en-IN');
 window.showToast=(m)=>{const t=document.getElementById('toast'),tm=document.getElementById('toastMsg');tm.innerHTML=`<i class="fa-solid fa-circle-check text-[#4ade80] shrink-0 text-lg"></i><span class="flex-1">${m}</span>`;t.classList.remove('hidden');t.style.top='20px';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>{t.classList.add('hidden');},3200);};
-window.openModal=(id)=>{const e=document.getElementById(id);if(!e.classList.contains('active')){e.classList.add('active');document.body.style.overflow='hidden';history.pushState({modalOpen:true,id:id},"");}};
+window.openModal=(id)=>{if(id==='authModal'&&typeof window.closeForgotPasswordView==='function')window.closeForgotPasswordView();const e=document.getElementById(id);if(!e.classList.contains('active')){e.classList.add('active');document.body.style.overflow='hidden';history.pushState({modalOpen:true,id:id},"");}};
 window.closeModal=(id)=>{const m=document.getElementById(id);if(m.classList.contains('active')){if(history.state&&history.state.modalOpen){history.back();}else{m.classList.remove('active');if(document.querySelectorAll('.bottom-sheet.active').length===0)document.body.style.overflow='';}}};
 window.addEventListener('popstate',()=>{const m=document.querySelectorAll('.bottom-sheet.active');if(m.length>0){m[m.length-1].classList.remove('active');if(m.length===1)document.body.style.overflow='';return;}});
 window.copyGenericText=(t,m)=>{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(()=>showToast(m)).catch(()=>fallbackCopy(t,m));else fallbackCopy(t,m);};
@@ -1807,9 +1853,51 @@ window.shareExploreBrand = async (i) => {
 window.processShareCommission=async(t)=>{if(!currentUser||!userData||userData.status!=='approved')return;const n=Date.now();let s=JSON.parse(localStorage.getItem('shraynex_share_timer')||'{}');if(n-(s[t]||0)<86400000)return showToast("Please wait 24 hours to share this partner again!");s[t]=n;localStorage.setItem('shraynex_share_timer',JSON.stringify(s));renderExploreBrandsUI();const id="SH"+Math.floor(100000+Math.random()*900000);try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:"Share Bonus: "+t,profit:1,status:"pending",resellerId:currentUser.uid,resellerName:userData.name||"",createdAt:serverTimestamp(),isShareBonus:true,paidToWallet:false});window.showSuccessPopup("₹1 Earned!",`You earned ₹1 by sharing ${t}. It is added to your pending wallet.`,"coin");}catch(e){}};
 window.submitBrandClaimFirebase=async()=>{if(!currentUser){openModal('authModal');return showToast("Please login first.");}if(userData?.status!=='approved')return showToast("Profile approval required for Claims.");const b=document.getElementById('claimBrandSelect').value,oid=document.getElementById('claimBrandOrderId').value.trim(),orderAmt=parseFloat(document.getElementById('claimBrandOrderAmount').value);if(!oid)return showToast("Please enter the Order ID.");if(!orderAmt||orderAmt<=0)return showToast("Please enter valid Order Amount.");const rate=window.getBrandCommissionPercent(b);const calc=window.calculateNetBrandProfit(orderAmt,rate);const id="BC"+Math.floor(100000+Math.random()*900000),btn=document.getElementById('claimSubmitBtn'),o=btn.innerText;btn.innerText='Submitting...';btn.disabled=true;try{await setDoc(doc(db,ORDERS_COL,id),{orderId:id,productName:`Claim: ${b} (Order: ${oid})`,profit:calc.net,grossProfit:calc.gross,platformCharge:calc.platform,orderAmount:orderAmt,commissionRate:rate,status:"pending",resellerId:currentUser.uid,resellerName:userData?.name||"",createdAt:serverTimestamp(),isBrandClaim:true,brandName:b,brandOrderId:oid,paidToWallet:false});document.getElementById('claimBrandOrderId').value='';document.getElementById('claimBrandOrderAmount').value='';updateClaimProfitPreview();if(calc.net>0){window.showSuccessPopup("Claim Submitted!",`Order of ₹${money(orderAmt)} tracked! ₹${money(calc.net)} profit added to pending history.`,"check");}else{window.showSuccessPopup("Claim Submitted!","Your claim will be verified soon and commission will be added.","check");}}catch(e){showToast("Failed to submit claim.");}finally{btn.innerText=o;btn.disabled=false;}};
 window.handleHomeNavClick=()=>{switchTab('Feed');};
-window.toggleAuthMode=(m)=>{isSignupMode=m==='signup';document.getElementById('signupFieldsGroup').classList.toggle('hidden',!isSignupMode);document.getElementById('submitAuthBtn').innerText=isSignupMode?'Sign Up':'Login';document.getElementById('authName').required=isSignupMode;document.getElementById('authPhone').required=isSignupMode;document.getElementById('toggleSignupBtn').className=isSignupMode?"flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900":"flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm";document.getElementById('toggleLoginBtn').className=isSignupMode?"flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm":"flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900";};
+window.toggleAuthMode=(m)=>{
+  if(typeof window.closeForgotPasswordView==='function')window.closeForgotPasswordView();
+  isSignupMode=m==='signup';
+  document.getElementById('signupFieldsGroup').classList.toggle('hidden',!isSignupMode);
+  const forgotRow=document.getElementById('forgotPasswordRow');
+  if(forgotRow)forgotRow.classList.toggle('hidden',isSignupMode);
+  document.getElementById('submitAuthBtn').innerText=isSignupMode?'Sign Up':'Login';
+  document.getElementById('authName').required=isSignupMode;
+  document.getElementById('authPhone').required=isSignupMode;
+  document.getElementById('toggleSignupBtn').className=isSignupMode?"flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900":"flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm";
+  document.getElementById('toggleLoginBtn').className=isSignupMode?"flex-1 py-2 rounded-lg text-gray-500 font-bold text-sm":"flex-1 py-2 rounded-lg bg-white shadow-sm font-bold text-sm text-gray-900";
+};
 window.loginWithGoogle=async()=>{const b=document.getElementById('googleAuthBtn');b.innerHTML='<div class="spinner"></div>';try{const r=await signInWithPopup(auth,googleProvider);if(r.user)await initUserDoc(r.user,{loginType:"google"});closeModal('authModal');window.showSuccessPopup("Login Successful!","Welcome back to SHRAYNEX.","check");}catch(e){showToast(e.message);}finally{b.innerHTML='<img src="https://www.google.com/favicon.ico" class="w-4 h-4" onerror="handleImageError(this)"> Continue with Google';}};
 window.handleEmailAuth=async(e)=>{e.preventDefault();const em=document.getElementById('authEmail').value.trim(),pw=document.getElementById('authPassword').value,b=document.getElementById('submitAuthBtn'),o=b.innerText;b.innerHTML='<div class="spinner white"></div>';b.disabled=true;try{if(isSignupMode){const nm=document.getElementById('authName').value.trim(),ph=document.getElementById('authPhone').value.trim();const r=await createUserWithEmailAndPassword(auth,em,pw);await initUserDoc(r.user,{name:nm,phone:ph,loginType:"email"});window.showSuccessPopup("Account Created!","Welcome to SHRAYNEX. Start earning today!","check");}else{await signInWithEmailAndPassword(auth,em,pw);window.showSuccessPopup("Login Successful!","Welcome back to SHRAYNEX.","check");}closeModal('authModal');}catch(e){showToast(e.message.replace('Firebase: ',''));}finally{b.innerText=o;b.disabled=false;}};
+
+// Handle Password Reset Email Request
+window.handlePasswordReset=async(e)=>{
+  e.preventDefault();
+  const em=(document.getElementById('resetEmail')?.value||'').trim();
+  if(!em)return showToast("Please enter your registered email address.");
+  const b=document.getElementById('sendResetBtn'),o=b.innerHTML;
+  b.innerHTML='<div class="spinner white"></div>';
+  b.disabled=true;
+  try{
+    await sendPasswordResetEmail(auth,em);
+    document.getElementById('authEmail').value=em;
+    window.closeForgotPasswordView();
+    window.showSuccessPopup("Reset Link Sent!",`Password reset link has been sent to ${em}. Please check your Inbox or Spam folder to set a new password.`,"check");
+  }catch(err){
+    const code=err?.code||'';
+    if(code==='auth/user-not-found'){
+      showToast("No account found with this email address.");
+    }else if(code==='auth/invalid-email'){
+      showToast("Please enter a valid email address.");
+    }else if(code==='auth/too-many-requests'){
+      showToast("Too many attempts. Please try again later.");
+    }else{
+      showToast((err?.message||"Failed to send reset link.").replace('Firebase: ',''));
+    }
+  }finally{
+    b.innerHTML=o;
+    b.disabled=false;
+  }
+};
+
 async function initUserDoc(u,e={}){const r=doc(db,USERS_COL,u.uid),s=await getDoc(r);if(!s.exists()){const d={uid:u.uid,name:e.name||u.displayName||"Reseller",email:u.email||"",phone:e.phone||"",role:"reseller",status:"pending",walletBalance:0,totalEarnings:0,createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await setDoc(r,d);userData=d;}else{const up={updatedAt:serverTimestamp()};if(e.name)up.name=e.name;if(e.phone)up.phone=e.phone;await setDoc(r,up,{merge:true});userData={...s.data(),...up};}}
 window.handleLogout=async()=>{await signOut(auth);window.showSuccessPopup("Logged Out","You have successfully logged out.","check");switchTab('Feed');};
 let authStateResolved=false;
